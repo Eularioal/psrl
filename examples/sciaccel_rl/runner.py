@@ -27,6 +27,8 @@ from psrl.utils.common.docker_utils import (
     force_remove_compose_project,
     prune_dangling_images,
 )
+from psrl.utils.common.http_utils import post
+from psrl.utils.concurrency.gpu_device_gate import AllocatedGpu, GpuDeviceGate, build_gpu_override
 
 psrl_logger = logging.getLogger("psrl.sciaccel_rl.runner")
 psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
@@ -34,6 +36,36 @@ psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
 # Tokens held back from the window advertised to terminus-2, which counts with litellm's
 # estimator rather than the served tokenizer and so drifts low.
 _CONTEXT_SAFETY_MARGIN = 8192
+
+
+async def _bind_gate_b(session_router_url: str, session_id: str, device: str | None) -> None:
+    """
+    Best-effort: tell SessionRouter which physical GPU device (if any) this
+    session is using, so Gate B (psrl/workers/gen/session_router.py's
+    `control_gpu_bind` + `_wait_for_gpu_idle`) can hold the model's reply
+    until that device looks idle before letting the agent issue its next
+    tool command. Called once when Gate A reserves a device, and again with
+    `device=None` to unbind once the episode's containers are gone.
+
+    Never raises: Gate B is a soft throttle layered on top of Gate A, and a
+    broken bind/unbind call (SessionRouter unreachable, session already torn
+    down, ...) must not fail the episode itself.
+    """
+    if not session_router_url or not session_id:
+        return
+    try:
+        await post(
+            f"{session_router_url.rstrip('/')}/control/gpu_bind",
+            payload=[{"session_id": session_id, "gpu_device": device}],
+            max_retries=1,
+        )
+    except Exception as exc:  # noqa: BLE001
+        psrl_logger.debug(
+            "Gate B %s call failed for session=%r: %s.",
+            "bind" if device else "unbind",
+            session_id,
+            exc,
+        )
 
 
 async def _in_cleanup_pool(fn, *args):
@@ -136,6 +168,7 @@ async def run_harbor_episode(
     config: SciAccelRuntimeConfig,
     needs_gpu: bool = False,
     session_id: str = "",
+    session_router_url: str = "",
     max_model_len: int = 40960,
     max_turns: int | None = None,
     regrade_unverified: bool = True,
@@ -152,8 +185,15 @@ async def run_harbor_episode(
         model_base_url: SessionRouter session URL for the model endpoint.
         model_name: Model name for the agent (e.g. `Qwen/Qwen3-8B`).
         config: Runtime config with Harbor and timeout settings.
-        needs_gpu: Whether the task container needs GPU device access.
+        needs_gpu: Whether the task container needs GPU device access. When
+            true, Gate A (`psrl.utils.concurrency.gpu_device_gate`) reserves
+            one physical GPU device exclusively for this episode instead of
+            always mounting the static override's hardcoded device.
         session_id: TITO session ID, used as the job directory name for traceability.
+        session_router_url: SessionRouter base URL (no `/sessions/...` suffix),
+            used only to call Gate B's `/control/gpu_bind` so the router can
+            throttle this session's replies while its GPU device is busy.
+            Empty disables Gate B for this call without affecting Gate A.
         max_model_len: vLLM context window size, forwarded to terminus-2 as its
             `model_info` limits. Note this is metadata only on the litellm path:
             nothing sends it as a per-request `max_tokens`, so generation is bounded
@@ -187,8 +227,33 @@ async def run_harbor_episode(
     extra_body = harness_extra_body(thinking_template)
     env_kwargs: dict = {}
     extra_compose_paths: list[Path] = []
+    allocated_gpu: AllocatedGpu | None = None
+    gpu_override_path: Path | None = None
     if needs_gpu and config.harbor.gpu_compose_override:
-        extra_compose_paths.append(Path(config.harbor.gpu_compose_override))
+        # Gate A: reserve one physical GPU device before this episode's
+        # container exists, instead of always mounting the static override's
+        # hardcoded /dev/nvidia0. Without this, N concurrent GPU episodes on
+        # an N>1-GPU host would all get handed the identical device string,
+        # because nothing here previously tracked per-device occupancy (only
+        # `_acquire_episode_slot`'s semaphore counted *how many*, never
+        # *which*). See docs/psrl/psrl-env-service-envworker-design.md §16.
+        gpu_gate = GpuDeviceGate(jobs_dir=str(config.harbor.jobs_dir))
+        allocated_gpu = await gpu_gate.acquire()
+        if allocated_gpu is not None:
+            gpu_override_path = Path(build_gpu_override(config.harbor.gpu_compose_override, allocated_gpu.device))
+            extra_compose_paths.append(gpu_override_path)
+            await _bind_gate_b(session_router_url, session_id, allocated_gpu.device)
+        else:
+            # No discoverable device on this host (e.g. a dev box with no
+            # GPU): degrade to the old static mapping rather than silently
+            # dropping GPU access, but this episode gets no per-device
+            # exclusivity guarantee.
+            psrl_logger.warning(
+                "Gate A found no GPU devices; falling back to the static override %r "
+                "(no per-device exclusivity for this episode).",
+                config.harbor.gpu_compose_override,
+            )
+            extra_compose_paths.append(Path(config.harbor.gpu_compose_override))
 
     main_override: dict = {}
     if actor_id:
@@ -330,3 +395,12 @@ async def run_harbor_episode(
         # Backstop for images this episode did not own, mainly ones orphaned by a rebuild
         # elsewhere. Self-throttled, so it is a cheap no-op on most episodes.
         await _in_cleanup_pool(prune_dangling_images)
+        # Gate A: release the reserved physical GPU device only after the container
+        # that used it is confirmed gone (the `force_remove_compose_project` call
+        # above), so a waiting episode never gets the device while the old one's
+        # container teardown is still in flight.
+        if allocated_gpu is not None:
+            GpuDeviceGate.release(allocated_gpu)
+            await _bind_gate_b(session_router_url, session_id, None)
+        if gpu_override_path is not None:
+            gpu_override_path.unlink(missing_ok=True)

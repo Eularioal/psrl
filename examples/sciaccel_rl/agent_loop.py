@@ -338,6 +338,10 @@ class SciAccelAgentLoop(SessionAgentLoop):
         All Harbor Jobs share one event loop to avoid `asyncio.subprocess` races. The
         episode is admitted through a semaphore released only after `run_harbor_episode`
         tears its containers down, so a waiting episode starts against a clean daemon.
+        This semaphore only ever counts *how many* episodes run concurrently; it knows
+        nothing about physical devices. `run_harbor_episode` layers Gate A (per-device
+        GPU reservation, `psrl.utils.concurrency.gpu_device_gate`) and, for GPU episodes,
+        binds Gate B (`session_router.py`'s reply throttle) on top of this count gate.
         """
         limit = int(self.runtime_config.harbor.max_concurrent_episodes)
 
@@ -351,6 +355,7 @@ class SciAccelAgentLoop(SessionAgentLoop):
                     config=self.runtime_config,
                     needs_gpu=needs_gpu,
                     session_id=session_id,
+                    session_router_url=self.session_router_url,
                     max_model_len=int(self.rollout_config.get("max_model_len", 40960)),
                     max_turns=self.max_turns,
                     actor_id=os.getenv("PSRL_ACTOR_ID", ""),

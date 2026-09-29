@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+import time
 from dataclasses import dataclass, field
 
 import aiohttp
@@ -32,6 +33,125 @@ STATUS_ENV = "env"
 SESSION_ID_HEADER = "x-smg-tito-session-id"
 TRAJECTORY_ID_HEADER = "x-smg-tito-trajectory-id"
 
+# --- Gate B: GPU-round throttle at the response-return path (Env Service design
+# doc §6 "Gate B") ---
+#
+# Only ever activated for a session whose `gpu_device` has been bound via
+# `/control/gpu_bind`; every other session (non-GPU tasks, or examples that
+# never call this endpoint at all, e.g. AIRS-Bench/MLGym on Path A) skips the
+# check entirely, so this is a no-op unless something explicitly opts in.
+_GATE_B_MAX_WAIT_SEC = float(os.getenv("PSRL_GATE_B_MAX_WAIT_SEC", "600"))
+_GATE_B_POLL_INTERVAL_SEC = float(os.getenv("PSRL_GATE_B_POLL_INTERVAL_SEC", "2"))
+_GATE_B_IDLE_UTIL_PCT = float(os.getenv("PSRL_GATE_B_IDLE_UTIL_PCT", "5"))
+_GATE_B_IDLE_MEM_MB = float(os.getenv("PSRL_GATE_B_IDLE_MEM_MB", "256"))
+_GATE_B_SMI_CACHE_TTL_SEC = 1.0
+_GATE_B_SMI_TIMEOUT_SEC = 5.0
+
+_gate_b_smi_cache_ts = 0.0
+_gate_b_smi_cache_data: dict[int, tuple[float, float]] = {}
+_gate_b_smi_lock: asyncio.Lock | None = None
+
+
+def _parse_gpu_index(device: str) -> int | None:
+    """`/dev/nvidia0` -> 0. `None` for anything that is not a bare GPU index."""
+    prefix = "/dev/nvidia"
+    if not device.startswith(prefix):
+        return None
+    tail = device[len(prefix) :]
+    return int(tail) if tail.isdigit() else None
+
+
+async def _read_gpu_utilization() -> dict[int, tuple[float, float]]:
+    """
+    Real GPU telemetry via `nvidia-smi`: `{index: (utilization_pct, memory_used_mb)}`.
+
+    Cached for `_GATE_B_SMI_CACHE_TTL_SEC` so many sessions polling in the same
+    instant only shell out once. Returns `{}` (fail open, i.e. "treat every
+    device as idle") if `nvidia-smi` is unavailable, times out, or errors --
+    e.g. on a dev box with no GPU -- so Gate B degrades to a no-op instead of
+    blocking every GPU session forever.
+    """
+    global _gate_b_smi_cache_ts, _gate_b_smi_cache_data, _gate_b_smi_lock
+    if _gate_b_smi_lock is None:
+        _gate_b_smi_lock = asyncio.Lock()
+    async with _gate_b_smi_lock:
+        now = time.monotonic()
+        if now - _gate_b_smi_cache_ts < _GATE_B_SMI_CACHE_TTL_SEC:
+            return _gate_b_smi_cache_data
+        try:
+            proc = await asyncio.create_subprocess_exec(
+                "nvidia-smi",
+                "--query-gpu=index,utilization.gpu,memory.used",
+                "--format=csv,noheader,nounits",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.DEVNULL,
+            )
+            stdout, _ = await asyncio.wait_for(proc.communicate(), timeout=_GATE_B_SMI_TIMEOUT_SEC)
+        except (OSError, asyncio.TimeoutError) as exc:
+            psrl_logger.debug("Gate B: nvidia-smi unavailable (%s); treating all devices as idle.", exc)
+            _gate_b_smi_cache_ts = now
+            _gate_b_smi_cache_data = {}
+            return _gate_b_smi_cache_data
+
+        data: dict[int, tuple[float, float]] = {}
+        for line in stdout.decode(errors="replace").splitlines():
+            parts = [p.strip() for p in line.split(",")]
+            if len(parts) != 3:
+                continue
+            try:
+                data[int(parts[0])] = (float(parts[1]), float(parts[2]))
+            except ValueError:
+                continue
+        _gate_b_smi_cache_ts = now
+        _gate_b_smi_cache_data = data
+        return data
+
+
+async def _wait_for_gpu_idle(device: str, sid: str) -> None:
+    """
+    Gate B: hold the model reply until `device` looks idle, or time out.
+
+    This is the throttle from the Env Service design doc's section 6: delay
+    the *response* to the agent (not the next request), so a tool command the
+    model already asked for cannot race a verifier about to reuse the same
+    physical GPU. It is a soft measure -- a background `nohup solver &` can
+    still be running once this returns -- and the default 600s cap exists so
+    one stuck episode cannot wedge every sibling session forever.
+    """
+    index = _parse_gpu_index(device)
+    if index is None:
+        return
+    deadline = time.monotonic() + _GATE_B_MAX_WAIT_SEC
+    waited = False
+    while True:
+        telemetry = await _read_gpu_utilization()
+        if index not in telemetry:
+            return  # Fail open: unknown/absent device, nothing to gate on.
+        util, mem = telemetry[index]
+        if util <= _GATE_B_IDLE_UTIL_PCT and mem <= _GATE_B_IDLE_MEM_MB:
+            if waited:
+                psrl_logger.info(
+                    "Gate B: %s idle (util=%.0f%%, mem=%.0fMB), releasing session=%r.",
+                    device,
+                    util,
+                    mem,
+                    sid,
+                )
+            return
+        if time.monotonic() >= deadline:
+            psrl_logger.warning(
+                "Gate B: timed out after %.0fs waiting for %s to idle "
+                "(util=%.0f%%, mem=%.0fMB); releasing session=%r anyway.",
+                _GATE_B_MAX_WAIT_SEC,
+                device,
+                util,
+                mem,
+                sid,
+            )
+            return
+        waited = True
+        await asyncio.sleep(_GATE_B_POLL_INTERVAL_SEC)
+
 
 @dataclass(slots=True)
 class SessionState:
@@ -61,6 +181,13 @@ class SessionState:
     continue_event: asyncio.Event = field(default_factory=asyncio.Event)
     # A continue target pins only the next turn. `None` leaves routing to SMG.
     pin_once_instance: tuple[str, str] | None = None
+    # --- Gate B (GPU round throttle) ---
+    # Physical device this session's Harbor episode is currently using, e.g.
+    # `/dev/nvidia0`. Set by `POST /control/gpu_bind` (called from
+    # examples/sciaccel_rl/runner.py right after Gate A reserves a device),
+    # cleared the same way once the episode releases it. `None` means "no GPU
+    # binding" and `session_chat_completions` skips Gate B entirely.
+    gpu_device: str | None = None
 
     def __post_init__(self) -> None:
         if self.inflight == 0:
@@ -117,6 +244,9 @@ class SessionRouter:
         self.app.get("/control/sessions")(self.control_list_sessions)
         self.app.post("/control/hang")(self.control_hang)
         self.app.post("/control/continue")(self.control_continue)
+        # Gate A callers (e.g. examples/sciaccel_rl/runner.py) report GPU
+        # device bindings here so Gate B can throttle replies on exit.
+        self.app.post("/control/gpu_bind")(self.control_gpu_bind)
         self.app.api_route(
             "/sessions/{sid}/{path:path}",
             methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
@@ -269,6 +399,15 @@ class SessionRouter:
                         f"Applied deferred session hang: session_id={sid!r}, trajectory_id={trajectory_id!r}."
                     )
 
+        # Gate B: for a session bound to a GPU device (via /control/gpu_bind), hold
+        # this reply until that device looks idle, or `_GATE_B_MAX_WAIT_SEC` elapses.
+        # `gpu_device` is `None` for every non-GPU session, so this is a no-op unless
+        # examples/sciaccel_rl/runner.py's Gate A explicitly bound one.
+        async with state.lock:
+            gpu_device = state.gpu_device
+        if gpu_device:
+            await _wait_for_gpu_idle(gpu_device, sid)
+
         return self.build_response(result)
 
     async def session_proxy(self, sid: str, path: str, request: Request) -> Response:
@@ -368,6 +507,42 @@ class SessionRouter:
             pinned = {sid: inst for sid, inst in pins.items() if inst is not None}
             psrl_logger.info(f"control_continue: continued={applied} missing={missing} pinned={pinned}.")
         return JSONResponse(content={"continued": applied, "missing": missing})
+
+    async def control_gpu_bind(self, request: Request) -> Response:
+        """
+        Bind or unbind a session's Gate B GPU device.
+
+        Called by `examples/sciaccel_rl/runner.py` right after Gate A reserves
+        (bind) or releases (unbind) a physical GPU device for one Harbor
+        episode. Body: ``[{"session_id": ..., "gpu_device": "/dev/nvidia0"}, ...]``;
+        a missing or `null` ``gpu_device`` unbinds (Gate B then skips this
+        session on its next reply).
+        """
+        try:
+            body = await request.json()
+        except Exception:
+            return JSONResponse(status_code=400, content={"error": "invalid JSON body"})
+        items = body if isinstance(body, list) else (body.get("sessions", []) if isinstance(body, dict) else [])
+
+        applied, missing = [], []
+        for item in items or []:
+            if not isinstance(item, dict):
+                continue
+            sid = item.get("session_id")
+            if sid is None:
+                continue
+            sid = str(sid)
+            state = self.states.get(sid)
+            if state is None:
+                missing.append(sid)
+                continue
+            device = item.get("gpu_device")
+            async with state.lock:
+                state.gpu_device = str(device) if device else None
+            applied.append(sid)
+        if applied or missing:
+            psrl_logger.debug(f"control_gpu_bind: bound={applied} missing={missing}.")
+        return JSONResponse(content={"bound": applied, "missing": missing})
 
     @staticmethod
     async def _read_control_ids(request: Request) -> list[str]:
