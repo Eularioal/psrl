@@ -9,12 +9,15 @@ import os
 import threading
 
 from examples.sciaccel_rl.config import SciAccelRuntimeConfig, build_runtime_config
+from examples.sciaccel_rl.env_demand import demand_from_task
 from examples.sciaccel_rl.runner import HarborEpisodeResult, run_harbor_episode
+from omegaconf import OmegaConf
 from psrl.utils.agent.overflow import is_prompt_overflow
 from psrl.utils.agent.thinking import MULTI_TRAJ, select_trajectories
 from psrl.workers.agent_loop.context import AgentLoopContext
 from psrl.workers.agent_loop.loops.session_agent_loop import SessionAgentLoop
 from psrl.workers.agent_loop.loops.utils import TerminateReason, register
+from psrl.workers.env_service.client import EnvServiceClient
 from psrl.workers.gen.utils import TokenOutput
 
 psrl_logger = logging.getLogger("psrl.sciaccel_rl.agent_loop")
@@ -83,6 +86,28 @@ async def _acquire_episode_slot(limit: int) -> asyncio.Semaphore:
     return _episode_gate
 
 
+# One env-service client per worker process, resolved on first use. Every episode of a
+# worker shares it, so the router handle is looked up once, not once per episode.
+_env_client: EnvServiceClient | None = None
+_env_client_resolved = False
+
+
+def _get_env_client(env_cfg: dict | None) -> EnvServiceClient | None:
+    """
+    Return this process's env-service client, or `None` when the service is disabled.
+
+    Resolved lazily because the router actor must already exist, which the trainer
+    guarantees before it starts any episode but not before a worker imports this module.
+    """
+    global _env_client, _env_client_resolved
+    if not _env_client_resolved:
+        _env_client = EnvServiceClient.from_config(env_cfg)
+        _env_client_resolved = True
+        if _env_client is not None:
+            psrl_logger.info("Env service Gate A enabled for this worker on node %s.", _env_client.node_ip)
+    return _env_client
+
+
 @register("sciaccel")
 class SciAccelAgentLoop(SessionAgentLoop):
     """
@@ -101,6 +126,14 @@ class SciAccelAgentLoop(SessionAgentLoop):
         super().__init__(context=context)
         runtime_kwargs = {k: kwargs[k] for k in ("harbor", "task_timeout_sec", "verifier_timeout_sec") if k in kwargs}
         self.runtime_config: SciAccelRuntimeConfig = build_runtime_config(runtime_kwargs)
+
+        # `psrl.env_service` is a plain dict here so the client has no OmegaConf dependency.
+        # It stays `None` for a recipe that never enabled the service, which keeps the
+        # legacy admission path (process semaphore plus `GpuDeviceGate`).
+        env_service_cfg = context.config.psrl.get("env_service")
+        self.env_service_cfg: dict | None = (
+            OmegaConf.to_container(env_service_cfg, resolve=True) if env_service_cfg is not None else None
+        )
 
         # Chosen once here so the trajectory-retention policy applied below and the
         # `extra_body` the runner sends the gateway are read from the same place.
@@ -156,6 +189,7 @@ class SciAccelAgentLoop(SessionAgentLoop):
                 session_id=session_id,
                 hint=hint,
                 guidance=guidance,
+                gpu_memory_mb=int(extra_info.get("gpu_memory_mb", 0) or 0),
             )
 
             if harbor_result.exception:
@@ -331,38 +365,54 @@ class SciAccelAgentLoop(SessionAgentLoop):
         session_id: str = "",
         hint: str = "",
         guidance: str = "",
+        gpu_memory_mb: int = 0,
     ) -> HarborEpisodeResult:
         """
         Run the Harbor Job on the dedicated Harbor event loop thread.
 
-        All Harbor Jobs share one event loop to avoid `asyncio.subprocess` races. The
-        episode is admitted through a semaphore released only after `run_harbor_episode`
-        tears its containers down, so a waiting episode starts against a clean daemon.
-        This semaphore only ever counts *how many* episodes run concurrently; it knows
-        nothing about physical devices. `run_harbor_episode` layers Gate A (per-device
-        GPU reservation, `psrl.utils.concurrency.gpu_device_gate`) and, for GPU episodes,
-        binds Gate B (`session_router.py`'s reply throttle) on top of this count gate.
+        All Harbor Jobs share one event loop to avoid `asyncio.subprocess` races.
+
+        Without the env service, an episode is admitted through a process-wide semaphore
+        released only after `run_harbor_episode` tears its containers down, so a waiting
+        episode starts against a clean daemon. That semaphore only counts *how many*
+        episodes run in this process, so it knows nothing about nodes or devices, and `GpuDeviceGate`
+        layers per-device reservation on top for GPU episodes.
+
+        With `psrl.env_service.enable`, the router's per-unit ceilings replace the semaphore:
+        they are node scoped, and the lease is likewise released only after teardown. Keeping
+        the semaphore as well would let a GPU episode waiting for a card hold a slot and
+        block CPU episodes behind it. Either way, GPU episodes bind Gate B
+        (`session_router.py`'s reply throttle).
+
+        Args:
+            gpu_memory_mb: Device memory this episode charges against its unit. Zero lets
+                the router apply its configured default, because Harbor declares none.
         """
         limit = int(self.runtime_config.harbor.max_concurrent_episodes)
 
         async def _gated() -> HarborEpisodeResult:
+            env_client = _get_env_client(self.env_service_cfg)
+            episode_kwargs = {
+                "task_path": task_path,
+                "model_base_url": model_base_url,
+                "model_name": model_name,
+                "config": self.runtime_config,
+                "needs_gpu": needs_gpu,
+                "session_id": session_id,
+                "session_router_url": self.session_router_url,
+                "max_model_len": int(self.rollout_config.get("max_model_len", 40960)),
+                "max_turns": self.max_turns,
+                "actor_id": os.getenv("PSRL_ACTOR_ID", ""),
+                "thinking_template": self.thinking_template,
+                "hint": hint,
+                "guidance": guidance,
+            }
+            if env_client is not None:
+                demand = demand_from_task(task_path, needs_gpu_hint=needs_gpu, gpu_memory_mb_override=gpu_memory_mb)
+                return await run_harbor_episode(**episode_kwargs, env_client=env_client, env_demand=demand)
             gate = await _acquire_episode_slot(limit)
             try:
-                return await run_harbor_episode(
-                    task_path=task_path,
-                    model_base_url=model_base_url,
-                    model_name=model_name,
-                    config=self.runtime_config,
-                    needs_gpu=needs_gpu,
-                    session_id=session_id,
-                    session_router_url=self.session_router_url,
-                    max_model_len=int(self.rollout_config.get("max_model_len", 40960)),
-                    max_turns=self.max_turns,
-                    actor_id=os.getenv("PSRL_ACTOR_ID", ""),
-                    thinking_template=self.thinking_template,
-                    hint=hint,
-                    guidance=guidance,
-                )
+                return await run_harbor_episode(**episode_kwargs)
             finally:
                 gate.release()
 

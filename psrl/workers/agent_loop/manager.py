@@ -29,6 +29,7 @@ from psrl.utils.transferqueue_utils import (
     validate_ready_payload,
 )
 from psrl.workers.agent_loop.loops.utils import TerminateReason
+from psrl.workers.env_service.placement import EnvAwareDispatcher, needs_gpu_from_extra_info
 from psrl.workers.gen.utils import RolloutInstanceId
 from psrl.workers.ps.request_status_tracker import PSRL_RequestStatus
 from psrl.workers.ps.staleness_controller import EntryInfo
@@ -87,6 +88,8 @@ class PSRL_AgentLoopManager:
         data_processor: ray.actor.ActorHandle,
         group_post_process_fn=None,
         buffer_post_process_fn=None,
+        env_router_handle: ray.actor.ActorHandle | None = None,
+        worker_node_ips: list[str] | None = None,
     ):
         """Initialize agent loop manager.
         Agent loop manager that manages a group of agent loop workers.
@@ -102,6 +105,11 @@ class PSRL_AgentLoopManager:
                 grouped entry data before occupying the buffer
             buffer_post_process_fn (Optional[callable]): Optional function to post-process
                 ready buffer data
+            env_router_handle (Optional[ray.actor.ActorHandle]): Handle to the env service
+                router. With `worker_node_ips` it turns on unit-aware dispatch, which sends a
+                prompt group to a worker whose node has room for it instead of plain round
+                robin. `None` keeps plain round robin.
+            worker_node_ips (Optional[list[str]]): Node IP of each agent loop worker, by index.
         """
         self.config = config
         model_config = config.gen_actor_rollout_ref.model
@@ -142,6 +150,19 @@ class PSRL_AgentLoopManager:
         self.data_processor = data_processor
         self.reward_manager = None
         self.distributed_post_actors: list[ray.actor.ActorHandle] = []
+
+        # Unit-aware dispatch (env service). Off unless both the router and the worker
+        # nodes are supplied, so a recipe that never enabled the service dispatches as before.
+        self.env_router_handle = env_router_handle
+        self._env_dispatcher: EnvAwareDispatcher | None = None
+        self._env_capacity_refresh_s = 2.0
+        self._env_capacity_warned = False
+        if env_router_handle is not None and worker_node_ips:
+            if len(worker_node_ips) != len(agent_loop_workers):
+                raise ValueError(
+                    f"worker_node_ips has {len(worker_node_ips)} entries for {len(agent_loop_workers)} workers."
+                )
+            self._env_dispatcher = EnvAwareDispatcher(worker_node_ips)
 
         self._request_counter = 0
         self._dispatch_idx = 0
@@ -880,30 +901,80 @@ class PSRL_AgentLoopManager:
         if not update_status_success:
             return
 
+        await self._refresh_env_capacity()
         dispatch_plan = self.get_dispatch_plan(data, is_validate=is_validate)
         for worker_index, batch in dispatch_plan.items():
             self.agent_loop_workers[worker_index].add_agent_program.remote(batch)
 
-    def get_dispatch_plan(self, data: TensorDict, is_validate: bool = False) -> dict[int, TensorDict]:
-        """Round-robin dispatch plan keyed by worker index, co-locating siblings.
+    async def _refresh_env_capacity(self) -> None:
+        """Refresh the per-node free-capacity snapshot that unit-aware dispatch reads.
 
-        Children sharing a ``parent_id`` (group sampling) land on the same worker.
+        A no-op without the env service. A failed refresh keeps the old snapshot, which goes
+        stale after a few seconds and then makes dispatch fall back to plain round robin, so
+        an unreachable router slows placement down but never stops dispatch.
         """
-        keys_by_worker: dict[int, list[str]] = {}
-        prompt_to_worker: dict[int, int] = {}
+        dispatcher = getattr(self, "_env_dispatcher", None)
+        if dispatcher is None:
+            return
+        age = dispatcher.snapshot_age_s
+        if age is not None and age < self._env_capacity_refresh_s:
+            return
+        try:
+            capacity = await asyncio.wait_for(self.env_router_handle.node_capacity.remote(), timeout=2.0)
+        except Exception as exc:  # noqa: BLE001
+            if not self._env_capacity_warned:
+                self._env_capacity_warned = True
+                psrl_logger.warning(
+                    f"Env router capacity unavailable ({exc!r}); dispatching round robin until it returns."
+                )
+            return
+        self._env_capacity_warned = False
+        dispatcher.update(capacity)
+
+    @staticmethod
+    def _groups_need_gpu(data: TensorDict, first_rows: list[int]) -> list[bool]:
+        """Whether each prompt group needs a GPU, read from its first row's ``extra_info``.
+
+        Never raises: a missing or malformed column means "no GPU", so a bad row can slow
+        placement down but cannot fail dispatch.
+        """
+        try:
+            infos = tu.get(data, "extra_info")
+            return [needs_gpu_from_extra_info(infos[row]) for row in first_rows]
+        except Exception:  # noqa: BLE001
+            return [False] * len(first_rows)
+
+    def get_dispatch_plan(self, data: TensorDict, is_validate: bool = False) -> dict[int, TensorDict]:
+        """Dispatch plan keyed by worker index, co-locating siblings.
+
+        Children sharing a ``parent_id`` (group sampling) land on the same worker. Groups are
+        spread round robin, unless the env service is on, in which case each group goes to a
+        worker whose node has room for it (see ``EnvAwareDispatcher``).
+        """
         rollout_n = self.val_rollout_n if is_validate else self.rollout_n
         prompt_ids = tu.get(data, "parent_id") if rollout_n > 1 else tu.get(data, "uid")
 
-        # Round-robin dispatching
+        # Distinct groups in arrival order, with the row each one first appears at.
+        first_row: dict = {}
         for i, prompt_id in enumerate(prompt_ids):
-            if prompt_id in prompt_to_worker:
-                worker_index = prompt_to_worker[prompt_id]
-            else:
-                worker_index = (self._dispatch_idx + len(prompt_to_worker)) % len(self.agent_loop_workers)
-                prompt_to_worker[prompt_id] = worker_index
-            keys_by_worker.setdefault(worker_index, []).append(i)
+            first_row.setdefault(prompt_id, i)
+        group_ids = list(first_row)
 
-        self._dispatch_idx = (self._dispatch_idx + len(prompt_to_worker)) % len(self.agent_loop_workers)
+        num_workers = len(self.agent_loop_workers)
+        dispatcher = getattr(self, "_env_dispatcher", None)
+        if dispatcher is not None:
+            needs_gpu = self._groups_need_gpu(data, [first_row[g] for g in group_ids])
+            assigned = dispatcher.assign(needs_gpu, self._dispatch_idx)
+        else:
+            # Round-robin dispatching
+            assigned = [(self._dispatch_idx + k) % num_workers for k in range(len(group_ids))]
+        prompt_to_worker = dict(zip(group_ids, assigned, strict=True))
+
+        keys_by_worker: dict[int, list[int]] = {}
+        for i, prompt_id in enumerate(prompt_ids):
+            keys_by_worker.setdefault(prompt_to_worker[prompt_id], []).append(i)
+
+        self._dispatch_idx = (self._dispatch_idx + len(group_ids)) % num_workers
         return {worker_index: data[keys] if keys else None for worker_index, keys in keys_by_worker.items()}
 
     async def occupy_requests(

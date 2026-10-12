@@ -21,6 +21,7 @@ defaults:
   - tms@tms
   - lmcache@lmcache
   - env_worker@env_worker
+  - env_service@env_service
   - rollout_gateway@rollout_gateway
   - _self_
 

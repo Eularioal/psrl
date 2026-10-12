@@ -311,6 +311,11 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
         self.reward_manager = None
         self.reward_loop_workers = []
         self.env_worker_manager = None
+        # Env service (unit-based admission for sandbox containers). Both stay empty unless
+        # `psrl.env_service.enable` is set.
+        self.env_router_handle = None
+        self.env_unit_node_ips: list[str] = []
+        self.agent_worker_node_ips: list[str] = []
 
         self.reward_gateways: dict[str, ray.actor.ActorHandle] = {}
         self.reward_gateway_urls: dict[str, str] = {}
@@ -541,6 +546,53 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
         else:
             psrl_logger.warning("Data processor is not initialized, skipping stop operation.")
 
+    def _init_env_service(self, all_wg: dict):
+        """Create the env service router when `psrl.env_service.enable` is set.
+
+        The router is the control plane for unit-based admission of sandbox containers
+        (see `docs/psrl/2026-09-21-env-service-design.md`). This also settles which nodes host
+        train, rollout, validation or reward-model GPUs: from `train_rollout_node_ips` when it
+        is set, otherwise from the placement groups of the worker groups, which are readable
+        before the workers finish initializing.
+
+        Args:
+            all_wg: Worker group name to `RayWorkerGroup`.
+
+        Returns:
+            NodeRules | None: The node rules, or `None` when the service is disabled.
+        """
+        env_cfg = self.config.psrl.get("env_service")
+        if env_cfg is None or not env_cfg.get("enable", False):
+            return None
+
+        from omegaconf import OmegaConf
+
+        from psrl.workers.env_service.node_policy import NodeRules, node_ips_from_worker_groups
+        from psrl.workers.env_service.router import create_env_router
+
+        cfg = OmegaConf.to_container(env_cfg, resolve=True)
+        train_rollout_ips = sorted(cfg.get("train_rollout_node_ips") or [])
+        if not train_rollout_ips:
+            node_id_to_ip = {n["NodeID"]: n["NodeManagerAddress"] for n in ray.nodes() if n["Alive"]}
+            train_rollout_ips = sorted(
+                node_ips_from_worker_groups(
+                    all_wg,
+                    placement_group_table=lambda pg: ray._private.state.state.placement_group_table(pg.id),
+                    node_id_to_ip=node_id_to_ip,
+                )
+            )
+            psrl_logger.info("Env service derived train/rollout nodes from placement groups: %s.", train_rollout_ips)
+        rules = NodeRules.build(
+            policy=cfg.get("node_policy", "cpu_only"),
+            train_rollout_node_ips=train_rollout_ips,
+            allow_node_ips=cfg.get("allow_node_ips") or (),
+            deny_node_ips=cfg.get("deny_node_ips") or (),
+        )
+        self.env_router_handle = create_env_router(cfg, train_rollout_ips)
+        self.env_unit_node_ips = sorted({str(unit["node_ip"]) for unit in cfg.get("units") or []})
+        psrl_logger.info("Env service router created (policy=%s).", rules.policy.value)
+        return rules
+
     def init_agent_loop_manager(self):
         if self.agent_loop_manager is not None:
             return
@@ -557,6 +609,8 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
                 self.data_processor,
                 group_post_process_fn=self.group_post_process_fn,
                 buffer_post_process_fn=self.buffer_post_process_fn,
+                env_router_handle=self.env_router_handle,
+                worker_node_ips=self.agent_worker_node_ips or None,
             )
         )
 
@@ -1816,6 +1870,10 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
             self.env_worker_manager = EnvWorkerManager(self.config)
             psrl_logger.info("Env worker pool built.")
 
+        # Build the env service router if enabled. It also yields the node rules that decide
+        # whether containers may share nodes with train and rollout GPUs.
+        env_rules = self._init_env_service(all_wg)
+
         # create agent loop workers
         self.agent_loop_workers = []
         num_agent_workers = self.config.gen_actor_rollout_ref.rollout.agent.num_workers
@@ -1841,16 +1899,40 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
                 sorted(n["NodeManagerAddress"] for n in selected),
             )
             alive_nodes = selected
+        restricted_by_env_policy = False
+        if env_rules is not None:
+            # A container lands on the node of the worker that starts it, so the node policy
+            # is also what decides whether containers can share a node with train or rollout
+            # GPUs. Raises when the policy leaves no node.
+            from psrl.workers.env_service.node_policy import restrict_to_unit_nodes, select_worker_nodes
+
+            candidates = [(n["NodeID"], n["NodeManagerAddress"]) for n in alive_nodes]
+            kept, note = select_worker_nodes(candidates, env_rules)
+            if note:
+                psrl_logger.info("Env service node policy: %s.", note)
+            # A worker on a node with no declared unit would have every episode refused.
+            kept, note = restrict_to_unit_nodes(kept, self.env_unit_node_ips)
+            if note:
+                psrl_logger.info("Env service units: %s.", note)
+            kept_ids = {node_id for node_id, _ in kept}
+            restricted_by_env_policy = len(kept_ids) < len(alive_nodes)
+            alive_nodes = [n for n in alive_nodes if n["NodeID"] in kept_ids]
         alive_node_ids = [n["NodeID"] for n in alive_nodes]
+        node_id_to_ip = {n["NodeID"]: n["NodeManagerAddress"] for n in alive_nodes}
+        self.agent_worker_node_ips = []
         for i in range(num_agent_workers):
             node_id = alive_node_ids[i % len(alive_node_ids)]
+            self.agent_worker_node_ips.append(node_id_to_ip[node_id])
             self.agent_loop_workers.append(
                 PSRL_AgentLoopWorker.options(
                     name=f"agent_loop_worker_{i}",
                     max_concurrency=max_concurrency_per_worker,
-                    # Hard affinity when an allow list is given, because a soft placement
-                    # lets Ray fall back to exactly the node being excluded.
-                    scheduling_strategy=NodeAffinitySchedulingStrategy(node_id=node_id, soft=not allowed_ips),
+                    # Hard affinity when an allow list or a node policy narrowed the nodes,
+                    # because a soft placement lets Ray fall back to exactly the node being
+                    # excluded.
+                    scheduling_strategy=NodeAffinitySchedulingStrategy(
+                        node_id=node_id, soft=not (allowed_ips or restricted_by_env_policy)
+                    ),
                 ).remote(
                     self.config,
                     self.ps_manager_handle,
@@ -3422,6 +3504,9 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
         if self.env_worker_manager is not None:
             self.env_worker_manager.shutdown()
             self.env_worker_manager = None
+        if self.env_router_handle is not None:
+            ray.kill(self.env_router_handle)
+            self.env_router_handle = None
         self.stop_ps_manager()
         self._shutdown_dump_executor()
 

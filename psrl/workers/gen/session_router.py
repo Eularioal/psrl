@@ -107,9 +107,19 @@ async def _read_gpu_utilization() -> dict[int, tuple[float, float]]:
         return data
 
 
-async def _wait_for_gpu_idle(device: str, sid: str) -> None:
+def _parse_gpu_indices(device_spec: str) -> list[int]:
     """
-    Gate B: hold the model reply until `device` looks idle, or time out.
+    `/dev/nvidia0,/dev/nvidia1` -> `[0, 1]`. Entries that are not a bare GPU index are dropped.
+
+    A unit that owns several devices binds all of them, so a single string carries a list.
+    """
+    indices = [_parse_gpu_index(part.strip()) for part in device_spec.split(",")]
+    return [i for i in indices if i is not None]
+
+
+async def _wait_for_gpu_idle(device: str, sid: str, shared: bool = False) -> None:
+    """
+    Gate B: hold the model reply until every bound device looks idle, or time out.
 
     This is the throttle from the Env Service design doc's section 6: delay
     the *response* to the agent (not the next request), so a tool command the
@@ -117,18 +127,27 @@ async def _wait_for_gpu_idle(device: str, sid: str) -> None:
     physical GPU. It is a soft measure -- a background `nohup solver &` can
     still be running once this returns -- and the default 600s cap exists so
     one stuck episode cannot wedge every sibling session forever.
+
+    Args:
+        device (str): One device path, or several joined by commas.
+        sid (str): Session id, for logs.
+        shared (bool): True when the device is shared by several containers of one unit.
+            Their resident model weights hold device memory even while idle, so a shared
+            device is judged on compute utilization alone. Judging it on memory too would
+            hold every reply for the full cap.
     """
-    index = _parse_gpu_index(device)
-    if index is None:
+    indices = _parse_gpu_indices(device)
+    if not indices:
         return
     deadline = time.monotonic() + _GATE_B_MAX_WAIT_SEC
     waited = False
     while True:
         telemetry = await _read_gpu_utilization()
-        if index not in telemetry:
+        if any(index not in telemetry for index in indices):
             return  # Fail open: unknown/absent device, nothing to gate on.
-        util, mem = telemetry[index]
-        if util <= _GATE_B_IDLE_UTIL_PCT and mem <= _GATE_B_IDLE_MEM_MB:
+        util = max(telemetry[index][0] for index in indices)
+        mem = max(telemetry[index][1] for index in indices)
+        if util <= _GATE_B_IDLE_UTIL_PCT and (shared or mem <= _GATE_B_IDLE_MEM_MB):
             if waited:
                 psrl_logger.info(
                     "Gate B: %s idle (util=%.0f%%, mem=%.0fMB), releasing session=%r.",
@@ -186,8 +205,12 @@ class SessionState:
     # `/dev/nvidia0`. Set by `POST /control/gpu_bind` (called from
     # examples/sciaccel_rl/runner.py right after Gate A reserves a device),
     # cleared the same way once the episode releases it. `None` means "no GPU
-    # binding" and `session_chat_completions` skips Gate B entirely.
+    # binding" and `session_chat_completions` skips Gate B entirely. A unit that owns
+    # several devices binds them as one comma-joined string.
     gpu_device: str | None = None
+    # True when the device is shared with other containers of the same env unit, in which
+    # case Gate B judges idleness on utilization alone (see `_wait_for_gpu_idle`).
+    gpu_shared: bool = False
 
     def __post_init__(self) -> None:
         if self.inflight == 0:
@@ -405,8 +428,9 @@ class SessionRouter:
         # examples/sciaccel_rl/runner.py's Gate A explicitly bound one.
         async with state.lock:
             gpu_device = state.gpu_device
+            gpu_shared = state.gpu_shared
         if gpu_device:
-            await _wait_for_gpu_idle(gpu_device, sid)
+            await _wait_for_gpu_idle(gpu_device, sid, shared=gpu_shared)
 
         return self.build_response(result)
 
@@ -516,7 +540,9 @@ class SessionRouter:
         (bind) or releases (unbind) a physical GPU device for one Harbor
         episode. Body: ``[{"session_id": ..., "gpu_device": "/dev/nvidia0"}, ...]``;
         a missing or `null` ``gpu_device`` unbinds (Gate B then skips this
-        session on its next reply).
+        session on its next reply). ``gpu_device`` may list several devices joined by
+        commas, and an optional ``"shared": true`` marks a device shared with other
+        containers of the same env unit, so Gate B judges it on utilization alone.
         """
         try:
             body = await request.json()
@@ -539,6 +565,8 @@ class SessionRouter:
             device = item.get("gpu_device")
             async with state.lock:
                 state.gpu_device = str(device) if device else None
+                # `shared` only means something while a device is bound, so unbinding resets it.
+                state.gpu_shared = bool(item.get("shared", False)) if device else False
             applied.append(sid)
         if applied or missing:
             psrl_logger.debug(f"control_gpu_bind: bound={applied} missing={missing}.")

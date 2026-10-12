@@ -1,0 +1,65 @@
+# Unit-based admission and placement for sandbox containers (the SciAccel / Harbor path).
+# Design: docs/psrl/2026-09-21-env-service-design.md. Disabled by default, so existing
+# recipes keep the behaviour they have today (process-level semaphore plus GpuDeviceGate).
+
+# Whether the trainer creates the EnvRouter actor and episodes are admitted through it.
+enable: False
+
+# Ray actor name of the router. Agent loop workers look it up by this name.
+router_name: psrl_env_router
+
+# Device memory charged to one GPU task, in MB. Harbor declares no such field, so this is a
+# configured budget rather than a measured one. Lower it once a task is profiled. Together
+# with `gpu_memory_mb` of a unit it decides how many containers share one card:
+# floor(gpu_memory_mb / default_gpu_memory_mb), also capped by `max_containers`.
+default_gpu_memory_mb: 24000
+
+# Seconds a lease may go without a heartbeat before it is reclaimed and its containers are
+# stopped. Workers heartbeat every `heartbeat_interval_s`, so this bounds how long a
+# crashed worker can hold capacity, not how long an episode may run.
+slot_ttl_s: 1800
+
+# Heartbeat period of a held lease. Keep it well under `slot_ttl_s`.
+heartbeat_interval_s: 60
+
+# Gate A retry delay while waiting for capacity. Backs off by 1.5x up to the maximum.
+# Waiting costs nothing because no container exists yet, so this only trades latency for load.
+poll_interval_s: 1.0
+max_poll_interval_s: 5.0
+
+# How episode containers treat nodes that host train, rollout, validation or reward-model GPUs.
+#   any           no restriction (the behaviour before this service existed)
+#   cpu_only      those nodes may host CPU-only episodes, never GPU episodes
+#   avoid         no container at all on those nodes; agent loop workers stay off them too
+#   prefer_other  like avoid, but spill onto those nodes when no other node can take the episode
+node_policy: cpu_only
+
+# Nodes that host train, rollout, validation or reward-model GPUs. Empty means "derive it from
+# the placement groups of the worker groups at startup".
+train_rollout_node_ips: []
+
+# When non-empty, only these nodes host containers. Empty means every node.
+allow_node_ips: []
+
+# These nodes never host containers, for example a node whose Docker daemon is wedged.
+deny_node_ips: []
+
+# Units are declared explicitly. Each owns whole devices, and no two units on one node may
+# name the same device index. Several containers share a unit's devices. Example:
+#
+# units:
+#   - unit_id: n1-gpu01
+#     node_ip: 28.49.55.40
+#     cpu_quota: 16.0
+#     memory_mb: 65536
+#     gpu_indices: [0, 1]
+#     max_containers: 3
+#     gpu_memory_mb: 195742
+#   - unit_id: n1-cpu
+#     node_ip: 28.49.55.40
+#     cpu_quota: 32.0
+#     memory_mb: 131072
+#     gpu_indices: []
+#     max_containers: 8
+#     gpu_memory_mb: 0
+units: []

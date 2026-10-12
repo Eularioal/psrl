@@ -487,4 +487,13 @@ def validate_config(
                 f"got {env_worker_config.cpu_slots_per_worker!r}."
             )
 
+    # env service checks
+    env_service_config = config.psrl.get("env_service")
+    if env_service_config is not None and env_service_config.get("enable", False):
+        from omegaconf import OmegaConf
+
+        from psrl.workers.env_service.config_check import validate_env_service_config
+
+        validate_env_service_config(OmegaConf.to_container(env_service_config, resolve=True))
+
     print("[validate_config] All configuration checks passed successfully!")

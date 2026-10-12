@@ -29,6 +29,15 @@ from psrl.utils.common.docker_utils import (
 )
 from psrl.utils.common.http_utils import post
 from psrl.utils.concurrency.gpu_device_gate import AllocatedGpu, GpuDeviceGate, build_gpu_override
+from psrl.workers.env_service.client import EnvLeaseHandle, EnvServiceClient
+from psrl.workers.env_service.overlay import (
+    DriverLibraryError,
+    build_lease_overlay,
+    read_kernel_driver_version,
+    resolve_driver_libs,
+    write_overlay,
+)
+from psrl.workers.env_service.types import EnvDemand, EnvLease
 
 psrl_logger = logging.getLogger("psrl.sciaccel_rl.runner")
 psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
@@ -38,7 +47,7 @@ psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
 _CONTEXT_SAFETY_MARGIN = 8192
 
 
-async def _bind_gate_b(session_router_url: str, session_id: str, device: str | None) -> None:
+async def _bind_gate_b(session_router_url: str, session_id: str, device: str | None, shared: bool = False) -> None:
     """
     Best-effort: tell SessionRouter which physical GPU device (if any) this
     session is using, so Gate B (psrl/workers/gen/session_router.py's
@@ -46,6 +55,10 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
     until that device looks idle before letting the agent issue its next
     tool command. Called once when Gate A reserves a device, and again with
     `device=None` to unbind once the episode's containers are gone.
+
+    `device` may list several devices joined by commas (an env unit that owns more than
+    one card). `shared` marks a card that other containers of the same unit also use, so
+    Gate B judges it on utilization alone.
 
     Never raises: Gate B is a soft throttle layered on top of Gate A, and a
     broken bind/unbind call (SessionRouter unreachable, session already torn
@@ -56,7 +69,7 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
     try:
         await post(
             f"{session_router_url.rstrip('/')}/control/gpu_bind",
-            payload=[{"session_id": session_id, "gpu_device": device}],
+            payload=[{"session_id": session_id, "gpu_device": device, "shared": shared}],
             max_retries=1,
         )
     except Exception as exc:  # noqa: BLE001
@@ -66,6 +79,54 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
             session_id,
             exc,
         )
+
+
+async def _apply_env_lease(
+    lease: EnvLease,
+    extra_compose_paths: list[Path],
+    env_kwargs: dict,
+    session_router_url: str,
+    session_id: str,
+) -> Path:
+    """
+    Turn a granted lease into the Compose overlay and Harbor settings that realise it.
+
+    A GPU lease gets its unit's devices and the driver libraries matching the loaded kernel
+    module, resolved now rather than hardcoded (design document B1 to B3). Harbor's local
+    Docker backend declares no GPU capability and would refuse a task whose `task.toml`
+    asks for one, so `override_gpus: 0` tells it none is needed while the overlay supplies
+    the devices (design document section 7.3). Gate B is bound here too, so a shared card
+    is judged on utilization alone.
+
+    Args:
+        lease: The granted lease.
+        extra_compose_paths: Compose files, appended to.
+        env_kwargs: Harbor environment settings, updated in place.
+        session_router_url: SessionRouter base URL for Gate B. Empty disables Gate B.
+        session_id: The TITO session id Gate B binds to.
+
+    Returns:
+        Path of the overlay file. The caller deletes it once the containers are gone.
+
+    Raises:
+        DriverLibraryError: When a GPU lease cannot find driver libraries matching the kernel.
+    """
+    driver_libs = None
+    if lease.gpu_indices:
+        version = read_kernel_driver_version()
+        if version is None:
+            raise DriverLibraryError(
+                "A GPU lease was granted but /proc/driver/nvidia/version is unreadable; "
+                "this node has no NVIDIA kernel driver loaded."
+            )
+        driver_libs = resolve_driver_libs(version)
+    overlay_path = write_overlay(build_lease_overlay(lease, driver_libs))
+    extra_compose_paths.append(overlay_path)
+    if lease.gpu_indices:
+        env_kwargs["override_gpus"] = 0
+        devices = ",".join(f"/dev/nvidia{i}" for i in lease.gpu_indices)
+        await _bind_gate_b(session_router_url, session_id, devices, shared=lease.shared)
+    return overlay_path
 
 
 async def _in_cleanup_pool(fn, *args):
@@ -176,6 +237,8 @@ async def run_harbor_episode(
     thinking_template: str = MULTI_TRAJ,
     hint: str = "",
     guidance: str = "",
+    env_client: EnvServiceClient | None = None,
+    env_demand: EnvDemand | None = None,
 ) -> HarborEpisodeResult:
     """
     Run one Harbor episode and return the verifier reward.
@@ -220,6 +283,13 @@ async def run_harbor_episode(
         guidance: Terminal and build discipline, delivered at every hint level so
             it stays orthogonal to localization. It describes how to spend turns,
             never where the defect is, so it does not weaken the unhinted control.
+        env_client: Env service client. When given, Gate A is the router's resource-keyed
+            admission (`psrl.workers.env_service`): the episode waits, at no cost, until a
+            unit on this node can hold it, then runs on that unit's devices with a
+            per-lease Compose overlay. This replaces the per-device `GpuDeviceGate` path
+            below, and lets several episodes share one card. `None` keeps the legacy path.
+        env_demand: What the episode charges against its unit. Defaults to one CPU, plus a
+            GPU when `needs_gpu` is set.
 
     Returns:
         HarborEpisodeResult with the verifier's shaped reward.
@@ -229,7 +299,27 @@ async def run_harbor_episode(
     extra_compose_paths: list[Path] = []
     allocated_gpu: AllocatedGpu | None = None
     gpu_override_path: Path | None = None
-    if needs_gpu and config.harbor.gpu_compose_override:
+    lease_handle: EnvLeaseHandle | None = None
+    lease_overlay_path: Path | None = None
+    job_name = session_id or uuid.uuid4().hex[:12]
+    if env_client is not None:
+        # Gate A (env service): wait, holding nothing, until a unit on this node can take
+        # the episode. The container does not exist yet, so waiting is free and may last
+        # as long as it must. Admission failure is an episode result, not an exception,
+        # so one bad task cannot take the agent loop down.
+        try:
+            lease_handle = await env_client.acquire(job_name, env_demand or EnvDemand(needs_gpu=needs_gpu))
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:  # noqa: BLE001
+            psrl_logger.warning("Env service admission failed for %s: %s.", job_name, exc)
+            return HarborEpisodeResult(
+                task_name="unknown",
+                reward=0.0,
+                exception=f"env_admission_failed: {exc}",
+                exception_type=type(exc).__name__,
+            )
+    elif needs_gpu and config.harbor.gpu_compose_override:
         # Gate A: reserve one physical GPU device before this episode's
         # container exists, instead of always mounting the static override's
         # hardcoded /dev/nvidia0. Without this, N concurrent GPU episodes on
@@ -255,86 +345,103 @@ async def run_harbor_episode(
             )
             extra_compose_paths.append(Path(config.harbor.gpu_compose_override))
 
-    main_override: dict = {}
-    if actor_id:
-        main_override["labels"] = [f"psrl.actor_id={actor_id}"]
-    if config.harbor.memory_mb_override > 0:
-        main_override["mem_limit"] = f"{config.harbor.memory_mb_override}m"
-
-    if main_override:
-        import tempfile
-
-        import yaml
-
-        compose_override = {"services": {"main": main_override}}
-        override_file = Path(tempfile.mktemp(suffix=".yaml", prefix="harbor-override-"))
-        override_file.write_text(yaml.dump(compose_override))
-        extra_compose_paths.append(override_file)
-
-    if extra_compose_paths:
-        env_kwargs["extra_docker_compose"] = extra_compose_paths
-
-    job_name = session_id or uuid.uuid4().hex[:12]
-    job_dir = Path(config.harbor.jobs_dir) / job_name
-    job_config = JobConfig(
-        jobs_dir=job_dir,
-        tasks=[TaskConfig(path=task_path)],
-        agents=[
-            AgentConfig(
-                name=config.harbor.agent_name,
-                model_name=f"openai/{model_name}",
-                env={"OPENAI_API_KEY": "EMPTY"},
-                # Let Harbor enforce the external budget so timed-out jobs remain gradable.
-                override_timeout_sec=config.task_timeout_sec,
-                kwargs={
-                    "api_base": model_base_url,
-                    "enable_summarize": False,
-                    "collect_rollout_details": True,
-                    # Disable terminal recording because offline task images omit asciinema.
-                    "record_terminal_session": False,
-                    "temperature": 1.0,
-                    # Only the local `TruncatingTerminus2` accepts this. Stock terminus-2
-                    # swallows it in `**kwargs`, so this is gated on the subclass.
-                    **(
-                        {"max_observation_bytes": config.harbor.max_observation_bytes}
-                        if ":" in config.harbor.agent_name
-                        else {}
-                    ),
-                    # Bound turns before context overflow.
-                    **({"max_turns": max_turns} if max_turns else {}),
-                    "suppress_max_turns_warning": True,
-                    "model_info": {
-                        # NOTE(lhy): Declare a window smaller than the server's, because
-                        # terminus-2 estimates tokens and would build a prompt vLLM rejects.
-                        # Do NOT raise it: this is a budget the agent spends.
-                        "max_input_tokens": max(1024, max_model_len - _CONTEXT_SAFETY_MARGIN),
-                        "max_output_tokens": max_model_len,
-                        "input_cost_per_token": 0.0,
-                        "output_cost_per_token": 0.0,
-                    },
-                    "llm_kwargs": {
-                        "timeout": 900,
-                        "max_retries": 0,
-                        # Apply gateway overrides required by `thinking_template`.
-                        **({"extra_body": extra_body} if extra_body else {}),
-                    },
-                },
-            )
-        ],
-        n_attempts=1,
-        n_concurrent_trials=1,
-        # Harbor appends these to the on-disk instruction before the agent sees it.
-        # Guidance leads, so the localization hint stays closest to the task.
-        **({"extra_instructions": [t for t in (guidance, hint) if t]} if (guidance or hint) else {}),
-        **({"environment": env_kwargs} if env_kwargs else {}),
-    )
-
-    # This Harbor backstop exceeds the agent and verifier budgets plus container slack.
-    timeout = config.task_timeout_sec + config.verifier_timeout_sec + 600.0
-
     # Every return path runs through `finally`. Cancelling the coroutine leaves the
-    # verifier running `sleep infinity` and the next one queues behind it.
+    # verifier running `sleep infinity` and the next one queues behind it. The `try` opens
+    # before the setup below, so a lease taken above is released even if building the
+    # overlay or the job config raises; a leaked lease would otherwise keep heartbeating.
     try:
+        if lease_handle is not None:
+            try:
+                lease_overlay_path = await _apply_env_lease(
+                    lease_handle.lease, extra_compose_paths, env_kwargs, session_router_url, session_id
+                )
+            except asyncio.CancelledError:
+                raise
+            except Exception as exc:  # noqa: BLE001
+                psrl_logger.error("Cannot prepare containers for lease %s: %s.", lease_handle.lease.lease_id, exc)
+                return HarborEpisodeResult(
+                    task_name="unknown",
+                    reward=0.0,
+                    exception=f"env_lease_setup_failed: {exc}",
+                    exception_type=type(exc).__name__,
+                )
+
+        main_override: dict = {}
+        if actor_id:
+            main_override["labels"] = [f"psrl.actor_id={actor_id}"]
+        if config.harbor.memory_mb_override > 0:
+            main_override["mem_limit"] = f"{config.harbor.memory_mb_override}m"
+
+        if main_override:
+            import tempfile
+
+            import yaml
+
+            compose_override = {"services": {"main": main_override}}
+            override_file = Path(tempfile.mktemp(suffix=".yaml", prefix="harbor-override-"))
+            override_file.write_text(yaml.dump(compose_override))
+            extra_compose_paths.append(override_file)
+
+        if extra_compose_paths:
+            env_kwargs["extra_docker_compose"] = extra_compose_paths
+
+        job_dir = Path(config.harbor.jobs_dir) / job_name
+        job_config = JobConfig(
+            jobs_dir=job_dir,
+            tasks=[TaskConfig(path=task_path)],
+            agents=[
+                AgentConfig(
+                    name=config.harbor.agent_name,
+                    model_name=f"openai/{model_name}",
+                    env={"OPENAI_API_KEY": "EMPTY"},
+                    # Let Harbor enforce the external budget so timed-out jobs remain gradable.
+                    override_timeout_sec=config.task_timeout_sec,
+                    kwargs={
+                        "api_base": model_base_url,
+                        "enable_summarize": False,
+                        "collect_rollout_details": True,
+                        # Disable terminal recording because offline task images omit asciinema.
+                        "record_terminal_session": False,
+                        "temperature": 1.0,
+                        # Only the local `TruncatingTerminus2` accepts this. Stock terminus-2
+                        # swallows it in `**kwargs`, so this is gated on the subclass.
+                        **(
+                            {"max_observation_bytes": config.harbor.max_observation_bytes}
+                            if ":" in config.harbor.agent_name
+                            else {}
+                        ),
+                        # Bound turns before context overflow.
+                        **({"max_turns": max_turns} if max_turns else {}),
+                        "suppress_max_turns_warning": True,
+                        "model_info": {
+                            # NOTE(lhy): Declare a window smaller than the server's, because
+                            # terminus-2 estimates tokens and would build a prompt vLLM rejects.
+                            # Do NOT raise it: this is a budget the agent spends.
+                            "max_input_tokens": max(1024, max_model_len - _CONTEXT_SAFETY_MARGIN),
+                            "max_output_tokens": max_model_len,
+                            "input_cost_per_token": 0.0,
+                            "output_cost_per_token": 0.0,
+                        },
+                        "llm_kwargs": {
+                            "timeout": 900,
+                            "max_retries": 0,
+                            # Apply gateway overrides required by `thinking_template`.
+                            **({"extra_body": extra_body} if extra_body else {}),
+                        },
+                    },
+                )
+            ],
+            n_attempts=1,
+            n_concurrent_trials=1,
+            # Harbor appends these to the on-disk instruction before the agent sees it.
+            # Guidance leads, so the localization hint stays closest to the task.
+            **({"extra_instructions": [t for t in (guidance, hint) if t]} if (guidance or hint) else {}),
+            **({"environment": env_kwargs} if env_kwargs else {}),
+        )
+
+        # This Harbor backstop exceeds the agent and verifier budgets plus container slack.
+        timeout = config.task_timeout_sec + config.verifier_timeout_sec + 600.0
+
         try:
             job = await Job.create(job_config)
             result = await asyncio.wait_for(job.run(), timeout=timeout)
@@ -404,3 +511,12 @@ async def run_harbor_episode(
             await _bind_gate_b(session_router_url, session_id, None)
         if gpu_override_path is not None:
             gpu_override_path.unlink(missing_ok=True)
+        # Env service Gate A: the same ordering rule. The lease goes back only after the
+        # containers are confirmed gone, so the next episode never shares a card with a
+        # container that is still tearing down.
+        if lease_handle is not None:
+            if lease_handle.lease.gpu_indices:
+                await _bind_gate_b(session_router_url, session_id, None)
+            await lease_handle.release()
+        if lease_overlay_path is not None:
+            lease_overlay_path.unlink(missing_ok=True)
