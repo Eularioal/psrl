@@ -593,6 +593,37 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
         psrl_logger.info("Env service router created (policy=%s).", rules.policy.value)
         return rules
 
+    def _init_gpu_lending(self, all_wg):
+        """Bind borrowing units only after model initialization and placement validation."""
+        if self.env_router_handle is None:
+            return
+        from psrl.workers.env_service.types import EnvUnit
+
+        units = [EnvUnit.from_mapping(raw) for raw in self.config.psrl.env_service.units]
+        units = [unit for unit in units if unit.rollout_replica_rank is not None]
+        if not units:
+            return
+        if self.config.psrl.profile.fix_weight:
+            raise ValueError("GPU lending requires weight restoration with profile.fix_weight=False.")
+        node_ips = {node["NodeID"]: node["NodeManagerAddress"] for node in ray.nodes() if node["Alive"]}
+        placements = {
+            name: ClusterTopology.collect_gpu_slots_from_worker_group(group)
+            for name, group in all_wg.items()
+            if not name.startswith("ps")
+        }
+        for unit in units:
+            name = f"rollout_{unit.rollout_replica_rank}"
+            slots = placements.get(name, frozenset())
+            actual = {(node_ips[slot.node_id], slot.gpu_id) for slot in slots}
+            expected = {(unit.node_ip, index) for index in unit.gpu_indices}
+            if actual != expected:
+                raise ValueError(f"GPU lending unit {unit.unit_id!r} does not match complete replica {name!r}.")
+            for other_name, other_slots in placements.items():
+                if other_name != name and slots & other_slots:
+                    raise ValueError(f"GPU lending replica {name!r} overlaps another GPU owner {other_name!r}.")
+            server = ray.get(self.rollout_coordinator.get_gpu_lending_server.remote(unit.rollout_replica_rank))
+            ray.get(self.env_router_handle.bind_rollout_gpu.remote(unit.unit_id, server, self.rollout_coordinator))
+
     def init_agent_loop_manager(self):
         if self.agent_loop_manager is not None:
             return
@@ -2229,6 +2260,7 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
                 ray.get(initial_pull_futures)
 
         self.init_elastic_rm_runtime()
+        self._init_gpu_lending(all_wg)
 
         self.replay_buffer.start_polling()
         psrl_logger.info("ReplayBuffer polling started after init_workers() completed.")

@@ -1,8 +1,7 @@
 """
 AIRS-Bench reward: the published normalized score.
 
-The task metric itself is computed inside the episode, because MLGym runs each
-task's own `evaluate.py` in the sandbox when the agent submits. This module only
+The task metric is computed by a trusted verifier during the episode. This module only
 converts that raw metric into a bounded, cross-task comparable reward using the
 formula from the AIRS-Bench paper.
 """
@@ -90,7 +89,7 @@ def compute_score(
     Args:
         data_source (str): Dataset tag, always `airs_bench` for this recipe.
         solution_str (str): Unused. The metric comes from in-episode evaluation.
-        ground_truth (Any): Unused. Hidden labels live inside the sandbox.
+        ground_truth (Any): Unused. Hidden labels are available only to the verifier.
         extra_info (dict): Per-row constants plus the episode outcome fields
             `airs_scores`, `airs_submit_count`, and `airs_validate_count`.
         **kwargs (Any): Ignored framework extras.

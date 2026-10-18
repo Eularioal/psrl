@@ -117,7 +117,13 @@ def _parse_gpu_indices(device_spec: str) -> list[int]:
     return [i for i in indices if i is not None]
 
 
-async def _wait_for_gpu_idle(device: str, sid: str, shared: bool = False) -> None:
+async def _wait_for_gpu_idle(
+    device: str,
+    sid: str,
+    shared: bool = False,
+    node_service_url: str = "",
+    gpu_indices: tuple[int, ...] = (),
+) -> None:
     """
     Gate B: hold the model reply until every bound device looks idle, or time out.
 
@@ -136,13 +142,24 @@ async def _wait_for_gpu_idle(device: str, sid: str, shared: bool = False) -> Non
             device is judged on compute utilization alone. Judging it on memory too would
             hold every reply for the full cap.
     """
-    indices = _parse_gpu_indices(device)
+    indices = list(gpu_indices) if node_service_url else _parse_gpu_indices(device)
     if not indices:
         return
     deadline = time.monotonic() + _GATE_B_MAX_WAIT_SEC
     waited = False
     while True:
-        telemetry = await _read_gpu_utilization()
+        if node_service_url:
+            try:
+                async with aiohttp.ClientSession(
+                    timeout=aiohttp.ClientTimeout(total=_GATE_B_SMI_TIMEOUT_SEC)
+                ) as client:
+                    async with client.get(node_service_url) as response:
+                        response.raise_for_status()
+                        telemetry = {int(key): value for key, value in (await response.json()).items()}
+            except (aiohttp.ClientError, asyncio.TimeoutError, ValueError):
+                return
+        else:
+            telemetry = await _read_gpu_utilization()
         if any(index not in telemetry for index in indices):
             return  # Fail open: unknown/absent device, nothing to gate on.
         util = max(telemetry[index][0] for index in indices)
@@ -211,6 +228,8 @@ class SessionState:
     # True when the device is shared with other containers of the same env unit, in which
     # case Gate B judges idleness on utilization alone (see `_wait_for_gpu_idle`).
     gpu_shared: bool = False
+    gpu_node_service_url: str = ""
+    gpu_indices: tuple[int, ...] = ()
 
     def __post_init__(self) -> None:
         if self.inflight == 0:
@@ -429,8 +448,16 @@ class SessionRouter:
         async with state.lock:
             gpu_device = state.gpu_device
             gpu_shared = state.gpu_shared
+            gpu_node_service_url = state.gpu_node_service_url
+            gpu_indices = state.gpu_indices
         if gpu_device:
-            await _wait_for_gpu_idle(gpu_device, sid, shared=gpu_shared)
+            await _wait_for_gpu_idle(
+                gpu_device,
+                sid,
+                shared=gpu_shared,
+                node_service_url=gpu_node_service_url,
+                gpu_indices=gpu_indices,
+            )
 
         return self.build_response(result)
 
@@ -567,6 +594,8 @@ class SessionRouter:
                 state.gpu_device = str(device) if device else None
                 # `shared` only means something while a device is bound, so unbinding resets it.
                 state.gpu_shared = bool(item.get("shared", False)) if device else False
+                state.gpu_node_service_url = str(item.get("node_service_url", "")) if device else ""
+                state.gpu_indices = tuple(int(index) for index in item.get("gpu_indices", ())) if device else ()
             applied.append(sid)
         if applied or missing:
             psrl_logger.debug(f"control_gpu_bind: bound={applied} missing={missing}.")

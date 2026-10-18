@@ -99,6 +99,8 @@ class RolloutCoordinator(
         # Rollout replica tracking
         self.rollout_replicas = {}
         self.server_handles = {}
+        self._env_gpu_reservations = {}
+        self._env_gpu_transition_lock = asyncio.Lock()
         self.replica_ids = set()
         self.instance_ids = set()
         # For convenience, maintain separate lists for rollout and validate instances
@@ -267,6 +269,44 @@ class RolloutCoordinator(
     def get_status_sink_endpoint(self) -> str:
         return self.status_sink_endpoint
 
+    async def prepare_env_gpu(self, replica_rank: int, owner: str):
+        """Reserve the replica before an elastic SLEEP can pause global routing."""
+        async with self._env_gpu_transition_lock:
+            replica_id = self.replica_idx_to_replica_id[replica_rank]
+            if self._env_gpu_reservations.get(replica_id, owner) != owner:
+                raise RuntimeError("Rollout replica is reserved by another environment lease.")
+            self._env_gpu_reservations[replica_id] = owner
+            prepared = await self.server_handles[replica_id].prepare_env_gpu.remote(owner)
+            await self._set_routing_loop_running(True)
+            return prepared
+
+    async def finish_env_gpu(self, replica_rank: int, owner: str):
+        """Release the scheduling reservation after physical cleanup and wake."""
+        async with self._env_gpu_transition_lock:
+            replica_id = self.replica_idx_to_replica_id[replica_rank]
+            if self._env_gpu_reservations.get(replica_id, owner) != owner:
+                raise RuntimeError("Rollout reservation does not match the returning lease.")
+            await self.server_handles[replica_id].finish_env_gpu.remote(owner)
+            self._env_gpu_reservations.pop(replica_id, None)
+
+    async def sleep_instances_for_control(self, instance_ids):
+        """Skip leased replicas before stopping routing or updating elastic state."""
+        async with self._env_gpu_transition_lock:
+            selected = [item for item in instance_ids if item[0] not in self._env_gpu_reservations]
+            if selected:
+                await self._set_routing_loop_running(False)
+                await asyncio.gather(*[self._do_sleep_instance(replica_id) for replica_id, _ in selected])
+                if self._env_gpu_reservations:
+                    await self._set_routing_loop_running(True)
+            return {"slept": selected}
+
+    def get_gpu_lending_server(self, replica_rank: int):
+        """Resolve the complete rollout replica that a GPU unit will borrow."""
+        replica_id = self.replica_idx_to_replica_id[replica_rank]
+        if replica_id not in self.tag_to_replica_ids["rollout"]:
+            raise ValueError("GPU lending requires a rollout replica.")
+        return self.server_handles[replica_id]
+
     def get_all_instance_ids(self) -> list:
         """Return all registered (replica_id, dp_rank) instance IDs, sorted for determinism."""
         return sorted(self.instance_ids)
@@ -386,11 +426,15 @@ class RolloutCoordinator(
         Args:
             tag (str): Tag to specify which instances to sleep ('rollout', 'validate', 'all')
         """
-        server_handles = self._tag_to_server(tag)
-        futures = []
-        for server_handle in server_handles:
-            futures.append(server_handle.sleep.remote(level=2))
-        await asyncio.gather(*futures)
+        async with self._env_gpu_transition_lock:
+            replica_ids = self.replica_ids if tag == "all" else self.tag_to_replica_ids[tag]
+            await asyncio.gather(
+                *[
+                    self.server_handles[replica_id].sleep.remote(level=2)
+                    for replica_id in replica_ids
+                    if replica_id not in self._env_gpu_reservations
+                ]
+            )
 
     async def start_busy_loop(self):
         """

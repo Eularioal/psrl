@@ -106,13 +106,7 @@ def test_read_file_returns_raw_bytes_not_tar():
 
 @requires_docker
 def test_timed_out_command_does_not_leak_into_the_next_observation():
-    """
-    Regression test for a verified bug. A command that times out keeps running and
-    later emits its output plus a sentinel. Without a drain before each exec, that
-    text lands in the next command's observation and its stale exit code is reported
-    as the next command's. MLGym routinely hits the 3600 second limit, so this path
-    is common.
-    """
+    """A timed out shell must be destroyed before another command can run."""
 
     async def scenario() -> None:
         worker = EnvWorker(worker_id=0, cpu_slots=1, gpu_slots=0, exec_default_timeout_s=60.0)
@@ -121,14 +115,9 @@ def test_timed_out_command_does_not_leak_into_the_next_observation():
             timed_out = await worker.exec(sandbox_id, "sleep 3; echo LATE_LEAK", timeout_s=1.0)
             assert timed_out.timed_out, "The slow command should have timed out."
 
-            await asyncio.sleep(4.0)  # let the abandoned command finish and emit
-
-            following = await worker.exec(sandbox_id, "echo SECOND", timeout_s=30.0)
-            assert "LATE_LEAK" not in following.stdout, (
-                f"Stale output leaked into the next observation: {following.stdout!r}."
-            )
-            assert "SECOND" in following.stdout
-            assert following.exit_code == 0, f"A stale sentinel corrupted the exit code: {following.exit_code!r}."
+            with pytest.raises(KeyError):
+                await worker.exec(sandbox_id, "echo SECOND", timeout_s=30.0)
+            assert await worker.live_sandbox_count() == 0
         finally:
             await worker.destroy_sandbox(sandbox_id)
 

@@ -88,6 +88,7 @@ class EnvUnitLedger:
         self._id_factory = id_factory or (lambda: uuid.uuid4().hex[:8])
         self._counter = itertools.count(1)
 
+        self._blocked_units = {unit.unit_id for unit in unit_list if unit.rollout_replica_rank is not None}
         self._leases: dict[str, EnvLease] = {}
         self._by_session: dict[str, str] = {}
         # node_ip -> (reported_at, {device_index: used_mb})
@@ -105,6 +106,8 @@ class EnvUnitLedger:
         demand: EnvDemand,
         node_ip: str | None = None,
         measured_gpu_used_mb: Mapping[int, float] | None = None,
+        *,
+        reap: bool = True,
     ) -> Admission:
         """
         Try to place one episode right now.
@@ -124,7 +127,8 @@ class EnvUnitLedger:
             `reject` when no unit could ever host the demand.
         """
         now = self._clock()
-        self._reap(now)
+        if reap:
+            self._reap(now)
         if measured_gpu_used_mb is not None and node_ip:
             self.report_measurement(node_ip, measured_gpu_used_mb)
 
@@ -171,6 +175,7 @@ class EnvUnitLedger:
                 granted_at=now,
                 last_seen=now,
                 shared=unit.has_gpu and unit.max_containers > 1,
+                gpu_lending=unit.rollout_replica_rank is not None and demand.needs_gpu,
             )
             self._leases[lease.lease_id] = lease
             self._by_session[session_id] = lease.lease_id
@@ -330,6 +335,8 @@ class EnvUnitLedger:
         fact, and also catches memory nobody declared. Taking the larger errs toward
         refusing, which is the safe side because device memory cannot be reclaimed.
         """
+        if unit.rollout_replica_rank is not None:
+            return float(self._declared_gpu_mb(unit))
         measured = self._measured_gpu_mb(unit, now)
         return max(float(self._declared_gpu_mb(unit)), measured if measured is not None else 0.0)
 
@@ -340,6 +347,8 @@ class EnvUnitLedger:
         return not (demand.needs_gpu and demand.gpu_memory_mb > unit.gpu_memory_mb)
 
     def _fits_now(self, unit: EnvUnit, demand: EnvDemand, now: float) -> bool:
+        if unit.unit_id in self._blocked_units:
+            return False
         leases = self._unit_leases(unit.unit_id)
         if len(leases) + 1 > unit.max_containers:
             return False

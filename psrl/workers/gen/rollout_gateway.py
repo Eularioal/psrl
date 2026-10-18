@@ -15,12 +15,28 @@ psrl_logger = logging.getLogger(__file__)
 psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
 
 
+def _bind_to_parent_lifetime():
+    """
+    Kill the router subprocess when its owning Ray actor exits.
+    """
+    from ray._private.utils import set_kill_on_parent_death_linux
+
+    parent = multiprocessing.parent_process()
+    if parent is None:
+        raise RuntimeError("Router must run in a multiprocessing child.")
+    set_kill_on_parent_death_linux()
+    # Close the race where the owner exits before the kernel registers the signal.
+    if os.getppid() != parent.pid:
+        os._exit(1)
+
+
 def _run_smg(args):
     """
     Run the SMG router subprocess.
 
     This target must remain at module scope for multiprocessing pickling.
     """
+    _bind_to_parent_lifetime()
     try:
         from smg.launch_router import launch_router
 
@@ -30,7 +46,7 @@ def _run_smg(args):
         return 0
     except Exception as e:
         psrl_logger.error(e)
-        return 1
+        raise
 
 
 @ray.remote(num_cpus=0)
@@ -157,6 +173,7 @@ class RolloutGateway:
             logging_path,
             turn_output_kwargs,
         ):
+            _bind_to_parent_lifetime()
             import uvicorn
 
             from psrl.workers.gen.session_router import (

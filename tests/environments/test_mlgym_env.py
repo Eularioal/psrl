@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 import yaml
 from examples.airs_bench.config import build_runtime_config
@@ -33,7 +35,7 @@ def test_runtime_config_defaults_are_sane():
 
     assert config.image, "A default sandbox image must be set."
     assert config.per_action_timeout_s >= 3600.0, "Per-action timeout must cover MLGym's 3600s training_timeout."
-    assert config.max_observation_chars > 0, "Observation truncation must be on by default."
+    assert config.sandbox_network == "none"
 
 
 @pytest.mark.cpu_test
@@ -45,11 +47,14 @@ def test_runtime_config_merges_overrides():
 
 
 @pytest.mark.cpu_test
-def test_build_sandbox_spec_mounts_prepared_task_data_read_only():
+def test_build_sandbox_spec_mounts_only_public_splits(tmp_path, monkeypatch):
+    for name in ("train", "test", "test_with_labels"):
+        (tmp_path / name).mkdir()
+    monkeypatch.setenv("http_proxy", "http://user:secret@proxy")
     config = build_runtime_config({"sandbox_memory": "32g"})
     spec = build_sandbox_spec(
         config,
-        dataset_data_path="/shared/airs_prepared/GraphRegressionZincMae",
+        dataset_data_path=str(tmp_path),
         labels={"psrl.airs_task_id": "t1"},
     )
 
@@ -57,7 +62,9 @@ def test_build_sandbox_spec_mounts_prepared_task_data_read_only():
     assert spec.gpus == 0, "AIRS-Bench tasks are CPU graded."
     mount_modes = {mode for _, _, mode in spec.mounts}
     assert "ro" in mount_modes, "Task data must be mounted read only so labels cannot be edited."
-    assert any("airs_prepared" in host for host, _, _ in spec.mounts)
+    assert {Path(host).name for host, _, _ in spec.mounts} == {"train", "test"}
+    assert not spec.env
+    assert spec.network == "none"
     assert spec.labels["psrl.airs_task_id"] == "t1"
 
 

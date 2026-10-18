@@ -1,21 +1,16 @@
-"""
-MLGym environment backed by the PSRL env worker pool.
-
-MLGym's `BaseAgent` is used unmodified. It reaches its environment only through
-`MLGymEnv.communicate()` and `MLGymEnv.step()`, both of which funnel into the
-low-level `_communicate`. Subclassing lets us replace the container and its shell
-with a remote sandbox while every other MLGym behavior, including workspace setup,
-conda activation, baseline scoring, and submission grading, is inherited intact.
-"""
+"""Adapt MLGym lifecycle, shell commands and grading to remotely owned sandboxes."""
 
 from __future__ import annotations
 
 import asyncio
+import copy
 import logging
 import os
+import shlex
 import time
 import uuid
 from concurrent.futures import Future
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -66,37 +61,37 @@ def build_sandbox_spec(
     runtime_config: AirsBenchRuntimeConfig,
     dataset_data_path: str,
     labels: dict[str, str],
+    verifier_spec: SandboxSpec | None = None,
 ) -> SandboxSpec:
-    """
-    Build the sandbox description for one AIRS-Bench episode.
+    """Mount only named public splits into the agent container."""
+    root = Path(dataset_data_path).resolve()
+    mounts = []
+    for split in ("train", "validation", "test"):
+        path = root / split
+        if split == "validation" and not path.exists():
+            continue
+        if not path.is_dir() or path.is_symlink():
+            raise ValueError(f"Public split {split!r} must be an existing directory, not a symlink.")
+        mounts.append((str(path), f"{AGENT_WORKSPACE}/data/{split}", "ro"))
+    from psrl.workers.env_worker.coordinator import memory_bytes
 
-    Task data is mounted read only so the agent cannot reach the hidden test labels
-    by editing them, while still letting the in-sandbox `evaluate.py` read them.
-
-    Args:
-        runtime_config (AirsBenchRuntimeConfig): Recipe runtime settings.
-        dataset_data_path (str): Host path to this task's prepared data.
-        labels (dict[str, str]): Docker labels for cleanup and diagnostics.
-
-    Returns:
-        SandboxSpec: Spec ready for the coordinator.
-    """
-    proxy_env = {
-        key: os.environ[key]
-        for key in ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY", "no_proxy", "NO_PROXY")
-        if key in os.environ
-    }
+    auxiliary_cpus = runtime_config.verifier_cpus
+    auxiliary_memory = runtime_config.verifier_memory
+    if verifier_spec is not None:
+        auxiliary_cpus += verifier_spec.auxiliary_cpus
+        if verifier_spec.auxiliary_memory != "0":
+            auxiliary_memory = str(memory_bytes(auxiliary_memory) + memory_bytes(verifier_spec.auxiliary_memory))
     return SandboxSpec(
         image=runtime_config.image,
         cpus=runtime_config.sandbox_cpus,
         memory=runtime_config.sandbox_memory,
-        gpus=0,
-        mounts=((dataset_data_path, f"{AGENT_WORKSPACE}/data", "ro"),),
-        env=proxy_env,
-        network="host",
+        mounts=tuple(mounts),
+        network=runtime_config.sandbox_network,
         labels=labels,
         startup_timeout_s=runtime_config.startup_timeout_s,
-        idle_timeout_s=runtime_config.episode_timeout_s,
+        idle_timeout_s=runtime_config.lease_timeout_s,
+        auxiliary_cpus=auxiliary_cpus,
+        auxiliary_memory=auxiliary_memory,
     )
 
 
@@ -126,83 +121,149 @@ def sync_exec(
     """
     future: Future = asyncio.run_coroutine_threadsafe(handle.exec(command, timeout_s, no_output_timeout_s), loop)
     # Add slack so the local wait never fires before the remote timeout reports.
-    return future.result(timeout=timeout_s + 120.0)
+    try:
+        return future.result(timeout=timeout_s + 30.0)
+    except BaseException:
+        future.cancel()
+        raise
+
+
+@dataclass
+class RemoteShell:
+    """Expose the shell identity required by MLGym's agent logging."""
+
+    pid: str
+
+    def terminate(self) -> None:
+        """End the episode rather than attempting local process cleanup."""
+        raise RuntimeError("Remote shell termination ends the episode.")
 
 
 def build_psrl_mlgym_env_class() -> type:
-    """
-    Build the `PSRLMLGymEnv` class, importing MLGym lazily.
-
-    MLGym lives outside this repo and is imported by path, so the subclass is
-    created on demand rather than at module import time. This keeps `psrl` importable
-    on machines where MLGym is absent, which matters for CPU-only unit tests.
-
-    Returns:
-        type: A subclass of MLGym's `MLGymEnv`.
-    """
+    """Implement MLGym's environment contract without local Docker access."""
     from mlgym.environment.env import MLGymEnv
 
-    class PSRLMLGymEnv(MLGymEnv):  # type: ignore[misc]
-        """MLGym environment whose container lives in a PSRL env worker sandbox."""
-
-        def __init__(
-            self,
-            args: Any,
-            sandbox_handle: Any,
-            loop: asyncio.AbstractEventLoop,
-            per_action_timeout_s: float,
-            **kwargs: Any,
-        ):
+    class PSRLMLGymEnv(MLGymEnv):
+        def __init__(self, args, sandbox_handle, loop, per_action_timeout_s, grader):
             self._sandbox_handle = sandbox_handle
             self._loop = loop
             self._per_action_timeout_s = per_action_timeout_s
-            super().__init__(args, devices=["cpu_0"], **kwargs)
+            self._grader = grader
+            super().__init__(args, devices=["cpu_0"])
 
-        def _init_container(self, cached_image: str | None = None) -> None:
-            """
-            Adopt the already-running sandbox instead of starting a local container.
-
-            The sandbox and its shell are created by the env worker before the agent
-            starts, so there is nothing to launch here. `container` and `container_obj`
-            are set to None because every consumer of them is routed through
-            `_communicate` in this subclass.
-            """
-            self.container = None
+        def _reset_container(self) -> None:
+            if self.container is not None:
+                raise RuntimeError("A failed remote sandbox cannot be reset in place.")
+            self.container = RemoteShell(self._sandbox_handle.sandbox_id)
             self.container_obj = None
             self.container_name = self._sandbox_handle.sandbox_id
-            psrl_logger.info(f"Adopted sandbox {self._sandbox_handle.sandbox_id!r} for MLGym.")
+            self._communicate(
+                "mkdir -p /home/agent/commands && touch /home/agent/commands/__init__.py && "
+                "export PATH=$PATH:/home/agent/commands"
+            )
+            if self.args.aliases_file is not None:
+                self.add_commands(
+                    [
+                        {
+                            "name": "bash_aliases.sh",
+                            "type": "source_file",
+                            "contents": Path(self.args.aliases_file).read_text(),
+                        }
+                    ]
+                )
 
-        def _communicate(
-            self,
-            input: str,
-            timeout_duration: float = 25,
-            no_output_timeout_duration: float = 25,
-        ) -> str:
-            """
-            Execute one command in the remote sandbox shell.
+        def reset_container(self) -> None:
+            """Require a new episode after any remote shell failure."""
+            raise RuntimeError("A failed remote sandbox cannot be reset in place.")
 
-            Overriding this single method reroutes every MLGym code path that talks to
-            the container, because `communicate`, `step`, workspace setup, and grading
-            all funnel through here.
-            """
-            timeout_s = min(float(timeout_duration), self._per_action_timeout_s)
+        def reset(self, *, seed=None, options=None):
+            self.current_step = 0
+            self.task = self.task_entrypoint(
+                seed=self.seed if seed is None else seed,
+                args=copy.deepcopy(self.task_args),
+                task_workspace=str(self.task_workspace),
+                _communicate=self.communicate,
+                _communicate_with_handling=self.communicate_with_handling,
+            )
+            self._reset_environment_variables()
+            self.task.setup()
+            for path in self.task.args.starter_code:
+                source = Path(path)
+                if source.is_dir():
+                    raise ValueError("AIRS starter code must contain individual files.")
+                self._write_file(str(self.task_workspace / source.name), source.read_bytes())
+            self.communicate_with_handling(
+                "source /home/agent/miniconda3/etc/profile.d/conda.sh && "
+                "conda activate mlgym_generic && cd /home/agent/workspace",
+                error_msg="Failed to activate the preinstalled AIRS environment.",
+            )
+            return {"observation": None}, {}
+
+        def _write_file(self, path: str, data: bytes) -> None:
+            future = asyncio.run_coroutine_threadsafe(self._sandbox_handle.write_file(path, data), self._loop)
+            try:
+                future.result(timeout=60)
+            except BaseException:
+                future.cancel()
+                raise
+
+        def add_commands(self, commands: list[dict]) -> None:
+            for command in commands:
+                name = command["name"]
+                if Path(name).name != name:
+                    raise ValueError("Command names must be basenames.")
+                path = f"/home/agent/commands/{name}"
+                self._write_file(path, command["contents"].encode())
+                if command["type"] == "source_file":
+                    self.communicate_with_handling(
+                        f"source {shlex.quote(path)}",
+                        error_msg="Failed to install command functions.",
+                    )
+                elif command["type"] == "script":
+                    self.communicate_with_handling(
+                        f"chmod +x {shlex.quote(path)}",
+                        error_msg="Failed to install command script.",
+                    )
+                elif command["type"] != "utility":
+                    raise ValueError(f"Invalid command type {command['type']!r}.")
+
+        def _communicate(self, input: str, timeout_duration=25, no_output_timeout_duration=25) -> str:
             result = sync_exec(
                 self._sandbox_handle,
                 self._loop,
                 input,
-                timeout_s=timeout_s,
-                no_output_timeout_s=float(no_output_timeout_duration),
+                min(float(timeout_duration), self._per_action_timeout_s),
+                float(no_output_timeout_duration),
             )
             self.returncode = result.exit_code
             if result.timed_out:
-                # MLGym's own contract: a training command that overruns raises here and
-                # the agent sees a timeout observation rather than losing the episode.
-                raise TimeoutError(f"Sandbox command exceeded {timeout_s}s: {input[:120]!r}.")
+                raise RuntimeError("Sandbox command timed out. The sandbox has been destroyed.")
             return result.stdout
 
+        def interrupt(self) -> str:
+            raise RuntimeError("Timed out remote sandboxes cannot be reused.")
+
+        def _evaluate_with_error_handling(self, info, action):
+            terminal = action != "validate"
+            self._communicate("test -f /home/agent/workspace/submission.csv")
+            if self.returncode != 0:
+                if terminal:
+                    info["exit_status"] = "submission_not_found"
+                return "Create submission.csv before submitting.", 0, terminal, info
+            try:
+                metrics = self._grader()
+            except ValueError:
+                if terminal:
+                    info["exit_status"] = "invalid_submission"
+                return "Invalid submission. Check the documented CSV format.", 0, terminal, info
+            info["score"].append(metrics)
+            info["submission"] = "/home/agent/workspace/submission.csv"
+            if terminal:
+                info["exit_status"] = "submitted" if action == "submit" else action
+            return f"Evaluation score: {metrics}", 0, terminal, info
+
         def close(self) -> None:
-            """Release the sandbox. The handle owns container teardown."""
-            psrl_logger.info(f"Closing MLGym env for sandbox {self._sandbox_handle.sandbox_id!r}.")
+            """The episode owner releases the remote reservation."""
 
     return PSRLMLGymEnv
 
@@ -251,6 +312,9 @@ class MLGymEnvironment(Environment[dict, None]):
         if not self._task_id:
             raise ValueError("Dataset row is missing extra_info.airs_task_id.")
         assert_default_history_processor(self._runtime_config.agent_config_path)
+        from examples.airs_bench.grading import task_config
+
+        task_config(self._runtime_config, extra_info["task_config_path"])
 
         observation = {
             "airs_task_id": self._task_id,
@@ -267,12 +331,7 @@ class MLGymEnvironment(Environment[dict, None]):
         raise NotImplementedError("MLGymEnvironment does not implement step because MLGym's agent owns the loop.")
 
     async def close(self) -> None:
-        """Force-remove any container still labelled with this episode id."""
-        if self._episode_id is None:
-            return
-        from psrl.utils.common.docker_utils import force_remove_containers_by_label
-
-        await asyncio.to_thread(force_remove_containers_by_label, "psrl.airs_episode_id", self._episode_id)
+        """Remote resources belong to the agent loop reservation."""
 
     @property
     def state(self) -> Any:

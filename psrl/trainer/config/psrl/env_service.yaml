@@ -29,7 +29,7 @@ max_poll_interval_s: 5.0
 
 # How episode containers treat nodes that host train, rollout, validation or reward-model GPUs.
 #   any           no restriction (the behaviour before this service existed)
-#   cpu_only      those nodes may host CPU-only episodes, never GPU episodes
+#   cpu_only      CPU episodes and explicitly bound rollout lending units only on those nodes
 #   avoid         no container at all on those nodes; agent loop workers stay off them too
 #   prefer_other  like avoid, but spill onto those nodes when no other node can take the episode
 node_policy: cpu_only
@@ -63,3 +63,11 @@ deny_node_ips: []
 #     max_containers: 8
 #     gpu_memory_mb: 0
 units: []
+
+# A unit with `rollout_replica_rank` borrows that complete replica between model calls.
+# Such units require `max_containers: 1` and exact, nonoverlapping GPU placement.
+gpu_lending:
+  transition_timeout_s: 60
+  max_env_phase_s: 300
+  return_tolerance_mb: 16
+  safety_margin_mb: 1024

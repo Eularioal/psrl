@@ -1,18 +1,11 @@
 """
-Per-lease Docker Compose overlays with runtime-resolved NVIDIA driver libraries.
+Build Docker Compose resources for a lease on the current host.
 
-Replaces the static `examples/sciaccel_rl/config/gpu-compose-override.yaml`, which has
-three defects the design document records as B1 to B3:
+Resolve versioned CUDA and NVML libraries against the loaded kernel driver instead of
+following unversioned symlinks. Include the PTX compiler when available. Resolve each
+GPU telemetry index through the host inventory before mounting its character device.
 
-* B1: it bind-mounts a hardcoded driver version. On the test fleet `libcuda.so.1`
-  resolves to the 570 build while the kernel module is 535, and `cuInit` then fails with
-  `CUDA_ERROR_SYSTEM_DRIVER_MISMATCH`. Because `libnvidia-ml.so.1` points at 535,
-  `nvidia-smi` keeps working and only CUDA breaks. The fix is to resolve the library
-  whose version matches `/proc/driver/nvidia/version` and never mount `libcuda.so.1`.
-* B2: `libnvidia-ptxjitcompiler.so.1` was missing from the code-side mount list.
-* B3: it hardcodes `/dev/nvidia0`, so every GPU episode on a node lands on device 0.
-
-Every function takes its filesystem probes as arguments, so tests run without a GPU.
+Filesystem probes and GPU inventory can be injected for tests without a GPU.
 """
 
 from __future__ import annotations
@@ -27,6 +20,7 @@ from pathlib import Path
 
 import yaml
 
+from psrl.workers.env_service.probe import GpuDevice, read_gpu_devices
 from psrl.workers.env_service.types import EnvLease
 
 psrl_logger = logging.getLogger("psrl.env_service.overlay")
@@ -149,6 +143,7 @@ def build_lease_overlay(
     device_exists: Callable[[str], bool] = os.path.exists,
     nvidia_smi_path: str = "/usr/bin/nvidia-smi",
     extra_labels: Sequence[str] = (),
+    gpu_devices: dict[int, GpuDevice] | None = None,
 ) -> dict:
     """
     Build the Compose override for one lease's `main` service.
@@ -182,7 +177,8 @@ def build_lease_overlay(
     if lease.gpu_indices:
         if driver_libs is None:
             raise ValueError("A GPU lease needs resolved driver libraries.")
-        devices = [f"/dev/nvidia{i}:/dev/nvidia{i}" for i in lease.gpu_indices]
+        inventory = read_gpu_devices() if gpu_devices is None else gpu_devices
+        devices = [f"{inventory[i].path}:{inventory[i].path}" for i in lease.gpu_indices]
         devices += [f"{d}:{d}" for d in CONTROL_DEVICES if device_exists(d)]
         volumes: list[str] = []
         if device_exists(nvidia_smi_path):

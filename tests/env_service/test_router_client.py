@@ -69,36 +69,6 @@ def _run(coro):
     return asyncio.run(coro)
 
 
-def _stub_docker_utils(fake_force_remove):
-    """
-    Replace `psrl.utils.common.docker_utils` with a fake so no real `docker` is called.
-
-    The real module sits under a package whose `__init__` imports aiohttp, which a bare
-    CPU box may lack, so the parent package is stubbed as well. Returns a restore callable.
-    """
-    import sys
-    import types
-
-    names = ("psrl.utils.common", "psrl.utils.common.docker_utils")
-    saved = {name: sys.modules.get(name) for name in names}
-    parent = types.ModuleType(names[0])
-    parent.__path__ = []  # marks it as a package so the submodule import resolves
-    fake = types.ModuleType(names[1])
-    fake.force_remove_containers_by_label = fake_force_remove
-    fake.CLEANUP_EXECUTOR = None  # `run_in_executor(None, ...)` uses the default pool in the test
-    sys.modules[names[0]] = parent
-    sys.modules[names[1]] = fake
-
-    def restore():
-        for name, module in saved.items():
-            if module is None:
-                sys.modules.pop(name, None)
-            else:
-                sys.modules[name] = module
-
-    return restore
-
-
 GPU = EnvDemand(needs_gpu=True)
 
 
@@ -268,14 +238,8 @@ def test_a_lease_that_stops_heartbeating_is_reclaimed_and_cleaned_up_on_its_node
         assert [r.lease_id for r in reaped] == [handle.lease.lease_id]
         assert (await core.snapshot())[1].containers_running == 0
 
-        removed = []
-        restore = _stub_docker_utils(lambda key, value: removed.append((key, value)))
-        try:
-            assert await client.reap_local() == 1
-            assert await client.reap_local() == 0  # delivered exactly once
-        finally:
-            restore()
-        assert removed == [("psrl.env_lease", handle.lease.lease_id)]
+        assert [lease.lease_id for lease in await core.pop_reaped(NODE)] == [handle.lease.lease_id]
+        assert await core.pop_reaped(NODE) == [], "Expired leases were delivered twice."
         handle._heartbeat_task.cancel()
 
     _run(scenario())

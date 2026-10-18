@@ -44,7 +44,7 @@ system_template: |-
 
   6. You have a limited number of actions/steps you can take in the environment. The current step and remaining number of steps will given after every action. Use the remaining steps wisely. If you only have few remaining steps, it is better to submit a working solution then to keep trying.
 
-  7. Your each action should take less than {training_timeout} seconds to complete. If your action doesn't finish within the time limit, it will be interrupted.
+  7. Your each action should take less than {training_timeout} seconds to complete. If your action does not finish within the time limit, the episode will be discarded.
 
   8. Validating your solution often, will give you a good idea of your progress so far and you will be able to adapt your strategy. Do not run the evaluation file on your own, use the `validate` function instead. If you run evaluation file yourself, your results won't be logged.
 task_template: |-

@@ -64,6 +64,7 @@ from psrl.utils.logger import (
 )
 from psrl.utils.ray import shared_pull_model_context_async
 from psrl.workers.config import RolloutConfig
+from psrl.workers.gen.gpu_handoff import GpuControlGate, GpuHandoffMixin, gpu_control
 from psrl.workers.gen.smg_adapter import build_worker_registration_payload, cfg_get, is_cache_aware_method
 from psrl.workers.gen.stats_collector import DPLBStatCollector
 from psrl.workers.gen.utils import DEFAULT_MAX_CONNECTIONS, DEFAULT_TIMEOUT, TokenOutput
@@ -86,7 +87,7 @@ class GenInterface:
     status_endpoint: str | None = None  # None / "" → no ZMQ status reporting (reward model path)
 
 
-class PSRL_vLLMHttpServer(vLLMHttpServer):
+class PSRL_vLLMHttpServer(GpuHandoffMixin, vLLMHttpServer):
     def __init__(
         self,
         psrl_config,
@@ -122,6 +123,11 @@ class PSRL_vLLMHttpServer(vLLMHttpServer):
 
         self.stat_collector = None
         self.curr_rollout_instance_model_version = None
+        self._gpu_control = GpuControlGate()
+        self._gpu_sync_active = False
+        self._gpu_weights_valid = False
+        self._last_env_owner = None
+        self._env_handoff_ready = False
 
         if self.psrl_config.rollout_coordination.redundant_rollout.enable:
             self.avg_max_active_tasks_len = (
@@ -714,14 +720,18 @@ class PSRL_vLLMHttpServer(vLLMHttpServer):
     # We add `data_parallel_rank` parameters to these methods to support DP-aware control in PSRL.
 
     async def is_sleeping(self) -> bool:
-        return await self.engine.is_sleeping()
+        return self._gpu_control.borrower is not None or await self.engine.is_sleeping()
 
+    @gpu_control
     async def sleep(self, level: int):
+        if level == 2:
+            self._gpu_weights_valid = False
         await self.engine.sleep(level)
         if self.psrl_config.tms.range in ["rollout", "all"]:
             # NOTE(linsh): TMS requires an explicit aggressive cache clear.
             aggressive_empty_cache(force_sync=True)
 
+    @gpu_control
     async def wake_up(self):
         wake_up_tags = ["weights", "kv_cache"]
         if self.psrl_config.tms.enable_cuda_graph:
@@ -733,6 +743,7 @@ class PSRL_vLLMHttpServer(vLLMHttpServer):
         await self.engine.reset_mm_cache()
         await self.engine.reset_encoder_cache()
 
+    @gpu_control
     async def pause_generation(
         self,
         mode: PauseMode = "abort",
@@ -745,6 +756,7 @@ class PSRL_vLLMHttpServer(vLLMHttpServer):
             clear_cache=clear_cache,
         )
 
+    @gpu_control
     async def resume_generation(self):
         await self.engine.resume_generation()
 
@@ -754,7 +766,9 @@ class PSRL_vLLMHttpServer(vLLMHttpServer):
     async def open_grpc_generate_admission(self):
         await self.grpc_servicer.open_generate_admission()
 
+    @gpu_control
     async def pause_for_sync(self):
+        self._gpu_sync_active = True
         # Close the park gate before admission so new requests cannot reach a
         # paused engine.
         self.grpc_servicer.pause_generation_admission()
@@ -763,13 +777,16 @@ class PSRL_vLLMHttpServer(vLLMHttpServer):
         await self.pause_generation(clear_cache=False)
         psrl_logger.info(f"Generation paused for parameter server sync: replica={self.get_replica_idx()}.")
 
+    @gpu_control
     async def resume_after_sync(self):
         # Resume the engine before waking parked requests.
         await self.resume_generation()
         await self.open_grpc_generate_admission()
         self.grpc_servicer.resume_generation_admission()
+        self._gpu_sync_active = False
         psrl_logger.info(f"Generation resumed on replica {self.get_replica_idx()}")
 
+    @gpu_control
     async def fail_sync(self):
         await self.close_grpc_generate_admission()
         await self.pause_generation(clear_cache=False)
@@ -1264,11 +1281,13 @@ class PSRL_vLLMHttpServer(vLLMHttpServer):
             args=(self.model_config, mode),
         )
 
+    @gpu_control
     async def nixl_wake_up(self):
         await self._is_init_nixl_client.wait()
         await self.wake_up()
         await self.collective_rpc(method="nixl_register_after_wake_up")
 
+    @gpu_control
     async def nixl_sleep(self, level: int):
         await self._is_init_nixl_client.wait()
         await self.sleep(level)
@@ -1355,11 +1374,12 @@ class PSRL_vLLMHttpServer(vLLMHttpServer):
 
     ###### Weights Update ######
 
+    @gpu_control
     async def pull_model_for_sync(self, ps_version: int) -> int:
         data_parallel_ranks = range(self.get_instance_num())
         data_parallel_rank = 0  # take dp 0 as representative for the replica
 
-        if self.curr_rollout_instance_model_version[data_parallel_rank] >= ps_version:
+        if self._gpu_weights_valid and self.curr_rollout_instance_model_version[data_parallel_rank] >= ps_version:
             curr_model_version = self.curr_rollout_instance_model_version[data_parallel_rank]
             self.kv_set_current_version(curr_model_version)
             return curr_model_version
@@ -1391,6 +1411,7 @@ class PSRL_vLLMHttpServer(vLLMHttpServer):
                 )
         return curr_model_version
 
+    @gpu_control
     async def sync_with_ps(self, ps_version: int, pause_generation: bool = False):
         if pause_generation:
             await self.pause_for_sync()
@@ -1399,19 +1420,24 @@ class PSRL_vLLMHttpServer(vLLMHttpServer):
             await self.resume_after_sync()
         return version
 
+    @gpu_control
     async def pull_model(self):
+        if not self._gpu_weights_valid and self.psrl_config.profile.fix_weight:
+            raise RuntimeError("Discarded weights cannot be restored while profile.fix_weight is enabled.")
         if self.psrl_config.ps_mode == "cpu" or self.psrl_config.ps_mode == "cpu_ref":
             await self.ray_pull_model()
         elif self.psrl_config.ps_mode == "nixl_cpu" or self.psrl_config.ps_mode == "nixl_gpu":
             await self.nixl_pull_model()
         else:
             raise NotImplementedError(f"PSRL does not support PS mode '{self.psrl_config.ps_mode}' yet.")
+        self._gpu_weights_valid = True
         # Important: the prefix cache needs to be cleared after pulling the model
         await self.clear_kv_cache()
         if self.kv_cache_manager is not None and self.kv_cache_manager.should_clear_on_weight_update:
             await self.collective_rpc(method="lmcache_clear_all_from_backend")
             psrl_logger.debug("Cleared LMCache backend after model weight update.")
 
+    @gpu_control
     async def nixl_pull_model(self) -> None:
         assert self.gen_interface.ps_manager_handle is not None, "nixl_pull_model requires a PS manager handle"
         assert self.psrl_config.ps_mode == "nixl_cpu" or self.psrl_config.ps_mode == "nixl_gpu", (
@@ -1439,6 +1465,7 @@ class PSRL_vLLMHttpServer(vLLMHttpServer):
         )  # This only updates the model version
         psrl_logger.info("NIXL pull model done.")
 
+    @gpu_control
     async def ray_pull_model(self) -> None:
         assert self.gen_interface.ps_manager_handle is not None, "ray_pull_model requires a PS manager handle"
         ps_manager_handle = self.gen_interface.ps_manager_handle

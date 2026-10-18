@@ -43,8 +43,12 @@ class EnvUnit:
     gpu_indices: tuple[int, ...] = ()
     max_containers: int = 1
     gpu_memory_mb: int = 0
+    rollout_replica_rank: int | None = None
 
     def __post_init__(self) -> None:
+        if self.rollout_replica_rank is not None:
+            if self.rollout_replica_rank < 0 or not self.gpu_indices or self.max_containers != 1:
+                raise ValueError("A borrowed unit requires one container slot, GPUs and a nonnegative replica rank.")
         if not self.unit_id:
             raise ValueError("EnvUnit.unit_id must be non-empty.")
         if not self.node_ip:
@@ -80,6 +84,9 @@ class EnvUnit:
             gpu_indices=tuple(int(i) for i in (raw.get("gpu_indices") or ())),
             max_containers=int(raw.get("max_containers", 1)),
             gpu_memory_mb=int(raw.get("gpu_memory_mb", 0)),
+            rollout_replica_rank=(
+                int(raw["rollout_replica_rank"]) if raw.get("rollout_replica_rank") is not None else None
+            ),
         )
 
 
@@ -160,6 +167,8 @@ class EnvLease:
     granted_at: float
     last_seen: float
     shared: bool = False
+    node_service_url: str = ""
+    gpu_lending: bool = False
 
 
 @dataclass(frozen=True)

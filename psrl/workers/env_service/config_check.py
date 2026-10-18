@@ -41,6 +41,16 @@ def validate_env_service_config(cfg: Mapping) -> list[EnvUnit]:
             detail = f"missing key {exc}" if isinstance(exc, KeyError) else str(exc)
             raise ValueError(f"psrl.env_service.units[{position}] is invalid: {detail}.") from exc
     validate_units(units)
+    ranks = [unit.rollout_replica_rank for unit in units if unit.rollout_replica_rank is not None]
+    if len(ranks) != len(set(ranks)):
+        raise ValueError("Each borrowed rollout replica must belong to exactly one unit.")
+    lending = cfg.get("gpu_lending") or {}
+    for key, default in (("transition_timeout_s", 60), ("max_env_phase_s", 300)):
+        if float(lending.get(key, default)) <= 0:
+            raise ValueError(f"gpu_lending.{key} must be positive.")
+    for key, default in (("return_tolerance_mb", 16), ("safety_margin_mb", 1024)):
+        if float(lending.get(key, default)) < 0:
+            raise ValueError(f"gpu_lending.{key} must be nonnegative.")
 
     default_gpu_mb = int(cfg.get("default_gpu_memory_mb", 24000))
     if default_gpu_mb <= 0:

@@ -691,6 +691,8 @@ class ElasticExecutor:
         )
         if result is None:
             return
+        if isinstance(result, dict) and instance_id not in result.get("slept", []):
+            return
         self.instances_status_flags[instance_role][instance_model_name][instance_id] = InstanceStatus.ASLEEP
         self.topology.set_status(instance_role, instance_model_name, instance_id, InstanceStatus.ASLEEP)
         self.instances_engine_stats[instance_role][instance_model_name][instance_id] = None

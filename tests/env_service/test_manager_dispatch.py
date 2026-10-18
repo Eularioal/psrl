@@ -17,7 +17,7 @@ import random
 import sys
 import types
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -101,12 +101,10 @@ def _load_manager():
         "psrl.workers.ps.staleness_controller",
     ):
         _loose(name)
-    sys.modules["verl.utils"].tensordict_utils = _FakeTu
+    stub_if_missing("verl.utils.tensordict_utils", get=_FakeTu.get)
     stub_package_keeping_children("psrl.utils.common", repo / "psrl" / "utils" / "common")
     stub_if_missing("psrl.utils.common.http_utils")
-    sys.modules["psrl.utils.common.http_utils"].init_distributed_post_pool = MagicMock()
     module = importlib.import_module("psrl.workers.agent_loop.manager")
-    module.tu = _FakeTu
     return module
 
 
@@ -141,7 +139,8 @@ def _manager(num_workers=3, rollout_n=2, dispatch_idx=0, dispatcher=None):
 
 
 def _plan(m, batch, is_validate=False):
-    return Manager.get_dispatch_plan(m, batch, is_validate=is_validate)
+    with patch.object(manager_module, "tu", _FakeTu):
+        return Manager.get_dispatch_plan(m, batch, is_validate=is_validate)
 
 
 # --------------------------------------------------------------------------- equivalence with the old algorithm

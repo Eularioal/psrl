@@ -1,9 +1,24 @@
 import pytest
+from psrl.workers.env_service.overlay import DriverLibs
+from psrl.workers.env_service.probe import GpuDevice
+from psrl.workers.env_worker import sandbox
 from psrl.workers.env_worker.sandbox import (
     NVIDIA_CONTROL_DEVICES,
     SandboxSpec,
     build_docker_run_argv,
 )
+
+
+@pytest.fixture(autouse=True)
+def gpu_host(monkeypatch):
+    monkeypatch.setattr(sandbox.os.path, "exists", lambda path: True)
+    monkeypatch.setattr(sandbox, "read_gpu_devices", lambda: {i: GpuDevice(i, i + 1, f"GPU-{i}") for i in range(8)})
+    monkeypatch.setattr(sandbox, "read_kernel_driver_version", lambda: "535.1")
+    monkeypatch.setattr(
+        sandbox,
+        "resolve_driver_libs",
+        lambda version: DriverLibs(version, (("/usr/lib64/libcuda.so.535.1", "/usr/lib64/libcuda.so.1"),)),
+    )
 
 
 @pytest.mark.cpu_test
@@ -47,8 +62,9 @@ def test_gpu_sandbox_uses_device_passthrough_not_gpus_flag():
     argv = build_docker_run_argv(spec, container_name="c1", gpu_device_indices=(3, 5))
 
     assert "--gpus" not in argv, "Must use device passthrough, not the broken --gpus flag."
-    assert "/dev/nvidia3" in argv, "Requested physical device must be passed through."
-    assert "/dev/nvidia5" in argv
+    assert "/dev/nvidia4" in argv, "GPU index 3 must resolve to minor 4."
+    assert "/dev/nvidia6" in argv, "GPU index 5 must resolve to minor 6."
+    assert "/dev/nvidia3" not in argv, "Enumeration indices are not device minor numbers."
     assert "/dev/nvidia0" not in argv, "Must not leak devices that were not assigned."
     for control_device in NVIDIA_CONTROL_DEVICES:
         assert control_device in argv, f"Missing required control device={control_device!r}."
@@ -61,12 +77,12 @@ def test_gpu_sandbox_bind_mounts_driver_libraries():
         spec,
         container_name="c1",
         gpu_device_indices=(0,),
-        driver_libs=("/usr/lib64/libnvidia-ml.so.1",),
+        driver_libs=DriverLibs("535.1", (("/usr/lib64/libnvidia-ml.so.535.1", "/usr/lib64/libnvidia-ml.so.1"),)),
         nvidia_smi_path="/usr/bin/nvidia-smi",
     )
 
     joined = " ".join(argv)
-    assert "/usr/lib64/libnvidia-ml.so.1:" in joined, "Driver library must be bind-mounted read-only."
+    assert "/usr/lib64/libnvidia-ml.so.535.1:/usr/lib64/libnvidia-ml.so.1:ro" in joined
     assert joined.count(":ro") >= 2, "Driver mounts must be read-only."
     assert "/usr/bin/nvidia-smi:/usr/bin/nvidia-smi:ro" in joined
 

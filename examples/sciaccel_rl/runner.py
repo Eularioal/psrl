@@ -25,7 +25,6 @@ from psrl.utils.common.docker_utils import (
     CLEANUP_EXECUTOR,
     force_remove_compose_images,
     force_remove_compose_project,
-    prune_dangling_images,
 )
 from psrl.utils.common.http_utils import post
 from psrl.utils.concurrency.gpu_device_gate import AllocatedGpu, GpuDeviceGate, build_gpu_override
@@ -47,7 +46,14 @@ psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
 _CONTEXT_SAFETY_MARGIN = 8192
 
 
-async def _bind_gate_b(session_router_url: str, session_id: str, device: str | None, shared: bool = False) -> None:
+async def _bind_gate_b(
+    session_router_url: str,
+    session_id: str,
+    device: str | None,
+    shared: bool = False,
+    node_service_url: str = "",
+    gpu_indices: tuple[int, ...] = (),
+) -> None:
     """
     Best-effort: tell SessionRouter which physical GPU device (if any) this
     session is using, so Gate B (psrl/workers/gen/session_router.py's
@@ -69,7 +75,15 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
     try:
         await post(
             f"{session_router_url.rstrip('/')}/control/gpu_bind",
-            payload=[{"session_id": session_id, "gpu_device": device, "shared": shared}],
+            payload=[
+                {
+                    "session_id": session_id,
+                    "gpu_device": device,
+                    "shared": shared,
+                    "node_service_url": node_service_url,
+                    "gpu_indices": list(gpu_indices),
+                }
+            ],
             max_retries=1,
         )
     except Exception as exc:  # noqa: BLE001
@@ -120,12 +134,26 @@ async def _apply_env_lease(
                 "this node has no NVIDIA kernel driver loaded."
             )
         driver_libs = resolve_driver_libs(version)
-    overlay_path = write_overlay(build_lease_overlay(lease, driver_libs))
+    overlay = build_lease_overlay(lease, driver_libs)
+    overlay_path = write_overlay(overlay)
     extra_compose_paths.append(overlay_path)
+    env_kwargs["import_path"] = "psrl.workers.env_service.docker:ManagedDockerEnvironment"
+    env_kwargs.setdefault("kwargs", {})["lease_overlay"] = overlay
     if lease.gpu_indices:
         env_kwargs["override_gpus"] = 0
-        devices = ",".join(f"/dev/nvidia{i}" for i in lease.gpu_indices)
-        await _bind_gate_b(session_router_url, session_id, devices, shared=lease.shared)
+        devices = ",".join(
+            item.split(":", 1)[0]
+            for item in overlay["services"]["main"]["devices"]
+            if item.split(":", 1)[0].removeprefix("/dev/nvidia").isdigit()
+        )
+        await _bind_gate_b(
+            "" if lease.gpu_lending else session_router_url,
+            session_id,
+            devices,
+            shared=lease.shared,
+            node_service_url=lease.node_service_url,
+            gpu_indices=lease.gpu_indices,
+        )
     return overlay_path
 
 
@@ -296,12 +324,16 @@ async def run_harbor_episode(
     """
     extra_body = harness_extra_body(thinking_template)
     env_kwargs: dict = {}
+    if config.harbor.override_gpus is not None:
+        env_kwargs["override_gpus"] = config.harbor.override_gpus
     extra_compose_paths: list[Path] = []
     allocated_gpu: AllocatedGpu | None = None
     gpu_override_path: Path | None = None
     lease_handle: EnvLeaseHandle | None = None
     lease_overlay_path: Path | None = None
     job_name = session_id or uuid.uuid4().hex[:12]
+    lending_agent_kwargs = {}
+    agent_name = config.harbor.agent_name
     if env_client is not None:
         # Gate A (env service): wait, holding nothing, until a unit on this node can take
         # the episode. The container does not exist yet, so waiting is free and may last
@@ -350,6 +382,16 @@ async def run_harbor_episode(
     # before the setup below, so a lease taken above is released even if building the
     # overlay or the job config raises; a leaked lease would otherwise keep heartbeating.
     try:
+        if lease_handle is not None and lease_handle.lease.gpu_lending:
+            if agent_name not in ("terminus-2", "examples.sciaccel_rl.agent:TruncatingTerminus2"):
+                raise ValueError("GPU lending requires the science Terminus2 phase hook.")
+            agent_name = "examples.sciaccel_rl.agent:TruncatingTerminus2"
+            lending_agent_kwargs["gpu_lending"] = {
+                "router_name": env_client.router_name,
+                "lease_id": lease_handle.lease.lease_id,
+            }
+            await env_client.router.set_gpu_phase.remote(lease_handle.lease.lease_id, "env", 0)
+            env_kwargs.setdefault("kwargs", {})["gpu_lending"] = lending_agent_kwargs["gpu_lending"]
         if lease_handle is not None:
             try:
                 lease_overlay_path = await _apply_env_lease(
@@ -369,6 +411,8 @@ async def run_harbor_episode(
         main_override: dict = {}
         if actor_id:
             main_override["labels"] = [f"psrl.actor_id={actor_id}"]
+            env_kwargs["import_path"] = "psrl.workers.env_service.docker:ManagedDockerEnvironment"
+            env_kwargs.setdefault("kwargs", {})["actor_id"] = actor_id
         if config.harbor.memory_mb_override > 0:
             main_override["mem_limit"] = f"{config.harbor.memory_mb_override}m"
 
@@ -391,12 +435,13 @@ async def run_harbor_episode(
             tasks=[TaskConfig(path=task_path)],
             agents=[
                 AgentConfig(
-                    name=config.harbor.agent_name,
+                    name=agent_name,
                     model_name=f"openai/{model_name}",
                     env={"OPENAI_API_KEY": "EMPTY"},
                     # Let Harbor enforce the external budget so timed-out jobs remain gradable.
                     override_timeout_sec=config.task_timeout_sec,
                     kwargs={
+                        **lending_agent_kwargs,
                         "api_base": model_base_url,
                         "enable_summarize": False,
                         "collect_rollout_details": True,
@@ -499,9 +544,6 @@ async def run_harbor_episode(
         # Each image is tagged after the per-episode Compose project, and on the cancelled
         # path Harbor's teardown never runs, leaving a tag no dangling sweep can reach.
         await _in_cleanup_pool(force_remove_compose_images, job_name)
-        # Backstop for images this episode did not own, mainly ones orphaned by a rebuild
-        # elsewhere. Self-throttled, so it is a cheap no-op on most episodes.
-        await _in_cleanup_pool(prune_dangling_images)
         # Gate A: release the reserved physical GPU device only after the container
         # that used it is confirmed gone (the `force_remove_compose_project` call
         # above), so a waiting episode never gets the device while the old one's

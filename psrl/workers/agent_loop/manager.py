@@ -1133,6 +1133,19 @@ class PSRL_AgentLoopManager:
                                 dispositions[request_positions[extra_request_id]] = PayloadState.DROPPED
 
                         alg_entry_infos = entry_infos[:alg_rollout_n]
+                        group_keys = [
+                            key
+                            for entry in alg_entry_infos
+                            for key in request_payload_keys(
+                                prompt_id * rollout_n + entry.request_idx, entry.n_trajectory
+                            )
+                        ]
+                        if not is_validate and not await self._keep_trainable_group(prompt_id, group_keys):
+                            for entry in alg_entry_infos:
+                                child_id = prompt_id * rollout_n + entry.request_idx
+                                if child_id in request_positions:
+                                    dispositions[request_positions[child_id]] = PayloadState.DROPPED
+                            continue
                         add_data = True
                         # Perform group post-processing for training data only.
                         if self.group_post_process_fn and not is_validate:
@@ -1183,8 +1196,10 @@ class PSRL_AgentLoopManager:
                                 )
                             )
                 else:
-                    # Without group sampling (e.g., PPO).
-                    # Group post processing is not used and every data will be added.
+                    keys = request_payload_keys(request_id, n_trajectory)
+                    if not is_validate and not await self._keep_trainable_group(prompt_id, keys):
+                        dispositions[position] = PayloadState.DROPPED
+                        continue
                     occupy_jobs.append(
                         (
                             [position],
@@ -1276,6 +1291,22 @@ class PSRL_AgentLoopManager:
             for buffer_id in sorted(list(ready_buffer_ids)):
                 await self._flush_ready_buffer(buffer_id, is_validate)
             return dispositions
+
+    async def _keep_trainable_group(self, prompt_id: int, keys: list[str]) -> bool:
+        """Refill fully masked groups before they can enter training buffers or chunks."""
+        data = await tq.async_kv_batch_get(keys=keys, partition_id="train", select_fields=["response_mask"])
+        mask = data["response_mask"]
+        values = mask.values() if mask.is_nested else mask
+        if values.any().item():
+            return True
+        self._failed_train_group_ids.add(prompt_id)
+        await async_clear_payload(keys=keys, partition_id="train", state=PayloadState.DROPPED)
+        await self.ps_manager_handle.clear_reserved_entries.remote(prompt_id, False)
+        self._record_group_failure(TerminateReason.NO_TRAINABLE_TOKENS)
+        psrl_logger.warning(f"Training group {prompt_id!r} has no trainable tokens after masking. Refilling.")
+        if self._refill_breaker_diagnosis is None:
+            await self._refill_failed_group(n_prompts=1, context="All response tokens masked")
+        return False
 
     def maybe_add_buffer(self, buffer_id: int, batch: KVBatchMeta, is_validate: bool = False) -> bool:
         """

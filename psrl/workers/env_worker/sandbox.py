@@ -6,6 +6,9 @@ import logging
 import os
 from dataclasses import dataclass, field
 
+from psrl.workers.env_service.overlay import DriverLibs, read_kernel_driver_version, resolve_driver_libs
+from psrl.workers.env_service.probe import read_gpu_devices
+
 psrl_logger = logging.getLogger(__file__)
 psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
 
@@ -17,12 +20,21 @@ NVIDIA_CONTROL_DEVICES: tuple[str, ...] = (
     "/dev/nvidia-uvm-tools",
 )
 
-DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
-    "/usr/lib64/libnvidia-ml.so.1",
-    "/usr/lib64/libcuda.so.1",
-)
-
 DEFAULT_NVIDIA_SMI_PATH = "/usr/bin/nvidia-smi"
+
+
+@dataclass(frozen=True)
+class CodeExecutionSpec:
+    """Limits for untrusted programs executed outside a private judge."""
+
+    python: str
+    runner_path: str
+    runner_host_dir: str
+    cpus: float = 1.0
+    memory: str = "512m"
+    case_timeout_s: float = 4.0
+    candidate_timeout_s: float = 11.0
+    output_bytes: int = 1024 * 1024
 
 
 @dataclass(frozen=True)
@@ -40,8 +52,9 @@ class SandboxSpec:
         network (str): Docker network mode.
         labels (dict[str, str]): Docker labels, used for reaper-based cleanup.
         startup_timeout_s (float): Maximum seconds to wait for the shell to become ready.
-        idle_timeout_s (float): Seconds of inactivity after which the watchdog reaps
-            the sandbox. Guards against agent loops that die without calling destroy.
+        idle_timeout_s (float): Owner heartbeat TTL used by the coordinator.
+        auxiliary_cpus (float): CPU capacity reserved for an owned verifier.
+        auxiliary_memory (str): RAM reserved for an owned verifier.
     """
 
     image: str
@@ -53,7 +66,14 @@ class SandboxSpec:
     network: str = "host"
     labels: dict[str, str] = field(default_factory=dict)
     startup_timeout_s: float = 300.0
-    idle_timeout_s: float = 7200.0
+    idle_timeout_s: float = 180.0
+    auxiliary_cpus: float = 0.0
+    auxiliary_memory: str = "0"
+    code_execution: CodeExecutionSpec | None = None
+    read_only: bool = False
+    user: str | None = None
+    pids_limit: int | None = None
+    tmpfs: tuple[str, ...] = ()
 
 
 @dataclass
@@ -77,7 +97,7 @@ class ExecResult:
 
 def build_gpu_argv(
     gpu_device_indices: tuple[int, ...],
-    driver_libs: tuple[str, ...] = DEFAULT_DRIVER_LIB_GLOBS,
+    driver_libs: DriverLibs | None = None,
     nvidia_smi_path: str = DEFAULT_NVIDIA_SMI_PATH,
 ) -> list[str]:
     """
@@ -85,8 +105,7 @@ def build_gpu_argv(
 
     Args:
         gpu_device_indices (tuple[int, ...]): Physical GPU indices to expose.
-        driver_libs (tuple[str, ...]): Host driver library paths to bind-mount.
-            Paths that do not exist on this host are skipped.
+        driver_libs (DriverLibs | None): Resolved host libraries, or resolve the loaded driver.
         nvidia_smi_path (str): Host path to nvidia-smi. Skipped when absent.
 
     Returns:
@@ -95,18 +114,24 @@ def build_gpu_argv(
     if not gpu_device_indices:
         return []
 
+    inventory = read_gpu_devices()
+    if driver_libs is None:
+        version = read_kernel_driver_version()
+        if version is None:
+            raise RuntimeError("A GPU sandbox requires a loaded NVIDIA kernel driver.")
+        driver_libs = resolve_driver_libs(version)
     argv: list[str] = []
     for index in gpu_device_indices:
-        argv.extend(["--device", f"/dev/nvidia{index}"])
+        argv.extend(["--device", inventory[index].path])
     for control_device in NVIDIA_CONTROL_DEVICES:
         if os.path.exists(control_device):
             argv.extend(["--device", control_device])
         else:
             psrl_logger.warning(f"Control device={control_device!r} is absent, skipping passthrough.")
 
-    for lib_path in driver_libs:
-        if os.path.exists(lib_path):
-            argv.extend(["-v", f"{lib_path}:{lib_path}:ro"])
+    for host_path, container_path in driver_libs.mounts:
+        argv.extend(["-v", f"{host_path}:{container_path}:ro"])
+    argv.extend(["-e", "LD_LIBRARY_PATH=/usr/lib64:/usr/local/cuda/lib64"])
     if os.path.exists(nvidia_smi_path):
         argv.extend(["-v", f"{nvidia_smi_path}:{nvidia_smi_path}:ro"])
 
@@ -117,7 +142,7 @@ def build_docker_run_argv(
     spec: SandboxSpec,
     container_name: str,
     gpu_device_indices: tuple[int, ...] = (),
-    driver_libs: tuple[str, ...] = DEFAULT_DRIVER_LIB_GLOBS,
+    driver_libs: DriverLibs | None = None,
     nvidia_smi_path: str = DEFAULT_NVIDIA_SMI_PATH,
 ) -> list[str]:
     """
@@ -131,7 +156,7 @@ def build_docker_run_argv(
         container_name (str): Docker container name, used for cleanup.
         gpu_device_indices (tuple[int, ...]): Physical GPU indices assigned by the worker.
             Length must equal `spec.gpus`.
-        driver_libs (tuple[str, ...]): Host driver library paths to bind-mount.
+        driver_libs (DriverLibs | None): Resolved host libraries, or resolve the loaded driver.
         nvidia_smi_path (str): Host path to nvidia-smi.
 
     Returns:
@@ -145,7 +170,17 @@ def build_docker_run_argv(
             f"Assigned GPU device count {len(gpu_device_indices)} does not match requested spec.gpus {spec.gpus}."
         )
 
-    argv: list[str] = ["docker", "run", "-i", "--rm", "--name", container_name]
+    argv: list[str] = [
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "--pull=never",
+        "--security-opt=no-new-privileges",
+        "--cap-drop=ALL",
+        "--name",
+        container_name,
+    ]
 
     if spec.network:
         argv.extend(["--network", spec.network])
@@ -153,6 +188,14 @@ def build_docker_run_argv(
         argv.append(f"--cpus={spec.cpus}")
     if spec.memory is not None:
         argv.append(f"--memory={spec.memory}")
+    if spec.read_only:
+        argv.append("--read-only")
+    if spec.user:
+        argv.extend(["--user", spec.user])
+    if spec.pids_limit is not None:
+        argv.extend(["--pids-limit", str(spec.pids_limit)])
+    for mount in spec.tmpfs:
+        argv.extend(["--tmpfs", mount])
 
     for host_path, container_path, mode in spec.mounts:
         argv.extend(["-v", f"{host_path}:{container_path}:{mode}"])

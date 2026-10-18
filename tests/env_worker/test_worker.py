@@ -13,19 +13,21 @@ class FakeShell:
         self.written: list[str] = []
         self.drain_calls = 0
         self.closed = False
+        self.lock = asyncio.Lock()
 
-    def write(self, text: str) -> None:
+    async def write(self, text: str, deadline: float) -> bool:
         self.written.append(text)
+        return True
 
     def drain(self) -> str:
         self.drain_calls += 1
         return ""
 
-    async def read_until(self, deadline: float, no_output_timeout_s: float) -> str:
+    async def read_until(self, deadline: float, no_output_timeout_s: float, command_id: str) -> str:
         if not self.scripted_outputs:
             await asyncio.sleep(0.01)
             return ""
-        return self.scripted_outputs.pop(0)
+        return self.scripted_outputs.pop(0).replace("///PROCESS-DONE:", f"///PROCESS-DONE:{command_id}:")
 
     def close(self) -> None:
         self.closed = True
@@ -71,6 +73,22 @@ def test_allocate_gpu_indices_raises_when_exhausted(monkeypatch):
 
 
 @pytest.mark.cpu_test
+def test_gpu_inventory_failure_releases_the_reserved_device(monkeypatch):
+    from psrl.workers.env_worker import worker as worker_module
+
+    monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "1")
+    worker = EnvWorker(worker_id=0, cpu_slots=1, gpu_slots=1, exec_default_timeout_s=60.0)
+
+    def unavailable(*args):
+        raise RuntimeError("GPU inventory unavailable.")
+
+    monkeypatch.setattr(worker_module, "build_docker_run_argv", unavailable)
+    with pytest.raises(RuntimeError, match="GPU inventory unavailable"):
+        asyncio.run(worker.create_sandbox(SandboxSpec(image="probe", gpus=1)))
+    assert worker._allocate_gpu_indices(1) == (1,), "GPU setup failure leaked its slot."
+
+
+@pytest.mark.cpu_test
 def test_sandbox_labels_always_include_the_cleanup_key(monkeypatch):
     monkeypatch.setenv("PSRL_ACTOR_ID", "actor-7")
     worker = EnvWorker(worker_id=0, cpu_slots=4, gpu_slots=0, exec_default_timeout_s=60.0)
@@ -106,14 +124,14 @@ def test_exec_parses_sentinel_and_returns_exit_code():
 
 
 @pytest.mark.cpu_test
-def test_exec_reports_timeout_without_killing_the_sandbox():
+def test_exec_timeout_invalidates_the_sandbox():
     worker = EnvWorker(worker_id=0, cpu_slots=4, gpu_slots=0, exec_default_timeout_s=60.0)
     worker._shells["s-1"] = FakeShell([])  # never emits a sentinel
 
     result = asyncio.run(worker.exec("s-1", "sleep 100", timeout_s=0.2))
 
     assert result.timed_out is True, "A command that never completes must report a timeout."
-    assert "s-1" in worker._shells, "Timeout must leave the sandbox alive, matching MLGym semantics."
+    assert "s-1" not in worker._shells, "An uncertain shell must never be reused."
 
 
 @pytest.mark.cpu_test

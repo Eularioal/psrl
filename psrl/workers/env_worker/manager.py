@@ -57,7 +57,8 @@ class EnvWorkerManager:
             config (DictConfig): The full PSRL config. Reads `psrl.env_worker`.
         """
         self.env_config = config.psrl.env_worker
-        node_by_ip = {node["NodeManagerAddress"]: node["NodeID"] for node in ray.nodes() if node["Alive"]}
+        nodes = {node["NodeManagerAddress"]: node for node in ray.nodes() if node["Alive"]}
+        node_by_ip = {ip: node["NodeID"] for ip, node in nodes.items()}
         target_ips = resolve_placement_node_ips(self.env_config, list(node_by_ip))
 
         self.coordinator = (
@@ -91,10 +92,28 @@ class EnvWorkerManager:
                         gpu_slots=gpu_slots,
                         exec_default_timeout_s=float(self.env_config.exec_default_timeout_s),
                         max_observation_chars=int(self.env_config.max_observation_chars),
-                        idle_sandbox_timeout_s=float(self.env_config.idle_sandbox_timeout_s),
                     )
                 )
-                ray.get(self.coordinator.register_worker.remote(worker, worker_id, cpu_slots, gpu_slots, node_ip))
+                workers_per_node = int(self.env_config.workers_per_node)
+                resources = nodes[node_ip]["Resources"]
+                cpu_budget = float(
+                    self.env_config.get("cpu_budget_per_worker")
+                    or (resources["CPU"] / workers_per_node - float(self.env_config.get("worker_num_cpus", 1)))
+                )
+                memory_budget = int(
+                    self.env_config.get("memory_budget_bytes_per_worker") or (resources["memory"] / workers_per_node)
+                )
+                ray.get(
+                    self.coordinator.register_worker.remote(
+                        worker,
+                        worker_id,
+                        cpu_slots,
+                        gpu_slots,
+                        node_ip,
+                        cpu_budget,
+                        memory_budget,
+                    )
+                )
                 self.workers.append(worker)
                 worker_id += 1
 
@@ -109,6 +128,7 @@ class EnvWorkerManager:
 
     def shutdown(self) -> None:
         """Kill every worker and the coordinator."""
+        ray.get(self.coordinator.shutdown.remote())
         for worker in self.workers:
             ray.kill(worker, no_restart=True)
         ray.kill(self.coordinator, no_restart=True)

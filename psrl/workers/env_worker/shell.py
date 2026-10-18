@@ -15,17 +15,15 @@ psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
 
 PROCESS_DONE_MARKER_START = "///PROCESS-DONE:"
 PROCESS_DONE_MARKER_END = ":PROCESS-DONE///"
-_SENTINEL_REGEX = re.compile(rf"{re.escape(PROCESS_DONE_MARKER_START)}(.+?){re.escape(PROCESS_DONE_MARKER_END)}")
 
 TRUNCATION_NOTICE = "\n... {omitted} characters omitted ...\n"
 
 
-def wrap_command(command: str) -> str:
+def wrap_command(command: str, command_id: str) -> str:
     """
     Append the completion sentinel to a shell command.
 
-    A short sleep before the echo keeps the sentinel on its own line even when the
-    command's own output is still being flushed.
+    Each invocation carries a unique id so unrelated markers cannot finish it.
 
     Args:
         command (str): Raw shell command from the agent.
@@ -35,12 +33,13 @@ def wrap_command(command: str) -> str:
     """
     terminated = command if command.endswith("\n") else command + "\n"
     sentinel_echo = (
-        f'EXITSTATUS="$?"; sleep 0.01; echo {PROCESS_DONE_MARKER_START}$EXITSTATUS{PROCESS_DONE_MARKER_END}\n'
+        f'EXITSTATUS="$?"; printf "\\n%s\\n" "{PROCESS_DONE_MARKER_START}{command_id}:$EXITSTATUS'
+        f'{PROCESS_DONE_MARKER_END}"\n'
     )
     return terminated + sentinel_echo
 
 
-def parse_sentinel(buffer: str) -> tuple[str, int | None] | None:
+def parse_sentinel(buffer: str, command_id: str) -> tuple[str, int] | None:
     """
     Split a shell output buffer at the completion sentinel.
 
@@ -48,23 +47,18 @@ def parse_sentinel(buffer: str) -> tuple[str, int | None] | None:
         buffer (str): Accumulated shell output.
 
     Returns:
-        tuple[str, int | None] | None: A (body, exit_code) pair once the sentinel is
-            present, otherwise None to signal that more output is needed. `exit_code`
-            is None when the sentinel payload is not an integer, which happens when a
-            command fails so badly that the shell leaves the variable unexpanded.
+        tuple[str, int] | None: Output and integer status for the requested command,
+            or None when its complete marker has not arrived.
     """
-    match = _SENTINEL_REGEX.search(buffer)
+    pattern = re.compile(
+        rf"{re.escape(PROCESS_DONE_MARKER_START + command_id)}:(\d+){re.escape(PROCESS_DONE_MARKER_END)}"
+    )
+    match = pattern.search(buffer)
     if match is None:
         return None
 
-    raw_status = match.group(1)
-    try:
-        exit_code: int | None = int(raw_status)
-    except ValueError:
-        psrl_logger.warning(f"Sandbox shell returned an unparseable exit status {raw_status!r}.")
-        exit_code = None
-
-    body = buffer[: match.start()] + buffer[match.end() :]
+    exit_code = int(match.group(1))
+    body = buffer[: match.start()]
     return body, exit_code
 
 

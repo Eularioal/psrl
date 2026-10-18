@@ -104,7 +104,7 @@ class NodeRules:
         if self.policy is NodePolicy.ANY:
             return 0
         if self.policy is NodePolicy.CPU_ONLY:
-            return None if demand.needs_gpu else 0
+            return None if demand.needs_gpu and unit.rollout_replica_rank is None else 0
         if self.policy is NodePolicy.AVOID:
             return None
         return 1  # PREFER_OTHER
@@ -121,6 +121,8 @@ def lint_units(units: Sequence[EnvUnit], rules: NodeRules) -> list[str]:
     warnings: list[str] = []
     for unit in units:
         if not rules.is_train_rollout(unit.node_ip):
+            continue
+        if unit.rollout_replica_rank is not None:
             continue
         if unit.has_gpu and rules.policy in (NodePolicy.CPU_ONLY, NodePolicy.AVOID):
             warnings.append(

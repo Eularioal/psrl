@@ -55,6 +55,11 @@ class PSRL_BaseTrainWorker:
         psrl_logger.addHandler(DualOutputHandler(self.psrl_config.logging_path, self.log_prefix))
         psrl_logger.info(f"Initialized on {ray.get_runtime_context().get_node_id()}.")
 
+    def get_runtime_gpu_ids(self) -> list[int]:
+        """Expose physical placement for GPU lending conflict checks."""
+        ids = ray.get_runtime_context().get_accelerator_ids()
+        return [int(gpu_id) for gpu_id in ids.get("GPU", ids.get("NPU", []))]
+
     def get_node_id(self) -> str:
         """
         Get the node id of the train worker.

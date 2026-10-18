@@ -141,7 +141,7 @@ def build_rollout_router_args(config: Any, host: str, port: int, ps_manager_addr
         model_path=cfg_get(config, "train_actor_rollout_ref.model.path", None),
         chat_template=cfg_get(config, "gen_actor_rollout_ref.rollout.chat_template", None),
         service_discovery=False,
-        prometheus_port=None,
+        prometheus_port=int(cfg_get(config, "psrl.rollout_gateway.prometheus_port", 0)),
         request_timeout_secs=2**64 - 1,
         log_level="warn",
         log_dir=cfg_get(config, "psrl.logging_path", None),

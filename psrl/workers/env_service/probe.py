@@ -11,9 +11,35 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+import subprocess
+import xml.etree.ElementTree as ET
+from dataclasses import dataclass
 
 psrl_logger = logging.getLogger("psrl.env_service.probe")
 psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
+
+
+@dataclass(frozen=True)
+class GpuDevice:
+    """Resolve a telemetry index to its physical UUID and character device."""
+
+    index: int
+    minor: int
+    uuid: str
+
+    @property
+    def path(self) -> str:
+        """Return the host character device path."""
+        return f"/dev/nvidia{self.minor}"
+
+
+def read_gpu_devices() -> dict[int, GpuDevice]:
+    """Read the host GPU inventory without assuming index equals minor number."""
+    result = subprocess.run(["nvidia-smi", "-q", "-x"], capture_output=True, text=True, timeout=30, check=True)
+    devices = {}
+    for index, element in enumerate(ET.fromstring(result.stdout).findall("gpu")):
+        devices[index] = GpuDevice(index, int(element.findtext("minor_number")), element.findtext("uuid"))
+    return devices
 
 
 def parse_gpu_csv(text: str) -> dict[int, tuple[float, float]]:

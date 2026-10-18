@@ -155,17 +155,8 @@ class CommandHandlerMixin:
                     if instance_ids is None:
                         raise ValueError("SLEEP command must contain 'instance_ids' in args.")
 
-                    # Pause routing to prevent new requests from being dispatched
-                    # to the instances that are going to sleep
-                    await self._set_routing_loop_running(False)
-
-                    sleep_futures = []
-                    for instance_id in instance_ids:
-                        # NOTE(linsh): Ignore DP rank for now.
-                        replica_id, _ = instance_id
-                        sleep_futures.append(self._do_sleep_instance(replica_id))
-                    await asyncio.gather(*sleep_futures)
-                    self._complete_command(command_id, None)
+                    result = await self.sleep_instances_for_control(instance_ids)
+                    self._complete_command(command_id, result)
                 elif command_type == CommandType.WAKE_UP:
                     instance_ids = command_args.get("instance_ids", None)
                     if not isinstance(instance_ids, list):

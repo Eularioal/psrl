@@ -109,8 +109,10 @@ class EnvServiceClient:
         max_poll_interval_s: float = 5.0,
         heartbeat_interval_s: float = 60.0,
         telemetry_reader: TelemetryReader = read_gpu_telemetry,
+        router_name: str = "psrl_env_router",
     ):
         self.router = router
+        self.router_name = router_name
         self.node_ip = node_ip
         self.default_gpu_memory_mb = int(default_gpu_memory_mb)
         self.poll_interval_s = float(poll_interval_s)
@@ -147,6 +149,7 @@ class EnvServiceClient:
         return cls(
             router,
             ray.util.get_node_ip_address(),
+            router_name=name,
             default_gpu_memory_mb=int(env_cfg.get("default_gpu_memory_mb", 24000)),
             poll_interval_s=float(env_cfg.get("poll_interval_s", 1.0)),
             max_poll_interval_s=float(env_cfg.get("max_poll_interval_s", 5.0)),
@@ -176,7 +179,6 @@ class EnvServiceClient:
             EnvAdmissionRejected: When no unit could ever host the demand.
             EnvAdmissionTimeout: When `max_wait_s` ran out.
         """
-        await self.reap_local()
         loop = asyncio.get_running_loop()
         deadline = None if max_wait_s is None else loop.time() + max_wait_s
         delay = self.poll_interval_s
@@ -209,31 +211,3 @@ class EnvServiceClient:
         if not telemetry:
             return None
         return {index: mem_mb for index, (_util, mem_mb) in telemetry.items()}
-
-    async def reap_local(self) -> int:
-        """
-        Stop containers of leases the router reclaimed on this node.
-
-        The router frees the capacity, but it runs on another machine, so the stop happens
-        here, by the `psrl.env_lease` label, on the next admission from this node.
-
-        Returns:
-            int: How many reclaimed leases were cleaned up.
-        """
-        try:
-            expired = await self.router.pop_reaped.remote(self.node_ip)
-        except Exception as exc:  # noqa: BLE001
-            psrl_logger.debug("pop_reaped failed: %s.", exc)
-            return 0
-        if not expired:
-            return 0
-        from psrl.utils.common.docker_utils import CLEANUP_EXECUTOR, force_remove_containers_by_label
-        from psrl.workers.env_service.overlay import LEASE_LABEL
-
-        loop = asyncio.get_running_loop()
-        for lease in expired:
-            psrl_logger.warning("Stopping containers of reclaimed lease %s.", lease.lease_id)
-            # The dedicated cleanup pool, not the loop's default executor: a `docker rm` on a
-            # loaded daemon blocks for tens of seconds and must not starve episode I/O.
-            await loop.run_in_executor(CLEANUP_EXECUTOR, force_remove_containers_by_label, LEASE_LABEL, lease.lease_id)
-        return len(expired)

@@ -31,9 +31,7 @@ RUN sed -i "s|http://archive.ubuntu.com/ubuntu|http://${APT_MIRROR}/ubuntu|g; \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -r mlgym \
-    && useradd -r -g mlgym -m -d /home/agent -s /bin/bash agent \
-    && echo "agent ALL=(ALL) NOPASSWD: /usr/bin/apt-get, /usr/bin/apt" >> /etc/sudoers.d/agent \
-    && chmod 440 /etc/sudoers.d/agent
+    && useradd -r -g mlgym -m -d /home/agent -s /bin/bash agent
 
 ENV ROOT='/home/agent/'
 ENV PS1="> "

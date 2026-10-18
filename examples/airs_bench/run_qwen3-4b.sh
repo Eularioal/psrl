@@ -10,15 +10,18 @@ export RAY_prestart_worker_first_driver=false
 export RAY_num_workers_soft_limit=0
 export RAY_memory_monitor_refresh_ms=0
 
-source /apdcephfs_zwfy10/share_303541817/lhy/env/psrl.sh
+AIRS_RECIPE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "${PSRL_ENV_SCRIPT:?Set PSRL_ENV_SCRIPT to the project activation script}"
 
-PSRL_PATH="${PSRL_PATH:-$(python3 -c "import os, psrl; print(os.path.dirname(os.path.dirname(psrl.__file__)))")}"
+PSRL_PATH="${AIRS_RECIPE_ROOT}"
+export PYTHONPATH="${PSRL_PATH}${PYTHONPATH:+:${PYTHONPATH}}"
 cd "${PSRL_PATH}"
 
-HF_MODEL_PATH="${HF_MODEL_PATH:-/jizhicfs/johnnyslin/models/Qwen3-4B}"
+HF_MODEL_PATH="${HF_MODEL_PATH:?Set HF_MODEL_PATH to the model weights}"
 DATA_DIR="${DATA_DIR:-${PSRL_PATH}/examples/airs_bench/data}"
-export AIRS_DATA_ROOT="${AIRS_DATA_ROOT:-/apdcephfs_zwfy10/share_303541817/lhy/airs_bench_data}"
-ENV_NODE_IP="${ENV_NODE_IP:-28.49.16.220}"
+export AIRS_DATA_ROOT="${AIRS_DATA_ROOT:?Set AIRS_DATA_ROOT to the prepared data}"
+export MLGYM_REPO="${MLGYM_REPO:?Set MLGYM_REPO to the upstream checkout}"
+ENV_NODE_IP="${ENV_NODE_IP:?Set ENV_NODE_IP to the environment node address}"
 export SANDBOX_IMAGE="${SANDBOX_IMAGE:-psrl/airs-bench-agent:latest}"
 
 TRAIN_FILE="${DATA_DIR}/train.parquet"
@@ -30,6 +33,9 @@ for path in "${HF_MODEL_PATH}" "${TRAIN_FILE}" "${TEST_FILE}"; do
         exit 1
     fi
 done
+
+python -m examples.airs_bench.prepare.validate_runtime \
+    --data-root "${AIRS_DATA_ROOT}" --dataset "${TRAIN_FILE}" "${TEST_FILE}"
 
 # Experiment output directories.
 project_name=airs_bench
@@ -183,10 +189,8 @@ PYTHONUNBUFFERED=1 python3 -m psrl.trainer.main_ppo \
     psrl.env_worker.enable=True \
     psrl.env_worker.placement=dedicated \
     psrl.env_worker.dedicated_node_ips="['${ENV_NODE_IP}']" \
-    psrl.env_worker.cpu_slots_per_worker=8 \
+    psrl.env_worker.cpu_slots_per_worker="${ENV_SLOTS:-8}" \
     psrl.env_worker.gpu_slots_per_worker=0 \
-    psrl.env_worker.sandbox_cpus=8.0 \
-    psrl.env_worker.sandbox_memory=32g \
     psrl.env_worker.routing.method=least_loaded \
     psrl.group_post_process.processors="['dynamic_sampling_filter']" \
     psrl.rollout_gateway.trajectory_id_strategy=auto \

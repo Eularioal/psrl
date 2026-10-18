@@ -10,7 +10,7 @@ from psrl.workers.env_worker.shell import (
 
 @pytest.mark.cpu_test
 def test_wrap_command_appends_sentinel_echo_and_trailing_newline():
-    wrapped = wrap_command("ls -la")
+    wrapped = wrap_command("ls -la", "abc")
 
     assert wrapped.startswith("ls -la\n"), "Command must be newline-terminated before the sentinel."
     assert wrapped.endswith("\n"), "Wrapped command must end with a newline so the shell executes it."
@@ -20,20 +20,20 @@ def test_wrap_command_appends_sentinel_echo_and_trailing_newline():
 
 @pytest.mark.cpu_test
 def test_wrap_command_does_not_double_newline():
-    wrapped = wrap_command("ls -la\n")
+    wrapped = wrap_command("ls -la\n", "abc")
 
     assert "ls -la\n\n" not in wrapped, "Already-terminated commands must not gain a blank line."
 
 
 @pytest.mark.cpu_test
 def test_parse_sentinel_returns_none_when_incomplete():
-    assert parse_sentinel("partial output with no marker") is None
+    assert parse_sentinel("partial output with no marker", "abc") is None
 
 
 @pytest.mark.cpu_test
 def test_parse_sentinel_extracts_body_and_exit_code():
-    buffer = f"hello world\n{PROCESS_DONE_MARKER_START}0{PROCESS_DONE_MARKER_END}\n"
-    parsed = parse_sentinel(buffer)
+    buffer = f"hello world\n{PROCESS_DONE_MARKER_START}abc:0{PROCESS_DONE_MARKER_END}\n"
+    parsed = parse_sentinel(buffer, "abc")
 
     assert parsed is not None, "A complete buffer must parse."
     body, exit_code = parsed
@@ -44,8 +44,8 @@ def test_parse_sentinel_extracts_body_and_exit_code():
 
 @pytest.mark.cpu_test
 def test_parse_sentinel_handles_nonzero_exit_code():
-    buffer = f"boom\n{PROCESS_DONE_MARKER_START}127{PROCESS_DONE_MARKER_END}\n"
-    parsed = parse_sentinel(buffer)
+    buffer = f"boom\n{PROCESS_DONE_MARKER_START}abc:127{PROCESS_DONE_MARKER_END}\n"
+    parsed = parse_sentinel(buffer, "abc")
 
     assert parsed is not None
     _, exit_code = parsed
@@ -53,16 +53,10 @@ def test_parse_sentinel_handles_nonzero_exit_code():
 
 
 @pytest.mark.cpu_test
-def test_parse_sentinel_returns_none_exit_code_for_unexpanded_variable():
-    # A badly failing command can leave the variable unexpanded, which MLGym also
-    # special-cases. It must not raise.
-    buffer = f"garbage\n{PROCESS_DONE_MARKER_START}$EXITSTATUS{PROCESS_DONE_MARKER_END}\n"
-    parsed = parse_sentinel(buffer)
-
-    assert parsed is not None
-    body, exit_code = parsed
-    assert exit_code is None, "Unparseable exit status must degrade to None, not raise."
-    assert "garbage" in body
+def test_parse_sentinel_rejects_unexpanded_or_foreign_markers():
+    buffer = f"garbage\n{PROCESS_DONE_MARKER_START}abc:$EXITSTATUS{PROCESS_DONE_MARKER_END}\n"
+    assert parse_sentinel(buffer, "abc") is None
+    assert parse_sentinel(buffer.replace("$EXITSTATUS", "0"), "other") is None
 
 
 @pytest.mark.cpu_test

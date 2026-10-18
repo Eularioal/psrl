@@ -12,6 +12,9 @@ multimodal_shm_min_bytes: 65536
 # Global HTTP capacity is this value times the active rollout server count.
 server_max_concurrency: 256
 
+# Zero lets the kernel allocate a metrics port for each gateway process.
+prometheus_port: 0
+
 # Whether AgentLoopWorkers should route POST requests through a Ray actor pool.
 # The pool is created by AgentLoopManager and selected with round-robin.
 use_distributed_post: False

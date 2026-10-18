@@ -34,7 +34,7 @@ from psrl.workers.env_service.overlay import (
     write_overlay,
 )
 from psrl.workers.env_service.placement import EnvAwareDispatcher, needs_gpu_from_extra_info
-from psrl.workers.env_service.probe import parse_gpu_csv
+from psrl.workers.env_service.probe import GpuDevice, parse_gpu_csv
 
 TRAIN = "10.0.0.9"
 ENV = "10.0.0.1"
@@ -240,7 +240,12 @@ def _libs():
 
 def test_overlay_mounts_exactly_the_leases_devices_not_a_hardcoded_nvidia0():
     # B3: the static override always mounted /dev/nvidia0.
-    overlay = build_lease_overlay(_lease((3, 4)), _libs(), device_exists=lambda p: True)
+    overlay = build_lease_overlay(
+        _lease((3, 4)),
+        _libs(),
+        gpu_devices={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)},
+        device_exists=lambda p: True,
+    )
     main = overlay["services"]["main"]
     assert "/dev/nvidia3:/dev/nvidia3" in main["devices"]
     assert "/dev/nvidia4:/dev/nvidia4" in main["devices"]
@@ -250,7 +255,12 @@ def test_overlay_mounts_exactly_the_leases_devices_not_a_hardcoded_nvidia0():
 
 
 def test_overlay_skips_control_devices_that_do_not_exist_on_the_host():
-    overlay = build_lease_overlay(_lease((0,)), _libs(), device_exists=lambda p: p == "/usr/bin/nvidia-smi")
+    overlay = build_lease_overlay(
+        _lease((0,)),
+        _libs(),
+        gpu_devices={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)},
+        device_exists=lambda p: p == "/usr/bin/nvidia-smi",
+    )
     main = overlay["services"]["main"]
     assert main["devices"] == ["/dev/nvidia0:/dev/nvidia0"]
     assert "/usr/bin/nvidia-smi:/usr/bin/nvidia-smi:ro" in main["volumes"]
@@ -260,7 +270,9 @@ def test_overlay_stamps_lease_and_unit_labels_for_reaping():
     # B6: Harbor sets no labels on local containers, so the lease label is what lets the
     # reaper find an orphan after a crash.
     lease = _lease((0,), unit_id="g7", lease_id="g7-4-abc")
-    overlay = build_lease_overlay(lease, _libs(), device_exists=lambda p: True)
+    overlay = build_lease_overlay(
+        lease, _libs(), gpu_devices={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)}, device_exists=lambda p: True
+    )
     labels = overlay["services"]["main"]["labels"]
     assert f"{LEASE_LABEL}=g7-4-abc" in labels and f"{UNIT_LABEL}=g7" in labels
 
@@ -278,8 +290,23 @@ def test_gpu_lease_without_driver_libs_is_a_programming_error():
     raise AssertionError("a GPU lease without driver libs was accepted")
 
 
+def test_overlay_resolves_nvml_index_to_device_minor():
+    overlay = build_lease_overlay(
+        _lease((1,)),
+        _libs(),
+        gpu_devices={1: GpuDevice(1, 3, "GPU-assigned")},
+        device_exists=lambda path: False,
+    )
+    assert overlay["services"]["main"]["devices"] == ["/dev/nvidia3:/dev/nvidia3"], "Wrong physical GPU mounted."
+
+
 def test_write_overlay_round_trips_through_yaml_and_is_a_real_file():
-    overlay = build_lease_overlay(_lease((1,)), _libs(), device_exists=lambda p: True)
+    overlay = build_lease_overlay(
+        _lease((1,)),
+        _libs(),
+        gpu_devices={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)},
+        device_exists=lambda p: True,
+    )
     path = write_overlay(overlay)
     try:
         assert path.exists() and path.suffix == ".yaml"

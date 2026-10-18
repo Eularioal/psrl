@@ -45,6 +45,7 @@ class TruncatingTerminus2(Terminus2):
         logs_dir: Path,
         model_name: str | None = None,
         max_observation_bytes: int = HARBOR_DEFAULT_MAX_OBS_BYTES,
+        gpu_lending: dict | None = None,
         **kwargs,
     ):
         """
@@ -57,6 +58,14 @@ class TruncatingTerminus2(Terminus2):
         if max_observation_bytes <= 0:
             raise ValueError(f"max_observation_bytes must be positive, got {max_observation_bytes}.")
         super().__init__(logs_dir=logs_dir, model_name=model_name, **kwargs)
+        self._gpu_phase_client = None
+        if gpu_lending:
+            import ray
+            from psrl.workers.env_service.lending import GpuPhaseClient
+
+            self._gpu_phase_client = GpuPhaseClient(
+                ray.get_actor(gpu_lending["router_name"]), gpu_lending["lease_id"]
+            )
         self._max_observation_bytes = int(max_observation_bytes)
         psrl_logger.info(
             "TruncatingTerminus2 capping observations at %d bytes (harbor default %d).",
@@ -90,6 +99,9 @@ class TruncatingTerminus2(Terminus2):
         still graded, because `SciAccelAgentLoop` recognizes the overflow and trains the
         turns captured before it.
         """
+        phase_client = getattr(self, "_gpu_phase_client", None)
+        if phase_client is not None:
+            await phase_client.set_phase("model")
         try:
             return await super()._query_llm(*args, **kwargs)
         except Exception as exc:
@@ -97,3 +109,6 @@ class TruncatingTerminus2(Terminus2):
                 psrl_logger.warning("Context window exhausted, ending the episode: %s", exc)
                 raise ContextWindowExhausted(str(exc)) from exc
             raise
+        finally:
+            if phase_client is not None:
+                await phase_client.set_phase("env")

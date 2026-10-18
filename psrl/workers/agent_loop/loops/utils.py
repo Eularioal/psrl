@@ -49,6 +49,7 @@ class TerminateReason(Enum):
     ABORTED = "aborted"
     UNKNOWN = "unknown"
     ROLLOUT_ERROR = "rollout_error"
+    NO_TRAINABLE_TOKENS = "no_trainable_tokens"
 
     @property
     def is_successful(self) -> bool:

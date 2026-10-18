@@ -9,32 +9,30 @@ episode up, waits for it, and turns the graded outcome into reward inputs.
 from __future__ import annotations
 
 import asyncio
-import concurrent.futures
 import logging
 import os
 from typing import Any
 
 import ray
 from examples.airs_bench.config import AirsBenchRuntimeConfig, build_runtime_config
-from examples.airs_bench.runner import run_mlgym_agent
+from examples.airs_bench.grading import build_verifier_spec
+from examples.airs_bench.process_runner import run_in_process
 
 from psrl.environments import Environment
 from psrl.environments.mlgym_env import build_sandbox_spec
 from psrl.workers.agent_loop.context import AgentLoopContext
 from psrl.workers.agent_loop.loops.session_agent_loop import SessionAgentLoop
 from psrl.workers.agent_loop.loops.utils import TerminateReason, register
+from psrl.workers.env_worker.coordinator import acquire_sandbox
 from psrl.workers.gen.utils import TokenOutput
 
 psrl_logger = logging.getLogger(__file__)
 psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
 
-_RUNNER_THREAD_POOL = concurrent.futures.ThreadPoolExecutor(
-    max_workers=int(os.getenv("AIRS_BENCH_RUNNER_THREADS", "64")),
-    thread_name_prefix="airs-bench-runner",
-)
-
 _EXIT_STATUS_TO_REASON: dict[str, TerminateReason] = {
     "submitted": TerminateReason.FINISHED,
+    "submission_not_found": TerminateReason.FINISHED,
+    "invalid_submission": TerminateReason.FINISHED,
     "submit": TerminateReason.FINISHED,
     "exit_context": TerminateReason.MAX_RESPONSE_LENGTH_EXCEEDED,
     "exit_cost": TerminateReason.MAX_TURNS_EXCEEDED,
@@ -86,54 +84,27 @@ class MLGymAgentLoop(SessionAgentLoop):
         """Include the AIRS-Bench task identity carried in the dataset row."""
         return [*super().get_generate_fields(), "extra_info"]
 
-    async def _run_episode_logic(
-        self,
-        request: dict,
-        observation: dict,
-        session_id: str,
-    ) -> dict:
-        """
-        Drive the MLGym runner inside a sandbox and return its raw result dict.
-
-        The sandbox is created and destroyed within this method. The TITO session
-        identified by `session_id` must already exist before this is called.
-
-        Args:
-            request (dict): Dataset row plus routing metadata.
-            observation (dict): Output of `env.reset`, including sandbox spec fields.
-            session_id (str): Active TITO session id for the current episode.
-
-        Returns:
-            dict: Raw result from `run_mlgym_agent`, containing keys such as
-                `exit_status`, `airs_scores`, `timing`, and `turns`.
-        """
-        spec = build_sandbox_spec(
+    async def _run_episode_logic(self, request: dict, observation: dict, session_id: str, handle: Any) -> dict:
+        """Run MLGym after sandbox admission and session creation."""
+        verifier_spec, verifier_command = build_verifier_spec(
             self.runtime_config,
-            dataset_data_path=observation["dataset_data_path"],
-            labels={
-                "psrl.airs_task_id": observation["airs_task_id"],
-                "psrl.airs_episode_id": observation["episode_id"],
-            },
+            observation["dataset_data_path"],
+            observation["task_config_path"],
+            {"psrl.airs_episode_id": observation["episode_id"]},
         )
-        handle = await self._coordinator.create_sandbox.remote(spec)
-        try:
-            payload = {
-                "base_url": self.session_api_url(session_id),
-                "model": self.model_config.path,
-                "sampling_params": self.get_session_sampling_params(request),
-                "task_config_path": observation["task_config_path"],
-                "runtime_config": self.runtime_config,
-                "sandbox_handle": handle,
-                "event_loop": asyncio.get_running_loop(),
-                "max_turns": self.max_turns,
-                "trajectory_id_strategy": self.trajectory_id_strategy,
-            }
-            return await asyncio.wait_for(
-                asyncio.get_running_loop().run_in_executor(_RUNNER_THREAD_POOL, run_mlgym_agent, payload),
-                timeout=self.runtime_config.episode_timeout_s,
-            )
-        finally:
-            await handle.destroy()
+        payload = {
+            "base_url": self.session_api_url(session_id),
+            "model": self.model_config.path,
+            "sampling_params": self.get_session_sampling_params(request),
+            "task_config_path": observation["task_config_path"],
+            "runtime_config": self.runtime_config,
+            "max_turns": self.max_turns,
+            "trajectory_id_strategy": self.trajectory_id_strategy,
+            "verifier_spec": verifier_spec,
+            "verifier_command": verifier_command,
+            "metric": observation["metric"],
+        }
+        return await run_in_process(payload, handle)
 
     async def run(
         self,
@@ -168,18 +139,31 @@ class MLGymAgentLoop(SessionAgentLoop):
             dataset_cls=self.dataset_cls,
             runtime_config=self.runtime_config,
         )
-        observation, _ = await env.reset(task=request)
+        handle = None
 
-        try:
+        async def episode():
+            nonlocal handle
+            observation, _ = await env.reset(task=request)
+            verifier_spec, _ = build_verifier_spec(
+                self.runtime_config,
+                observation["dataset_data_path"],
+                observation["task_config_path"],
+                {},
+            )
+            spec = build_sandbox_spec(
+                self.runtime_config,
+                observation["dataset_data_path"],
+                {"psrl.airs_task_id": observation["airs_task_id"], "psrl.airs_episode_id": observation["episode_id"]},
+                verifier_spec=verifier_spec,
+            )
+            handle = await acquire_sandbox(self._coordinator, spec, self.runtime_config.episode_timeout_s)
             async with self.session_scope(request) as session_id:
-                try:
-                    result = await self._run_episode_logic(request, observation, session_id)
-                except asyncio.TimeoutError:
-                    psrl_logger.warning(
-                        f"AIRS-Bench timeout: task={observation['airs_task_id']!r}, "
-                        f"limit={self.runtime_config.episode_timeout_s}s."
-                    )
-                    return None, TerminateReason.TRAJECTORY_TIMEOUT
+                result = await self._run_episode_logic(request, observation, session_id, handle)
+                if classify_exit_status(result["exit_status"]) in {
+                    TerminateReason.ROLLOUT_ERROR,
+                    TerminateReason.UNKNOWN,
+                }:
+                    return None, TerminateReason.ROLLOUT_ERROR
 
                 psrl_logger.info(
                     f"AIRS-Bench episode: task={observation['airs_task_id']!r}, "
@@ -208,5 +192,14 @@ class MLGymAgentLoop(SessionAgentLoop):
                 if scored_output is None:
                     return None, TerminateReason.ABORTED
                 return scored_output, classify_exit_status(result["exit_status"])
+
+        try:
+            return await asyncio.wait_for(episode(), self.runtime_config.episode_timeout_s)
+        except TimeoutError:
+            return None, TerminateReason.TRAJECTORY_TIMEOUT
         finally:
-            await env.close()
+            try:
+                if handle is not None:
+                    await handle.destroy()
+            finally:
+                await env.close()

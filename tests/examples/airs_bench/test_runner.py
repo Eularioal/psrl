@@ -12,6 +12,15 @@ class FakeInfo:
 
 
 @pytest.mark.cpu_test
+@pytest.mark.parametrize("value", [float("inf"), float("nan"), -1.0, 0.0])
+def test_runtime_rejects_nonfinite_or_nonpositive_deadlines(value):
+    from examples.airs_bench.config import AirsBenchRuntimeConfig
+
+    with pytest.raises(ValueError, match="finite and positive"):
+        AirsBenchRuntimeConfig(episode_timeout_s=value)
+
+
+@pytest.mark.cpu_test
 def test_collect_scores_separates_submit_from_validate():
     # MLGym appends one entry per submit or validate, tagged by the caller.
     info = FakeInfo(score=[{"MAE": 0.5}, {"MAE": 0.3}])
@@ -31,6 +40,29 @@ def test_collect_scores_handles_no_submission():
 
     assert collected["airs_scores"] == []
     assert collected["airs_submit_count"] == 0
+
+
+@pytest.mark.cpu_test
+@pytest.mark.parametrize("status", ["invalid_submission", "submission_not_found", "exit_forfeit", "skipped"])
+def test_failed_final_submission_cannot_reuse_an_earlier_validation_score(status):
+    from examples.airs_bench.reward import compute_score
+
+    info = FakeInfo(score=[{"Accuracy": 1.0}], exit_status=status)
+    collected = collect_scores_from_info(info, submit_count=1, validate_count=1)
+    result = compute_score(
+        "airs_bench",
+        "",
+        None,
+        {
+            **collected,
+            "metric": "Accuracy",
+            "optimal_score": 1.0,
+            "sota_score": 0.9,
+            "estimated_worst_score": 0.0,
+        },
+    )
+    assert result["score"] == 0, "An invalid final submission must not inherit validation reward."
+    assert info.score == [{"Accuracy": 1.0}], "The recorded validation history must remain available."
 
 
 @pytest.mark.cpu_test

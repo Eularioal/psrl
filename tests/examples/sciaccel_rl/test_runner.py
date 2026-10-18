@@ -58,7 +58,6 @@ class TestRunHarborEpisode:
             patch("examples.sciaccel_rl.runner.Job") as mock_job_cls,
             patch("examples.sciaccel_rl.runner.force_remove_compose_project", return_value=[]),
             patch("examples.sciaccel_rl.runner.force_remove_compose_images", return_value=0),
-            patch("examples.sciaccel_rl.runner.prune_dangling_images", return_value=False),
         ):
             mock_job_cls.create = AsyncMock(return_value=mock_job)
             result = asyncio.run(
@@ -77,7 +76,7 @@ class TestRunHarborEpisode:
         assert result.exception is None
         assert job_config.agents[0].kwargs["record_terminal_session"] is False
 
-    def _run_with_hint(self, hint, guidance=""):
+    def _run_with_hint(self, hint, guidance="", override_gpus=None):
         """
         Run one mocked episode and return the JobConfig Harbor was handed.
         """
@@ -95,12 +94,13 @@ class TestRunHarborEpisode:
 
         mock_job = AsyncMock()
         mock_job.run = AsyncMock(return_value=mock_job_result)
+        config = SciAccelRuntimeConfig()
+        config.harbor.override_gpus = override_gpus
 
         with (
             patch("examples.sciaccel_rl.runner.Job") as mock_job_cls,
             patch("examples.sciaccel_rl.runner.force_remove_compose_project", return_value=[]),
             patch("examples.sciaccel_rl.runner.force_remove_compose_images", return_value=0),
-            patch("examples.sciaccel_rl.runner.prune_dangling_images", return_value=False),
         ):
             mock_job_cls.create = AsyncMock(return_value=mock_job)
             asyncio.run(
@@ -108,12 +108,16 @@ class TestRunHarborEpisode:
                     task_path="/path/to/tasks/laps-repair-bounds-2d-mhdrhs-l264",
                     model_base_url="http://10.0.0.1:8000/sessions/abc/v1",
                     model_name="Qwen/Qwen3.5-4B",
-                    config=SciAccelRuntimeConfig(),
+                    config=config,
                     hint=hint,
                     guidance=guidance,
                 )
             )
             return mock_job_cls.create.await_args.args[0]
+
+    def test_zero_gpu_override_reaches_harbor_without_an_env_client(self):
+        job_config = self._run_with_hint("", override_gpus=0)
+        assert job_config.environment.override_gpus == 0
 
     def test_guidance_leads_the_hint_when_both_are_present(self):
         # Guidance first keeps the localization hint closest to the task text.
@@ -153,7 +157,6 @@ class TestEpisodeContainerCleanup:
             patch("examples.sciaccel_rl.runner.Job") as mock_job_cls,
             patch("examples.sciaccel_rl.runner.force_remove_compose_project", return_value=["cid1"]) as mock_rm,
             patch("examples.sciaccel_rl.runner.force_remove_compose_images", return_value=0),
-            patch("examples.sciaccel_rl.runner.prune_dangling_images", return_value=False),
         ):
             mock_job_cls.create = AsyncMock(return_value=job)
             asyncio.run(
@@ -284,7 +287,7 @@ class TestDanglingImagePrune:
 
         assert force_remove_compose_images("") == 0
 
-    def test_episode_cleanup_invokes_the_prune(self):
+    def test_episode_cleanup_only_removes_owned_resources(self):
         from examples.sciaccel_rl.config import SciAccelRuntimeConfig
         from examples.sciaccel_rl.runner import run_harbor_episode
 
@@ -301,7 +304,8 @@ class TestDanglingImagePrune:
         with (
             patch("examples.sciaccel_rl.runner.Job") as mock_job_cls,
             patch("examples.sciaccel_rl.runner.force_remove_compose_project", return_value=[]),
-            patch("examples.sciaccel_rl.runner.prune_dangling_images") as mock_prune,
+            patch("psrl.utils.common.docker_utils.prune_dangling_images") as mock_prune,
+            patch("examples.sciaccel_rl.runner.force_remove_compose_images", return_value=0) as mock_images,
         ):
             mock_job_cls.create = AsyncMock(return_value=job)
             asyncio.run(
@@ -314,7 +318,8 @@ class TestDanglingImagePrune:
                     regrade_unverified=False,
                 )
             )
-        mock_prune.assert_called_once()
+        mock_prune.assert_not_called()
+        mock_images.assert_called_once_with("s")
 
 
 class TestContextBudget:
@@ -340,7 +345,6 @@ class TestContextBudget:
             patch("examples.sciaccel_rl.runner.Job") as mock_job_cls,
             patch("examples.sciaccel_rl.runner.force_remove_compose_project", return_value=[]),
             patch("examples.sciaccel_rl.runner.force_remove_compose_images", return_value=0),
-            patch("examples.sciaccel_rl.runner.prune_dangling_images", return_value=False),
         ):
             mock_job_cls.create = AsyncMock(return_value=job)
             asyncio.run(
@@ -409,7 +413,6 @@ class TestComposeProjectName:
             patch("examples.sciaccel_rl.runner.Job") as mock_job_cls,
             patch("examples.sciaccel_rl.runner.force_remove_compose_project", return_value=[]),
             patch("examples.sciaccel_rl.runner.force_remove_compose_images", return_value=0),
-            patch("examples.sciaccel_rl.runner.prune_dangling_images", return_value=False),
         ):
             mock_job_cls.create = AsyncMock(return_value=mock_job)
             result = asyncio.run(

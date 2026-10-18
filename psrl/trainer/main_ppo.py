@@ -135,7 +135,7 @@ def run_ppo(config, task_runner_class=None) -> None:
     if not ray.is_initialized():
         default_runtime_env = get_ppo_ray_runtime_env()
         ray_init_kwargs = config.ray_kwargs.get("ray_init", {})
-        runtime_env_kwargs = ray_init_kwargs.get("runtime_env", {})
+        runtime_env_kwargs = OmegaConf.to_container(OmegaConf.create(ray_init_kwargs.get("runtime_env", {})))
 
         if config.transfer_queue.enable:
             # Add runtime environment variables for transfer queue
@@ -155,6 +155,9 @@ def run_ppo(config, task_runner_class=None) -> None:
     if task_runner_class is None:
         task_runner_class = ray.remote(num_cpus=1)(TaskRunner)  # please make sure main_task is not scheduled on head
 
+    # Subprocesses must join this job's cluster even when its temporary directory is isolated.
+    runner_runtime_env = {"env_vars": {"RAY_ADDRESS": ray.get_runtime_context().gcs_address}}
+
     # Create a remote instance of the TaskRunner class, and
     # Execute the `run` method of the TaskRunner instance remotely and wait for it to complete
     if (
@@ -169,9 +172,10 @@ def run_ppo(config, task_runner_class=None) -> None:
         nsight_options = OmegaConf.to_container(
             config.global_profiler.global_tool_config.nsys.controller_nsight_options
         )
-        runner = task_runner_class.options(runtime_env={"nsight": nsight_options}).remote()
+        runner_runtime_env["nsight"] = nsight_options
+        runner = task_runner_class.options(runtime_env=runner_runtime_env).remote()
     else:
-        runner = task_runner_class.remote()
+        runner = task_runner_class.options(runtime_env=runner_runtime_env).remote()
     ray.get(runner.run.remote(config))
     ray.shutdown()
 

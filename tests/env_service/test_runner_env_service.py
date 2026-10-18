@@ -20,7 +20,8 @@ import yaml  # noqa: E402
 from _light_stubs import load_sciaccel_runner  # noqa: E402
 from psrl.workers.env_service import EnvDemand  # noqa: E402
 from psrl.workers.env_service.client import EnvServiceClient  # noqa: E402
-from psrl.workers.env_service.overlay import DriverLibs, DriverLibraryError  # noqa: E402
+from psrl.workers.env_service.overlay import DriverLibraryError, DriverLibs  # noqa: E402
+from psrl.workers.env_service.probe import GpuDevice  # noqa: E402
 from psrl.workers.env_service.router import EnvRouterCore  # noqa: E402
 from test_router_client import LocalRouter  # noqa: E402
 
@@ -91,7 +92,10 @@ def _run_episode(core, *, needs_gpu, create_side_effect=None, driver_version="53
     client = _client(core)
 
     async def create(job_config):
+        captured["agent"] = job_config.agents[0]
         env = job_config.environment or {}
+        if hasattr(env, "model_dump"):
+            env = env.model_dump(exclude_unset=True)
         captured["environment"] = env
         captured["overlay_paths"] = [Path(p) for p in env.get("extra_docker_compose", [])]
         captured["overlay_existed_during_job"] = [p.exists() for p in captured["overlay_paths"]]
@@ -117,6 +121,10 @@ def _run_episode(core, *, needs_gpu, create_side_effect=None, driver_version="53
         patch.object(runner, "prune_dangling_images", return_value=False),
         patch.object(runner, "read_kernel_driver_version", return_value=driver_version),
         patch.object(runner, "resolve_driver_libs", return_value=_LIBS),
+        patch(
+            "psrl.workers.env_service.overlay.read_gpu_devices",
+            return_value={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)},
+        ),
         patch.object(runner, "post", post),
         patch.object(runner.EnvLeaseHandle, "release", traced_release),
     ):
@@ -138,6 +146,25 @@ def _run_episode(core, *, needs_gpu, create_side_effect=None, driver_version="53
     captured["job_create_called"] = job_cls.create.await_count > 0
     captured["gate_b_calls"] = [call.kwargs.get("payload") for call in post.await_args_list]
     return result, captured
+
+
+def test_borrowed_gpu_wires_the_same_lease_into_agent_and_container_hooks():
+    from types import SimpleNamespace
+
+    cfg = _cfg(max_containers=1)
+    cfg["units"][0]["rollout_replica_rank"] = 0
+    core = EnvRouterCore(cfg)
+    binding = SimpleNamespace(phase="model", set_phase=AsyncMock(), finish=AsyncMock())
+    core._gpu_bindings["g0"] = binding
+    core._ledger._blocked_units.clear()
+    result, captured = _run_episode(core, needs_gpu=True)
+    assert result.reward == 1.0
+    binding.set_phase.assert_awaited_once()
+    lease, phase, sequence = binding.set_phase.await_args.args
+    assert lease.gpu_lending and (phase, sequence) == ("env", 0)
+    assert captured["agent"].name == "examples.sciaccel_rl.agent:TruncatingTerminus2"
+    assert captured["environment"]["kwargs"]["gpu_lending"] == captured["agent"].kwargs["gpu_lending"]
+    binding.finish.assert_awaited_once_with(lease.lease_id)
 
 
 def _ledger_containers(core):
@@ -163,7 +190,10 @@ def test_the_overlay_content_carries_the_leases_devices_labels_and_resolved_libs
     seen: dict = {}
 
     async def create(job_config):
-        path = Path(job_config.environment["extra_docker_compose"][0])
+        env = job_config.environment
+        if hasattr(env, "model_dump"):
+            env = env.model_dump(exclude_unset=True)
+        path = Path(env["extra_docker_compose"][0])
         seen["overlay"] = yaml.safe_load(path.read_text())
         return _ok_job()
 
@@ -174,6 +204,10 @@ def test_the_overlay_content_carries_the_leases_devices_labels_and_resolved_libs
         patch.object(runner, "prune_dangling_images", return_value=False),
         patch.object(runner, "read_kernel_driver_version", return_value="535.1"),
         patch.object(runner, "resolve_driver_libs", return_value=_LIBS),
+        patch(
+            "psrl.workers.env_service.overlay.read_gpu_devices",
+            return_value={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)},
+        ),
         patch.object(runner, "post", AsyncMock(return_value=None)),
     ):
         job_cls.create = AsyncMock(side_effect=create)
@@ -210,8 +244,18 @@ def test_gate_b_is_bound_with_all_devices_and_shared_then_unbound():
     post = AsyncMock(return_value=None)
     _, captured = _run_episode(core, needs_gpu=True, gate_b=post)
     bind, unbind = captured["gate_b_calls"]
-    assert bind == [{"session_id": SESSION, "gpu_device": "/dev/nvidia0,/dev/nvidia1", "shared": True}]
-    assert unbind == [{"session_id": SESSION, "gpu_device": None, "shared": False}]
+    assert bind == [
+        {
+            "session_id": SESSION,
+            "gpu_device": "/dev/nvidia0,/dev/nvidia1",
+            "shared": True,
+            "node_service_url": "",
+            "gpu_indices": [0, 1],
+        }
+    ]
+    assert unbind == [
+        {"session_id": SESSION, "gpu_device": None, "shared": False, "node_service_url": "", "gpu_indices": []}
+    ]
 
 
 def test_a_solo_unit_binds_gate_b_unshared():
