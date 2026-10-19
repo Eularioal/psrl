@@ -1,0 +1,44 @@
+{
+  "scope": "Real ON snapshot after first two CUDA phases completed; remaining repair/scoring holds reservations",
+  "last_completed_cuda_phase_at": 1792344065.3695402,
+  "snapshot": {
+    "time": 1792344066.5814188,
+    "gpu": "0, GPU-ee0871c3-32f7-1cc3-450d-c978c2178ace, 10119, 0, 125.64\n1, GPU-bec2e98e-3375-eaa5-6e3b-8b4c00f2aeb4, 11367, 0, 125.84\n2, GPU-9ef8ad9d-bc9a-e1ed-2ce0-dee5f86b3a97, 54517, 30, 174.39\n3, GPU-f70d7b3f-6c42-c0eb-10a9-ca1db72a7781, 3, 0, 71.26\n4, GPU-18fd2a3a-d4f2-cb6c-ce90-46770a384e17, 3, 0, 75.67\n5, GPU-31caee0c-b94f-a38f-a597-f1451ed4ba57, 0, 0, 74.42\n6, GPU-cc0c694a-e734-8f50-9242-2460d9af38f8, 0, 0, 73.69\n7, GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616, 0, 0, 118.50",
+    "units": [
+      {
+        "unit_id": "pressure-6",
+        "node_ip": "192.168.1.13",
+        "containers_running": 1,
+        "max_containers": 4,
+        "cpu_used": 4.0,
+        "cpu_quota": 16.0,
+        "memory_used_mb": 8192,
+        "memory_mb": 32768,
+        "declared_gpu_memory_mb": 52224,
+        "measured_gpu_memory_mb": 0.0,
+        "gpu_memory_mb": 81920,
+        "sessions": [
+          "01a15006-972d-7561-af37-59da1d5ececc"
+        ],
+        "sessions_waiting": 2
+      },
+      {
+        "unit_id": "pressure-7",
+        "node_ip": "192.168.1.13",
+        "containers_running": 1,
+        "max_containers": 4,
+        "cpu_used": 4.0,
+        "cpu_quota": 16.0,
+        "memory_used_mb": 8192,
+        "memory_mb": 32768,
+        "declared_gpu_memory_mb": 52224,
+        "measured_gpu_memory_mb": 2.0,
+        "gpu_memory_mb": 81920,
+        "sessions": [
+          "01a15006-972e-7d30-89cd-51daf633e802"
+        ],
+        "sessions_waiting": 2
+      }
+    ]
+  }
+}

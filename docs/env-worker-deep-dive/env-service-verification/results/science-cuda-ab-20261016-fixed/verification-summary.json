@@ -1,0 +1,18 @@
+{
+  "training_comparison": "incomplete: OFF timed out, one OFF retry failed reward configuration; ON not started",
+  "cuda_container_comparison": "passed: 4/4 each, peak concurrent 1 vs 3, both exits 0",
+  "cpu_regression": "38 runner tests passed; reward constructor fixed; fragmentation demonstration passed",
+  "training_was_not_retried_after_reward_fix": true,
+  "production_fix": "Forward explicit HarborConfig.override_gpus, including 0, to JobConfig.environment",
+  "runner_sha256": "d1d0e7522b6faa1e087295f6718babc4bce0f8ce3e698eb073b8b0bef73e25fd",
+  "cleanup": {
+    "time": 1792087663.3550823,
+    "gpu": "0, GPU-ee0871c3-32f7-1cc3-450d-c978c2178ace, 0 MiB\n1, GPU-bec2e98e-3375-eaa5-6e3b-8b4c00f2aeb4, 0 MiB\n2, GPU-9ef8ad9d-bc9a-e1ed-2ce0-dee5f86b3a97, 0 MiB\n3, GPU-f70d7b3f-6c42-c0eb-10a9-ca1db72a7781, 0 MiB\n4, GPU-18fd2a3a-d4f2-cb6c-ce90-46770a384e17, 0 MiB\n5, GPU-31caee0c-b94f-a38f-a597-f1451ed4ba57, 0 MiB\n6, GPU-cc0c694a-e734-8f50-9242-2460d9af38f8, 0 MiB\n7, GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616, 0 MiB",
+    "gpu_compute_apps": "",
+    "experiment_containers": "",
+    "unit_labelled_containers": "",
+    "active_ray_model_processes": [],
+    "all_gpu_memory_zero": true,
+    "scope": "Independent read-only cleanup check after both CUDA arms and the earlier training attempts"
+  }
+}

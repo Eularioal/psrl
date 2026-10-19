@@ -1,0 +1,15 @@
+{
+  "off": {
+    "cuda_ok": 2,
+    "cuda_oom": 2,
+    "trial_count": 4,
+    "task_errors": 0
+  },
+  "on": {
+    "cuda_ok": 4,
+    "cuda_oom": 0,
+    "trial_count": 4,
+    "task_errors": 0
+  },
+  "boundary": "Preflight driver exited 1 after all tasks completed, due to telemetry nvidia-smi timeout; original trial results audited without rerun."
+}

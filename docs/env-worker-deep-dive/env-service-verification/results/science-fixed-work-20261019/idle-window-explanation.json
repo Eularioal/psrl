@@ -1,0 +1,60 @@
+{
+  "scope": "Existing GPU records + explanatory arithmetic; no new GPU execution",
+  "off_a_record": "off/pool-0/attempts/1-01.json",
+  "off_b_record": "off/pool-1/attempts/4-01.json",
+  "same_gpu_uuid_hex": "cc0c694ae7348f5092422460d9af38f8",
+  "off_timeline_seconds_relative_to_a_allocation": [
+    {
+      "event": "A(uid=1) CUDA allocated",
+      "seconds": 0.0
+    },
+    {
+      "event": "A CUDA freed; episode continues",
+      "seconds": 45.143
+    },
+    {
+      "event": "B(uid=4) CUDA allocated on same GPU",
+      "seconds": 57.77
+    },
+    {
+      "event": "B CUDA freed; episode continues",
+      "seconds": 102.945
+    },
+    {
+      "event": "A episode finished",
+      "seconds": 259.263
+    },
+    {
+      "event": "B episode finished",
+      "seconds": 318.234
+    }
+  ],
+  "off_oom_during_a_cuda": [
+    {
+      "uid": "0",
+      "attempt": 1
+    },
+    {
+      "uid": "2",
+      "attempt": 1
+    },
+    {
+      "uid": "3",
+      "attempt": 1
+    }
+  ],
+  "on_arithmetic_gib": {
+    "budget": 80,
+    "declared": 51,
+    "physical_measured": 0,
+    "incoming": 51,
+    "effective_plus_incoming": 102,
+    "fits": false
+  },
+  "on_real_idle_snapshot_time": 1792344066.5814188,
+  "on_real_unit_declared_mib": [
+    52224,
+    52224
+  ],
+  "on_real_node_waiters": 2
+}

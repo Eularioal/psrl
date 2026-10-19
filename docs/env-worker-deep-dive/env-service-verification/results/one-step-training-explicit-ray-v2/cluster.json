@@ -1,0 +1,18 @@
+{
+  "started_at": 1791863651.5686567,
+  "original_pointer": {
+    "content": "192.168.1.10:8887",
+    "sha256": "fae4d7bb0c2e5168a9e7109f6426eb60d32a46e5c192fd0ade44eb298f629ae0",
+    "mtime_ns": 1788913279690859103
+  },
+  "address": "192.168.1.13:49994",
+  "node_ip": "192.168.1.13",
+  "exit_code": 1,
+  "finished_at": 1791864450.2191029,
+  "pointer_after": {
+    "content": "192.168.1.10:8887",
+    "sha256": "fae4d7bb0c2e5168a9e7109f6426eb60d32a46e5c192fd0ade44eb298f629ae0",
+    "mtime_ns": 1788913279690859103
+  },
+  "original_pointer_unchanged": true
+}

@@ -1,0 +1,94 @@
+{
+  "valid_ab": false,
+  "reason": "OFF failed in training forward with external GPU occupancy. ON stopped before model launch.",
+  "completed_optimizer_steps": {
+    "off": 0,
+    "on": 0
+  },
+  "off_completed_scored_trials": [
+    {
+      "trial": "laps-repair-coef-2d-rktmod-l17k1__MWDdTds",
+      "started_at": "2026-10-16T06:29:42.311991Z",
+      "finished_at": "2026-10-16T06:34:36.464585Z",
+      "rewards": {
+        "check_aw_2d_256": 0.0,
+        "check_aw_2d_512": 0.0,
+        "equivalence_pass": 0,
+        "floor": 0.5,
+        "reward": 0.0,
+        "reward_repair": 0.0,
+        "speedup": 0.0
+      },
+      "exception": {
+        "exception_type": "AgentTimeoutError",
+        "exception_message": "Agent execution timed out after 240.0 seconds",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1607, in run\n    await self._run_agent_loop(\n  File \"${WORKSPACE_ROOT}\", line 1286, in _run_agent_loop\n    ) = await self._handle_llm_interaction(\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1164, in _handle_llm_interaction\n    llm_response = await self._query_llm(\n                   ^^^^^^^^^^^^^^^^^^^^^^\n  File \"${PSRL_WORKSPACE}/examples/sciaccel_rl/agent.py\", line 106, in _query_llm\n    return await super()._query_llm(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 193, in async_wrapped\n    return await copy(fn, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 112, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 157, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 111, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 393, in <lambda>\n    self._add_action_func(lambda rs: rs.outcome.result())\n                                     ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 401, in __get_result\n    raise self._exception\n  File \"${WORKSPACE_ROOT}\", line 116, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1004, in _query_llm\n    llm_response = await chat.chat(\n                   ^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 89, in chat\n    llm_response: LLMResponse = await self._model.call(\n                                ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 193, in async_wrapped\n    return await copy(fn, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 112, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 157, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 111, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 393, in <lambda>\n    self._add_action_func(lambda rs: rs.outcome.result())\n                                     ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 401, in __get_result\n    raise self._exception\n  File \"${WORKSPACE_ROOT}\", line 116, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 370, in call\n    response = await litellm.acompletion(**completion_kwargs)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1690, in wrapper_async\n    result = await original_function(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 657, in acompletion\n    response = await init_response\n               ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 886, in acompletion\n    headers, response = await self.make_openai_chat_completion_request(\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 289, in async_wrapper\n    result = await func(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 427, in make_openai_chat_completion_request\n    raw_response = await openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 386, in wrapped\n    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 2883, in create\n    return await self._post(\n           ^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1977, in post\n    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1694, in request\n    response = await self._send_request(\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1083, in _send_request\n    response = await self._send_with_auth_retry(request, stream=stream, **kwargs)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1061, in _send_with_auth_retry\n    response = await super()._send_request(request, stream=stream, **kwargs)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1613, in _send_request\n    return await self._client.send(request, stream=stream, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1629, in send\n    response = await self._send_handling_auth(\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1657, in _send_handling_auth\n    response = await self._send_handling_redirects(\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1694, in _send_handling_redirects\n    response = await self._send_single_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1730, in _send_single_request\n    response = await transport.handle_async_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 293, in handle_async_request\n    response = await self._make_aiohttp_request(\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 271, in _make_aiohttp_request\n    response = await client_session.request(**request_kwargs).__aenter__()\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1693, in __aenter__\n    self._resp: _RetType_co = await self._coro\n                              ^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 858, in _request\n    resp = await handler(req)\n           ^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 836, in _connect_and_send_request\n    await resp.start(conn)\n  File \"${WORKSPACE_ROOT}\", line 558, in start\n    message, payload = await protocol.read()  # type: ignore[union-attr]\n                       ^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 705, in read\n    await self._waiter\nasyncio.exceptions.CancelledError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 545, in _run_agent_phase\n    await asyncio.wait_for(\n  File \"${WORKSPACE_ROOT}\", line 519, in wait_for\n    async with timeouts.timeout(timeout):\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 115, in __aexit__\n    raise TimeoutError from exc_val\nTimeoutError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 77, in _run_agent\n    await self._run_agent_phase(\n  File \"${WORKSPACE_ROOT}\", line 554, in _run_agent_phase\n    raise AgentTimeoutError(\nharbor.trial.errors.AgentTimeoutError: Agent execution timed out after 240.0 seconds\n",
+        "occurred_at": "2026-10-16T06:33:59.504766Z"
+      }
+    },
+    {
+      "trial": "laps-repair-subtle-2d-rktmod-l17__XkYYSJB",
+      "started_at": "2026-10-16T06:29:41.441723Z",
+      "finished_at": "2026-10-16T06:34:19.278899Z",
+      "rewards": {
+        "check_aw_2d_256": 0.0,
+        "check_aw_2d_512": 0.0,
+        "equivalence_pass": 0,
+        "floor": 0.5,
+        "reward": 0.0,
+        "reward_repair": 0.0,
+        "speedup": 0.0
+      },
+      "exception": null
+    },
+    {
+      "trial": "laps-repair-subtle-2d-rktmod-l17__MJw5sdE",
+      "started_at": "2026-10-16T06:29:42.883218Z",
+      "finished_at": "2026-10-16T06:34:55.070257Z",
+      "rewards": {
+        "check_aw_2d_256": 0.0,
+        "check_aw_2d_512": 0.0,
+        "equivalence_pass": 0,
+        "floor": 0.5,
+        "reward": 0.0,
+        "reward_repair": 0.0,
+        "speedup": 0.0
+      },
+      "exception": {
+        "exception_type": "AgentTimeoutError",
+        "exception_message": "Agent execution timed out after 240.0 seconds",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1607, in run\n    await self._run_agent_loop(\n  File \"${WORKSPACE_ROOT}\", line 1399, in _run_agent_loop\n    timeout_occurred, terminal_output = await self._execute_commands(\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1215, in _execute_commands\n    await session.send_keys(\n  File \"${WORKSPACE_ROOT}\", line 817, in send_keys\n    await self._send_non_blocking_keys(\n  File \"${WORKSPACE_ROOT}\", line 777, in _send_non_blocking_keys\n    await asyncio.sleep(min_timeout_sec - elapsed_time_sec)\n  File \"${WORKSPACE_ROOT}\", line 665, in sleep\n    return await future\n           ^^^^^^^^^^^^\nasyncio.exceptions.CancelledError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 545, in _run_agent_phase\n    await asyncio.wait_for(\n  File \"${WORKSPACE_ROOT}\", line 519, in wait_for\n    async with timeouts.timeout(timeout):\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 115, in __aexit__\n    raise TimeoutError from exc_val\nTimeoutError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 77, in _run_agent\n    await self._run_agent_phase(\n  File \"${WORKSPACE_ROOT}\", line 554, in _run_agent_phase\n    raise AgentTimeoutError(\nharbor.trial.errors.AgentTimeoutError: Agent execution timed out after 240.0 seconds\n",
+        "occurred_at": "2026-10-16T06:34:05.580730Z"
+      }
+    },
+    {
+      "trial": "laps-repair-coef-2d-rktmod-l17k1__y23SaFJ",
+      "started_at": "2026-10-16T06:29:42.585827Z",
+      "finished_at": "2026-10-16T06:34:41.590347Z",
+      "rewards": {
+        "check_aw_2d_256": 0.0,
+        "check_aw_2d_512": 0.0,
+        "equivalence_pass": 0,
+        "floor": 0.5,
+        "reward": 0.0,
+        "reward_repair": 0.0,
+        "speedup": 0.0
+      },
+      "exception": {
+        "exception_type": "AgentTimeoutError",
+        "exception_message": "Agent execution timed out after 240.0 seconds",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1607, in run\n    await self._run_agent_loop(\n  File \"${WORKSPACE_ROOT}\", line 1256, in _run_agent_loop\n    if not await self._session.is_session_alive():\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 588, in is_session_alive\n    result = await self.environment.exec(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1101, in exec\n    return await self._compose_exec(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1178, in _compose_exec\n    return await self._run_docker_compose_command(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 649, in _run_docker_compose_command\n    result = await self._collect_buffered_output(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 679, in _collect_buffered_output\n    stdout_bytes, stderr_bytes = await process.communicate(input=stdin_data)\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 201, in communicate\n    stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 181, in _read_stream\n    output = await stream.read()\n             ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 706, in read\n    block = await self.read(self._limit)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 713, in read\n    await self._wait_for_data('read')\n  File \"${WORKSPACE_ROOT}\", line 545, in _wait_for_data\n    await self._waiter\nasyncio.exceptions.CancelledError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 545, in _run_agent_phase\n    await asyncio.wait_for(\n  File \"${WORKSPACE_ROOT}\", line 519, in wait_for\n    async with timeouts.timeout(timeout):\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 115, in __aexit__\n    raise TimeoutError from exc_val\nTimeoutError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 77, in _run_agent\n    await self._run_agent_phase(\n  File \"${WORKSPACE_ROOT}\", line 554, in _run_agent_phase\n    raise AgentTimeoutError(\nharbor.trial.errors.AgentTimeoutError: Agent execution timed out after 240.0 seconds\n",
+        "occurred_at": "2026-10-16T06:34:05.666843Z"
+      }
+    }
+  ],
+  "response_lengths": [
+    10732,
+    11451,
+    8393,
+    12778
+  ],
+  "on_stopped_by": "Experiment owner sent SIGINT to the owned harness after confirming occupied GPUs.",
+  "foreign_owner": "Unknown. NVML host PIDs are not visible in this PID namespace.",
+  "future_harness_changes": "GPU preflight before each arm. Stop paired run after an arm fails. These changes do not reserve GPUs against external workloads."
+}

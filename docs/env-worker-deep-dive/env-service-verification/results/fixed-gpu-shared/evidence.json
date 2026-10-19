@@ -1,0 +1,215 @@
+{
+  "kernel": "NVRM version: NVIDIA UNIX x86_64 Kernel Module  535.247.01  Wed Mar 26 11:50:32 UTC 2025\nGCC version:  gcc version 8.5.0 20210514 (Tencent 8.5.0-23) (GCC) \n",
+  "libcuda_symlink": "/usr/lib64/libcuda.so.570.133.20",
+  "gpu_identity": [
+    {
+      "nvml_index": 0,
+      "uuid": "GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777",
+      "minor": 0
+    },
+    {
+      "nvml_index": 1,
+      "uuid": "GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd",
+      "minor": 2
+    },
+    {
+      "nvml_index": 2,
+      "uuid": "GPU-b46511f3-5ebc-4057-d9d7-68ac47385dce",
+      "minor": 3
+    },
+    {
+      "nvml_index": 3,
+      "uuid": "GPU-4a92eb22-4980-ad29-91df-3b7d6d988765",
+      "minor": 1
+    },
+    {
+      "nvml_index": 4,
+      "uuid": "GPU-8b48d72b-0714-6c96-0c43-d088ef6fe34d",
+      "minor": 4
+    },
+    {
+      "nvml_index": 5,
+      "uuid": "GPU-c45af252-11aa-87a7-3990-13ee894dd2db",
+      "minor": 7
+    },
+    {
+      "nvml_index": 6,
+      "uuid": "GPU-ffcf88f0-a452-2789-22b0-591b5f2ae50b",
+      "minor": 5
+    },
+    {
+      "nvml_index": 7,
+      "uuid": "GPU-0c521243-77cf-e237-b704-cd8dcac8481e",
+      "minor": 6
+    }
+  ],
+  "third_admission": {
+    "status": "wait",
+    "lease": null,
+    "reason": "every eligible unit is at capacity"
+  },
+  "during": {
+    "leases": [
+      {
+        "lease_id": "shared-1-34cf0c3d",
+        "session_id": "shared-8b9b6a6f-0",
+        "unit_id": "shared",
+        "node_ip": "192.168.1.10",
+        "gpu_indices": [
+          1
+        ],
+        "demand": {
+          "cpu": 1,
+          "memory_mb": 512,
+          "needs_gpu": true,
+          "gpu_memory_mb": 512
+        },
+        "granted_at": 4950806.124524538,
+        "last_seen": 4950806.124524538,
+        "shared": true,
+        "node_service_url": "http://192.168.1.10:36857/cda93cb0c53e429c9dbd5cddd444a871/gpu"
+      },
+      {
+        "lease_id": "shared-2-e614c7a3",
+        "session_id": "shared-8b9b6a6f-1",
+        "unit_id": "shared",
+        "node_ip": "192.168.1.10",
+        "gpu_indices": [
+          1
+        ],
+        "demand": {
+          "cpu": 1,
+          "memory_mb": 512,
+          "needs_gpu": true,
+          "gpu_memory_mb": 512
+        },
+        "granted_at": 4950807.67088954,
+        "last_seen": 4950807.67088954,
+        "shared": true,
+        "node_service_url": "http://192.168.1.10:36857/cda93cb0c53e429c9dbd5cddd444a871/gpu"
+      }
+    ],
+    "snapshot": [
+      {
+        "unit_id": "shared",
+        "node_ip": "192.168.1.10",
+        "containers_running": 2,
+        "max_containers": 2,
+        "cpu_used": 2,
+        "cpu_quota": 4.0,
+        "memory_used_mb": 1024,
+        "memory_mb": 4096,
+        "declared_gpu_memory_mb": 1024,
+        "measured_gpu_memory_mb": 0.0,
+        "gpu_memory_mb": 2048,
+        "sessions": [
+          "shared-8b9b6a6f-0",
+          "shared-8b9b6a6f-1"
+        ],
+        "sessions_waiting": 1
+      }
+    ],
+    "telemetry": "0, GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777, 0 MiB\n1, GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd, 774 MiB\n2, GPU-b46511f3-5ebc-4057-d9d7-68ac47385dce, 0 MiB\n3, GPU-4a92eb22-4980-ad29-91df-3b7d6d988765, 0 MiB\n4, GPU-8b48d72b-0714-6c96-0c43-d088ef6fe34d, 0 MiB\n5, GPU-c45af252-11aa-87a7-3990-13ee894dd2db, 0 MiB\n6, GPU-ffcf88f0-a452-2789-22b0-591b5f2ae50b, 0 MiB\n7, GPU-0c521243-77cf-e237-b704-cd8dcac8481e, 0 MiB\n",
+    "containers": "f1aac9d0e529 evg-8b9b6a6f-1-main-1\nae8bfbd023f0 evg-8b9b6a6f-0-main-1\n"
+  },
+  "shared_results": [
+    {
+      "stdout": "{\"device_count\": 1, \"device_name\": \"NVIDIA H20\", \"uuid_hex\": \"77ed957951542afbe9384c0eb22a8ebd\", \"kernel_output\": 42, \"allocation_bytes\": 67108864, \"visible_devices\": [\"/dev/nvidia0\", \"/dev/nvidia1\", \"/dev/nvidia2\", \"/dev/nvidia3\", \"/dev/nvidia4\", \"/dev/nvidia5\", \"/dev/nvidia6\", \"/dev/nvidia7\"], \"nvidia_smi\": \"0, GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd\\n\"}\n",
+      "stderr": null,
+      "return_code": 0
+    },
+    {
+      "stdout": "{\"device_count\": 1, \"device_name\": \"NVIDIA H20\", \"uuid_hex\": \"77ed957951542afbe9384c0eb22a8ebd\", \"kernel_output\": 42, \"allocation_bytes\": 67108864, \"visible_devices\": [\"/dev/nvidia0\", \"/dev/nvidia1\", \"/dev/nvidia2\", \"/dev/nvidia3\", \"/dev/nvidia4\", \"/dev/nvidia5\", \"/dev/nvidia6\", \"/dev/nvidia7\"], \"nvidia_smi\": \"0, GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd\\n\"}\n",
+      "stderr": null,
+      "return_code": 0
+    }
+  ],
+  "shared_probes": [
+    {
+      "device_count": 1,
+      "device_name": "NVIDIA H20",
+      "uuid_hex": "77ed957951542afbe9384c0eb22a8ebd",
+      "kernel_output": 42,
+      "allocation_bytes": 67108864,
+      "visible_devices": [
+        "/dev/nvidia0",
+        "/dev/nvidia1",
+        "/dev/nvidia2",
+        "/dev/nvidia3",
+        "/dev/nvidia4",
+        "/dev/nvidia5",
+        "/dev/nvidia6",
+        "/dev/nvidia7"
+      ],
+      "nvidia_smi": "0, GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd\n"
+    },
+    {
+      "device_count": 1,
+      "device_name": "NVIDIA H20",
+      "uuid_hex": "77ed957951542afbe9384c0eb22a8ebd",
+      "kernel_output": 42,
+      "allocation_bytes": 67108864,
+      "visible_devices": [
+        "/dev/nvidia0",
+        "/dev/nvidia1",
+        "/dev/nvidia2",
+        "/dev/nvidia3",
+        "/dev/nvidia4",
+        "/dev/nvidia5",
+        "/dev/nvidia6",
+        "/dev/nvidia7"
+      ],
+      "nvidia_smi": "0, GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd\n"
+    }
+  ],
+  "after_shared": [
+    {
+      "unit_id": "shared",
+      "node_ip": "192.168.1.10",
+      "containers_running": 0,
+      "max_containers": 2,
+      "cpu_used": 0,
+      "cpu_quota": 4.0,
+      "memory_used_mb": 0,
+      "memory_mb": 4096,
+      "declared_gpu_memory_mb": 0,
+      "measured_gpu_memory_mb": 0.0,
+      "gpu_memory_mb": 2048,
+      "sessions": [],
+      "sessions_waiting": 0
+    }
+  ],
+  "wrong_driver_cuinit": {
+    "stdout": "0\n",
+    "stderr": null,
+    "return_code": 0
+  },
+  "wrong_driver_nvidia_smi": {
+    "stdout": "GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd\n",
+    "stderr": null,
+    "return_code": 0
+  },
+  "driver_mismatch_reproduced": false,
+  "wrong_driver_loaded_maps": {
+    "stdout": "12080\n7f4506097000-7f4506210000 r--p 00000000 00:e6 14992369196405035044       /usr/lib64/libcuda.so.1\n7f4506210000-7f4506f2c000 r-xp 00179000 00:e6 14992369196405035044       /usr/lib64/libcuda.so.1\n7f4506f2c000-7f450a326000 r--p 00e95000 00:e6 14992369196405035044       /usr/lib64/libcuda.so.1\n7f450a326000-7f450a403000 r--p 0428e000 00:e6 14992369196405035044       /usr/lib64/libcuda.so.1\n7f450a403000-7f450a4a7000 rw-p 0436b000 00:e6 14992369196405035044       /usr/lib64/libcuda.so.1\n\n",
+    "stderr": null,
+    "return_code": 0
+  },
+  "final_snapshot": [
+    {
+      "unit_id": "shared",
+      "node_ip": "192.168.1.10",
+      "containers_running": 0,
+      "max_containers": 2,
+      "cpu_used": 0,
+      "cpu_quota": 4.0,
+      "memory_used_mb": 0,
+      "memory_mb": 4096,
+      "declared_gpu_memory_mb": 0,
+      "measured_gpu_memory_mb": 0.0,
+      "gpu_memory_mb": 2048,
+      "sessions": [],
+      "sessions_waiting": 0
+    }
+  ]
+}

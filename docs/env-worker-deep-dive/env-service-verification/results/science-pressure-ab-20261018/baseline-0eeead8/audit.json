@@ -1,0 +1,80 @@
+{
+  "scope": "CPU admission replay plus historical timing analysis; NOT old-commit GPU training",
+  "baseline_commit": "0eeead861ffafed6bf31c962d259fd847775dcf9",
+  "current_head": "fc92a777466e1a751c7c7fc174deb08823ce93db",
+  "source_sha256": {
+    "examples/sciaccel_rl/agent_loop.py": "2ea26118ae47aff208c389a98267f3becdd28d3a8071241337709792f1e8ee3a",
+    "examples/sciaccel_rl/runner.py": "9441395eeacac33788d13f88ae7f751c4fe4c3a95f1172052d90aca99a056a12",
+    "examples/sciaccel_rl/config/gpu-compose-override.yaml": "894bd46d1fed8f4248050a6a7aff0bb89c317f4b4301575ec4c3085552c6e3a8",
+    "examples/sciaccel_rl/config/sciaccel_agent_config.yaml": "3ee601c2e5e52d8a76abbbd1a6221672eb51dc231895e5819668cc629baa5301"
+  },
+  "baseline": {
+    "workers": 2,
+    "per_worker_limit": 2,
+    "total_admitted": 4,
+    "when_static_override_enabled_device_for_each_episode": [
+      "/dev/nvidia0"
+    ],
+    "shipped_agent_config_override_empty": true
+  },
+  "current_ledger": {
+    "decisions": [
+      "granted",
+      "granted",
+      "wait",
+      "wait"
+    ],
+    "allocated_devices": [
+      [
+        6
+      ],
+      [
+        7
+      ]
+    ],
+    "after_release": [
+      "granted",
+      "granted"
+    ]
+  },
+  "historical_all_recorded_pressure_commands_by_exit_code": {
+    "off": {
+      "42": {
+        "count": 7,
+        "min_seconds": 0.5918402671813965,
+        "max_seconds": 1.85282564163208,
+        "mean_seconds": 1.0883054392678397
+      },
+      "0": {
+        "count": 9,
+        "min_seconds": 45.944141149520874,
+        "max_seconds": 48.15756273269653,
+        "mean_seconds": 46.59776939286126
+      }
+    },
+    "on": {
+      "0": {
+        "count": 8,
+        "min_seconds": 45.99293255805969,
+        "max_seconds": 46.33459424972534,
+        "mean_seconds": 46.14389190077782
+      }
+    }
+  },
+  "historical_current_off_on_first_two_steps_seconds": {
+    "off": {
+      "wait_for_gen": 591.5812141271308,
+      "old_log_prob": 12.880306182429194,
+      "update_actor": 76.75332421157509,
+      "step": 681.5619080523029,
+      "other": 0.3470635311678052
+    },
+    "on": {
+      "wait_for_gen": 1211.5577215142548,
+      "old_log_prob": 17.305654090829194,
+      "update_actor": 138.55507518723607,
+      "step": 1367.7452469281852,
+      "other": 0.3267961358651519
+    }
+  }
+}

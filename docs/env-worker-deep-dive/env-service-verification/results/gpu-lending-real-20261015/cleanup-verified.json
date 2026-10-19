@@ -1,0 +1,15 @@
+{
+  "containers": [],
+  "gpu_processes": [],
+  "gpu_memory": [
+    "0, GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777, 0 MiB",
+    "1, GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd, 0 MiB",
+    "2, GPU-b46511f3-5ebc-4057-d9d7-68ac47385dce, 0 MiB",
+    "3, GPU-4a92eb22-4980-ad29-91df-3b7d6d988765, 0 MiB",
+    "4, GPU-8b48d72b-0714-6c96-0c43-d088ef6fe34d, 0 MiB",
+    "5, GPU-c45af252-11aa-87a7-3990-13ee894dd2db, 0 MiB",
+    "6, GPU-ffcf88f0-a452-2789-22b0-591b5f2ae50b, 0 MiB",
+    "7, GPU-0c521243-77cf-e237-b704-cd8dcac8481e, 0 MiB"
+  ],
+  "owned_processes": []
+}

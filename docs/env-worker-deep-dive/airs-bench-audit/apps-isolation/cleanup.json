@@ -1,0 +1,34 @@
+{
+  "containers": {
+    "apps-20261015-f1": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "apps-20261015-f2": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "apps-20261015-real": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "apps-20261015-debug": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "remove_image": {
+    "exit_code": 0,
+    "stdout": "Untagged: airs-apps-smoke:20261015\nDeleted: sha256:91ab9aa5ae1bdf6370053b15e475a4ca12dd3539ce76f79ab8be862349e0b88b\n",
+    "stderr": ""
+  },
+  "remaining_image": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

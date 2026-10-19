@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import socket
+import threading
 import time
 from collections.abc import Mapping
 from dataclasses import dataclass, field
@@ -94,10 +95,11 @@ class HttpRuntimeConfig:
         return max(1, (self.total_concurrency + self.producer_count - 1) // self.producer_count)
 
 
-_http_client: aiohttp.ClientSession | None = None
+# Socket transports must stay on the event loop that created their connection pool.
+_http_clients: dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
+_http_clients_lock = threading.Lock()
 
-# Maximum concurrency for the global HTTP client. Kept for compatibility with
-# callers that use create_aiohttp_client(concurrency=None).
+# Default connection limit for each event loop when callers omit `concurrency`.
 _client_concurrency: int = DEFAULT_HTTP_CONCURRENCY
 _runtime_config = HttpRuntimeConfig()
 
@@ -207,18 +209,26 @@ def create_aiohttp_client(
 
 
 async def _ensure_http_client() -> aiohttp.ClientSession:
-    global _http_client
-    if _http_client is None or _http_client.closed:
-        _http_client = create_aiohttp_client()
-    return _http_client
+    loop = asyncio.get_running_loop()
+    with _http_clients_lock:
+        client = _http_clients.get(loop)
+        if client is None or client.closed:
+            client = create_aiohttp_client()
+            _http_clients[loop] = client
+        return client
 
 
 async def close_http_client() -> None:
-    """Close the global aiohttp client if it has been created."""
-    global _http_client
-    if _http_client is not None and not _http_client.closed:
-        await _http_client.close()
-    _http_client = None
+    """
+    Close this event loop's connection pool before shutting down its loop.
+
+    Other threads keep their own clients and any requests already in flight.
+    """
+    loop = asyncio.get_running_loop()
+    with _http_clients_lock:
+        client = _http_clients.pop(loop, None)
+    if client is not None and not client.closed:
+        await client.close()
 
 
 def _extract_worker_headers(headers: Mapping[str, str]) -> dict[str, str | None]:

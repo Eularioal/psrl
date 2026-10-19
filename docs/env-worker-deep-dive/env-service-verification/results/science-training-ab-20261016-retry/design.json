@@ -1,0 +1,24 @@
+{
+  "task_names": [
+    "sciaccel/laps-repair-coef-2d-rktmod-l17k1",
+    "sciaccel/laps-repair-subtle-2d-rktmod-l17k1"
+  ],
+  "unique_tasks": 2,
+  "rows": 4,
+  "steps_per_arm": 2,
+  "batch_size": 2,
+  "rollout_n": 2,
+  "planned_episodes_per_arm": 8,
+  "timeout_per_arm_s": 1440,
+  "task_timeout_s": 240,
+  "max_turns": 16,
+  "model": "${MODEL_ROOT}/Qwen3.5-4B",
+  "seed": 17,
+  "scope": "Original CPU science repair containers with GPU model training and inference.",
+  "only_treatment": "psrl.env_service.enable",
+  "env_concurrency": 4,
+  "training_gpus": 2,
+  "rollout_gpus": 1,
+  "overlong_filtering": false,
+  "note": "Truncated trajectories remain trainable in both arms. No convergence claim."
+}

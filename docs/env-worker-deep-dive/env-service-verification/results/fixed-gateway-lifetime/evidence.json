@@ -1,0 +1,25 @@
+{
+  "running": [
+    {
+      "owner": 3128806,
+      "smg": 3129323,
+      "session": 3129704,
+      "listeners": [
+        40753,
+        36079,
+        8100
+      ]
+    },
+    {
+      "owner": 3128809,
+      "smg": 3129848,
+      "session": 3130229,
+      "listeners": [
+        8101,
+        32939,
+        34721
+      ]
+    }
+  ],
+  "all_processes_exited": true
+}

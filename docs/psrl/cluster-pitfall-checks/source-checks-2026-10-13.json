@@ -1,0 +1,6 @@
+{
+  "ray_temp_source": "def get_user_temp_dir():\n    if \"RAY_TMPDIR\" in os.environ:\n        return os.environ[\"RAY_TMPDIR\"]\n    elif sys.platform.startswith(\"linux\") and \"TMPDIR\" in os.environ:\n        return os.environ[\"TMPDIR\"]\n    elif sys.platform.startswith(\"darwin\") or sys.platform.startswith(\"linux\"):\n        # Ideally we wouldn't need this fallback, but keep it for now for\n        # for compatibility\n        tempdir = os.path.join(os.sep, \"tmp\")\n    else:\n        tempdir = tempfile.gettempdir()\n    return tempdir\n",
+  "default_verl_origin": "${PSRL_WORKSPACE}/third_party/verl/verl/__init__.py",
+  "patched_verl_file": "${WORKSPACE_ROOT}/.verification-deps/verl/utils/tensordict_utils.py",
+  "snapshot_note": "Results describe the recorded working tree, including existing uncommitted changes."
+}

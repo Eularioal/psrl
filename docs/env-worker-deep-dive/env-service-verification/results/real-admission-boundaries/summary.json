@@ -1,0 +1,18 @@
+{
+  "node_ip": "192.168.1.10",
+  "gpu_uuid": "GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777",
+  "cases": {
+    "gpu-memory": {
+      "passed": true,
+      "remaining": []
+    },
+    "cpu": {
+      "passed": true,
+      "remaining": []
+    },
+    "host-memory": {
+      "passed": true,
+      "remaining": []
+    }
+  }
+}

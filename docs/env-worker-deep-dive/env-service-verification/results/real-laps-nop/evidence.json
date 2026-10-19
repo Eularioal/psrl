@@ -1,0 +1,2136 @@
+{
+  "task": "${SCIENCE_INFRA_ROOT}/sciaccel-rl/build/laps/repair/easy/laps-repair-coef-2d-rktmod-l17k1",
+  "agent": "nop",
+  "node_ip": "192.168.1.10",
+  "lease": {
+    "lease_id": "real-harbor-1-316e34c6",
+    "session_id": "verify-ca7d9822a1",
+    "unit_id": "real-harbor",
+    "node_ip": "192.168.1.10",
+    "gpu_indices": [],
+    "demand": {
+      "cpu": 4.0,
+      "memory_mb": 8192,
+      "needs_gpu": false,
+      "gpu_memory_mb": 0
+    },
+    "granted_at": 4932359.536871342,
+    "last_seen": 4932359.536871342,
+    "shared": false
+  },
+  "containers": {
+    "882e44d823e0": {
+      "name": "/laps-repair-coef-2d-rktmod-l17k1__gk29sgl__env-main-1",
+      "labels": {
+        "com.docker.compose.config-hash": "4d0e56a5ebca8073b503bcd928dfdb7fa73a769aab1ebf25cc233267670f271f",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+        "com.docker.compose.image": "sha256:01f8a16187e2c795dedebffa41a5110eee144b55fcb63c3b6b5484d17cc60043",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "laps-repair-coef-2d-rktmod-l17k1__gk29sgl__env",
+        "com.docker.compose.project.config_files": "/tmp/tmpw4a2hetx/laps-repair-coef-2d-rktmod-l17k1__Gk29SgL__env-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/env-service-lease-dq2rwd9m.yaml,${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-laps-nop/actor-label.yaml,/tmp/tmpxadxd446/docker-compose-environment.json,/tmp/tmpt2002a_2/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmpm4l3kql3/docker-compose-egress-control-services.json",
+        "com.docker.compose.project.working_dir": "${SCIENCE_INFRA_ROOT}/sciaccel-rl/build/laps/repair/easy/laps-repair-coef-2d-rktmod-l17k1/environment",
+        "com.docker.compose.service": "main",
+        "com.docker.compose.version": "2.27.0",
+        "psrl.actor_id": "verify-ca7d9822a1",
+        "psrl.env_lease": "real-harbor-1-316e34c6",
+        "psrl.env_unit": "real-harbor"
+      },
+      "devices": null,
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-laps-nop/jobs/verify-ca7d9822a1/laps-repair-coef-2d-rktmod-l17k1__Gk29SgL/artifacts/logs/artifacts",
+          "Destination": "/logs/artifacts",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-laps-nop/jobs/verify-ca7d9822a1/laps-repair-coef-2d-rktmod-l17k1__Gk29SgL/verifier",
+          "Destination": "/logs/verifier",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-laps-nop/jobs/verify-ca7d9822a1/laps-repair-coef-2d-rktmod-l17k1__Gk29SgL/agent",
+          "Destination": "/logs/agent",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        }
+      ]
+    }
+  },
+  "related_containers": {
+    "882e44d823e0": {
+      "name": "/laps-repair-coef-2d-rktmod-l17k1__gk29sgl__env-main-1",
+      "labels": {
+        "com.docker.compose.config-hash": "4d0e56a5ebca8073b503bcd928dfdb7fa73a769aab1ebf25cc233267670f271f",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+        "com.docker.compose.image": "sha256:01f8a16187e2c795dedebffa41a5110eee144b55fcb63c3b6b5484d17cc60043",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "laps-repair-coef-2d-rktmod-l17k1__gk29sgl__env",
+        "com.docker.compose.project.config_files": "/tmp/tmpw4a2hetx/laps-repair-coef-2d-rktmod-l17k1__Gk29SgL__env-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/env-service-lease-dq2rwd9m.yaml,${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-laps-nop/actor-label.yaml,/tmp/tmpxadxd446/docker-compose-environment.json,/tmp/tmpt2002a_2/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmpm4l3kql3/docker-compose-egress-control-services.json",
+        "com.docker.compose.project.working_dir": "${SCIENCE_INFRA_ROOT}/sciaccel-rl/build/laps/repair/easy/laps-repair-coef-2d-rktmod-l17k1/environment",
+        "com.docker.compose.service": "main",
+        "com.docker.compose.version": "2.27.0",
+        "psrl.actor_id": "verify-ca7d9822a1",
+        "psrl.env_lease": "real-harbor-1-316e34c6",
+        "psrl.env_unit": "real-harbor"
+      },
+      "devices": null
+    },
+    "29c2cf429add": {
+      "name": "/laps-repair-coef-2d-rktmod-l17k1__gk29sgl__env-harbor-docker-egress-control-sidecar-1",
+      "labels": {
+        "com.docker.compose.config-hash": "c6489fa7de8f63c5181015e57eddbf15b0e255c369b5610cc0ba7547c6c3c826",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "laps-repair-coef-2d-rktmod-l17k1__gk29sgl__env",
+        "com.docker.compose.project.config_files": "/tmp/tmpw4a2hetx/laps-repair-coef-2d-rktmod-l17k1__Gk29SgL__env-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/env-service-lease-dq2rwd9m.yaml,${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-laps-nop/actor-label.yaml,/tmp/tmpxadxd446/docker-compose-environment.json,/tmp/tmpt2002a_2/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmpm4l3kql3/docker-compose-egress-control-services.json",
+        "com.docker.compose.project.working_dir": "${SCIENCE_INFRA_ROOT}/sciaccel-rl/build/laps/repair/easy/laps-repair-coef-2d-rktmod-l17k1/environment",
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "com.docker.compose.version": "2.27.0"
+      },
+      "devices": null
+    },
+    "bf281efd5b84": {
+      "name": "/laps-repair-coef-2d-rktmod-l17k1__gk29sgl__verifier__trial-main-1",
+      "labels": {
+        "com.docker.compose.config-hash": "fd207861e90ccdd86153a7bc52f5abd7a3f924021b10eb28d8be25dcb66f9f2e",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+        "com.docker.compose.image": "sha256:b7f227133b43e36bc0069f073a90d552abf14572742e4e16efa5ecfbf3f1c52f",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "laps-repair-coef-2d-rktmod-l17k1__gk29sgl__verifier__trial",
+        "com.docker.compose.project.config_files": "/tmp/tmpiv8bal38/laps-repair-coef-2d-rktmod-l17k1__Gk29SgL__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmpnvr_0rol/docker-compose-environment.json,/tmp/tmp_gmv6ae2/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmplznvstau/docker-compose-egress-control-services.json",
+        "com.docker.compose.project.working_dir": "${SCIENCE_INFRA_ROOT}/sciaccel-rl/build/laps/repair/easy/laps-repair-coef-2d-rktmod-l17k1/tests",
+        "com.docker.compose.service": "main",
+        "com.docker.compose.version": "2.27.0"
+      },
+      "devices": null
+    },
+    "d2a3c5b33ff4": {
+      "name": "/laps-repair-coef-2d-rktmod-l17k1__gk29sgl__verifier__trial-harbor-docker-egress-control-sidecar-1",
+      "labels": {
+        "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "laps-repair-coef-2d-rktmod-l17k1__gk29sgl__verifier__trial",
+        "com.docker.compose.project.config_files": "/tmp/tmpiv8bal38/laps-repair-coef-2d-rktmod-l17k1__Gk29SgL__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmpnvr_0rol/docker-compose-environment.json,/tmp/tmp_gmv6ae2/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmplznvstau/docker-compose-egress-control-services.json",
+        "com.docker.compose.project.working_dir": "${SCIENCE_INFRA_ROOT}/sciaccel-rl/build/laps/repair/easy/laps-repair-coef-2d-rktmod-l17k1/tests",
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "com.docker.compose.version": "2.27.0"
+      },
+      "devices": null
+    }
+  },
+  "samples": [
+    {
+      "at": 1791856824.402793,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856826.5455096,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856828.8634167,
+      "containers": [
+        "882e44d823e0"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856830.994319,
+      "containers": [
+        "882e44d823e0"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856833.3427398,
+      "containers": [
+        "882e44d823e0"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856835.7187078,
+      "containers": [
+        "882e44d823e0"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856837.8716476,
+      "containers": [
+        "882e44d823e0"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856839.9935508,
+      "containers": [
+        "882e44d823e0"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856842.2024488,
+      "containers": [
+        "882e44d823e0"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856844.555271,
+      "containers": [
+        "882e44d823e0"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856846.9445794,
+      "containers": [
+        "882e44d823e0"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856849.0771627,
+      "containers": [
+        "882e44d823e0"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856851.22308,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856853.3761237,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856855.8132985,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856857.9677813,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856860.0972917,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856867.845693,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856870.2704606,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856872.4258456,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856874.5596101,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856876.7098808,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856879.152083,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856881.5713904,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856883.718627,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856885.8379207,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856888.0391474,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856890.3174663,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856892.660528,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856895.1388586,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856897.2915215,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856899.4318163,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856901.5895362,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856903.7881854,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856906.1877475,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856908.5046117,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856910.8773417,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856912.9819639,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856915.1132789,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856917.3229957,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856919.5683389,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856921.9544594,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856929.0553446,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856931.4342968,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856933.7756598,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856935.9137607,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856938.0203333,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856940.1337943,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856942.247146,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856944.5670443,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856946.91874,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856949.0212169,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856951.221706,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856953.3306546,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856955.483275,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856957.7674994,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856959.9563482,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856962.092913,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856964.2250965,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856966.3550825,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856968.6331565,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856971.0296452,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856973.166603,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856975.2868986,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856977.4267185,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856979.800508,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856986.6219182,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856988.7492833,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856990.9044473,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856993.018957,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856995.5229816,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856997.6439135,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791856999.8417575,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791857001.9873183,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791857004.2564788,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791857006.6561542,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791857009.2124388,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791857011.584283,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791857013.9505177,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791857016.0727599,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791857018.2090297,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791857020.349374,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791857022.5200164,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791857024.9311736,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 4.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 8192,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "verify-ca7d9822a1"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    }
+  ],
+  "started_at": 1791856822.264143,
+  "overlay": {
+    "services": {
+      "main": {
+        "labels": [
+          "psrl.env_lease=real-harbor-1-316e34c6",
+          "psrl.env_unit=real-harbor"
+        ]
+      }
+    }
+  },
+  "trials": [
+    {
+      "task": "sciaccel/laps-repair-coef-2d-rktmod-l17k1",
+      "reward": {
+        "check_aw_2d_256": 0.0,
+        "check_aw_2d_512": 0.0,
+        "equivalence_pass": 0,
+        "floor": 0.5,
+        "reward": 0.0,
+        "reward_repair": 0.0,
+        "speedup": 0.0
+      },
+      "exception": null
+    }
+  ],
+  "remaining_before_release": [],
+  "final_snapshot": [
+    {
+      "unit_id": "real-harbor",
+      "node_ip": "192.168.1.10",
+      "containers_running": 0,
+      "max_containers": 2,
+      "cpu_used": 0,
+      "cpu_quota": 16.0,
+      "memory_used_mb": 0,
+      "memory_mb": 32768,
+      "declared_gpu_memory_mb": 0,
+      "measured_gpu_memory_mb": null,
+      "gpu_memory_mb": 0,
+      "sessions": [],
+      "sessions_waiting": 0
+    }
+  ],
+  "elapsed_s": 203.95854449272156
+}

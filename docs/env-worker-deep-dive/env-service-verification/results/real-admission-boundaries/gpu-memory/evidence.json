@@ -1,0 +1,179 @@
+{
+  "unit": {
+    "unit_id": "gpu-memory-f3b08a21",
+    "node_ip": "192.168.1.10",
+    "cpu_quota": 8,
+    "memory_mb": 8192,
+    "max_containers": 8,
+    "gpu_indices": [
+      0
+    ],
+    "gpu_memory_mb": 1200
+  },
+  "demand": {
+    "cpu": 1,
+    "memory_mb": 512,
+    "needs_gpu": true,
+    "gpu_memory_mb": 512
+  },
+  "started_at": 1791863604.250756,
+  "before_wait": {
+    "snapshot": [
+      {
+        "unit_id": "gpu-memory-f3b08a21",
+        "node_ip": "192.168.1.10",
+        "containers_running": 2,
+        "max_containers": 8,
+        "cpu_used": 2,
+        "cpu_quota": 8.0,
+        "memory_used_mb": 1024,
+        "memory_mb": 8192,
+        "declared_gpu_memory_mb": 1024,
+        "measured_gpu_memory_mb": 0.0,
+        "gpu_memory_mb": 1200,
+        "sessions": [
+          "gpu-memory-f3b08a21-0",
+          "gpu-memory-f3b08a21-1"
+        ],
+        "sessions_waiting": 0
+      }
+    ],
+    "containers": [
+      "5dea3826c3ca",
+      "5c372a4bcd6c"
+    ]
+  },
+  "admission_at_boundary": "timeout",
+  "wait_s": 2.466594995930791,
+  "while_blocked": {
+    "snapshot": [
+      {
+        "unit_id": "gpu-memory-f3b08a21",
+        "node_ip": "192.168.1.10",
+        "containers_running": 2,
+        "max_containers": 8,
+        "cpu_used": 2,
+        "cpu_quota": 8.0,
+        "memory_used_mb": 1024,
+        "memory_mb": 8192,
+        "declared_gpu_memory_mb": 1024,
+        "measured_gpu_memory_mb": 774.0,
+        "gpu_memory_mb": 1200,
+        "sessions": [
+          "gpu-memory-f3b08a21-0",
+          "gpu-memory-f3b08a21-1"
+        ],
+        "sessions_waiting": 0
+      }
+    ],
+    "containers": [
+      "5dea3826c3ca",
+      "5c372a4bcd6c"
+    ],
+    "gpu_telemetry": "0, GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777, 774 MiB\n1, GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd, 0 MiB\n2, GPU-b46511f3-5ebc-4057-d9d7-68ac47385dce, 0 MiB\n3, GPU-4a92eb22-4980-ad29-91df-3b7d6d988765, 0 MiB\n4, GPU-8b48d72b-0714-6c96-0c43-d088ef6fe34d, 0 MiB\n5, GPU-c45af252-11aa-87a7-3990-13ee894dd2db, 0 MiB\n6, GPU-ffcf88f0-a452-2789-22b0-591b5f2ae50b, 0 MiB\n7, GPU-0c521243-77cf-e237-b704-cd8dcac8481e, 0 MiB\n"
+  },
+  "cuda_results": [
+    {
+      "stdout": "{\"device_count\": 1, \"device_name\": \"NVIDIA H20\", \"uuid_hex\": \"eb89300acff91c5a984852fd65c0f777\", \"kernel_output\": 42, \"allocation_bytes\": 67108864, \"visible_devices\": [\"/dev/nvidia0\", \"/dev/nvidia1\", \"/dev/nvidia2\", \"/dev/nvidia3\", \"/dev/nvidia4\", \"/dev/nvidia5\", \"/dev/nvidia6\", \"/dev/nvidia7\"], \"nvidia_smi\": \"0, GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777\\n\"}\n",
+      "stderr": null,
+      "return_code": 0
+    },
+    {
+      "stdout": "{\"device_count\": 1, \"device_name\": \"NVIDIA H20\", \"uuid_hex\": \"eb89300acff91c5a984852fd65c0f777\", \"kernel_output\": 42, \"allocation_bytes\": 67108864, \"visible_devices\": [\"/dev/nvidia0\", \"/dev/nvidia1\", \"/dev/nvidia2\", \"/dev/nvidia3\", \"/dev/nvidia4\", \"/dev/nvidia5\", \"/dev/nvidia6\", \"/dev/nvidia7\"], \"nvidia_smi\": \"0, GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777\\n\"}\n",
+      "stderr": null,
+      "return_code": 0
+    }
+  ],
+  "after_one_release": {
+    "snapshot": [
+      {
+        "unit_id": "gpu-memory-f3b08a21",
+        "node_ip": "192.168.1.10",
+        "containers_running": 1,
+        "max_containers": 8,
+        "cpu_used": 1,
+        "cpu_quota": 8.0,
+        "memory_used_mb": 512,
+        "memory_mb": 8192,
+        "declared_gpu_memory_mb": 512,
+        "measured_gpu_memory_mb": 774.0,
+        "gpu_memory_mb": 1200,
+        "sessions": [
+          "gpu-memory-f3b08a21-1"
+        ],
+        "sessions_waiting": 0
+      }
+    ],
+    "containers": [
+      "5dea3826c3ca"
+    ]
+  },
+  "resumed": {
+    "lease": {
+      "lease_id": "gpu-memory-f3b08a21-3-e942f3fd",
+      "session_id": "gpu-memory-f3b08a21-resumed",
+      "unit_id": "gpu-memory-f3b08a21",
+      "node_ip": "192.168.1.10",
+      "gpu_indices": [
+        0
+      ],
+      "demand": {
+        "cpu": 1,
+        "memory_mb": 512,
+        "needs_gpu": true,
+        "gpu_memory_mb": 512
+      },
+      "granted_at": 4939174.369808875,
+      "last_seen": 4939174.369808875,
+      "shared": true
+    },
+    "execution": {
+      "stdout": "{\"device_count\": 1, \"device_name\": \"NVIDIA H20\", \"uuid_hex\": \"eb89300acff91c5a984852fd65c0f777\", \"kernel_output\": 42, \"allocation_bytes\": 67108864, \"visible_devices\": [\"/dev/nvidia0\", \"/dev/nvidia1\", \"/dev/nvidia2\", \"/dev/nvidia3\", \"/dev/nvidia4\", \"/dev/nvidia5\", \"/dev/nvidia6\", \"/dev/nvidia7\"], \"nvidia_smi\": \"0, GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777\\n\"}\n",
+      "stderr": null,
+      "return_code": 0
+    },
+    "containers": [
+      "71277a5bfe2d",
+      "5dea3826c3ca"
+    ],
+    "snapshot": [
+      {
+        "unit_id": "gpu-memory-f3b08a21",
+        "node_ip": "192.168.1.10",
+        "containers_running": 2,
+        "max_containers": 8,
+        "cpu_used": 2,
+        "cpu_quota": 8.0,
+        "memory_used_mb": 1024,
+        "memory_mb": 8192,
+        "declared_gpu_memory_mb": 1024,
+        "measured_gpu_memory_mb": 0.0,
+        "gpu_memory_mb": 1200,
+        "sessions": [
+          "gpu-memory-f3b08a21-1",
+          "gpu-memory-f3b08a21-resumed"
+        ],
+        "sessions_waiting": 0
+      }
+    ]
+  },
+  "passed": true,
+  "final_snapshot": [
+    {
+      "unit_id": "gpu-memory-f3b08a21",
+      "node_ip": "192.168.1.10",
+      "containers_running": 0,
+      "max_containers": 8,
+      "cpu_used": 0,
+      "cpu_quota": 8.0,
+      "memory_used_mb": 0,
+      "memory_mb": 8192,
+      "declared_gpu_memory_mb": 0,
+      "measured_gpu_memory_mb": 0.0,
+      "gpu_memory_mb": 1200,
+      "sessions": [],
+      "sessions_waiting": 0
+    }
+  ],
+  "remaining_containers": []
+}

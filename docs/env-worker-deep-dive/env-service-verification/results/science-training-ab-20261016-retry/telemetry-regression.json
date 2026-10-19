@@ -1,0 +1,5 @@
+{
+  "timeout_injection": "passed",
+  "normal_sample": "passed",
+  "missing_sample_policy": "gpu_error field, no fabricated zero, no propagation into training"
+}

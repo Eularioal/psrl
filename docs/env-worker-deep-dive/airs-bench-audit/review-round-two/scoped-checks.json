@@ -1,0 +1,99 @@
+[
+  {
+    "command": [
+      "-m",
+      "ruff",
+      "check",
+      "examples/airs_bench/runner.py",
+      "examples/airs_bench/grading.py",
+      "examples/airs_bench/apps/candidate.py",
+      "examples/airs_bench/config.py",
+      "examples/airs_bench/reward.py",
+      "psrl/workers/agent_loop/loops/mlgym_agent_loop.py",
+      "psrl/workers/env_worker/worker.py",
+      "psrl/workers/env_worker/coordinator.py",
+      "tests/env_worker/test_worker.py",
+      "tests/env_worker/test_airs_regressions.py",
+      "tests/examples/airs_bench/test_runner.py",
+      "tests/examples/airs_bench/test_grading_isolation.py",
+      "tests/examples/airs_bench/test_apps_isolation.py",
+      "tests/examples/airs_bench/test_mlgym_agent_loop.py",
+      "tests/examples/airs_bench/test_upstream_mlgym.py"
+    ],
+    "exit_code": 0,
+    "output": "All checks passed!\n"
+  },
+  {
+    "command": [
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "examples/airs_bench/runner.py",
+      "examples/airs_bench/grading.py",
+      "examples/airs_bench/apps/candidate.py",
+      "examples/airs_bench/config.py",
+      "examples/airs_bench/reward.py",
+      "psrl/workers/agent_loop/loops/mlgym_agent_loop.py",
+      "psrl/workers/env_worker/worker.py",
+      "psrl/workers/env_worker/coordinator.py",
+      "tests/env_worker/test_worker.py",
+      "tests/env_worker/test_airs_regressions.py",
+      "tests/examples/airs_bench/test_runner.py",
+      "tests/examples/airs_bench/test_grading_isolation.py",
+      "tests/examples/airs_bench/test_apps_isolation.py",
+      "tests/examples/airs_bench/test_mlgym_agent_loop.py",
+      "tests/examples/airs_bench/test_upstream_mlgym.py"
+    ],
+    "exit_code": 0,
+    "output": "15 files already formatted\n"
+  },
+  {
+    "command": [
+      "scripts/audit_prose_style.py",
+      "examples/airs_bench/runner.py",
+      "examples/airs_bench/grading.py",
+      "examples/airs_bench/apps/candidate.py",
+      "examples/airs_bench/config.py",
+      "examples/airs_bench/reward.py",
+      "psrl/workers/agent_loop/loops/mlgym_agent_loop.py",
+      "psrl/workers/env_worker/worker.py",
+      "psrl/workers/env_worker/coordinator.py",
+      "tests/env_worker/test_worker.py",
+      "tests/env_worker/test_airs_regressions.py",
+      "tests/examples/airs_bench/test_runner.py",
+      "tests/examples/airs_bench/test_grading_isolation.py",
+      "tests/examples/airs_bench/test_apps_isolation.py",
+      "tests/examples/airs_bench/test_mlgym_agent_loop.py",
+      "tests/examples/airs_bench/test_upstream_mlgym.py"
+    ],
+    "exit_code": 0,
+    "output": "Prose-style audit passed.\n"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      "examples/airs_bench/runner.py",
+      "examples/airs_bench/grading.py",
+      "examples/airs_bench/apps/candidate.py",
+      "examples/airs_bench/config.py",
+      "examples/airs_bench/reward.py",
+      "psrl/workers/agent_loop/loops/mlgym_agent_loop.py",
+      "psrl/workers/env_worker/worker.py",
+      "psrl/workers/env_worker/coordinator.py",
+      "tests/env_worker/test_worker.py",
+      "tests/env_worker/test_airs_regressions.py",
+      "tests/examples/airs_bench/test_runner.py",
+      "tests/examples/airs_bench/test_grading_isolation.py",
+      "tests/examples/airs_bench/test_apps_isolation.py",
+      "tests/examples/airs_bench/test_mlgym_agent_loop.py",
+      "tests/examples/airs_bench/test_upstream_mlgym.py",
+      "examples/airs_bench/README.md"
+    ],
+    "exit_code": 0,
+    "output": ""
+  }
+]

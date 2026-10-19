@@ -1,0 +1,262 @@
+{
+  "off": {
+    "scope": "Real science runner and Harbor CUDA, no model inference or training",
+    "training_attempted": false,
+    "exit_code": 0,
+    "episodes": [
+      {
+        "start": 1792087364.5624173,
+        "held": 1792087364.6146243,
+        "end": 1792087379.7354267,
+        "cuda": {
+          "device_count": 1,
+          "device_name": "NVIDIA H20",
+          "uuid_hex": "ef35a6b4cbcecff975a8b83f69f61616",
+          "kernel_output": 42,
+          "allocation_bytes": 15032385536,
+          "visible_devices": [
+            "/dev/nvidia0",
+            "/dev/nvidia1",
+            "/dev/nvidia2",
+            "/dev/nvidia3",
+            "/dev/nvidia4",
+            "/dev/nvidia5",
+            "/dev/nvidia6",
+            "/dev/nvidia7"
+          ],
+          "nvidia_smi": "0, GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616\n",
+          "allocation_start": 1792087364.5624173,
+          "held_from": 1792087364.6146243,
+          "released_at": 1792087379.7354267
+        },
+        "path": "off/harbor-jobs/cuda-ab-d5c37094-off-0/2026-10-16__02-02-30/budget-cuda__o5tB4jk/agent/budget-agent.json"
+      },
+      {
+        "start": 1792087401.8880465,
+        "held": 1792087401.944389,
+        "end": 1792087417.321039,
+        "cuda": {
+          "device_count": 1,
+          "device_name": "NVIDIA H20",
+          "uuid_hex": "ef35a6b4cbcecff975a8b83f69f61616",
+          "kernel_output": 42,
+          "allocation_bytes": 15032385536,
+          "visible_devices": [
+            "/dev/nvidia0",
+            "/dev/nvidia1",
+            "/dev/nvidia2",
+            "/dev/nvidia3",
+            "/dev/nvidia4",
+            "/dev/nvidia5",
+            "/dev/nvidia6",
+            "/dev/nvidia7"
+          ],
+          "nvidia_smi": "0, GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616\n",
+          "allocation_start": 1792087401.8880465,
+          "held_from": 1792087401.944389,
+          "released_at": 1792087417.321039
+        },
+        "path": "off/harbor-jobs/cuda-ab-d5c37094-off-1/2026-10-16__02-03-14/budget-cuda__j2Tr34s/agent/budget-agent.json"
+      },
+      {
+        "start": 1792087437.7687652,
+        "held": 1792087437.8203888,
+        "end": 1792087452.9463727,
+        "cuda": {
+          "device_count": 1,
+          "device_name": "NVIDIA H20",
+          "uuid_hex": "ef35a6b4cbcecff975a8b83f69f61616",
+          "kernel_output": 42,
+          "allocation_bytes": 15032385536,
+          "visible_devices": [
+            "/dev/nvidia0",
+            "/dev/nvidia1",
+            "/dev/nvidia2",
+            "/dev/nvidia3",
+            "/dev/nvidia4",
+            "/dev/nvidia5",
+            "/dev/nvidia6",
+            "/dev/nvidia7"
+          ],
+          "nvidia_smi": "0, GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616\n",
+          "allocation_start": 1792087437.7687652,
+          "held_from": 1792087437.8203888,
+          "released_at": 1792087452.9463727
+        },
+        "path": "off/harbor-jobs/cuda-ab-d5c37094-off-2/2026-10-16__02-03-50/budget-cuda__zUuJahC/agent/budget-agent.json"
+      },
+      {
+        "start": 1792087473.9142892,
+        "held": 1792087473.9750433,
+        "end": 1792087489.0998127,
+        "cuda": {
+          "device_count": 1,
+          "device_name": "NVIDIA H20",
+          "uuid_hex": "ef35a6b4cbcecff975a8b83f69f61616",
+          "kernel_output": 42,
+          "allocation_bytes": 15032385536,
+          "visible_devices": [
+            "/dev/nvidia0",
+            "/dev/nvidia1",
+            "/dev/nvidia2",
+            "/dev/nvidia3",
+            "/dev/nvidia4",
+            "/dev/nvidia5",
+            "/dev/nvidia6",
+            "/dev/nvidia7"
+          ],
+          "nvidia_smi": "0, GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616\n",
+          "allocation_start": 1792087473.9142892,
+          "held_from": 1792087473.9750433,
+          "released_at": 1792087489.0998127
+        },
+        "path": "off/harbor-jobs/cuda-ab-d5c37094-off-3/2026-10-16__02-04-25/budget-cuda__sSJeT7m/agent/budget-agent.json"
+      }
+    ],
+    "completed_cuda_commands": 4,
+    "max_simultaneous_cuda_contexts": 1,
+    "gpu_work_window_s": 124.53739547729492,
+    "process_wall_s": 154.18617010116577,
+    "training_completed": false,
+    "metrics": {},
+    "peak_gpu_mib": 14661.0,
+    "max_ledger_leases": null,
+    "max_ledger_declared_mib": null,
+    "max_waiters": null,
+    "ledger_samples_with_three_and_waiter": 0
+  },
+  "on": {
+    "scope": "Real science runner and Harbor CUDA, no model inference or training",
+    "training_attempted": false,
+    "exit_code": 0,
+    "episodes": [
+      {
+        "start": 1792087541.3660424,
+        "held": 1792087541.4190507,
+        "end": 1792087556.8376195,
+        "cuda": {
+          "device_count": 1,
+          "device_name": "NVIDIA H20",
+          "uuid_hex": "ef35a6b4cbcecff975a8b83f69f61616",
+          "kernel_output": 42,
+          "allocation_bytes": 15032385536,
+          "visible_devices": [
+            "/dev/nvidia0",
+            "/dev/nvidia1",
+            "/dev/nvidia2",
+            "/dev/nvidia3",
+            "/dev/nvidia4",
+            "/dev/nvidia5",
+            "/dev/nvidia6",
+            "/dev/nvidia7"
+          ],
+          "nvidia_smi": "0, GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616\n",
+          "allocation_start": 1792087541.3660424,
+          "held_from": 1792087541.4190507,
+          "released_at": 1792087556.8376195
+        },
+        "path": "on/harbor-jobs/cuda-ab-d5c37094-on-0/2026-10-16__02-05-26/budget-cuda__6HcvCAN/agent/budget-agent.json"
+      },
+      {
+        "start": 1792087541.3696597,
+        "held": 1792087541.4210289,
+        "end": 1792087556.8431785,
+        "cuda": {
+          "device_count": 1,
+          "device_name": "NVIDIA H20",
+          "uuid_hex": "ef35a6b4cbcecff975a8b83f69f61616",
+          "kernel_output": 42,
+          "allocation_bytes": 15032385536,
+          "visible_devices": [
+            "/dev/nvidia0",
+            "/dev/nvidia1",
+            "/dev/nvidia2",
+            "/dev/nvidia3",
+            "/dev/nvidia4",
+            "/dev/nvidia5",
+            "/dev/nvidia6",
+            "/dev/nvidia7"
+          ],
+          "nvidia_smi": "0, GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616\n",
+          "allocation_start": 1792087541.3696597,
+          "held_from": 1792087541.4210289,
+          "released_at": 1792087556.8431785
+        },
+        "path": "on/harbor-jobs/cuda-ab-d5c37094-on-2/2026-10-16__02-05-28/budget-cuda__LeuWkTv/agent/budget-agent.json"
+      },
+      {
+        "start": 1792087543.0519564,
+        "held": 1792087543.112899,
+        "end": 1792087558.2881432,
+        "cuda": {
+          "device_count": 1,
+          "device_name": "NVIDIA H20",
+          "uuid_hex": "ef35a6b4cbcecff975a8b83f69f61616",
+          "kernel_output": 42,
+          "allocation_bytes": 15032385536,
+          "visible_devices": [
+            "/dev/nvidia0",
+            "/dev/nvidia1",
+            "/dev/nvidia2",
+            "/dev/nvidia3",
+            "/dev/nvidia4",
+            "/dev/nvidia5",
+            "/dev/nvidia6",
+            "/dev/nvidia7"
+          ],
+          "nvidia_smi": "0, GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616\n",
+          "allocation_start": 1792087543.0519564,
+          "held_from": 1792087543.112899,
+          "released_at": 1792087558.2881432
+        },
+        "path": "on/harbor-jobs/cuda-ab-d5c37094-on-3/2026-10-16__02-05-30/budget-cuda__rYahRFy/agent/budget-agent.json"
+      },
+      {
+        "start": 1792087586.3411262,
+        "held": 1792087586.393338,
+        "end": 1792087601.5357664,
+        "cuda": {
+          "device_count": 1,
+          "device_name": "NVIDIA H20",
+          "uuid_hex": "ef35a6b4cbcecff975a8b83f69f61616",
+          "kernel_output": 42,
+          "allocation_bytes": 15032385536,
+          "visible_devices": [
+            "/dev/nvidia0",
+            "/dev/nvidia1",
+            "/dev/nvidia2",
+            "/dev/nvidia3",
+            "/dev/nvidia4",
+            "/dev/nvidia5",
+            "/dev/nvidia6",
+            "/dev/nvidia7"
+          ],
+          "nvidia_smi": "0, GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616\n",
+          "allocation_start": 1792087586.3411262,
+          "held_from": 1792087586.393338,
+          "released_at": 1792087601.5357664
+        },
+        "path": "on/harbor-jobs/cuda-ab-d5c37094-on-1/2026-10-16__02-06-18/budget-cuda__fmRf5WJ/agent/budget-agent.json"
+      }
+    ],
+    "completed_cuda_commands": 4,
+    "max_simultaneous_cuda_contexts": 3,
+    "gpu_work_window_s": 60.169723987579346,
+    "process_wall_s": 112.09258508682251,
+    "training_completed": false,
+    "metrics": {},
+    "peak_gpu_mib": 43976.0,
+    "max_ledger_leases": 3,
+    "max_ledger_declared_mib": 43008,
+    "max_waiters": 1,
+    "ledger_samples_with_three_and_waiter": 49
+  },
+  "interpretation": {
+    "task": "Real science runner and Harbor CUDA comparison, no inference or training",
+    "control": "EnvRouter disabled retains the existing exclusive GPU gate",
+    "unit_budget_gib": 55,
+    "per_task_declared_gib": 14,
+    "nominal_remaining_gib_at_three": 13,
+    "limitation": "No claim of universal contention freedom, convergence, or vLLM/Docker same-card lending"
+  }
+}

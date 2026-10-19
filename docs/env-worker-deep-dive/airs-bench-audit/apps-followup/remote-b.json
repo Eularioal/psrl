@@ -1,0 +1,341 @@
+{
+  "status": "passed",
+  "run_id": "airs-followup-20261016-b",
+  "scope": "bounded real Docker and MLGym replay, no Ray/TITO/LLM/GPU",
+  "image": "sha256:c7f5889cfb0dc50e605113bfcd1e0f021144471fdb14594866e6afdace011096 agent",
+  "fixtures": [
+    {
+      "row": 0,
+      "kind": "stdin",
+      "original_cases": 565,
+      "source_sha256": "0206b59d4050bbf38f2a2bb25c974c6123786ac316e6e1ce4a4280f0c9339dae",
+      "cases": 3
+    },
+    {
+      "row": 1,
+      "kind": "stdin",
+      "original_cases": 278,
+      "source_sha256": "36d9ec74663c444ba3809c0b6447f96967e30d21018387835fb42747f7e53b0e",
+      "cases": 3
+    },
+    {
+      "row": 2303,
+      "kind": "function",
+      "original_cases": 5,
+      "source_sha256": "6a7bfab8eeb00b1d8d9b402b84fe0078bbab7910fe3c1ce8c5513fd6ba7b5579",
+      "cases": 3
+    },
+    {
+      "row": 2365,
+      "kind": "function",
+      "original_cases": 4,
+      "source_sha256": "10cd841e00c843073ec153358e88d00a9b39e9cfb6bb040be8e4e456c0dad6c9",
+      "cases": 3
+    }
+  ],
+  "legacy": [
+    {
+      "passed": true,
+      "elapsed_s": 0.9095096560195088
+    },
+    {
+      "passed": true,
+      "elapsed_s": 0.9375836020335555
+    },
+    {
+      "passed": true,
+      "elapsed_s": 0.9072643108665943
+    },
+    {
+      "passed": true,
+      "elapsed_s": 1.118526034988463
+    },
+    {
+      "passed": false,
+      "elapsed_s": 0.948563446290791
+    },
+    {
+      "passed": false,
+      "elapsed_s": 0.90562704205513
+    }
+  ],
+  "isolated": [
+    {
+      "score": 1.0,
+      "elapsed_s": 2.9068253934383392,
+      "matches_legacy": true
+    },
+    {
+      "score": 1.0,
+      "elapsed_s": 2.629120459780097,
+      "matches_legacy": true
+    },
+    {
+      "score": 1.0,
+      "elapsed_s": 2.7757206922397017,
+      "matches_legacy": true
+    },
+    {
+      "score": 1.0,
+      "elapsed_s": 2.5823042318224907,
+      "matches_legacy": true
+    }
+  ],
+  "bad_then_good": {
+    "score": 1.0,
+    "elapsed_s": 3.2922956263646483
+  },
+  "all_bad": {
+    "score": 0.0,
+    "elapsed_s": 4.812492221593857
+  },
+  "episode": {
+    "exit_status": "submitted",
+    "airs_scores": [
+      {
+        "Pass@5": 1.0
+      },
+      {
+        "Pass@5": 1.0
+      }
+    ],
+    "airs_submit_count": 1,
+    "airs_validate_count": 1,
+    "airs_eval_error": "",
+    "turns": 3,
+    "timing": {
+      "episode_s": 75.75961145013571
+    }
+  },
+  "timings": [
+    {
+      "op": "create",
+      "role": "agent",
+      "elapsed_s": 0.3025184292346239
+    },
+    {
+      "op": "create",
+      "role": "verifier",
+      "elapsed_s": 0.2544006584212184
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.2521267281845212
+    },
+    {
+      "op": "destroy",
+      "id": "c-c0f9e1ae963d4eab819eb5d9f1e4c639",
+      "elapsed_s": 0.13894334249198437
+    },
+    {
+      "op": "destroy",
+      "id": "v-c36769c495b54dde8bd823455a108fcd",
+      "elapsed_s": 0.30174139980226755
+    },
+    {
+      "op": "create",
+      "role": "verifier",
+      "elapsed_s": 0.2523252200335264
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.2525298008695245
+    },
+    {
+      "op": "destroy",
+      "id": "c-bc75a4046241487b9c62ed60912da7d6",
+      "elapsed_s": 0.0836086655035615
+    },
+    {
+      "op": "destroy",
+      "id": "v-7f91e08957c84e70a1792489cebe25e9",
+      "elapsed_s": 0.10727231577038765
+    },
+    {
+      "op": "create",
+      "role": "verifier",
+      "elapsed_s": 0.25239433255046606
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.25227893330156803
+    },
+    {
+      "op": "destroy",
+      "id": "c-f7e5a2461b7f4f9e8b612b0c6200736b",
+      "elapsed_s": 0.09682927373796701
+    },
+    {
+      "op": "destroy",
+      "id": "v-9eef88dfe3c44b0da10d414c551e23fa",
+      "elapsed_s": 0.10512026399374008
+    },
+    {
+      "op": "create",
+      "role": "verifier",
+      "elapsed_s": 0.25209219101816416
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.25226850528270006
+    },
+    {
+      "op": "destroy",
+      "id": "c-268dd441e51940dfa4471bc22b268c2e",
+      "elapsed_s": 0.08774936571717262
+    },
+    {
+      "op": "destroy",
+      "id": "v-3776f82f4bcd46c582fa83d531e19027",
+      "elapsed_s": 0.09872916992753744
+    },
+    {
+      "op": "create",
+      "role": "verifier",
+      "elapsed_s": 0.25234452821314335
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.30230559781193733
+    },
+    {
+      "op": "destroy",
+      "id": "c-fb74159e6d26424284110ce3771aa70f",
+      "elapsed_s": 0.0972211379557848
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.25207856204360723
+    },
+    {
+      "op": "destroy",
+      "id": "c-d9bdf9d930eb41b19ff560afa77c7672",
+      "elapsed_s": 0.0982098774984479
+    },
+    {
+      "op": "destroy",
+      "id": "v-833bdaf7ced240e68afb5d9214dfb270",
+      "elapsed_s": 0.12024618778377771
+    },
+    {
+      "op": "create",
+      "role": "verifier",
+      "elapsed_s": 0.20631698705255985
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.30296243727207184
+    },
+    {
+      "op": "destroy",
+      "id": "c-c0f2b4ee1ffa4c1781f0f7803f3b5d51",
+      "elapsed_s": 0.09995713736861944
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.20198907237499952
+    },
+    {
+      "op": "destroy",
+      "id": "c-8480897729fb46fda7e4db8e868a9907",
+      "elapsed_s": 0.10419440921396017
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.2523052003234625
+    },
+    {
+      "op": "destroy",
+      "id": "c-470000728d544ce280c244f2be97a116",
+      "elapsed_s": 0.09512867964804173
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.20210970286279917
+    },
+    {
+      "op": "destroy",
+      "id": "c-538f176cd9704278868f59c57f8f01c2",
+      "elapsed_s": 0.08128792885690928
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.2524529481306672
+    },
+    {
+      "op": "destroy",
+      "id": "c-8304fde6e17145d9a45adf91a3fa3f8d",
+      "elapsed_s": 0.08276021294295788
+    },
+    {
+      "op": "destroy",
+      "id": "v-f52c8ee13de54c82a640d2ac243a6367",
+      "elapsed_s": 0.10384558979421854
+    },
+    {
+      "op": "create",
+      "role": "verifier",
+      "elapsed_s": 0.25217866338789463
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.25214823614805937
+    },
+    {
+      "op": "destroy",
+      "id": "c-39f9dd12dac54969a560bad318b547aa",
+      "elapsed_s": 0.1848389459773898
+    },
+    {
+      "op": "destroy",
+      "id": "v-f10572a5f50941ff94ba36b16a88b672",
+      "elapsed_s": 0.1225678538903594
+    },
+    {
+      "op": "create",
+      "role": "verifier",
+      "elapsed_s": 0.2522352272644639
+    },
+    {
+      "op": "create",
+      "role": "candidate",
+      "elapsed_s": 0.25225727539509535
+    },
+    {
+      "op": "destroy",
+      "id": "c-159facb29e8f4423ade0efeb46894ac3",
+      "elapsed_s": 0.0893624285236001
+    },
+    {
+      "op": "destroy",
+      "id": "v-f56dc238bc4c42739c57cb853929c0a2",
+      "elapsed_s": 0.10181690659373999
+    },
+    {
+      "op": "destroy",
+      "id": "s-4d4cc568ae65",
+      "elapsed_s": 0.10710191167891026
+    }
+  ],
+  "worker_remaining": 0,
+  "cleanup_remaining": [],
+  "duration_s": 185.0064367679879,
+  "source_sha256": {
+    "examples/airs_bench/apps/__init__.py": "510d376fdfd61f186a310f74226a6f4b41712448056e8a7dafcc2c1986d5b4eb",
+    "examples/airs_bench/apps/candidate.py": "fad3724aabd24bfd61e7510e2be1ff4126476763553dbb56f0994d0c6f058bfd",
+    "examples/airs_bench/apps/judge.py": "65820ba7e4dcfa73a6d7a1086dc4807dded468d02669bf77e8a201725847f416",
+    "examples/airs_bench/apps/comparison.py": "30922ea6651d60f5568c5860963be15c8e003a57a19872e4aeaf864118ba6a96"
+  }
+}

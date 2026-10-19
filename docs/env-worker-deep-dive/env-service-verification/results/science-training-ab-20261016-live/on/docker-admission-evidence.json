@@ -1,0 +1,125 @@
+{
+  "time": 1792141691.185199,
+  "containers": [
+    {
+      "name": "/laps-repair-coef-2d-rktmod-l17k1__hhqz47b__env-main-1",
+      "id": "21bf6cbed3de427188e07dc1449e8feb4709fcaf354d76dc0fb779c8f87f1cc9",
+      "labels": {
+        "com.docker.compose.service": "main",
+        "psrl.actor_id": "internal.example.invalid",
+        "psrl.env_lease": "science-cpu-3-76d7e561",
+        "psrl.env_unit": "science-cpu"
+      },
+      "cpu_quota": 0,
+      "cpu_period": 0,
+      "nano_cpus": 4000000000,
+      "memory_bytes": 8589934592,
+      "device_requests": null
+    },
+    {
+      "name": "/laps-repair-coef-2d-rktmod-l17k1__hhqz47b__env-harbor-docker-egress-control-sidecar-1",
+      "id": "a8226465f9c1641011f4d3bc322cab7651246998beab540d147a3e5b8eb93f0b",
+      "labels": {
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "psrl.actor_id": "internal.example.invalid",
+        "psrl.env_lease": "science-cpu-3-76d7e561",
+        "psrl.env_unit": "science-cpu"
+      },
+      "cpu_quota": 0,
+      "cpu_period": 0,
+      "nano_cpus": 0,
+      "memory_bytes": 0,
+      "device_requests": null
+    },
+    {
+      "name": "/laps-repair-subtle-2d-rktmod-l17__ucz5y4o__env-main-1",
+      "id": "e48f66dcd3c07d4ad0eb8f0b4605a0c41d7dad7a84d6eeb033937a8e5166c627",
+      "labels": {
+        "com.docker.compose.service": "main",
+        "psrl.actor_id": "internal.example.invalid",
+        "psrl.env_lease": "science-cpu-4-b2e7e7c6",
+        "psrl.env_unit": "science-cpu"
+      },
+      "cpu_quota": 0,
+      "cpu_period": 0,
+      "nano_cpus": 4000000000,
+      "memory_bytes": 8589934592,
+      "device_requests": null
+    },
+    {
+      "name": "/laps-repair-subtle-2d-rktmod-l17__ucz5y4o__env-harbor-docker-egress-control-sidecar-1",
+      "id": "d05e3c3d9149e01afd682d0c1fd228602d0a97d4ed5ac02e9e5c60f34cfa3a78",
+      "labels": {
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "psrl.actor_id": "internal.example.invalid",
+        "psrl.env_lease": "science-cpu-4-b2e7e7c6",
+        "psrl.env_unit": "science-cpu"
+      },
+      "cpu_quota": 0,
+      "cpu_period": 0,
+      "nano_cpus": 0,
+      "memory_bytes": 0,
+      "device_requests": null
+    },
+    {
+      "name": "/laps-repair-coef-2d-rktmod-l17k1__yevd9wr__env-main-1",
+      "id": "38f98bfcca0c3700a9b95e82c466c2c593f153a6ee28374377db9d494e028182",
+      "labels": {
+        "com.docker.compose.service": "main",
+        "psrl.actor_id": "internal.example.invalid",
+        "psrl.env_lease": "science-cpu-2-92f4af20",
+        "psrl.env_unit": "science-cpu"
+      },
+      "cpu_quota": 0,
+      "cpu_period": 0,
+      "nano_cpus": 4000000000,
+      "memory_bytes": 8589934592,
+      "device_requests": null
+    },
+    {
+      "name": "/laps-repair-coef-2d-rktmod-l17k1__yevd9wr__env-harbor-docker-egress-control-sidecar-1",
+      "id": "4e1774759e3731b7b87ecbe16501d380e5d634c962a28d523d8fc6d595f4f7fc",
+      "labels": {
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "psrl.actor_id": "internal.example.invalid",
+        "psrl.env_lease": "science-cpu-2-92f4af20",
+        "psrl.env_unit": "science-cpu"
+      },
+      "cpu_quota": 0,
+      "cpu_period": 0,
+      "nano_cpus": 0,
+      "memory_bytes": 0,
+      "device_requests": null
+    },
+    {
+      "name": "/laps-repair-subtle-2d-rktmod-l17__sit9vlp__env-main-1",
+      "id": "414a4dfffcf580f9c7d5a589d9269ff2ed22283c17305f5ef332b0e09a77af52",
+      "labels": {
+        "com.docker.compose.service": "main",
+        "psrl.actor_id": "internal.example.invalid",
+        "psrl.env_lease": "science-cpu-1-7b344b88",
+        "psrl.env_unit": "science-cpu"
+      },
+      "cpu_quota": 0,
+      "cpu_period": 0,
+      "nano_cpus": 4000000000,
+      "memory_bytes": 8589934592,
+      "device_requests": null
+    },
+    {
+      "name": "/laps-repair-subtle-2d-rktmod-l17__sit9vlp__env-harbor-docker-egress-control-sidecar-1",
+      "id": "7f571d5c7c8bab2b176110d09922d20bb54cbaab41017fe4cea07806dd5d8197",
+      "labels": {
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "psrl.actor_id": "internal.example.invalid",
+        "psrl.env_lease": "science-cpu-1-7b344b88",
+        "psrl.env_unit": "science-cpu"
+      },
+      "cpu_quota": 0,
+      "cpu_period": 0,
+      "nano_cpus": 0,
+      "memory_bytes": 0,
+      "device_requests": null
+    }
+  ]
+}

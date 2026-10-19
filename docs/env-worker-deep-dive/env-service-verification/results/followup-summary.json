@@ -1,0 +1,95 @@
+{
+  "date": "2026-10-13",
+  "psrl_commit": "00db595",
+  "psrl_source_modified": false,
+  "resource_boundaries": {
+    "node_ip": "192.168.1.10",
+    "gpu_uuid": "GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777",
+    "cases": {
+      "gpu-memory": {
+        "passed": true,
+        "remaining": []
+      },
+      "cpu": {
+        "passed": true,
+        "remaining": []
+      },
+      "host-memory": {
+        "passed": true,
+        "remaining": []
+      }
+    }
+  },
+  "existing_env_worker": {
+    "passed": true,
+    "workers": [
+      0,
+      1
+    ],
+    "remaining_containers": []
+  },
+  "crash_recovery": {
+    "evidence": "real-crash-recovery-v2/evidence.json",
+    "ttl_releases_ledger": true,
+    "ttl_container_cleanup_requires_next_acquire": true,
+    "actual_worker_killed": true,
+    "unlabelled_verifier_containers_remaining_after_both_reapers": 2,
+    "tagged_containers_present_at_kill": 0,
+    "manual_cleanup_remaining": []
+  },
+  "training": {
+    "evidence": "one-step-training-explicit-ray-v2",
+    "explicit_ray_address_connected": true,
+    "completed_science_trials": [
+      {
+        "path": "one-step-training-explicit-ray-v2/harbor-jobs/01a1336f-5d1c-7d00-a2b1-f1c84ddc7544/2026-10-13__12-04-58/laps-repair-coef-2d-rktmod-l17k1__XcQGcQD/result.json",
+        "task": "sciaccel/laps-repair-coef-2d-rktmod-l17k1",
+        "reward": 0.0,
+        "exception": null
+      },
+      {
+        "path": "one-step-training-explicit-ray-v2/harbor-jobs/01a1336f-5d1c-7d00-a2b1-f1da106cce73/2026-10-13__12-05-09/laps-repair-coef-2d-rktmod-l17k1__su2ZTre/result.json",
+        "task": "sciaccel/laps-repair-coef-2d-rktmod-l17k1",
+        "reward": 0.0,
+        "exception": null
+      }
+    ],
+    "completed_optimizer_step": false,
+    "exit_code": 1,
+    "failure_stage": "_compute_old_log_prob -> prepare_micro_batches -> index_select_tensor_dict -> tensor.unbind",
+    "error": "split_with_sizes: input dimension 2407, split_sizes=[4]",
+    "original_ray_pointer_unchanged": true
+  },
+  "cleanup": {
+    "192.168.1.10": {
+      "time": "2026-10-13T12:10:38.204236",
+      "hostname": "internal.example.invalid",
+      "docker": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gpu": {
+        "exit_code": 0,
+        "stdout": "0, 0 MiB\n1, 0 MiB\n2, 0 MiB\n3, 0 MiB\n4, 0 MiB\n5, 0 MiB\n6, 0 MiB\n7, 0 MiB\n",
+        "stderr": ""
+      },
+      "ray_processes": []
+    },
+    "192.168.1.13": {
+      "time": "2026-10-13T12:10:38.427059",
+      "hostname": "internal.example.invalid",
+      "docker": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gpu": {
+        "exit_code": 0,
+        "stdout": "0, 0 MiB\n1, 0 MiB\n2, 0 MiB\n3, 0 MiB\n4, 0 MiB\n5, 0 MiB\n6, 0 MiB\n7, 0 MiB\n",
+        "stderr": ""
+      },
+      "ray_processes": []
+    }
+  }
+}

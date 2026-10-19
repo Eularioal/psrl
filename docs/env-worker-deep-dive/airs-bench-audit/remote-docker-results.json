@@ -1,0 +1,70 @@
+{
+  "run_id": "airs-20261014-c729",
+  "status": "passed",
+  "scope": "real Docker, synthetic CSV, no Ray/LLM/GPU",
+  "docker_version": "26.1.3",
+  "imports": {
+    "psrl": "${PSRL_WORKSPACE}/psrl/__init__.py",
+    "verl": "${PSRL_WORKSPACE}/third_party/verl/verl/__init__.py",
+    "transfer_queue": "${PSRL_WORKSPACE}/third_party/TransferQueue/transfer_queue/__init__.py"
+  },
+  "source_sha256": {
+    "psrl/workers/env_worker/worker.py": "067dba5fe73e59487336bc50caf6b77fdc0e63d2319d5f942f6f348f5553fd56",
+    "psrl/workers/env_worker/shell.py": "fb8786a5602085bb4854a7df611cf90caf6c1790678c3d8b7f880a5f1a61a3a4",
+    "psrl/workers/env_worker/sandbox.py": "4c980b4e3313e1459c53aee8d32ccb307e9d149f47d7f41e56f9f5948333b7b6",
+    "psrl/environments/mlgym_env.py": "d15b1dea0830fa945c8562370a0790a1ddb30824de59cd6044febdd941b33ca5",
+    "examples/airs_bench/grading.py": "4edf3166d8a08db951dce01cb5605d8956f1ac38e6631cb0bf070af0b8dcaa58"
+  },
+  "build_log": "#0 building with \"default\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile\n#1 transferring dockerfile: 331B done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/python:3.13-slim\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 2B done\n#3 DONE 0.0s\n\n#4 [1/3] FROM docker.io/library/python:3.13-slim\n#4 CACHED\n\n#5 [2/3] RUN useradd -m -u 1000 agent && mkdir -p /home/agent/workspace /home/agent/miniconda3/envs/mlgym_generic/bin && ln -s /usr/local/bin/python /home/agent/miniconda3/envs/mlgym_generic/bin/python && chown -R agent:agent /home/agent\n#5 DONE 0.2s\n\n#6 [3/3] WORKDIR /home/agent/workspace\n#6 DONE 0.0s\n\n#7 exporting to image\n#7 exporting layers\n#7 exporting layers 0.6s done\n#7 writing image sha256:8aead9133eb21de0ec113c498f475d6d13d354e98e0b3df9991ac34e774c0a8e done\n#7 naming to docker.io/library/airs-smoke-airs-20261014-c729:local done\n#7 DONE 0.6s\n",
+  "image_id": "sha256:8aead9133eb21de0ec113c498f475d6d13d354e98e0b3df9991ac34e774c0a8e",
+  "sandbox_id": "s-6fc3302b890f",
+  "agent_container": {
+    "user": "agent",
+    "network": "none",
+    "nano_cpus": 1000000000,
+    "memory": 268435456,
+    "mounts": [
+      {
+        "Type": "bind",
+        "Source": "/tmp/airs-smoke-w1glhm6e/airs_prepared/tiny/train",
+        "Destination": "/home/agent/workspace/data/train",
+        "Mode": "ro",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Source": "/tmp/airs-smoke-w1glhm6e/airs_prepared/tiny/test",
+        "Destination": "/home/agent/workspace/data/test",
+        "Mode": "ro",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "public_data": "id\n0\n1\n2\n\n",
+  "private_data_denied": "PRIVATE_DATA_UNAVAILABLE\n\n",
+  "read_only": "READ_ONLY\n\n",
+  "shell_state": "/tmp\n\n",
+  "nonzero_command": {
+    "stdout": "EXPECTED_NONZERO\n\n",
+    "exit_code": 1,
+    "timed_out": false,
+    "duration_s": 0.050335971638560295
+  },
+  "metrics_despite_agent_fake_evaluator": {
+    "Accuracy": 0.6666666666666666
+  },
+  "verifier_removed_before_agent_exit": true,
+  "timeout": {
+    "stdout": "A-start\n",
+    "exit_code": null,
+    "timed_out": true,
+    "duration_s": 0.40408918634057045
+  },
+  "next_command_rejected": true,
+  "containers_after_timeout": [],
+  "cleanup_remaining_containers": [],
+  "image_remove_exit_code": 0,
+  "duration_s": 75.603
+}

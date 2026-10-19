@@ -1,0 +1,156 @@
+{
+  "unit": {
+    "unit_id": "host-memory-f3b08a21",
+    "node_ip": "192.168.1.10",
+    "cpu_quota": 8,
+    "memory_mb": 768,
+    "max_containers": 8
+  },
+  "demand": {
+    "cpu": 1,
+    "memory_mb": 512,
+    "needs_gpu": false,
+    "gpu_memory_mb": 0
+  },
+  "started_at": 1791863691.695213,
+  "initial_exec": {
+    "stdout": "42\n",
+    "stderr": null,
+    "return_code": 0
+  },
+  "before_wait": {
+    "snapshot": [
+      {
+        "unit_id": "host-memory-f3b08a21",
+        "node_ip": "192.168.1.10",
+        "containers_running": 1,
+        "max_containers": 8,
+        "cpu_used": 1,
+        "cpu_quota": 8.0,
+        "memory_used_mb": 512,
+        "memory_mb": 768,
+        "declared_gpu_memory_mb": 0,
+        "measured_gpu_memory_mb": null,
+        "gpu_memory_mb": 0,
+        "sessions": [
+          "host-memory-f3b08a21-0"
+        ],
+        "sessions_waiting": 0
+      }
+    ],
+    "containers": [
+      "b940f7933148"
+    ]
+  },
+  "admission_at_boundary": "timeout",
+  "wait_s": 2.083654962480068,
+  "while_blocked": {
+    "snapshot": [
+      {
+        "unit_id": "host-memory-f3b08a21",
+        "node_ip": "192.168.1.10",
+        "containers_running": 1,
+        "max_containers": 8,
+        "cpu_used": 1,
+        "cpu_quota": 8.0,
+        "memory_used_mb": 512,
+        "memory_mb": 768,
+        "declared_gpu_memory_mb": 0,
+        "measured_gpu_memory_mb": null,
+        "gpu_memory_mb": 0,
+        "sessions": [
+          "host-memory-f3b08a21-0"
+        ],
+        "sessions_waiting": 0
+      }
+    ],
+    "containers": [
+      "b940f7933148"
+    ],
+    "gpu_telemetry": "0, GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777, 0 MiB\n1, GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd, 0 MiB\n2, GPU-b46511f3-5ebc-4057-d9d7-68ac47385dce, 0 MiB\n3, GPU-4a92eb22-4980-ad29-91df-3b7d6d988765, 0 MiB\n4, GPU-8b48d72b-0714-6c96-0c43-d088ef6fe34d, 0 MiB\n5, GPU-c45af252-11aa-87a7-3990-13ee894dd2db, 0 MiB\n6, GPU-ffcf88f0-a452-2789-22b0-591b5f2ae50b, 0 MiB\n7, GPU-0c521243-77cf-e237-b704-cd8dcac8481e, 0 MiB\n"
+  },
+  "after_one_release": {
+    "snapshot": [
+      {
+        "unit_id": "host-memory-f3b08a21",
+        "node_ip": "192.168.1.10",
+        "containers_running": 0,
+        "max_containers": 8,
+        "cpu_used": 0,
+        "cpu_quota": 8.0,
+        "memory_used_mb": 0,
+        "memory_mb": 768,
+        "declared_gpu_memory_mb": 0,
+        "measured_gpu_memory_mb": null,
+        "gpu_memory_mb": 0,
+        "sessions": [],
+        "sessions_waiting": 0
+      }
+    ],
+    "containers": []
+  },
+  "resumed": {
+    "lease": {
+      "lease_id": "host-memory-f3b08a21-2-f05eb287",
+      "session_id": "host-memory-f3b08a21-resumed",
+      "unit_id": "host-memory-f3b08a21",
+      "node_ip": "192.168.1.10",
+      "gpu_indices": [],
+      "demand": {
+        "cpu": 1,
+        "memory_mb": 512,
+        "needs_gpu": false,
+        "gpu_memory_mb": 0
+      },
+      "granted_at": 4939244.956933852,
+      "last_seen": 4939244.956933852,
+      "shared": false
+    },
+    "execution": {
+      "stdout": "42\n",
+      "stderr": null,
+      "return_code": 0
+    },
+    "containers": [
+      "ca51bd97735e"
+    ],
+    "snapshot": [
+      {
+        "unit_id": "host-memory-f3b08a21",
+        "node_ip": "192.168.1.10",
+        "containers_running": 1,
+        "max_containers": 8,
+        "cpu_used": 1,
+        "cpu_quota": 8.0,
+        "memory_used_mb": 512,
+        "memory_mb": 768,
+        "declared_gpu_memory_mb": 0,
+        "measured_gpu_memory_mb": null,
+        "gpu_memory_mb": 0,
+        "sessions": [
+          "host-memory-f3b08a21-resumed"
+        ],
+        "sessions_waiting": 0
+      }
+    ]
+  },
+  "passed": true,
+  "final_snapshot": [
+    {
+      "unit_id": "host-memory-f3b08a21",
+      "node_ip": "192.168.1.10",
+      "containers_running": 0,
+      "max_containers": 8,
+      "cpu_used": 0,
+      "cpu_quota": 8.0,
+      "memory_used_mb": 0,
+      "memory_mb": 768,
+      "declared_gpu_memory_mb": 0,
+      "measured_gpu_memory_mb": null,
+      "gpu_memory_mb": 0,
+      "sessions": [],
+      "sessions_waiting": 0
+    }
+  ],
+  "remaining_containers": []
+}

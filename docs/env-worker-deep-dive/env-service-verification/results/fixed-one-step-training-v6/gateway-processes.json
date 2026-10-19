@@ -1,0 +1,34 @@
+[
+  {
+    "pid": 3533927,
+    "name": "ray::RolloutGateway.launch_router",
+    "listeners": [
+      {
+        "ip": "127.0.0.1",
+        "port": 33127
+      },
+      {
+        "ip": "192.168.1.13",
+        "port": 8101
+      },
+      {
+        "ip": "::",
+        "port": 37923
+      }
+    ]
+  },
+  {
+    "pid": 3534421,
+    "name": "ray::RolloutGateway.launch_session_router",
+    "listeners": [
+      {
+        "ip": "192.168.1.13",
+        "port": 8200
+      },
+      {
+        "ip": "::",
+        "port": 37923
+      }
+    ]
+  }
+]

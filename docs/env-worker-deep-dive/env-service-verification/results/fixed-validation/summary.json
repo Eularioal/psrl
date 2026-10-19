@@ -1,0 +1,96 @@
+{
+  "updated_at": "2026-10-13T19:16:48.056379",
+  "real_experiments": [
+    {
+      "design": "harbor_cuda_device_identity",
+      "status": "passed",
+      "evidence": "fixed-gpu-oracle/evidence.json"
+    },
+    {
+      "design": "shared_gpu_admission",
+      "status": "passed",
+      "evidence": "fixed-gpu-shared/evidence.json"
+    },
+    {
+      "design": "cross_node_gate_b",
+      "status": "passed",
+      "evidence": "fixed-multinode/evidence.json"
+    },
+    {
+      "design": "independent_crash_cleanup",
+      "status": "passed",
+      "evidence": "fixed-crash-recovery/evidence.json"
+    },
+    {
+      "design": "resource_admission_boundaries",
+      "status": "passed",
+      "evidence": "fixed-admission-boundaries/summary.json"
+    },
+    {
+      "design": "env_worker_shell_and_capacity",
+      "status": "passed",
+      "evidence": "fixed-env-worker/evidence.json"
+    },
+    {
+      "design": "env_worker_cuda_identity",
+      "status": "passed",
+      "evidence": "fixed-env-worker-gpu-v3/evidence.json"
+    },
+    {
+      "design": "gateway_parent_death_and_ports",
+      "status": "passed",
+      "evidence": "fixed-gateway-lifetime/evidence.json"
+    }
+  ],
+  "regressions": {
+    "passed": 295,
+    "skipped": 1,
+    "skip_reason": "Current LAPS task layer has no matching multi-file defect example."
+  },
+  "static_checks": {
+    "changed_python_ruff": "passed",
+    "git_diff_check": "passed",
+    "full_pre_commit": "failed_existing_baseline_violations"
+  },
+  "training": {
+    "v3": {
+      "status": "pipeline_passed",
+      "first_step_learning_rate": 0,
+      "evidence": "fixed-one-step-training-v3/training-evidence.json"
+    },
+    "v4": {
+      "status": "timeout",
+      "exit_code": 124
+    },
+    "v5": {
+      "status": "startup_failure_fixed",
+      "reason": "orphan_gateway_metrics_port_conflict"
+    },
+    "v6": {
+      "status": "pipeline_passed",
+      "exit_code": 0,
+      "first_step_learning_rate": 1e-06,
+      "trained_tokens": 44697,
+      "policy_gradient_nonzero": false,
+      "effective_policy_update_validated": false,
+      "reason": "Both reward_repair scores are zero.",
+      "evidence": "fixed-one-step-training-v6/training-evidence.json"
+    },
+    "v7": {
+      "status": "stopped_at_user_request",
+      "exit_code": 134,
+      "reason": "Extra policy-learning experiment exceeded the intended functional verification scope.",
+      "evidence": "fixed-one-step-training-v7/cluster.json"
+    }
+  },
+  "not_validated_or_implemented": [
+    "Unified Harbor and EnvWorker backend",
+    "Hard GPU memory enforcement",
+    "Node power loss and router/node-service restart persistence",
+    "Long-running convergence and full-scale throughput"
+  ],
+  "shared_verl_install_modified": false,
+  "source_manifest": "fixed-validation/source-manifest.json",
+  "functional_verification_complete": true,
+  "additional_learning_experiments_stopped": true
+}

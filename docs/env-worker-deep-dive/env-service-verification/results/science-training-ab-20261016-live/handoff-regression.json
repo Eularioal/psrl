@@ -1,0 +1,25 @@
+{
+  "driver_release_lag": {
+    "released": true,
+    "observations": [
+      {
+        "time": 0,
+        "gpu": "0, uuid, 62087, 0, 120"
+      },
+      {
+        "time": 0,
+        "gpu": "0, uuid, 3, 0, 75"
+      }
+    ]
+  },
+  "bounded_non_release": {
+    "released": false,
+    "error": "Selected GPUs are already occupied in MiB: {0: 62087.0}.",
+    "observations": [
+      {
+        "time": 0,
+        "gpu": "0, uuid, 62087, 0, 120"
+      }
+    ]
+  }
+}

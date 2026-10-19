@@ -1,0 +1,6 @@
+{
+  "check": "local_docker_info",
+  "timed_out": true,
+  "timeout_s": 5,
+  "duration_s": 5.01
+}

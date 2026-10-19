@@ -1,0 +1,82 @@
+[
+  {
+    "pid": 3206885,
+    "session_file": "/tmp/evt-31055/session_2026-10-13_10-17-13_720469_3205291/logs/worker-5dc4162d1f78735f8bec71a53ed1da78fd1b223a82da8ce33df049e8-01000000-3206885.out",
+    "ray_address": null
+  },
+  {
+    "pid": 3206886,
+    "session_file": "/tmp/evt-31055/session_2026-10-13_10-17-13_720469_3205291/logs/worker-511c3b9d910a56ce3ffed3bb18dffb0b8436c5aea7f76a3cee463ec1-01000000-3206886.out",
+    "ray_address": null
+  },
+  {
+    "pid": 3206887,
+    "session_file": "/tmp/evt-31055/session_2026-10-13_10-17-13_720469_3205291/logs/worker-585688dd6329896b0ce4bea94f8604364114b2c85661690146581916-01000000-3206887.out",
+    "ray_address": null
+  },
+  {
+    "pid": 3206888,
+    "session_file": "/tmp/evt-31055/session_2026-10-13_10-17-13_720469_3205291/logs/worker-fe7840de64ee1d410ef56da083fb9903fc5c039ec4677b6d8833ce35-01000000-3206888.out",
+    "ray_address": null
+  },
+  {
+    "pid": 3206889,
+    "session_file": "/tmp/evt-31055/session_2026-10-13_10-17-13_720469_3205291/logs/worker-9c42a9eb3ed97e3648eda099d01ba2bfa30cac7f36a4e9d06160d851-01000000-3206889.out",
+    "ray_address": null
+  },
+  {
+    "pid": 3206890,
+    "session_file": "/tmp/evt-31055/session_2026-10-13_10-17-13_720469_3205291/logs/worker-f672838e0bd532c0552b05844d4fa4a635c705355fb1f11949d7929a-01000000-3206890.out",
+    "ray_address": null
+  },
+  {
+    "pid": 3206891,
+    "session_file": "/tmp/evt-31055/session_2026-10-13_10-17-13_720469_3205291/logs/worker-4d369a671d6f8f4214061469a67b8a4f34580114c4a5278feb1cb9f1-01000000-3206891.out",
+    "ray_address": null
+  },
+  {
+    "pid": 3206892,
+    "session_file": "/tmp/evt-31055/session_2026-10-13_10-17-13_720469_3205291/logs/worker-5cde21dbbac2a7d873ba7fc48cd0feace6422fc08cfbc135f9a97f2c-01000000-3206892.out",
+    "ray_address": null
+  },
+  {
+    "pid": 3278858,
+    "session_file": "/tmp/evtrain-bd7d3811/session_2026-10-13_15-23-57_187828_3274329/logs/worker-e63c8c37dc37df8279759f0b2cb24b12a23c52dae7ac5b76bdbcb017-02000000-3278858.out",
+    "ray_address": "192.168.1.13:61423"
+  },
+  {
+    "pid": 3278859,
+    "session_file": "/tmp/evtrain-bd7d3811/session_2026-10-13_15-23-57_187828_3274329/logs/worker-bf98691bbe25ca9f5b96cc9dbd5279f2f6c6f57607ec1abdda6984d5-02000000-3278859.out",
+    "ray_address": "192.168.1.13:61423"
+  },
+  {
+    "pid": 3278860,
+    "session_file": "/tmp/evtrain-bd7d3811/session_2026-10-13_15-23-57_187828_3274329/logs/worker-70658debcc2c9a5e884f1aeb90617665d5b5228932dd2185abb62021-02000000-3278860.out",
+    "ray_address": "192.168.1.13:61423"
+  },
+  {
+    "pid": 3278861,
+    "session_file": "/tmp/evtrain-bd7d3811/session_2026-10-13_15-23-57_187828_3274329/logs/worker-f697d1da74f14dd20b89fc3908e5a25c21c26e346a13fa25d7fe755c-02000000-3278861.out",
+    "ray_address": "192.168.1.13:61423"
+  },
+  {
+    "pid": 3278862,
+    "session_file": "/tmp/evtrain-bd7d3811/session_2026-10-13_15-23-57_187828_3274329/logs/worker-c212821fe95fef49c08b5468375ed38f01497cacd4f8200ee9d2195b-02000000-3278862.out",
+    "ray_address": "192.168.1.13:61423"
+  },
+  {
+    "pid": 3278863,
+    "session_file": "/tmp/evtrain-bd7d3811/session_2026-10-13_15-23-57_187828_3274329/logs/worker-3b08b4d1ca81da9d5f0aa8c04e54d84af2aad1ab9bb6c1fa1c56aedb-02000000-3278863.out",
+    "ray_address": "192.168.1.13:61423"
+  },
+  {
+    "pid": 3278864,
+    "session_file": "/tmp/evtrain-bd7d3811/session_2026-10-13_15-23-57_187828_3274329/logs/worker-324abb1dd2ed7e64bde69def5295edb532139d0981ea7d1cd925fd0d-02000000-3278864.out",
+    "ray_address": "192.168.1.13:61423"
+  },
+  {
+    "pid": 3278865,
+    "session_file": "/tmp/evtrain-bd7d3811/session_2026-10-13_15-23-57_187828_3274329/logs/worker-ea21bfdcdfed7709c686a0f6ef287a9920fdd7115cade2053531765a-02000000-3278865.out",
+    "ray_address": "192.168.1.13:61423"
+  }
+]

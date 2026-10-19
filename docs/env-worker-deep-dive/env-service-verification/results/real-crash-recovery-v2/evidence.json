@@ -1,0 +1,1096 @@
+{
+  "started_at": 1791864163.5884345,
+  "token": "2d3d2e79",
+  "timeline": [
+    {
+      "elapsed_s": 0.13734287954866886,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 4,
+          "cpu_used": 1,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 256,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "crash-2d3d2e79"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 1.232484633103013,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 4,
+          "cpu_used": 1,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 256,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "crash-2d3d2e79"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 2.3261787993833423,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 4,
+          "cpu_used": 1,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 256,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "crash-2d3d2e79"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 3.4219946805387735,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 4,
+          "cpu_used": 1,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 256,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "crash-2d3d2e79"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 4.518707460723817,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 5.630179266445339,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 6.7283809296786785,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 7.826530776917934,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 9.03948129992932,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 10.155983995646238,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 11.288619531318545,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 12.384558901190758,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 13.485114228911698,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 14.58084673807025,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 15.706619763746858,
+      "containers": [
+        {
+          "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0"
+          }
+        },
+        {
+          "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+          "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    }
+  ],
+  "node_ip": "192.168.1.10",
+  "ttl_only": {
+    "owner": {
+      "pid": 2994618,
+      "lease": {
+        "lease_id": "crash-2d3d2e79-1-26ddedba",
+        "session_id": "ttl-2d3d2e79",
+        "unit_id": "crash-2d3d2e79",
+        "node_ip": "192.168.1.10",
+        "gpu_indices": [],
+        "demand": {
+          "cpu": 1,
+          "memory_mb": 256,
+          "needs_gpu": false,
+          "gpu_memory_mb": 0
+        },
+        "granted_at": 4939717.462502957,
+        "last_seen": 4939717.462502957,
+        "shared": false
+      },
+      "overlay": "/tmp/env-service-lease-twbuhbds.yaml"
+    },
+    "before": [
+      {
+        "id": "d887ee7e90eb90199640082c2032d8c050fcac980dff7d984517d53a20ca5247",
+        "name": "/ec-2d3d2e79-ttl-main-1",
+        "state": "running",
+        "labels": {
+          "com.docker.compose.config-hash": "de26781fd0cb5778165e736b4d96dce7fc8d09295d2f9e205b06b739e859fc44",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "",
+          "com.docker.compose.image": "sha256:825ae66ee08d1561a248b04abe7cd1aa29925a916f33174b8138592a2b3e1287",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "ec-2d3d2e79-ttl",
+          "com.docker.compose.project.config_files": "/tmp/tmpj7btfv74/ec-2d3d2e79-ttl-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/env-service-lease-twbuhbds.yaml,/tmp/tmpx8td9yy7/docker-compose-environment.json,/tmp/tmpxnz3a0vl/docker-compose-mounts.json",
+          "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/gpu-smoke-task/environment",
+          "com.docker.compose.service": "main",
+          "com.docker.compose.version": "2.27.0",
+          "psrl.env_lease": "crash-2d3d2e79-1-26ddedba",
+          "psrl.env_unit": "crash-2d3d2e79"
+        }
+      }
+    ],
+    "after_ttl": {
+      "snapshot": [
+        {
+          "unit_id": "crash-2d3d2e79",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ],
+      "containers": [
+        {
+          "id": "d887ee7e90eb90199640082c2032d8c050fcac980dff7d984517d53a20ca5247",
+          "name": "/ec-2d3d2e79-ttl-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "de26781fd0cb5778165e736b4d96dce7fc8d09295d2f9e205b06b739e859fc44",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:825ae66ee08d1561a248b04abe7cd1aa29925a916f33174b8138592a2b3e1287",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "ec-2d3d2e79-ttl",
+            "com.docker.compose.project.config_files": "/tmp/tmpj7btfv74/ec-2d3d2e79-ttl-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/env-service-lease-twbuhbds.yaml,/tmp/tmpx8td9yy7/docker-compose-environment.json,/tmp/tmpxnz3a0vl/docker-compose-mounts.json",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/gpu-smoke-task/environment",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0",
+            "psrl.env_lease": "crash-2d3d2e79-1-26ddedba",
+            "psrl.env_unit": "crash-2d3d2e79"
+          }
+        }
+      ]
+    },
+    "after_next_acquire": []
+  },
+  "real_worker": {
+    "pid": 2994623,
+    "actor_label": "internal.example.invalid",
+    "reaper_pid": 2996560,
+    "lease": {
+      "lease_id": "crash-2d3d2e79-3-d98f44d9",
+      "session_id": "crash-2d3d2e79",
+      "unit_id": "crash-2d3d2e79",
+      "node_ip": "192.168.1.10",
+      "gpu_indices": [],
+      "demand": {
+        "cpu": 1,
+        "memory_mb": 256,
+        "needs_gpu": false,
+        "gpu_memory_mb": 0
+      },
+      "granted_at": 4939790.559906646,
+      "last_seen": 4939790.559906646,
+      "shared": false
+    },
+    "overlay": "/tmp/env-service-lease-p1clo_y3.yaml"
+  },
+  "before_worker_kill": [
+    {
+      "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+      "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+      "state": "running",
+      "labels": {
+        "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+        "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+        "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+        "com.docker.compose.service": "main",
+        "com.docker.compose.version": "2.27.0"
+      }
+    },
+    {
+      "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+      "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+      "state": "running",
+      "labels": {
+        "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+        "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "com.docker.compose.version": "2.27.0"
+      }
+    }
+  ],
+  "after_worker_reaper": [
+    {
+      "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+      "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+      "state": "running",
+      "labels": {
+        "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+        "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+        "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+        "com.docker.compose.service": "main",
+        "com.docker.compose.version": "2.27.0"
+      }
+    },
+    {
+      "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+      "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+      "state": "running",
+      "labels": {
+        "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+        "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "com.docker.compose.version": "2.27.0"
+      }
+    }
+  ],
+  "lease_reap_count": 1,
+  "after_lease_cleanup": [
+    {
+      "id": "1a24ab8daaacfe98d8a42d7107d0e8ee77a2dde19e0e8b4dd4cbe2cdbcba3577",
+      "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-main-1",
+      "state": "running",
+      "labels": {
+        "com.docker.compose.config-hash": "f61e5722e1d9ba947dd9e6867bb8e8f30af9e475246f0810fee65602010d028e",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+        "com.docker.compose.image": "sha256:e2a52c76d415257e50839bf1b1cbd031ca153a550ccbac4767798e40a0251eb2",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+        "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+        "com.docker.compose.service": "main",
+        "com.docker.compose.version": "2.27.0"
+      }
+    },
+    {
+      "id": "57f1bf25d1509adbb851e8bd5ef08a0a02650ba34119bb762fde29f1755f8b33",
+      "name": "/evcrash-2d3d2e79__znjdgtq__verifier__trial-harbor-docker-egress-control-sidecar-1",
+      "state": "running",
+      "labels": {
+        "com.docker.compose.config-hash": "d772d0c6644f592cbd23dde5de11610399215fbf71662983c6913f8b27cff5f0",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "evcrash-2d3d2e79__znjdgtq__verifier__trial",
+        "com.docker.compose.project.config_files": "/tmp/tmpyjlsapm4/evcrash-2d3d2e79__ZNjDGtq__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmprzk3qy81/docker-compose-environment.json,/tmp/tmpp2ncitcs/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp0w5brfds/docker-compose-egress-control-services.json",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-crash-recovery-v2/evcrash-2d3d2e79/tests",
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "com.docker.compose.version": "2.27.0"
+      }
+    }
+  ],
+  "findings": {
+    "unlabelled_containers_survive": true,
+    "lease_released": true,
+    "tagged_containers_remaining": false,
+    "tagged_containers_present_at_kill": 0
+  },
+  "after_manual_cleanup": [],
+  "final_snapshot": [
+    {
+      "unit_id": "crash-2d3d2e79",
+      "node_ip": "192.168.1.10",
+      "containers_running": 0,
+      "max_containers": 4,
+      "cpu_used": 0,
+      "cpu_quota": 8.0,
+      "memory_used_mb": 0,
+      "memory_mb": 4096,
+      "declared_gpu_memory_mb": 0,
+      "measured_gpu_memory_mb": null,
+      "gpu_memory_mb": 0,
+      "sessions": [],
+      "sessions_waiting": 0
+    }
+  ],
+  "finished_at": 1791864303.2239034,
+  "interpretation_note": "No tagged agent main was present at kill time. This experiment demonstrates surviving unlabelled verifier containers, not successful actor-reaper removal of a tagged main. The initial console field tagged_main_reaped was an overly broad derived label and is corrected here; raw container observations are unchanged."
+}

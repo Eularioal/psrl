@@ -1,0 +1,54 @@
+{
+  "scope": "Teaching resource values, production CPU ledger, no physical GPU experiment",
+  "config": {
+    "node_policy": "any",
+    "default_gpu_memory_mb": 20480,
+    "units": [
+      {
+        "unit_id": "example-gpu0",
+        "node_ip": "192.0.2.10",
+        "gpu_indices": [
+          0
+        ],
+        "cpu_quota": 8,
+        "memory_mb": 65536,
+        "gpu_memory_mb": 61440,
+        "max_containers": 4
+      }
+    ]
+  },
+  "task_demand": {
+    "cpu": 2,
+    "memory_mb": 16384,
+    "needs_gpu": true,
+    "gpu_memory_mb": 20480
+  },
+  "admissions": [
+    "granted",
+    "granted",
+    "granted",
+    "wait"
+  ],
+  "after_three": {
+    "unit_id": "example-gpu0",
+    "node_ip": "192.0.2.10",
+    "containers_running": 3,
+    "max_containers": 4,
+    "cpu_used": 6,
+    "cpu_quota": 8.0,
+    "memory_used_mb": 49152,
+    "memory_mb": 65536,
+    "declared_gpu_memory_mb": 61440,
+    "measured_gpu_memory_mb": null,
+    "gpu_memory_mb": 61440,
+    "sessions": [
+      "task-0",
+      "task-1",
+      "task-2"
+    ],
+    "sessions_waiting": 1
+  },
+  "oversized": "reject",
+  "retry_after_release": "granted",
+  "final_active_leases": 0
+}

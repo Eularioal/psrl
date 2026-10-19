@@ -1,0 +1,51 @@
+{
+  "scope": "Production CPU ledger with teaching values, no GPU or Docker",
+  "large_admissions": [
+    "granted",
+    "granted",
+    "granted",
+    "wait"
+  ],
+  "after_three_large": {
+    "unit_id": "example",
+    "node_ip": "192.0.2.10",
+    "containers_running": 3,
+    "max_containers": 4,
+    "cpu_used": 3,
+    "cpu_quota": 4,
+    "memory_used_mb": 3072,
+    "memory_mb": 4096,
+    "declared_gpu_memory_mb": 43008,
+    "measured_gpu_memory_mb": null,
+    "gpu_memory_mb": 56320,
+    "sessions": [
+      "large-0",
+      "large-1",
+      "large-2"
+    ],
+    "sessions_waiting": 1
+  },
+  "smaller_task_admission": "granted",
+  "after_smaller_task": {
+    "unit_id": "example",
+    "node_ip": "192.0.2.10",
+    "containers_running": 4,
+    "max_containers": 4,
+    "cpu_used": 4,
+    "cpu_quota": 4,
+    "memory_used_mb": 4096,
+    "memory_mb": 4096,
+    "declared_gpu_memory_mb": 53248,
+    "measured_gpu_memory_mb": null,
+    "gpu_memory_mb": 56320,
+    "sessions": [
+      "large-0",
+      "large-1",
+      "large-2",
+      "small"
+    ],
+    "sessions_waiting": 1
+  },
+  "large_retry_after_release": "granted",
+  "final_active_leases": 0
+}

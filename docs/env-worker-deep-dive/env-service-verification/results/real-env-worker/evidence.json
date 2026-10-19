@@ -1,0 +1,531 @@
+{
+  "node_ip": "192.168.1.10",
+  "scope": "Existing Path A EnvWorker; not Harbor or EnvRouter",
+  "token": "dc0a2059",
+  "workers": [
+    0,
+    1
+  ],
+  "full": {
+    "routing_method": "least_loaded",
+    "workers": [
+      {
+        "worker_id": 0,
+        "node_ip": "192.168.1.10",
+        "cpu_slots": 1,
+        "used_cpu": 1,
+        "gpu_slots": 0,
+        "used_gpu": 0
+      },
+      {
+        "worker_id": 1,
+        "node_ip": "192.168.1.10",
+        "cpu_slots": 1,
+        "used_cpu": 1,
+        "gpu_slots": 0,
+        "used_gpu": 0
+      }
+    ]
+  },
+  "third_rejected": "\u001b[36mray::EnvWorkerCoordinator.create_sandbox()\u001b[39m (pid=2998770, ip=192.168.1.10, actor_id=4d0eb5af1e0f3df21cbf427d01000000, repr=<psrl.workers.env_worker.coordinator.EnvWorkerCoordinator object at 0x7f664c620860>)\n  File \"${WORKSPACE_ROOT}\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 401, in __get_result\n    raise self._exception\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${PSRL_WORKSPACE}/psrl/workers/env_worker/coordinator.py\", line 203, in create_sandbox\n    worker_handle, worker_id = await self.select_worker(spec, timeout_s)\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${PSRL_WORKSPACE}/psrl/workers/env_worker/coordinator.py\", line 179, in select_worker\n    raise RuntimeError(\nRuntimeError: No env worker capacity became available within 1s for a sandbox requesting 0 gpu(s).",
+  "persistent_shell": [
+    {
+      "stdout": "\n",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_s": 0.05037005338817835
+    },
+    {
+      "stdout": "42\n/tmp\noriginal\n",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_s": 0.05034754425287247
+    }
+  ],
+  "file_roundtrip_hex": "00ff656e762d776f726b65720a",
+  "command_failure": {
+    "stdout": "\n",
+    "exit_code": 1,
+    "timed_out": false,
+    "duration_s": 0.05036911182105541
+  },
+  "after_command_failure": {
+    "stdout": "still-alive\n\n",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 0.050358294509351254
+  },
+  "docker_containers": [
+    {
+      "Id": "3f3d84baf2c49af536f26b3c86193ad399625a378cd27ef44355cbc01b20b8ee",
+      "Created": "2026-10-13T04:04:25.649166642Z",
+      "Path": "/bin/bash",
+      "Args": [
+        "-l"
+      ],
+      "State": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 3000207,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-13T04:04:26.058723556Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "Image": "sha256:51cce855bb6e44a8ff6ed0f46ded8850f246bfc7549801459f83fc34b80c210f",
+      "ResolvConfPath": "/var/lib/docker/containers/3f3d84baf2c49af536f26b3c86193ad399625a378cd27ef44355cbc01b20b8ee/resolv.conf",
+      "HostnamePath": "/var/lib/docker/containers/3f3d84baf2c49af536f26b3c86193ad399625a378cd27ef44355cbc01b20b8ee/hostname",
+      "HostsPath": "/var/lib/docker/containers/3f3d84baf2c49af536f26b3c86193ad399625a378cd27ef44355cbc01b20b8ee/hosts",
+      "LogPath": "/var/lib/docker/containers/3f3d84baf2c49af536f26b3c86193ad399625a378cd27ef44355cbc01b20b8ee/3f3d84baf2c49af536f26b3c86193ad399625a378cd27ef44355cbc01b20b8ee-json.log",
+      "Name": "/psrl-env-s-4051b4ac9bda",
+      "RestartCount": 0,
+      "Driver": "fuse-overlayfs",
+      "Platform": "linux",
+      "MountLabel": "",
+      "ProcessLabel": "",
+      "AppArmorProfile": "",
+      "ExecIDs": null,
+      "HostConfig": {
+        "Binds": null,
+        "ContainerIDFile": "",
+        "LogConfig": {
+          "Type": "json-file",
+          "Config": {}
+        },
+        "NetworkMode": "none",
+        "PortBindings": {},
+        "RestartPolicy": {
+          "Name": "no",
+          "MaximumRetryCount": 0
+        },
+        "AutoRemove": true,
+        "VolumeDriver": "",
+        "VolumesFrom": null,
+        "ConsoleSize": [
+          0,
+          0
+        ],
+        "CapAdd": null,
+        "CapDrop": null,
+        "CgroupnsMode": "host",
+        "Dns": [],
+        "DnsOptions": [],
+        "DnsSearch": [],
+        "ExtraHosts": null,
+        "GroupAdd": null,
+        "IpcMode": "private",
+        "Cgroup": "",
+        "Links": null,
+        "OomScoreAdj": 0,
+        "PidMode": "",
+        "Privileged": false,
+        "PublishAllPorts": false,
+        "ReadonlyRootfs": false,
+        "SecurityOpt": null,
+        "UTSMode": "",
+        "UsernsMode": "",
+        "ShmSize": 67108864,
+        "Runtime": "runc",
+        "Isolation": "",
+        "CpuShares": 0,
+        "Memory": 268435456,
+        "NanoCpus": 1000000000,
+        "CgroupParent": "",
+        "BlkioWeight": 0,
+        "BlkioWeightDevice": [],
+        "BlkioDeviceReadBps": [],
+        "BlkioDeviceWriteBps": [],
+        "BlkioDeviceReadIOps": [],
+        "BlkioDeviceWriteIOps": [],
+        "CpuPeriod": 0,
+        "CpuQuota": 0,
+        "CpuRealtimePeriod": 0,
+        "CpuRealtimeRuntime": 0,
+        "CpusetCpus": "",
+        "CpusetMems": "",
+        "Devices": [],
+        "DeviceCgroupRules": null,
+        "DeviceRequests": null,
+        "MemoryReservation": 0,
+        "MemorySwap": 536870912,
+        "MemorySwappiness": null,
+        "OomKillDisable": false,
+        "PidsLimit": null,
+        "Ulimits": [],
+        "CpuCount": 0,
+        "CpuPercent": 0,
+        "IOMaximumIOps": 0,
+        "IOMaximumBandwidth": 0,
+        "MaskedPaths": [
+          "/proc/asound",
+          "/proc/acpi",
+          "/proc/kcore",
+          "/proc/keys",
+          "/proc/latency_stats",
+          "/proc/timer_list",
+          "/proc/timer_stats",
+          "/proc/sched_debug",
+          "/proc/scsi",
+          "/sys/firmware",
+          "/sys/devices/virtual/powercap"
+        ],
+        "ReadonlyPaths": [
+          "/proc/bus",
+          "/proc/fs",
+          "/proc/irq",
+          "/proc/sys",
+          "/proc/sysrq-trigger"
+        ]
+      },
+      "GraphDriver": {
+        "Data": {
+          "LowerDir": "/var/lib/docker/fuse-overlayfs/7a7fc0bf2f56c17aaf6e0bb27c8ec7afb21a26357228dbedcb555170c5498c13-init/diff:/var/lib/docker/fuse-overlayfs/4f15e375b2f95552c7d5290fcebb6d22afe27b67be023f74f569e11117801163/diff:/var/lib/docker/fuse-overlayfs/2011d7fa12df9b2a779c3ff7aab7635c8c16c0b0233bbbe0ee0ddbbe7bfd7bf5/diff:/var/lib/docker/fuse-overlayfs/6030cce91a69d0639860c608fe7c927240871f5b1e3e340f9b82a150f91be937/diff:/var/lib/docker/fuse-overlayfs/b8d2fe79c2bee6af6fce36840a4d1e94eb014f87ef8e564ce4896bf3d3a6c722/diff",
+          "MergedDir": "/var/lib/docker/fuse-overlayfs/7a7fc0bf2f56c17aaf6e0bb27c8ec7afb21a26357228dbedcb555170c5498c13/merged",
+          "UpperDir": "/var/lib/docker/fuse-overlayfs/7a7fc0bf2f56c17aaf6e0bb27c8ec7afb21a26357228dbedcb555170c5498c13/diff",
+          "WorkDir": "/var/lib/docker/fuse-overlayfs/7a7fc0bf2f56c17aaf6e0bb27c8ec7afb21a26357228dbedcb555170c5498c13/work"
+        },
+        "Name": "fuse-overlayfs"
+      },
+      "Mounts": [],
+      "Config": {
+        "Hostname": "3f3d84baf2c4",
+        "Domainname": "",
+        "User": "",
+        "AttachStdin": true,
+        "AttachStdout": true,
+        "AttachStderr": true,
+        "Tty": false,
+        "OpenStdin": true,
+        "StdinOnce": true,
+        "Env": [
+          "HTTPS_PROXY=http://internal.example.invalid",
+          "https_proxy=http://internal.example.invalid",
+          "NO_PROXY=localhost,127.0.0.1,::1",
+          "no_proxy=localhost,127.0.0.1,::1",
+          "HTTP_PROXY=http://internal.example.invalid",
+          "http_proxy=http://internal.example.invalid",
+          "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305",
+          "PYTHON_VERSION=3.13.15",
+          "PYTHON_SHA256=1e66a7945a48390ee4c2a4268a0e4185884059a13c4aab6d148aa208deea4a76"
+        ],
+        "Cmd": [
+          "/bin/bash",
+          "-l"
+        ],
+        "Image": "python:3.13-slim",
+        "Volumes": null,
+        "WorkingDir": "",
+        "Entrypoint": null,
+        "OnBuild": null,
+        "Labels": {
+          "psrl.env_sandbox_id": "s-4051b4ac9bda",
+          "verification.run": "dc0a2059"
+        }
+      },
+      "NetworkSettings": {
+        "Bridge": "",
+        "SandboxID": "651961179f71d041a847bbdfe9d0dfbf2541dd1aec378d4e5e569f0da60b0d28",
+        "SandboxKey": "/var/run/docker/netns/651961179f71",
+        "Ports": {},
+        "HairpinMode": false,
+        "LinkLocalIPv6Address": "",
+        "LinkLocalIPv6PrefixLen": 0,
+        "SecondaryIPAddresses": null,
+        "SecondaryIPv6Addresses": null,
+        "EndpointID": "",
+        "Gateway": "",
+        "GlobalIPv6Address": "",
+        "GlobalIPv6PrefixLen": 0,
+        "IPAddress": "",
+        "IPPrefixLen": 0,
+        "IPv6Gateway": "",
+        "MacAddress": "",
+        "Networks": {
+          "none": {
+            "IPAMConfig": null,
+            "Links": null,
+            "Aliases": null,
+            "MacAddress": "",
+            "NetworkID": "47b109fdc31d1163930efe817d8f246f5c5e7bf0090e6e21635be3d0b6ba764a",
+            "EndpointID": "d6e1df4d2226b395f2f8daf71bf77354149fa67922fe839a36cb8bfdad1eb723",
+            "Gateway": "",
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "DriverOpts": null,
+            "DNSNames": null
+          }
+        }
+      }
+    },
+    {
+      "Id": "9299cfb3fd8c9aaf1e4362e965aadf11f9f0942ca00a4319f1e49bc3cd4b61a3",
+      "Created": "2026-10-13T04:04:25.095580421Z",
+      "Path": "/bin/bash",
+      "Args": [
+        "-l"
+      ],
+      "State": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 3000003,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-13T04:04:25.470327667Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "Image": "sha256:51cce855bb6e44a8ff6ed0f46ded8850f246bfc7549801459f83fc34b80c210f",
+      "ResolvConfPath": "/var/lib/docker/containers/9299cfb3fd8c9aaf1e4362e965aadf11f9f0942ca00a4319f1e49bc3cd4b61a3/resolv.conf",
+      "HostnamePath": "/var/lib/docker/containers/9299cfb3fd8c9aaf1e4362e965aadf11f9f0942ca00a4319f1e49bc3cd4b61a3/hostname",
+      "HostsPath": "/var/lib/docker/containers/9299cfb3fd8c9aaf1e4362e965aadf11f9f0942ca00a4319f1e49bc3cd4b61a3/hosts",
+      "LogPath": "/var/lib/docker/containers/9299cfb3fd8c9aaf1e4362e965aadf11f9f0942ca00a4319f1e49bc3cd4b61a3/9299cfb3fd8c9aaf1e4362e965aadf11f9f0942ca00a4319f1e49bc3cd4b61a3-json.log",
+      "Name": "/psrl-env-s-8b353fc83196",
+      "RestartCount": 0,
+      "Driver": "fuse-overlayfs",
+      "Platform": "linux",
+      "MountLabel": "",
+      "ProcessLabel": "",
+      "AppArmorProfile": "",
+      "ExecIDs": null,
+      "HostConfig": {
+        "Binds": null,
+        "ContainerIDFile": "",
+        "LogConfig": {
+          "Type": "json-file",
+          "Config": {}
+        },
+        "NetworkMode": "none",
+        "PortBindings": {},
+        "RestartPolicy": {
+          "Name": "no",
+          "MaximumRetryCount": 0
+        },
+        "AutoRemove": true,
+        "VolumeDriver": "",
+        "VolumesFrom": null,
+        "ConsoleSize": [
+          0,
+          0
+        ],
+        "CapAdd": null,
+        "CapDrop": null,
+        "CgroupnsMode": "host",
+        "Dns": [],
+        "DnsOptions": [],
+        "DnsSearch": [],
+        "ExtraHosts": null,
+        "GroupAdd": null,
+        "IpcMode": "private",
+        "Cgroup": "",
+        "Links": null,
+        "OomScoreAdj": 0,
+        "PidMode": "",
+        "Privileged": false,
+        "PublishAllPorts": false,
+        "ReadonlyRootfs": false,
+        "SecurityOpt": null,
+        "UTSMode": "",
+        "UsernsMode": "",
+        "ShmSize": 67108864,
+        "Runtime": "runc",
+        "Isolation": "",
+        "CpuShares": 0,
+        "Memory": 268435456,
+        "NanoCpus": 1000000000,
+        "CgroupParent": "",
+        "BlkioWeight": 0,
+        "BlkioWeightDevice": [],
+        "BlkioDeviceReadBps": [],
+        "BlkioDeviceWriteBps": [],
+        "BlkioDeviceReadIOps": [],
+        "BlkioDeviceWriteIOps": [],
+        "CpuPeriod": 0,
+        "CpuQuota": 0,
+        "CpuRealtimePeriod": 0,
+        "CpuRealtimeRuntime": 0,
+        "CpusetCpus": "",
+        "CpusetMems": "",
+        "Devices": [],
+        "DeviceCgroupRules": null,
+        "DeviceRequests": null,
+        "MemoryReservation": 0,
+        "MemorySwap": 536870912,
+        "MemorySwappiness": null,
+        "OomKillDisable": false,
+        "PidsLimit": null,
+        "Ulimits": [],
+        "CpuCount": 0,
+        "CpuPercent": 0,
+        "IOMaximumIOps": 0,
+        "IOMaximumBandwidth": 0,
+        "MaskedPaths": [
+          "/proc/asound",
+          "/proc/acpi",
+          "/proc/kcore",
+          "/proc/keys",
+          "/proc/latency_stats",
+          "/proc/timer_list",
+          "/proc/timer_stats",
+          "/proc/sched_debug",
+          "/proc/scsi",
+          "/sys/firmware",
+          "/sys/devices/virtual/powercap"
+        ],
+        "ReadonlyPaths": [
+          "/proc/bus",
+          "/proc/fs",
+          "/proc/irq",
+          "/proc/sys",
+          "/proc/sysrq-trigger"
+        ]
+      },
+      "GraphDriver": {
+        "Data": {
+          "LowerDir": "/var/lib/docker/fuse-overlayfs/8f039ff5db415ddb255ac40e1eba54354a06ff35560c56d1039e85e73dc8ad6e-init/diff:/var/lib/docker/fuse-overlayfs/4f15e375b2f95552c7d5290fcebb6d22afe27b67be023f74f569e11117801163/diff:/var/lib/docker/fuse-overlayfs/2011d7fa12df9b2a779c3ff7aab7635c8c16c0b0233bbbe0ee0ddbbe7bfd7bf5/diff:/var/lib/docker/fuse-overlayfs/6030cce91a69d0639860c608fe7c927240871f5b1e3e340f9b82a150f91be937/diff:/var/lib/docker/fuse-overlayfs/b8d2fe79c2bee6af6fce36840a4d1e94eb014f87ef8e564ce4896bf3d3a6c722/diff",
+          "MergedDir": "/var/lib/docker/fuse-overlayfs/8f039ff5db415ddb255ac40e1eba54354a06ff35560c56d1039e85e73dc8ad6e/merged",
+          "UpperDir": "/var/lib/docker/fuse-overlayfs/8f039ff5db415ddb255ac40e1eba54354a06ff35560c56d1039e85e73dc8ad6e/diff",
+          "WorkDir": "/var/lib/docker/fuse-overlayfs/8f039ff5db415ddb255ac40e1eba54354a06ff35560c56d1039e85e73dc8ad6e/work"
+        },
+        "Name": "fuse-overlayfs"
+      },
+      "Mounts": [],
+      "Config": {
+        "Hostname": "9299cfb3fd8c",
+        "Domainname": "",
+        "User": "",
+        "AttachStdin": true,
+        "AttachStdout": true,
+        "AttachStderr": true,
+        "Tty": false,
+        "OpenStdin": true,
+        "StdinOnce": true,
+        "Env": [
+          "HTTP_PROXY=http://internal.example.invalid",
+          "http_proxy=http://internal.example.invalid",
+          "HTTPS_PROXY=http://internal.example.invalid",
+          "https_proxy=http://internal.example.invalid",
+          "NO_PROXY=localhost,127.0.0.1,::1",
+          "no_proxy=localhost,127.0.0.1,::1",
+          "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305",
+          "PYTHON_VERSION=3.13.15",
+          "PYTHON_SHA256=1e66a7945a48390ee4c2a4268a0e4185884059a13c4aab6d148aa208deea4a76"
+        ],
+        "Cmd": [
+          "/bin/bash",
+          "-l"
+        ],
+        "Image": "python:3.13-slim",
+        "Volumes": null,
+        "WorkingDir": "",
+        "Entrypoint": null,
+        "OnBuild": null,
+        "Labels": {
+          "psrl.env_sandbox_id": "s-8b353fc83196",
+          "verification.run": "dc0a2059"
+        }
+      },
+      "NetworkSettings": {
+        "Bridge": "",
+        "SandboxID": "7bcdcc83b2bf845e283d89722916880bd347c67768efb26a6037293cb2f1bc82",
+        "SandboxKey": "/var/run/docker/netns/7bcdcc83b2bf",
+        "Ports": {},
+        "HairpinMode": false,
+        "LinkLocalIPv6Address": "",
+        "LinkLocalIPv6PrefixLen": 0,
+        "SecondaryIPAddresses": null,
+        "SecondaryIPv6Addresses": null,
+        "EndpointID": "",
+        "Gateway": "",
+        "GlobalIPv6Address": "",
+        "GlobalIPv6PrefixLen": 0,
+        "IPAddress": "",
+        "IPPrefixLen": 0,
+        "IPv6Gateway": "",
+        "MacAddress": "",
+        "Networks": {
+          "none": {
+            "IPAMConfig": null,
+            "Links": null,
+            "Aliases": null,
+            "MacAddress": "",
+            "NetworkID": "47b109fdc31d1163930efe817d8f246f5c5e7bf0090e6e21635be3d0b6ba764a",
+            "EndpointID": "9477c28825d9a303c2eec405af65eb63951f736c160a8e970a960504c3b2d199",
+            "Gateway": "",
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "DriverOpts": null,
+            "DNSNames": null
+          }
+        }
+      }
+    }
+  ],
+  "after_idempotent_destroy": {
+    "routing_method": "least_loaded",
+    "workers": [
+      {
+        "worker_id": 0,
+        "node_ip": "192.168.1.10",
+        "cpu_slots": 1,
+        "used_cpu": 0,
+        "gpu_slots": 0,
+        "used_gpu": 0
+      },
+      {
+        "worker_id": 1,
+        "node_ip": "192.168.1.10",
+        "cpu_slots": 1,
+        "used_cpu": 1,
+        "gpu_slots": 0,
+        "used_gpu": 0
+      }
+    ]
+  },
+  "replacement": {
+    "worker_id": 0,
+    "result": {
+      "stdout": "replacement-ready\n\n",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_s": 0.050350314006209373
+    }
+  },
+  "passed": true,
+  "final_capacity": {
+    "routing_method": "least_loaded",
+    "workers": [
+      {
+        "worker_id": 0,
+        "node_ip": "192.168.1.10",
+        "cpu_slots": 1,
+        "used_cpu": 0,
+        "gpu_slots": 0,
+        "used_gpu": 0
+      },
+      {
+        "worker_id": 1,
+        "node_ip": "192.168.1.10",
+        "cpu_slots": 1,
+        "used_cpu": 0,
+        "gpu_slots": 0,
+        "used_gpu": 0
+      }
+    ]
+  },
+  "remaining_containers": []
+}

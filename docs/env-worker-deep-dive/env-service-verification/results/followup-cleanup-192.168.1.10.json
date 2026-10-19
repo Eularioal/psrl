@@ -1,0 +1,15 @@
+{
+  "time": "2026-10-13T12:10:38.204236",
+  "hostname": "internal.example.invalid",
+  "docker": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "gpu": {
+    "exit_code": 0,
+    "stdout": "0, 0 MiB\n1, 0 MiB\n2, 0 MiB\n3, 0 MiB\n4, 0 MiB\n5, 0 MiB\n6, 0 MiB\n7, 0 MiB\n",
+    "stderr": ""
+  },
+  "ray_processes": []
+}

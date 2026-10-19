@@ -1,0 +1,75 @@
+{
+  "scope": "CPU only; no Docker, GPU, Ray cluster, model, or dataset execution",
+  "shell": {
+    "command_results": [
+      {
+        "command": "echo A-start; sleep 0.6; echo A-end; true",
+        "stdout": "A-start\n",
+        "exit_code": null,
+        "timed_out": true,
+        "duration_s": 0.1003666128963232
+      },
+      {
+        "command": "sleep 0.35; echo B-output; false",
+        "stdout": "A-end\n\n",
+        "exit_code": 0,
+        "timed_out": false,
+        "duration_s": 0.6016005519777536
+      },
+      {
+        "command": "echo C-output; true",
+        "stdout": "B-output\n\nC-output\n",
+        "exit_code": 1,
+        "timed_out": false,
+        "duration_s": 0.401143841445446
+      }
+    ],
+    "exited_process": {
+      "returncode_before_read": 7,
+      "read_elapsed_s": 0.20057709887623787,
+      "output": "startup-failed\n"
+    }
+  },
+  "lifecycle": {
+    "idle_reaper_removed": [
+      "orphan"
+    ],
+    "coordinator_used_cpu_after_reap": 1,
+    "rpc_pool_model": {
+      "release_blocked": true,
+      "waiter_results": [
+        "placement_timeout",
+        "placement_timeout"
+      ],
+      "release_eventually_completed": true
+    }
+  },
+  "executor": {
+    "awaited_future_cancelled": true,
+    "thread_still_running_at_timeout": true,
+    "thread_explicitly_stopped_before_script_exit": true
+  },
+  "mlgym": {
+    "status": "targeted_real_method_replay",
+    "failures": {
+      "initialization": {
+        "exception": "AssertionError",
+        "function": "_init_scripts",
+        "line": 1045
+      },
+      "step_timeout": {
+        "exception": "AssertionError",
+        "function": "interrupt",
+        "line": 803
+      }
+    },
+    "env_source_sha256": "542257f5053916f550cfec7638634925e928b77d59f615ec42c379e3ab2c73a6"
+  },
+  "source_sha256": {
+    "psrl/workers/env_worker/worker.py": "1e905ede85e8f25333e88f8d6a308253aa44b60064418d49558fc36e20e838ac",
+    "psrl/workers/env_worker/shell.py": "2b6221f24983ccfab6cb4c76725b01ba2d0157e9b7261b64c914b6cca874495a",
+    "psrl/workers/env_worker/coordinator.py": "d9854060d411d214dbcf2e32a796e6e7c9d7d7bfbebd0f2adf087aa3cadf7683",
+    "psrl/environments/mlgym_env.py": "9b2f0aef9d3d79ca652c499c38bdf81e8070434e3103f3cca966dc971bb0fcdd",
+    "psrl/workers/agent_loop/loops/mlgym_agent_loop.py": "95fac4810c98ff570e9fefa34d7440282f540ecf83feae979f6945859b755a08"
+  }
+}

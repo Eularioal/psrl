@@ -1,0 +1,164 @@
+{
+  "time": "2026-10-13T16:27:14+0800",
+  "repo": "${PSRL_WORKSPACE}",
+  "python": "${WORKSPACE_ROOT}",
+  "checks": {
+    "git_head": {
+      "code": 0,
+      "stdout": "90a4178f40b4de3e90ada1c9ebc4baf15815921a",
+      "stderr": "",
+      "seconds": 0.044
+    },
+    "git_status": {
+      "code": 0,
+      "stdout": "M docs/design/env_worker.md\n M examples/sciaccel_rl/runner.py\n M psrl/trainer/main_ppo.py\n M psrl/workers/agent_loop/loops/utils.py\n M psrl/workers/agent_loop/manager.py\n M psrl/workers/env_service/client.py\n M psrl/workers/env_service/ledger.py\n M psrl/workers/env_service/overlay.py\n M psrl/workers/env_service/probe.py\n M psrl/workers/env_service/router.py\n M psrl/workers/env_service/types.py\n M psrl/workers/gen/session_router.py\n M tests/env_service/test_manager_dispatch.py\n M tests/env_service/test_node_policy_overlay_placement.py\n M tests/env_service/test_router_client.py\n M tests/env_service/test_runner_env_service.py\n?? patch/verl/d613affc.patch\n?? psrl/workers/env_service/docker.py\n?? psrl/workers/env_service/node.py\n?? tests/agent_loop/test_empty_training_group.py\n?? tests/env_service/test_node_cleanup.py\n?? tests/env_service/test_position_ids_roundtrip.py",
+      "stderr": "",
+      "seconds": 0.732
+    },
+    "activation": {
+      "code": 0,
+      "stdout": "expected=${WORKSPACE_ROOT}\nactual=${WORKSPACE_ROOT}",
+      "stderr": "",
+      "seconds": 10.777
+    },
+    "imports_unpinned": {
+      "code": 0,
+      "stdout": "{\"psrl\": \"${PSRL_WORKSPACE}/psrl/__init__.py\", \"verl\": \"${PSRL_WORKSPACE}/third_party/verl/verl/__init__.py\", \"transfer_queue\": \"${PSRL_WORKSPACE}/third_party/TransferQueue/transfer_queue/__init__.py\"}",
+      "stderr": "",
+      "seconds": 0.305
+    },
+    "imports_pinned": {
+      "code": 0,
+      "stdout": "{\"psrl\": \"${PSRL_WORKSPACE}/psrl/__init__.py\", \"verl\": \"${PSRL_WORKSPACE}/third_party/verl/verl/__init__.py\", \"transfer_queue\": \"${PSRL_WORKSPACE}/third_party/TransferQueue/transfer_queue/__init__.py\"}",
+      "stderr": "",
+      "seconds": 0.264
+    },
+    "route": {
+      "code": 0,
+      "stdout": "1.1.1.1 via 192.168.1.15 dev bond1 src 192.168.1.11 uid 0 \n    cache",
+      "stderr": "",
+      "seconds": 0.053
+    },
+    "hostname_addresses": {
+      "first": [
+        "192.168.1.254"
+      ],
+      "count": 326
+    },
+    "docker_info": {
+      "timeout": 6,
+      "seconds": 6.012
+    },
+    "docker_ping": {
+      "code": 28,
+      "stdout": "",
+      "stderr": "curl: (28) Operation timed out after 3001 milliseconds with 0 bytes received",
+      "seconds": 3.126
+    },
+    "docker_processes": [
+      "3763725       1 Zsl  dockerd <defunct>",
+      "3763752 3763725 Zs   containerd <defunct>"
+    ],
+    "gpu_mapping": [
+      {
+        "index": 0,
+        "minor": 0,
+        "uuid": "GPU-0cf07dbb-f390-b5fa-a73d-55220ef7390d"
+      },
+      {
+        "index": 1,
+        "minor": 2,
+        "uuid": "GPU-c4e14036-ef7a-fd66-cff2-ffa0909a1baf"
+      },
+      {
+        "index": 2,
+        "minor": 3,
+        "uuid": "GPU-6b7d7285-620b-3d4d-ca8d-ca0eb8b81821"
+      },
+      {
+        "index": 3,
+        "minor": 1,
+        "uuid": "GPU-ad9c9c26-7433-51f1-ee2c-dcb3b92c91ec"
+      },
+      {
+        "index": 4,
+        "minor": 4,
+        "uuid": "GPU-bef68a24-ec97-3643-00d2-c2a34165941c"
+      },
+      {
+        "index": 5,
+        "minor": 7,
+        "uuid": "GPU-e11e1295-715d-815f-521e-1f0324c77620"
+      },
+      {
+        "index": 6,
+        "minor": 5,
+        "uuid": "GPU-37bc34e4-5716-0726-dcb5-1760e5799ecb"
+      },
+      {
+        "index": 7,
+        "minor": 6,
+        "uuid": "GPU-658ce9b5-ec0a-c277-f033-5426aafd0f11"
+      }
+    ],
+    "gpu_usage": {
+      "code": 0,
+      "stdout": "0, 3, 97871, 0\n1, 3, 97871, 0\n2, 3, 97871, 0\n3, 3, 97871, 0\n4, 3, 97871, 0\n5, 3, 97871, 0\n6, 3, 97871, 0\n7, 3, 97871, 0",
+      "stderr": "",
+      "seconds": 0.202
+    },
+    "long_unix_socket": {
+      "bytes": 135,
+      "error": "AF_UNIX path too long"
+    },
+    "short_unix_socket": "bound successfully",
+    "json_string_parquet": {
+      "error": "'str' object has no attribute 'get'",
+      "fixed_index": 7
+    },
+    "structured_config": {
+      "error_type": "ConfigKeyError",
+      "error": "Key 'TRANSFER_QUEUE_ENABLE' is not in struct\n    full_key: env_vars.TRANSFER_QUEUE_ENABLE\n    object_type=dict"
+    },
+    "structured_config_fixed": {
+      "env_vars": {
+        "RAY_ADDRESS": "127.0.0.1:12345",
+        "TRANSFER_QUEUE_ENABLE": "1"
+      }
+    },
+    "model_configs": [
+      {
+        "path": "${MODEL_ROOT}/Qwen2.5-3B-Instruct/config.json",
+        "model_type": "qwen2",
+        "max_position_embeddings": 32768,
+        "rope_scaling": null
+      }
+    ],
+    "gsm8k_schema": [
+      {
+        "path": "${WORKSPACE_ROOT}/psrl_demo/data/gsm8k/test.parquet",
+        "schema": "data_source: string\nprompt: list<element: struct<role: string, content: string>>\n  child 0, element: struct<role: string, content: string>\n      child 0, role: string\n      child 1, content: string\nability: string\nreward_model: struct<ground_truth: string, style: string>\n  child 0, ground_truth: string\n  child 1, style: string\nextra_info: struct<answer: string, index: int64, question: string, split: string, ref_answer: string, prompt: st (... 78 chars omitted)\n  child 0, answer: string\n  child 1, index: int64\n  child 2, question: string\n  child 3, split: string\n  child 4, ref_answer: string\n  child 5, prompt: string\n  child 6, img_path: string\n  child 7, resolutions: list<element: null>\n      child 0, element: null\n  child 8, reward_func: string\n-- schema metadata --\npandas: '{\"index_columns\": [{\"kind\": \"range\", \"name\": null, \"start\": 0, \"' + 875"
+      },
+      {
+        "path": "${WORKSPACE_ROOT}/psrl_demo/data/gsm8k/train.parquet",
+        "schema": "data_source: string\nprompt: list<element: struct<role: string, content: string>>\n  child 0, element: struct<role: string, content: string>\n      child 0, role: string\n      child 1, content: string\nability: string\nreward_model: struct<ground_truth: string, style: string>\n  child 0, ground_truth: string\n  child 1, style: string\nextra_info: struct<answer: string, index: int64, question: string, split: string, ref_answer: string, prompt: st (... 78 chars omitted)\n  child 0, answer: string\n  child 1, index: int64\n  child 2, question: string\n  child 3, split: string\n  child 4, ref_answer: string\n  child 5, prompt: string\n  child 6, img_path: string\n  child 7, resolutions: list<element: null>\n      child 0, element: null\n  child 8, reward_func: string\n-- schema metadata --\npandas: '{\"index_columns\": [{\"kind\": \"range\", \"name\": null, \"start\": 0, \"' + 875"
+      }
+    ],
+    "tensor_dependency_origins": {
+      "verl": "${PSRL_WORKSPACE}/third_party/verl/verl/__init__.py",
+      "transfer_queue": "${PSRL_WORKSPACE}/third_party/TransferQueue/transfer_queue/__init__.py"
+    },
+    "position_ids_before": {
+      "ragged_idx": 1,
+      "offsets": [
+        0,
+        4
+      ]
+    },
+    "position_ids_old_mechanism": "split_with_sizes expects split_sizes to sum exactly to 2407 (input tensor's size at dimension 1), but got split_sizes=[4]",
+    "position_ids_current": {
+      "error": "split_with_sizes expects split_sizes to sum exactly to 2407 (input tensor's size at dimension 1), but got split_sizes=[4]"
+    }
+  },
+  "seconds": 61.642
+}

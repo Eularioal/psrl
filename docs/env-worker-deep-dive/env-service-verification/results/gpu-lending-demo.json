@@ -1,0 +1,44 @@
+{
+  "kind": "CPU teaching simulation",
+  "events": [
+    "sleep acknowledged; physical=2 GiB; Ray GPU reservation=1",
+    "borrow A; physical=26 GiB",
+    "borrow B; physical=50 GiB",
+    "return requested; new lending is closed",
+    "wake allocated memory; weights are still invalid",
+    "version 7 restored; routing reopened"
+  ],
+  "blocked": [
+    {
+      "case": "borrow while rollout is awake",
+      "reason": "GPU is not lendable"
+    },
+    {
+      "case": "third container",
+      "reason": "container slots exhausted"
+    },
+    {
+      "case": "late request with old permit",
+      "reason": "stale lending epoch"
+    },
+    {
+      "case": "new request during return",
+      "reason": "GPU is not lendable"
+    },
+    {
+      "case": "wake with active leases",
+      "reason": "Docker leases still active"
+    },
+    {
+      "case": "wake with residual Docker memory",
+      "reason": "Docker memory has not been reclaimed"
+    },
+    {
+      "case": "serve before restoring level-2 weights",
+      "reason": "weights must be restored even at version 7"
+    }
+  ],
+  "final_state": "ROLLOUT",
+  "ray_gpu_reserved": 1,
+  "model_version": 7
+}

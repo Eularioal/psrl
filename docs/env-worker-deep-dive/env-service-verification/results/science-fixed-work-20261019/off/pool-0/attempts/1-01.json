@@ -1,0 +1,41 @@
+{
+  "uid": "1",
+  "parent_id": "0",
+  "attempt": 1,
+  "session_id": "01a14fe4-a986-7301-8bba-625015b75fa9",
+  "slot_started_at": 1792341748.079238,
+  "started_at": 1792341748.079239,
+  "admitted_at": 1792341748.079242,
+  "finished_at": 1792342037.977549,
+  "pressure": {
+    "started_at": 1792341778.2315488,
+    "requested_bytes": 53687091200,
+    "hold_seconds": 45.0,
+    "scope": "Injected CUDA pressure, not native LAPS demand",
+    "gpu_uuid_hex": "cc0c694ae7348f5092422460d9af38f8",
+    "free_before": 101651972096,
+    "total_bytes": 102010650624,
+    "allocated_at": 1792341778.7145336,
+    "kernel_output": 42,
+    "status": "ok",
+    "finished_at": 1792341823.8571036
+  },
+  "termination": "TerminateReason.MAX_TURNS_EXCEEDED",
+  "has_output": true,
+  "rewards": {
+    "check_aw_2d_256": 0.5,
+    "check_aw_2d_512": 0.5,
+    "equivalence_pass": 0,
+    "floor": 0.5,
+    "reward": 0.5,
+    "reward_repair": 0.0,
+    "speedup": 0.0
+  },
+  "exception_type": null,
+  "accepted": true,
+  "source_paths": {
+    "psrl": "${PSRL_WORKSPACE}/__init__.py",
+    "verl": "${WORKSPACE_ROOT}/.verification-deps/verl/__init__.py",
+    "science_loop": "${WORKSPACE_ROOT}/.verification-worktrees/psrl-0eeead8-fixed-work/examples/sciaccel_rl/agent_loop.py"
+  }
+}

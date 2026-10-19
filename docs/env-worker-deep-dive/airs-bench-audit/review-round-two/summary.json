@@ -1,0 +1,36 @@
+{
+  "scope": "CPU regression, real Bash and real upstream MLGym ReplayModel. No Docker, Ray, GPU, model or training run in this round.",
+  "tests": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "145",
+      "time": "69.992",
+      "timestamp": "2026-10-16T17:22:04.369917+08:00",
+      "hostname": "internal.example.invalid"
+    }
+  ],
+  "static_checks_passed": true,
+  "all_repo_precommit": "Failed in unrelated files. See precommit-all.log.",
+  "source_sha256": {
+    "examples/airs_bench/runner.py": "809616474b026e7f279d18b344324f80d88a8e083587b85e293e390a00a3dc3c",
+    "examples/airs_bench/grading.py": "1a2b45a963a6e19fc1de11bff223e108bc439f7c9cc65521aff095a7eccd72d9",
+    "examples/airs_bench/apps/candidate.py": "0d3b00b482d572b9f4de2c3cd3622ad444e92372dbf28889e7e65cf782253c40",
+    "examples/airs_bench/config.py": "6f316f0e98ce11e7e07fd2b1f5ad3f1d3cb755530c29deb41a6da2a0fad4356c",
+    "examples/airs_bench/reward.py": "82248bcf0b2e013102c67d010ed619415c92d54a84a8b739da296e822410af5e",
+    "psrl/workers/agent_loop/loops/mlgym_agent_loop.py": "853506204843cdc5a9b440240ea28651d1d63ef0bbb9a54b9362c84d60f6b64b",
+    "psrl/workers/env_worker/worker.py": "3cd7b3a8ce1943473dd7fe1881c6bf981fe9ffabad1f17dda4290a77e0569f90",
+    "psrl/workers/env_worker/coordinator.py": "5f2a8b6f34ef2638b9050166f47c3882090263e0e003e96763cf6d8368e1a16c",
+    "tests/env_worker/test_worker.py": "f64fea63b7f76e17a4efeef326831e3b170bd2be1f9ffaf8bed18e4979eee89a",
+    "tests/env_worker/test_airs_regressions.py": "7e4237d211bc221eafb4122b89880df1926f66d1cf28fef9a3a0214d24ed2cf1",
+    "tests/examples/airs_bench/test_runner.py": "1caccb46bf9c007b7cebdc0b6496474c95f166068ffce0c3d0541c3ea3db574e",
+    "tests/examples/airs_bench/test_grading_isolation.py": "a42d044b4af277cc8a117d902b15f5fe11c976f5393d09599b2d32bdd7c40023",
+    "tests/examples/airs_bench/test_apps_isolation.py": "5d48dcd7d001001f9c9c3603fae8e568054b91ae4efea76ffd51e3bcc02c0e31",
+    "tests/examples/airs_bench/test_mlgym_agent_loop.py": "8f1b947f441d987fc542f9163827f60f325260cdb5cba77b22dd6892c2e3c958",
+    "tests/examples/airs_bench/test_upstream_mlgym.py": "28761f7cf6c4bd4ff720ab74ba944c3c5f14e51873f280d49db8c77418ba8958"
+  },
+  "git_head": "90a4178f40b4de3e90ada1c9ebc4baf15815921a",
+  "working_tree": "Uncommitted, includes unrelated existing changes."
+}

@@ -1,0 +1,200 @@
+{
+  "id": "4925b72a-46c5-4f58-a857-48e3b6a6d60c",
+  "started_at": "2026-10-13T10:00:22.292861",
+  "updated_at": "2026-10-13T10:03:45.959456",
+  "finished_at": "2026-10-13T10:03:45.959456",
+  "n_total_trials": 1,
+  "stats": {
+    "n_completed_trials": 1,
+    "n_errored_trials": 0,
+    "n_running_trials": 0,
+    "n_pending_trials": 0,
+    "n_cancelled_trials": 0,
+    "n_retries": 0,
+    "evals": {
+      "nop__adhoc": {
+        "n_trials": 1,
+        "n_errors": 0,
+        "metrics": [
+          {
+            "check_aw_2d_256": 0.0,
+            "check_aw_2d_512": 0.0,
+            "equivalence_pass": 0.0,
+            "floor": 0.5,
+            "reward": 0.0,
+            "reward_repair": 0.0,
+            "speedup": 0.0
+          }
+        ],
+        "pass_at_k": {},
+        "reward_stats": {
+          "check_aw_2d_256": {
+            "0.0": [
+              "laps-repair-coef-2d-rktmod-l17k1__Gk29SgL"
+            ]
+          },
+          "check_aw_2d_512": {
+            "0.0": [
+              "laps-repair-coef-2d-rktmod-l17k1__Gk29SgL"
+            ]
+          },
+          "equivalence_pass": {
+            "0": [
+              "laps-repair-coef-2d-rktmod-l17k1__Gk29SgL"
+            ]
+          },
+          "floor": {
+            "0.5": [
+              "laps-repair-coef-2d-rktmod-l17k1__Gk29SgL"
+            ]
+          },
+          "reward": {
+            "0.0": [
+              "laps-repair-coef-2d-rktmod-l17k1__Gk29SgL"
+            ]
+          },
+          "reward_repair": {
+            "0.0": [
+              "laps-repair-coef-2d-rktmod-l17k1__Gk29SgL"
+            ]
+          },
+          "speedup": {
+            "0.0": [
+              "laps-repair-coef-2d-rktmod-l17k1__Gk29SgL"
+            ]
+          }
+        },
+        "exception_stats": {}
+      }
+    },
+    "n_input_tokens": null,
+    "n_cache_tokens": null,
+    "n_output_tokens": null,
+    "cost_usd": null
+  },
+  "trial_results": [
+    {
+      "id": "509ff0ce-9732-4d35-b563-05faff266176",
+      "task_name": "sciaccel/laps-repair-coef-2d-rktmod-l17k1",
+      "trial_name": "laps-repair-coef-2d-rktmod-l17k1__Gk29SgL",
+      "trial_uri": "file://${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-laps-nop/jobs/verify-ca7d9822a1/laps-repair-coef-2d-rktmod-l17k1__Gk29SgL",
+      "task_id": {
+        "path": "${SCIENCE_INFRA_ROOT}/sciaccel-rl/build/laps/repair/easy/laps-repair-coef-2d-rktmod-l17k1"
+      },
+      "source": null,
+      "task_checksum": "c97d6b5c8c689a8fe2ec6cced7e3f6461c1e0cea58252a73d891eb7809430d79",
+      "config": {
+        "task": {
+          "path": "${SCIENCE_INFRA_ROOT}/sciaccel-rl/build/laps/repair/easy/laps-repair-coef-2d-rktmod-l17k1",
+          "git_url": null,
+          "git_commit_id": null,
+          "name": null,
+          "ref": null,
+          "overwrite": false,
+          "download_dir": null,
+          "source": null
+        },
+        "trial_name": "laps-repair-coef-2d-rktmod-l17k1__Gk29SgL",
+        "trials_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-laps-nop/jobs/verify-ca7d9822a1",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+          "name": "nop",
+          "import_path": null,
+          "model_name": null,
+          "n_concurrent": null,
+          "concurrency_group": null,
+          "skills": [],
+          "override_timeout_sec": null,
+          "override_setup_timeout_sec": null,
+          "max_timeout_sec": null,
+          "resume_trajectory": false,
+          "load_trajectory": null,
+          "extra_allowed_hosts": [],
+          "kwargs": {},
+          "mcp_servers": []
+        },
+        "user_agent": null,
+        "environment": {
+          "type": "docker",
+          "import_path": null,
+          "force_build": false,
+          "delete": true,
+          "cpu_enforcement_policy": "auto",
+          "memory_enforcement_policy": "auto",
+          "override_cpus": null,
+          "override_memory_mb": null,
+          "override_storage_mb": null,
+          "override_gpus": null,
+          "override_tpu": null,
+          "mounts": null,
+          "extra_docker_compose": [
+            "/tmp/env-service-lease-dq2rwd9m.yaml",
+            "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/real-laps-nop/actor-label.yaml"
+          ],
+          "kwargs": {},
+          "extra_allowed_hosts": []
+        },
+        "verifier": {
+          "override_timeout_sec": null,
+          "max_timeout_sec": null,
+          "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "extra_instructions": [],
+        "job_id": "4925b72a-46c5-4f58-a857-48e3b6a6d60c",
+        "source_trial": null
+      },
+      "agent_info": {
+        "name": "nop",
+        "version": "1.0.0",
+        "model_info": null
+      },
+      "agent_result": {
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null,
+        "rollout_details": null,
+        "metadata": null
+      },
+      "verifier_result": {
+        "rewards": {
+          "check_aw_2d_256": 0.0,
+          "check_aw_2d_512": 0.0,
+          "equivalence_pass": 0,
+          "floor": 0.5,
+          "reward": 0.0,
+          "reward_repair": 0.0,
+          "speedup": 0.0
+        }
+      },
+      "verifier_environment_mode": "separate",
+      "exception_info": null,
+      "started_at": "2026-10-13T02:00:23.777928Z",
+      "finished_at": "2026-10-13T02:03:45.952687Z",
+      "environment_setup": {
+        "started_at": "2026-10-13T02:00:23.997127Z",
+        "finished_at": "2026-10-13T02:00:31.805032Z"
+      },
+      "agent_setup": {
+        "started_at": "2026-10-13T02:00:31.805087Z",
+        "finished_at": "2026-10-13T02:00:31.805138Z"
+      },
+      "agent_execution": {
+        "started_at": "2026-10-13T02:00:31.805197Z",
+        "finished_at": "2026-10-13T02:00:36.752653Z"
+      },
+      "verifier": {
+        "started_at": "2026-10-13T02:00:49.902421Z",
+        "finished_at": "2026-10-13T02:03:45.952673Z"
+      },
+      "step_results": null
+    }
+  ]
+}

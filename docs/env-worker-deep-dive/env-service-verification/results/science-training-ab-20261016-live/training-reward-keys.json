@@ -1,0 +1,18 @@
+[
+  {
+    "task_name": "sciaccel/laps-repair-subtle-2d-rktmod-l17k1",
+    "reward_key": "reward_repair"
+  },
+  {
+    "task_name": "sciaccel/laps-repair-coef-2d-rktmod-l17k1",
+    "reward_key": "reward_repair"
+  },
+  {
+    "task_name": "sciaccel/laps-repair-subtle-2d-rktmod-l17k1",
+    "reward_key": "reward_repair"
+  },
+  {
+    "task_name": "sciaccel/laps-repair-coef-2d-rktmod-l17k1",
+    "reward_key": "reward_repair"
+  }
+]

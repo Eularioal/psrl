@@ -1,0 +1,654 @@
+{
+  "task": "../docs/env-worker-deep-dive/env-service-verification/results/gpu-smoke-task",
+  "agent": "oracle",
+  "node_ip": "192.168.1.10",
+  "lease": {
+    "lease_id": "real-harbor-1-0a6f2291",
+    "session_id": "verify-38a2c9884c",
+    "unit_id": "real-harbor",
+    "node_ip": "192.168.1.10",
+    "gpu_indices": [
+      1
+    ],
+    "demand": {
+      "cpu": 1.0,
+      "memory_mb": 1024,
+      "needs_gpu": true,
+      "gpu_memory_mb": 1024
+    },
+    "granted_at": 4949893.365853172,
+    "last_seen": 4949893.365853172,
+    "shared": true,
+    "node_service_url": "http://192.168.1.10:41645/4bb734677b594e4890e60464d359c8cc/gpu"
+  },
+  "containers": {
+    "f8604f580854": {
+      "name": "/gpu-smoke-task__erpww49__env-main-1",
+      "labels": {
+        "com.docker.compose.config-hash": "db298495fd6662a23d3913d1459210678973a5709ae75e12bd0c57b69c883959",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+        "com.docker.compose.image": "sha256:c9c14f22803e81f7a0bfb6cbf57b92ce33da9c189c33057397a1c2f9402a870a",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "gpu-smoke-task__erpww49__env",
+        "com.docker.compose.project.config_files": "/tmp/tmphwyczd4z/gpu-smoke-task__eRpwW49__env-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/env-service-lease-44awe20k.yaml,${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-gpu-oracle/actor-label.yaml,/tmp/tmpw8pigvdw/docker-compose-environment.json,/tmp/tmpjr2uy8do/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp25trzfrf/docker-compose-egress-control-services.json,/tmp/psrl-compose-vwjqd788/ownership.yaml",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/gpu-smoke-task/environment",
+        "com.docker.compose.service": "main",
+        "com.docker.compose.version": "2.27.0",
+        "psrl.actor_id": "verify-38a2c9884c",
+        "psrl.env_lease": "real-harbor-1-0a6f2291",
+        "psrl.env_unit": "real-harbor"
+      },
+      "devices": [
+        {
+          "PathOnHost": "/dev/nvidia2",
+          "PathInContainer": "/dev/nvidia2",
+          "CgroupPermissions": "rwm"
+        },
+        {
+          "PathOnHost": "/dev/nvidiactl",
+          "PathInContainer": "/dev/nvidiactl",
+          "CgroupPermissions": "rwm"
+        },
+        {
+          "PathOnHost": "/dev/nvidia-uvm",
+          "PathInContainer": "/dev/nvidia-uvm",
+          "CgroupPermissions": "rwm"
+        },
+        {
+          "PathOnHost": "/dev/nvidia-uvm-tools",
+          "PathInContainer": "/dev/nvidia-uvm-tools",
+          "CgroupPermissions": "rwm"
+        }
+      ],
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/usr/bin/nvidia-smi",
+          "Destination": "/usr/bin/nvidia-smi",
+          "Mode": "ro",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/usr/lib64/libcuda.so.535.247.01",
+          "Destination": "/usr/lib64/libcuda.so.1",
+          "Mode": "ro",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/usr/lib64/libcuda.so.535.247.01",
+          "Destination": "/usr/lib64/libcuda.so",
+          "Mode": "ro",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/usr/lib64/libnvidia-ml.so.535.247.01",
+          "Destination": "/usr/lib64/libnvidia-ml.so.1",
+          "Mode": "ro",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/usr/lib64/libnvidia-ptxjitcompiler.so.535.247.01",
+          "Destination": "/usr/lib64/libnvidia-ptxjitcompiler.so.1",
+          "Mode": "ro",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-gpu-oracle/jobs/verify-38a2c9884c/gpu-smoke-task__eRpwW49/verifier",
+          "Destination": "/logs/verifier",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-gpu-oracle/jobs/verify-38a2c9884c/gpu-smoke-task__eRpwW49/agent",
+          "Destination": "/logs/agent",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-gpu-oracle/jobs/verify-38a2c9884c/gpu-smoke-task__eRpwW49/artifacts/logs/artifacts",
+          "Destination": "/logs/artifacts",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    "5dd72e1c9768": {
+      "name": "/gpu-smoke-task__erpww49__env-harbor-docker-egress-control-sidecar-1",
+      "labels": {
+        "com.docker.compose.config-hash": "7a4a1b77a76f68fc4c0415a1a6616692dd8c241484510d8a5f4b59c81d532ec0",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "gpu-smoke-task__erpww49__env",
+        "com.docker.compose.project.config_files": "/tmp/tmphwyczd4z/gpu-smoke-task__eRpwW49__env-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/env-service-lease-44awe20k.yaml,${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-gpu-oracle/actor-label.yaml,/tmp/tmpw8pigvdw/docker-compose-environment.json,/tmp/tmpjr2uy8do/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp25trzfrf/docker-compose-egress-control-services.json,/tmp/psrl-compose-vwjqd788/ownership.yaml",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/gpu-smoke-task/environment",
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "com.docker.compose.version": "2.27.0",
+        "psrl.actor_id": "verify-38a2c9884c",
+        "psrl.env_lease": "real-harbor-1-0a6f2291",
+        "psrl.env_unit": "real-harbor"
+      },
+      "devices": null,
+      "mounts": []
+    }
+  },
+  "related_containers": {
+    "f8604f580854": {
+      "name": "/gpu-smoke-task__erpww49__env-main-1",
+      "labels": {
+        "com.docker.compose.config-hash": "db298495fd6662a23d3913d1459210678973a5709ae75e12bd0c57b69c883959",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+        "com.docker.compose.image": "sha256:c9c14f22803e81f7a0bfb6cbf57b92ce33da9c189c33057397a1c2f9402a870a",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "gpu-smoke-task__erpww49__env",
+        "com.docker.compose.project.config_files": "/tmp/tmphwyczd4z/gpu-smoke-task__eRpwW49__env-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/env-service-lease-44awe20k.yaml,${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-gpu-oracle/actor-label.yaml,/tmp/tmpw8pigvdw/docker-compose-environment.json,/tmp/tmpjr2uy8do/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp25trzfrf/docker-compose-egress-control-services.json,/tmp/psrl-compose-vwjqd788/ownership.yaml",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/gpu-smoke-task/environment",
+        "com.docker.compose.service": "main",
+        "com.docker.compose.version": "2.27.0",
+        "psrl.actor_id": "verify-38a2c9884c",
+        "psrl.env_lease": "real-harbor-1-0a6f2291",
+        "psrl.env_unit": "real-harbor"
+      },
+      "devices": [
+        {
+          "PathOnHost": "/dev/nvidia2",
+          "PathInContainer": "/dev/nvidia2",
+          "CgroupPermissions": "rwm"
+        },
+        {
+          "PathOnHost": "/dev/nvidiactl",
+          "PathInContainer": "/dev/nvidiactl",
+          "CgroupPermissions": "rwm"
+        },
+        {
+          "PathOnHost": "/dev/nvidia-uvm",
+          "PathInContainer": "/dev/nvidia-uvm",
+          "CgroupPermissions": "rwm"
+        },
+        {
+          "PathOnHost": "/dev/nvidia-uvm-tools",
+          "PathInContainer": "/dev/nvidia-uvm-tools",
+          "CgroupPermissions": "rwm"
+        }
+      ]
+    },
+    "5dd72e1c9768": {
+      "name": "/gpu-smoke-task__erpww49__env-harbor-docker-egress-control-sidecar-1",
+      "labels": {
+        "com.docker.compose.config-hash": "7a4a1b77a76f68fc4c0415a1a6616692dd8c241484510d8a5f4b59c81d532ec0",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "gpu-smoke-task__erpww49__env",
+        "com.docker.compose.project.config_files": "/tmp/tmphwyczd4z/gpu-smoke-task__eRpwW49__env-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/env-service-lease-44awe20k.yaml,${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-gpu-oracle/actor-label.yaml,/tmp/tmpw8pigvdw/docker-compose-environment.json,/tmp/tmpjr2uy8do/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp25trzfrf/docker-compose-egress-control-services.json,/tmp/psrl-compose-vwjqd788/ownership.yaml",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/gpu-smoke-task/environment",
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "com.docker.compose.version": "2.27.0",
+        "psrl.actor_id": "verify-38a2c9884c",
+        "psrl.env_lease": "real-harbor-1-0a6f2291",
+        "psrl.env_unit": "real-harbor"
+      },
+      "devices": null
+    }
+  },
+  "samples": [
+    {
+      "at": 1791874358.5915434,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874360.8685231,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874362.9709966,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874365.067946,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874367.1656077,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874369.262744,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874371.3566256,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874373.449356,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874375.6014712,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874377.6995764,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874379.7964923,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874381.9103084,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874385.312269,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874387.4209998,
+      "containers": [
+        "f8604f580854",
+        "5dd72e1c9768"
+      ],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "at": 1791874389.5193233,
+      "containers": [],
+      "snapshots": [
+        {
+          "unit_id": "real-harbor",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 2,
+          "cpu_used": 1.0,
+          "cpu_quota": 16.0,
+          "memory_used_mb": 1024,
+          "memory_mb": 32768,
+          "declared_gpu_memory_mb": 1024,
+          "measured_gpu_memory_mb": 0.0,
+          "gpu_memory_mb": 8000,
+          "sessions": [
+            "verify-38a2c9884c"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    }
+  ],
+  "started_at": 1791874356.098233,
+  "overlay": {
+    "services": {
+      "main": {
+        "labels": [
+          "psrl.env_lease=real-harbor-1-0a6f2291",
+          "psrl.env_unit=real-harbor"
+        ],
+        "devices": [
+          "/dev/nvidia2:/dev/nvidia2",
+          "/dev/nvidiactl:/dev/nvidiactl",
+          "/dev/nvidia-uvm:/dev/nvidia-uvm",
+          "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
+        ],
+        "volumes": [
+          "/usr/bin/nvidia-smi:/usr/bin/nvidia-smi:ro",
+          "/usr/lib64/libcuda.so.535.247.01:/usr/lib64/libcuda.so.1:ro",
+          "/usr/lib64/libcuda.so.535.247.01:/usr/lib64/libcuda.so:ro",
+          "/usr/lib64/libnvidia-ml.so.535.247.01:/usr/lib64/libnvidia-ml.so.1:ro",
+          "/usr/lib64/libnvidia-ptxjitcompiler.so.535.247.01:/usr/lib64/libnvidia-ptxjitcompiler.so.1:ro"
+        ],
+        "environment": [
+          "LD_LIBRARY_PATH=/usr/lib64:/usr/local/cuda/lib64"
+        ]
+      }
+    }
+  },
+  "trials": [
+    {
+      "task": "verification/cuda-driver-smoke",
+      "reward": {
+        "reward": 1.0
+      },
+      "exception": null
+    }
+  ],
+  "remaining_before_release": [],
+  "final_snapshot": [
+    {
+      "unit_id": "real-harbor",
+      "node_ip": "192.168.1.10",
+      "containers_running": 0,
+      "max_containers": 2,
+      "cpu_used": 0,
+      "cpu_quota": 16.0,
+      "memory_used_mb": 0,
+      "memory_mb": 32768,
+      "declared_gpu_memory_mb": 0,
+      "measured_gpu_memory_mb": 0.0,
+      "gpu_memory_mb": 8000,
+      "sessions": [],
+      "sessions_waiting": 0
+    }
+  ],
+  "elapsed_s": 33.47523331642151
+}

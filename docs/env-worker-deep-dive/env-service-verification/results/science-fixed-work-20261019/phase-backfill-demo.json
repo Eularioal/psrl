@@ -1,0 +1,82 @@
+{
+  "scope": "Teaching simulation only; synthetic seconds",
+  "whole_episode_reservation_makespan": 37,
+  "accurate_prediction": {
+    "actual_gap": 20,
+    "predicted_gap": 20,
+    "borrow_admitted": true,
+    "events": [
+      [
+        "A GPU",
+        0,
+        4
+      ],
+      [
+        "B GPU",
+        5,
+        13
+      ],
+      [
+        "A GPU",
+        24,
+        28
+      ]
+    ],
+    "a_extra_wait": 0,
+    "makespan": 28,
+    "stale_command_rejected": true,
+    "final_owner": null
+  },
+  "owner_returns_early": {
+    "actual_gap": 4,
+    "predicted_gap": 20,
+    "borrow_admitted": true,
+    "events": [
+      [
+        "A GPU",
+        0,
+        4
+      ],
+      [
+        "B GPU",
+        5,
+        13
+      ],
+      [
+        "A GPU",
+        14,
+        18
+      ]
+    ],
+    "a_extra_wait": 6,
+    "makespan": 18,
+    "stale_command_rejected": true,
+    "final_owner": null
+  },
+  "conservative_short_gap": {
+    "actual_gap": 4,
+    "predicted_gap": 4,
+    "borrow_admitted": false,
+    "events": [
+      [
+        "A GPU",
+        0,
+        4
+      ],
+      [
+        "A GPU",
+        8,
+        12
+      ],
+      [
+        "B GPU",
+        13,
+        21
+      ]
+    ],
+    "a_extra_wait": 0,
+    "makespan": 21,
+    "stale_command_rejected": true,
+    "final_owner": null
+  }
+}

@@ -21,6 +21,10 @@ Claude must read and apply these guides when writing or modifying code.
 
 ## Documentation
 
+- Keep all workspace documentation in this repository's `docs/` directory. From the parent workspace, this is `psrl/docs/`.
+- Merge documentation into the existing topic directories. Do not create a sibling `../docs/` directory or a `docs/notes/` migration layer.
+- Update `docs/README.md` and relative links when adding or moving documentation.
+
 - A README tells a reader what to do and what will bite them. It is not the lab notebook that proves how we learned it.
 - Do not paste measured forensics into documentation. Keep a number only if the reader acts on it, and drop the run-specific evidence that merely justifies a past decision. Experiment results belong in a `Results` section or a `FINDINGS.md`, tied to the script that reproduces them.
 - Never write history into documentation or comments. `git log` owns what the code used to be.

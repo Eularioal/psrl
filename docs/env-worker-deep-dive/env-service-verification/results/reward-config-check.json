@@ -1,0 +1,7 @@
+{
+  "scope": "CPU constructor regression, no training retry",
+  "previous_assertion": "max_resp_len must be larger than overlong_buffer.len",
+  "max_response_length": 512,
+  "fixed_buffer_length": 0,
+  "fixed_constructor_passed": true
+}

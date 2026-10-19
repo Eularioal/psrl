@@ -1,0 +1,7 @@
+{
+  "idle_selected_devices": "passed",
+  "occupied_device": "rejected",
+  "missing_device": "rejected",
+  "telemetry_failure": "rejected",
+  "scope": "CPU checks only. This gate does not reserve physical GPUs."
+}

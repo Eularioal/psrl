@@ -1,0 +1,184 @@
+{
+  "exit_code": 0,
+  "original_ray_pointer_unchanged": true,
+  "training_completed_log": true,
+  "episodes": [
+    {
+      "uid": 0,
+      "termination": "finished",
+      "reward": 1.0
+    },
+    {
+      "uid": 1,
+      "termination": "max_response_length_exceeded",
+      "reward": 0.0
+    }
+  ],
+  "training_reward_key": "reward_repair",
+  "metrics": {
+    "global_seqlen/min": 33856.0,
+    "global_seqlen/max": 34773.0,
+    "global_seqlen/minmax_diff": 917.0,
+    "global_seqlen/balanced_min": 33856.0,
+    "global_seqlen/balanced_max": 34773.0,
+    "global_seqlen/mean": 34314.5,
+    "actor/entropy": 0.373046875,
+    "training/rollout_probs_diff_valid": 1.0,
+    "training/rollout_probs_diff_max": 0.10565349459648132,
+    "training/rollout_probs_diff_mean": 0.0031619188375771046,
+    "training/rollout_probs_diff_std": 0.00780068151652813,
+    "training/rollout_actor_probs_pearson_corr": 0.9995777010917664,
+    "rollout_corr/rollout_is_mean": 1.0000803470611572,
+    "rollout_corr/rollout_is_ratio_fraction_high": 0.0,
+    "rollout_corr/rollout_is_ratio_fraction_low": 0.0,
+    "rollout_corr/rollout_is_max": 1.346713900566101,
+    "rollout_corr/rollout_is_min": 0.6725954413414001,
+    "rollout_corr/rollout_is_std": 0.029725059866905212,
+    "rollout_corr/rollout_is_eff_sample_size": 0.9991173197678567,
+    "rollout_corr/rollout_is_seq_mean": 1.0000803470611572,
+    "rollout_corr/rollout_is_seq_std": 0.0,
+    "rollout_corr/rollout_is_seq_max": 1.0000803470611572,
+    "rollout_corr/rollout_is_seq_min": 1.0000803470611572,
+    "rollout_corr/rollout_is_seq_max_deviation": 1.0,
+    "rollout_corr/rollout_is_seq_fraction_high": 0.0,
+    "rollout_corr/rollout_is_seq_fraction_low": 0.5,
+    "rollout_corr/training_ppl": 1.2274589538574219,
+    "rollout_corr/training_log_ppl": 0.18747472763061523,
+    "rollout_corr/kl": 0.00036067349719814956,
+    "rollout_corr/k3_kl": 0.0004409306275192648,
+    "rollout_corr/rollout_ppl": 1.2271965742111206,
+    "rollout_corr/rollout_log_ppl": 0.1872943788766861,
+    "rollout_corr/log_ppl_diff": 0.00018034875392913818,
+    "rollout_corr/log_ppl_abs_diff": 0.00018034875392913818,
+    "rollout_corr/log_ppl_diff_max": 0.00036069750785827637,
+    "rollout_corr/log_ppl_diff_min": 0.0,
+    "rollout_corr/ppl_ratio": 1.0001803636550903,
+    "rollout_corr/chi2_token": 0.0010442733764648438,
+    "rollout_corr/chi2_seq": -0.49975335597991943,
+    "actor/pg_clipfrac": 0.0,
+    "actor/ppo_kl": 0.0,
+    "actor/pg_clipfrac_lower": 0.0,
+    "actor/pg_loss": -0.5000401735305786,
+    "actor/loss": -0.5000401735305786,
+    "actor/grad_norm": 2.169189929962158,
+    "actor/lr": 3.333333333333333e-07,
+    "actor/perf/max_memory_allocated_gb": 43.06682729721069,
+    "actor/perf/max_memory_reserved_gb": 56.447265625,
+    "actor/perf/cpu_memory_used_gb": 216.50801849365234,
+    "perf/mfu/actor": 0.0,
+    "training/global_step": 1.0,
+    "critic/score/mean": 0.5,
+    "critic/score/max": 1.0,
+    "critic/score/min": 0.0,
+    "critic/rewards/mean": 0.5,
+    "critic/rewards/max": 1.0,
+    "critic/rewards/min": 0.0,
+    "critic/advantages/mean": 0.5,
+    "critic/advantages/max": 0.5,
+    "critic/advantages/min": 0.5,
+    "critic/returns/mean": 0.5,
+    "critic/returns/max": 0.5,
+    "critic/returns/min": 0.5,
+    "response_length/mean": 32298.0,
+    "response_length/max": 32756.0,
+    "response_length/min": 31840.0,
+    "response_length/clip_ratio": 0.0,
+    "response_length_non_aborted/mean": 32298.0,
+    "response_length_non_aborted/max": 32756.0,
+    "response_length_non_aborted/min": 31840.0,
+    "response_length_non_aborted/clip_ratio": 0.0,
+    "response/aborted_ratio": 0.0,
+    "prompt_length/mean": 2016.5,
+    "prompt_length/max": 2017.0,
+    "prompt_length/min": 2016.0,
+    "prompt_length/clip_ratio": 0.0,
+    "timing_s/start_profile": 2.006813883781433e-05,
+    "timing_s/wait_for_gen": 815.9152095969766,
+    "timing_s/old_log_prob": 10.696126670576632,
+    "timing_s/async_reward_get": 0.04716561548411846,
+    "timing_s/adv": 0.057969674468040466,
+    "timing_s/update_actor": 80.6324746729806,
+    "timing_s/step": 907.3793346630409,
+    "timing_s/stop_profile": 3.018788993358612e-05,
+    "timing_per_token_ms/adv": 0.0008446819051427307,
+    "timing_per_token_ms/update_actor": 1.1749038259770739,
+    "perf/total_num_tokens": 68629.0,
+    "perf/time_per_step": 907.3793346630409,
+    "perf/throughput": 18.908574776360116,
+    "training/num_turns/mean": 27.5,
+    "training/num_turns/max": 31.0,
+    "training/num_turns/min": 24.0,
+    "termination/max_response_length_exceeded/fraction": 0.5,
+    "termination/max_response_length_exceeded/score_mean": 0.0,
+    "termination/finished/fraction": 0.5,
+    "termination/finished/score_mean": 1.0,
+    "termination/trained_tokens": 10556.0,
+    "termination/masked_sample_fraction": 0.5,
+    "group/zero_variance_fraction": 0.0,
+    "group/count": 1.0
+  },
+  "warmup_steps": 3,
+  "nonzero_first_step_learning_rate": false,
+  "policy_gradient_nonzero": true,
+  "effective_policy_update_validated": false,
+  "train_worker_logs": {
+    "TrainWorker_R1.log": {
+      "train_actor_completed": true,
+      "push_model_completed": true
+    },
+    "TrainWorker_R0.log": {
+      "train_actor_completed": true,
+      "push_model_completed": true
+    }
+  },
+  "harbor_trials": [
+    {
+      "path": "harbor-jobs/01a13446-131f-76f3-a65d-e28168113948/2026-10-13__15-59-43/laps-repair-coef-2d-rktmod-l17k1__xVeRyHH/result.json",
+      "rewards": {
+        "rewards": {
+          "check_aw_2d_256": 1.0,
+          "check_aw_2d_512": 1.0,
+          "equivalence_pass": 1,
+          "floor": 0.5,
+          "reward": 1.0,
+          "reward_repair": 1.0,
+          "speedup": 0.0
+        }
+      },
+      "training_reward": 1.0,
+      "exception": null
+    },
+    {
+      "path": "harbor-jobs/01a13446-131f-76f3-a65d-e29c0ffbe0e8/regrade/regrade_laps-repair-coef-2d-rktmod-l17k1__LGeEkE9_ea5315f8/laps-repair-coef-2d-rktmod-l17k1__RMKGr9c/result.json",
+      "rewards": {
+        "rewards": {
+          "check_aw_2d_256": 0.0,
+          "check_aw_2d_512": 0.0,
+          "equivalence_pass": 0,
+          "floor": 0.5,
+          "reward": 0.0,
+          "reward_repair": 0.0,
+          "speedup": 0.0
+        }
+      },
+      "training_reward": 0.0,
+      "exception": null
+    },
+    {
+      "path": "harbor-jobs/01a13446-131f-76f3-a65d-e29c0ffbe0e8/2026-10-13__15-59-48/laps-repair-coef-2d-rktmod-l17k1__LGeEkE9/result.json",
+      "rewards": null,
+      "training_reward": 0.0,
+      "exception": {
+        "exception_type": "ContextWindowExhausted",
+        "exception_message": "litellm.BadRequestError: OpenAIException - The prompt (length 35043) is longer than the maximum model length of 34816.",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 886, in acompletion\n    headers, response = await self.make_openai_chat_completion_request(\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 289, in async_wrapper\n    result = await func(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 447, in make_openai_chat_completion_request\n    raise e\n  File \"${WORKSPACE_ROOT}\", line 427, in make_openai_chat_completion_request\n    raw_response = await openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 386, in wrapped\n    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 2883, in create\n    return await self._post(\n           ^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1977, in post\n    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1762, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.BadRequestError: Error code: 400 - {'error': {'type': 'Bad Request', 'code': 'prompt_overflow', 'message': 'The prompt (length 35043) is longer than the maximum model length of 34816.', 'param': None}}\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 657, in acompletion\n    response = await init_response\n               ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 946, in acompletion\n    raise OpenAIError(\nlitellm.llms.openai.common_utils.OpenAIError: Error code: 400 - {'error': {'type': 'Bad Request', 'code': 'prompt_overflow', 'message': 'The prompt (length 35043) is longer than the maximum model length of 34816.', 'param': None}}\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"${PSRL_WORKSPACE}/examples/sciaccel_rl/agent.py\", line 94, in _query_llm\n    return await super()._query_llm(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 193, in async_wrapped\n    return await copy(fn, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 112, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 157, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 111, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 413, in exc_check\n    raise retry_exc.reraise()\n          ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 184, in reraise\n    raise self.last_attempt.result()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 401, in __get_result\n    raise self._exception\n  File \"${WORKSPACE_ROOT}\", line 116, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1155, in _query_llm\n    raise e\n  File \"${WORKSPACE_ROOT}\", line 1004, in _query_llm\n    llm_response = await chat.chat(\n                   ^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 89, in chat\n    llm_response: LLMResponse = await self._model.call(\n                                ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 193, in async_wrapped\n    return await copy(fn, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 112, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 157, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 111, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 413, in exc_check\n    raise retry_exc.reraise()\n          ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 184, in reraise\n    raise self.last_attempt.result()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 401, in __get_result\n    raise self._exception\n  File \"${WORKSPACE_ROOT}\", line 116, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 406, in call\n    self._handle_litellm_error(e)\n  File \"${WORKSPACE_ROOT}\", line 641, in _handle_litellm_error\n    raise e\n  File \"${WORKSPACE_ROOT}\", line 404, in call\n    raise e\n  File \"${WORKSPACE_ROOT}\", line 370, in call\n    response = await litellm.acompletion(**completion_kwargs)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1871, in wrapper_async\n    raise e\n  File \"${WORKSPACE_ROOT}\", line 1690, in wrapper_async\n    result = await original_function(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 710, in acompletion\n    raise exception_type(\n          ^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 2510, in exception_type\n    raise e  # it's already mapped\n    ^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 2276, in exception_type\n    _map_openai_exception(\n  File \"${WORKSPACE_ROOT}\", line 394, in _map_openai_exception\n    raise BadRequestError(\nlitellm.exceptions.BadRequestError: litellm.BadRequestError: OpenAIException - The prompt (length 35043) is longer than the maximum model length of 34816.\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"${WORKSPACE_ROOT}\", line 409, in run\n    await self._run()\n  File \"${WORKSPACE_ROOT}\", line 41, in _run\n    await self._run_agent()\n  File \"${WORKSPACE_ROOT}\", line 77, in _run_agent\n    await self._run_agent_phase(\n  File \"${WORKSPACE_ROOT}\", line 545, in _run_agent_phase\n    await asyncio.wait_for(\n  File \"${WORKSPACE_ROOT}\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1607, in run\n    await self._run_agent_loop(\n  File \"${WORKSPACE_ROOT}\", line 1286, in _run_agent_loop\n    ) = await self._handle_llm_interaction(\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"${WORKSPACE_ROOT}\", line 1164, in _handle_llm_interaction\n    llm_response = await self._query_llm(\n                   ^^^^^^^^^^^^^^^^^^^^^^\n  File \"${PSRL_WORKSPACE}/examples/sciaccel_rl/agent.py\", line 98, in _query_llm\n    raise ContextWindowExhausted(str(exc)) from exc\nexamples.sciaccel_rl.agent.ContextWindowExhausted: litellm.BadRequestError: OpenAIException - The prompt (length 35043) is longer than the maximum model length of 34816.\n",
+        "occurred_at": "2026-10-13T08:09:49.969670Z"
+      }
+    }
+  ],
+  "verifier_trial_rewards": [
+    1.0,
+    0.0,
+    0.0
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "node_ip": "192.168.1.10",
+  "probes": [
+    {
+      "worker_id": 0,
+      "expected": {
+        "index": 0,
+        "minor": 0,
+        "uuid": "GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777"
+      },
+      "devices": [
+        "/dev/nvidia0",
+        "/dev/nvidiactl",
+        "/dev/nvidia-uvm",
+        "/dev/nvidia-uvm-tools"
+      ],
+      "actual": {
+        "device_count": 1,
+        "device_name": "NVIDIA H20",
+        "uuid_hex": "eb89300acff91c5a984852fd65c0f777",
+        "kernel_output": 42,
+        "allocation_bytes": 67108864,
+        "visible_devices": [
+          "/dev/nvidia0",
+          "/dev/nvidia1",
+          "/dev/nvidia2",
+          "/dev/nvidia3",
+          "/dev/nvidia4",
+          "/dev/nvidia5",
+          "/dev/nvidia6",
+          "/dev/nvidia7"
+        ],
+        "nvidia_smi": "0, GPU-eb89300a-cff9-1c5a-9848-52fd65c0f777\n"
+      }
+    },
+    {
+      "worker_id": 1,
+      "expected": {
+        "index": 1,
+        "minor": 2,
+        "uuid": "GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd"
+      },
+      "devices": [
+        "/dev/nvidia2",
+        "/dev/nvidiactl",
+        "/dev/nvidia-uvm",
+        "/dev/nvidia-uvm-tools"
+      ],
+      "actual": {
+        "device_count": 1,
+        "device_name": "NVIDIA H20",
+        "uuid_hex": "77ed957951542afbe9384c0eb22a8ebd",
+        "kernel_output": 42,
+        "allocation_bytes": 67108864,
+        "visible_devices": [
+          "/dev/nvidia0",
+          "/dev/nvidia1",
+          "/dev/nvidia2",
+          "/dev/nvidia3",
+          "/dev/nvidia4",
+          "/dev/nvidia5",
+          "/dev/nvidia6",
+          "/dev/nvidia7"
+        ],
+        "nvidia_smi": "0, GPU-77ed9579-5154-2afb-e938-4c0eb22a8ebd\n"
+      }
+    }
+  ],
+  "passed": true,
+  "final_stats": {
+    "routing_method": "least_loaded",
+    "workers": [
+      {
+        "worker_id": 0,
+        "node_ip": "192.168.1.10",
+        "cpu_slots": 1,
+        "used_cpu": 0,
+        "gpu_slots": 1,
+        "used_gpu": 0
+      },
+      {
+        "worker_id": 1,
+        "node_ip": "192.168.1.10",
+        "cpu_slots": 1,
+        "used_cpu": 0,
+        "gpu_slots": 1,
+        "used_gpu": 0
+      }
+    ]
+  },
+  "remaining": []
+}

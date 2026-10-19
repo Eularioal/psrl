@@ -1,0 +1,611 @@
+{
+  "started_at": 1791874256.366224,
+  "token": "09362ff7",
+  "timeline": [
+    {
+      "elapsed_s": 0.08978850860148668,
+      "containers": [
+        {
+          "id": "6c83fab7e8099078d576633e6ab45b752f320342203deb5829265b9e7c5447ff",
+          "name": "/evcrash-09362ff7__5x4wd2d__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "b799dae36b58e777ea88b98054c87279fc8a9862913a6cf8c85abb6a9ee2aa71",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:d03486fbca1ac7b7b7ad31909560afc0c5e6b6a07939b15fa483ac3686df67cb",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-09362ff7__5x4wd2d__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpfjr1ioqw/evcrash-09362ff7__5x4WD2D__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmpzufyhr6i/docker-compose-environment.json,/tmp/tmp0nk16306/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp5gyasxg_/docker-compose-egress-control-services.json,/tmp/psrl-compose-va65mvqf/ownership.yaml",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-crash-recovery/evcrash-09362ff7/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0",
+            "psrl.actor_id": "internal.example.invalid",
+            "psrl.env_lease": "crash-09362ff7-3-2ee89c07",
+            "psrl.env_unit": "crash-09362ff7"
+          }
+        },
+        {
+          "id": "896d4617ab4f1f33202f8132974390535a147b78e5207c4f85ea29deb51282c9",
+          "name": "/evcrash-09362ff7__5x4wd2d__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "9abc6d3186659652620691b0145febe57c218daad9e3e58029b6ecfe66106e95",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-09362ff7__5x4wd2d__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpfjr1ioqw/evcrash-09362ff7__5x4WD2D__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmpzufyhr6i/docker-compose-environment.json,/tmp/tmp0nk16306/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp5gyasxg_/docker-compose-egress-control-services.json,/tmp/psrl-compose-va65mvqf/ownership.yaml",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-crash-recovery/evcrash-09362ff7/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0",
+            "psrl.actor_id": "internal.example.invalid",
+            "psrl.env_lease": "crash-09362ff7-3-2ee89c07",
+            "psrl.env_unit": "crash-09362ff7"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 4,
+          "cpu_used": 1,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 256,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "crash-09362ff7"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 1.1998241096735,
+      "containers": [
+        {
+          "id": "6c83fab7e8099078d576633e6ab45b752f320342203deb5829265b9e7c5447ff",
+          "name": "/evcrash-09362ff7__5x4wd2d__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "b799dae36b58e777ea88b98054c87279fc8a9862913a6cf8c85abb6a9ee2aa71",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:d03486fbca1ac7b7b7ad31909560afc0c5e6b6a07939b15fa483ac3686df67cb",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-09362ff7__5x4wd2d__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpfjr1ioqw/evcrash-09362ff7__5x4WD2D__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmpzufyhr6i/docker-compose-environment.json,/tmp/tmp0nk16306/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp5gyasxg_/docker-compose-egress-control-services.json,/tmp/psrl-compose-va65mvqf/ownership.yaml",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-crash-recovery/evcrash-09362ff7/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0",
+            "psrl.actor_id": "internal.example.invalid",
+            "psrl.env_lease": "crash-09362ff7-3-2ee89c07",
+            "psrl.env_unit": "crash-09362ff7"
+          }
+        },
+        {
+          "id": "896d4617ab4f1f33202f8132974390535a147b78e5207c4f85ea29deb51282c9",
+          "name": "/evcrash-09362ff7__5x4wd2d__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "9abc6d3186659652620691b0145febe57c218daad9e3e58029b6ecfe66106e95",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-09362ff7__5x4wd2d__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpfjr1ioqw/evcrash-09362ff7__5x4WD2D__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmpzufyhr6i/docker-compose-environment.json,/tmp/tmp0nk16306/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp5gyasxg_/docker-compose-egress-control-services.json,/tmp/psrl-compose-va65mvqf/ownership.yaml",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-crash-recovery/evcrash-09362ff7/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0",
+            "psrl.actor_id": "internal.example.invalid",
+            "psrl.env_lease": "crash-09362ff7-3-2ee89c07",
+            "psrl.env_unit": "crash-09362ff7"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 4,
+          "cpu_used": 1,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 256,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "crash-09362ff7"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 2.336616796441376,
+      "containers": [
+        {
+          "id": "6c83fab7e8099078d576633e6ab45b752f320342203deb5829265b9e7c5447ff",
+          "name": "/evcrash-09362ff7__5x4wd2d__verifier__trial-main-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "b799dae36b58e777ea88b98054c87279fc8a9862913a6cf8c85abb6a9ee2aa71",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+            "com.docker.compose.image": "sha256:d03486fbca1ac7b7b7ad31909560afc0c5e6b6a07939b15fa483ac3686df67cb",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-09362ff7__5x4wd2d__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpfjr1ioqw/evcrash-09362ff7__5x4WD2D__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmpzufyhr6i/docker-compose-environment.json,/tmp/tmp0nk16306/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp5gyasxg_/docker-compose-egress-control-services.json,/tmp/psrl-compose-va65mvqf/ownership.yaml",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-crash-recovery/evcrash-09362ff7/tests",
+            "com.docker.compose.service": "main",
+            "com.docker.compose.version": "2.27.0",
+            "psrl.actor_id": "internal.example.invalid",
+            "psrl.env_lease": "crash-09362ff7-3-2ee89c07",
+            "psrl.env_unit": "crash-09362ff7"
+          }
+        },
+        {
+          "id": "896d4617ab4f1f33202f8132974390535a147b78e5207c4f85ea29deb51282c9",
+          "name": "/evcrash-09362ff7__5x4wd2d__verifier__trial-harbor-docker-egress-control-sidecar-1",
+          "state": "running",
+          "labels": {
+            "com.docker.compose.config-hash": "9abc6d3186659652620691b0145febe57c218daad9e3e58029b6ecfe66106e95",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "evcrash-09362ff7__5x4wd2d__verifier__trial",
+            "com.docker.compose.project.config_files": "/tmp/tmpfjr1ioqw/evcrash-09362ff7__5x4WD2D__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmpzufyhr6i/docker-compose-environment.json,/tmp/tmp0nk16306/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp5gyasxg_/docker-compose-egress-control-services.json,/tmp/psrl-compose-va65mvqf/ownership.yaml",
+            "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-crash-recovery/evcrash-09362ff7/tests",
+            "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+            "com.docker.compose.version": "2.27.0",
+            "psrl.actor_id": "internal.example.invalid",
+            "psrl.env_lease": "crash-09362ff7-3-2ee89c07",
+            "psrl.env_unit": "crash-09362ff7"
+          }
+        }
+      ],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 4,
+          "cpu_used": 1,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 256,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "crash-09362ff7"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 3.383790500462055,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 1,
+          "max_containers": 4,
+          "cpu_used": 1,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 256,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [
+            "crash-09362ff7"
+          ],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 4.428406488150358,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 5.474986546672881,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 6.561268035322428,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 7.645701742731035,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 8.699789612554014,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 9.7530556069687,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 10.803085399791598,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 11.856448526494205,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 12.907229308970273,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 13.957344943657517,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    },
+    {
+      "elapsed_s": 15.010115623474121,
+      "containers": [],
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ]
+    }
+  ],
+  "node_ip": "192.168.1.10",
+  "ttl_only": {
+    "owner": {
+      "pid": 3020011,
+      "lease": {
+        "lease_id": "crash-09362ff7-1-6198c099",
+        "session_id": "ttl-09362ff7",
+        "unit_id": "crash-09362ff7",
+        "node_ip": "192.168.1.10",
+        "gpu_indices": [],
+        "demand": {
+          "cpu": 1,
+          "memory_mb": 256,
+          "needs_gpu": false,
+          "gpu_memory_mb": 0
+        },
+        "granted_at": 4949823.557845999,
+        "last_seen": 4949823.557845999,
+        "shared": false,
+        "node_service_url": "http://192.168.1.10:35909/3291b07f88614c2bb6ba8d00df44e4fd/gpu"
+      },
+      "overlay": "/tmp/env-service-lease-rs8uugo0.yaml"
+    },
+    "before": [
+      {
+        "id": "4d200f86734f9726aca0e33dce72c70bb54c4dc3d691fdb9c1735aa03d70cd4c",
+        "name": "/ec-09362ff7-ttl-main-1",
+        "state": "running",
+        "labels": {
+          "com.docker.compose.config-hash": "d213b749842a0009e1ae3d935260730a0d6a54bd10d0c4b5e6ce09b6db651044",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "",
+          "com.docker.compose.image": "sha256:bbb7d9e20910f8d5a12b20e8e3d4e1fa3482afe71ee3042ea3f8bbf92da80f2d",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "ec-09362ff7-ttl",
+          "com.docker.compose.project.config_files": "/tmp/tmp9vospu82/ec-09362ff7-ttl-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/env-service-lease-rs8uugo0.yaml,/tmp/tmpaqbr3b_w/docker-compose-environment.json,/tmp/tmppedd7_3z/docker-compose-mounts.json",
+          "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/gpu-smoke-task/environment",
+          "com.docker.compose.service": "main",
+          "com.docker.compose.version": "2.27.0",
+          "psrl.env_lease": "crash-09362ff7-1-6198c099",
+          "psrl.env_unit": "crash-09362ff7"
+        }
+      }
+    ],
+    "after_ttl": {
+      "snapshot": [
+        {
+          "unit_id": "crash-09362ff7",
+          "node_ip": "192.168.1.10",
+          "containers_running": 0,
+          "max_containers": 4,
+          "cpu_used": 0,
+          "cpu_quota": 8.0,
+          "memory_used_mb": 0,
+          "memory_mb": 4096,
+          "declared_gpu_memory_mb": 0,
+          "measured_gpu_memory_mb": null,
+          "gpu_memory_mb": 0,
+          "sessions": [],
+          "sessions_waiting": 0
+        }
+      ],
+      "containers": []
+    },
+    "after_next_acquire": []
+  },
+  "real_worker": {
+    "pid": 3020008,
+    "actor_label": "internal.example.invalid",
+    "reaper_pid": 3023287,
+    "lease": {
+      "lease_id": "crash-09362ff7-3-2ee89c07",
+      "session_id": "crash-09362ff7",
+      "unit_id": "crash-09362ff7",
+      "node_ip": "192.168.1.10",
+      "gpu_indices": [],
+      "demand": {
+        "cpu": 1,
+        "memory_mb": 256,
+        "needs_gpu": false,
+        "gpu_memory_mb": 0
+      },
+      "granted_at": 4949897.297239697,
+      "last_seen": 4949897.297239697,
+      "shared": false,
+      "node_service_url": "http://192.168.1.10:35909/3291b07f88614c2bb6ba8d00df44e4fd/gpu"
+    },
+    "overlay": "/tmp/env-service-lease-m5tyllbi.yaml"
+  },
+  "before_worker_kill": [
+    {
+      "id": "6c83fab7e8099078d576633e6ab45b752f320342203deb5829265b9e7c5447ff",
+      "name": "/evcrash-09362ff7__5x4wd2d__verifier__trial-main-1",
+      "state": "running",
+      "labels": {
+        "com.docker.compose.config-hash": "b799dae36b58e777ea88b98054c87279fc8a9862913a6cf8c85abb6a9ee2aa71",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "harbor-docker-egress-control-sidecar:service_healthy:false",
+        "com.docker.compose.image": "sha256:d03486fbca1ac7b7b7ad31909560afc0c5e6b6a07939b15fa483ac3686df67cb",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "evcrash-09362ff7__5x4wd2d__verifier__trial",
+        "com.docker.compose.project.config_files": "/tmp/tmpfjr1ioqw/evcrash-09362ff7__5x4WD2D__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmpzufyhr6i/docker-compose-environment.json,/tmp/tmp0nk16306/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp5gyasxg_/docker-compose-egress-control-services.json,/tmp/psrl-compose-va65mvqf/ownership.yaml",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-crash-recovery/evcrash-09362ff7/tests",
+        "com.docker.compose.service": "main",
+        "com.docker.compose.version": "2.27.0",
+        "psrl.actor_id": "internal.example.invalid",
+        "psrl.env_lease": "crash-09362ff7-3-2ee89c07",
+        "psrl.env_unit": "crash-09362ff7"
+      }
+    },
+    {
+      "id": "896d4617ab4f1f33202f8132974390535a147b78e5207c4f85ea29deb51282c9",
+      "name": "/evcrash-09362ff7__5x4wd2d__verifier__trial-harbor-docker-egress-control-sidecar-1",
+      "state": "running",
+      "labels": {
+        "com.docker.compose.config-hash": "9abc6d3186659652620691b0145febe57c218daad9e3e58029b6ecfe66106e95",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:37b2c9fc3f1fc05e09dd970cc3f5de3c0d87c3c6deb319d22d3f6ea96e6b5b76",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "evcrash-09362ff7__5x4wd2d__verifier__trial",
+        "com.docker.compose.project.config_files": "/tmp/tmpfjr1ioqw/evcrash-09362ff7__5x4WD2D__verifier__trial-docker-compose-resources.json,${WORKSPACE_ROOT},/tmp/tmpzufyhr6i/docker-compose-environment.json,/tmp/tmp0nk16306/docker-compose-mounts.json,${WORKSPACE_ROOT},/tmp/tmp5gyasxg_/docker-compose-egress-control-services.json,/tmp/psrl-compose-va65mvqf/ownership.yaml",
+        "com.docker.compose.project.working_dir": "${WORKSPACE_ROOT}/docs/env-worker-deep-dive/env-service-verification/results/fixed-crash-recovery/evcrash-09362ff7/tests",
+        "com.docker.compose.service": "harbor-docker-egress-control-sidecar",
+        "com.docker.compose.version": "2.27.0",
+        "psrl.actor_id": "internal.example.invalid",
+        "psrl.env_lease": "crash-09362ff7-3-2ee89c07",
+        "psrl.env_unit": "crash-09362ff7"
+      }
+    }
+  ],
+  "after_worker_reaper": [],
+  "lease_reap_count": 0,
+  "after_lease_cleanup": [],
+  "findings": {
+    "tagged_containers_present_at_kill": 2,
+    "tagged_containers_remaining": false,
+    "unlabelled_containers_survive": false,
+    "lease_released": true
+  },
+  "after_manual_cleanup": [],
+  "final_snapshot": [
+    {
+      "unit_id": "crash-09362ff7",
+      "node_ip": "192.168.1.10",
+      "containers_running": 0,
+      "max_containers": 4,
+      "cpu_used": 0,
+      "cpu_quota": 8.0,
+      "memory_used_mb": 0,
+      "memory_mb": 4096,
+      "declared_gpu_memory_mb": 0,
+      "measured_gpu_memory_mb": null,
+      "gpu_memory_mb": 0,
+      "sessions": [],
+      "sessions_waiting": 0
+    }
+  ],
+  "finished_at": 1791874406.8149817
+}

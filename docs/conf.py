@@ -56,7 +56,7 @@ master_doc = "index"
 
 # README.md is the maintainer build guide, not a site page, so keep it out of the
 # toctree to avoid an "isn't included in any toctree" warning.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "README.md", "superpowers"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "README.md", "superpowers", "psrl", "env-worker-deep-dive", "tools", "sciaccel-grpo-oom-analysis.md"]
 
 # -- Options for HTML output ----------------------------------------------
 

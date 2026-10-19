@@ -1,0 +1,6 @@
+{
+  "scope": "CPU production helper ownership check, no cross-loop socket operations and no GPU",
+  "shared_client_between_loops": true,
+  "first_client_owned_by_first_loop": true,
+  "second_client_owned_by_second_loop": false
+}

@@ -1,0 +1,14 @@
+{
+  "time": 1792132806.9873621,
+  "owned_processes_matching_output_or_ray_paths": [],
+  "all_containers": [],
+  "remaining_gpu_apps": [
+    "GPU-ee0871c3-32f7-1cc3-450d-c978c2178ace, 978989, 77938",
+    "GPU-bec2e98e-3375-eaa5-6e3b-8b4c00f2aeb4, 979015, 77938",
+    "GPU-18fd2a3a-d4f2-cb6c-ce90-46770a384e17, 978992, 77938",
+    "GPU-31caee0c-b94f-a38f-a597-f1451ed4ba57, 979014, 77938",
+    "GPU-cc0c694a-e734-8f50-9242-2460d9af38f8, 978990, 77938",
+    "GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616, 979017, 77938"
+  ],
+  "note": "Remaining six 77938 MiB allocations are external and were left untouched. No owned training or Ray process remains."
+}

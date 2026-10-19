@@ -1,0 +1,96 @@
+{
+  "recorded_at": "2026-10-14T20:06:28.581328+08:00",
+  "scope": "Science Harbor command batches alternate GPU ownership with one complete single-node vLLM rollout replica.",
+  "status": "implemented_cpu_regression_passed_real_gpu_loop_not_run",
+  "tests": [
+    {
+      "log": "regression-171.log",
+      "result": "171 passed in 50.98s",
+      "scope": "Full EnvService suite and science agent regression before final concurrency guards"
+    },
+    {
+      "log": "targeted-final-37.log",
+      "result": "37 passed in 13.98s",
+      "scope": "Final code: test_gpu_lending.py, test_runner_env_service.py, test_node_cleanup.py"
+    },
+    {
+      "log": "ruff.log",
+      "result": "All checks passed",
+      "scope": "Changed Python files listed in source_sha256"
+    },
+    {
+      "log": "diff-check.log",
+      "result": "passed",
+      "scope": "git diff --check, tracked working tree changes"
+    }
+  ],
+  "test_command": "PYTHONPATH=.:../.verification-deps timeout 90s python -m pytest tests/env_service/test_gpu_lending.py tests/env_service/test_runner_env_service.py tests/env_service/test_node_cleanup.py -q --tb=short",
+  "dependency_environment": {
+    "activation": "${PSRL_ENV_SCRIPT}",
+    "python": "3.12.13",
+    "patched_dependency_parent": "${WORKSPACE_ROOT}/.verification-deps",
+    "shared_environment_modified": false
+  },
+  "initial_failures": {
+    "log": "initial-unpatched-dependency-run.log",
+    "explanation": "Initial 153-case run had 150 passes and 3 failures: a cleanup test fake missing the new RPC (fixed), plus 2 pre-existing position_ids failures when using unpatched shared veRL. Subsequent runs pinned the existing isolated veRL patch; shared installation was not edited."
+  },
+  "verified": [
+    "Repeated three ENV/MODEL cycles through production handoff state machine",
+    "Science agent model-query boundary and runner lease propagation",
+    "Background CUDA blocks wake until verified cleanup",
+    "Stale sequence and lease identity guards",
+    "Sleep cancellation retains fence",
+    "Invalid weights restored despite unchanged model version",
+    "Elastic SLEEP skips reserved replica before pausing routing",
+    "Container start/return race and ambiguous start quarantine",
+    "ENV phase deadline despite heartbeat",
+    "Node cleanup waits for inflight freeze and rejects late unfreeze",
+    "Strict GPU UUID, CUDA PID and memory-baseline checks"
+  ],
+  "test_adapters": "Ray actor calls and GPU/Docker operations use CPU adapters or mocks. Tests also execute extracted production sync/coordinator function bodies. These are not a distributed Ray or physical GPU experiment.",
+  "not_verified": [
+    "Real vLLM sleep/wake plus Docker CUDA same-GPU cycle",
+    "Peak host RAM used by level-1 backup",
+    "Handoff latency, throughput or model quality",
+    "Controller restart persistence and distributed failure recovery"
+  ],
+  "limitations": [
+    "Opt-in, one active episode, complete single-node replica, no overlapping independent GPU owners",
+    "No automatic reconciliation for ambiguous Docker start; unit remains quarantined",
+    "Path A EnvWorker is not connected to this command-phase protocol",
+    "Node retired-lease identities persist in memory for actor lifetime to reject late RPCs"
+  ],
+  "resource_cleanup": {
+    "training_started": false,
+    "ray_cluster_started": false,
+    "gpu_container_started": false,
+    "owned_gpu_resources": []
+  },
+  "source_sha256": {
+    "psrl/workers/gen/gpu_handoff.py": "04c289070ec7107673c03a8e72f7a2b7cd0c1484357954924be3bc8001012cb1",
+    "psrl/workers/env_service/lending.py": "05781b0655e1e6bc1fd8816e6f357842d32df430163c624e0ea582e37d46ec62",
+    "psrl/workers/env_service/lending_node.py": "6c62d43a0086dc5db26f69d9606ee5638fbb178115703c1f5e3c09fa183aeb72",
+    "psrl/workers/gen/vllm_async_server.py": "9e87f25b8d76d89fe80ed9d81a453a12d3768ca3aa8d949786fbdf65051113de",
+    "psrl/workers/gen/rollout_coordination/coordinator.py": "2594c20c409b61212adb78dca12efda1f66cd1f427316e59b54a561c6423eaa8",
+    "psrl/workers/gen/rollout_coordination/command_loop.py": "e8f8b1f608f9fd7839e36c0b967872f999b1f060a73ce881628f13c204dd1018",
+    "psrl/utils/elastic_rm/elastic_executor.py": "eb6f8830da7f61a50a2f7528dda9f201d56cabadcc0dcb498a07ff5c3ca9b097",
+    "psrl/workers/train/base_train_worker.py": "26337feda7a03e8f327a8bb72804fc70fcd11a421bbf5c6433c9f6846d8f3843",
+    "psrl/trainer/ppo/ray_trainer.py": "0f3131ec087006b850a21ee5802dc969e60287bbeae2b7a355b0a60655e518aa",
+    "psrl/workers/env_service/types.py": "220430a0240ea29483d5bc34d7473995785223c813b2887c9ac3804b45cd5fc5",
+    "psrl/workers/env_service/ledger.py": "a87b77a15d6d69d65da577c10bfd10a3c1770d3395345d1c047297d2251ea159",
+    "psrl/workers/env_service/node_policy.py": "5a42f40de991b26f39a793ff829168d0954e759343b7e60cfb951f7968ca46cc",
+    "psrl/workers/env_service/config_check.py": "debf148b489a60d7267c4ae78fc4d8cff4f77713ced6f92f7b0c1ff1a15cd515",
+    "psrl/workers/env_service/router.py": "ac90150cfa4495891aff17e6ac0b8e8ec7dae890a326da03d1167499cd598ac7",
+    "psrl/workers/env_service/node.py": "ac1bc3366ec3fa4e4c58036407a67660e6af331f0bb6f1dca816ac2dabc978d9",
+    "psrl/workers/env_service/client.py": "99f865b29bdffb936f6f9cf831b586de320a38025c98faa75f3cb159fa6eb6e9",
+    "psrl/workers/env_service/docker.py": "d5b00615e70cf601ddd1f709d1f67b1604691431ce7d4625087a14b333bafd1a",
+    "examples/sciaccel_rl/runner.py": "2964ee7515e69ca9391033337cad15467ef9cfafbfc9101b4efb465081ac8580",
+    "examples/sciaccel_rl/agent.py": "a68bd9ebb6b95101c0b859c63acbbd2db6ea47634f131866dbc8f83f15ba33ca",
+    "tests/env_service/test_gpu_lending.py": "24d69ae3d94f2dd9f55a7f336db7050bea79cff937c3006dc410fe53fca123bf",
+    "tests/env_service/test_node_cleanup.py": "1bfd357c37c90275f013627b5d5c2de6cb2e09b52a32c9cd2c61868fd2774c6c",
+    "tests/env_service/test_runner_env_service.py": "fda194454af41d6d446bafe566d2e2d4f566b0032159b986a2d434f6798a1a11",
+    "psrl/trainer/config/psrl/env_service.yaml": "b071370205ce25516eaa013a66b305df570e218c7bbb4679e411e32d81eeca95"
+  },
+  "note": "The two passing test counts overlap and must not be summed. Workspace contains pre-existing changes; hashes describe final files, not exclusive ownership of every line."
+}

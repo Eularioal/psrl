@@ -1,0 +1,54 @@
+{
+  "scope": "CPU mechanism check; logical devices only; no CUDA OOM simulated as a real result",
+  "off_duplicate_device_owners": {
+    "/dev/nvidia900": 2,
+    "/dev/nvidia901": 2
+  },
+  "on_admission": [
+    "granted",
+    "granted",
+    "wait",
+    "wait"
+  ],
+  "on_snapshot": [
+    {
+      "unit_id": "gpu-900",
+      "node_ip": "192.0.2.10",
+      "containers_running": 1,
+      "max_containers": 4,
+      "cpu_used": 4,
+      "cpu_quota": 16,
+      "memory_used_mb": 8192,
+      "memory_mb": 32768,
+      "declared_gpu_memory_mb": 52224,
+      "measured_gpu_memory_mb": null,
+      "gpu_memory_mb": 81920,
+      "sessions": [
+        "session-0"
+      ],
+      "sessions_waiting": 2
+    },
+    {
+      "unit_id": "gpu-901",
+      "node_ip": "192.0.2.10",
+      "containers_running": 1,
+      "max_containers": 4,
+      "cpu_used": 4,
+      "cpu_quota": 16,
+      "memory_used_mb": 8192,
+      "memory_mb": 32768,
+      "declared_gpu_memory_mb": 52224,
+      "measured_gpu_memory_mb": null,
+      "gpu_memory_mb": 81920,
+      "sessions": [
+        "session-1"
+      ],
+      "sessions_waiting": 2
+    }
+  ],
+  "on_retry_after_release": [
+    "granted",
+    "granted"
+  ],
+  "final_leases": 0
+}

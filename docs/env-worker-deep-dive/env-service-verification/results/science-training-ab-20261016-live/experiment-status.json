@@ -1,0 +1,148 @@
+{
+  "off": {
+    "exit_code": 0,
+    "wall_seconds": 1379.7911772727966,
+    "trials": [
+      {
+        "trial": "laps-repair-subtle-2d-rktmod-l17__XhmV4vf",
+        "reward": 0.0,
+        "exception": null,
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-coef-2d-rktmod-l17k1__uUEHNMN",
+        "reward": 0.0,
+        "exception": "AgentTimeoutError",
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-coef-2d-rktmod-l17k1__3ZmGCvo",
+        "reward": 0.0,
+        "exception": "AgentTimeoutError",
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-subtle-2d-rktmod-l17__Ry4RGse",
+        "reward": 0.0,
+        "exception": null,
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-subtle-2d-rktmod-l17__SWWfXrm",
+        "reward": 0.0,
+        "exception": null,
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-coef-2d-rktmod-l17k1__ZFpWUR7",
+        "reward": 1.0,
+        "exception": null,
+        "training_reward": 1.0
+      },
+      {
+        "trial": "laps-repair-subtle-2d-rktmod-l17__YKcBGrb",
+        "reward": 0.0,
+        "exception": "AgentTimeoutError",
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-coef-2d-rktmod-l17k1__DvtWB69",
+        "reward": 0.0,
+        "exception": null,
+        "training_reward": 0.0
+      }
+    ],
+    "trial_count": 8,
+    "unit_samples": 0,
+    "unique_sessions": 0,
+    "peak_leases": null,
+    "peak_cpu": null,
+    "peak_memory_mb": null,
+    "peak_waiting": null,
+    "last_unit": null,
+    "budget_violation_samples": null,
+    "accounting_mismatch_samples": null,
+    "mean_training_reward": 0.125,
+    "explicit_release_wait_seconds": null
+  },
+  "on": {
+    "exit_code": 0,
+    "wall_seconds": 1399.1875863075256,
+    "trials": [
+      {
+        "trial": "laps-repair-subtle-2d-rktmod-l17__6dV5vZV",
+        "reward": 0.0,
+        "exception": null,
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-subtle-2d-rktmod-l17__MW9dffJ",
+        "reward": 0.5,
+        "exception": "AgentTimeoutError",
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-coef-2d-rktmod-l17k1__wip84dB",
+        "reward": 0.0,
+        "exception": null,
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-subtle-2d-rktmod-l17__UcZ5y4o",
+        "reward": 0.0,
+        "exception": null,
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-coef-2d-rktmod-l17k1__YEVd9Wr",
+        "reward": 0.0,
+        "exception": null,
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-coef-2d-rktmod-l17k1__hHqz47B",
+        "reward": 0.0,
+        "exception": null,
+        "training_reward": 0.0
+      },
+      {
+        "trial": "laps-repair-coef-2d-rktmod-l17k1__u89Vsif",
+        "reward": 1.0,
+        "exception": null,
+        "training_reward": 1.0
+      },
+      {
+        "trial": "laps-repair-subtle-2d-rktmod-l17__SiT9vLp",
+        "reward": 0.0,
+        "exception": "AgentTimeoutError",
+        "training_reward": 0.0
+      }
+    ],
+    "trial_count": 8,
+    "unit_samples": 782,
+    "unique_sessions": 8,
+    "peak_leases": 4,
+    "peak_cpu": 16.0,
+    "peak_memory_mb": 32768,
+    "peak_waiting": 0,
+    "last_unit": {
+      "unit_id": "science-cpu",
+      "node_ip": "192.168.1.13",
+      "containers_running": 0,
+      "max_containers": 4,
+      "cpu_used": 0,
+      "cpu_quota": 16.0,
+      "memory_used_mb": 0,
+      "memory_mb": 32768,
+      "declared_gpu_memory_mb": 0,
+      "measured_gpu_memory_mb": null,
+      "gpu_memory_mb": 0,
+      "sessions": [],
+      "sessions_waiting": 0
+    },
+    "budget_violation_samples": 0,
+    "accounting_mismatch_samples": 0,
+    "mean_training_reward": 0.125,
+    "explicit_release_wait_seconds": 12.567895650863647
+  }
+}

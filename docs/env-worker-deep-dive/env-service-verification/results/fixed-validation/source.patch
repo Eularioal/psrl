@@ -1,0 +1,1518 @@
+diff --git a/docs/design/env_worker.md b/docs/design/env_worker.md
+index a61ab4a..0db553f 100644
+--- a/docs/design/env_worker.md
++++ b/docs/design/env_worker.md
+@@ -200,14 +200,15 @@ toolkit.
+ 
+ The approach is:
+ 
+-1. For each assigned GPU index, pass `--device /dev/nvidiaN`.
++1. Resolve each assigned GPU enumeration index to its host minor number, then pass
++   the corresponding `--device /dev/nvidiaN`.
+ 2. For each NVIDIA control device (`/dev/nvidiactl`, `/dev/nvidia-uvm`,
+    `/dev/nvidia-uvm-tools`), pass `--device` if the path exists on the host.
+-3. Bind-mount the driver libraries (`libcuda.so.1`, `libnvidia-ml.so.1`) from the host
+-   into the same path inside the container as read-only mounts.
++3. Resolve CUDA and NVML libraries matching the loaded kernel driver and bind them
++   to their container library names. Include the PTX compiler when available.
+ 4. Optionally bind-mount `nvidia-smi` from the host.
+ 
+-This was verified to work on H20 nodes with CUDA code running inside the container.
++GPU containers receive a library search path containing the mounted driver libraries.
+ 
+ The `EnvWorker` derives the allowed GPU indices from `CUDA_VISIBLE_DEVICES`, which Ray sets
+ to exactly the GPUs it granted the worker actor. This partitions the physical GPUs safely:
+@@ -277,3 +278,35 @@ the SessionRouter.
+ - {doc}`router_tito`: TITO session capture and SMG routing
+ - {doc}`staleness_control`: staleness buffer and Reserve/Occupy/Consume protocol
+ :::
++
++## Harbor 的 EnvService 路径
++
++Science 示例通过 `EnvRouter → EnvServiceClient → ManagedDockerEnvironment → Harbor`
++管理容器。它与上文的 `EnvWorkerCoordinator → EnvWorker` 是两条独立执行路径。
++启用 `psrl.env_service.enable` 不会自动把 Harbor 的命令执行转到 EnvWorker。
++
++`EnvRouter` 负责资源准入及租约。每个参与节点由路由器创建一个 `EnvNodeService`
++actor，负责本机 GPU 遥测和过期租约容器回收。节点间须允许访问该服务返回的 HTTP
++地址。SessionRouter 使用租约中的节点地址和 GPU 枚举编号检查任务所在节点的设备。
++Gate B 的等待有上限，遥测不可用时放行，因此它不是 GPU 互斥锁或显存硬隔离。
++
++配置中的 `gpu_indices` 是宿主机 `nvidia-smi` 的枚举编号。设备挂载通过宿主机清单
++转换成真实设备文件的 minor 编号，不能假定编号 1 就对应 `/dev/nvidia1`。
++例如枚举编号 1 的 minor 为 3 时，应挂载 `/dev/nvidia3`，遥测仍查询枚举编号 1。
++
++`ManagedDockerEnvironment` 使用 Harbor 的自定义环境接口，将租约资源和归属标签
++加入每个环境。标签覆盖独立 verifier 及其网络辅助容器，因此 worker 退出后的
++actor 回收进程和租约回收服务都能找到它们。过期租约的清理失败时保留待重试记录，
++确认容器删除前不在该节点发放新租约。正常任务仍由 Harbor 先销毁容器，再释放租约。
++
++Qwen 的多维位置编码还要求使用与依赖版本匹配的 verl 补丁。在使用提交
++`d613affc` 的独立项目环境中，从仓库根目录执行：
++
++```bash
++bash patch/apply_patch.sh verl d613affc.patch
++```
++
++补丁按实际 token 轴重建嵌套张量的边界。训练侧不能只修改可变长度维度的标记。
++对训练输出启用截断过滤后，整组有效 token 为零会触发补采，连续失败由
++`psrl.agentic_rl.refill_failure_threshold` 限制。应给任务配置足够的轮数和上下文预算，
++避免持续补采无法完成的任务。
+diff --git a/examples/sciaccel_rl/runner.py b/examples/sciaccel_rl/runner.py
+index 1b3aad2..e145855 100644
+--- a/examples/sciaccel_rl/runner.py
++++ b/examples/sciaccel_rl/runner.py
+@@ -47,7 +47,14 @@ psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
+ _CONTEXT_SAFETY_MARGIN = 8192
+ 
+ 
+-async def _bind_gate_b(session_router_url: str, session_id: str, device: str | None, shared: bool = False) -> None:
++async def _bind_gate_b(
++    session_router_url: str,
++    session_id: str,
++    device: str | None,
++    shared: bool = False,
++    node_service_url: str = "",
++    gpu_indices: tuple[int, ...] = (),
++) -> None:
+     """
+     Best-effort: tell SessionRouter which physical GPU device (if any) this
+     session is using, so Gate B (psrl/workers/gen/session_router.py's
+@@ -69,7 +76,15 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
+     try:
+         await post(
+             f"{session_router_url.rstrip('/')}/control/gpu_bind",
+-            payload=[{"session_id": session_id, "gpu_device": device, "shared": shared}],
++            payload=[
++                {
++                    "session_id": session_id,
++                    "gpu_device": device,
++                    "shared": shared,
++                    "node_service_url": node_service_url,
++                    "gpu_indices": list(gpu_indices),
++                }
++            ],
+             max_retries=1,
+         )
+     except Exception as exc:  # noqa: BLE001
+@@ -120,12 +135,26 @@ async def _apply_env_lease(
+                 "this node has no NVIDIA kernel driver loaded."
+             )
+         driver_libs = resolve_driver_libs(version)
+-    overlay_path = write_overlay(build_lease_overlay(lease, driver_libs))
++    overlay = build_lease_overlay(lease, driver_libs)
++    overlay_path = write_overlay(overlay)
+     extra_compose_paths.append(overlay_path)
++    env_kwargs["import_path"] = "psrl.workers.env_service.docker:ManagedDockerEnvironment"
++    env_kwargs.setdefault("kwargs", {})["lease_overlay"] = overlay
+     if lease.gpu_indices:
+         env_kwargs["override_gpus"] = 0
+-        devices = ",".join(f"/dev/nvidia{i}" for i in lease.gpu_indices)
+-        await _bind_gate_b(session_router_url, session_id, devices, shared=lease.shared)
++        devices = ",".join(
++            item.split(":", 1)[0]
++            for item in overlay["services"]["main"]["devices"]
++            if item.split(":", 1)[0].removeprefix("/dev/nvidia").isdigit()
++        )
++        await _bind_gate_b(
++            session_router_url,
++            session_id,
++            devices,
++            shared=lease.shared,
++            node_service_url=lease.node_service_url,
++            gpu_indices=lease.gpu_indices,
++        )
+     return overlay_path
+ 
+ 
+@@ -369,6 +398,8 @@ async def run_harbor_episode(
+         main_override: dict = {}
+         if actor_id:
+             main_override["labels"] = [f"psrl.actor_id={actor_id}"]
++            env_kwargs["import_path"] = "psrl.workers.env_service.docker:ManagedDockerEnvironment"
++            env_kwargs.setdefault("kwargs", {})["actor_id"] = actor_id
+         if config.harbor.memory_mb_override > 0:
+             main_override["mem_limit"] = f"{config.harbor.memory_mb_override}m"
+ 
+diff --git a/psrl/trainer/config/psrl/rollout_gateway.yaml b/psrl/trainer/config/psrl/rollout_gateway.yaml
+index 174d0c8..9be17b7 100644
+--- a/psrl/trainer/config/psrl/rollout_gateway.yaml
++++ b/psrl/trainer/config/psrl/rollout_gateway.yaml
+@@ -12,6 +12,9 @@ multimodal_shm_min_bytes: 65536
+ # Global HTTP capacity is this value times the active rollout server count.
+ server_max_concurrency: 256
+ 
++# Zero lets the kernel allocate a metrics port for each gateway process.
++prometheus_port: 0
++
+ # Whether AgentLoopWorkers should route POST requests through a Ray actor pool.
+ # The pool is created by AgentLoopManager and selected with round-robin.
+ use_distributed_post: False
+diff --git a/psrl/trainer/main_ppo.py b/psrl/trainer/main_ppo.py
+index c9801b6..ed7f919 100644
+--- a/psrl/trainer/main_ppo.py
++++ b/psrl/trainer/main_ppo.py
+@@ -135,7 +135,7 @@ def run_ppo(config, task_runner_class=None) -> None:
+     if not ray.is_initialized():
+         default_runtime_env = get_ppo_ray_runtime_env()
+         ray_init_kwargs = config.ray_kwargs.get("ray_init", {})
+-        runtime_env_kwargs = ray_init_kwargs.get("runtime_env", {})
++        runtime_env_kwargs = OmegaConf.to_container(OmegaConf.create(ray_init_kwargs.get("runtime_env", {})))
+ 
+         if config.transfer_queue.enable:
+             # Add runtime environment variables for transfer queue
+@@ -155,6 +155,9 @@ def run_ppo(config, task_runner_class=None) -> None:
+     if task_runner_class is None:
+         task_runner_class = ray.remote(num_cpus=1)(TaskRunner)  # please make sure main_task is not scheduled on head
+ 
++    # Subprocesses must join this job's cluster even when its temporary directory is isolated.
++    runner_runtime_env = {"env_vars": {"RAY_ADDRESS": ray.get_runtime_context().gcs_address}}
++
+     # Create a remote instance of the TaskRunner class, and
+     # Execute the `run` method of the TaskRunner instance remotely and wait for it to complete
+     if (
+@@ -169,9 +172,10 @@ def run_ppo(config, task_runner_class=None) -> None:
+         nsight_options = OmegaConf.to_container(
+             config.global_profiler.global_tool_config.nsys.controller_nsight_options
+         )
+-        runner = task_runner_class.options(runtime_env={"nsight": nsight_options}).remote()
++        runner_runtime_env["nsight"] = nsight_options
++        runner = task_runner_class.options(runtime_env=runner_runtime_env).remote()
+     else:
+-        runner = task_runner_class.remote()
++        runner = task_runner_class.options(runtime_env=runner_runtime_env).remote()
+     ray.get(runner.run.remote(config))
+     ray.shutdown()
+ 
+diff --git a/psrl/workers/agent_loop/loops/utils.py b/psrl/workers/agent_loop/loops/utils.py
+index 0703f7f..3ae3ac7 100644
+--- a/psrl/workers/agent_loop/loops/utils.py
++++ b/psrl/workers/agent_loop/loops/utils.py
+@@ -49,6 +49,7 @@ class TerminateReason(Enum):
+     ABORTED = "aborted"
+     UNKNOWN = "unknown"
+     ROLLOUT_ERROR = "rollout_error"
++    NO_TRAINABLE_TOKENS = "no_trainable_tokens"
+ 
+     @property
+     def is_successful(self) -> bool:
+diff --git a/psrl/workers/agent_loop/manager.py b/psrl/workers/agent_loop/manager.py
+index 3639422..2cbd48a 100644
+--- a/psrl/workers/agent_loop/manager.py
++++ b/psrl/workers/agent_loop/manager.py
+@@ -1133,6 +1133,19 @@ class PSRL_AgentLoopManager:
+                                 dispositions[request_positions[extra_request_id]] = PayloadState.DROPPED
+ 
+                         alg_entry_infos = entry_infos[:alg_rollout_n]
++                        group_keys = [
++                            key
++                            for entry in alg_entry_infos
++                            for key in request_payload_keys(
++                                prompt_id * rollout_n + entry.request_idx, entry.n_trajectory
++                            )
++                        ]
++                        if not is_validate and not await self._keep_trainable_group(prompt_id, group_keys):
++                            for entry in alg_entry_infos:
++                                child_id = prompt_id * rollout_n + entry.request_idx
++                                if child_id in request_positions:
++                                    dispositions[request_positions[child_id]] = PayloadState.DROPPED
++                            continue
+                         add_data = True
+                         # Perform group post-processing for training data only.
+                         if self.group_post_process_fn and not is_validate:
+@@ -1183,8 +1196,10 @@ class PSRL_AgentLoopManager:
+                                 )
+                             )
+                 else:
+-                    # Without group sampling (e.g., PPO).
+-                    # Group post processing is not used and every data will be added.
++                    keys = request_payload_keys(request_id, n_trajectory)
++                    if not is_validate and not await self._keep_trainable_group(prompt_id, keys):
++                        dispositions[position] = PayloadState.DROPPED
++                        continue
+                     occupy_jobs.append(
+                         (
+                             [position],
+@@ -1277,6 +1292,22 @@ class PSRL_AgentLoopManager:
+                 await self._flush_ready_buffer(buffer_id, is_validate)
+             return dispositions
+ 
++    async def _keep_trainable_group(self, prompt_id: int, keys: list[str]) -> bool:
++        """Refill fully masked groups before they can enter training buffers or chunks."""
++        data = await tq.async_kv_batch_get(keys=keys, partition_id="train", select_fields=["response_mask"])
++        mask = data["response_mask"]
++        values = mask.values() if mask.is_nested else mask
++        if values.any().item():
++            return True
++        self._failed_train_group_ids.add(prompt_id)
++        await async_clear_payload(keys=keys, partition_id="train", state=PayloadState.DROPPED)
++        await self.ps_manager_handle.clear_reserved_entries.remote(prompt_id, False)
++        self._record_group_failure(TerminateReason.NO_TRAINABLE_TOKENS)
++        psrl_logger.warning(f"Training group {prompt_id!r} has no trainable tokens after masking. Refilling.")
++        if self._refill_breaker_diagnosis is None:
++            await self._refill_failed_group(n_prompts=1, context="All response tokens masked")
++        return False
++
+     def maybe_add_buffer(self, buffer_id: int, batch: KVBatchMeta, is_validate: bool = False) -> bool:
+         """
+         Apply buffer post-processing function if defined and add the buffer to data_buffers.
+diff --git a/psrl/workers/env_service/client.py b/psrl/workers/env_service/client.py
+index fe45723..07574cc 100644
+--- a/psrl/workers/env_service/client.py
++++ b/psrl/workers/env_service/client.py
+@@ -176,7 +176,6 @@ class EnvServiceClient:
+             EnvAdmissionRejected: When no unit could ever host the demand.
+             EnvAdmissionTimeout: When `max_wait_s` ran out.
+         """
+-        await self.reap_local()
+         loop = asyncio.get_running_loop()
+         deadline = None if max_wait_s is None else loop.time() + max_wait_s
+         delay = self.poll_interval_s
+@@ -209,31 +208,3 @@ class EnvServiceClient:
+         if not telemetry:
+             return None
+         return {index: mem_mb for index, (_util, mem_mb) in telemetry.items()}
+-
+-    async def reap_local(self) -> int:
+-        """
+-        Stop containers of leases the router reclaimed on this node.
+-
+-        The router frees the capacity, but it runs on another machine, so the stop happens
+-        here, by the `psrl.env_lease` label, on the next admission from this node.
+-
+-        Returns:
+-            int: How many reclaimed leases were cleaned up.
+-        """
+-        try:
+-            expired = await self.router.pop_reaped.remote(self.node_ip)
+-        except Exception as exc:  # noqa: BLE001
+-            psrl_logger.debug("pop_reaped failed: %s.", exc)
+-            return 0
+-        if not expired:
+-            return 0
+-        from psrl.utils.common.docker_utils import CLEANUP_EXECUTOR, force_remove_containers_by_label
+-        from psrl.workers.env_service.overlay import LEASE_LABEL
+-
+-        loop = asyncio.get_running_loop()
+-        for lease in expired:
+-            psrl_logger.warning("Stopping containers of reclaimed lease %s.", lease.lease_id)
+-            # The dedicated cleanup pool, not the loop's default executor: a `docker rm` on a
+-            # loaded daemon blocks for tens of seconds and must not starve episode I/O.
+-            await loop.run_in_executor(CLEANUP_EXECUTOR, force_remove_containers_by_label, LEASE_LABEL, lease.lease_id)
+-        return len(expired)
+diff --git a/psrl/workers/env_service/ledger.py b/psrl/workers/env_service/ledger.py
+index b8c81fb..80aa6db 100644
+--- a/psrl/workers/env_service/ledger.py
++++ b/psrl/workers/env_service/ledger.py
+@@ -105,6 +105,8 @@ class EnvUnitLedger:
+         demand: EnvDemand,
+         node_ip: str | None = None,
+         measured_gpu_used_mb: Mapping[int, float] | None = None,
++        *,
++        reap: bool = True,
+     ) -> Admission:
+         """
+         Try to place one episode right now.
+@@ -124,7 +126,8 @@ class EnvUnitLedger:
+             `reject` when no unit could ever host the demand.
+         """
+         now = self._clock()
+-        self._reap(now)
++        if reap:
++            self._reap(now)
+         if measured_gpu_used_mb is not None and node_ip:
+             self.report_measurement(node_ip, measured_gpu_used_mb)
+ 
+diff --git a/psrl/workers/env_service/overlay.py b/psrl/workers/env_service/overlay.py
+index b802d11..92d8b76 100644
+--- a/psrl/workers/env_service/overlay.py
++++ b/psrl/workers/env_service/overlay.py
+@@ -1,18 +1,11 @@
+ """
+-Per-lease Docker Compose overlays with runtime-resolved NVIDIA driver libraries.
++Build Docker Compose resources for a lease on the current host.
+ 
+-Replaces the static `examples/sciaccel_rl/config/gpu-compose-override.yaml`, which has
+-three defects the design document records as B1 to B3:
++Resolve versioned CUDA and NVML libraries against the loaded kernel driver instead of
++following unversioned symlinks. Include the PTX compiler when available. Resolve each
++GPU telemetry index through the host inventory before mounting its character device.
+ 
+-* B1: it bind-mounts a hardcoded driver version. On the test fleet `libcuda.so.1`
+-  resolves to the 570 build while the kernel module is 535, and `cuInit` then fails with
+-  `CUDA_ERROR_SYSTEM_DRIVER_MISMATCH`. Because `libnvidia-ml.so.1` points at 535,
+-  `nvidia-smi` keeps working and only CUDA breaks. The fix is to resolve the library
+-  whose version matches `/proc/driver/nvidia/version` and never mount `libcuda.so.1`.
+-* B2: `libnvidia-ptxjitcompiler.so.1` was missing from the code-side mount list.
+-* B3: it hardcodes `/dev/nvidia0`, so every GPU episode on a node lands on device 0.
+-
+-Every function takes its filesystem probes as arguments, so tests run without a GPU.
++Filesystem probes and GPU inventory can be injected for tests without a GPU.
+ """
+ 
+ from __future__ import annotations
+@@ -27,6 +20,7 @@ from pathlib import Path
+ 
+ import yaml
+ 
++from psrl.workers.env_service.probe import GpuDevice, read_gpu_devices
+ from psrl.workers.env_service.types import EnvLease
+ 
+ psrl_logger = logging.getLogger("psrl.env_service.overlay")
+@@ -149,6 +143,7 @@ def build_lease_overlay(
+     device_exists: Callable[[str], bool] = os.path.exists,
+     nvidia_smi_path: str = "/usr/bin/nvidia-smi",
+     extra_labels: Sequence[str] = (),
++    gpu_devices: dict[int, GpuDevice] | None = None,
+ ) -> dict:
+     """
+     Build the Compose override for one lease's `main` service.
+@@ -182,7 +177,8 @@ def build_lease_overlay(
+     if lease.gpu_indices:
+         if driver_libs is None:
+             raise ValueError("A GPU lease needs resolved driver libraries.")
+-        devices = [f"/dev/nvidia{i}:/dev/nvidia{i}" for i in lease.gpu_indices]
++        inventory = read_gpu_devices() if gpu_devices is None else gpu_devices
++        devices = [f"{inventory[i].path}:{inventory[i].path}" for i in lease.gpu_indices]
+         devices += [f"{d}:{d}" for d in CONTROL_DEVICES if device_exists(d)]
+         volumes: list[str] = []
+         if device_exists(nvidia_smi_path):
+diff --git a/psrl/workers/env_service/probe.py b/psrl/workers/env_service/probe.py
+index 56acadf..ad0e475 100644
+--- a/psrl/workers/env_service/probe.py
++++ b/psrl/workers/env_service/probe.py
+@@ -11,11 +11,37 @@ from __future__ import annotations
+ import asyncio
+ import logging
+ import os
++import subprocess
++import xml.etree.ElementTree as ET
++from dataclasses import dataclass
+ 
+ psrl_logger = logging.getLogger("psrl.env_service.probe")
+ psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
+ 
+ 
++@dataclass(frozen=True)
++class GpuDevice:
++    """Resolve a telemetry index to its physical UUID and character device."""
++
++    index: int
++    minor: int
++    uuid: str
++
++    @property
++    def path(self) -> str:
++        """Return the host character device path."""
++        return f"/dev/nvidia{self.minor}"
++
++
++def read_gpu_devices() -> dict[int, GpuDevice]:
++    """Read the host GPU inventory without assuming index equals minor number."""
++    result = subprocess.run(["nvidia-smi", "-q", "-x"], capture_output=True, text=True, timeout=30, check=True)
++    devices = {}
++    for index, element in enumerate(ET.fromstring(result.stdout).findall("gpu")):
++        devices[index] = GpuDevice(index, int(element.findtext("minor_number")), element.findtext("uuid"))
++    return devices
++
++
+ def parse_gpu_csv(text: str) -> dict[int, tuple[float, float]]:
+     """
+     Parse `nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader,nounits`.
+diff --git a/psrl/workers/env_service/router.py b/psrl/workers/env_service/router.py
+index 1cdcbfb..c5d29c1 100644
+--- a/psrl/workers/env_service/router.py
++++ b/psrl/workers/env_service/router.py
+@@ -6,8 +6,8 @@ never sits on the exec path: containers are started by Harbor inside the agent l
+ exactly as before. This is the same relationship SMG has with a vLLM engine (design
+ document section 6.1).
+ 
+-`EnvRouterCore` is plain Python so tests can drive it without Ray. `EnvRouter` is the same
+-class wrapped as an actor, and is `None` when Ray is not installed.
++`EnvRouterCore` is plain Python so tests can drive it without Ray. `EnvRouter` adds
++node services for telemetry and cleanup, and is `None` when Ray is not installed.
+ """
+ 
+ from __future__ import annotations
+@@ -16,6 +16,7 @@ import asyncio
+ import logging
+ import os
+ from collections.abc import Iterable, Mapping
++from dataclasses import replace
+ 
+ from psrl.workers.env_service.ledger import EnvUnitLedger
+ from psrl.workers.env_service.node_policy import NodeRules, lint_units
+@@ -139,10 +140,50 @@ class EnvRouterCore:
+ 
+ try:
+     import ray
++    from ray.util.scheduling_strategies import NodeAffinitySchedulingStrategy
++
++    class RayEnvRouter(EnvRouterCore):
++        """Own node services so cleanup survives the death of an episode worker."""
++
++        def __init__(self, config, train_rollout_node_ips=()):
++            super().__init__(config, train_rollout_node_ips)
++            self._node_services = {}
++
++        async def _start_node(self, node_ip):
++            from psrl.workers.env_service.node import EnvNodeService
++
++            nodes = {node["NodeManagerAddress"]: node["NodeID"] for node in ray.nodes() if node["Alive"]}
++            service = (
++                ray.remote(num_cpus=0)(EnvNodeService)
++                .options(scheduling_strategy=NodeAffinitySchedulingStrategy(nodes[node_ip], soft=False))
++                .remote(ray.get_runtime_context().current_actor, node_ip)
++            )
++            url = await service.ready.remote()
++            return service, url
++
++        async def try_admit(self, session_id, demand, node_ip=None, measured_gpu_used_mb=None):
++            self._ensure_reaper()
++            self._ledger.reap()
++            node_ips = [node_ip] if node_ip else list({unit.node_ip for unit in self._ledger._units.values()})
++            urls = {}
++            for ip in node_ips:
++                if ip not in self._node_services:
++                    self._node_services[ip] = asyncio.create_task(self._start_node(ip))
++                service, urls[ip] = await self._node_services[ip]
++                if await service.cleanup.remote():
++                    return Admission(status="wait", reason="Expired containers are still being removed.")
++            if any(self._ledger._reaped.get(ip) for ip in node_ips):
++                return Admission(status="wait", reason="Expired containers are awaiting cleanup.")
++            admission = self._ledger.try_admit(session_id, demand, node_ip, measured_gpu_used_mb, reap=False)
++            if admission.lease is not None:
++                admission = replace(
++                    admission, lease=replace(admission.lease, node_service_url=urls[admission.lease.node_ip])
++                )
++            return admission
+ 
+     # No Ray CPU reservation: this actor does bookkeeping, and reserving a core could
+     # fail to schedule on a fully packed cluster.
+-    EnvRouter = ray.remote(num_cpus=0)(EnvRouterCore)
++    EnvRouter = ray.remote(num_cpus=0)(RayEnvRouter)
+ except ImportError:  # pragma: no cover - exercised only on a box without Ray
+     EnvRouter = None
+ 
+diff --git a/psrl/workers/env_service/types.py b/psrl/workers/env_service/types.py
+index 2ab4d2b..99366f3 100644
+--- a/psrl/workers/env_service/types.py
++++ b/psrl/workers/env_service/types.py
+@@ -160,6 +160,7 @@ class EnvLease:
+     granted_at: float
+     last_seen: float
+     shared: bool = False
++    node_service_url: str = ""
+ 
+ 
+ @dataclass(frozen=True)
+diff --git a/psrl/workers/env_worker/sandbox.py b/psrl/workers/env_worker/sandbox.py
+index 031df8c..cf23609 100644
+--- a/psrl/workers/env_worker/sandbox.py
++++ b/psrl/workers/env_worker/sandbox.py
+@@ -6,6 +6,9 @@ import logging
+ import os
+ from dataclasses import dataclass, field
+ 
++from psrl.workers.env_service.overlay import DriverLibs, read_kernel_driver_version, resolve_driver_libs
++from psrl.workers.env_service.probe import read_gpu_devices
++
+ psrl_logger = logging.getLogger(__file__)
+ psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
+ 
+@@ -17,11 +20,6 @@ NVIDIA_CONTROL_DEVICES: tuple[str, ...] = (
+     "/dev/nvidia-uvm-tools",
+ )
+ 
+-DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
+-    "/usr/lib64/libnvidia-ml.so.1",
+-    "/usr/lib64/libcuda.so.1",
+-)
+-
+ DEFAULT_NVIDIA_SMI_PATH = "/usr/bin/nvidia-smi"
+ 
+ 
+@@ -77,7 +75,7 @@ class ExecResult:
+ 
+ def build_gpu_argv(
+     gpu_device_indices: tuple[int, ...],
+-    driver_libs: tuple[str, ...] = DEFAULT_DRIVER_LIB_GLOBS,
++    driver_libs: DriverLibs | None = None,
+     nvidia_smi_path: str = DEFAULT_NVIDIA_SMI_PATH,
+ ) -> list[str]:
+     """
+@@ -85,8 +83,7 @@ def build_gpu_argv(
+ 
+     Args:
+         gpu_device_indices (tuple[int, ...]): Physical GPU indices to expose.
+-        driver_libs (tuple[str, ...]): Host driver library paths to bind-mount.
+-            Paths that do not exist on this host are skipped.
++        driver_libs (DriverLibs | None): Resolved host libraries, or resolve the loaded driver.
+         nvidia_smi_path (str): Host path to nvidia-smi. Skipped when absent.
+ 
+     Returns:
+@@ -95,18 +92,24 @@ def build_gpu_argv(
+     if not gpu_device_indices:
+         return []
+ 
++    inventory = read_gpu_devices()
++    if driver_libs is None:
++        version = read_kernel_driver_version()
++        if version is None:
++            raise RuntimeError("A GPU sandbox requires a loaded NVIDIA kernel driver.")
++        driver_libs = resolve_driver_libs(version)
+     argv: list[str] = []
+     for index in gpu_device_indices:
+-        argv.extend(["--device", f"/dev/nvidia{index}"])
++        argv.extend(["--device", inventory[index].path])
+     for control_device in NVIDIA_CONTROL_DEVICES:
+         if os.path.exists(control_device):
+             argv.extend(["--device", control_device])
+         else:
+             psrl_logger.warning(f"Control device={control_device!r} is absent, skipping passthrough.")
+ 
+-    for lib_path in driver_libs:
+-        if os.path.exists(lib_path):
+-            argv.extend(["-v", f"{lib_path}:{lib_path}:ro"])
++    for host_path, container_path in driver_libs.mounts:
++        argv.extend(["-v", f"{host_path}:{container_path}:ro"])
++    argv.extend(["-e", "LD_LIBRARY_PATH=/usr/lib64:/usr/local/cuda/lib64"])
+     if os.path.exists(nvidia_smi_path):
+         argv.extend(["-v", f"{nvidia_smi_path}:{nvidia_smi_path}:ro"])
+ 
+@@ -117,7 +120,7 @@ def build_docker_run_argv(
+     spec: SandboxSpec,
+     container_name: str,
+     gpu_device_indices: tuple[int, ...] = (),
+-    driver_libs: tuple[str, ...] = DEFAULT_DRIVER_LIB_GLOBS,
++    driver_libs: DriverLibs | None = None,
+     nvidia_smi_path: str = DEFAULT_NVIDIA_SMI_PATH,
+ ) -> list[str]:
+     """
+@@ -131,7 +134,7 @@ def build_docker_run_argv(
+         container_name (str): Docker container name, used for cleanup.
+         gpu_device_indices (tuple[int, ...]): Physical GPU indices assigned by the worker.
+             Length must equal `spec.gpus`.
+-        driver_libs (tuple[str, ...]): Host driver library paths to bind-mount.
++        driver_libs (DriverLibs | None): Resolved host libraries, or resolve the loaded driver.
+         nvidia_smi_path (str): Host path to nvidia-smi.
+ 
+     Returns:
+diff --git a/psrl/workers/env_worker/worker.py b/psrl/workers/env_worker/worker.py
+index 506a0ae..a1e0dd8 100644
+--- a/psrl/workers/env_worker/worker.py
++++ b/psrl/workers/env_worker/worker.py
+@@ -224,10 +224,9 @@ class EnvWorker:
+             startup_timeout_s=spec.startup_timeout_s,
+             idle_timeout_s=spec.idle_timeout_s,
+         )
+-        argv = build_docker_run_argv(labelled_spec, container_name, gpu_indices)
+-        psrl_logger.info(f"Starting sandbox={sandbox_id!r} with image={spec.image!r}.")
+-
+         try:
++            argv = build_docker_run_argv(labelled_spec, container_name, gpu_indices)
++            psrl_logger.info(f"Starting sandbox={sandbox_id!r} with image={spec.image!r}.")
+             process = subprocess.Popen(
+                 argv,
+                 stdin=subprocess.PIPE,
+diff --git a/psrl/workers/gen/rollout_gateway.py b/psrl/workers/gen/rollout_gateway.py
+index fbc5d3e..ea46b11 100644
+--- a/psrl/workers/gen/rollout_gateway.py
++++ b/psrl/workers/gen/rollout_gateway.py
+@@ -15,12 +15,28 @@ psrl_logger = logging.getLogger(__file__)
+ psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
+ 
+ 
++def _bind_to_parent_lifetime():
++    """
++    Kill the router subprocess when its owning Ray actor exits.
++    """
++    from ray._private.utils import set_kill_on_parent_death_linux
++
++    parent = multiprocessing.parent_process()
++    if parent is None:
++        raise RuntimeError("Router must run in a multiprocessing child.")
++    set_kill_on_parent_death_linux()
++    # Close the race where the owner exits before the kernel registers the signal.
++    if os.getppid() != parent.pid:
++        os._exit(1)
++
++
+ def _run_smg(args):
+     """
+     Run the SMG router subprocess.
+ 
+     This target must remain at module scope for multiprocessing pickling.
+     """
++    _bind_to_parent_lifetime()
+     try:
+         from smg.launch_router import launch_router
+ 
+@@ -30,7 +46,7 @@ def _run_smg(args):
+         return 0
+     except Exception as e:
+         psrl_logger.error(e)
+-        return 1
++        raise
+ 
+ 
+ @ray.remote(num_cpus=0)
+@@ -157,6 +173,7 @@ class RolloutGateway:
+             logging_path,
+             turn_output_kwargs,
+         ):
++            _bind_to_parent_lifetime()
+             import uvicorn
+ 
+             from psrl.workers.gen.session_router import (
+diff --git a/psrl/workers/gen/session_router.py b/psrl/workers/gen/session_router.py
+index 8e24f76..d49021a 100644
+--- a/psrl/workers/gen/session_router.py
++++ b/psrl/workers/gen/session_router.py
+@@ -117,7 +117,13 @@ def _parse_gpu_indices(device_spec: str) -> list[int]:
+     return [i for i in indices if i is not None]
+ 
+ 
+-async def _wait_for_gpu_idle(device: str, sid: str, shared: bool = False) -> None:
++async def _wait_for_gpu_idle(
++    device: str,
++    sid: str,
++    shared: bool = False,
++    node_service_url: str = "",
++    gpu_indices: tuple[int, ...] = (),
++) -> None:
+     """
+     Gate B: hold the model reply until every bound device looks idle, or time out.
+ 
+@@ -136,13 +142,24 @@ async def _wait_for_gpu_idle(device: str, sid: str, shared: bool = False) -> Non
+             device is judged on compute utilization alone. Judging it on memory too would
+             hold every reply for the full cap.
+     """
+-    indices = _parse_gpu_indices(device)
++    indices = list(gpu_indices) if node_service_url else _parse_gpu_indices(device)
+     if not indices:
+         return
+     deadline = time.monotonic() + _GATE_B_MAX_WAIT_SEC
+     waited = False
+     while True:
+-        telemetry = await _read_gpu_utilization()
++        if node_service_url:
++            try:
++                async with aiohttp.ClientSession(
++                    timeout=aiohttp.ClientTimeout(total=_GATE_B_SMI_TIMEOUT_SEC)
++                ) as client:
++                    async with client.get(node_service_url) as response:
++                        response.raise_for_status()
++                        telemetry = {int(key): value for key, value in (await response.json()).items()}
++            except (aiohttp.ClientError, asyncio.TimeoutError, ValueError):
++                return
++        else:
++            telemetry = await _read_gpu_utilization()
+         if any(index not in telemetry for index in indices):
+             return  # Fail open: unknown/absent device, nothing to gate on.
+         util = max(telemetry[index][0] for index in indices)
+@@ -211,6 +228,8 @@ class SessionState:
+     # True when the device is shared with other containers of the same env unit, in which
+     # case Gate B judges idleness on utilization alone (see `_wait_for_gpu_idle`).
+     gpu_shared: bool = False
++    gpu_node_service_url: str = ""
++    gpu_indices: tuple[int, ...] = ()
+ 
+     def __post_init__(self) -> None:
+         if self.inflight == 0:
+@@ -429,8 +448,16 @@ class SessionRouter:
+         async with state.lock:
+             gpu_device = state.gpu_device
+             gpu_shared = state.gpu_shared
++            gpu_node_service_url = state.gpu_node_service_url
++            gpu_indices = state.gpu_indices
+         if gpu_device:
+-            await _wait_for_gpu_idle(gpu_device, sid, shared=gpu_shared)
++            await _wait_for_gpu_idle(
++                gpu_device,
++                sid,
++                shared=gpu_shared,
++                node_service_url=gpu_node_service_url,
++                gpu_indices=gpu_indices,
++            )
+ 
+         return self.build_response(result)
+ 
+@@ -567,6 +594,8 @@ class SessionRouter:
+                 state.gpu_device = str(device) if device else None
+                 # `shared` only means something while a device is bound, so unbinding resets it.
+                 state.gpu_shared = bool(item.get("shared", False)) if device else False
++                state.gpu_node_service_url = str(item.get("node_service_url", "")) if device else ""
++                state.gpu_indices = tuple(int(index) for index in item.get("gpu_indices", ())) if device else ()
+             applied.append(sid)
+         if applied or missing:
+             psrl_logger.debug(f"control_gpu_bind: bound={applied} missing={missing}.")
+diff --git a/psrl/workers/gen/smg_adapter.py b/psrl/workers/gen/smg_adapter.py
+index b474e48..21b3df1 100644
+--- a/psrl/workers/gen/smg_adapter.py
++++ b/psrl/workers/gen/smg_adapter.py
+@@ -141,7 +141,7 @@ def build_rollout_router_args(config: Any, host: str, port: int, ps_manager_addr
+         model_path=cfg_get(config, "train_actor_rollout_ref.model.path", None),
+         chat_template=cfg_get(config, "gen_actor_rollout_ref.rollout.chat_template", None),
+         service_discovery=False,
+-        prometheus_port=None,
++        prometheus_port=int(cfg_get(config, "psrl.rollout_gateway.prometheus_port", 0)),
+         request_timeout_secs=2**64 - 1,
+         log_level="warn",
+         log_dir=cfg_get(config, "psrl.logging_path", None),
+diff --git a/tests/env_service/test_manager_dispatch.py b/tests/env_service/test_manager_dispatch.py
+index 2817cfd..d8a3e26 100644
+--- a/tests/env_service/test_manager_dispatch.py
++++ b/tests/env_service/test_manager_dispatch.py
+@@ -17,7 +17,7 @@ import random
+ import sys
+ import types
+ from pathlib import Path
+-from unittest.mock import MagicMock
++from unittest.mock import MagicMock, patch
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parent))
+ 
+@@ -101,12 +101,10 @@ def _load_manager():
+         "psrl.workers.ps.staleness_controller",
+     ):
+         _loose(name)
+-    sys.modules["verl.utils"].tensordict_utils = _FakeTu
++    stub_if_missing("verl.utils.tensordict_utils", get=_FakeTu.get)
+     stub_package_keeping_children("psrl.utils.common", repo / "psrl" / "utils" / "common")
+     stub_if_missing("psrl.utils.common.http_utils")
+-    sys.modules["psrl.utils.common.http_utils"].init_distributed_post_pool = MagicMock()
+     module = importlib.import_module("psrl.workers.agent_loop.manager")
+-    module.tu = _FakeTu
+     return module
+ 
+ 
+@@ -141,7 +139,8 @@ def _manager(num_workers=3, rollout_n=2, dispatch_idx=0, dispatcher=None):
+ 
+ 
+ def _plan(m, batch, is_validate=False):
+-    return Manager.get_dispatch_plan(m, batch, is_validate=is_validate)
++    with patch.object(manager_module, "tu", _FakeTu):
++        return Manager.get_dispatch_plan(m, batch, is_validate=is_validate)
+ 
+ 
+ # --------------------------------------------------------------------------- equivalence with the old algorithm
+diff --git a/tests/env_service/test_node_policy_overlay_placement.py b/tests/env_service/test_node_policy_overlay_placement.py
+index 20f94b2..b016e9c 100644
+--- a/tests/env_service/test_node_policy_overlay_placement.py
++++ b/tests/env_service/test_node_policy_overlay_placement.py
+@@ -34,7 +34,7 @@ from psrl.workers.env_service.overlay import (
+     write_overlay,
+ )
+ from psrl.workers.env_service.placement import EnvAwareDispatcher, needs_gpu_from_extra_info
+-from psrl.workers.env_service.probe import parse_gpu_csv
++from psrl.workers.env_service.probe import GpuDevice, parse_gpu_csv
+ 
+ TRAIN = "10.0.0.9"
+ ENV = "10.0.0.1"
+@@ -240,7 +240,12 @@ def _libs():
+ 
+ def test_overlay_mounts_exactly_the_leases_devices_not_a_hardcoded_nvidia0():
+     # B3: the static override always mounted /dev/nvidia0.
+-    overlay = build_lease_overlay(_lease((3, 4)), _libs(), device_exists=lambda p: True)
++    overlay = build_lease_overlay(
++        _lease((3, 4)),
++        _libs(),
++        gpu_devices={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)},
++        device_exists=lambda p: True,
++    )
+     main = overlay["services"]["main"]
+     assert "/dev/nvidia3:/dev/nvidia3" in main["devices"]
+     assert "/dev/nvidia4:/dev/nvidia4" in main["devices"]
+@@ -250,7 +255,12 @@ def test_overlay_mounts_exactly_the_leases_devices_not_a_hardcoded_nvidia0():
+ 
+ 
+ def test_overlay_skips_control_devices_that_do_not_exist_on_the_host():
+-    overlay = build_lease_overlay(_lease((0,)), _libs(), device_exists=lambda p: p == "/usr/bin/nvidia-smi")
++    overlay = build_lease_overlay(
++        _lease((0,)),
++        _libs(),
++        gpu_devices={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)},
++        device_exists=lambda p: p == "/usr/bin/nvidia-smi",
++    )
+     main = overlay["services"]["main"]
+     assert main["devices"] == ["/dev/nvidia0:/dev/nvidia0"]
+     assert "/usr/bin/nvidia-smi:/usr/bin/nvidia-smi:ro" in main["volumes"]
+@@ -260,7 +270,9 @@ def test_overlay_stamps_lease_and_unit_labels_for_reaping():
+     # B6: Harbor sets no labels on local containers, so the lease label is what lets the
+     # reaper find an orphan after a crash.
+     lease = _lease((0,), unit_id="g7", lease_id="g7-4-abc")
+-    overlay = build_lease_overlay(lease, _libs(), device_exists=lambda p: True)
++    overlay = build_lease_overlay(
++        lease, _libs(), gpu_devices={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)}, device_exists=lambda p: True
++    )
+     labels = overlay["services"]["main"]["labels"]
+     assert f"{LEASE_LABEL}=g7-4-abc" in labels and f"{UNIT_LABEL}=g7" in labels
+ 
+@@ -278,8 +290,23 @@ def test_gpu_lease_without_driver_libs_is_a_programming_error():
+     raise AssertionError("a GPU lease without driver libs was accepted")
+ 
+ 
++def test_overlay_resolves_nvml_index_to_device_minor():
++    overlay = build_lease_overlay(
++        _lease((1,)),
++        _libs(),
++        gpu_devices={1: GpuDevice(1, 3, "GPU-assigned")},
++        device_exists=lambda path: False,
++    )
++    assert overlay["services"]["main"]["devices"] == ["/dev/nvidia3:/dev/nvidia3"], "Wrong physical GPU mounted."
++
++
+ def test_write_overlay_round_trips_through_yaml_and_is_a_real_file():
+-    overlay = build_lease_overlay(_lease((1,)), _libs(), device_exists=lambda p: True)
++    overlay = build_lease_overlay(
++        _lease((1,)),
++        _libs(),
++        gpu_devices={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)},
++        device_exists=lambda p: True,
++    )
+     path = write_overlay(overlay)
+     try:
+         assert path.exists() and path.suffix == ".yaml"
+diff --git a/tests/env_service/test_router_client.py b/tests/env_service/test_router_client.py
+index e0eab0b..5ff9982 100644
+--- a/tests/env_service/test_router_client.py
++++ b/tests/env_service/test_router_client.py
+@@ -69,36 +69,6 @@ def _run(coro):
+     return asyncio.run(coro)
+ 
+ 
+-def _stub_docker_utils(fake_force_remove):
+-    """
+-    Replace `psrl.utils.common.docker_utils` with a fake so no real `docker` is called.
+-
+-    The real module sits under a package whose `__init__` imports aiohttp, which a bare
+-    CPU box may lack, so the parent package is stubbed as well. Returns a restore callable.
+-    """
+-    import sys
+-    import types
+-
+-    names = ("psrl.utils.common", "psrl.utils.common.docker_utils")
+-    saved = {name: sys.modules.get(name) for name in names}
+-    parent = types.ModuleType(names[0])
+-    parent.__path__ = []  # marks it as a package so the submodule import resolves
+-    fake = types.ModuleType(names[1])
+-    fake.force_remove_containers_by_label = fake_force_remove
+-    fake.CLEANUP_EXECUTOR = None  # `run_in_executor(None, ...)` uses the default pool in the test
+-    sys.modules[names[0]] = parent
+-    sys.modules[names[1]] = fake
+-
+-    def restore():
+-        for name, module in saved.items():
+-            if module is None:
+-                sys.modules.pop(name, None)
+-            else:
+-                sys.modules[name] = module
+-
+-    return restore
+-
+-
+ GPU = EnvDemand(needs_gpu=True)
+ 
+ 
+@@ -268,14 +238,8 @@ def test_a_lease_that_stops_heartbeating_is_reclaimed_and_cleaned_up_on_its_node
+         assert [r.lease_id for r in reaped] == [handle.lease.lease_id]
+         assert (await core.snapshot())[1].containers_running == 0
+ 
+-        removed = []
+-        restore = _stub_docker_utils(lambda key, value: removed.append((key, value)))
+-        try:
+-            assert await client.reap_local() == 1
+-            assert await client.reap_local() == 0  # delivered exactly once
+-        finally:
+-            restore()
+-        assert removed == [("psrl.env_lease", handle.lease.lease_id)]
++        assert [lease.lease_id for lease in await core.pop_reaped(NODE)] == [handle.lease.lease_id]
++        assert await core.pop_reaped(NODE) == [], "Expired leases were delivered twice."
+         handle._heartbeat_task.cancel()
+ 
+     _run(scenario())
+diff --git a/tests/env_service/test_runner_env_service.py b/tests/env_service/test_runner_env_service.py
+index e96496b..81afda1 100644
+--- a/tests/env_service/test_runner_env_service.py
++++ b/tests/env_service/test_runner_env_service.py
+@@ -20,7 +20,8 @@ import yaml  # noqa: E402
+ from _light_stubs import load_sciaccel_runner  # noqa: E402
+ from psrl.workers.env_service import EnvDemand  # noqa: E402
+ from psrl.workers.env_service.client import EnvServiceClient  # noqa: E402
+-from psrl.workers.env_service.overlay import DriverLibs, DriverLibraryError  # noqa: E402
++from psrl.workers.env_service.overlay import DriverLibraryError, DriverLibs  # noqa: E402
++from psrl.workers.env_service.probe import GpuDevice  # noqa: E402
+ from psrl.workers.env_service.router import EnvRouterCore  # noqa: E402
+ from test_router_client import LocalRouter  # noqa: E402
+ 
+@@ -92,6 +93,8 @@ def _run_episode(core, *, needs_gpu, create_side_effect=None, driver_version="53
+ 
+     async def create(job_config):
+         env = job_config.environment or {}
++        if hasattr(env, "model_dump"):
++            env = env.model_dump(exclude_unset=True)
+         captured["environment"] = env
+         captured["overlay_paths"] = [Path(p) for p in env.get("extra_docker_compose", [])]
+         captured["overlay_existed_during_job"] = [p.exists() for p in captured["overlay_paths"]]
+@@ -117,6 +120,10 @@ def _run_episode(core, *, needs_gpu, create_side_effect=None, driver_version="53
+         patch.object(runner, "prune_dangling_images", return_value=False),
+         patch.object(runner, "read_kernel_driver_version", return_value=driver_version),
+         patch.object(runner, "resolve_driver_libs", return_value=_LIBS),
++        patch(
++            "psrl.workers.env_service.overlay.read_gpu_devices",
++            return_value={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)},
++        ),
+         patch.object(runner, "post", post),
+         patch.object(runner.EnvLeaseHandle, "release", traced_release),
+     ):
+@@ -163,7 +170,10 @@ def test_the_overlay_content_carries_the_leases_devices_labels_and_resolved_libs
+     seen: dict = {}
+ 
+     async def create(job_config):
+-        path = Path(job_config.environment["extra_docker_compose"][0])
++        env = job_config.environment
++        if hasattr(env, "model_dump"):
++            env = env.model_dump(exclude_unset=True)
++        path = Path(env["extra_docker_compose"][0])
+         seen["overlay"] = yaml.safe_load(path.read_text())
+         return _ok_job()
+ 
+@@ -174,6 +184,10 @@ def test_the_overlay_content_carries_the_leases_devices_labels_and_resolved_libs
+         patch.object(runner, "prune_dangling_images", return_value=False),
+         patch.object(runner, "read_kernel_driver_version", return_value="535.1"),
+         patch.object(runner, "resolve_driver_libs", return_value=_LIBS),
++        patch(
++            "psrl.workers.env_service.overlay.read_gpu_devices",
++            return_value={i: GpuDevice(i, i, f"GPU-{i}") for i in range(8)},
++        ),
+         patch.object(runner, "post", AsyncMock(return_value=None)),
+     ):
+         job_cls.create = AsyncMock(side_effect=create)
+@@ -210,8 +224,18 @@ def test_gate_b_is_bound_with_all_devices_and_shared_then_unbound():
+     post = AsyncMock(return_value=None)
+     _, captured = _run_episode(core, needs_gpu=True, gate_b=post)
+     bind, unbind = captured["gate_b_calls"]
+-    assert bind == [{"session_id": SESSION, "gpu_device": "/dev/nvidia0,/dev/nvidia1", "shared": True}]
+-    assert unbind == [{"session_id": SESSION, "gpu_device": None, "shared": False}]
++    assert bind == [
++        {
++            "session_id": SESSION,
++            "gpu_device": "/dev/nvidia0,/dev/nvidia1",
++            "shared": True,
++            "node_service_url": "",
++            "gpu_indices": [0, 1],
++        }
++    ]
++    assert unbind == [
++        {"session_id": SESSION, "gpu_device": None, "shared": False, "node_service_url": "", "gpu_indices": []}
++    ]
+ 
+ 
+ def test_a_solo_unit_binds_gate_b_unshared():
+diff --git a/tests/env_worker/test_sandbox.py b/tests/env_worker/test_sandbox.py
+index a8596ed..3b4057b 100644
+--- a/tests/env_worker/test_sandbox.py
++++ b/tests/env_worker/test_sandbox.py
+@@ -1,4 +1,7 @@
+ import pytest
++from psrl.workers.env_service.overlay import DriverLibs
++from psrl.workers.env_service.probe import GpuDevice
++from psrl.workers.env_worker import sandbox
+ from psrl.workers.env_worker.sandbox import (
+     NVIDIA_CONTROL_DEVICES,
+     SandboxSpec,
+@@ -6,6 +9,18 @@ from psrl.workers.env_worker.sandbox import (
+ )
+ 
+ 
++@pytest.fixture(autouse=True)
++def gpu_host(monkeypatch):
++    monkeypatch.setattr(sandbox.os.path, "exists", lambda path: True)
++    monkeypatch.setattr(sandbox, "read_gpu_devices", lambda: {i: GpuDevice(i, i + 1, f"GPU-{i}") for i in range(8)})
++    monkeypatch.setattr(sandbox, "read_kernel_driver_version", lambda: "535.1")
++    monkeypatch.setattr(
++        sandbox,
++        "resolve_driver_libs",
++        lambda version: DriverLibs(version, (("/usr/lib64/libcuda.so.535.1", "/usr/lib64/libcuda.so.1"),)),
++    )
++
++
+ @pytest.mark.cpu_test
+ def test_cpu_only_argv_has_interactive_shell_and_no_gpu_flags():
+     spec = SandboxSpec(image="mlgym:latest")
+@@ -47,8 +62,9 @@ def test_gpu_sandbox_uses_device_passthrough_not_gpus_flag():
+     argv = build_docker_run_argv(spec, container_name="c1", gpu_device_indices=(3, 5))
+ 
+     assert "--gpus" not in argv, "Must use device passthrough, not the broken --gpus flag."
+-    assert "/dev/nvidia3" in argv, "Requested physical device must be passed through."
+-    assert "/dev/nvidia5" in argv
++    assert "/dev/nvidia4" in argv, "GPU index 3 must resolve to minor 4."
++    assert "/dev/nvidia6" in argv, "GPU index 5 must resolve to minor 6."
++    assert "/dev/nvidia3" not in argv, "Enumeration indices are not device minor numbers."
+     assert "/dev/nvidia0" not in argv, "Must not leak devices that were not assigned."
+     for control_device in NVIDIA_CONTROL_DEVICES:
+         assert control_device in argv, f"Missing required control device={control_device!r}."
+@@ -61,12 +77,12 @@ def test_gpu_sandbox_bind_mounts_driver_libraries():
+         spec,
+         container_name="c1",
+         gpu_device_indices=(0,),
+-        driver_libs=("/usr/lib64/libnvidia-ml.so.1",),
++        driver_libs=DriverLibs("535.1", (("/usr/lib64/libnvidia-ml.so.535.1", "/usr/lib64/libnvidia-ml.so.1"),)),
+         nvidia_smi_path="/usr/bin/nvidia-smi",
+     )
+ 
+     joined = " ".join(argv)
+-    assert "/usr/lib64/libnvidia-ml.so.1:" in joined, "Driver library must be bind-mounted read-only."
++    assert "/usr/lib64/libnvidia-ml.so.535.1:/usr/lib64/libnvidia-ml.so.1:ro" in joined
+     assert joined.count(":ro") >= 2, "Driver mounts must be read-only."
+     assert "/usr/bin/nvidia-smi:/usr/bin/nvidia-smi:ro" in joined
+ 
+diff --git a/tests/env_worker/test_worker.py b/tests/env_worker/test_worker.py
+index 95f3fa1..af31c96 100644
+--- a/tests/env_worker/test_worker.py
++++ b/tests/env_worker/test_worker.py
+@@ -70,6 +70,22 @@ def test_allocate_gpu_indices_raises_when_exhausted(monkeypatch):
+         worker._allocate_gpu_indices(1)
+ 
+ 
++@pytest.mark.cpu_test
++def test_gpu_inventory_failure_releases_the_reserved_device(monkeypatch):
++    from psrl.workers.env_worker import worker as worker_module
++
++    monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "1")
++    worker = EnvWorker(worker_id=0, cpu_slots=1, gpu_slots=1, exec_default_timeout_s=60.0)
++
++    def unavailable(*args):
++        raise RuntimeError("GPU inventory unavailable.")
++
++    monkeypatch.setattr(worker_module, "build_docker_run_argv", unavailable)
++    with pytest.raises(RuntimeError, match="GPU inventory unavailable"):
++        asyncio.run(worker.create_sandbox(SandboxSpec(image="probe", gpus=1)))
++    assert worker._allocate_gpu_indices(1) == (1,), "GPU setup failure leaked its slot."
++
++
+ @pytest.mark.cpu_test
+ def test_sandbox_labels_always_include_the_cleanup_key(monkeypatch):
+     monkeypatch.setenv("PSRL_ACTOR_ID", "actor-7")
+diff --git a/patch/verl/d613affc.patch b/patch/verl/d613affc.patch
+new file mode 100644
+index 0000000..02b9a3f
+--- /dev/null
++++ b/patch/verl/d613affc.patch
+@@ -0,0 +1,34 @@
++diff --git a/verl/utils/tensordict_utils.py b/verl/utils/tensordict_utils.py
++--- a/verl/utils/tensordict_utils.py
+++++ b/verl/utils/tensordict_utils.py
++@@ -177,9 +177,7 @@
++     offsets = torch.zeros(len(tensors) + 1, dtype=torch.long, device=values.device)
++     torch.cumsum(lengths, dim=0, out=offsets[1:])
++ 
++-    nested_tensor = torch.nested.nested_tensor_from_jagged(values=values, offsets=offsets)
++-    nested_tensor._ragged_idx = ragged_idx
++-    return nested_tensor
+++    return torch.nested.nested_tensor_from_jagged(values=values, offsets=offsets, jagged_dim=ragged_idx)
++ 
++ 
++ def concat_nested_tensors(tensors: list[torch.Tensor]) -> torch.Tensor:
++@@ -908,11 +906,14 @@
++ 
++ 
++ def maybe_fix_3d_position_ids(data: TensorDict):
++-    # note for tensordict with pickle/unpickle. nested tensor in tensordict after consolidate and pickle/unpickle
++-    # will incur indexing error for ragged tensor. This only happens when using 3D position ids in VLMs.
++-    # This is likely a bug in tensordict. As a workaround, we manually set _ragged_index.
++-    if "position_ids" in data.keys() and data["position_ids"].dim() == 3 and data["position_ids"].is_nested:
++-        data["position_ids"]._ragged_idx = 2
+++    """Canonicalize position rows without changing the meaning of existing offsets."""
+++    position_ids = data.get("position_ids")
+++    if position_ids is None or position_ids.dim() != 3 or not position_ids.is_nested:
+++        return
+++    if position_ids.layout == torch.jagged and position_ids._ragged_idx == 2:
+++        return
+++    # Storage may batch along the coordinate axis. Rebuild offsets along the token axis.
+++    data["position_ids"] = nested_tensor_from_tensor_list(list(position_ids.unbind()), ragged_idx=2)
++ 
++ 
++ def list_of_dict_to_tensordict(list_of_dicts: list[dict[str, Any]]) -> TensorDict:
+diff --git a/psrl/workers/env_service/docker.py b/psrl/workers/env_service/docker.py
+new file mode 100644
+index 0000000..e711a94
+--- /dev/null
++++ b/psrl/workers/env_service/docker.py
+@@ -0,0 +1,37 @@
++"""Attach lease resources and ownership labels to every Harbor environment."""
++
++import tempfile
++from pathlib import Path
++
++import yaml
++from harbor.environments.docker.docker import DockerEnvironment
++
++
++class ManagedDockerEnvironment(DockerEnvironment):
++    """Keep ownership metadata when Harbor creates a separate verifier environment."""
++
++    def __init__(self, *args, lease_overlay: dict | None = None, actor_id: str = "", **kwargs):
++        self._lease_overlay = lease_overlay or {}
++        self._actor_id = actor_id
++        self._ownership_dir = tempfile.TemporaryDirectory(prefix="psrl-compose-")
++        self._ownership_path = Path(self._ownership_dir.name) / "ownership.yaml"
++        super().__init__(*args, **kwargs)
++
++    @property
++    def _docker_compose_paths(self) -> list[Path]:
++        """Apply ownership labels after all task and network services are known."""
++        paths = super()._docker_compose_paths
++        main = dict(self._lease_overlay.get("services", {}).get("main", {}))
++        labels = dict(item.split("=", 1) for item in main.get("labels", []))
++        if self._actor_id:
++            labels["psrl.actor_id"] = self._actor_id
++        services = {"main"}
++        for path in paths:
++            # Only service names are needed, including files with Compose-specific YAML tags.
++            document = yaml.load(path.read_text(), Loader=yaml.BaseLoader) or {}
++            services.update(document.get("services", {}))
++        overlay = {name: {"labels": labels} for name in services}
++        overlay["main"].update(main)
++        overlay["main"]["labels"] = labels
++        self._ownership_path.write_text(yaml.safe_dump({"services": overlay}))
++        return [*paths, self._ownership_path]
+diff --git a/psrl/workers/env_service/node.py b/psrl/workers/env_service/node.py
+new file mode 100644
+index 0000000..43e3447
+--- /dev/null
++++ b/psrl/workers/env_service/node.py
+@@ -0,0 +1,83 @@
++"""Run node-local GPU telemetry and lease cleanup independently of episode owners."""
++
++import asyncio
++import logging
++import uuid
++
++from aiohttp import web
++
++from psrl.utils.common.docker_utils import CLEANUP_EXECUTOR, force_remove_containers_by_label
++from psrl.workers.env_service.overlay import LEASE_LABEL
++from psrl.workers.env_service.probe import read_gpu_telemetry
++
++psrl_logger = logging.getLogger(__file__)
++
++
++class EnvNodeService:
++    """Serve one node for the lifetime of the owning router actor."""
++
++    def __init__(self, router, node_ip: str):
++        self.router = router
++        self.node_ip = node_ip
++        self._pending = {}
++        self._lock = asyncio.Lock()
++        self._runner = None
++        self._reaper = None
++        self._url = None
++
++    async def ready(self) -> str:
++        """Start telemetry and cleanup before admitting containers on this node."""
++        if self._runner is None:
++            path = f"/{uuid.uuid4().hex}/gpu"
++            app = web.Application()
++            app.router.add_get(path, self._telemetry)
++            self._runner = web.AppRunner(app)
++            await self._runner.setup()
++            site = web.TCPSite(self._runner, self.node_ip, 0)
++            await site.start()
++            port = self._runner.addresses[0][1]
++            self._url = f"http://{self.node_ip}:{port}{path}"
++            self._reaper = asyncio.create_task(self._reap_forever())
++        return self._url
++
++    async def _telemetry(self, request: web.Request) -> web.Response:
++        return web.json_response(await read_gpu_telemetry())
++
++    async def cleanup(self) -> int:
++        """Retain failed removals for retry and return the remaining lease count."""
++        async with self._lock:
++            expired = await self.router.pop_reaped.remote(self.node_ip)
++            self._pending.update((lease.lease_id, lease) for lease in expired)
++            for lease_id in tuple(self._pending):
++                try:
++                    await asyncio.get_running_loop().run_in_executor(
++                        CLEANUP_EXECUTOR, force_remove_containers_by_label, LEASE_LABEL, lease_id
++                    )
++                    process = await asyncio.create_subprocess_exec(
++                        "docker",
++                        "ps",
++                        "-aq",
++                        "--filter",
++                        f"label={LEASE_LABEL}={lease_id}",
++                        stdout=asyncio.subprocess.PIPE,
++                        stderr=asyncio.subprocess.PIPE,
++                    )
++                    try:
++                        stdout, _ = await asyncio.wait_for(process.communicate(), timeout=10)
++                    except asyncio.TimeoutError:
++                        process.kill()
++                        await process.wait()
++                        raise
++                    if process.returncode == 0 and not stdout.strip():
++                        del self._pending[lease_id]
++                except Exception as exc:
++                    psrl_logger.warning(f"Lease cleanup failed for {lease_id!r}: {exc!r}.")
++            return len(self._pending)
++
++    async def _reap_forever(self) -> None:
++        while True:
++            await asyncio.sleep(1)
++            try:
++                await self.cleanup()
++            except Exception as exc:
++                psrl_logger.warning(f"Node cleanup pass failed: {exc!r}.")
+diff --git a/tests/agent_loop/test_empty_training_group.py b/tests/agent_loop/test_empty_training_group.py
+new file mode 100644
+index 0000000..0b7dae6
+--- /dev/null
++++ b/tests/agent_loop/test_empty_training_group.py
+@@ -0,0 +1,68 @@
++"""Verify that masked groups are refilled without entering optimizer batches."""
++
++import asyncio
++from collections import Counter
++from types import SimpleNamespace
++from unittest.mock import AsyncMock
++
++import pytest
++import torch
++from psrl.utils.transferqueue_utils import PayloadState
++from psrl.workers.agent_loop import manager as manager_module
++from psrl.workers.agent_loop.loops.utils import TerminateReason
++from psrl.workers.agent_loop.manager import PSRL_AgentLoopManager
++from tensordict import TensorDict
++
++
++def make_manager():
++    manager = object.__new__(PSRL_AgentLoopManager)
++    manager._failed_train_group_ids = set()
++    manager._consecutive_group_failures = 0
++    manager._group_failure_reasons = Counter()
++    manager._refill_breaker_diagnosis = None
++    manager.refill_failure_threshold = 2
++    manager._train_buffer_waiters = {}
++    manager._train_chunk_waiters = {}
++    manager._resolved_train_chunks = {}
++    manager.ps_manager_handle = SimpleNamespace(clear_reserved_entries=SimpleNamespace(remote=AsyncMock()))
++    manager._refill_failed_group = AsyncMock(return_value=2)
++    return manager
++
++
++@pytest.mark.parametrize("nested", [False, True])
++def test_empty_groups_refill_then_trip_breaker(monkeypatch, nested):
++    mask = torch.zeros(2, 4)
++    if nested:
++        mask = torch.nested.as_nested_tensor([torch.zeros(3), torch.zeros(7)], layout=torch.jagged)
++    read = AsyncMock(return_value=TensorDict({"response_mask": mask}, batch_size=[2]))
++    clear = AsyncMock()
++    monkeypatch.setattr(manager_module.tq, "async_kv_batch_get", read)
++    monkeypatch.setattr(manager_module, "async_clear_payload", clear)
++    manager = make_manager()
++
++    async def run():
++        waiter = asyncio.get_running_loop().create_future()
++        manager._train_buffer_waiters[0] = [waiter]
++        assert not await manager._keep_trainable_group(1, ["2", "3"]), "Empty group was accepted."
++        assert not waiter.done(), "Transient filtering ended training."
++        assert not await manager._keep_trainable_group(2, ["4", "5"]), "Empty refill was accepted."
++        with pytest.raises(RuntimeError, match="no_trainable_tokens=2"):
++            await waiter
++
++    asyncio.run(run())
++    manager._refill_failed_group.assert_awaited_once()
++    assert manager._failed_train_group_ids == {1, 2}, "Late arrivals could be readmitted."
++    clear.assert_awaited_with(keys=["4", "5"], partition_id="train", state=PayloadState.DROPPED)
++    assert manager._group_failure_reasons[TerminateReason.NO_TRAINABLE_TOKENS.value] == 2
++
++
++def test_mixed_group_preserves_masked_siblings(monkeypatch):
++    mask = torch.nested.as_nested_tensor([torch.zeros(3), torch.tensor([0.0, 1.0, 1.0])], layout=torch.jagged)
++    read = AsyncMock(return_value=TensorDict({"response_mask": mask}, batch_size=[2]))
++    clear = AsyncMock()
++    monkeypatch.setattr(manager_module.tq, "async_kv_batch_get", read)
++    monkeypatch.setattr(manager_module, "async_clear_payload", clear)
++    manager = make_manager()
++    assert asyncio.run(manager._keep_trainable_group(1, ["2", "3"])), "Trainable group was discarded."
++    clear.assert_not_awaited()
++    manager._refill_failed_group.assert_not_awaited()
+diff --git a/tests/env_service/test_node_cleanup.py b/tests/env_service/test_node_cleanup.py
+new file mode 100644
+index 0000000..2762091
+--- /dev/null
++++ b/tests/env_service/test_node_cleanup.py
+@@ -0,0 +1,30 @@
++"""Verify that failed Docker cleanup remains pending and is retried."""
++
++import asyncio
++from types import SimpleNamespace
++from unittest.mock import AsyncMock, Mock
++
++from psrl.workers.env_service import node
++
++
++def test_cleanup_retains_lease_until_docker_confirms_removal(monkeypatch):
++    lease = SimpleNamespace(lease_id="expired-lease")
++    router = SimpleNamespace(pop_reaped=SimpleNamespace(remote=AsyncMock(side_effect=[[lease], [], []])))
++    remove = Mock()
++    monkeypatch.setattr(node, "force_remove_containers_by_label", remove)
++    processes = [
++        SimpleNamespace(returncode=1, communicate=AsyncMock(return_value=(b"", b"Daemon unavailable"))),
++        SimpleNamespace(returncode=0, communicate=AsyncMock(return_value=(b"container-id\n", b""))),
++        SimpleNamespace(returncode=0, communicate=AsyncMock(return_value=(b"", b""))),
++    ]
++    monkeypatch.setattr(node.asyncio, "create_subprocess_exec", AsyncMock(side_effect=processes))
++
++    async def run():
++        service = node.EnvNodeService(router, "127.0.0.1")
++        assert await service.cleanup() == 1, "A Docker failure released capacity."
++        assert await service.cleanup() == 1, "A live container released capacity."
++        assert await service.cleanup() == 0, "Successful cleanup stayed pending."
++
++    asyncio.run(run())
++    assert remove.call_count == 3, "Failed cleanup was not retried."
++    remove.assert_called_with("psrl.env_lease", "expired-lease")
+diff --git a/tests/env_service/test_position_ids_roundtrip.py b/tests/env_service/test_position_ids_roundtrip.py
+new file mode 100644
+index 0000000..93f2ce4
+--- /dev/null
++++ b/tests/env_service/test_position_ids_roundtrip.py
+@@ -0,0 +1,20 @@
++"""Exercise stored multimodal position rows through training batch selection."""
++
++import pytest
++import torch
++from tensordict import TensorDict
++from transfer_queue.storage.managers.simple_storage_manager import AsyncSimpleStorageManager
++from verl.utils.tensordict_utils import index_select_tensor_dict, maybe_fix_3d_position_ids
++
++
++@pytest.mark.parametrize("lengths", [(2407,), (9, 13), (11, 11)])
++def test_stored_position_ids_keep_coordinates_and_token_lengths(lengths):
++    rows = [torch.arange(4 * size).reshape(4, size) for size in lengths]
++    packed = AsyncSimpleStorageManager._pack_field_values(rows)
++    batch = TensorDict({"position_ids": packed}, batch_size=[len(rows)])
++    maybe_fix_3d_position_ids(batch)
++    maybe_fix_3d_position_ids(batch)
++    selected = index_select_tensor_dict(batch, list(reversed(range(len(rows)))))
++    actual = selected["position_ids"].unbind()
++    assert all(torch.equal(left, right) for left, right in zip(actual, reversed(rows))), "Position rows changed."
++    assert selected["position_ids"].offsets().diff().tolist() == list(reversed(lengths)), "Token lengths changed."
+diff --git a/tests/gen_dplb/test_gateway_lifetime.py b/tests/gen_dplb/test_gateway_lifetime.py
+new file mode 100644
+index 0000000..3e1a03c
+--- /dev/null
++++ b/tests/gen_dplb/test_gateway_lifetime.py
+@@ -0,0 +1,61 @@
++import multiprocessing
++import os
++import signal
++import time
++from types import SimpleNamespace
++
++import psutil
++import pytest
++from psrl.workers.gen.rollout_gateway import _bind_to_parent_lifetime
++from psrl.workers.gen.smg_adapter import build_rollout_router_args
++
++
++def _serve(ready):
++    _bind_to_parent_lifetime()
++    ready.send(os.getpid())
++    while True:
++        time.sleep(1)
++
++
++def _own_server(ready):
++    child = multiprocessing.get_context("fork").Process(target=_serve, args=(ready,))
++    child.start()
++    child.join()
++
++
++@pytest.mark.parametrize("exit_signal", [signal.SIGTERM, signal.SIGKILL])
++def test_router_exits_when_owner_is_killed(exit_signal):
++    context = multiprocessing.get_context("fork")
++    reader, writer = context.Pipe(duplex=False)
++    owner = context.Process(target=_own_server, args=(writer,))
++    owner.start()
++    server = None
++    try:
++        assert reader.poll(15), "Router did not initialize."
++        server = psutil.Process(reader.recv())
++        os.kill(owner.pid, exit_signal)
++        owner.join(timeout=10)
++        deadline = time.monotonic() + 5
++        while time.monotonic() < deadline:
++            if not server.is_running() or server.status() == psutil.STATUS_ZOMBIE:
++                break
++            time.sleep(0.05)
++        else:
++            pytest.fail("Router survived its owner.")
++    finally:
++        if owner.is_alive():
++            owner.kill()
++            owner.join(timeout=5)
++        if server is not None and server.is_running() and server.status() != psutil.STATUS_ZOMBIE:
++            server.kill()
++        reader.close()
++        writer.close()
++
++
++def test_metrics_port_defaults_to_kernel_allocation_and_accepts_explicit_port():
++    config = SimpleNamespace(psrl=SimpleNamespace(rollout_gateway=SimpleNamespace()))
++    args = build_rollout_router_args(config, "127.0.0.1", 8101, "127.0.0.1:8100")
++    assert args.prometheus_port == 0, "Gateway metrics must not reserve a shared fixed port."
++    config.psrl.rollout_gateway.prometheus_port = 29001
++    args = build_rollout_router_args(config, "127.0.0.1", 8101, "127.0.0.1:8100")
++    assert args.prometheus_port == 29001, "Explicit metrics port was not forwarded."
+diff --git a/tests/trainer/test_main_ppo_runtime_env.py b/tests/trainer/test_main_ppo_runtime_env.py
+new file mode 100644
+index 0000000..bfd5940
+--- /dev/null
++++ b/tests/trainer/test_main_ppo_runtime_env.py
+@@ -0,0 +1,40 @@
++"""Check cluster discovery and environment injection without launching model workers."""
++
++from types import SimpleNamespace
++from unittest.mock import MagicMock
++
++import pytest
++from omegaconf import OmegaConf
++
++
++@pytest.mark.parametrize("initialized", [False, True])
++def test_task_runner_inherits_current_cluster_address(monkeypatch, initialized):
++    from psrl.trainer import main_ppo
++
++    config = OmegaConf.create(
++        {
++            "ray_kwargs": {"ray_init": {"runtime_env": {"env_vars": {"EXISTING": "value"}}}},
++            "transfer_queue": {"enable": True},
++            "global_profiler": {"tool": None},
++        }
++    )
++    OmegaConf.set_struct(config, True)
++    ray = MagicMock()
++    ray.is_initialized.return_value = initialized
++    ray.get_runtime_context.return_value = SimpleNamespace(gcs_address="127.0.0.1:23456")
++    monkeypatch.setattr(main_ppo, "ray", ray)
++    monkeypatch.setattr(main_ppo, "get_ppo_ray_runtime_env", lambda: {})
++    monkeypatch.setattr(main_ppo, "_reserve_excess_nodes", lambda config: [])
++    runner = MagicMock()
++
++    main_ppo.run_ppo(config, task_runner_class=runner)
++
++    runner.options.assert_called_once_with(runtime_env={"env_vars": {"RAY_ADDRESS": "127.0.0.1:23456"}})
++    if initialized:
++        ray.init.assert_not_called()
++    else:
++        assert ray.init.call_args.kwargs["runtime_env"]["env_vars"] == {
++            "EXISTING": "value",
++            "TRANSFER_QUEUE_ENABLE": "1",
++        }, "Runtime variables were lost or could not be injected into structured config."
++    assert "TRANSFER_QUEUE_ENABLE" not in config.ray_kwargs.ray_init.runtime_env.env_vars

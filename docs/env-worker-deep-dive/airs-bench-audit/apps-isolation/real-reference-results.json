@@ -1,0 +1,55 @@
+{
+  "run_id": "apps-20261015-real",
+  "status": "passed",
+  "scope": "real Docker, actual APPS grader, bounded cases, no Ray/LLM/training",
+  "docker_version": "26.1.3",
+  "real_problem": {
+    "row": 0,
+    "problem_id": 0,
+    "original_case_count": 565,
+    "cases": 3,
+    "source_sha256": "0206b59d4050bbf38f2a2bb25c974c6123786ac316e6e1ce4a4280f0c9339dae"
+  },
+  "real_reference_score": {
+    "Pass@5": 1.0
+  },
+  "candidate_container_inspections": [
+    {
+      "id": "c-0bfb14dd92324ed1be73ea38e80702ae",
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "${PSRL_WORKSPACE}/examples/airs_bench/apps",
+          "Destination": "/opt/psrl-code",
+          "Mode": "ro",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "user": "agent",
+      "network": "none",
+      "read_only": true,
+      "pids": 64,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges"
+      ],
+      "memory": 268435456,
+      "nano_cpus": 1000000000
+    }
+  ],
+  "final_worker_count": 0,
+  "cleanup_remaining": [],
+  "duration_s": 55.835,
+  "source_sha256": {
+    "examples/airs_bench/grading.py": "ce429a338e6c641311cafb420a72fed5785784d3604e52b4a18558b1760beae0",
+    "examples/airs_bench/apps/judge.py": "0a11241895153f48c0ad05e26eb52dc25a350903a40088253b0e050b9031854b",
+    "examples/airs_bench/apps/candidate.py": "fad3724aabd24bfd61e7510e2be1ff4126476763553dbb56f0994d0c6f058bfd",
+    "examples/airs_bench/apps/comparison.py": "827f905fbf84c0c4b7f80a8ec161e98d78d2f4f3dc1870b84dc6cd98a4888310",
+    "psrl/workers/env_worker/isolated_code.py": "428758b24ffb42058762929ceea3bea66b1ce399065d93b349b09d744cf16824",
+    "psrl/workers/env_worker/worker.py": "beafd9301c54a0f9d1549349f9b579c473a0c5d9f6e39e599a98a2162539aba2",
+    "psrl/workers/env_worker/sandbox.py": "79177eb447d8c52713283d51d568fe60d0f284c413fe32d8cc69bc1b5ee64699"
+  }
+}

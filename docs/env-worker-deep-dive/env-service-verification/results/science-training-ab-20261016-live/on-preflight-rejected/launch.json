@@ -1,0 +1,12 @@
+{
+  "mode": "on",
+  "started_at": 1792140684.1728015,
+  "budget_seconds": 1440,
+  "gpu_baseline": {
+    "gpu": "0, GPU-ee0871c3-32f7-1cc3-450d-c978c2178ace, 62087, 0, 128.50\n1, GPU-bec2e98e-3375-eaa5-6e3b-8b4c00f2aeb4, 58523, 0, 128.85\n2, GPU-9ef8ad9d-bc9a-e1ed-2ce0-dee5f86b3a97, 3, 0, 75.93\n3, GPU-f70d7b3f-6c42-c0eb-10a9-ca1db72a7781, 3, 0, 71.45\n4, GPU-18fd2a3a-d4f2-cb6c-ce90-46770a384e17, 3, 0, 75.34\n5, GPU-31caee0c-b94f-a38f-a597-f1451ed4ba57, 3, 0, 74.26\n6, GPU-cc0c694a-e734-8f50-9242-2460d9af38f8, 3, 0, 73.03\n7, GPU-ef35a6b4-cbce-cff9-75a8-b83f69f61616, 3, 0, 73.40"
+  },
+  "harness_error": "RuntimeError: Selected GPUs are already occupied in MiB: {0: 62087.0, 1: 58523.0}.",
+  "exit_code": 1,
+  "reclaimed_descendant_pids": [],
+  "finished_at": 1792140684.5049572
+}
