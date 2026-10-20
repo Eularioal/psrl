@@ -118,7 +118,6 @@ def _run_episode(core, *, needs_gpu, create_side_effect=None, driver_version="53
         patch.object(runner, "Job") as job_cls,
         patch.object(runner, "force_remove_compose_project", side_effect=removed),
         patch.object(runner, "force_remove_compose_images", return_value=0),
-        patch.object(runner, "prune_dangling_images", return_value=False),
         patch.object(runner, "read_kernel_driver_version", return_value=driver_version),
         patch.object(runner, "resolve_driver_libs", return_value=_LIBS),
         patch(
@@ -167,8 +166,50 @@ def test_borrowed_gpu_wires_the_same_lease_into_agent_and_container_hooks():
     binding.finish.assert_awaited_once_with(lease.lease_id)
 
 
+def test_command_gpu_wires_explicit_execution_and_skips_model_reply_gate():
+    from types import SimpleNamespace
+
+    cfg = _cfg()
+    cfg["units"][0]["gpu_reservation"] = "command"
+    core = EnvRouterCore(cfg)
+    node = SimpleNamespace(
+        remove_gpu_lease=SimpleNamespace(remote=AsyncMock()),
+        gpu_lending_snapshot=SimpleNamespace(remote=AsyncMock(return_value={0: {"used_mb": 0}})),
+    )
+    core._gpu_commands.get_node = AsyncMock(return_value=node)
+    result, captured = _run_episode(core, needs_gpu=True)
+    assert result.reward == 1.0
+    commands = captured["environment"]["kwargs"]["gpu_commands"]
+    assert commands["lease_id"].startswith("g0-")
+    assert commands["router_name"]
+    assert all(not item["gpu_device"] for payload in captured["gate_b_calls"] for item in payload), (
+        "GPU command ownership must not gate unrelated model replies."
+    )
+    node.remove_gpu_lease.remote.assert_awaited_once_with(commands["lease_id"])
+    assert _ledger_containers(core) == 0
+
+
 def _ledger_containers(core):
     return sum(snap.containers_running for snap in asyncio.run(core.snapshot()))
+
+
+def test_deferred_gpu_return_failure_cannot_be_accepted_as_a_successful_episode():
+    from types import SimpleNamespace
+
+    cfg = _cfg()
+    cfg["units"][0]["gpu_reservation"] = "command"
+    core = EnvRouterCore(cfg)
+    core._gpu_commands.get_node = AsyncMock(
+        return_value=SimpleNamespace(
+            remove_gpu_lease=SimpleNamespace(remote=AsyncMock()),
+            gpu_lending_snapshot=SimpleNamespace(remote=AsyncMock(return_value={0: {"used_mb": 0}})),
+        )
+    )
+    core.wait_gpu_command_returns = AsyncMock(side_effect=RuntimeError("Deferred GPU return failed."))
+    result, _ = _run_episode(core, needs_gpu=True)
+    assert result.reward == 0.0 and result.exception == "Deferred GPU return failed."
+    core.wait_gpu_command_returns.assert_awaited_once()
+    assert _ledger_containers(core) == 0
 
 
 # --------------------------------------------------------------------------- the GPU lease path
@@ -201,7 +242,6 @@ def test_the_overlay_content_carries_the_leases_devices_labels_and_resolved_libs
         patch.object(runner, "Job") as job_cls,
         patch.object(runner, "force_remove_compose_project", return_value=[]),
         patch.object(runner, "force_remove_compose_images", return_value=0),
-        patch.object(runner, "prune_dangling_images", return_value=False),
         patch.object(runner, "read_kernel_driver_version", return_value="535.1"),
         patch.object(runner, "resolve_driver_libs", return_value=_LIBS),
         patch(
@@ -307,7 +347,6 @@ def _run_with_failing_driver(core, events):
         patch.object(runner, "Job") as job_cls,
         patch.object(runner, "force_remove_compose_project", return_value=[]),
         patch.object(runner, "force_remove_compose_images", return_value=0),
-        patch.object(runner, "prune_dangling_images", return_value=False),
         patch.object(runner, "read_kernel_driver_version", return_value="535.1"),
         patch.object(runner, "resolve_driver_libs", side_effect=DriverLibraryError("no libcuda for 535.1")),
         patch.object(runner, "post", AsyncMock(return_value=None)),
@@ -363,7 +402,6 @@ def test_without_an_env_client_the_legacy_path_never_touches_the_router():
         patch.object(runner, "Job") as job_cls,
         patch.object(runner, "force_remove_compose_project", return_value=[]),
         patch.object(runner, "force_remove_compose_images", return_value=0),
-        patch.object(runner, "prune_dangling_images", return_value=False),
         patch.object(runner, "GpuDeviceGate") as gate_cls,
     ):
         job_cls.create = AsyncMock(return_value=_ok_job())
@@ -389,7 +427,6 @@ def test_the_default_job_name_is_generated_when_no_session_id_is_given():
         patch.object(runner, "Job") as job_cls,
         patch.object(runner, "force_remove_compose_project", return_value=[]) as removed,
         patch.object(runner, "force_remove_compose_images", return_value=0),
-        patch.object(runner, "prune_dangling_images", return_value=False),
     ):
         job_cls.create = AsyncMock(return_value=_ok_job())
         asyncio.run(

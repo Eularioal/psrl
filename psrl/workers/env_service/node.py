@@ -7,6 +7,8 @@ import uuid
 from aiohttp import web
 
 from psrl.utils.common.docker_utils import CLEANUP_EXECUTOR, force_remove_containers_by_label
+from psrl.workers.env_service.command_gpu_node import GpuCommandNodeMixin
+from psrl.workers.env_service.docker_api import ping_docker
 from psrl.workers.env_service.lending_node import GpuLendingNodeMixin
 from psrl.workers.env_service.overlay import LEASE_LABEL
 from psrl.workers.env_service.probe import read_gpu_telemetry
@@ -14,7 +16,7 @@ from psrl.workers.env_service.probe import read_gpu_telemetry
 psrl_logger = logging.getLogger(__file__)
 
 
-class EnvNodeService(GpuLendingNodeMixin):
+class EnvNodeService(GpuCommandNodeMixin, GpuLendingNodeMixin):
     """Serve one node for the lifetime of the owning router actor."""
 
     def __init__(self, router, node_ip: str):
@@ -43,6 +45,25 @@ class EnvNodeService(GpuLendingNodeMixin):
 
     async def _telemetry(self, request: web.Request) -> web.Response:
         return web.json_response(await read_gpu_telemetry())
+
+    async def prepare(self, indices):
+        """Initialize this service's live queries without reserving or authorizing a GPU."""
+        await ping_docker()
+        if indices:
+            await asyncio.to_thread(self._gpu_probe().read_gpu_devices)
+            await self.gpu_lending_snapshot(indices)
+
+    async def close(self):
+        """Stop background work before releasing this service's driver connection."""
+        if self._reaper is not None:
+            self._reaper.cancel()
+            await asyncio.gather(self._reaper, return_exceptions=True)
+            self._reaper = None
+        if self._runner is not None:
+            await self._runner.cleanup()
+            self._runner = None
+        if hasattr(self, "_nvml_probe"):
+            await asyncio.to_thread(self._nvml_probe.close)
 
     async def cleanup(self) -> int:
         """Retain failed removals for retry and return the remaining lease count."""
@@ -74,6 +95,8 @@ class EnvNodeService(GpuLendingNodeMixin):
                         lease = self._pending[lease_id]
                         if lease.gpu_lending:
                             await self.router.finish_gpu_lease.remote(lease_id, lease.unit_id)
+                        if lease.gpu_reservation == "command":
+                            await self.router.finish_gpu_command_lease.remote(lease_id, lease.unit_id)
                         del self._pending[lease_id]
                 except Exception as exc:
                     psrl_logger.warning(f"Lease cleanup failed for {lease_id!r}: {exc!r}.")

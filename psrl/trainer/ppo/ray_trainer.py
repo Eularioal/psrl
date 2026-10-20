@@ -593,6 +593,18 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
         psrl_logger.info("Env service router created (policy=%s).", rules.policy.value)
         return rules
 
+    def stop_env_service(self):
+        """Reclaim prepared node services even when model initialization fails."""
+        if self.env_router_handle is None:
+            return
+        try:
+            ray.get(self.env_router_handle.shutdown_nodes.remote(), timeout=15)
+        except Exception as exc:
+            psrl_logger.warning("Env service shutdown did not finish cleanly: %r.", exc)
+        finally:
+            ray.kill(self.env_router_handle)
+            self.env_router_handle = None
+
     def _init_gpu_lending(self, all_wg):
         """Bind borrowing units only after model initialization and placement validation."""
         if self.env_router_handle is None:
@@ -3536,9 +3548,7 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
         if self.env_worker_manager is not None:
             self.env_worker_manager.shutdown()
             self.env_worker_manager = None
-        if self.env_router_handle is not None:
-            ray.kill(self.env_router_handle)
-            self.env_router_handle = None
+        self.stop_env_service()
         self.stop_ps_manager()
         self._shutdown_dump_executor()
 

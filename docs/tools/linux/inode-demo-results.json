@@ -1,0 +1,48 @@
+{
+  "created": {
+    "device": 70,
+    "inode": 4396013907,
+    "links": 1,
+    "bytes": 6
+  },
+  "hard_link": {
+    "a": {
+      "device": 70,
+      "inode": 4396013907,
+      "links": 2,
+      "bytes": 6
+    },
+    "b": {
+      "device": 70,
+      "inode": 4396013907,
+      "links": 2,
+      "bytes": 6
+    }
+  },
+  "copy": {
+    "device": 70,
+    "inode": 4396013908,
+    "links": 1,
+    "bytes": 6
+  },
+  "renamed": {
+    "device": 70,
+    "inode": 4396013907,
+    "links": 2,
+    "bytes": 6
+  },
+  "one_name_removed": {
+    "device": 70,
+    "inode": 4396013907,
+    "links": 1,
+    "bytes": 6
+  },
+  "no_names_but_open": {
+    "inode": 4396013907,
+    "links": 0,
+    "read": "hello\n",
+    "names_exist": false
+  },
+  "descriptor_closed": true,
+  "temporary_directory_removed": true
+}

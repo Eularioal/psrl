@@ -8,7 +8,7 @@ from psrl.workers.env_service import node
 
 
 def test_cleanup_retains_lease_until_docker_confirms_removal(monkeypatch):
-    lease = SimpleNamespace(lease_id="expired-lease", gpu_lending=False)
+    lease = SimpleNamespace(lease_id="expired-lease", gpu_lending=False, gpu_reservation="episode")
     router = SimpleNamespace(
         pop_reaped=SimpleNamespace(remote=AsyncMock(side_effect=[[lease], [], []])),
         reclaim_gpu_phases=SimpleNamespace(remote=AsyncMock()),

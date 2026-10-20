@@ -16,6 +16,7 @@ license = { file = "LICENSE" }
 dependencies = [
     "aiohttp>=3.9.0",
     "cachetools>=5.0.0",
+    "nvidia-ml-py>=12.535.108",
     "vllm-psrl-patches",
 ]
 classifiers = [

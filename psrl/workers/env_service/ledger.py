@@ -97,6 +97,8 @@ class EnvUnitLedger:
         self._reaped: dict[str, list[EnvLease]] = {}
         # session_id -> last time it asked and had to wait
         self._waiting: dict[str, float] = {}
+        self._gpu_cleanup_pending: dict[str, str] = {}
+        self._gpu_command_waiters: dict[str, str] = {}
 
     # ------------------------------------------------------------------ admission
 
@@ -176,6 +178,8 @@ class EnvUnitLedger:
                 last_seen=now,
                 shared=unit.has_gpu and unit.max_containers > 1,
                 gpu_lending=unit.rollout_replica_rank is not None and demand.needs_gpu,
+                gpu_reservation=unit.gpu_reservation,
+                gpu_active=unit.gpu_reservation == "episode",
             )
             self._leases[lease.lease_id] = lease
             self._by_session[session_id] = lease.lease_id
@@ -236,6 +240,8 @@ class EnvUnitLedger:
     def _reap(self, now: float) -> list[EnvLease]:
         expired = [lease for lease in self._leases.values() if now - lease.last_seen > self._lease_ttl_s]
         for lease in expired:
+            if lease.gpu_reservation == "command":
+                self.block_gpu_cleanup(lease.lease_id, lease.unit_id)
             self.release(lease.lease_id)
             self._reaped.setdefault(lease.node_ip, []).append(lease)
         for sid in [s for s, ts in self._waiting.items() if now - ts > self._wait_ttl_s]:
@@ -270,6 +276,10 @@ class EnvUnitLedger:
                     gpu_memory_mb=unit.gpu_memory_mb,
                     sessions=tuple(lease.session_id for lease in leases),
                     sessions_waiting=waiting,
+                    gpu_commands_active=sum(
+                        lease.gpu_active for lease in leases if lease.gpu_reservation == "command"
+                    ),
+                    gpu_commands_waiting=sum(u == unit.unit_id for u in self._gpu_command_waiters.values()),
                 )
             )
         return result
@@ -297,7 +307,9 @@ class EnvUnitLedger:
                 entry["gpu_eligible"] = True
                 headroom = unit.gpu_memory_mb - self._effective_gpu_mb(unit, now)
                 by_memory = int(max(0.0, headroom) // max(1, self._default_gpu_memory_mb))
-                entry["gpu_free"] += min(containers_free, by_memory)
+                entry["gpu_free"] += (
+                    containers_free if unit.gpu_reservation == "command" else min(containers_free, by_memory)
+                )
         return {ip: NodeCapacity(**vals) for ip, vals in per_node.items()}
 
     # ------------------------------------------------------------------ arithmetic
@@ -311,7 +323,22 @@ class EnvUnitLedger:
         return [lease for lease in self._leases.values() if lease.unit_id == unit_id]
 
     def _declared_gpu_mb(self, unit: EnvUnit) -> int:
-        return sum(lease.demand.gpu_memory_mb for lease in self._unit_leases(unit.unit_id) if lease.demand.needs_gpu)
+        return sum(
+            lease.demand.gpu_memory_mb
+            for lease in self._unit_leases(unit.unit_id)
+            if lease.demand.needs_gpu and lease.gpu_active
+        )
+
+    def block_gpu_cleanup(self, lease_id: str, unit_id: str) -> None:
+        """Keep expired or uncertain GPU access fenced until node cleanup acknowledges it."""
+        self._gpu_cleanup_pending[lease_id] = unit_id
+        self._blocked_units.add(unit_id)
+
+    def confirm_gpu_cleanup(self, lease_id: str, unit_id: str) -> None:
+        """Unblock only after every uncertain lease on this unit has been removed."""
+        self._gpu_cleanup_pending.pop(lease_id, None)
+        if unit_id not in self._gpu_cleanup_pending.values():
+            self._blocked_units.discard(unit_id)
 
     def _measured_gpu_mb(self, unit: EnvUnit, now: float) -> float | None:
         """Summed measured memory over the unit's devices, or `None` when unknown or stale."""
@@ -356,6 +383,8 @@ class EnvUnitLedger:
             return False
         if sum(lease.demand.memory_mb for lease in leases) + demand.memory_mb > unit.memory_mb:
             return False
+        if unit.gpu_reservation == "command":
+            return self._could_ever_fit(unit, demand)
         return not (
             demand.needs_gpu and self._effective_gpu_mb(unit, now) + demand.gpu_memory_mb > unit.gpu_memory_mb + _EPS
         )
@@ -373,7 +402,7 @@ class EnvUnitLedger:
             (sum(lease.demand.cpu for lease in leases) + demand.cpu) / unit.cpu_quota,
             (sum(lease.demand.memory_mb for lease in leases) + demand.memory_mb) / unit.memory_mb,
         ]
-        if demand.needs_gpu and unit.gpu_memory_mb > 0:
+        if demand.needs_gpu and unit.gpu_memory_mb > 0 and unit.gpu_reservation == "episode":
             ratios.append((self._effective_gpu_mb(unit, now) + demand.gpu_memory_mb) / unit.gpu_memory_mb)
         return max(ratios)
 

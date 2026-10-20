@@ -19,6 +19,7 @@ import time
 from collections.abc import Iterable, Mapping
 from dataclasses import replace
 
+from psrl.workers.env_service.command_gpu import GpuCommandScheduler
 from psrl.workers.env_service.ledger import EnvUnitLedger
 from psrl.workers.env_service.node_policy import NodeRules, lint_units
 from psrl.workers.env_service.types import (
@@ -68,6 +69,7 @@ class EnvRouterCore:
         )
         self._lending_config = dict(config.get("gpu_lending") or {})
         self._gpu_bindings = {}
+        self._gpu_commands = GpuCommandScheduler(self._ledger, self._gpu_command_node)
         self._warnings = lint_units(units, rules)
         for warning in self._warnings:
             psrl_logger.warning("env_service: %s", warning)
@@ -206,7 +208,36 @@ class EnvRouterCore:
         lease = self._ledger._leases.get(lease_id)
         if lease is not None and lease.gpu_lending:
             await self.finish_gpu_lease(lease_id, lease.unit_id)
+        if lease is not None and lease.gpu_reservation == "command":
+            await self.finish_gpu_command_lease(lease_id, lease.unit_id)
         return self._ledger.release(lease_id)
+
+    async def _gpu_command_node(self, node_ip):
+        raise RuntimeError("GPU command reservations require an attached node service.")
+
+    async def acquire_gpu_command(self, lease_id, container_id, request_id):
+        self._ensure_reaper()
+        return await self._gpu_commands.acquire(lease_id, container_id, request_id)
+
+    async def release_gpu_command(self, lease_id, request_id, epoch):
+        return await self._gpu_commands.release(lease_id, request_id, epoch)
+
+    async def begin_gpu_command_return(self, lease_id, request_id, epoch):
+        """Own command cleanup before allowing its caller to continue model planning."""
+        self._ensure_reaper()
+        return await self._gpu_commands.begin_return(lease_id, request_id, epoch)
+
+    async def gpu_command_return_status(self, lease_id, request_id, epoch):
+        return self._gpu_commands.return_status(lease_id, request_id, epoch)
+
+    async def wait_gpu_command_returns(self, lease_id):
+        await self._gpu_commands.wait_returns(lease_id)
+
+    async def cancel_gpu_command(self, lease_id, request_id):
+        await self._gpu_commands.cancel(lease_id, request_id)
+
+    async def finish_gpu_command_lease(self, lease_id, unit_id):
+        await self._gpu_commands.finish(lease_id, unit_id)
 
     async def release_session(self, session_id: str) -> bool:
         self._ensure_reaper()
@@ -242,8 +273,16 @@ try:
         def __init__(self, config, train_rollout_node_ips=()):
             super().__init__(config, train_rollout_node_ips)
             self._node_services = {}
+            self._node_handles = {}
+            self._nodes_closing = False
+            prewarm = dict(config.get("prewarm") or {})
+            self._node_start_timeout_s = float(prewarm.get("timeout_s", 30))
+            concurrency = int(prewarm.get("max_concurrency", 4))
+            if self._node_start_timeout_s <= 0 or concurrency <= 0:
+                raise ValueError("Node startup timeout and concurrency must be positive.")
+            self._node_start_slots = asyncio.Semaphore(concurrency)
 
-        async def _start_node(self, node_ip):
+        def _create_node(self, node_ip):
             from psrl.workers.env_service.node import EnvNodeService
 
             nodes = {node["NodeManagerAddress"]: node["NodeID"] for node in ray.nodes() if node["Alive"]}
@@ -252,8 +291,78 @@ try:
                 .options(scheduling_strategy=NodeAffinitySchedulingStrategy(nodes[node_ip], soft=False))
                 .remote(ray.get_runtime_context().current_actor, node_ip)
             )
-            url = await service.ready.remote()
-            return service, url
+            return service
+
+        async def _start_node(self, node_ip):
+            service = None
+            try:
+                async with asyncio.timeout(self._node_start_timeout_s):
+                    async with self._node_start_slots:
+                        service = self._create_node(node_ip)
+                        self._node_handles[node_ip] = service
+                        url = await service.ready.remote()
+                        units = [u for u in self._ledger._units.values() if u.node_ip == node_ip]
+                        if any(u.gpu_reservation == "command" for u in units):
+                            await service.check_gpu_command_support.remote()
+                        indices = tuple(sorted({i for u in units for i in u.gpu_indices}))
+                        await service.prepare.remote(indices)
+                        return service, url
+            except BaseException:
+                if service is not None:
+                    ray.kill(service, no_restart=True)
+                    self._node_handles.pop(node_ip, None)
+                raise
+
+        def _node_task(self, node_ip):
+            if self._nodes_closing:
+                raise RuntimeError("Node services are closing.")
+            if node_ip not in {u.node_ip for u in self._ledger._units.values()}:
+                raise ValueError(f"Node {node_ip!r} has no configured environment unit.")
+            if node_ip not in self._node_services:
+                task = asyncio.create_task(self._start_node(node_ip))
+                # Observe background failures while retaining them for the first consumer.
+                task.add_done_callback(lambda done: None if done.cancelled() else done.exception())
+                self._node_services[node_ip] = task
+            return self._node_services[node_ip]
+
+        async def begin_prewarm(self):
+            """Submit one bounded startup per configured node without waiting for readiness."""
+            nodes = sorted({u.node_ip for u in self._ledger._units.values()})
+            for node_ip in nodes:
+                self._node_task(node_ip)
+            return nodes
+
+        async def wait_prewarm(self):
+            """Join the same startup tasks used by admission without creating leases."""
+            nodes = await self.begin_prewarm()
+            await asyncio.gather(*(asyncio.shield(self._node_task(ip)) for ip in nodes))
+            return nodes
+
+        async def shutdown_nodes(self):
+            """Stop owned startup tasks and services after all leases have been released."""
+            if self._ledger._leases:
+                raise RuntimeError("Cannot close node services with active environment leases.")
+            self._nodes_closing = True
+            tasks = list(self._node_services.values())
+            for task in tasks:
+                if not task.done():
+                    task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            errors = []
+            for service in list(self._node_handles.values()):
+                try:
+                    await asyncio.wait_for(service.close.remote(), timeout=5)
+                except Exception as exc:
+                    errors.append(repr(exc))
+                finally:
+                    ray.kill(service, no_restart=True)
+            self._node_handles.clear()
+            if errors:
+                raise RuntimeError(f"Node service shutdown errors: {errors!r}.")
+
+        async def _gpu_command_node(self, node_ip):
+            node, _ = await asyncio.shield(self._node_task(node_ip))
+            return node
 
         async def bind_rollout_gpu(self, unit_id, server, coordinator):
             """Bind a verified replica before this unit can admit an episode."""
@@ -263,9 +372,7 @@ try:
             await server.validate_gpu_lending.remote()
             if unit_id in self._gpu_bindings or unit.rollout_replica_rank is None:
                 raise ValueError("GPU lending binding is duplicate or not configured.")
-            if unit.node_ip not in self._node_services:
-                self._node_services[unit.node_ip] = asyncio.create_task(self._start_node(unit.node_ip))
-            node, _ = await self._node_services[unit.node_ip]
+            node, _ = await asyncio.shield(self._node_task(unit.node_ip))
             await node.gpu_lending_snapshot.remote(unit.gpu_indices)
             self._gpu_bindings[unit_id] = GpuLendingBinding(server, node, unit, self._lending_config, coordinator)
             self._ledger._blocked_units.discard(unit_id)
@@ -278,9 +385,7 @@ try:
             node_ips = [node_ip] if node_ip else list({unit.node_ip for unit in self._ledger._units.values()})
             urls = {}
             for ip in node_ips:
-                if ip not in self._node_services:
-                    self._node_services[ip] = asyncio.create_task(self._start_node(ip))
-                service, urls[ip] = await self._node_services[ip]
+                service, urls[ip] = await asyncio.shield(self._node_task(ip))
                 if await service.cleanup.remote():
                     return Admission(status="wait", reason="Expired containers are still being removed.")
             if any(self._ledger._reaped.get(ip) for ip in node_ips):
@@ -317,4 +422,6 @@ def create_env_router(config: Mapping, train_rollout_node_ips: Iterable[str] = (
     name = str(config.get("router_name", DEFAULT_ROUTER_NAME))
     handle = EnvRouter.options(name=name, get_if_exists=True).remote(dict(config), tuple(train_rollout_node_ips))
     ray.get(handle.ping.remote())
+    if (config.get("prewarm") or {}).get("enable", True):
+        ray.get(handle.begin_prewarm.remote())
     return handle

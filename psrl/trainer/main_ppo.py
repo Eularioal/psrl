@@ -428,6 +428,7 @@ class TaskRunner:
             trainer.fit()
         finally:
             if trainer:
+                trainer.stop_env_service()
                 trainer.replay_buffer.close()
             tq.close()
 

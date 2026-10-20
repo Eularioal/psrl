@@ -23,8 +23,9 @@ class EnvUnit:
 
     A unit owns whole GPU devices outright and shares them among every container it
     hosts, so several containers may sit on one card as long as their summed device
-    memory fits `gpu_memory_mb`. Device memory adds under sharing and scheduling cannot
-    reclaim it, which is why admission sums it instead of queueing per card.
+    memory fits `gpu_memory_mb`. Episode reservations retain this budget until cleanup.
+    Command reservations charge it only while a fenced GPU command is active. Host
+    resources remain reserved for the container lifetime in both modes.
 
     Attributes:
         unit_id (str): Stable, unique cluster-wide id.
@@ -34,6 +35,7 @@ class EnvUnit:
         gpu_indices (tuple[int, ...]): Whole devices owned by this unit. Empty means CPU only.
         max_containers (int): Configured ceiling on concurrent containers, not derived.
         gpu_memory_mb (int): Device memory budget across `gpu_indices`. Zero for CPU units.
+        gpu_reservation (str): Charge GPU capacity for the episode or explicit commands.
     """
 
     unit_id: str
@@ -44,8 +46,13 @@ class EnvUnit:
     max_containers: int = 1
     gpu_memory_mb: int = 0
     rollout_replica_rank: int | None = None
+    gpu_reservation: str = "episode"
 
     def __post_init__(self) -> None:
+        if self.gpu_reservation not in ("episode", "command"):
+            raise ValueError(f"Unknown GPU reservation mode {self.gpu_reservation!r}.")
+        if self.gpu_reservation == "command" and (not self.gpu_indices or self.rollout_replica_rank is not None):
+            raise ValueError("Command reservations require dedicated environment GPUs.")
         if self.rollout_replica_rank is not None:
             if self.rollout_replica_rank < 0 or not self.gpu_indices or self.max_containers != 1:
                 raise ValueError("A borrowed unit requires one container slot, GPUs and a nonnegative replica rank.")
@@ -87,6 +94,7 @@ class EnvUnit:
             rollout_replica_rank=(
                 int(raw["rollout_replica_rank"]) if raw.get("rollout_replica_rank") is not None else None
             ),
+            gpu_reservation=str(raw.get("gpu_reservation", "episode")),
         )
 
 
@@ -169,6 +177,9 @@ class EnvLease:
     shared: bool = False
     node_service_url: str = ""
     gpu_lending: bool = False
+    gpu_reservation: str = "episode"
+    gpu_active: bool = True
+    gpu_closing: bool = False
 
 
 @dataclass(frozen=True)
@@ -223,3 +234,5 @@ class UnitSnapshot:
     gpu_memory_mb: int
     sessions: tuple[str, ...] = field(default_factory=tuple)
     sessions_waiting: int = 0
+    gpu_commands_active: int = 0
+    gpu_commands_waiting: int = 0

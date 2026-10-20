@@ -2,7 +2,7 @@
 
 > **核心结论**：不必把 Docker 与训推 GPU 永久分成两个互斥资源池。可以让 Ray 保留 GPU 的逻辑归属，在 vLLM 睡眠期间把同一批物理卡借给 Docker。但需要统一的借还状态机，保证容器确实释放资源后才允许唤醒。当前已接入受控的 science 命令批次与模型调用交替借卡，详见[实现与验证](#12-命令批次与模型调用交替借卡的实现)。CPU 回归覆盖交接协议；2026-10-15 已完成两轮真实同卡 Docker CUDA / vLLM 交接，详见[GPU 结果](#14-真实-gpu-验证结果2026-10-15)。该实验未接入训练侧 NIXL 和完整 SMG 路由。
 >
-> 本文更新日期：2026-10-19。第 15 节新增普通任务阶段租约、抢占与预测回填分析（设计提案及 CPU 教学模拟，未接入生产）。第 1–11 节保留实现前的设计分析，其中“拟新增/尚未实现”描述的是当时的状态，当前接入范围以第 12 节为准。第 12 节记录实现与 CPU 回归，第 13 节解释 unit 配额，第 14 节记录真实 GPU 验证；各节的验证时间与范围不可混用。本文补充[现有 Env Service 讲解](env-service-implementation.md)中尚未实现的借还协议，单独展开其跨调度器约束；原文主要描述静态 unit，不应把其中早期“没有实机验证”的状态当作今天的总结果。
+> 本文更新日期：2026-10-19。第 15 节为普通任务阶段租约、抢占与预测回填的设计分析及 CPU 教学模拟，其中命令阶段协议的落地实现见[命令阶段配额](command-gpu-reservations.md)。第 1–11 节保留实现前的设计分析，其中“拟新增/尚未实现”描述的是当时的状态，当前接入范围以第 12 节为准。第 12 节记录实现与 CPU 回归，第 13 节解释 unit 配额，第 14 节记录真实 GPU 验证；各节的验证时间与范围不可混用。本文补充[现有 Env Service 讲解](env-service-implementation.md)中尚未实现的借还协议，单独展开其跨调度器约束；原文主要描述静态 unit，不应把其中早期“没有实机验证”的状态当作今天的总结果。
 
 ## 目录
 
@@ -65,7 +65,7 @@
 | 1 的 GPU 拓扑 | 维护实例对应的 GPU 集合，以及 ASLEEP/AWAKEN 两态 | [`GPUSlot` / `ClusterTopology`](../../psrl/utils/elastic_rm/cluster_topology.py#L17) |
 | 1 → 2 → 3 | SLEEP 关闭协调器派发，WAKE_UP 调用引擎后恢复派发 | [`command_loop.py`](../../psrl/workers/gen/rollout_coordination/command_loop.py#L151)、[`_do_sleep_instance`](../../psrl/workers/gen/rollout_coordination/coordinator.py#L318) |
 | 3 | 引擎 sleep/wake；NIXL 关联的内存注销与重新注册 | [`vllm_async_server.py`](../../psrl/workers/gen/vllm_async_server.py#L726)、[`nixl_wake_up` / `nixl_sleep`](../../psrl/workers/gen/vllm_async_server.py#L1285) |
-| 4 | 静态 unit 的准入预算；借用许可目前没有实现 | [`EnvServiceClient.acquire`](../../psrl/workers/env_service/client.py#L159)、[`EnvUnitLedger._fits_now`](../../psrl/workers/env_service/ledger.py#L349) |
+| 4 | 静态 unit 的准入预算；借用许可目前没有实现 | [`EnvServiceClient.acquire`](../../psrl/workers/env_service/client.py#L159)、[`EnvUnitLedger._fits_now`](../../psrl/workers/env_service/ledger.py#L376) |
 | 4 → 5 | 先申请 lease，再把 GPU 和标签写入 Compose overlay，交给 Harbor | [`runner.py`](../../examples/sciaccel_rl/runner.py#L344)、[`_apply_env_lease`](../../examples/sciaccel_rl/runner.py#L99)、[`build_lease_overlay`](../../psrl/workers/env_service/overlay.py#L139) |
 | 5 → 6 | runner 的 finally 清理 Compose 后释放 lease；节点服务负责孤儿清理 | [`runner.py`](../../examples/sciaccel_rl/runner.py#L535)、[`EnvNodeService.cleanup`](../../psrl/workers/env_service/node.py#L47) |
 | 6 → 1 → 3 | 以物理清理确认阻止过早 wake | **拟新增协议，无现成连线**；现有清理函数本身不阻止 ElasticExecutor 唤醒 |
@@ -208,7 +208,7 @@ ROLLOUT → DRAINING → LENDABLE → ENV → RETURNING → WAKING → ROLLOUT
 | 1 → 1 | [`register_role`](../../psrl/utils/elastic_rm/elastic_executor.py#L109)、[`ClusterTopology.register`](../../psrl/utils/elastic_rm/cluster_topology.py#L68) | 注册实例对应的 GPU 集合；未来补充统一的物理 UUID 映射 |
 | 2 → 1、2 | [`_scale_down_instance`](../../psrl/utils/elastic_rm/elastic_executor.py#L644)、[`SLEEP 分支`](../../psrl/workers/gen/rollout_coordination/command_loop.py#L151) | 发送 SLEEP 命令；暂停协调器派发；当前包含最小活跃实例数检查 |
 | 3 → 3 | [`_do_sleep_instance`](../../psrl/workers/gen/rollout_coordination/coordinator.py#L318)、[`nixl_sleep`](../../psrl/workers/gen/vllm_async_server.py#L1291) | 调用 level 2 sleep、注销内存；成功后执行器更新 ASLEEP；尚无向 EnvRouter 发布许可的步骤 |
-| 4 → 4 | [`acquire`](../../psrl/workers/env_service/client.py#L159)、[`try_admit`](../../psrl/workers/env_service/ledger.py#L103) | 容器需求与本节点显存观测进入 router；当前只检查静态资格/预算；拟新增许可和 epoch 检查 |
+| 4 → 4 | [`acquire`](../../psrl/workers/env_service/client.py#L159)、[`try_admit`](../../psrl/workers/env_service/ledger.py#L105) | 容器需求与本节点显存观测进入 router；当前只检查静态资格/预算；拟新增许可和 epoch 检查 |
 | 5 → 5 | [`_apply_env_lease`](../../examples/sciaccel_rl/runner.py#L99)、[`build_lease_overlay`](../../psrl/workers/env_service/overlay.py#L139) | lease 中的设备映射成 Docker 配置；Harbor 启动并运行任务 |
 | 6 → 6、1 | [`runner 的 finally`](../../examples/sciaccel_rl/runner.py#L535)、[`EnvNodeService.cleanup`](../../psrl/workers/env_service/node.py#L47) | 当前清理和 lease 释放；拟新增撤销通知、逐卡物理确认以及超时隔离 |
 | 7 → 3、7 | [`nixl_wake_up`](../../psrl/workers/gen/vllm_async_server.py#L1285)、[`pull_model`](../../psrl/workers/gen/vllm_async_server.py#L1424) | 恢复显存和传输登记；level 2 必须实际重载权重，即使版本数字未变 |
@@ -396,7 +396,7 @@ PYTHONPATH=.:../.verification-deps python -m pytest \
 |---|---|
 | 1 | [`EnvUnit`](../../psrl/workers/env_service/types.py#L20) 定义资源包；[`EnvUnitLedger.__init__`](../../psrl/workers/env_service/ledger.py#L65) 建立静态资源池 |
 | 2 | [`demand_from_task`](../../examples/sciaccel_rl/env_demand.py#L23) 从任务读取 CPU/内存，GPU 显存需求由覆盖值或默认值补齐 |
-| 3 | [`try_admit`](../../psrl/workers/env_service/ledger.py#L103)、[`_fits_now`](../../psrl/workers/env_service/ledger.py#L349) 做准入；[`_init_gpu_lending`](../../psrl/trainer/ppo/ray_trainer.py#L596) 校验 unit 等于整个实例的 GPU 集合 |
+| 3 | [`try_admit`](../../psrl/workers/env_service/ledger.py#L105)、[`_fits_now`](../../psrl/workers/env_service/ledger.py#L376) 做准入；[`_init_gpu_lending`](../../psrl/trainer/ppo/ray_trainer.py#L608) 校验 unit 等于整个实例的 GPU 集合 |
 | 4 | [`GpuLendingBinding.set_phase`](../../psrl/workers/env_service/lending.py#L27) 只切换物理使用阶段，不释放任务租约；[`_enter_env`](../../psrl/workers/env_service/lending.py#L63) 在真实 sleep 后逐卡检查容量 |
 | 5 | [`EnvRouterCore.release`](../../psrl/workers/env_service/router.py#L204) 完成物理清理后释放账本名额 |
 
@@ -423,7 +423,7 @@ PYTHONPATH=.:../.verification-deps python -m pytest \
 2129 <= 物理总容量 97871，允许进入 ENV
 ```
 
-普通 unit 使用声明占用与有效遥测占用的较大值；借卡 unit 的特殊处理见 [`_effective_gpu_mb`](../../psrl/workers/env_service/ledger.py#L330)。GPU 显存声明仍是准入预算，不会阻止 CUDA 程序超额分配。CPU/主机内存 unit 上限也是账本预算，容器实际运行限制由 Harbor/Docker 的环境配置另行执行，不能把 unit 当作一个覆盖所有容器的硬件隔离分区。
+普通 unit 使用声明占用与有效遥测占用的较大值；借卡 unit 的特殊处理见 [`_effective_gpu_mb`](../../psrl/workers/env_service/ledger.py#L357)。GPU 显存声明仍是准入预算，不会阻止 CUDA 程序超额分配。CPU/主机内存 unit 上限也是账本预算，容器实际运行限制由 Harbor/Docker 的环境配置另行执行，不能把 unit 当作一个覆盖所有容器的硬件隔离分区。
 
 如果 rollout 实例跨两张 GPU，当前 unit 必须包含这两张卡，不能只借一张；如果实例跨节点，当前绑定校验不接受。多卡借用还会保守地要求**每张卡**都能容纳完整任务声明和余量，不假设任务自动平均分摊显存。若以后需要多个任务共享同一套借卡实例、运行时重划 unit 或按实际占用调整预算，需要另加调度策略，当前没有实现。
 
@@ -487,7 +487,7 @@ CPU 最多支持：    8 / 2  = 4 个
 
 这不是一个额外的“先计算并发数”函数，而是逐项累计检查自然得到的结果：前三个任务获准，第四个加入后显存声明会达到 80 GiB，超过 60 GiB，因而返回 `wait`。第一个任务退出、归还其 20 GiB 声明后，第四个重试就能获准。单任务若要求 80 GiB，超过一个空 unit 的 60 GiB 上限，返回 `reject`，因为再等其他任务退出也无济于事。
 
-不同任务大小不一致时，不再套一个固定任务数，而是每次计算“当前累计声明 + 新任务声明”。普通 GPU unit 还会用有效遥测占用与声明占用的较大值参与判断。若同一策略优先级内有多个合适 unit，代码比较加入新任务后各资源的占用比例，取其中最大比例作为负载，优先选该负载较小的 unit；它不是只按空闲显存选卡。对应 [`_fits_now`](../../psrl/workers/env_service/ledger.py#L349) 和 [`_load`](../../psrl/workers/env_service/ledger.py#L363)。
+不同任务大小不一致时，不再套一个固定任务数，而是每次计算“当前累计声明 + 新任务声明”。普通 GPU unit 还会用有效遥测占用与声明占用的较大值参与判断。若同一策略优先级内有多个合适 unit，代码比较加入新任务后各资源的占用比例，取其中最大比例作为负载，优先选该负载较小的 unit；它不是只按空闲显存选卡。对应 [`_fits_now`](../../psrl/workers/env_service/ledger.py#L376) 和 [`_load`](../../psrl/workers/env_service/ledger.py#L392)。
 
 ### 14 GiB 任务剩下 13 GiB 是不是 unit 太粗
 
@@ -506,7 +506,7 @@ CPU 最多支持：    8 / 2  = 4 个
 另一个 10 GiB 任务：42 + 10 = 52 <= 55，可以申请余量。
 ```
 
-把记账精度改成 1 GiB 或 1 MiB，都不能让 14 GiB 装进 13 GiB。这属于任务不可拆分带来的装箱尾部余量。若工作队列只有同样大小的任务，等待是合理结果；若有较小任务，当前准入可以让它利用余量，并不要求先来的大任务一定先执行。不过这还不是带公平性保证的最优装箱调度器，持续到来的小任务可能影响大任务等待时间。实际还有 CUDA 上下文等开销，普通 unit 使用“累计声明、有效实测显存的较大者”，因此账面剩余 13 GiB 不等于物理上可以恰好再分配 13 GiB。实现见 [`_effective_gpu_mb`](../../psrl/workers/env_service/ledger.py#L330)、[`_fits_now`](../../psrl/workers/env_service/ledger.py#L349)。
+把记账精度改成 1 GiB 或 1 MiB，都不能让 14 GiB 装进 13 GiB。这属于任务不可拆分带来的装箱尾部余量。若工作队列只有同样大小的任务，等待是合理结果；若有较小任务，当前准入可以让它利用余量，并不要求先来的大任务一定先执行。不过这还不是带公平性保证的最优装箱调度器，持续到来的小任务可能影响大任务等待时间。实际还有 CUDA 上下文等开销，普通 unit 使用“累计声明、有效实测显存的较大者”，因此账面剩余 13 GiB 不等于物理上可以恰好再分配 13 GiB。实现见 [`_effective_gpu_mb`](../../psrl/workers/env_service/ledger.py#L357)、[`_fits_now`](../../psrl/workers/env_service/ledger.py#L376)。
 
 **人为粒度确实可能增加浪费。** 例如物理卡足够且可以安全开放 60 GiB，却只配置 55 GiB，第四个 14 GiB 任务会因为人为预算被挡住；`max_containers=1` 也会让普通 unit 中剩余显存无法被其他任务使用。这些限制可能是有意保留安全余量或限制计算竞争，需要依据真实峰值调整，不能见到空闲就删掉。当前 rollout 借卡 unit 的 `max_containers=1` 是交接协议的实现约束，不能直接套用普通 unit 的多任务共享能力。
 
@@ -587,6 +587,8 @@ timeout -k 30s 620s python -u "$VERIFY_ROOT/scripts/real_gpu_lending.py" \
 
 ## 15. 普通任务的阶段租约与预测回填
 
+> 本节为设计分析。已落地的显式命令申请、物理归还确认和重新排队协议见[命令阶段配额](command-gpu-reservations.md)。它采用 cgroup v1 设备访问控制，限独立环境 GPU，未包含预测器或与 vLLM 借卡的组合。
+
 **核心结论：用户提出的“预测下次使用间隔，把空闲 GPU 交给其他任务”合理。首先需要把容器生命周期与 GPU 使用权分开，再用预测改善选择。预测不是物理资源释放证明，也不能让任意 CUDA 程序自动变得可抢占。** 本节是针对普通 unit 的设计分析；没有把本次 CPU 模拟冒充已落地调度器。此前 Docker/vLLM 借还实现已具备部分交接机制，但仍由一个任务租约持有 unit，不能直接推导为多任务交替复用已经完成。
 
 先看完整串联关系。P1/P2/P4 有部分已有实现，P3 的跨任务借用与预测决策尚待实现：
@@ -614,7 +616,7 @@ timeout -k 30s 620s python -u "$VERIFY_ROOT/scripts/real_gpu_lending.py" \
 |---|---|---|
 | P1 | [TruncatingTerminus2._query_llm:103](../../examples/sciaccel_rl/agent.py#L103) | 借卡模式已有 model/env 边界；不是所有普通容器命令都会自动上报 |
 | P2 | [GpuLendingNodeMixin._freeze_gpu_lease:103](../../psrl/workers/env_service/lending_node.py#L103)、[returned_to_baseline:25](../../psrl/workers/env_service/lending_node.py#L25) | 已有暂停归属容器、核对 GPU UUID/进程/显存的受控借卡路径；暂停本身不等于显存归还 |
-| P3 当前限制 | [GpuLendingBinding.set_phase:27](../../psrl/workers/env_service/lending.py#L27)、[EnvUnitLedger._fits_now:349](../../psrl/workers/env_service/ledger.py#L349) | 前者保留单租约 owner，后者仍累计整个 demand；没有普通任务 GPU 阶段子租约和预测回填器 |
+| P3 当前限制 | [GpuLendingBinding.set_phase:27](../../psrl/workers/env_service/lending.py#L27)、[EnvUnitLedger._fits_now:376](../../psrl/workers/env_service/ledger.py#L376) | 前者保留单租约 owner，后者仍累计整个 demand；没有普通任务 GPU 阶段子租约和预测回填器 |
 | P3 单位定义 | [EnvUnit:20](../../psrl/workers/env_service/types.py#L20)、[try_admit:168](../../psrl/workers/env_service/ledger.py#L168) | unit 是资源池，lease 属于 session，并非 worker 永久独占一整个 unit |
 | P4 | [GpuPhaseClient.set_phase:120](../../psrl/workers/env_service/lending.py#L120) | 已有单租约阶段序号；跨任务 epoch 校验、重排队优先级和有界回收仍需设计 |
 | 普通任务当前释放点 | [runner finally:534](../../examples/sciaccel_rl/runner.py#L534) | 清理整个任务容器后才释放租约，因此空闲 GPU 配额仍被保留 |

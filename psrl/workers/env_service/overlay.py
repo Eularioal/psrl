@@ -180,6 +180,8 @@ def build_lease_overlay(
         inventory = read_gpu_devices() if gpu_devices is None else gpu_devices
         devices = [f"{inventory[i].path}:{inventory[i].path}" for i in lease.gpu_indices]
         devices += [f"{d}:{d}" for d in CONTROL_DEVICES if device_exists(d)]
+        if lease.gpu_reservation == "command":
+            devices = [f"{device}:m" for device in devices]
         volumes: list[str] = []
         if device_exists(nvidia_smi_path):
             volumes.append(f"{nvidia_smi_path}:/usr/bin/nvidia-smi:ro")
@@ -188,6 +190,11 @@ def build_lease_overlay(
         main["volumes"] = volumes
         main["environment"] = [f"LD_LIBRARY_PATH={_CONTAINER_LD_LIBRARY_PATH}"]
     return {"services": {"main": main}}
+
+
+def command_security_options() -> dict:
+    """Apply command fencing constraints once in the final Compose override."""
+    return {"cap_drop": ["SYS_ADMIN", "MKNOD"], "security_opt": ["no-new-privileges:true"]}
 
 
 def write_overlay(overlay: dict) -> Path:

@@ -83,7 +83,10 @@ def prepare(args, out):
     (out / "design.json").write_text(
         json.dumps(
             {
-                "scope": "Original LAPS repair with identical declared 50 GiB / 45 second CUDA pressure injection; not native GPU science workload",
+                "scope": (
+                    "Original LAPS repair with identical 50 GiB / 45 second CUDA pressure injection. "
+                    "Not native GPU science workload."
+                ),
                 "task_names": names,
                 "steps_per_arm": args.steps,
                 "batch_size": 4,
@@ -98,14 +101,24 @@ def prepare(args, out):
                 "task_demand_mib": 52224,
                 "max_containers_per_unit": 4,
                 "timeout_per_arm_s": args.timeout,
+                "max_turns": args.turns,
+                "modes": args.modes,
+                "command_mode": (
+                    "Persistent host leases, explicit foreground GPU reservations, device cgroup fencing"
+                ),
                 "task_timeout_s": args.task_timeout,
                 "comparison": "0eeead8 + documented runtime fixes vs current Router; not a pure toggle ablation",
                 "data_shuffle": False,
                 "device_mapping": {str(i): dataclasses.asdict(devices[i]) for i in (6, 7)},
-                "stopping_rule": "16 non-OOM graded rollouts (4 per task), one GRPO step, or 3600 s per arm; failures are not completion",
+                "stopping_rule": (
+                    f"16 non-OOM graded rollouts (4 per task), one GRPO step, or {args.timeout} s per arm. "
+                    "Failures are not completion."
+                ),
                 "baseline_repo": str(args.baseline_repo),
                 "current_repo": str(args.repo),
-                "baseline_gpu_mapping": "static mapping relocated to environment GPU 6; libraries resolved for actual host; no allocation/lock added",
+                "baseline_gpu_mapping": (
+                    "Static mapping to GPU 6, libraries resolved for actual host, no allocation or lock added"
+                ),
             },
             indent=2,
         )
@@ -153,7 +166,8 @@ def run_arm(args, out, mode, device):
                 "_target_": "science_fixed_work_agent.FixedWorkAgentLoop",
                 "harbor": {
                     "jobs_dir": str(arm / f"pool-{i}" / "harbor-jobs"),
-                    "agent_name": "science_fixed_work_agent:FixedWorkPressureAgent",
+                    "agent_name": "science_fixed_work_agent:"
+                    + ("CommandPressureAgent" if mode == "command" else "FixedWorkPressureAgent"),
                     "override_gpus": 0,
                     "gpu_compose_override": str(out / "gpu-overlay.yaml"),
                     "max_concurrent_episodes": 4,
@@ -215,7 +229,7 @@ def run_arm(args, out, mode, device):
             "psrl.deployment.total_nnodes=1",
             "psrl.deployment.n_validate_instances=0",
             "psrl.colocate_validate_and_train=False",
-            f"psrl.env_service.enable={mode == 'on'}",
+            f"psrl.env_service.enable={mode != 'off'}",
             "psrl.env_service.node_policy=any",
             "psrl.env_service.default_gpu_memory_mb=52224",
             "data.shuffle=False",
@@ -223,7 +237,11 @@ def run_arm(args, out, mode, device):
             (
                 "psrl.env_service.units=["
                 + ",".join(
-                    f"{{unit_id:pressure-{i},node_ip:{args.node_ip},cpu_quota:16,memory_mb:32768,gpu_indices:[{i}],gpu_memory_mb:81920,max_containers:4}}"
+                    (
+                        f"{{unit_id:pressure-{i},node_ip:{args.node_ip},cpu_quota:16,memory_mb:32768,"
+                        f"gpu_indices:[{i}],gpu_memory_mb:81920,max_containers:4,"
+                        f"gpu_reservation:{'command' if mode == 'command' else 'episode'}}}"
+                    )
                     for i in (6, 7)
                 )
                 + "]"
@@ -284,7 +302,7 @@ def run_arm(args, out, mode, device):
                         pass
                 sample = {"time": time.time()}
                 sample.update(sample_gpu())
-                if mode == "on":
+                if mode != "off":
                     try:
                         if router is None:
                             named = ray.util.list_named_actors(all_namespaces=True)

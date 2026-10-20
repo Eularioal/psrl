@@ -14,12 +14,15 @@ class PressureTerminus2(TruncatingTerminus2):
         self._pressure_done = False
         return await super().run(instruction, environment, context)
 
+    async def _exec_pressure(self, command, **kwargs):
+        return await self._pressure_environment.exec(command, **kwargs)
+
     async def _query_llm(self, *args, **kwargs):
         reply = await super()._query_llm(*args, **kwargs)
         if not self._pressure_done:
             self._pressure_done = True
             started = time.time()
-            command = await self._pressure_environment.exec(
+            command = await self._exec_pressure(
                 "python3 /opt/verification/cuda_pressure.py --gib 50 --hold 45", timeout_sec=75
             )
             record = {

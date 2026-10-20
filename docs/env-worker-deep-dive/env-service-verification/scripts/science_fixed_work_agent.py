@@ -15,6 +15,17 @@ class FixedWorkPressureAgent(PressureTerminus2):
     """Use the same 50 GiB / 45 second phase as the preceding experiment."""
 
 
+class CommandPressureAgent(FixedWorkPressureAgent):
+    """Return GPU command capacity while the science repair agent continues."""
+
+    async def _exec_pressure(self, command, **kwargs):
+        environment = self._pressure_environment
+        try:
+            return await environment.exec_gpu(command, wait_timeout_sec=300, **kwargs)
+        finally:
+            (self.logs_dir / "gpu-command-phase.json").write_text(json.dumps(environment.last_gpu_command, indent=2))
+
+
 class FixedWorkAgentLoop(SciAccelAgentLoop):
     """Discard OOM attempts before reward computation; preserve each GRPO slot."""
 

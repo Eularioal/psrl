@@ -1,0 +1,87 @@
+{
+  "observed_at": "2026-10-20T10:18:15.992455+08:00",
+  "threads": [
+    {
+      "tid": 636957,
+      "stat": "636957 (fuse-overlayfs) D 1 636957 636957 0 -1 4194624 458 0 0 0 229 2263 0 0 20 0 1 0 813546369 19431424 751 18446744073709551615 94426163675136 94426163775096 140730008797456 0 0 256 0 4096 16899 1 0 0 17 112 0 0 1378 0 0 94426165872400 94426165875184 94426195603456 140730008805207 140730008806096 140730008806096 140730008821728 0\n",
+      "stack": "[<0>] __inode_wait_for_writeback+0xb9/0xf0\n[<0>] inode_wait_for_writeback+0x26/0x40\n[<0>] evict+0xc1/0x1b0\n[<0>] iput+0x148/0x210\n[<0>] fuse_release_end+0x19/0x30 [fuse]\n[<0>] fuse_request_end+0x7d/0x1f0 [fuse]\n[<0>] fuse_dev_do_write+0x24f/0x460 [fuse]\n[<0>] fuse_dev_write+0x6e/0xa0 [fuse]\n[<0>] do_iter_readv_writev+0x159/0x1d0\n[<0>] do_iter_write+0x86/0x1a0\n[<0>] vfs_writev+0xa3/0x100\n[<0>] do_writev+0x6d/0x110\n[<0>] __x64_sys_writev+0x1c/0x20\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n",
+      "wchan": "__inode_wait_for_writeback",
+      "state": "D",
+      "uses_docker_storage": true
+    },
+    {
+      "tid": 3070863,
+      "stat": "3070863 (sync) D 1 3052497 3052497 0 -1 4194304 145 0 0 0 0 0 0 0 20 0 1 0 1037049407 8847360 237 18446744073709551615 94491102359552 94491102387144 140732158903680 0 0 256 0 0 0 1 0 0 17 185 0 0 0 0 0 94491104488176 94491104489600 94491119124480 140732158911281 140732158911286 140732158911286 140732158926826 0\n",
+      "stack": "[<0>] iterate_supers+0x84/0x110\n[<0>] ksys_sync+0x42/0xb0\n[<0>] __ia32_sys_sync+0xe/0x20\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n",
+      "wchan": "iterate_supers",
+      "state": "D"
+    },
+    {
+      "tid": 3763725,
+      "stat": "3763725 (dockerd) Z 1 3763725 3763725 0 -1 4228356 29991 4658 1 0 2045 526 2 4 20 0 2 0 814845174 0 0 18446744073709551615 0 0 0 0 0 0 0 4097 2143416062 0 0 0 17 255 0 0 922 0 0 0 0 0 0 0 0 0 9\n",
+      "stack": "",
+      "wchan": "0",
+      "state": "Z",
+      "wait_status": 9,
+      "termination_signal": 9
+    },
+    {
+      "tid": 3763750,
+      "stat": "3763750 (dockerd) D 1 3763725 3763725 0 -1 4194624 29991 4658 1 0 2045 526 2 4 20 0 2 0 814845177 16741797888 35872 18446744073709551615 93977857110016 93977915886584 140734191986816 0 0 256 0 4097 2143416062 0 0 0 -1 286 0 0 0 0 0 93977917984464 93977949092823 93977964945408 140734191988850 140734191988858 140734191988858 140734191996903 0\n",
+      "stack": "[<0>] rwsem_down_write_slowpath+0x331/0x4e0\n[<0>] deactivate_super+0x49/0x60\n[<0>] cleanup_mnt+0xbd/0x150\n[<0>] __cleanup_mnt+0x12/0x20\n[<0>] task_work_run+0x97/0xc0\n[<0>] get_signal+0x80f/0x850\n[<0>] do_signal+0x37/0x6d0\n[<0>] exit_to_usermode_loop+0x82/0x100\n[<0>] do_syscall_64+0x110/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n",
+      "wchan": "rwsem_down_write_slowpath",
+      "state": "D"
+    },
+    {
+      "tid": 3763752,
+      "stat": "3763752 (containerd) Z 3763725 3763752 3763752 0 -1 4228356 9639 128518 10 1 340 77 39 203 20 0 1 0 814845178 0 0 18446744073709551615 0 0 0 0 0 0 1002055680 1 2143420158 0 0 0 17 234 0 0 0 0 0 0 0 0 0 0 0 0 9\n",
+      "stack": "",
+      "wchan": "0",
+      "state": "Z",
+      "wait_status": 9,
+      "termination_signal": 9
+    },
+    {
+      "tid": 3788856,
+      "stat": "3788856 (sync) D 3788855 3788855 3788823 0 -1 4194304 109 0 1 0 0 0 0 0 20 0 1 0 815411986 8839168 223 18446744073709551615 94195983282176 94195983309768 140733460212336 0 0 256 0 0 0 1 0 0 17 95 0 0 0 0 0 94195985410800 94195985412224 94196005421056 140733460218015 140733460218020 140733460218020 140733460226026 0\n",
+      "stack": "[<0>] iterate_supers+0x84/0x110\n[<0>] ksys_sync+0x42/0xb0\n[<0>] __ia32_sys_sync+0xe/0x20\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n",
+      "wchan": "iterate_supers",
+      "state": "D"
+    }
+  ],
+  "matching_thread_count": 6,
+  "pid1_name": "taijirun",
+  "disk": {
+    "code": 0,
+    "stdout": "Filesystem      Size  Used Avail Use% Mounted on\noverlay          12T  7.7T  4.0T  67% /\n",
+    "stderr": ""
+  },
+  "inodes": {
+    "code": 0,
+    "stdout": "Filesystem         Inodes    IUsed      IFree IUse% Mounted on\noverlay        1250243968 31477645 1218766323    3% /\n",
+    "stderr": ""
+  },
+  "docker_ping": {
+    "code": 28,
+    "stdout": "",
+    "stderr": "curl: (28) Operation timed out after 3000 milliseconds with 0 bytes received\n"
+  },
+  "daemon_log_events": [
+    "time=\"2026-09-07T07:25:26.473560426+08:00\" level=info msg=\"Starting up\"",
+    "time=\"2026-09-07T07:25:26.477074843+08:00\" level=info msg=\"started new containerd process\" address=/var/run/docker/containerd/containerd.sock module=libcontainerd pid=3763752",
+    "time=\"2026-09-07T07:25:41.359017624+08:00\" level=info msg=\"[graphdriver] using prior storage driver: fuse-overlayfs\"",
+    "time=\"2026-09-07T07:25:53.516043646+08:00\" level=info msg=\"Loading containers: start.\"",
+    "time=\"2026-09-07T08:57:25.767463958+08:00\" level=info msg=\"Processing signal 'terminated'\""
+  ],
+  "kernel_log": {
+    "first": [
+      "[Mon Sep 14 11:52:26 2026] mlx5_core 0000:cc:02.2 eth166: renamed from eth1"
+    ],
+    "last": [
+      "[Tue Oct 20 07:35:34 2026] oom_reaper: reaped process 39428 (python3), now anon-rss:0kB, file-rss:0kB, shmem-rss:4kB"
+    ],
+    "daemon_mentions": [],
+    "stderr": "",
+    "timeout": null
+  }
+}

@@ -147,7 +147,7 @@ async def _apply_env_lease(
             if item.split(":", 1)[0].removeprefix("/dev/nvidia").isdigit()
         )
         await _bind_gate_b(
-            "" if lease.gpu_lending else session_router_url,
+            "" if lease.gpu_lending or lease.gpu_reservation == "command" else session_router_url,
             session_id,
             devices,
             shared=lease.shared,
@@ -393,6 +393,11 @@ async def run_harbor_episode(
             await env_client.router.set_gpu_phase.remote(lease_handle.lease.lease_id, "env", 0)
             env_kwargs.setdefault("kwargs", {})["gpu_lending"] = lending_agent_kwargs["gpu_lending"]
         if lease_handle is not None:
+            if lease_handle.lease.gpu_reservation == "command":
+                env_kwargs.setdefault("kwargs", {})["gpu_commands"] = {
+                    "router_name": env_client.router_name,
+                    "lease_id": lease_handle.lease.lease_id,
+                }
             try:
                 lease_overlay_path = await _apply_env_lease(
                     lease_handle.lease, extra_compose_paths, env_kwargs, session_router_url, session_id
@@ -490,6 +495,8 @@ async def run_harbor_episode(
         try:
             job = await Job.create(job_config)
             result = await asyncio.wait_for(job.run(), timeout=timeout)
+            if lease_handle is not None and lease_handle.lease.gpu_reservation == "command":
+                await env_client.router.wait_gpu_command_returns.remote(lease_handle.lease.lease_id)
         except asyncio.CancelledError:
             raise
         except Exception as exc:

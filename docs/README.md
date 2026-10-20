@@ -29,7 +29,7 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 - [PSRL 的 Ray 调度与生成长尾](psrl/psrl-run-guide/ray-and-rollout.md)：分别说明 Ray 的角色、资源调度流程和 rollout 长尾，区分集群调度职责与模型计算职责。
 - [PSRL 日志监控、批量配置与进程排查](psrl/psrl-run-guide/monitoring-and-batches.md)：从训练日志提取指标，理解 train_prompt_bsz 的配置映射，并确认训练进程所在节点及运行状态。
 - [PSRL 单机与多机启动故障复盘](psrl/psrl-run-guide/startup-incident-reviews.md)：保留 IP、数据格式、环境变量覆盖及上下文长度问题的历史故障链、修复过程与验证边界。
-- [PSRL 共享环境与集群检查](psrl/psrl-run-guide/cluster-preflight.md)：源码依赖、节点与 Docker 预检，以及 science 训练复盘、监控容错、显存交接、对照设计和停止条件；历史状态每次重新核实。
+- [PSRL 共享环境与集群检查](psrl/psrl-run-guide/cluster-preflight.md)：源码依赖、节点与 Docker 预检、Docker 文件系统阻塞排查，以及 science 训练复盘、监控容错、显存交接、对照设计和停止条件；历史状态每次重新核实。
 
 ## 环境执行与回收专题
 
@@ -39,6 +39,9 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 - [AIRS-Bench 修复与小实验](env-worker-deep-dive/airs-bench-audit/fixes-and-results.md) —— 普通 CSV 评分隔离、最终奖励取值、shell 有界 I/O、资源回收，以及真实 MLGym 回放、远端 Docker 小实验和持续复核结果。
 - [APPS 判题隔离实现](env-worker-deep-dive/airs-bench-audit/apps-isolation.md) —— 可信 judge 与无答案容器分离、评分错误分类、正式镜像小样本对照与 MLGym 回放，以及全量吞吐的验收边界。
 - [Docker 借用 rollout GPU](env-worker-deep-dive/rollout-gpu-lending.md) —— 区分 Ray 配额与物理显存，复核现有实验边界，实现 science 命令批次与模型调用交替借卡，附静态 unit 配额说明、CPU 回归、两轮真实 GPU 借还结果，以及普通任务阶段租约、抢占和预测回填的设计边界。
+- [EnvRouter 命令阶段配额](env-worker-deep-dive/command-gpu-reservations.md)：保留容器状态、按命令归还 GPU 配额及后台归还与规划重叠的实现，包含慢查询定位与直接接口修复的 GPU 对照、失败验收、CPU 教学模拟及跨节点调度提案。
+- [EnvRouter 当前流程与优化总览](env-worker-deep-dive/env-router-current-flow.md)：串联任务放置、会话账本、GPU 命令借还、节点预热与清理，区分独立环境卡和 vLLM 借卡分支。
+- [修复后 Router 与固定 OFF 的单卡对照](env-worker-deep-dive/router-baseline-control-validation.md)：在相同物理 GPU 和固定成功数量下，比较低压力开销、高压力 OOM 补采与命令阶段安全回填，补充 NVML 连接复用后的低负载优化实测及私有节点预热、固定 OFF 的实机复验，明确合成任务和训练的区别。
 
 - [Science 训练资源账本对照](env-worker-deep-dive/science-env-router-comparison.md) —— 解释 14 GiB 任务的 unit 余量，比较旧整卡锁与 EnvRouter 预算共享，附真实 GPU 并发与显存图、完整训练对照未完成的原因和修复验证边界。
 - [真实 LAPS 训练的 Router 开关对照](env-worker-deep-dive/science-training-router-ab.md) —— 两组各 8 条轨迹、2 step 的 entropy/loss 与资源曲线；第 10 节汇总 EnvRouter 的意义、共享预算与回收收益，区分 GPU 容器加速和训练尚无性能优势的证据，附源码路径与 CPU 演示。
@@ -47,7 +50,9 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 
 ## 开发工具
 
-和具体研究内容无关，纯粹是工具用法：Claude Code 权限模式与执行命令方式、Codex 的 `AGENTS.md` 作用范围、会话管理（含终端滚轮和长回复阅读排查）与 `config.toml` 备份回退、Shell `source` 命令与 Python `import` 的进程生命周期。共 8 篇，详见 [tools/README.md](tools/README.md)。
+- [inode 与 Docker 写回阻塞](tools/linux/inode-basics.md)：用真实六字节文件实验解释文件名、inode、硬链接、删除后的打开引用，以及 inode 容量与写回等待的区别。
+
+和具体研究内容无关的开发工具与系统基础：Claude Code 权限模式与执行命令方式、Codex 的 `AGENTS.md` 作用范围、会话管理与配置备份回退、Shell `source`、Python `import` 和 Linux inode。详见 [tools/README.md](tools/README.md)。
 
 ## 其他位置的文档
 

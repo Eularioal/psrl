@@ -8,6 +8,12 @@ enable: False
 # Ray actor name of the router. Agent loop workers look it up by this name.
 router_name: psrl_env_router
 
+# Start configured node services while the trainer continues model initialization.
+prewarm:
+  enable: True
+  timeout_s: 30
+  max_concurrency: 4
+
 # Device memory charged to one GPU task, in MB. Harbor declares no such field, so this is a
 # configured budget rather than a measured one. Lower it once a task is profiled. Together
 # with `gpu_memory_mb` of a unit it decides how many containers share one card:
@@ -55,6 +61,7 @@ deny_node_ips: []
 #     gpu_indices: [0, 1]
 #     max_containers: 3
 #     gpu_memory_mb: 195742
+#     gpu_reservation: episode
 #   - unit_id: n1-cpu
 #     node_ip: 28.49.55.40
 #     cpu_quota: 32.0
@@ -63,6 +70,9 @@ deny_node_ips: []
 #     max_containers: 8
 #     gpu_memory_mb: 0
 units: []
+
+# Use gpu_reservation: command for explicit exec_gpu calls on dedicated environment GPUs.
+# This requires writable cgroup v1 device controls and keeps host leases alive between commands.
 
 # A unit with `rollout_replica_rank` borrows that complete replica between model calls.
 # Such units require `max_containers: 1` and exact, nonoverlapping GPU placement.

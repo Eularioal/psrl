@@ -1,0 +1,93 @@
+{
+  "method": "fresh local data directory, overlay2, isolated socket, no bridge or iptables changes",
+  "initial_smoke": [
+    {
+      "command": [
+        "import",
+        "/dockerdata/psrl-docker-recovery-20261020/probe-rootfs.tar",
+        "psrl-recovery-probe:20261020"
+      ],
+      "code": 0,
+      "stdout": "sha256:b1858b4909b9608f0c3ce6c0980d0c28b6276b4d1ed46ab2df7707e93a43aebe\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "run",
+        "--rm",
+        "--name",
+        "psrl-recovery-smoke-20261020",
+        "--network",
+        "none",
+        "--memory",
+        "64m",
+        "--pids-limit",
+        "32",
+        "--cap-drop",
+        "ALL",
+        "psrl-recovery-probe:20261020",
+        "/bin/sh",
+        "-c",
+        "printf \"DOCKER_RECOVERY_OK\\n\"; printf \"write-ok\\n\" > /tmp/probe; read value < /tmp/probe; test \"$value\" = write-ok"
+      ],
+      "code": 127,
+      "stdout": "",
+      "stderr": "/bin/sh: error while loading shared libraries: libtinfo.so.6: cannot open shared object file: No such file or directory\n"
+    }
+  ],
+  "fixed_smoke": [
+    {
+      "command": [
+        "import",
+        "/dockerdata/psrl-docker-recovery-20261020/probe-rootfs.tar",
+        "psrl-recovery-probe:20261020"
+      ],
+      "code": 0,
+      "stdout": "sha256:5f263146b70a6d8ccaea50e42c7c51a46b68f5415abf62aaa9df01f27e65360a\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "run",
+        "--rm",
+        "--name",
+        "psrl-recovery-smoke-20261020",
+        "--network",
+        "none",
+        "--memory",
+        "64m",
+        "--pids-limit",
+        "32",
+        "--cap-drop",
+        "ALL",
+        "--env",
+        "LD_LIBRARY_PATH=/lib64",
+        "psrl-recovery-probe:20261020",
+        "/bin/sh",
+        "-c",
+        "printf \"DOCKER_RECOVERY_OK\\n\"; printf \"write-ok\\n\" > /tmp/probe; read value < /tmp/probe; test \"$value\" = write-ok"
+      ],
+      "code": 0,
+      "stdout": "DOCKER_RECOVERY_OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "ps",
+        "-a",
+        "--format",
+        "{{.Names}} {{.Status}}"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "default_service_changed": false,
+  "old_data_changed": false,
+  "fuse_abort_attempted": false,
+  "fuse_abort_reason": "Connection 1527 has 289 pending requests but was absent from 211 readable process mount tables, so ownership was not confirmed.",
+  "recovery_daemon_state_after_stop": "absent",
+  "recovery_socket_exists": false,
+  "remaining_recovery_processes": []
+}

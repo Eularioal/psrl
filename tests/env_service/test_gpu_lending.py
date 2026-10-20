@@ -359,15 +359,23 @@ async def test_node_freezes_only_after_gpu_process_exits(monkeypatch):
             state["paused"] = True
         elif args[:2] == ("docker", "unpause"):
             state.update(paused=False, busy=False, unpauses=state["unpauses"] + 1)
-        elif args[0] == "nvidia-smi":
-            if args[1].startswith("--query-gpu"):
-                return f"0, GPU-a, {500 if state['busy'] else 200}, 96000\n"
-            return "GPU-a, 10\n" + ("GPU-a, 20\n" if state["busy"] else "")
         else:
             raise AssertionError(args)
         return ""
 
     monkeypatch.setattr(lending_node, "run_command", command)
+    monkeypatch.setattr(
+        lending_node.NvmlProbe,
+        "read_gpu_snapshot",
+        lambda self, indices: {
+            0: {
+                "uuid": "GPU-a",
+                "used_mb": 500 if state["busy"] else 200,
+                "total_mb": 96000,
+                "pids": [10, 20] if state["busy"] else [10],
+            }
+        },
+    )
     node = lending_node.GpuLendingNodeMixin()
     baseline = {0: {"uuid": "GPU-a", "used_mb": 200, "pids": [10]}}
     await node.freeze_gpu_lease("lease", baseline, 16, 1)

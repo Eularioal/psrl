@@ -1,18 +1,13 @@
-"""
-Read per-device GPU telemetry with `nvidia-smi`.
-
-The router cannot read a remote node's devices, so each agent loop worker reads its own
-node and reports the result with its admission request. That keeps measured occupancy a
-field on an existing message instead of a new mechanism (design document section 6.6).
-"""
+"""Read current GPU identities, ownership and utilization on the executing node."""
 
 from __future__ import annotations
 
 import asyncio
+import atexit
 import logging
 import os
-import subprocess
-import xml.etree.ElementTree as ET
+import threading
+from contextlib import ExitStack, contextmanager
 from dataclasses import dataclass
 
 psrl_logger = logging.getLogger("psrl.env_service.probe")
@@ -33,13 +28,89 @@ class GpuDevice:
         return f"/dev/nvidia{self.minor}"
 
 
+@contextmanager
+def nvml_session():
+    """Pair driver initialization and shutdown even when a safety query fails."""
+    import pynvml
+
+    pynvml.nvmlInit()
+    try:
+        yield pynvml
+    finally:
+        pynvml.nvmlShutdown()
+
+
+class NvmlProbe:
+    """Own a lazy driver connection and serialize live queries against its teardown."""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._context = ExitStack()
+        self._nvml = None
+
+    @contextmanager
+    def _session(self):
+        with self._lock:
+            if self._nvml is None:
+                self._nvml = self._context.enter_context(nvml_session())
+                atexit.register(self.close)
+            yield self._nvml
+
+    def close(self):
+        """Wait for in-flight queries before releasing the owner's driver reference."""
+        with self._lock:
+            self._nvml = None
+            try:
+                self._context.close()
+            finally:
+                atexit.unregister(self.close)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_exc):
+        self.close()
+
+    def read_gpu_devices(self) -> dict[int, GpuDevice]:
+        """Read current physical identities without caching device handles or mappings."""
+        with self._session() as nvml:
+            devices = {}
+            for index in range(nvml.nvmlDeviceGetCount()):
+                handle = nvml.nvmlDeviceGetHandleByIndex(index)
+                devices[index] = GpuDevice(
+                    index, nvml.nvmlDeviceGetMinorNumber(handle), nvml.nvmlDeviceGetUUID(handle)
+                )
+            return devices
+
+    def read_gpu_snapshot(self, indices):
+        """Read live memory and compute ownership, propagating incomplete telemetry errors."""
+        if not indices:
+            raise ValueError("GPU handoff telemetry requires device indices.")
+        with self._session() as nvml:
+            readings = {}
+            for index in indices:
+                handle = nvml.nvmlDeviceGetHandleByIndex(index)
+                # Version 2 excludes driver reserved memory from application usage, matching `nvidia-smi`.
+                memory = nvml.nvmlDeviceGetMemoryInfo(handle, version=nvml.nvmlMemory_v2)
+                readings[index] = {
+                    "uuid": nvml.nvmlDeviceGetUUID(handle),
+                    "used_mb": memory.used / 1024**2,
+                    "total_mb": memory.total / 1024**2,
+                    "pids": [process.pid for process in nvml.nvmlDeviceGetComputeRunningProcesses(handle)],
+                }
+            return readings
+
+
 def read_gpu_devices() -> dict[int, GpuDevice]:
-    """Read the host GPU inventory without assuming index equals minor number."""
-    result = subprocess.run(["nvidia-smi", "-q", "-x"], capture_output=True, text=True, timeout=30, check=True)
-    devices = {}
-    for index, element in enumerate(ET.fromstring(result.stdout).findall("gpu")):
-        devices[index] = GpuDevice(index, int(element.findtext("minor_number")), element.findtext("uuid"))
-    return devices
+    """Read inventory for a caller without a long-lived node service."""
+    with NvmlProbe() as probe:
+        return probe.read_gpu_devices()
+
+
+def read_gpu_snapshot(indices):
+    """Read a live snapshot and release the short-lived caller's driver reference."""
+    with NvmlProbe() as probe:
+        return probe.read_gpu_snapshot(indices)
 
 
 def parse_gpu_csv(text: str) -> dict[int, tuple[float, float]]:
@@ -82,12 +153,12 @@ async def read_gpu_telemetry(timeout_s: float = 5.0) -> dict[int, tuple[float, f
             stderr=asyncio.subprocess.DEVNULL,
         )
     except OSError as exc:
-        psrl_logger.debug("nvidia-smi unavailable (%s); no GPU measurement.", exc)
+        psrl_logger.debug(f"nvidia-smi unavailable ({exc!r}). No GPU measurement.")
         return {}
     try:
         stdout, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout_s)
     except asyncio.TimeoutError:
-        psrl_logger.debug("nvidia-smi timed out after %.1fs; no GPU measurement.", timeout_s)
+        psrl_logger.debug(f"nvidia-smi timed out after {timeout_s:.1f}s. No GPU measurement.")
         try:
             proc.kill()
         except ProcessLookupError:

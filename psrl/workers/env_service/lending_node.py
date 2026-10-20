@@ -5,6 +5,7 @@ import json
 import time
 
 from psrl.workers.env_service.overlay import LEASE_LABEL
+from psrl.workers.env_service.probe import NvmlProbe
 
 
 async def run_command(*args: str) -> str:
@@ -37,6 +38,11 @@ def returned_to_baseline(snapshot, baseline, tolerance_mb: float) -> bool:
 class GpuLendingNodeMixin:
     """Perform node local handoff actions without touching unrelated containers."""
 
+    def _gpu_probe(self):
+        if not hasattr(self, "_nvml_probe"):
+            self._nvml_probe = NvmlProbe()
+        return self._nvml_probe
+
     def _gpu_lease_state(self, lease_id):
         # Retain retired identities so delayed RPCs cannot unfreeze a returned lease.
         if not hasattr(self, "_gpu_lease_states"):
@@ -44,29 +50,7 @@ class GpuLendingNodeMixin:
         return self._gpu_lease_states.setdefault(lease_id, {"lock": asyncio.Lock(), "retired": False})
 
     async def gpu_lending_snapshot(self, indices):
-        inventory = await run_command(
-            "nvidia-smi", "--query-gpu=index,uuid,memory.used,memory.total", "--format=csv,noheader,nounits"
-        )
-        processes = await run_command(
-            "nvidia-smi", "--query-compute-apps=gpu_uuid,pid", "--format=csv,noheader,nounits"
-        )
-        pids = {}
-        for line in processes.splitlines():
-            gpu_uuid, pid = (part.strip() for part in line.split(","))
-            pids.setdefault(gpu_uuid, []).append(int(pid))
-        snapshot = {}
-        for line in inventory.splitlines():
-            index, gpu_uuid, used, total = (part.strip() for part in line.split(","))
-            if int(index) in indices:
-                snapshot[int(index)] = {
-                    "uuid": gpu_uuid,
-                    "used_mb": float(used),
-                    "total_mb": float(total),
-                    "pids": pids.get(gpu_uuid, []),
-                }
-        if set(snapshot) != set(indices) or not indices:
-            raise RuntimeError("GPU handoff telemetry is incomplete.")
-        return snapshot
+        return await asyncio.wait_for(asyncio.to_thread(self._gpu_probe().read_gpu_snapshot, indices), timeout=10)
 
     async def _lease_containers(self, lease_id):
         ids = (await run_command("docker", "ps", "-aq", "--filter", f"label={LEASE_LABEL}={lease_id}")).split()
