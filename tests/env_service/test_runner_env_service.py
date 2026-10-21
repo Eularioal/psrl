@@ -116,6 +116,7 @@ def _run_episode(core, *, needs_gpu, create_side_effect=None, driver_version="53
     post = gate_b if gate_b is not None else AsyncMock(return_value=None)
     with (
         patch.object(runner, "Job") as job_cls,
+        patch("psrl.workers.env_service.docker.ManagedDockerEnvironment.prepare_runtime", new_callable=AsyncMock),
         patch.object(runner, "force_remove_compose_project", side_effect=removed),
         patch.object(runner, "force_remove_compose_images", return_value=0),
         patch.object(runner, "read_kernel_driver_version", return_value=driver_version),
@@ -240,6 +241,7 @@ def test_the_overlay_content_carries_the_leases_devices_labels_and_resolved_libs
 
     with (
         patch.object(runner, "Job") as job_cls,
+        patch("psrl.workers.env_service.docker.ManagedDockerEnvironment.prepare_runtime", new_callable=AsyncMock),
         patch.object(runner, "force_remove_compose_project", return_value=[]),
         patch.object(runner, "force_remove_compose_images", return_value=0),
         patch.object(runner, "read_kernel_driver_version", return_value="535.1"),
@@ -345,6 +347,7 @@ def _run_with_failing_driver(core, events):
 
     with (
         patch.object(runner, "Job") as job_cls,
+        patch("psrl.workers.env_service.docker.ManagedDockerEnvironment.prepare_runtime", new_callable=AsyncMock),
         patch.object(runner, "force_remove_compose_project", return_value=[]),
         patch.object(runner, "force_remove_compose_images", return_value=0),
         patch.object(runner, "read_kernel_driver_version", return_value="535.1"),
@@ -400,6 +403,7 @@ def test_an_overlay_is_not_left_behind_when_the_job_fails():
 def test_without_an_env_client_the_legacy_path_never_touches_the_router():
     with (
         patch.object(runner, "Job") as job_cls,
+        patch("psrl.workers.env_service.docker.ManagedDockerEnvironment.prepare_runtime", new_callable=AsyncMock),
         patch.object(runner, "force_remove_compose_project", return_value=[]),
         patch.object(runner, "force_remove_compose_images", return_value=0),
         patch.object(runner, "GpuDeviceGate") as gate_cls,
@@ -425,6 +429,7 @@ def test_the_default_job_name_is_generated_when_no_session_id_is_given():
     client = _client(core)
     with (
         patch.object(runner, "Job") as job_cls,
+        patch("psrl.workers.env_service.docker.ManagedDockerEnvironment.prepare_runtime", new_callable=AsyncMock),
         patch.object(runner, "force_remove_compose_project", return_value=[]) as removed,
         patch.object(runner, "force_remove_compose_images", return_value=0),
     ):

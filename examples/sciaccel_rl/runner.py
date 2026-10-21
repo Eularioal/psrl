@@ -125,16 +125,21 @@ async def _apply_env_lease(
     Raises:
         DriverLibraryError: When a GPU lease cannot find driver libraries matching the kernel.
     """
-    driver_libs = None
-    if lease.gpu_indices:
-        version = read_kernel_driver_version()
-        if version is None:
-            raise DriverLibraryError(
-                "A GPU lease was granted but /proc/driver/nvidia/version is unreadable; "
-                "this node has no NVIDIA kernel driver loaded."
-            )
-        driver_libs = resolve_driver_libs(version)
-    overlay = build_lease_overlay(lease, driver_libs)
+
+    def prepare_overlay():
+        driver_libs = None
+        if lease.gpu_indices:
+            version = read_kernel_driver_version()
+            if version is None:
+                raise DriverLibraryError(
+                    "A GPU lease was granted but /proc/driver/nvidia/version is unreadable. "
+                    "This node has no NVIDIA kernel driver loaded."
+                )
+            driver_libs = resolve_driver_libs(version)
+        return build_lease_overlay(lease, driver_libs)
+
+    overlay = await asyncio.to_thread(prepare_overlay)
+    # Keep file creation and cleanup registration together if the caller is cancelled.
     overlay_path = write_overlay(overlay)
     extra_compose_paths.append(overlay_path)
     env_kwargs["import_path"] = "psrl.workers.env_service.docker:ManagedDockerEnvironment"
@@ -493,6 +498,10 @@ async def run_harbor_episode(
         timeout = config.task_timeout_sec + config.verifier_timeout_sec + 600.0
 
         try:
+            if env_kwargs.get("import_path") == "psrl.workers.env_service.docker:ManagedDockerEnvironment":
+                from psrl.workers.env_service.docker import ManagedDockerEnvironment
+
+                await ManagedDockerEnvironment.prepare_runtime()
             job = await Job.create(job_config)
             result = await asyncio.wait_for(job.run(), timeout=timeout)
             if lease_handle is not None and lease_handle.lease.gpu_reservation == "command":

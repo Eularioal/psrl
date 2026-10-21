@@ -2,6 +2,7 @@
 
 import asyncio
 import tempfile
+import threading
 import time
 import uuid
 from pathlib import Path
@@ -11,9 +12,28 @@ from harbor.environments.docker.docker import DockerEnvironment
 
 from psrl.workers.env_service.overlay import command_security_options
 
+_KERNEL_PROBE_LOCK = threading.Lock()
+
+
+def _warm_kernel_probe():
+    """Populate Harbor's existing cache once even when several jobs arrive together."""
+    with _KERNEL_PROBE_LOCK:
+        DockerEnvironment._egress_control_kernel_support()
+
 
 class ManagedDockerEnvironment(DockerEnvironment):
     """Keep ownership metadata when Harbor creates a separate verifier environment."""
+
+    @staticmethod
+    async def prepare_runtime():
+        """Warm the synchronous constructor probe before creating Harbor jobs."""
+        probe = asyncio.create_task(asyncio.to_thread(_warm_kernel_probe))
+        try:
+            await asyncio.shield(probe)
+        except asyncio.CancelledError:
+            # The probe runs a temporary container, so join it before caller cleanup.
+            await probe
+            raise
 
     def __init__(
         self,
@@ -25,6 +45,7 @@ class ManagedDockerEnvironment(DockerEnvironment):
         **kwargs,
     ):
         self._gpu_lending = gpu_lending
+        self._daemon_os = None
         self._gpu_commands = gpu_commands
         self._gpu_command_lock = asyncio.Lock()
         self._pending_gpu_return = None
@@ -111,6 +132,7 @@ class ManagedDockerEnvironment(DockerEnvironment):
 
     async def start(self, force_build: bool):
         """Keep GPU ownership until every asynchronous container start is acknowledged."""
+        self._daemon_os = await asyncio.to_thread(super()._detect_daemon_os)
         if not self._gpu_lending:
             return await super().start(force_build)
         import ray
@@ -126,6 +148,10 @@ class ManagedDockerEnvironment(DockerEnvironment):
             raise
         await router.end_gpu_container.remote(lease_id, token)
         return result
+
+    def _detect_daemon_os(self):
+        """Use the fresh query from `start` during Harbor's synchronous validation."""
+        return self._daemon_os
 
     @property
     def _docker_compose_paths(self) -> list[Path]:
