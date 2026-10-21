@@ -17,6 +17,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 from examples.sciaccel_rl.config import SciAccelRuntimeConfig
+from examples.sciaccel_rl.gpu_grading import LAPS_CUDA_CHECKS, apply_gpu_activity_gate, is_laps_cuda, save_gpu_reports
 from harbor.job import Job
 from harbor.models.job.config import AgentConfig, JobConfig, SourceJobConfig
 from harbor.models.trial.config import TaskConfig
@@ -340,10 +341,7 @@ async def run_harbor_episode(
     lending_agent_kwargs = {}
     agent_name = config.harbor.agent_name
     if env_client is not None:
-        # Gate A (env service): wait, holding nothing, until a unit on this node can take
-        # the episode. The container does not exist yet, so waiting is free and may last
-        # as long as it must. Admission failure is an episode result, not an exception,
-        # so one bad task cannot take the agent loop down.
+        # Wait for admission before creating containers, and classify admission failures as episode errors.
         try:
             lease_handle = await env_client.acquire(job_name, env_demand or EnvDemand(needs_gpu=needs_gpu))
         except asyncio.CancelledError:
@@ -357,13 +355,7 @@ async def run_harbor_episode(
                 exception_type=type(exc).__name__,
             )
     elif needs_gpu and config.harbor.gpu_compose_override:
-        # Gate A: reserve one physical GPU device before this episode's
-        # container exists, instead of always mounting the static override's
-        # hardcoded /dev/nvidia0. Without this, N concurrent GPU episodes on
-        # an N>1-GPU host would all get handed the identical device string,
-        # because nothing here previously tracked per-device occupancy (only
-        # `_acquire_episode_slot`'s semaphore counted *how many*, never
-        # *which*). See docs/psrl/psrl-env-service-envworker-design.md §16.
+        # Device ownership must be acquired before the container maps the selected GPU.
         gpu_gate = GpuDeviceGate(jobs_dir=str(config.harbor.jobs_dir))
         allocated_gpu = await gpu_gate.acquire()
         if allocated_gpu is not None:
@@ -371,21 +363,15 @@ async def run_harbor_episode(
             extra_compose_paths.append(gpu_override_path)
             await _bind_gate_b(session_router_url, session_id, allocated_gpu.device)
         else:
-            # No discoverable device on this host (e.g. a dev box with no
-            # GPU): degrade to the old static mapping rather than silently
-            # dropping GPU access, but this episode gets no per-device
-            # exclusivity guarantee.
+            # Static mapping without a discoverable device cannot guarantee exclusive access.
             psrl_logger.warning(
-                "Gate A found no GPU devices; falling back to the static override %r "
+                "Gate A found no GPU devices. Using the static override %r "
                 "(no per-device exclusivity for this episode).",
                 config.harbor.gpu_compose_override,
             )
             extra_compose_paths.append(Path(config.harbor.gpu_compose_override))
 
-    # Every return path runs through `finally`. Cancelling the coroutine leaves the
-    # verifier running `sleep infinity` and the next one queues behind it. The `try` opens
-    # before the setup below, so a lease taken above is released even if building the
-    # overlay or the job config raises; a leaked lease would otherwise keep heartbeating.
+    # Include setup in the cleanup scope so a failed overlay cannot leave a heartbeating lease.
     try:
         if lease_handle is not None and lease_handle.lease.gpu_lending:
             if agent_name not in ("terminus-2", "examples.sciaccel_rl.agent:TruncatingTerminus2"):
@@ -399,11 +385,16 @@ async def run_harbor_episode(
             env_kwargs.setdefault("kwargs", {})["gpu_lending"] = lending_agent_kwargs["gpu_lending"]
         if lease_handle is not None:
             if lease_handle.lease.gpu_reservation == "command":
+                if agent_name == "terminus-2":
+                    agent_name = "examples.sciaccel_rl.agent:TruncatingTerminus2"
+                lending_agent_kwargs["gpu_jobs"] = True
                 env_kwargs.setdefault("kwargs", {})["gpu_commands"] = {
                     "router_name": env_client.router_name,
                     "lease_id": lease_handle.lease.lease_id,
                 }
             try:
+                if lease_handle.lease.gpu_reservation == "command" and is_laps_cuda(task_path):
+                    await env_client.router.require_gpu_attribution.remote(lease_handle.lease.lease_id)
                 lease_overlay_path = await _apply_env_lease(
                     lease_handle.lease, extra_compose_paths, env_kwargs, session_router_url, session_id
                 )
@@ -540,6 +531,13 @@ async def run_harbor_episode(
                 timeout_sec=config.verifier_timeout_sec + 600.0,
             )
 
+        if lease_handle is not None and lease_handle.lease.gpu_reservation == "command":
+            reports = await env_client.router.gpu_job_reports.remote(lease_handle.lease.lease_id)
+            if is_laps_cuda(task_path):
+                rewards = apply_gpu_activity_gate(rewards, reports, LAPS_CUDA_CHECKS)
+            if reports:
+                await asyncio.to_thread(save_gpu_reports, Path(job_config.jobs_dir) / job_name, reports, rewards)
+
         return HarborEpisodeResult(
             task_name=tr.task_name,
             reward=float(rewards.get("reward", 0.0)),
@@ -560,18 +558,13 @@ async def run_harbor_episode(
         # Each image is tagged after the per-episode Compose project, and on the cancelled
         # path Harbor's teardown never runs, leaving a tag no dangling sweep can reach.
         await _in_cleanup_pool(force_remove_compose_images, job_name)
-        # Gate A: release the reserved physical GPU device only after the container
-        # that used it is confirmed gone (the `force_remove_compose_project` call
-        # above), so a waiting episode never gets the device while the old one's
-        # container teardown is still in flight.
+        # Physical container removal must precede release of the device gate.
         if allocated_gpu is not None:
             GpuDeviceGate.release(allocated_gpu)
             await _bind_gate_b(session_router_url, session_id, None)
         if gpu_override_path is not None:
             gpu_override_path.unlink(missing_ok=True)
-        # Env service Gate A: the same ordering rule. The lease goes back only after the
-        # containers are confirmed gone, so the next episode never shares a card with a
-        # container that is still tearing down.
+        # Session resources remain charged until the owned containers are confirmed gone.
         if lease_handle is not None:
             if lease_handle.lease.gpu_indices:
                 await _bind_gate_b(session_router_url, session_id, None)

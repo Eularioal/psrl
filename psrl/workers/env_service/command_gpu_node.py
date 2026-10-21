@@ -8,6 +8,7 @@ from pathlib import Path
 
 from psrl.workers.env_service.docker_api import inspect_container
 from psrl.workers.env_service.overlay import CONTROL_DEVICES, LEASE_LABEL
+from psrl.workers.env_service.task_telemetry import TaskGpuTelemetry
 
 
 class DeviceCgroupFence:
@@ -39,6 +40,7 @@ class DeviceCgroupFence:
             raise RuntimeError("GPU command fencing requires the cgroup v1 devices controller.")
         mount_root = self.mount_root(root, Path("/proc/self/mountinfo").read_text())
         membership = Path(relative)
+        self.membership = membership
         if not membership.is_relative_to(mount_root):
             raise RuntimeError("Container device cgroup is outside the visible controller mount.")
         self.path = (root / membership.relative_to(mount_root)).resolve()
@@ -106,6 +108,23 @@ class GpuCommandNodeMixin:
             raise RuntimeError("GPU command reservations require a cgroup v1 devices controller.")
         return True
 
+    async def check_gpu_attribution_support(self, indices):
+        telemetry = TaskGpuTelemetry(self._gpu_probe(), None, indices)
+        telemetry.check_proc_root()
+        readings = await asyncio.wait_for(
+            asyncio.to_thread(self._gpu_probe().read_process_snapshot, indices, 0), timeout=5
+        )
+        if any(reading["utilization_status"] == "unsupported" for reading in readings.values()):
+            raise RuntimeError("This GPU does not support process utilization attribution.")
+        return True
+
+    async def gpu_job_telemetry(self, lease_id, container_id, epoch):
+        state = self._gpu_lease_state(lease_id)
+        if state.get("command_epoch") != epoch or state.get("command_container") != container_id:
+            raise RuntimeError("GPU telemetry request has a stale owner or epoch.")
+        telemetry = state.get("command_telemetry")
+        return telemetry.summary() if telemetry else None
+
     async def _command_container(self, lease_id, container_id, indices):
         container = await inspect_container(container_id)
         if container["Config"].get("Labels", {}).get(LEASE_LABEL) != lease_id:
@@ -127,6 +146,9 @@ class GpuCommandNodeMixin:
             state["command_returned"] = False
             fence = await self._command_container(lease_id, container_id, indices)
             await asyncio.to_thread(fence.set_access, True)
+            telemetry = TaskGpuTelemetry(self._gpu_probe(), fence, indices)
+            state["command_telemetry"] = telemetry
+            telemetry.start()
 
     async def revoke_gpu_command(self, lease_id, container_id, indices, epoch, telemetry_indices):
         """Block future opens and require all existing GPU ownership to disappear."""
@@ -136,6 +158,8 @@ class GpuCommandNodeMixin:
                 raise RuntimeError("GPU command return has a stale epoch or container.")
             fence = await self._command_container(lease_id, container_id, indices)
             await asyncio.to_thread(fence.set_access, False)
+            telemetry = state.get("command_telemetry")
+            report = await telemetry.stop() if telemetry else None
             deadline = time.monotonic() + 10
             while True:
                 pids = await asyncio.to_thread(fence.processes)
@@ -144,6 +168,8 @@ class GpuCommandNodeMixin:
                 computing = pids & {pid for reading in readings.values() for pid in reading["pids"]}
                 if not handles and not computing:
                     state["command_returned"] = True
+                    for reading in readings.values():
+                        reading["task_telemetry"] = report
                     return readings
                 if time.monotonic() >= deadline:
                     raise RuntimeError("GPU command left device handles or CUDA processes after completion.")

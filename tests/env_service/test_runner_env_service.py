@@ -449,6 +449,30 @@ def test_the_default_job_name_is_generated_when_no_session_id_is_given():
     assert _ledger_containers(core) == 0
 
 
+def test_native_cuda_missing_attribution_fails_before_harbor_starts():
+    config = _cfg()
+    config["units"][0]["gpu_reservation"] = "command"
+    core = EnvRouterCore(config)
+    core.require_gpu_attribution = AsyncMock(side_effect=RuntimeError("Host PID procfs is unavailable."))
+    core.finish_gpu_command_lease = AsyncMock()
+    with patch.object(runner, "is_laps_cuda", return_value=True):
+        result, captured = _run_episode(core, needs_gpu=True)
+    assert not captured["job_create_called"]
+    assert "Host PID procfs" in result.exception
+    assert _ledger_containers(core) == 0
+
+
+def test_command_lease_enables_default_science_gpu_job_tools():
+    config = _cfg()
+    config["units"][0]["gpu_reservation"] = "command"
+    core = EnvRouterCore(config)
+    core.finish_gpu_command_lease = AsyncMock()
+    result, captured = _run_episode(core, needs_gpu=True)
+    assert result.reward == 1
+    assert captured["agent"].name == "examples.sciaccel_rl.agent:TruncatingTerminus2"
+    assert captured["agent"].kwargs["gpu_jobs"] is True
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):

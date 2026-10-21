@@ -9,6 +9,7 @@ Subclassing keeps the override in this repository.
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 from pathlib import Path
@@ -46,6 +47,7 @@ class TruncatingTerminus2(Terminus2):
         model_name: str | None = None,
         max_observation_bytes: int = HARBOR_DEFAULT_MAX_OBS_BYTES,
         gpu_lending: dict | None = None,
+        gpu_jobs: bool = False,
         **kwargs,
     ):
         """
@@ -59,13 +61,13 @@ class TruncatingTerminus2(Terminus2):
             raise ValueError(f"max_observation_bytes must be positive, got {max_observation_bytes}.")
         super().__init__(logs_dir=logs_dir, model_name=model_name, **kwargs)
         self._gpu_phase_client = None
+        self._gpu_jobs_enabled = gpu_jobs
+        self._gpu_job_environment = None
         if gpu_lending:
             import ray
             from psrl.workers.env_service.lending import GpuPhaseClient
 
-            self._gpu_phase_client = GpuPhaseClient(
-                ray.get_actor(gpu_lending["router_name"]), gpu_lending["lease_id"]
-            )
+            self._gpu_phase_client = GpuPhaseClient(ray.get_actor(gpu_lending["router_name"]), gpu_lending["lease_id"])
         self._max_observation_bytes = int(max_observation_bytes)
         psrl_logger.info(
             "TruncatingTerminus2 capping observations at %d bytes (harbor default %d).",
@@ -88,6 +90,37 @@ class TruncatingTerminus2(Terminus2):
             output,
             self._max_observation_bytes if max_bytes is None else max_bytes,
         )
+
+    async def run(self, instruction, environment, context):
+        if self._gpu_jobs_enabled:
+            from examples.sciaccel_rl.gpu_tools import GPU_JOB_INSTRUCTIONS
+
+            self._gpu_job_environment = environment
+            instruction += "\n" + GPU_JOB_INSTRUCTIONS
+        await super().run(instruction, environment, context)
+        if self._gpu_jobs_enabled:
+            await environment.finish_gpu_jobs()
+
+    async def _execute_commands(self, commands, session):
+        if not self._gpu_jobs_enabled:
+            return await super()._execute_commands(commands, session)
+        from examples.sciaccel_rl.gpu_tools import dispatch_gpu_tool
+
+        observations = []
+        for command in commands:
+            text = command.keystrokes.strip()
+            if text == "psrl-gpu" or text.startswith("psrl-gpu "):
+                try:
+                    result = await dispatch_gpu_tool(self._gpu_job_environment, text)
+                except (ValueError, KeyError, TypeError, RuntimeError) as exc:
+                    result = {"error": str(exc)}
+                observations.append(json.dumps(result))
+            else:
+                timed_out, observation = await super()._execute_commands([command], session)
+                observations.append(observation)
+                if timed_out:
+                    return True, self._limit_output_length("\n".join(observations))
+        return False, self._limit_output_length("\n".join(observations))
 
     async def _query_llm(self, *args, **kwargs):
         """

@@ -17,6 +17,8 @@ class CommandRequest:
     epoch: int = 0
     error: str | None = None
     returned_at: float | None = None
+    tag: str = ""
+    telemetry: dict | None = None
 
 
 class GpuCommandScheduler:
@@ -44,14 +46,14 @@ class GpuCommandScheduler:
             sorted({i for unit in self.ledger._units.values() if unit.node_ip == node_ip for i in unit.gpu_indices})
         )
 
-    async def acquire(self, lease_id, container_id, request_id):
+    async def acquire(self, lease_id, container_id, request_id, tag=""):
         """Try the FIFO queue head without consuming host resources a second time."""
         lease = self._lease(lease_id)
         async with self.locks[lease.unit_id]:
             lease = self._lease(lease_id)
             request = self.requests.get(request_id)
             if request is not None:
-                if (request.lease_id, request.container_id) != (lease_id, container_id):
+                if (request.lease_id, request.container_id, request.tag) != (lease_id, container_id, tag):
                     raise RuntimeError("GPU request identity does not match its owner.")
                 if request.state == "active":
                     return {"status": "granted", "epoch": request.epoch}
@@ -61,6 +63,7 @@ class GpuCommandScheduler:
                 if any(r.lease_id == lease_id and r.state in ("waiting", "active") for r in self.requests.values()):
                     raise RuntimeError("A lease may have only one pending GPU command.")
                 request = CommandRequest(lease_id, container_id, lease.unit_id)
+                request.tag = tag
                 self.requests[request_id] = request
                 self.ledger._gpu_command_waiters[request_id] = lease.unit_id
             if lease.unit_id in self.ledger._blocked_units:
@@ -137,6 +140,7 @@ class GpuCommandScheduler:
                 if self.ledger._leases.get(lease.lease_id) is not lease:
                     raise RuntimeError("GPU command lease expired during return.")
                 self.ledger.report_measurement(lease.node_ip, {i: r["used_mb"] for i, r in readings.items()})
+                request.telemetry = next(iter(readings.values())).get("task_telemetry")
                 lease.gpu_active = False
                 request.returned_at = time.time()
                 request.state = "completed"
@@ -190,6 +194,26 @@ class GpuCommandScheduler:
         for _, request in requests:
             if request.state not in ("completed", "cancelled"):
                 raise RuntimeError(f"GPU command is not safely completed: {request.state}, {request.error}")
+
+    def reports(self, lease_id):
+        self._lease(lease_id)
+        return [
+            {"request_id": key, "tag": request.tag, "state": request.state, "telemetry": request.telemetry}
+            for key, request in self.requests.items()
+            if request.lease_id == lease_id
+        ]
+
+    async def telemetry(self, lease_id, request_id):
+        lease = self._lease(lease_id)
+        request = self.requests.get(request_id)
+        if request is None:
+            return None
+        if request.lease_id != lease_id:
+            raise RuntimeError("GPU telemetry request belongs to another lease.")
+        if request.state not in ("active", "returning"):
+            return request.telemetry
+        node = await self.get_node(lease.node_ip)
+        return await node.gpu_job_telemetry.remote(lease_id, request.container_id, request.epoch)
 
     async def finish(self, lease_id, unit_id):
         """Remove the lease's containers before retiring uncertain command state."""

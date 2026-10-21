@@ -100,6 +100,31 @@ class NvmlProbe:
                 }
             return readings
 
+    def read_process_snapshot(self, indices, since_us):
+        """Read process metrics without substituting device totals for missing samples."""
+        with self._session() as nvml:
+            readings = {}
+            for index in indices:
+                handle = nvml.nvmlDeviceGetHandleByIndex(index)
+                memory = {}
+                for process in nvml.nvmlDeviceGetComputeRunningProcesses(handle):
+                    value = process.usedGpuMemory
+                    memory[process.pid] = None if value is None or value >= 2**64 - 1 else value / 1024**2
+                status = "available"
+                try:
+                    samples = nvml.nvmlDeviceGetProcessUtilization(handle, since_us)
+                except nvml.NVMLError_NotFound:
+                    status, samples = "no_samples", []
+                except nvml.NVMLError_NotSupported:
+                    status, samples = "unsupported", []
+                readings[index] = {
+                    "uuid": nvml.nvmlDeviceGetUUID(handle),
+                    "memory_mb_by_pid": memory,
+                    "utilization_status": status,
+                    "samples": [{"pid": s.pid, "timestamp_us": s.timeStamp, "sm_util": s.smUtil} for s in samples],
+                }
+            return readings
+
 
 def read_gpu_devices() -> dict[int, GpuDevice]:
     """Read inventory for a caller without a long-lived node service."""

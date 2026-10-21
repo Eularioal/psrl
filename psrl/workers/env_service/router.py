@@ -1,14 +1,4 @@
-"""
-The EnvRouter: a single Ray actor that owns the unit ledger.
-
-It is the control plane only. It grants and releases leases and reaps dead ones, but it
-never sits on the exec path: containers are started by Harbor inside the agent loop worker,
-exactly as before. This is the same relationship SMG has with a vLLM engine (design
-document section 6.1).
-
-`EnvRouterCore` is plain Python so tests can drive it without Ray. `EnvRouter` adds
-node services for telemetry and cleanup, and is `None` when Ray is not installed.
-"""
+"""Own environment leases and GPU grants while executors retain command payloads and output."""
 
 from __future__ import annotations
 
@@ -100,7 +90,7 @@ class EnvRouterCore:
                     )
             except Exception:  # noqa: BLE001
                 # One bad pass must not kill the control plane for good.
-                psrl_logger.exception("Lease reaper pass failed; continuing.")
+                psrl_logger.exception("Lease reaper pass failed. Continuing.")
 
     def _lending_unavailable(self, demand, node_ip):
         """Reject a permanently quarantined pool instead of polling it forever."""
@@ -215,9 +205,20 @@ class EnvRouterCore:
     async def _gpu_command_node(self, node_ip):
         raise RuntimeError("GPU command reservations require an attached node service.")
 
-    async def acquire_gpu_command(self, lease_id, container_id, request_id):
+    async def acquire_gpu_command(self, lease_id, container_id, request_id, tag=""):
         self._ensure_reaper()
-        return await self._gpu_commands.acquire(lease_id, container_id, request_id)
+        return await self._gpu_commands.acquire(lease_id, container_id, request_id, tag)
+
+    async def gpu_job_reports(self, lease_id):
+        return self._gpu_commands.reports(lease_id)
+
+    async def gpu_job_telemetry(self, lease_id, request_id):
+        return await self._gpu_commands.telemetry(lease_id, request_id)
+
+    async def require_gpu_attribution(self, lease_id):
+        lease = self._gpu_commands._lease(lease_id)
+        node = await self._gpu_command_node(lease.node_ip)
+        return await node.check_gpu_attribution_support.remote(lease.gpu_indices)
 
     async def release_gpu_command(self, lease_id, request_id, epoch):
         return await self._gpu_commands.release(lease_id, request_id, epoch)
@@ -400,7 +401,7 @@ try:
     # No Ray CPU reservation: this actor does bookkeeping, and reserving a core could
     # fail to schedule on a fully packed cluster.
     EnvRouter = ray.remote(num_cpus=0)(RayEnvRouter)
-except ImportError:  # pragma: no cover - exercised only on a box without Ray
+except ImportError:  # pragma: no cover
     EnvRouter = None
 
 

@@ -102,6 +102,8 @@ class GpuLendingNodeMixin:
         state = self._gpu_lease_state(lease_id)
         async with state["lock"]:
             state["retired"] = True
+            if state.get("command_telemetry"):
+                await state["command_telemetry"].stop()
             await self._remove_gpu_lease(lease_id)
 
     async def _remove_gpu_lease(self, lease_id):
