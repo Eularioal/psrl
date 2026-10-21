@@ -6,6 +6,7 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
+matplotlib.rcParams["svg.hashsalt"] = "psrl-gpu-jobs"
 import matplotlib.pyplot as plt
 
 directory = Path(__file__).resolve().parents[2] / "gpu-job-validation"
@@ -28,5 +29,7 @@ figure.text(
     fontsize=9,
 )
 figure.tight_layout(rect=(0, 0.05, 1, 1))
-figure.savefig(directory / "latency.svg")
+destination = directory / "latency.svg"
+figure.savefig(destination, metadata={"Date": None})
+destination.write_text("\n".join(line.rstrip() for line in destination.read_text().splitlines()) + "\n")
 plt.close(figure)

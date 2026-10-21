@@ -33,6 +33,8 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 
 ## 环境执行与回收专题
 
+- [GPU 作业入口、任务遥测与执行后端统一](env-worker-deep-dive/gpu-jobs-and-task-telemetry.md)：显式异步 GPU 作业、按容器进程归因、宿主机 PID 视图要求、science 评分接线，以及 Harbor 与 EnvWorker 的 shell 状态对照和统一路线。
+
 - [implementation-and-gaps.md](env-worker-deep-dive/implementation-and-gaps.md) —— EnvWorker 计数与回收缺口，含 AIRS-Bench 标签隔离、MLGym 适配、shell 超时、排队与清理问题审查。
 - [AIRS-Bench 审查与复现](env-worker-deep-dive/implementation-and-gaps.md#17-airs-bench-接入批评核对与最小复现) —— 2026-10-13 修复前代码裁定、真实 Bash 复现、上游 MLGym 契约检查和修复顺序建议。
 

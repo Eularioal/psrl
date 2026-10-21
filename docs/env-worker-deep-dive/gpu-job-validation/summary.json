@@ -1,0 +1,33 @@
+{
+  "scope": "Real Docker/CUDA jobs, local production scheduler RPC adapter, no model or training. Independent work represented by six seconds of waiting.",
+  "latency_seconds": {
+    "serial": [
+      12.908952578902245,
+      12.873658219352365
+    ],
+    "overlap": [
+      7.069561684504151,
+      6.94472037628293
+    ]
+  },
+  "mean_seconds": {
+    "serial": 12.891305399127305,
+    "overlap": 7.007141030393541
+  },
+  "latency_reduction_percent": 45.64444163375495,
+  "gpu_work_seconds": 6,
+  "independent_wait_seconds": 6,
+  "global_utilization_seen_by_cpu_task": 99,
+  "outside_grant_denied": true,
+  "cancelled_state": "cancelled",
+  "reacquisition_kernel_verified": true,
+  "unavailable_attribution_rejected": true,
+  "positive_process_attribution": "Blocked on this node: outer PID namespace lacks host procfs. CPU contract tests only.",
+  "shell_state_preserved": true,
+  "final_gpu_memory_mib": 0.1875,
+  "final_gpu_process_count": 0,
+  "failure_notes": [
+    "Initial attribution code could not match host NVML PIDs to container-local procfs.",
+    "GPU probe image lacks tmux. Shell contract subsequently passed in a cached science task image."
+  ]
+}
