@@ -6,9 +6,9 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
-matplotlib.rcParams["svg.hashsalt"] = "psrl-gpu-jobs"
 import matplotlib.pyplot as plt
 
+matplotlib.rcParams["svg.hashsalt"] = "psrl-gpu-jobs"
 directory = Path(__file__).resolve().parents[2] / "gpu-job-validation"
 data = json.loads((directory / "summary.json").read_text())
 figure, ax = plt.subplots(figsize=(7, 4))
