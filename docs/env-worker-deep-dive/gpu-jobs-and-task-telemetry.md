@@ -13,6 +13,14 @@
 - [5. Results 与复现](#5-results-与复现)
 - [6. 跟着图读源码](#6-跟着图读源码)
 - [7. 尚未完成的目标](#7-尚未完成的目标)
+- [8. 宿主机、procfs 与 proxy](#8-宿主机procfs-与-proxy)
+  - [8.1 先看三层执行环境](#81-先看三层执行环境)
+  - [8.2 PID 为什么会对不上](#82-pid-为什么会对不上)
+  - [8.3 proxy 到底代理什么](#83-proxy-到底代理什么)
+  - [8.4 正确的部署边界](#84-正确的部署边界)
+  - [8.5 只读实验与 Results](#85-只读实验与-results)
+  - [8.6 跟着图读源码](#86-跟着图读源码)
+  - [8.7 下一阶段的最小验收](#87-下一阶段的最小验收)
 
 ## 1. 完整执行链
 
@@ -218,3 +226,142 @@ CPU 后端契约脚本是 [harbor_shell_contract.py](env-service-verification/sc
 正向任务遥测还需要在具备宿主机进程视图的节点运行真实 CUDA 对照，并验证三项原生 LAPS 检查的训练奖励。当前只完成接口、过滤规则、错误拒绝和评分接线，不能写成原生 CUDA 训练已经通过。
 
 任务标签的可信性、短命 GPU 进程的采样覆盖、MIG 设备支持、cgroup v2、服务重启恢复和跨节点重派发仍需独立设计和验收。GPU 作业接口没有引入任意 CUDA 进程抢占、自动显存预测或跨节点容器迁移。
+
+## 8. 宿主机、procfs 与 proxy
+
+### 8.1 先看三层执行环境
+
+本节补充第 3 节的部署前提。**Docker 可运行 CUDA，不等于节点服务已经能正确识别每个 GPU 进程所属的任务。** `procfs` 是进程信息视图，`proxy` 是请求转发代理，两者是不同机制。
+
+```text
+[A] 物理宿主机：Linux 内核、GPU 驱动、宿主机 PID 视图
+  │ GPU 驱动提供数据
+  │     ↓
+  └─ [B] 平台分配的实验节点容器：SSH 进入的位置
+       ├─ [1] EnvNodeService / NvmlProbe → 逐进程 GPU 数据
+       ├─ [2] TaskGpuTelemetry → 宿主机 procfs → cgroup 与出生身份
+       │                        ↑ 当前缺少这个宿主机视图
+       ├─ [3] Docker Unix socket → dockerd
+       │                              ↓ 创建、执行、清理
+       └─ [C] Science 任务容器 → 前台 CUDA 进程
+                                      ↓ 结束
+          [4] 撤权、核实物理归还 → Router 解除 GPU 配额
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 编号 | 职责 | 对应源码 |
+|---|---|---|
+| A、B、C | 部署环境层级，内核和平台容器不是 PSRL 创建 | [只读诊断脚本](env-service-verification/scripts/host_proc_diagnostic.py)观测 procfs 挂载及 Docker daemon 的进程视图 |
+| 1 | NVML 是 NVIDIA 的设备管理接口，返回进程显存和利用率样本 | [NvmlProbe.read_process_snapshot](../../psrl/workers/env_service/probe.py#L103) |
+| 2 | 按 procfs 中的 cgroup 归属和出生时间筛选样本 | [process_identities](../../psrl/workers/env_service/task_telemetry.py#L10)、[check_proc_root / sample](../../psrl/workers/env_service/task_telemetry.py#L51) |
+| 3 | 通过本地 Unix socket 请求 Docker 管理接口 | [_local_get](../../psrl/workers/env_service/docker_api.py#L9) |
+| C | 适配器授权后执行 GPU 程序，进程组助手保留生命周期身份 | [_run_gpu_process](../../psrl/workers/env_service/docker.py#L192)、[gpu_job_process.py](../../psrl/workers/env_service/gpu_job_process.py) |
+| 4 | 撤销设备访问，核对已有句柄、映射和计算进程，随后确认归还 | [revoke_gpu_command](../../psrl/workers/env_service/command_gpu_node.py#L153) |
+
+宿主机是相对概念。C 的 Docker 管理服务运行在 B，B 是 C 的直接宿主环境。B 自身又是 A 上的平台容器，所以不能把 B 的进程列表当成 A 的完整进程列表。这里的容器共享底层内核，并不是每层都启动了一个独立 Linux 内核。
+
+`namespace` 称为命名空间，用于给进程提供不同的系统视图。PID 命名空间隔离进程编号，网络命名空间隔离网卡、路由和端口，挂载命名空间隔离文件系统挂载视图。共享其中一种，并不自动共享其他几种。因而 `--network=host` 不会解决 PID 问题，能访问 GPU 设备也不代表能读取宿主机的所有进程。
+
+### 8.2 PID 为什么会对不上
+
+PID 是进程编号。`/proc` 是 Linux 内核提供的特殊文件系统，里面的数字目录用来查看进程状态，不是程序自己保存的普通日志。`/proc/self` 表示读取者自身，`/proc/PID/stat` 包含进程出生时间，`/proc/PID/cgroup` 包含进程所属资源组。procfs 展示哪组进程编号，取决于其对应的 PID 命名空间。[Linux procfs 文档](https://docs.kernel.org/filesystems/proc.html)和 [PID 命名空间手册](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html)解释了这些机制。
+
+以下为**教学假设**，不是实测 PID 映射：
+
+| 观察位置 | 同一个 CUDA 进程的编号 | 可见信息 |
+|---|---|---|
+| A，物理宿主机 | 2000 | 宿主机 procfs 能读取 2000 的归属 |
+| B，实验节点 | 300 | B 的 procfs 用 300 识别这个进程 |
+| C，任务容器 | 17 | 任务自身把它看作 17 |
+
+假设 NVML 返回“PID 2000 使用 512 MiB 显存”。正确流程是查宿主机 `/proc/2000/cgroup`，发现它属于任务 A 的容器，然后把 512 MiB 归到任务 A。
+
+如果错误地用 B 的 procfs 查 2000，目录可能不存在，也可能对应另一个进程。把没有匹配到的记录填成 0，会把正在计算的任务说成没用 GPU。当前实现先验证 procfs 是否属于初始 PID 命名空间，条件不满足就报告缺失，避免这种错误。这个前置检查仍不等于完整归因验收，还要验证权限、cgroup 路径一致性和设备接口支持。
+
+cgroup 可以理解为内核给进程登记的资源组。这里使用其归属路径识别任务容器，并接受这个容器的子组。代码使用路径层级匹配，不能把 `/docker/task-a-neighbor` 因为字符串前缀相同也算到 `/docker/task-a`。PID 会在进程结束后复用，所以还要核对出生 ticks，即从开机起累计的时钟单位数，防止把旧进程的样本算给新进程。
+
+将 B 的 `/proc` 再挂到 C 的 `/host/proc`，目录名字虽然有 host，内容仍是 B 的视图。类似地，在 B 的 Docker 中设置 `--pid=host`，共享的通常是 B 所在的 PID 命名空间。它不会自动进入 A 的初始命名空间。
+
+### 8.3 proxy 到底代理什么
+
+Proxy 的含义是代理，即接收请求后代调用者访问目标。一个直观的网络例子是：构建程序要下载依赖，先把请求送给 HTTP 代理，代理再连接软件源并转回响应。代理能控制出口、认证或访问范围，但不改变 CUDA 进程的编号。
+
+本项目附近出现的几种机制应分别理解：
+
+| 名称 | 谁调用谁 | 解决的问题 | 与任务 GPU 归因的关系 |
+|---|---|---|---|
+| Shell HTTP 代理 | 当前 shell 启动的下载工具 → 代理 → 网站 | 当前工具访问外部网络 | 不提供宿主机进程视图 |
+| Docker daemon 代理 | dockerd → 代理 → 镜像仓库 | 拉取镜像等 daemon 发出的网络请求 | 不改变 PID 或显存归属 |
+| 构建和容器代理变量 | 构建步骤或容器程序 → 配置的代理 | 构建时安装依赖、任务下载文件 | 需要传给实际发请求的程序 |
+| Harbor 出口控制 sidecar | 任务网络流量 → 配套容器中的网络规则和透明代理 → 目标 | 按阶段限制外部访问 | 不参与 GPU 配额和进程身份关联 |
+| Docker Unix socket | 节点服务 → 本机 dockerd | 创建、检查、执行和删除容器 | 管理入口，本身不是出站 HTTP 代理 |
+| 宿主机遥测代理 | 节点服务 → 宿主机采集服务 → 驱动与 procfs | 在宿主机生成可信归因结果 | 可作为独立部署方案，当前尚未实现此服务 |
+
+Sidecar 是与主业务容器配套运行的辅助容器。当前安装的 Harbor 在启用出口控制时，会让相关服务共享这个辅助容器的网络命名空间，使用 GOST 透明代理和网络策略限制出口。共享网络不等于共享 PID。并非每个任务都必须走这个模式，要看任务的 network policy 和平台支持。
+
+Harbor 属于运行环境依赖，源码没有复制进 PSRL。可在项目 Python 环境中定位实际安装的实现：
+
+```bash
+python -c 'import inspect; from harbor.environments.docker.docker import DockerEnvironment; print(inspect.getfile(DockerEnvironment)); print(inspect.getsourcelines(DockerEnvironment._write_egress_control_services_compose_file)[1])'
+```
+
+它输出实际文件与函数起始行。检查同目录的 `docker-compose-egress-control.yaml` 和 `harbor-docker-egress-control-sidecar/gost.yaml`，可以看到辅助容器与透明代理的接线。这是外部依赖源码定位，不代表 PSRL 实现了一套新的网络代理。
+
+**为什么 shell 的 curl 成功，Docker 构建仍可能失败？** shell 中设置代理只影响继承这些变量的程序。已运行的 dockerd 不会因为当前 shell 改了变量而自动更新配置，构建里的下载命令也需要自己的配置。Docker 分别提供 [daemon 代理配置](https://docs.docker.com/engine/daemon/proxy/)和[构建、容器代理配置](https://docs.docker.com/engine/cli/proxy/)。
+
+当前 `_local_get` 用 `aiohttp.UnixConnector` 连接本地 Docker socket，且设置 `trust_env=False`。URL 中的 `http://localhost` 是 HTTP 请求的地址形式，实际传输走 Unix socket，不经过环境变量指定的 HTTP 代理。此前直接访问 Docker 接口的优化省去了 Docker CLI 子进程及客户端初始化，仍请求同一执行节点的 daemon。它没有通过代理绕开物理宿主机权限。
+
+### 8.4 正确的部署边界
+
+**现有实现支持的路径**：平台在创建 B 时，把 A 的真正宿主机 procfs 以只读方式提供给可信节点服务，服务进程设置 `PSRL_GPU_HOST_PROC=/host/proc`。挂载必须来自 A，不能在 B 内把自己的 procfs 换个名字。若平台使用 Kubernetes，`hostPath` 的来源是运行 Pod 的节点文件系统，具体挂载应由外层部署配置提供。[Kubernetes hostPath 说明](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath)
+
+这里的路径是部署约定示例，当前节点尚未提供该挂载。只读挂载并不自动解决所有访问权限，仍要确认能读目标进程的 `stat`、`cgroup`，并核对 cgroup 命名空间没有把路径解释成另一套相对路径。环境变量必须到达实际 EnvNodeService，设置在 driver 中而未传到远程服务没有效果。
+
+**另一条设计路线**：让一个轻量的宿主机遥测代理在 A 上采集，按容器身份、GPU UUID、作业 epoch 和采样时间返回报告。epoch 是本次授权的递增编号，用于区分旧授权和新授权。这样 B 无需直接读取全部宿主机 procfs，但需要明确身份验证、租约绑定和故障处理。当前尚未实现该服务，也没有在现场发现可直接使用的已配置接口，不能把它写成现成能力。
+
+Docker/cgroup 控制与采集可以分离。不能把整个 EnvNodeService 随意移到 A，同时继续假定 A 的 Docker socket、进程 PID 和 cgroup 路径与 B 的内部 dockerd 相同。运行位置改变后，必须重新验证这些身份关系。
+
+### 8.5 只读实验与 Results
+
+运行以下脚本只需要 Linux 和 Python 标准库，不启动容器、Ray 或 GPU 程序：
+
+```bash
+python docs/env-worker-deep-dive/env-service-verification/scripts/host_proc_diagnostic.py --docker
+```
+
+`--docker` 会探测本地 Unix socket，单次超时为 3 秒。去掉它可只检查进程视图。`--proc-root` 可指定平台已经提供的 procfs，`--output` 可保存 JSON。脚本只输出代理变量名称是否存在，不输出代理 URL、凭证或进程环境变量。
+
+对应图中的 B、2、3，脚本读取当前挂载表、选中 procfs 的 PID 1 命名空间、可见 dockerd 的命名空间及其 procfs，再请求 Docker `/_ping`。同时输出第 8.2 节的教学数据：错误编号关联没有匹配，正确关联得到 512 MiB。教学输出不是 GPU 实测。
+
+退出码 0 表示所选 procfs 满足初始 PID 命名空间和基本可读性条件，且显式请求的 Docker 探活成功。退出码 3 表示至少一个前提不满足。退出码 0 **仍不代表**真实 GPU 归因通过，脚本没有调用 NVML，也没有证明全部任务 cgroup 路径等价。
+
+本轮在优先实验节点执行的 Results：
+
+| 只读检查 | 结果 | 含义 |
+|---|---|---|
+| Docker 探活与版本 | `OK`，26.1.3，cgroup v1 | 容器服务可响应 |
+| GPU 空闲快照 | 8 张卡均为 0 MiB、0% | 只是检查时的快照，不是独占保证 |
+| 外层 PID 1 与 dockerd | 同一非初始 PID 命名空间 | 实验节点内运行的是内层 Docker 服务 |
+| procfs 挂载表 | 只有外层节点的完整 procfs，以及 NVIDIA 驱动信息的局部挂载 | 驱动目录不能用于查宿主机进程身份 |
+| 所选 procfs | 不满足初始命名空间条件 | 诊断退出码为 3，原生 CUDA 归因验收仍受部署条件阻塞 |
+
+本轮没有启动 CUDA 工作、训练或新容器，不存在新增 GPU 占用需要回收。最初一次临时探针误用了远端系统 Python 3.6，因不支持 `subprocess.run(capture_output=...)` 提前退出。随后在远端也激活项目环境，并运行标准库诊断脚本，保存结果。此错误属于探针解释器选择，与 Docker 或 GPU 故障无关。
+
+本轮另运行任务遥测和 science runner 的 26 项 CPU 回归，全部通过。诊断脚本的 Ruff、格式及注释风格检查通过，索引和本文的本地链接、源码行号与目录锚点已检查。全仓 `pre-commit run --all-files` 在隔离副本执行，仍因其他已有文件的格式与注释问题失败，自动修改未回写工作区。
+
+### 8.6 跟着图读源码
+
+1. [B、2] [runner.py](../../examples/sciaccel_rl/runner.py#L396) 在原生 CUDA 任务创建前请求遥测能力预检。
+2. [1、2] [Router.require_gpu_attribution](../../psrl/workers/env_service/router.py#L218) 找到租约归属节点。[check_gpu_attribution_support](../../psrl/workers/env_service/command_gpu_node.py#L111) 先检查 procfs，再查询 NVML 支持情况。
+3. [3、C] 正常授权时，[DeviceCgroupFence](../../psrl/workers/env_service/command_gpu_node.py#L17) 从 Docker 容器身份得到其 cgroup，核对设备映射并控制访问权限。此步骤使用本地 Docker 对应的 PID 视图。
+4. [1、2] 授权后启动后台遥测，GPU 执行和采样并行。[sample](../../psrl/workers/env_service/task_telemetry.py#L56) 用宿主机 PID 读取身份，[consume](../../psrl/workers/env_service/task_telemetry.py#L72) 聚合本任务样本。这一步需要与 NVML 一致的宿主机视图。
+5. [4] [revoke_gpu_command](../../psrl/workers/env_service/command_gpu_node.py#L153) 撤权并停止采样，核实归还后把报告与完成结果交回。它不会因为报告缺失而虚构成功的 GPU 活动评分。
+
+这些源码或两个 PID 视图的区别有不清楚的地方，可以随时追问。
+
+### 8.7 下一阶段的最小验收
+
+先解决宿主机视图的部署输入，再运行已有 GPU 探针的 `--skip-latency` 模式。验收只要求：忙任务获得自己的有效样本、相邻 CPU 任务不获得忙任务样本、取消与归还后所属进程和容器消失。限定一张空闲卡、两个小容器和 300 秒总预算，不重做已有时长对照。
+
+随后才推进原生 `laps-accel-cuda` 的三个检查。已核对它声明 1 张 GPU、使用 allowlist 网络策略，并提供独立 verifier。依次核对镜像和执行入口，验证数值结果与任务归因报告能对应。当前只是源码与配置核对，没有构建、运行或评分成功记录。完整训练、模型指标变化和固定 OFF 对照仍是另一个验收范围。
