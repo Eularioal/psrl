@@ -22,6 +22,7 @@
   - [8.6 跟着图读源码](#86-跟着图读源码)
   - [8.7 下一阶段的最小验收](#87-下一阶段的最小验收)
 - [9. 部署补丁与生产预检验收](#9-部署补丁与生产预检验收)
+- [10. 开发工作树与推送边界](#10-开发工作树与推送边界)
 
 ## 1. 完整执行链
 
@@ -444,3 +445,37 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/gpu_job_probe.
 修改文件的 Ruff、格式及注释检查通过，索引与本文链接已校验。全仓 hooks 在隔离副本仍因其他文件的已有问题失败，自动格式修改没有回写。
 
 这次请求没有更改平台 Pod、重启 Docker 或启动 Ray 集群。后续接续需要平台把上述只读挂载和环境变量交付给新的实验节点运行环境。只授予本节点内部更多 Docker 权限，不能满足这个条件。
+
+## 10. 开发工作树与推送边界
+
+`psrl` 和 `psrl-gpu-jobs` 是同一个 Git 仓库的两个工作树。工作树是某个分支的文件展开目录，各自有独立的当前分支、暂存区与未提交文件，但共享提交对象和分支引用。这个关系由 `git worktree list` 和 `git rev-parse --git-common-dir` 核验。[Git worktree 官方说明](https://git-scm.com/docs/git-worktree)
+
+```text
+同一个本地 Git 仓库，公共元数据在 psrl/.git
+  ├─ psrl/          → main，保留未提交的工作区改动
+  └─ psrl-gpu-jobs/ → feat/env-gpu-jobs，GPU 作业与遥测功能提交
+                          ↓ git push
+                     Eularioal/psrl 的同名远端分支
+```
+
+图中表示 Git 目录和分支关系，不是 PSRL 运行时调用链。`main`、`feat/env-gpu-jobs` 是分支名，目录名本身不决定推送目标。远端目标由 Git remote 和 push 参数决定。
+
+本专题的 GPU 作业、进程遥测和部署预检，在独立功能工作树开发、运行针对性验证并提交。主目录原有较多未提交改动，因此使用独立工作树维护可检查、可回退的功能提交。相关补丁也同步回主目录，方便从惯用路径查阅源码和文档，但文件同步不会自动提交主目录，也不会把 main 分支移到功能分支的提交。
+
+例如，功能工作树中的 `gpu_jobs.py` 已经纳入提交，主工作树中的同内容文件仍可能显示 `??`，表示它尚未被该工作树的暂存区跟踪。两边共享 Git 提交记录，不代表所有未提交文件会自动同步。
+
+**Results：** 以功能提交 `d0ad050` 为核对点，主工作树的 main 仍指向 `37a06ea`。对比功能分支相对该基点涉及的 29 个文件，27 个内容一致，`docs/README.md` 与 `psrl/workers/env_service/docker.py` 有差异。索引保留主目录的额外条目，主目录的 Docker 适配器另有 `exec_gpu_prepared`、准备中任务登记及取消清理逻辑。这些额外逻辑和主目录其他未提交文件没有因此自动进入已推送分支。本节新增说明不改变这些功能代码的差异。
+
+可以在工作区父目录执行以下只读检查，不切换分支、不修改文件：
+
+```bash
+git -C psrl worktree list
+git -C psrl branch --show-current
+git -C psrl-gpu-jobs branch --show-current
+git -C psrl-gpu-jobs rev-parse --git-common-dir
+git -C psrl status --short
+git -C psrl-gpu-jobs status --short
+git -C psrl-gpu-jobs remote get-url origin
+```
+
+前四条确认工作树和分支关系，中间两条分别检查未提交改动，最后一条确认远端仓库。命令已在本次核对中执行。要复现已推送功能，应固定功能分支的具体提交和依赖路径，不能仅因为主目录已经同步了部分文件，就把它当成相同的完整实验快照。
