@@ -1,0 +1,22 @@
+{
+  "scope": "Deployment access and production node preflight. No task containers or CUDA workload.",
+  "platform_access": {
+    "self_pod_get_http_status": 403,
+    "pod_get_allowed": false,
+    "pod_create_allowed": false,
+    "pod_patch_allowed": false,
+    "platform_resources_modified": false
+  },
+  "production_node_preflight": {
+    "docker_and_device_controls": "passed",
+    "host_pid_procfs": "unavailable",
+    "workload_started": false,
+    "node_service_closed": true
+  },
+  "validation": {
+    "cpu_lifecycle_regressions_passed": 4,
+    "patch_forms_checked": ["pod", "controller"],
+    "invalid_container_name_rejected": true
+  },
+  "not_verified": ["platform_mount_delivery", "positive_gpu_attribution", "native_science_cuda_grading"]
+}

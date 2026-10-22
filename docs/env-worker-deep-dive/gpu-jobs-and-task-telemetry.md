@@ -21,6 +21,7 @@
   - [8.5 只读实验与 Results](#85-只读实验与-results)
   - [8.6 跟着图读源码](#86-跟着图读源码)
   - [8.7 下一阶段的最小验收](#87-下一阶段的最小验收)
+- [9. 部署补丁与生产预检验收](#9-部署补丁与生产预检验收)
 
 ## 1. 完整执行链
 
@@ -365,3 +366,81 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/host_proc_diag
 先解决宿主机视图的部署输入，再运行已有 GPU 探针的 `--skip-latency` 模式。验收只要求：忙任务获得自己的有效样本、相邻 CPU 任务不获得忙任务样本、取消与归还后所属进程和容器消失。限定一张空闲卡、两个小容器和 300 秒总预算，不重做已有时长对照。
 
 随后才推进原生 `laps-accel-cuda` 的三个检查。已核对它声明 1 张 GPU、使用 allowlist 网络策略，并提供独立 verifier。依次核对镜像和执行入口，验证数值结果与任务归因报告能对应。当前只是源码与配置核对，没有构建、运行或评分成功记录。完整训练、模型指标变化和固定 OFF 对照仍是另一个验收范围。
+
+## 9. 部署补丁与生产预检验收
+
+**当前停止点是外层平台权限。** 实验节点的 ServiceAccount，即平台给 Pod 挂载的服务身份，可以请求自己的权限检查，但对当前 Pod 的读取、创建和修改均没有授权。读取当前 Pod 返回 HTTP 403。已经证实身份权限不足，不能通过修改内层 Docker 的参数来补齐外层挂载。
+
+部署与验收按以下顺序衔接。平台应用模板和创建新节点是待完成步骤，补丁生成器与预检是现有实现：
+
+```text
+[1] 生成只读 procfs 挂载补丁
+     ↓ 平台将补丁合入外层实验节点模板
+[2] 新节点运行环境：/host/proc + PSRL_GPU_HOST_PROC
+     ↓ 实际 EnvNodeService 读取该路径
+[3] 生产节点预检：Docker、设备控制、宿主机视图、NVML 接口
+     ├─ 条件不满足 → 关闭采集连接，保存失败，不启动任务容器
+     └─ 条件满足 → [4] 两容器真实 GPU 归因与取消、归还验证
+```
+
+图例及跟着图读源码：
+
+| 步骤 | 输入和状态变化 | 源码 |
+|---|---|---|
+| 1 | 外层可信容器名称和模板类型，输出 JSON 补丁，不调用平台接口 | [mount_patch](../../examples/sciaccel_rl/prepare/host_proc_mount_patch.py#L8) |
+| 2 | 节点进程读取配置路径，挂载动作属于平台 | [TaskGpuTelemetry.__init__](../../psrl/workers/env_service/task_telemetry.py#L33) |
+| 3 | 在创建任务容器前执行真实节点服务的能力检查 | [probe_node](env-service-verification/scripts/gpu_job_probe.py#L50)、[check_gpu_attribution_support](../../psrl/workers/env_service/command_gpu_node.py#L111) |
+| 3 的退出 | 成功、失败或取消都进入节点连接清理 | [probe](env-service-verification/scripts/gpu_job_probe.py#L41) |
+| 4 | 验证本任务样本、邻居隔离、进程取消和配额归还 | [gpu_job_probe.py](env-service-verification/scripts/gpu_job_probe.py) |
+
+这些源码或部署边界有不清楚的地方，可以随时追问。
+
+在仓库根目录生成一个**以 `experiment-node` 为示例容器名**的补丁：
+
+```bash
+python examples/sciaccel_rl/prepare/host_proc_mount_patch.py \
+  --container experiment-node --target pod
+```
+
+该命令可以直接运行，只打印 JSON。实际使用时把 `experiment-node` 改成外层模板中已有的可信运行容器名，不能填 science 任务容器名。输出的关键内容是：
+
+```yaml
+spec:
+  volumes:
+    - name: psrl-host-proc
+      hostPath:
+        path: /proc
+        type: Directory
+  containers:
+    - name: experiment-node
+      volumeMounts:
+        - name: psrl-host-proc
+          mountPath: /host/proc
+          readOnly: true
+      env:
+        - name: PSRL_GPU_HOST_PROC
+          value: /host/proc
+```
+
+这是按名称合并的部署片段，不是完整 Pod，也没有在本次现场应用。`--target controller` 会把同样的内容放到 `spec.template.spec`，适用于具有该模板结构的标准控制器。平台自定义训练资源的嵌套位置可能不同，不能直接假定适用。提交给平台前还需核对已有卷名和挂载路径没有冲突。
+
+应修改创建外层实验节点的模板并通过平台发布流程生效。普通 Pod 更新接口不能任意给运行中的 Pod 增加卷，不能把这个文件当作保证可热更新现有节点的命令。修改控制器模板通常会创建替代 Pod，平台需要安排对当前会话的影响。[Kubernetes Pod 更新与替换](https://kubernetes.io/docs/concepts/workloads/pods/#pod-update-and-replacement)
+
+节点具备挂载后，在实际执行节点的项目环境中先运行：
+
+```bash
+python docs/env-worker-deep-dive/env-service-verification/scripts/gpu_job_probe.py \
+  --gpu 7 --preflight-only --output /tmp/psrl-host-proc-preflight
+```
+
+这里的 7 是命令示例，应改成现场核对的 GPU 序号。预检只读取 Docker 和 GPU 信息，不分配 CUDA 张量，也不启动 Harbor 容器。它不需要 `--image`。环境不满足时非零退出，`result.json` 保留 `stage=preflight`、`workload_started=false` 和错误原因，`node_service_closed=true` 表示采集连接已经清理。预检成功也不等于任务归因验收通过，后续仍需真实 CUDA 样本。
+
+正式 GPU 验证现在默认执行同一个预检。缺少宿主机视图时会在工作负载之前停止。`--allow-unavailable-attribution` 仅用于有意复现缺失条件的诊断，不能与 `--preflight-only` 组合，不能当作修复办法。
+
+**Results：** 本轮真实生产节点方法在优先实验节点执行，Docker 与设备控制检查通过，宿主机 PID 视图检查拒绝。没有启动任务容器或 CUDA 工作，节点服务连接已关闭。平台权限检查的三个结果均为拒绝，实际 Pod 查询为 403。两种部署补丁结构已在 CPU 上生成并检查，非法容器名被拒绝。GPU 正向归因、原生 science 三项评分和训练均未执行。
+
+可分享的结果见 [deployment-summary.json](gpu-job-validation/deployment-summary.json)。新增 [4 项 CPU 回归](../../tests/env_service/test_gpu_probe_preflight.py)通过，覆盖正式运行前的拒绝、只预检模式的拒绝与通过、准备阶段取消后的连接清理。这里的通过分支使用测试替身，不是宿主机视图已经部署成功。
+
+修改文件的 Ruff、格式及注释检查通过，索引与本文链接已校验。全仓 hooks 在隔离副本仍因其他文件的已有问题失败，自动格式修改没有回写。
+
+这次请求没有更改平台 Pod、重启 Docker 或启动 Ray 集群。后续接续需要平台把上述只读挂载和环境变量交付给新的实验节点运行环境。只授予本节点内部更多 Docker 权限，不能满足这个条件。

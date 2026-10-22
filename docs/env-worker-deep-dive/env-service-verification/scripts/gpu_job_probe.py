@@ -39,11 +39,26 @@ class Remote:
 
 
 async def probe(args, evidence):
+    node = EnvNodeService(None, "local")
+    try:
+        await probe_node(args, evidence, node)
+    finally:
+        await node.close()
+        evidence["node_service_closed"] = True
+
+
+async def probe_node(args, evidence, node):
     unit = EnvUnit("job-probe", "local", 4, 4096, (args.gpu,), 2, 4096, gpu_reservation="command")
     ledger = EnvUnitLedger([unit], NodeRules.build(policy="any"), lease_ttl_s=600)
-    node = EnvNodeService(None, "local")
+    evidence["stage"] = "preflight"
+    evidence["workload_started"] = False
     await node.prepare(unit.gpu_indices)
     await node.check_gpu_command_support()
+    if not args.allow_unavailable_attribution:
+        await node.check_gpu_attribution_support(unit.gpu_indices)
+    evidence["attribution_preflight"] = "diagnostic_bypass" if args.allow_unavailable_attribution else "passed"
+    if args.preflight_only:
+        return
     before = await node.gpu_lending_snapshot(unit.gpu_indices)
     assert before[args.gpu]["used_mb"] < 64 and not before[args.gpu]["pids"], "Select an idle GPU."
     evidence["before"] = before
@@ -66,6 +81,8 @@ async def probe(args, evidence):
     )
     environments, leases, paths = [], [], []
     try:
+        evidence["stage"] = "workload"
+        evidence["workload_started"] = True
         await ManagedDockerEnvironment.prepare_runtime()
         for name in ("a", "b"):
             lease = ledger.try_admit(name, EnvDemand(2, 2048, True, 2048), "local").lease
@@ -178,12 +195,16 @@ async def probe(args, evidence):
         evidence["after"] = await node.gpu_lending_snapshot(unit.gpu_indices)
         assert not evidence["after"][args.gpu]["pids"], "Probe CUDA processes must be gone."
         assert evidence["after"][args.gpu]["used_mb"] < 64, "Probe GPU memory must be physically returned."
-        await node.close()
 
 
 async def main(args):
     args.output.mkdir(parents=True, exist_ok=True)
-    evidence = {"scope": "Real Docker and CUDA with local production scheduler RPC adapter. No model or training."}
+    scope = (
+        "Production node deployment preflight. No task containers or CUDA workload."
+        if args.preflight_only
+        else "Real Docker and CUDA with local production scheduler RPC adapter. No model or training."
+    )
+    evidence = {"scope": scope}
     try:
         async with asyncio.timeout(300):
             await probe(args, evidence)
@@ -196,9 +217,15 @@ async def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--image", required=True)
+    parser.add_argument("--image")
     parser.add_argument("--gpu", type=int, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--skip-latency", action="store_true")
     parser.add_argument("--allow-unavailable-attribution", action="store_true")
-    asyncio.run(main(parser.parse_args()))
+    parser.add_argument("--preflight-only", action="store_true")
+    args = parser.parse_args()
+    if not args.preflight_only and not args.image:
+        parser.error("--image is required unless --preflight-only is selected")
+    if args.preflight_only and args.allow_unavailable_attribution:
+        parser.error("--preflight-only cannot bypass attribution checks")
+    asyncio.run(main(args))
