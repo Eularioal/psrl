@@ -473,6 +473,18 @@ def test_command_lease_enables_default_science_gpu_job_tools():
     assert captured["agent"].kwargs["gpu_jobs"] is True
 
 
+def test_episode_lease_enables_the_same_gpu_tools_with_session_ownership():
+    core = EnvRouterCore(_cfg())
+    result, captured = _run_episode(core, needs_gpu=True)
+    assert result.reward == 1
+    assert captured["agent"].kwargs["gpu_jobs"] is True
+    settings = captured["environment"]["kwargs"]
+    assert settings["gpu_execution"]["mode"] == "episode"
+    assert settings["gpu_execution"]["lease_id"].startswith("g0-")
+    assert "gpu_commands" not in settings
+    assert _ledger_containers(core) == 0
+
+
 if __name__ == "__main__":
     failed = 0
     for name, fn in sorted(globals().items()):

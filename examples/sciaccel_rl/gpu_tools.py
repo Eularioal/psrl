@@ -3,7 +3,9 @@
 import json
 
 GPU_JOB_INSTRUCTIONS = """
-GPU work must use the managed GPU job tool. Ordinary terminal commands have no GPU grant.
+Submit bounded foreground GPU work through the managed GPU job tool.
+In command mode ordinary terminal commands have no GPU grant. In episode mode the session
+retains its GPU reservation after a job completes. Job completion does not release that reservation.
 In a command's keystrokes, send one standalone line beginning with psrl-gpu and a JSON object.
 Examples:
 psrl-gpu {"op":"start","command":"./solver","cwd":"/workspace","tag":"check-name"}

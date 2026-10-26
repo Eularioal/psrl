@@ -384,14 +384,20 @@ async def run_harbor_episode(
             await env_client.router.set_gpu_phase.remote(lease_handle.lease.lease_id, "env", 0)
             env_kwargs.setdefault("kwargs", {})["gpu_lending"] = lending_agent_kwargs["gpu_lending"]
         if lease_handle is not None:
-            if lease_handle.lease.gpu_reservation == "command":
+            if lease_handle.lease.gpu_indices and not lease_handle.lease.gpu_lending:
                 if agent_name == "terminus-2":
                     agent_name = "examples.sciaccel_rl.agent:TruncatingTerminus2"
                 lending_agent_kwargs["gpu_jobs"] = True
-                env_kwargs.setdefault("kwargs", {})["gpu_commands"] = {
+                binding = {
                     "router_name": env_client.router_name,
                     "lease_id": lease_handle.lease.lease_id,
                 }
+                env_kwargs.setdefault("kwargs", {})["gpu_execution"] = {
+                    **binding,
+                    "mode": lease_handle.lease.gpu_reservation,
+                }
+                if lease_handle.lease.gpu_reservation == "command":
+                    env_kwargs["kwargs"]["gpu_commands"] = binding
             try:
                 if lease_handle.lease.gpu_reservation == "command" and is_laps_cuda(task_path):
                     await env_client.router.require_gpu_attribution.remote(lease_handle.lease.lease_id)

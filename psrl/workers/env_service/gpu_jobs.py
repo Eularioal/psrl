@@ -22,6 +22,7 @@ class GpuJob:
     output: object = None
     error: str | None = None
     events: dict = field(default_factory=dict)
+    reservation: dict = field(default_factory=dict)
     output_ready: asyncio.Event = field(default_factory=asyncio.Event)
     task: asyncio.Task | None = None
     queued_mono: float = field(default_factory=time.monotonic)
@@ -42,6 +43,7 @@ class GpuJob:
             "stderr": (getattr(output, "stderr", None) or "")[-16000:],
             "error": self.error,
             "events": dict(self.events),
+            "reservation": dict(self.reservation),
         }
 
 
