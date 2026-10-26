@@ -1,6 +1,7 @@
 """Original science agent plus an identical, declared CUDA pressure phase in both arms."""
 
 import json
+import os
 import time
 
 from examples.sciaccel_rl.agent import TruncatingTerminus2
@@ -23,7 +24,10 @@ class PressureTerminus2(TruncatingTerminus2):
             self._pressure_done = True
             started = time.time()
             command = await self._exec_pressure(
-                "python3 /opt/verification/cuda_pressure.py --gib 50 --hold 45", timeout_sec=75
+                "python3 /opt/verification/cuda_pressure.py "
+                f"--gib {int(os.environ.get('SCIENCE_PRESSURE_GIB', 50))} "
+                f"--hold {float(os.environ.get('SCIENCE_PRESSURE_HOLD', 45))}",
+                timeout_sec=75,
             )
             record = {
                 "started_at": started,

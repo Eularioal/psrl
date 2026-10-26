@@ -7,27 +7,36 @@ from pathlib import Path
 
 from examples.sciaccel_rl.agent_loop import SciAccelAgentLoop
 from science_pressure_agent import PressureTerminus2
+from science_pressure_audit import load_pressure_evidence, save_pressure_evidence
 
 _slots = None
 
 
 class FixedWorkPressureAgent(PressureTerminus2):
-    """Use the same 50 GiB / 45 second phase as the preceding experiment."""
+    """Use the same configured CUDA pressure phase in both experiment arms."""
+
+    async def _run_pressure_command(self, command, **kwargs):
+        return await super()._exec_pressure(command, **kwargs)
+
+    async def _exec_pressure(self, command, **kwargs):
+        result = await self._run_pressure_command(command, **kwargs)
+        save_pressure_evidence(self.logs_dir, result.model_dump())
+        return result
 
 
 class CommandPressureAgent(FixedWorkPressureAgent):
     """Return GPU command capacity while the science repair agent continues."""
 
-    async def _exec_pressure(self, command, **kwargs):
+    async def _run_pressure_command(self, command, **kwargs):
         environment = self._pressure_environment
         try:
-            return await environment.exec_gpu(command, wait_timeout_sec=300, **kwargs)
+            return await environment.exec_gpu(command, wait_timeout_sec=300, overlap_return=True, **kwargs)
         finally:
             (self.logs_dir / "gpu-command-phase.json").write_text(json.dumps(environment.last_gpu_command, indent=2))
 
 
 class FixedWorkAgentLoop(SciAccelAgentLoop):
-    """Discard OOM attempts before reward computation; preserve each GRPO slot."""
+    """Discard OOM attempts before reward computation and preserve each GRPO slot."""
 
     async def create_session(self, request):
         self._attempt_session = await super().create_session(request)
@@ -36,12 +45,7 @@ class FixedWorkAgentLoop(SciAccelAgentLoop):
     async def _run_harbor_in_thread(self, *args, **kwargs):
         result = await super()._run_harbor_in_thread(*args, **kwargs)
         self._attempt_result = result
-        paths = list(
-            (Path(self.runtime_config.harbor.jobs_dir) / self._attempt_session).glob(
-                "*/*/artifacts/logs/artifacts/gpu-pressure.json"
-            )
-        )
-        self._pressure = json.loads(paths[0].read_text()) if len(paths) == 1 else {"status": "missing"}
+        self._pressure = load_pressure_evidence(Path(self.runtime_config.harbor.jobs_dir) / self._attempt_session)
         return result
 
     async def get_training_data(self, session_id):
@@ -58,6 +62,12 @@ class FixedWorkAgentLoop(SciAccelAgentLoop):
         root = Path(self.runtime_config.harbor.jobs_dir).parent / "attempts"
         root.mkdir(parents=True, exist_ok=True)
         slot_start = time.time()
+        starts = root.parent / "slot-starts"
+        starts.mkdir(exist_ok=True)
+        marker = starts / f"{uid}.json"
+        temporary = marker.with_suffix(".tmp")
+        temporary.write_text(json.dumps({"uid": uid, "started_at": slot_start}))
+        temporary.replace(marker)
         for attempt in range(1, 13):
             self._pressure = {"status": "not_started"}
             self._attempt_result = None
@@ -70,6 +80,7 @@ class FixedWorkAgentLoop(SciAccelAgentLoop):
             record = {
                 "uid": uid,
                 "parent_id": str(request.get("parent_id", uid)),
+                "version_tag": request.get("version_tag"),
                 "attempt": attempt,
                 "session_id": self._attempt_session,
                 "slot_started_at": slot_start,
@@ -83,16 +94,19 @@ class FixedWorkAgentLoop(SciAccelAgentLoop):
                 "exception_type": result.exception_type if result else "missing",
                 "accepted": self._pressure.get("status") == "ok"
                 and output is not None
-                and bool(result and result.rewards),
+                and bool(result and result.rewards)
+                and result.exception_type is None,
             }
             import inspect
 
             import psrl
+            import transfer_queue
             import verl
 
             record["source_paths"] = {
                 "psrl": psrl.__file__,
                 "verl": verl.__file__,
+                "transfer_queue": transfer_queue.__file__,
                 "science_loop": inspect.getfile(SciAccelAgentLoop),
             }
             (root / f"{uid}-{attempt:02d}.json").write_text(json.dumps(record, indent=2, default=str))
@@ -102,6 +116,6 @@ class FixedWorkAgentLoop(SciAccelAgentLoop):
             if self._pressure.get("status") != "cuda_oom":
                 raise RuntimeError(f"Non-OOM infrastructure failure for slot {uid}; fixed work not complete.")
             if attempt < 12:
-                # Equal deterministic backoff in both arms; the semaphore is not held.
+                # Both arms use equal deterministic backoff without holding the semaphore.
                 await asyncio.sleep(12 + sum(uid.encode()) % 9)
         raise RuntimeError(f"OOM retry budget exhausted for slot {uid}; fixed work not complete.")
