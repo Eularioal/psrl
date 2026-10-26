@@ -2,9 +2,13 @@
 
 > **核心结论**：修复后的 ON 在单卡高压力下，16 条成功任务耗时从固定 OFF 基线的 266.52 秒降至 207.84 秒，减少 22.02%，OOM 从 15 次降至 0。计入驱动记录的初始化和最终清理后，总时长减少 15.15%。低压力四任务则从 40.37 秒增加到 55.83 秒，说明安全调度并非所有负载下都更快。基线是指定提交 `0eeead861ffafed6bf31c962d259fd847775dcf9`，失败重试不计作完成。
 >
-> **低负载优化补充**：第 7–8 节记录后续诊断和代码优化。节点服务复用 NVML 连接、保持每次读取实时状态后，两批各四任务的总任务时间从 98.48 秒降到 90.36 秒；服务已就绪的第二批从 44.83 秒降到 41.87 秒。本轮比较优化前后 ON，不是重新测量 OFF。第 9 节解释预热原理，第 10 节记录已接入生产初始化流程后的私有节点小实验。
+> **低负载优化补充**：第 7–8 节记录后续诊断和代码优化。节点服务复用 NVML 连接、保持每次读取实时状态后，两批各四任务的总任务时间从 98.48 秒降到 90.36 秒；服务已就绪的第二批从 44.83 秒降到 41.87 秒。本轮比较优化前后 ON，不是重新测量 OFF。第 9 节解释预热原理，第 10 节记录已接入生产初始化流程后的私有节点小实验，第 11 节进一步拆分低负载关键路径，区分控制开销与授权后的执行长尾。第 12 节记录真实小任务复现、逐 CUDA 调用与线程栈定位。第 13 节记录两条同步准备路径移出事件循环的实现与实机对照。
 >
 > 这是实际 science runner、Harbor、Docker 和 CUDA 的控制实验。任务是合成验证任务，CPU 间隔固定，不是原生 LAPS 修复、真实模型 rollout 或训练。本文补充[命令阶段配额与慢查询修复](command-gpu-reservations.md#13-results慢查询定位与直接接口修复)，不替代该文第 7 节的历史训练结果。
+
+> **真实训练补充**：[单张环境 GPU 的真实训练报告](science-single-gpu-training-control.md#7-results十步扩展验证)记录了十步目标扩展：OFF 完成十步，ON 完成五步后因实验审计文件被模型删除而退出。双方完整前五步的训练耗时减少 27.67%，OOM 从 57 次降到 0。完整十步收益尚未验证，节点干扰与测量脚本修复见报告第 7、8 节。 无压力原生任务修正配置后续跑，双方共同完成两步，ON 耗时增加 2.73%，未测出提速。ON 第三步因评分器镜像请求 EOF 退出，完整三步对照未完成，见[报告第 10 节](science-single-gpu-training-control.md#10-results无压力续跑与共同完成的两步)。这组真实训练与本文合成容器数据分别统计。
+
+> 最新同期低负载配对与原设计 Gate A/B 审视见[独立报告](router-paired-latency-and-design-review.md)。该实验与本文早期顺序对照分别统计，并同时报告工作阶段和初始化成本。
 
 ## 目录
 
@@ -18,6 +22,9 @@
 - [8. Results：优化前后与复现](#8-results优化前后与复现)
 - [9. 节点服务预热：方案、原理与教学模拟](#9-节点服务预热方案原理与教学模拟)
 - [10. Results：私有节点预热与固定 OFF 复验](#10-results私有节点预热与固定-off-复验)
+- [11. Results：低负载慢在哪里与优化优先级](#11-results低负载慢在哪里与优化优先级)
+- [12. Results：长尾复现与阻塞栈定位](#12-results长尾复现与阻塞栈定位)
+- [13. Results：同步准备路径移出事件循环](#13-results同步准备路径移出事件循环)
 
 ## 1. 比较链路与源码
 
@@ -44,7 +51,7 @@
 | 编号 | 职责与源码 |
 |---|---|
 | 1 | [实验驱动](env-service-verification/scripts/science_router_control_ab.py) 的 `run` 选择实际导入的 science runner，保持相同并发及补采规则。旧 runner 的实验快照见[基线源码](env-service-verification/results/router-baseline-control-20261020/baseline-runner.py#L132) |
-| 2 | [固定代理](env-service-verification/scripts/science_router_control_agent.py#L12) 的 `run` 执行两条相同 CUDA 命令，中间执行 CPU 等待。ON 调用 [exec_gpu](../../psrl/workers/env_service/docker.py#L52) |
+| 2 | [固定代理](env-service-verification/scripts/science_router_control_agent.py#L12) 的 `run` 执行两条相同 CUDA 命令，中间执行 CPU 等待。ON 调用 [exec_gpu](../../psrl/workers/env_service/docker.py#L73) |
 | 3 | [GpuCommandScheduler.acquire](../../psrl/workers/env_service/command_gpu.py#L47) 检查先入先出队列、预算及实时显存 |
 | 4 | [grant_gpu_command / revoke_gpu_command](../../psrl/workers/env_service/command_gpu_node.py#L120) 检查容器归属并授予、撤销设备权限。使用[本机 Docker 接口](../../psrl/workers/env_service/docker_api.py#L9)与 [NVML 查询](../../psrl/workers/env_service/probe.py#L74) |
 | 5 | 驱动的 `prepare_tasks` 写入 verifier，检查两条命令均成功且 CUDA 写入、读回值均为 42 |
@@ -213,7 +220,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/plot_router_co
 
 | 编号 | 对应函数与职责 |
 |---|---|
-| 1 | [ManagedDockerEnvironment.exec_gpu](../../psrl/workers/env_service/docker.py#L52)：请求授权、执行命令并发起归还 |
+| 1 | [ManagedDockerEnvironment.exec_gpu](../../psrl/workers/env_service/docker.py#L73)：请求授权、执行命令并发起归还 |
 | 2 | [GpuCommandScheduler.acquire](../../psrl/workers/env_service/command_gpu.py#L47)：unit 锁覆盖预算检查、实时查询和授权确认，避免同一个预算被并发超额承诺 |
 | 3 | [GpuLendingNodeMixin._gpu_probe](../../psrl/workers/env_service/lending_node.py#L41) 持有对象；[gpu_lending_snapshot](../../psrl/workers/env_service/lending_node.py#L52) 将查询交给线程；[NvmlProbe._session](../../psrl/workers/env_service/probe.py#L52) 只在首次初始化连接；[read_gpu_snapshot](../../psrl/workers/env_service/probe.py#L85) 每次读取当前占用 |
 | 4 | [_command_container](../../psrl/workers/env_service/command_gpu_node.py#L109)、[grant_gpu_command](../../psrl/workers/env_service/command_gpu_node.py#L120)：本机 Docker 身份校验、实时设备映射及设备权限管理 |
@@ -429,3 +436,316 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/plot_router_pr
 ```
 
 证据入口：[六组统计](env-service-verification/results/router-prewarm-private-20261020/comparison.json)、[完整启动记录](env-service-verification/results/router-prewarm-private-20261020/suite.log)、[OFF 全部压力尝试](env-service-verification/results/router-prewarm-private-20261020/pressure-off/result.json)、[ON 压力尝试](env-service-verification/results/router-prewarm-private-20261020/pressure-on/result.json)、[并行预热 trace](env-service-verification/results/router-prewarm-private-20261020/low-on-overlap/control-trace.json)、[CUDA 预检](env-service-verification/results/router-prewarm-private-20261020/cuda-preflight.json)、[最终物理清理](env-service-verification/results/router-prewarm-private-20261020/physical-cleanup-final.json)、[67 项回归](env-service-verification/results/router-prewarm-private-20261020/cpu-tests.log)、[最终 9 项预热测试](env-service-verification/results/router-prewarm-private-20261020/startup-tests-final.log)、[全仓检查](env-service-verification/results/router-prewarm-private-20261020/precommit-all.log)、[代码摘要](env-service-verification/results/router-prewarm-private-20261020/source-sha256.json)、[基线运行补丁](env-service-verification/results/router-prewarm-private-20261020/baseline.patch)。
+
+## 11. Results：低负载慢在哪里与优化优先级
+
+**核心结论**：重新分析第 10 节保存的时间线后，可以把成本分成首次准备、会话准备、逐命令控制和实际执行长尾。ON 并行预热比 OFF 多出的 8.46 秒不能全部解释为 Router 计算或排队。该组最后完成的任务，第一条 GPU 调用花了 9.762 秒，其中申请到获准只有 0.039 秒，获准后到容器脚本开始为 3.922 秒，脚本内部为 5.532 秒。已有数据定位到了延迟区间，但没有定位 Docker 或驱动内部的具体根因。本节只分析已有真实运行，没有重新启动 GPU 实验。
+
+**先把两条路径连起来。** 图中的编号用于下方源码表和分析脚本注释。OFF 指固定提交，不是当前关闭服务的分支。
+
+```text
+OFF：
+[1] science runner → 静态 GPU 配置 → Harbor 创建容器
+  → [3] 直接执行容器命令 → CUDA → CPU 间隔 → 再执行 CUDA
+  → [5] 评分、容器和任务清理 → 完成
+
+ON：
+[0] Router 与节点服务准备，节点准备可与独立初始化重叠
+  → [1] 会话申请 → 准备租约配置 → Harbor 创建容器
+  → [2] 等前次归还、取 Router 句柄、Compose 查询容器 ID
+  → [3] Router 检查额度 → 节点校验与授权 → 容器命令 → CUDA
+  → [4] 原任务继续 CPU 间隔，同时后台确认归还并释放额度
+  → [2] 再次需要 GPU 时重复查询与准入
+  → [5] 等待必要确认 → 评分、容器和会话清理 → 完成
+```
+
+图例：图里每个部分对应的源码位置：
+
+| 编号 | 真实调用、输入和状态 |
+|---|---|
+| 0 | [create_env_router](../../psrl/workers/env_service/router.py#L407) 提交预热，[Node.prepare](../../psrl/workers/env_service/node.py#L49) 探活并初始化查询能力，不占任务配额 |
+| 1 | [固定基线 runner 快照](env-service-verification/results/router-prewarm-private-20261020/baseline-runner.py#L191) 静态映射；ON 经 [Client.acquire](../../psrl/workers/env_service/client.py#L159) 申请会话，再由 [_apply_env_lease](../../examples/sciaccel_rl/runner.py#L98) 准备设备、驱动库和 Compose 覆盖配置 |
+| 2 | [exec_gpu](../../psrl/workers/env_service/docker.py#L73) 在记录 `reservation.requested_at` 前执行归还等待、获取句柄及 `compose ps -q main`；[_docker_compose_paths](../../psrl/workers/env_service/docker.py#L157) 每次访问会读配置、生成归属文件 |
+| 3 | [acquire](../../psrl/workers/env_service/command_gpu.py#L47) 校验预算并等待节点授权；[exec_gpu 调用父类执行](../../psrl/workers/env_service/docker.py#L108) 后运行 [CUDA 脚本](env-service-verification/scripts/cuda_pressure.py#L10) |
+| 4 | [begin_return](../../psrl/workers/env_service/command_gpu.py#L109) 交接后台任务，[_return](../../psrl/workers/env_service/command_gpu.py#L124) 确认撤权及物理状态后提交配额释放 |
+| 5 | [stop](../../psrl/workers/env_service/docker.py#L126) 汇合未完成的归还，随后清理容器；[runner](../../examples/sciaccel_rl/runner.py#L507) 收敛归还错误并处理评分结果 |
+
+这些源码如果有不容易理解的地方，可以随时追问。Harbor 内部 Docker 子进程、daemon 请求和 CUDA 每个驱动调用没有独立计时，图中不能将这些未观测步骤的时间强行拆分。
+
+**为什么没有竞争时需要付出成本。** 低负载四条任务各申报 2 GiB，累计 8 GiB，小于 unit 的 80 GiB 预算，实际允许四条 GPU 命令并行。OFF 本轮没有 OOM，因此 ON 没有可节省的失败重试时间，但仍要确认容器归属、额度和归还。这些额外工作有实际用途，只是不保证在每种负载下都带来净时间收益。这个例子也排除了“因为 unit 只让一条任务运行”作为本轮低负载主因。
+
+**测到的成本与不能声称的结论。** 下表的 ON 是并行预热组，每条命令的统计覆盖八次调用。均值不代表关键路径，各行也不能随意相加。
+
+| 环节 | 本轮证据 | 判断与优化空间 |
+|---|---|---|
+| 首次节点启动 | 懒启动 5.481 秒；并行预热 5.415 秒，落在共同的 8 秒准备窗口内 | 已覆盖本轮并行 ON 的这部分等待，不应继续把它算作剩余 8.46 秒的原因。Router 自身创建仍在驱动初始化边界内 |
+| 任务开始到代理开始 | OFF 平均 6.694 秒，ON 8.002 秒 | ON 多 1.308 秒，但此区间混有遥测、会话准入、租约配置、Harbor 准备及文件操作。没有逐步 trace，不能全部归因于账本 |
+| Harbor 容器环境准备 | OFF 平均 5.491 秒，ON 5.205 秒 | 本轮没有证据表明 ON 创建容器更慢。此行嵌套在上一行，不能再相加 |
+| GPU 申请前准备 | ON 平均 0.202 秒，最大 0.232 秒 | 包含查询容器 ID 等步骤，是源码可确认的重复工作。该区间整体有计时，但没有独立证明 202 毫秒全部属于 `compose ps` |
+| 申请到获准 | ON 平均 0.0144 秒，最大 0.0390 秒 | 包含 Ray 跨进程调用、短锁等待、预算检查和节点授权，不等于纯显存排队。它解释不了数秒长尾 |
+| 节点 Docker inspect | 平均 0.915 毫秒 | 直接访问执行节点本机接口已经很快，不是本轮优先瓶颈 |
+| 命令结束到确认归还 | 平均 9.884 毫秒 | 第一段与 CPU 工作重叠，不能把所有归还耗时都加到墙钟时间上 |
+| 代理结束到任务结束 | OFF 平均 13.727 秒，ON 13.903 秒 | 两边都有明显收尾成本，本轮差值仅 0.176 秒。该区间包含评分、日志、清理等，不能全叫“Docker 删除耗时” |
+| 获准后的执行阶段 | ON 的任务 1 第一条命令出现显著长尾，细分见下表 | 是本轮批次尾部的主要延迟位置。Docker 交付、进程调度、文件系统、CUDA 同卡执行等只能列为候选，不能当作已确认原因 |
+
+NVML 是 NVIDIA 的 GPU 管理查询接口。当前节点复用连接，但每次仍读取实时占用。它和直接 Docker inspect 的优化已经落地，不能再用早期慢查询的旧数字解释当前结果。
+
+**跟着一个真实长尾任务看。** 并行预热 ON 的任务 1 第一条 GPU 调用，以下区间互不重叠：
+
+| 时间段 | 实测耗时 | 包含什么 |
+|---|---:|---|
+| 调用开始到发起额度请求 | 0.219 秒 | 获取句柄、查容器等客户端准备 |
+| 发起请求到获准 | 0.039 秒 | Router／节点控制协议 |
+| 获准到 CUDA 脚本记录开始 | 3.922 秒 | 父类容器执行、进程启动到脚本计时点，内部没有更细计时 |
+| 脚本开始到分配成功 | 0.585 秒 | 加载驱动、建立上下文、设备查询及分配 |
+| 分配成功到脚本结束 | 4.946 秒 | CUDA 操作、同步、读回、配置的 2 秒等待、显存释放及上下文销毁 |
+| 脚本结束到调用返回 | 0.050 秒 | 写日志／输出、命令退出及返回交接 |
+| 合计 | **9.762 秒** | 与外层调用计时一致 |
+
+特别注意，4.946 秒不能直接叫“GPU 计算耗时”，也不能断定是等待睡过头。脚本没有把 CUDA 同步、2 秒等待、上下文销毁分别计时。归还确认发生在命令结束后，无法解释获准后、脚本开始前的 3.922 秒延迟。当前证据也不足以排除 ON 的配置或执行方式间接影响长尾。
+
+整个批次必须等最后一个任务完成，因此不能把四条并行任务的均值或耗时总和当作批次墙钟时间。挑出各组最后完成的任务，连续阶段如下，另有不足 10 毫秒的提交偏移和最终记录间隔：
+
+| 最后完成的任务 | 代理前准备 | 代理执行，含两条 GPU 命令及 CPU 间隔 | 代理后收尾 | 从该任务提交到结束 |
+|---|---:|---:|---:|---:|
+| OFF 任务 0 | 7.497 秒 | 13.450 秒 | 13.601 秒 | 34.548 秒 |
+| ON 任务 1 | 8.238 秒 | 21.270 秒 | 13.478 秒 | 42.986 秒 |
+
+这是描述性关键路径拆分，不是让两条不同任务组成严格的因果实验。ON 其余三条任务约在批次开始后 37.81、38.09、38.21 秒结束，任务 1 在 42.99 秒结束。最后约 4.78 秒是这条任务独自拖住批次的尾部，不能据此宣称某项优化必定节省 4.78 秒。
+
+![低负载关键路径与长尾命令拆分](env-service-verification/results/router-prewarm-private-20261020/low-load-breakdown.png)
+
+上图只画任务阶段，没有重复画两边共同的 8 秒准备。图中 `pre_agent` 是代理前准备，`agent` 是代理执行，`post_agent` 是代理后收尾。第二幅图的 `grant_to_script` 在 OFF 对应直接调用到脚本开始，因为 OFF 没有授权步骤。
+
+**建议优化顺序，以下均为待实现或待验证方案。**
+
+1. **先定位获准后的长尾。** 给 `super().exec` 内的命令构造、子进程启动／退出，以及脚本的 CUDA 初始化、分配、同步、等待、销毁增加少量分段计时。只有再出现该问题时，才能区分控制线程阻塞、Docker 服务延迟、进程启动和驱动等待。已经确认毫秒级的账本路径不应先被大幅重写。
+2. **减少逐命令容器发现。** 容器启动后保存不可变的容器 ID，在同一容器生命周期内复用，重建或消失时失效；节点每次授权仍检查标签、状态和归属。这样有机会消除大部分 0.202 秒申请前准备，但不能预先承诺全部消除。两条 GPU 命令对应每任务约 0.40 秒的该区间，四条任务并发时不能直接乘四当成墙钟收益。
+3. **避免重复解析和写 Compose 配置。** 当前 `_docker_compose_paths` 每次访问都读取 YAML 并重写归属文件。可按容器配置生命周期生成，服务集合或租约变化时明确失效。源码能确认重复工作存在，现有 trace 没有测出它独立占多少时间。
+4. **复用轻量控制对象与合并固定配置查询。** 可按生命周期复用 Router 句柄，缓存与设备／驱动版本绑定的静态解析结果。实时显存、容器存活和归还结果必须继续查询。先拆分会话准备的 1.308 秒平均差值再确定收益，不把未计时步骤都当成缓存优化收益。
+5. **高频短命令再考虑有界批量授权。** 若一段确定的 GPU 工作由多个极短命令组成，可以在同一次已批准的预算内完成后统一归还。教学例子：十条 20 毫秒命令，如果每条额外需要 200 毫秒准备，200 毫秒实际工作可能伴随 2 秒控制成本。批量执行可以摊薄这些成本，但额度持有会延长，必须有明确时间／命令数上限，长 CPU 间隔仍需归还。不能重新退化为整条任务长期占额，也不能因为当前空闲就跳过准入。
+
+先入先出等待目前采用轮询，请求被拒绝时等 0.1 秒再问，可以考虑改为额度归还后通知等待者。但本轮低负载的申请到获准最大不足 0.1 秒，没有跨过一次完整的 100 毫秒退避，轮询并非这组数秒差距的解释。
+
+**跟着图读源码。** 从 [代理 run](env-service-verification/scripts/science_router_control_agent.py#L12) 观察 OFF 的 `exec` 与 ON 的 `exec_gpu` 分支；沿 [1] 先看 `Client.acquire` 和 `_apply_env_lease`，再沿 [2] 看 `reservation.requested_at` 为什么不含容器发现；沿 [3] 看 `acquire` 返回后才执行父类容器命令；沿 [4] 看第一次归还与 CPU 命令并发、下一次 GPU 命令等待前次错误收敛；最后沿 [5] 看 `stop` 和 runner 收尾。源码跳转位置见图例，不能把这条并发路径当作所有阶段简单串行相加。
+
+**可运行的只读复核。** [analyze_low_load_path.py](env-service-verification/scripts/analyze_low_load_path.py) 使用保存的真实运行时间戳，不是教学模拟，也不启动 Ray、Docker、GPU 或训练。默认仅依赖 Python 标准库，`--plot` 额外使用 matplotlib 生成上图。运行前按项目约定激活环境，在仓库根目录执行：
+
+```bash
+python docs/env-worker-deep-dive/env-service-verification/scripts/analyze_low_load_path.py \
+  docs/env-worker-deep-dive/env-service-verification/results/router-prewarm-private-20261020
+
+# 可选：同时重建 PNG／SVG。
+python docs/env-worker-deep-dive/env-service-verification/scripts/analyze_low_load_path.py \
+  docs/env-worker-deep-dive/env-service-verification/results/router-prewarm-private-20261020 --plot
+```
+
+本次已运行，检查每组四条成功任务、四份 Harbor 记录、命令区间非负且相加等于外层调用时间，输出 [low-load-breakdown.json](env-service-verification/results/router-prewarm-private-20261020/low-load-breakdown.json)。预期可看到 OFF 任务阶段约 34.557 秒、ON 并行组约 42.999 秒，以及 ON 最后任务第一条命令 0.039 秒授权、3.922 秒授权后启动、5.532 秒脚本执行的分解。单次观察不提供稳定平均性能或明确的系统级根因，新增的代码仅用于离线分析，未修改生产调度行为。
+
+## 12. Results：长尾复现与阻塞栈定位
+
+**核心结论**：原记录的“获准后 3.922 秒才进入脚本，同时脚本执行 5.532 秒”组合没有完整重现。新增三组共 24 条成功任务、48 条 CUDA 命令定位了两类真实成本：宿主事件循环会被同步 NVML／Docker 探测以及子进程创建阻塞；CUDA 脚本内部的较长耗时主要落在驱动初始化、上下文创建和销毁。本轮 OFF 也出现了 4.878 秒脚本时长，因此不能把这类耗时都归因于 Router。新增证据不能替代旧任务缺失的调用栈，旧 9.762 秒调用的完整根因仍未证实。
+
+**先看计时和阻塞如何对应。** 事件循环是一条线程轮流推进多个异步任务的调度机制。某一步使用 `await` 不代表它内部所有工作都不阻塞，普通同步驱动调用、同步子进程等待，以及异步进程接口里的实际创建步骤，都可能暂时占住这条线程。
+
+```text
+宿主事件循环线程
+  ├─ [1] A 准备会话：_apply_env_lease → build_lease_overlay
+  │        → 同步 NVML 初始化、设备枚举、关闭
+  ├─ [2] Harbor 准备环境：同步 Docker 模式／内核探测
+  ├─ [3] B 已获 GPU 额度：准备并启动 Docker 子进程
+  │        → asyncio 接口内部仍经过同步 _fork_exec
+  └─ [4] 处理其他任务的就绪回调、命令结果、心跳
+       上面任一步同步阻塞时，同线程的其他协程暂时不能推进
+
+Docker 容器内独立进程
+  [5] 加载 libcuda → cuInit → cuCtxCreate → 分配／读写
+      → 等待 2 秒 → 释放显存 → cuCtxDestroy → 返回
+  这些驱动操作有自己的耗时，不能与宿主事件循环延迟混为一项
+```
+
+图例：图里每个部分对应的源码位置：
+
+| 编号 | 实现、观测和边界 |
+|---|---|
+| 1 | 本节实验快照中的 `_apply_env_lease` 在异步函数中直接调用 [build_lease_overlay](../../psrl/workers/env_service/overlay.py#L180)，后者进入 [read_gpu_devices](../../psrl/workers/env_service/probe.py#L104)。实际采样栈覆盖 NVML 初始化、设备句柄查询及关闭 |
+| 2 | 实际使用的 [Harbor Docker 源码快照](env-service-verification/results/router-tail-profile-20261020/source/harbor-docker.py#L125) 的 `_detect_daemon_os` 和 [_egress_control_kernel_support](env-service-verification/results/router-tail-profile-20261020/source/harbor-docker.py#L834) 使用同步 `subprocess.run`；内核探测已有函数级缓存，不能说每条命令都重复执行它 |
+| 3 | [Harbor 命令启动](env-service-verification/results/router-tail-profile-20261020/source/harbor-docker.py#L606) 和 [_is_rootless_docker](env-service-verification/results/router-tail-profile-20261020/source/harbor-docker.py#L985) 调用 `asyncio.create_subprocess_exec`，实际线程栈停在 Python 的 `_execute_child → _fork_exec`。后者是外部 Python 运行时实现，不是 Router 锁 |
+| 4 | [profile_science_tail](env-service-verification/scripts/profile_science_tail.py#L92) 每 50 毫秒检查事件循环推进，独立线程对超过 300 毫秒的停顿采集调用栈。栈只含文件、行号和函数，不读取局部变量 |
+| 5 | [cuda_timing_probe](env-service-verification/scripts/cuda_timing_probe.py#L26) 保留原来的显存分配和读回工作，逐个驱动调用记录单调时钟、进程 CPU 时间及容器限流计数 |
+
+这些源码如果有不容易理解的地方，可以随时追问。图里的 A／B 同时活动是机制示意，不是旧任务的逐帧重放。例如 A 的同步准备若堵住事件循环两秒，即使 B 的 GPU 额度已够，B 也可能迟迟不能执行下一个 Python 步骤。实测堵塞主要出现在本轮任务准备阶段，不能据此直接认定旧任务的 3.922 秒完全来自 A。
+
+**实验条件与预算。** 使用第 10 节同一私有节点、同一 GPU UUID、同一镜像。现场重新检查 Docker、GPU index／minor 映射、导入来源及 1 GiB CUDA 读回，其他 GPU 上的任务未改动。ON 与固定 baseline OFF 各两批，每批四条任务，每条仍为两次 1 GiB 分配、各持有 2 秒，中间 8 秒 CPU 等待。每组任务预算 240 秒、外层 360 秒。ON 第一组出现准备阶段的 6.639 秒事件循环停顿后，追加且仅追加一组相同规模的 ON 栈采样，预算相同。随后只做了八对 Docker 客户端 `--version` 的 CPU 路径检查，未再启动 GPU 实验。
+
+所有有效组均一次成功，没有 OOM。最初一轮计时包装误把 Harbor 静态方法当作实例方法，导致容器准备失败，未产生有效代理／CUDA 数据；已保留在 [instrumentation-failed](env-service-verification/results/router-tail-profile-20261020/instrumentation-failed/result.json)，修正的是诊断包装，不是生产逻辑。生产环境服务源码与第 10 节快照逐文件一致，本次提交标识及工作树补丁另行保存，未修改共享 Harbor 安装或生产调度策略。
+
+| 观察值 | ON，16 条命令 | 固定 OFF，16 条命令 | ON 栈采样，16 条命令 |
+|---|---:|---:|---:|
+| 两批任务墙钟时间 | 39.53／44.22 秒 | 36.70／39.53 秒 | 40.88／38.00 秒 |
+| 获准后到脚本开始，最大 | 0.561 秒 | 无授权，直接调用到脚本开始最大 0.641 秒 | 0.293 秒 |
+| 脚本执行，最大 | 3.198 秒 | 4.878 秒 | 3.769 秒 |
+| 请求到 GPU 获准，最大 | 39.6 毫秒 | 无此协议 | 49.6 毫秒 |
+| 任务期间事件循环停顿，最大 | 6.639 秒 | 2.694 秒 | 1.705 秒 |
+| 记录的容器 CPU 限流计数增量 | 0 | 0 | 0 |
+
+这不是新的稳定吞吐结论。三组包含不同诊断开销、顺序和运行时波动，没有重复试验置信区间。主机 Ray 初始化和最终退出也会阻塞事件循环，上表已排除这两个阶段，不能把初始化时十几秒的停顿拿来解释任务执行。
+
+**CUDA 侧复现到了什么。** OFF 第二批任务 4 的第一段脚本用时 4.878 秒，其中主要组成如下：
+
+| 实际操作 | 耗时 | 含义 |
+|---|---:|---|
+| `cuInit` | 0.732 秒 | 初始化进程使用 CUDA 驱动的能力 |
+| `cuCtxCreate_v2` | 1.071 秒 | 建立该进程的 GPU 执行上下文，即驱动管理的执行状态和资源环境 |
+| 配置的等待 | 2.001 秒 | 与设定的 2 秒一致，没有出现秒级睡眠超时 |
+| `cuMemFree_v2` | 0.037 秒 | 释放本次分配 |
+| `cuCtxDestroy_v2` | 1.031 秒 | 销毁上下文并回收关联状态 |
+| 其他记录操作及微小间隔 | 约 0.006 秒 | 库加载、设备查询、分配、读写校验和计时开销 |
+
+显存分配本身约 0.8 毫秒、同步约 0.13 毫秒。慢的是上下文生命周期操作，不是本次一小段显存读写，也不是 OFF 不存在的 GPU 配额队列。`cuCtxCreate` 的约 1.071 秒内，进程 CPU 时间约 0.342 秒，说明墙钟时间并非全是进程消耗 CPU。驱动内部的锁等待、跨进程干扰等没有进一步计时，不能把某一种猜测当成已经证明的内部根因。
+
+全部 48 条命令同时记录墙钟和单调时钟，两者的脚本时长差小于 7 微秒；CPU 限流计数增量均为零。它们排除了本轮已记录脚本时段的秒级系统时钟跳变和可见 CPU 配额限流，不能反推旧任务当时也必然没有这些问题。原始较长 CUDA 操作已在脚本返回前完成，后续归还协议无法解释这些调用内部的耗时。
+
+**宿主侧捕获到了什么。** ON 栈采样组在任务窗口采到 37 份停顿栈：11 份位于 NVML，9 份位于 Harbor 同步 Docker 探测，15 份位于创建子进程，2 份位于文件操作／路径解析。采样份数不是独立故障次数，也不能乘采样周期当作精确耗时分摊。原始栈见 [execution-trace.json](env-service-verification/results/router-tail-profile-20261020/on-stack/execution-trace.json)。
+
+其中一条完整链路是：
+
+```text
+run_harbor_episode
+  → _apply_env_lease
+  → build_lease_overlay
+  → 短生命周期 read_gpu_devices / NvmlProbe
+  → nvmlInitWithFlags / nvmlDeviceGetHandleByIndex / nvmlShutdown
+```
+
+这说明节点服务复用 NVML 连接的优化没有覆盖所有调用者：runner 构造租约 overlay 时仍走短生命周期查询，而且在事件循环线程同步执行。这是已经有现场栈证据的阻塞路径。节点服务本身的快速查询不能代表客户端所有 NVML 调用都已优化。
+
+另一条链路为 `_chown_to_host_user → _is_rootless_docker → asyncio.create_subprocess_exec → _execute_child → _fork_exec`。因此一个标成“启动 Docker 子进程”的长区间，可能发生在 Docker daemon 接到请求之前，不能仅凭它就判定 daemon 慢。本轮 CPU 路径小检查中，`docker --version` 的进程启动平均 1.92 毫秒、最大 2.54 毫秒，使用解析后的 `/usr/bin/docker` 平均 0.64 毫秒、最大 0.70 毫秒。这个小差异没有重现秒级停顿，不能认定 PATH 查找就是长尾根因。
+
+**可确定的修复方向与尚未确定的部分。** 应优先将 runner 的设备枚举与 overlay 准备从事件循环线程移走，保持身份新鲜度与异常传播；再处理 Harbor 同步探测，减少反复创建命令行进程。不能仅用“函数已经是 async”作为没有阻塞的证明。若复用节点服务的静态设备身份，仍需明确设备变化和服务重启时的失效规则，不能缓存实时显存空闲结论。CUDA 上下文创建和销毁是另一条成本链，进程常驻或批量执行可能摊薄它，但必须兼容“没有遗留设备句柄才允许归还”的协议，不能为了提速让容器长期私自持有上下文。
+
+第 12 节这轮只完成诊断与复现，后续实现见第 13 节，当时没有宣布上述方向已经实现，也没有把新增准备阶段的阻塞等同于旧 GPU 调用的完整根因。后续修复应分别验收事件循环能否继续推进、原任务是否正常完成和实际资源能否归还，而不只看总时间是否碰巧下降。
+
+**跟着图读源码与只读复核。** 先沿 [1] 阅读 runner 到 overlay、短生命周期 probe 的同步调用，再沿 [2] 阅读实际 Harbor 快照中的 `subprocess.run`。沿 [3] 看宿主命令启动，结合 [4] 的独立线程采样，避免把单线程阻塞误当作远端等待。最后沿 [5] 按每个 CUDA 调用的单调时钟区间阅读，返回到 `exec_gpu` 后才进入归还协议。批次结束先检查评分和命令成功，再检查容器、网络、actor 和物理 GPU 状态。
+
+在仓库根目录、项目环境中执行下列只读分析，不重新占用 GPU：
+
+```bash
+python docs/env-worker-deep-dive/env-service-verification/scripts/analyze_science_tail.py \
+  docs/env-worker-deep-dive/env-service-verification/results/router-tail-profile-20261020 \
+  --arms on off on-stack
+```
+
+本次已运行，预期得到三组批次时间、逐 CUDA 调用统计、事件循环停顿和原始栈分类。[profile_science_tail.py](env-service-verification/scripts/profile_science_tail.py) 是真实任务埋点入口，沿第 10 节命令的节点、镜像与 overlay 参数使用，`--stack-sampling` 开启独立线程采样。[probe_subprocess_path.py](env-service-verification/scripts/probe_subprocess_path.py) 是不访问 Docker daemon 的 CPU 检查。它们均不是训练脚本。
+
+最终按真实 Compose project 参数核验容器与网络，按记录 PID 核验 Router／节点服务，检查独立 Ray 进程。四组含失败诊断轮的所属资源均已释放，GPU 无计算进程，应用显存约 0.19 MiB，未删除镜像或改动其他用户服务。证据入口：[完整统计](env-service-verification/results/router-tail-profile-20261020/tail-analysis.json)、[本轮源码摘要](env-service-verification/results/router-tail-profile-20261020/source-hashes-final.json)、[实验预算](env-service-verification/results/router-tail-profile-20261020/experiment-plan.json)、[清理核验](env-service-verification/results/router-tail-profile-20261020/physical-cleanup-final.json)、[CPU 路径检查](env-service-verification/results/router-tail-profile-20261020/spawn-path-probe.json)。
+
+本次四个诊断脚本的 Ruff 检查通过，文档本地链接及源码行号范围检查通过。全仓 pre-commit 在隔离副本仍被既有格式／风格问题阻塞，未对工作区执行全仓自动修正；记录见 [precommit-all.log](env-service-verification/results/router-tail-profile-20261020/precommit-all.log)。
+
+
+## 13. Results：同步准备路径移出事件循环
+
+**结论与范围。** 同一张空闲 GPU、同一组 science runner 合成任务，ON 优化前后分别完成八条任务、十六条 CUDA 命令。任务总时间由 93.00 秒降为 77.56 秒，减少 16.61%，事件循环最大停顿由 2.143 秒降为 0.583 秒。本节比较 ON 修改前后，前者固定在 `37a06ea8d32b05bbbf385ad40cb404b30ba01680` 的隔离 checkout，后者为该提交加本节补丁。没有把它称为用户指定历史 OFF 的新结果，也没有启动模型或训练。
+
+```text
+[1] 执行节点上的 science runner 获得会话租约
+       │
+       ├─ [2] await 后台线程：读驱动库、NVML 设备身份、构造 overlay 内容
+       │         主事件循环继续处理其他任务和完成回调
+       │         查询返回 → 同步写文件并登记清理路径
+       │
+       ├─ [3] await prepare_runtime：后台线程准备 Harbor 内核能力缓存
+       │         同进程并发调用串行访问原缓存，取消时汇合探针
+       │         准备完成 → Job.create → Harbor 环境构造
+       │
+       └─ [4] ManagedDockerEnvironment.start
+                 后台线程新查 Docker daemon 类型 → 原校验逻辑 → 容器启动
+                       ↓
+             [5] exec_gpu：请求预算 → 授权 → CUDA 命令 → 确认归还
+                       ↓
+             CPU 间隔／下一条命令 → 评分 → [6] 清理容器、租约和物理资源
+```
+
+图例：图里每个部分对应的源码位置：
+
+| 编号 | 职责、函数与源码 |
+|---|---|
+| 1 | [run_harbor_episode](../../examples/sciaccel_rl/runner.py#L258) 调用会话准入，再进入容器准备 |
+| 2 | [_apply_env_lease](../../examples/sciaccel_rl/runner.py#L129) 在线程执行只读准备，`write_overlay` 和清理列表登记仍在调用协程里连续完成 |
+| 3 | [runner 调用入口](../../examples/sciaccel_rl/runner.py#L500)、[prepare_runtime / _warm_kernel_probe](../../psrl/workers/env_service/docker.py#L18) 使用 Harbor 原有缓存，探测失败结果也保持原值 |
+| 4 | [start / _detect_daemon_os](../../psrl/workers/env_service/docker.py#L133) 每次启动新查 daemon 类型，原 Harbor 校验随后读取这次结果 |
+| 5 | [exec_gpu](../../psrl/workers/env_service/docker.py#L73)、[GpuCommandScheduler.acquire](../../psrl/workers/env_service/command_gpu.py#L47) 继续执行原准入和归还协议 |
+| 6 | [stop](../../psrl/workers/env_service/docker.py#L126) 汇合延迟归还，[runner finally](../../examples/sciaccel_rl/runner.py#L550) 负责本次容器与租约清理 |
+
+**为什么有用。** 事件循环是让多个任务轮流处理请求、完成通知和定时器的执行线程。函数声明为 `async` 并不能让其中的同步调用自动变成后台操作。NVML 是 NVIDIA 的设备查询库，初始化、枚举或关闭连接如果耗时，直接在事件循环调用它，就会同时推迟其他任务收到完成通知。Docker 的同步 `subprocess.run` 也有同样问题。
+
+`asyncio.to_thread` 把这类同步工作交给线程池，`await` 只暂停当前任务对查询结果的使用，事件循环可继续处理其他协程。查询仍发生在原来的实际执行节点，并没有改成让管理节点查询错误的本机 Docker。
+
+举一个**教学假设**：任务 A 在 0 秒发起需要 0.8 秒的设备查询，任务 B 的命令在 0.1 秒完成。如果 A 同步堵住事件循环，B 的完成处理只能等到约 0.8 秒，额外等约 0.7 秒。把 A 的查询放入后台线程后，B 可以在约 0.1 秒开始处理结果，A 仍要等自己的 0.8 秒查询。这不允许 B 跳过设备撤权或物理归还确认，只是完成回调不必被无关查询压住。
+
+**具体改动与安全边界。**
+
+- 设备身份和驱动库每次重新查询，没有缓存“GPU 空闲”的结论。后台只构造 overlay 内容，不创建临时文件。取消等待时线程可能继续完成只读查询，但不能随后留下无人登记的 overlay 文件。
+- Harbor 内核能力探针原本就有进程内缓存。本次提前在线程里填充原缓存，用线程锁避免多个冷请求同时运行探针。并非把原来每次运行的探针改成缓存，也没有把探测失败伪装成支持。托管 runner 会在创建任务前准备这一能力，纯公网任务也会支付进程首次准备成本，这是本轮没有单独评估的场景。
+- daemon 类型在每次 `start` 时重新查询，再运行 Harbor 原校验，类型不匹配仍报错，查询失败仍沿用 Harbor 的后续报错行为。没有长期保存 daemon 类型来跳过验证。
+- 内核探针会运行临时容器，取消准备时等待探针退出后再进入调用方清理。线程不能被 Python 强制中止，因此取消不是立即完成，沿用原探针的有限超时。共享安装的 Harbor 源码没有修改。
+- Python 创建子进程时的 `_fork_exec`、共享文件系统读取和 CUDA 上下文创建／销毁仍存在。没有为了提速保留容器 CUDA 上下文，也没有改 GPU 显存配额、设备权限、队列顺序或确认归还条件。
+
+**Results：同等工作量。** 两组均四并发、两批各四条任务，每条分配 1 GiB、申报 2 GiB，两次 GPU 命令各等待 2 秒，中间 CPU 等待 8 秒，使用相同镜像及 GPU UUID。节点预热与 8 秒独立准备重叠，设置相同 240 秒工作预算。按固定的“修改前 → 修改后”顺序各跑一次，任务总时间包含容器准备、命令、评分及每条 runner 清理，不包含整个 Ray 初始化和最终检查。
+
+| 观测项 | 修改前 ON | 修改后 ON | 解读 |
+|---|---:|---:|---|
+| 成功任务／CUDA 命令 | 8 / 16 | 8 / 16 | 相同工作量，全部校验通过 |
+| 第一批四任务 | 48.059 秒 | 39.943 秒 | 含首次托管 Docker 探测 |
+| 第二批四任务 | 44.936 秒 | 37.604 秒 | 同进程后续任务 |
+| 全部任务时间 | 93.003 秒 | 77.556 秒 | 本次减少 16.61% |
+| 事件循环最大停顿 | 2.143 秒 | 0.583 秒 | 本次减少约 72.82% |
+| 授权后到 CUDA 脚本开始，最大 | 1.096 秒 | 0.352 秒 | 宿主发送／处理阶段的长尾缩短 |
+| 记账请求到收到授权，最大 | 0.721 秒 | 0.070 秒 | 包含调用者恢复执行延迟，不全是账本排队 |
+| CUDA 脚本平均时间 | 3.587 秒 | 3.606 秒 | 未见内核脚本本身加速 |
+| CUDA 脚本最大时间 | 5.971 秒 | 5.914 秒 | 仍有约六秒的设备侧脚本长尾 |
+| 主线程停顿采样中的 NVML / 同步 Docker 栈份数 | 10 / 11 | 0 / 0 | 两条目标阻塞路径未再被采到 |
+
+![同步准备优化的同量任务、事件循环停顿和 CUDA 脚本耗时](env-service-verification/results/router-sync-offload-20261020/startup-offload.png)
+
+这些结果支持“目标查询已移出事件循环，且本次同量任务更快”。它们不证明长期固定加速 16.61%。只有一组顺序对照，没有重复样本和置信区间，文件系统缓存、进程启动和节点噪声仍会影响整体耗时。修改后也没有采到进程创建停顿，但该路径本次没有修改，不能声称已经修复它。采样份数不是阻塞调用次数或精确耗时分摊。两项优化一起启用，本次没有单独估算各自贡献。
+
+**跟着图读源码。** 从 [1] `run_harbor_episode` 的会话准入进入 [2]，输入是租约，后台输出是 overlay 字典，主协程登记文件路径。随后 [3] 准备原 Harbor 缓存，多个任务可并发等待但冷探针串行执行，取消分支必须先汇合。进入 [4] 每个环境的异步启动，查询结果回到原验证分支。沿 [5] 阅读 `exec_gpu` 到命令归还，注意后台归还与 CPU 间隔可重叠。最后 [6] 先收敛返回错误、清理所属容器，再释放租约。代码中这些调用或并发边界有理解上的问题，可以随时追问。
+
+**可运行回归和只读复核。** 在仓库根目录的项目环境运行：
+
+```bash
+python -m pytest tests/env_service/test_startup_offload.py -q
+python docs/env-worker-deep-dive/env-service-verification/scripts/analyze_science_tail.py \
+  docs/env-worker-deep-dive/env-service-verification/results/router-sync-offload-20261020 \
+  --arms before after
+python docs/env-worker-deep-dive/env-service-verification/scripts/plot_startup_offload.py \
+  docs/env-worker-deep-dive/env-service-verification/results/router-sync-offload-20261020
+```
+
+第一条是 CPU 故障注入回归，使用线程事件阻塞假的设备／Docker 查询，由事件循环解除阻塞，验证循环持续推进、并发探针去重、取消汇合、错误保持和无临时文件泄漏。预期五项通过，它不需要 Docker daemon 或 GPU。后两条分析本次保存的真实结果并绘图，不再启动任务，结果目录是本地实验材料。需要重跑 GPU 时使用 [profile_science_tail.py](env-service-verification/scripts/profile_science_tail.py) 的有界入口，设备、镜像和 overlay 按现场重新准备，不沿用过期占用判断。
+
+本次五项新回归加 runner、命令配额和 GPU 借还回归共 **59 项通过**。修改文件的 Ruff 检查通过。全仓 pre-commit 已在隔离副本执行，仍被既有格式和 prose-style 问题阻塞，没有对工作区做全仓自动修正。相关原始证据：[完整统计](env-service-verification/results/router-sync-offload-20261020/tail-analysis.json)、[修改补丁](env-service-verification/results/router-sync-offload-20261020/after.patch)、[测试日志](env-service-verification/results/router-sync-offload-20261020/tests.log)、[全仓检查](env-service-verification/results/router-sync-offload-20261020/precommit-all.log)、[实验预算](env-service-verification/results/router-sync-offload-20261020/experiment-plan.json)。
+
+两组结束后核验所属容器、Compose 网络、Router／节点服务和独立 Ray 进程均已退出，目标 GPU 无计算进程、应用显存约 0.19 MiB。证据见[物理清理检查](env-service-verification/results/router-sync-offload-20261020/physical-cleanup-final.json)。达到本轮结论即停止，没有为提高优势重复运行或追加训练。
+
+
+**最新 ON 与已有低负载 OFF 的延迟参考。** 以下是对已有原始结果的只读重算，本次没有新启动 GPU 实验。OFF 取第 12 节指定历史提交的八任务结果，ON 取第 13 节修改后的八任务结果。工作量、节点、设备和镜像一致，但运行时间不同，而且 ON 开启了独立线程栈采样、OFF 未开启，不能把这张表视为最新版本严格配对的统计结论。
+
+| 延迟口径 | 已有 OFF | 最新 ON | ON 相对差值 |
+|---|---:|---:|---:|
+| 单任务端到端平均 | 37.621 秒 | 38.181 秒 | +0.560 秒，+1.49% |
+| 单任务端到端最大 | 39.526 秒 | 39.928 秒 | +0.402 秒，+1.02% |
+| 单次 GPU 命令调用平均 | 4.136 秒 | 4.168 秒 | +0.032 秒，+0.76% |
+| 单次 GPU 命令调用最大 | 6.198 秒 | 6.414 秒 | +0.217 秒，+3.50% |
+| 八条任务全部完成 | 76.243 秒 | 77.556 秒 | +1.313 秒，+1.72% |
+
+当前已有证据显示最新 ON 与这批 OFF 的低负载延迟数值接近，尚未证明 ON 在低负载更快，也不能把约 1% 至 2% 的差值认定为稳定协议成本。上一表的 93.003 秒是修改前 ON，不能拿它充当 OFF。
+
+单任务端到端延迟由[驱动的 episode](env-service-verification/scripts/science_router_control_ab.py#L216)记录的 `finished_at - started_at` 得出，覆盖任务容器准备、执行、评分和 runner 清理，还包含驱动读取任务结果的小开销。八任务总时间是两批四并发全部完成的墙钟，不是单任务 latency，也不能除以八当作单任务平均。例如 OFF 的 76.243 / 8 约为 9.53 秒，而真实单任务平均是 37.621 秒，因为四条任务在时间轴上重叠。
+
+命令调用延迟采用[代理的计时边界](env-service-verification/scripts/science_router_control_agent.py#L23)，包含 ON 的准入与返回确认路径，第一条允许归还与后续 CPU 阶段重叠。它不是单纯 CUDA 内核执行时间。两组 CUDA 脚本耗时本身也不同，因此不能把平均多出的约 32 毫秒全部归因于 Router。
+
+低负载下四条命令合计申报 8 GiB，低于 unit 的 80 GiB 预算，两边都不发生 OOM，ON 的安全机制没有失败重试可以节省。现有优化主要减轻主循环阻塞，容器身份确认、预算检查、设备授权及归还仍有开销。本表不代表单请求零并发延迟、模型响应延迟或完整训练速度。
+
+原始结果与本次重算：[历史 OFF](env-service-verification/results/router-tail-profile-20261020/off/result.json)、[最新 ON](env-service-verification/results/router-sync-offload-20261020/after/result.json)、[描述性对比 JSON](env-service-verification/results/router-sync-offload-20261020/historical-off-reference.json)。继续使用第 13 节已有只读分析入口可复核每组命令统计。若要判断最新 ON 是否稳定追平 OFF，需要另做同期交错对照，目前不据这一次跨轮结果宣称已经证明。

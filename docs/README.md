@@ -33,7 +33,7 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 
 ## 环境执行与回收专题
 
-- [GPU 作业入口、任务遥测与执行后端统一](env-worker-deep-dive/gpu-jobs-and-task-telemetry.md)：显式异步 GPU 作业、按容器进程归因、宿主机与 procfs/proxy 的区别、部署补丁与只读预检、science 评分接线，以及 Harbor 与 EnvWorker 的统一路线。
+- [GPU 作业入口、任务遥测与执行后端统一](env-worker-deep-dive/gpu-jobs-and-task-telemetry.md)：显式 GPU 作业与遥测、宿主机部署前提及 Science 接线；补充同容器并发的命令预算、作业子组、独立取消与回收设计，附 CPU 契约模型，明确尚未实现的生产能力。
 
 - [implementation-and-gaps.md](env-worker-deep-dive/implementation-and-gaps.md) —— EnvWorker 计数与回收缺口，含 AIRS-Bench 标签隔离、MLGym 适配、shell 超时、排队与清理问题审查。
 - [AIRS-Bench 审查与复现](env-worker-deep-dive/implementation-and-gaps.md#17-airs-bench-接入批评核对与最小复现) —— 2026-10-13 修复前代码裁定、真实 Bash 复现、上游 MLGym 契约检查和修复顺序建议。
@@ -42,11 +42,15 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 - [APPS 判题隔离实现](env-worker-deep-dive/airs-bench-audit/apps-isolation.md) —— 可信 judge 与无答案容器分离、评分错误分类、正式镜像小样本对照与 MLGym 回放，以及全量吞吐的验收边界。
 - [Docker 借用 rollout GPU](env-worker-deep-dive/rollout-gpu-lending.md) —— 区分 Ray 配额与物理显存，复核现有实验边界，实现 science 命令批次与模型调用交替借卡，附静态 unit 配额说明、CPU 回归、两轮真实 GPU 借还结果，以及普通任务阶段租约、抢占和预测回填的设计边界。
 - [EnvRouter 命令阶段配额](env-worker-deep-dive/command-gpu-reservations.md)：保留容器状态、按命令归还 GPU 配额及后台归还与规划重叠的实现，包含慢查询定位与直接接口修复的 GPU 对照、失败验收、CPU 教学模拟及跨节点调度提案。
-- [EnvRouter 当前流程与优化总览](env-worker-deep-dive/env-router-current-flow.md)：串联任务放置、会话账本、GPU 命令借还、节点预热与清理，区分独立环境卡和 vLLM 借卡分支。
-- [修复后 Router 与固定 OFF 的单卡对照](env-worker-deep-dive/router-baseline-control-validation.md)：在相同物理 GPU 和固定成功数量下，比较低压力开销、高压力 OOM 补采与命令阶段安全回填，补充 NVML 连接复用后的低负载优化实测及私有节点预热、固定 OFF 的实机复验，明确合成任务和训练的区别。
+- [GPU 统一执行后端](env-worker-deep-dive/unified-gpu-execution.md)：episode 与 command 共用作业执行、等待和取消，说明固定模式配置、真实 Docker GPU 任务验证及动态卸载边界。
+- [EnvRouter 当前流程与优化总览](env-worker-deep-dive/env-router-current-flow.md)：串联任务放置、命令借还、预热与清理，梳理独立 rollout 与同容器作业关系；解释 episode／command 的适用边界，并提供通用 GPU 任务接入提案、状态释放恢复成本分析及 CPU 教学模拟。
+- [EnvRouter 同期配对与 Gate A/B 设计审视](env-worker-deep-dive/router-paired-latency-and-design-review.md)：固定历史 OFF 与当前 ON 的低负载顺序平衡实验，区分任务延迟与冷启动成本，核对 Gate A/B 的功能证据、奖励归因缺口和命令模式适用边界，解释 Gate B 与命令调度的组合关系，并审计原设计剩余工作和原生 science 任务的 command 接入缺口。
+- [修复后 Router 与固定 OFF 的单卡对照](env-worker-deep-dive/router-baseline-control-validation.md)：在相同物理 GPU 和固定成功数量下，比较低压力开销、高压力 OOM 补采与命令阶段安全回填，补充 NVML 连接复用后的低负载优化实测及私有节点预热、固定 OFF 的实机复验，明确合成任务和训练的区别，含低负载关键路径拆分、长尾复现与阻塞栈定位。 补充同步准备移出事件循环后的实现、安全边界和实机对照。
 
 - [Science 训练资源账本对照](env-worker-deep-dive/science-env-router-comparison.md) —— 解释 14 GiB 任务的 unit 余量，比较旧整卡锁与 EnvRouter 预算共享，附真实 GPU 并发与显存图、完整训练对照未完成的原因和修复验证边界。
 - [真实 LAPS 训练的 Router 开关对照](env-worker-deep-dive/science-training-router-ab.md) —— 两组各 8 条轨迹、2 step 的 entropy/loss 与资源曲线；第 10 节汇总 EnvRouter 的意义、共享预算与回收收益，区分 GPU 容器加速和训练尚无性能优势的证据，附源码路径与 CPU 演示。
+- [Science 真实训练的压力与原生任务对照](env-worker-deep-dive/science-single-gpu-training-control.md)：固定历史 OFF 与 ON 使用相同设备，比较真实训练下的显存准入、OOM 补采与耗时，包含无压力原生任务对照，以及多步验证中的审计文件删除故障及修复。
+- [真实 GPU 工作负载的同任务多协程对照](env-worker-deep-dive/science-natural-gpu-concurrency.md)：保留 MLGym 分类训练的同容器并发、高低显存压力与启动修复结果；已注明用户原意是同题多 rollout，单容器组件实验不代表该目标完成，附范围纠正和 CPU 教学示例。
 
 - [Science GPU 压力与 Router 训练对照](env-worker-deep-dive/science-gpu-pressure-ab.md) —— 最新按指定旧提交对照四题各四条、OOM 补采：两组完成，OOM 7/0，但 Router 采样慢 64.3%；保留历史结果、HTTP 修复、等完成量图表及整任务租约空闲占用证据。
 
