@@ -1,6 +1,6 @@
 # EnvRouter 低负载配对实验与 Gate A/B 设计审视
 
-> **最新修复状态（2026-10-27）**：主工作区已补迁移暂停异常恢复、逐卡显存预算、容器集合限额和健康派发。本轮继续补物理资源遥测、负载派发偏好，以及清理确认前保留待办记录，见[第 13 节](#13-物理资源遥测与清理交接确认)。可信进程归属由另一进程处理，本轮不修改该逻辑。第 1 至 11 节保留原审计，第 12 节是上一轮修复及 CPU 验证边界。代码尚未提交、推送、合并或部署。
+> **最新修复状态（2026-10-27）**：资源遥测和清理交接见[第 13 节](#13-物理资源遥测与清理交接确认)。关于“重派发尚未完成”，应准确理解为同请求跨 worker 转移协议未完成，框架早已有同 worker 重试和整组补采。新的[Worker 恢复专题](../knowledge/worker-retry-and-redispatch.md)核对了固定 baseline 中的实现，并记录本轮执行监督、熔断修复和真实 Ray/Docker 故障验证。这次 worker 改动尚未提交、推送或合并。第 1 至 13 节保留对应阶段的审计与实验条件。
 
 > **核心结论**：当前“会话资源准入 + 命令阶段 GPU 预算 + 确认归还”的方向适合受控的多轮任务。Gate A 的预算拦截、共享准入和高压力下减少失败已有真实证据。旧 Gate B 是基于遥测的软节流，没有证明它能保证计算互斥或奖励归因。当前命令模式主动跳过旧 Gate B，不能将这条新路径的收益记到 Gate B 上。
 >
@@ -67,7 +67,7 @@
 
 | 图中部分 | 调用、职责与源码 |
 |---|---|
-| 1 | [get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L947) 根据容量快照选择 worker，实际准入仍须经过账本。配对小实验直接调用 runner，没有测跨节点放置 |
+| 1 | [get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L984) 根据容量快照选择 worker，实际准入仍须经过账本。配对小实验直接调用 runner，没有测跨节点放置 |
 | 2 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L258)、[Ledger.try_admit](../../../psrl/workers/env_service/ledger.py#L105)：检查可承载资源、登记会话 |
 | 3 | [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L98)：生成设备映射，选择 ManagedDockerEnvironment，再交给 Harbor |
 | B | [SessionRouter 响应出口](../../../psrl/workers/gen/session_router.py#L444) 调用 [_wait_for_gpu_idle](../../../psrl/workers/gen/session_router.py#L120)。[runner 的模式分支](../../../examples/sciaccel_rl/runner.py#L154) 对命令模式与模型借卡模式传入空绑定地址，跳过此 Gate |
@@ -197,7 +197,7 @@ B 也读取到空闲 → 放行 B 的回复
 
 | 步骤 | 图中编号与函数 | 输入、输出或状态变化 |
 |---|---|---|
-| 选择 worker | [1] [get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L947) | 输入一批任务和容量快照，输出 worker 对任务的分组，本轮实验直接从下一步进入 |
+| 选择 worker | [1] [get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L984) | 输入一批任务和容量快照，输出 worker 对任务的分组，本轮实验直接从下一步进入 |
 | 任务进入与会话准入 | [2] [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L258) → [try_admit](../../../psrl/workers/env_service/ledger.py#L105) | 输入资源声明、节点约束，输出等待或租约，登记持久 CPU、主存和容器预算 |
 | 环境配置与创建 | [3] [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L98) | 租约变为设备映射、环境子类和 Harbor 参数 |
 | episode 分支的回复出口 | [B] [_wait_for_gpu_idle](../../../psrl/workers/gen/session_router.py#L120) | 遥测用于延迟回复，不授予独占计算权，命令模式跳过此分支 |
@@ -312,7 +312,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/simulate_gate_
 | Phase 2：GPU 映射、驱动挂载、借还 | **实现存在，部分真实验证** | 动态 overlay、设备身份核对和命令归还已验证。vLLM 同卡借还的历史小实验通过，但绕过 NIXL 的推理适配器不是完整训练权重同步验收，见第 3 节。当前 command 与模型借卡不能组合，逐卡需求和外部 GPU 所有权边界仍见第 5 节 |
 | Phase 2：Gate B 与 GPU 活动归因 | **软节流已实现，归因目标未完成** | Gate B 有 CPU 测试、实机等待与远端查询证据，但没有逐进程归因，以及原稿指定的后台邻居、第二任务、完整奖励对照验收。命令模式跳过旧 Gate B，不能用 command 的吞吐结果签收此目标 |
 | Phase 3：负载感知放置 | **基础容量派发已实现，完整目标未完成** | [EnvAwareDispatcher.assign](../../../psrl/workers/env_service/placement.py#L84)按 CPU/GPU 类型、空闲槽位及快照派发，最终再准入。尚未按实际编译 CPU 压力、具体每条任务的 CPU／主存／逐卡显存需求精确放置，整组采样还共用一个放置决策 |
-| Phase 3：坏放置后的有界重派发 | **通用恢复基础存在，环境专用闭环未完成** | [manager](../../../psrl/workers/agent_loop/manager.py#L629)已有失败组补采与连续失败熔断，但这不是“同一环境任务识别坏节点，清理后按明确尝试上限换到另一健康节点”。不应写成没有任何重试，也不能写成自动重派发已完整实现 |
+| Phase 3：坏放置后的有界重派发 | **通用恢复基础存在，环境专用闭环未完成** | [manager](../../../psrl/workers/agent_loop/manager.py#L630)已有失败组补采与连续失败熔断，但这不是“同一环境任务识别坏节点，清理后按明确尝试上限换到另一健康节点”。不应写成没有任何重试，也不能写成自动重派发已完整实现 |
 | Phase 4：容器复用等延期功能 | **尚未实现，但原稿已明确延期** | 节点服务预热不等于跨任务保留并复用旧容器，主容器仍按任务创建和清理 |
 
 **B1 到 B8 也不能笼统标记全修复。**
@@ -324,7 +324,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/simulate_gate_
 | B4 进程内信号量 | ON 绕过本地信号量并使用共享账本，OFF 分支保留原有路径，见 [agent_loop](../../../examples/sciaccel_rl/agent_loop.py#L394) |
 | B5 独立 verifier 泄漏、B6 无归属标签 | 已有 [环境标签覆盖](../../../psrl/workers/env_service/docker.py#L158)与 [runner 收尾](../../../examples/sciaccel_rl/runner.py#L550)，历史故障回收通过。标签覆盖不等于 sidecar 等整个集合都有独立的资源硬限制，也不保证所有 Docker 永久故障均能自动恢复 |
 | B7 暂停路由后异常未恢复 | **原函数仍未彻底修复**。[check_and_migrate](../../../psrl/workers/gen/rollout_coordination/sync_and_migrate/sync_and_migrate_mixin.py#L290)暂停后执行 ABORT 和等待，恢复操作仍未放进 `finally`。中途抛异常可能跳过恢复，这是当前源码风险，本次没有在实机注入该故障。新的借卡协议有自己的保护，不能替代修复这个函数 |
-| B8 默认只尝试一次 | [默认 retry_limit](../../../psrl/trainer/config/rollout/psrl_rollout.yaml#L154)仍为 1。[worker 重试循环](../../../psrl/workers/agent_loop/worker.py#L391)与 manager 补采存在，但实验代理的受控重试不等于默认 science 配方已启用同样策略 |
+| B8 默认只尝试一次 | [默认 retry_limit](../../../psrl/trainer/config/rollout/psrl_rollout.yaml#L154)仍为 1。[worker 重试循环](../../../psrl/workers/agent_loop/worker.py#L362)与 manager 补采存在，但实验代理的受控重试不等于默认 science 配方已启用同样策略 |
 
 **实现方向发生过变化。** 原稿将每次 exec 加锁和同卡并发计算列为范围外，因为 shell 可以遗留后台计算。当前 command 增加了设备撤权与物理归还确认，才允许在合作式前台阶段之间复用，并允许预算内多个命令并发。它不是只补一把锁，也没有解决任意后台任务的自动暂停恢复。原稿“Router 不参与 exec 路径”现在也应区分控制面与数据面：命令需要请求 Router 授权，但命令输出不经过 Router 转发。
 
@@ -429,7 +429,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/audit_science_
 
 | 编号 | 当前函数与职责 |
 |---|---|
-| 1 | [EnvAwareDispatcher.assign](../../../psrl/workers/env_service/placement.py#L84)、[get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L947)：按组派发，读取空闲槽位和 GPU 类型提示 |
+| 1 | [EnvAwareDispatcher.assign](../../../psrl/workers/env_service/placement.py#L84)、[get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L984)：按组派发，读取空闲槽位和 GPU 类型提示 |
 | 2 | [Ledger.try_admit](../../../psrl/workers/env_service/ledger.py#L105)、[_reap](../../../psrl/workers/env_service/ledger.py#L240)、[RayEnvRouter.try_admit](../../../psrl/workers/env_service/router.py#L381)：资源账本、租约过期与物理清理门槛 |
 | 3 | [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L99)、[_docker_compose_paths](../../../psrl/workers/env_service/docker.py#L276)：动态映射与整组服务归属标签 |
 | 4 | [TruncatingTerminus2._execute_commands](../../../examples/sciaccel_rl/agent.py#L104)、[dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py#L28)、[GpuExecutionBackend.execute](../../../psrl/workers/env_service/gpu_execution.py#L102)：显式作业、队列与生命周期 |
@@ -533,7 +533,7 @@ verifier 是检查答案、执行测试和评分的组件。在独立 verifier �
 
 | 编号 | 对应实现 |
 |---|---|
-| 2 | [get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L973)选择运行节点 |
+| 2 | [get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L984)选择运行节点 |
 | 3/4 | [节点检查](../../../psrl/workers/env_service/router.py#L336)、[准入检查](../../../psrl/workers/env_service/ledger.py#L425)决定是否允许启动 |
 | 5 | [完整容器预算](../../../psrl/workers/env_service/container_budget.py#L7)、[最终容器限制](../../../psrl/workers/env_service/docker.py#L280)覆盖主服务与附属服务 |
 | 7 | [RoutingPauseController](../../../psrl/workers/gen/rollout_coordination/routing_pause.py#L7)记录并释放暂停持有者 |
@@ -588,7 +588,7 @@ verifier 是检查答案、执行测试和评分的组件。在独立 verifier �
 | 图中部分 | 职责与真实源码 |
 |---|---|
 | 1 | [harbor_resources.py：demand_from_task](../../../psrl/workers/env_service/harbor_resources.py#L22)统一解析任务与 verifier 需求，供 manager 与 runner 使用 |
-| 2 | [manager.py：get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L973)统计组内条数，[placement.py：_assign_resources](../../../psrl/workers/env_service/placement.py#L184)按资源形状放置 |
+| 2 | [manager.py：get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L984)统计组内条数，[placement.py：_assign_resources](../../../psrl/workers/env_service/placement.py#L184)按资源形状放置 |
 | 3 | [router.py：_check_node](../../../psrl/workers/env_service/router.py#L334)检查节点并保留清理状态，[try_admit](../../../psrl/workers/env_service/router.py#L444)在确认后准入 |
 | 4 | [ledger.py：_could_ever_fit](../../../psrl/workers/env_service/ledger.py#L396)、[_fits_now](../../../psrl/workers/env_service/ledger.py#L425)区分永远放不下与当前需等待 |
 | 5 | [runner.py](../../../examples/sciaccel_rl/runner.py#L149)把预算放入 Harbor 环境参数，[docker.py](../../../psrl/workers/env_service/docker.py#L280)为最终全部 Compose 服务施加限制 |

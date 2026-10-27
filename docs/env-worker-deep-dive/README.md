@@ -12,7 +12,7 @@
 
 | 想了解什么 | 入口 | 内容边界 |
 |---|---|---|
-| 向别人介绍实现进度、收益与规划 | [Env 状态与路线图](experiments/env-status-and-roadmap.md) | 可单文件转发，图示、条件和结果数据均在正文中，明确实现成熟度与后续验收标准。 |
+| 向别人介绍实现进度、收益与规划 | [Env 状态与路线图](experiments/env-status-and-roadmap.md) | 可单文件转发，以结构图和表格对比固定 baseline、当前实现及未来策略，实验条件、数据和边界均在正文中。 |
 | 现在怎样工作，接口怎样使用 | [知识与实现](knowledge/README.md) | 流程、源码、配置、接入与能力边界。索引另列早期版本讲解。 |
 | 测过什么，结果如何，哪里失败 | [实验与验证](experiments/README.md) | 训练对照、组件验证、性能分析、故障与未验证项。 |
 | 从概念出发理解为什么这样设计 | [EnvWorker 设计讲解](../psrl/psrl-env-service-envworker-design.md) | 问题背景与设计动机，阅读时区分提案和实现。 |

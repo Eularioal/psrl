@@ -13,12 +13,14 @@
 | 文档 | 阅读用途与边界 |
 |---|---|
 | [EnvRouter 当前流程与优化总览](env-router-current-flow.md) | 首读入口。串联任务放置、命令借还、预热和清理，区分现有流程与通用接入提案。 |
+| [Worker 重试、整组补采与重派发](worker-retry-and-redispatch.md) | 区分已有恢复和同请求跨 worker 转移，解释执行监督、熔断修复与真实进程死亡实验。 |
 | [GPU 统一执行后端](unified-gpu-execution.md) | episode 与 command 的提交、等待、取消和收尾，附组件验证及原生 science 验收边界。 |
 | [GPU 作业入口与任务遥测](gpu-jobs-and-task-telemetry.md) | 作业状态、资源归属和部署条件。同容器并发部分为方案与 CPU 模型，未作为生产能力验收。 |
 | [不用 procfs 标识进程](process-identity-without-procfs.md) | procfs 与 eBPF 的通俗比较、可选统一归属后端及双容器实测，也解释 SSH 容器层次和 pidfd 生命周期。 |
 | [命令阶段配额](command-gpu-reservations.md) | 保留容器状态、归还 GPU 预算、后台归还与规划重叠，附实测和跨节点调度提案。 |
 | [GPU 显存准入与未兑现预约](gpu-memory-admission.md) | 实测占用与逐任务预约余量如何共同参与准入，附故障修复和验证边界。 |
 | [Docker 借用 rollout GPU](rollout-gpu-lending.md) | vLLM 睡眠、Docker 借卡与确认归还，区分当前实现、早期设计和配套实验。 |
+| [vLLM 与环境同卡共享策略](vllm-env-opportunistic-sharing.md) | 独立 GPU 优先的实现与真实 CUDA 验证。进一步分析训推余量、依赖、计算干扰和空窗卸载，明确未实现的共享策略。 |
 
 ## 基础概念与接入
 

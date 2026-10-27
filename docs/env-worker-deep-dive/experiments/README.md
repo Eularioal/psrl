@@ -32,6 +32,7 @@
 
 | 报告 | 验证对象与边界 |
 |---|---|
+| [Worker 重试与执行监督](../knowledge/worker-retry-and-redispatch.md#7-可运行验证与-results) | 真实 Ray worker 死亡、训练等待方错误传播和 Harbor 容器回收，不是完整 science 训练。 |
 | [procfs 挂载障碍与实验处理](host-proc-blocker.md) | 现场 GPU 进程归属障碍、观察模式配置及未验证风险。 |
 | [Env Service 设计与修复验证](../env-service-verification/README.md) | 早期进程、Docker、跨节点与训练功能验证，按报告中注明的版本和范围阅读。 |
 | [AIRS-Bench 修复与小实验](../airs-bench-audit/fixes-and-results.md) | 评分隔离、shell 超时、资源回收，以及 MLGym 回放和 Docker 验证。 |
