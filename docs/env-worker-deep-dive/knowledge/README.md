@@ -20,7 +20,7 @@
 | [命令阶段配额](command-gpu-reservations.md) | 保留容器状态、归还 GPU 预算、后台归还与规划重叠，附实测和跨节点调度提案。 |
 | [GPU 显存准入与未兑现预约](gpu-memory-admission.md) | 实测占用与逐任务预约余量如何共同参与准入，附故障修复和验证边界。 |
 | [Docker 借用 rollout GPU](rollout-gpu-lending.md) | vLLM 睡眠、Docker 借卡与确认归还，区分当前实现、早期设计和配套实验。 |
-| [vLLM 与环境同卡共享策略](vllm-env-opportunistic-sharing.md) | 独立 GPU 优先的实现与真实 CUDA 验证。进一步分析训推余量、依赖、计算干扰和空窗卸载，明确未实现的共享策略。 |
+| [vLLM 与环境同卡共享策略](vllm-env-opportunistic-sharing.md) | 独立 GPU 优先、常驻 command 共享及已睡眠窗口协议，解释 KV 上限和余量计算，并区分功能验证与性能收益。 |
 
 ## 基础概念与接入
 

@@ -12,7 +12,8 @@
 
 | 想了解什么 | 入口 | 内容边界 |
 |---|---|---|
-| 向别人介绍实现进度、收益与规划 | [Env 状态与路线图](experiments/env-status-and-roadmap.md) | 可单文件转发，以结构图和表格对比固定 baseline、当前实现及未来策略，实验条件、数据和边界均在正文中。 |
+| 快速介绍当前设计、收益与重点规划 | [Env 设计与收益简版](experiments/env-design-and-results-brief.md) | 可单文件转发，保留结构图、baseline 对照和必要实验边界。 |
+| 详细了解实现进度、收益与规划 | [Env 状态与路线图](experiments/env-status-and-roadmap.md) | 详细版，以结构图和表格对比固定 baseline、当前实现及未来策略，实验条件、数据和边界均在正文中。 |
 | 现在怎样工作，接口怎样使用 | [知识与实现](knowledge/README.md) | 流程、源码、配置、接入与能力边界。索引另列早期版本讲解。 |
 | 测过什么，结果如何，哪里失败 | [实验与验证](experiments/README.md) | 训练对照、组件验证、性能分析、故障与未验证项。 |
 | 从概念出发理解为什么这样设计 | [EnvWorker 设计讲解](../psrl/psrl-env-service-envworker-design.md) | 问题背景与设计动机，阅读时区分提案和实现。 |
@@ -21,7 +22,7 @@
 
 ## 推荐阅读顺序
 
-项目交流可先读[实现、实测收益与后续规划](experiments/env-status-and-roadmap.md)，再按下面的路径查实现细节。
+项目交流先读[设计与收益简版](experiments/env-design-and-results-brief.md)，需要展开时读[详细版](experiments/env-status-and-roadmap.md)，再按下面的路径查实现细节。
 
 1. [当前流程总览](knowledge/env-router-current-flow.md)：先串联任务放置、命令执行、配额归还与清理。
 2. [统一执行后端](knowledge/unified-gpu-execution.md)和[GPU 作业与遥测](knowledge/gpu-jobs-and-task-telemetry.md)：理解实际接口、状态与部署条件。

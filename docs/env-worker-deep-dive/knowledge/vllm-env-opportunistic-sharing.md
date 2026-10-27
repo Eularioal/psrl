@@ -2,7 +2,7 @@
 
 > **核心结论**：以整批任务完成时间为目标，先使用未被训推占用的其他 GPU，包括同机的独立 GPU。只有这些资源紧张时，才考虑 vLLM 正常服务时的安全余量。再放不下且有足够长的真实空闲窗口时，才评估睡眠借卡。不能把设备都已分配给训推理解成每张卡都没有物理余量，也不能把物理余量当作不影响模型的保证。
 >
-> 本文是 2026-10-27 的方案分析及阶段实现记录。设备级优先级已接入 worker 放置、派发及准入，CPU 回归与真实 CUDA 验证见第 9 节。活跃模型的统一峰值预约、空窗预测与按总时长决策仍未接入生产，没有同卡训练实测。
+> 本文是 2026-10-27 的方案分析及阶段实现记录。设备级优先级已接入 worker 放置、派发及准入，CPU 回归与真实 CUDA 验证见第 9 节。显式共享 command 已加入推理余量与模型控制门禁，并支持已睡眠窗口，见第 10 节。统一训练峰值预约、空窗预测与按总时长决策仍未实现，没有同卡训练性能实测。
 
 ## 目录
 
@@ -15,6 +15,7 @@
 - [7. 跟着图读源码](#7-跟着图读源码)
 - [8. 可运行教学模拟与验证边界](#8-可运行教学模拟与验证边界)
 - [9. 独立 GPU 优先的实现与实机验证](#9-独立-gpu-优先的实现与实机验证)
+- [10. 常驻共享、KV 上限与已睡眠窗口](#10-常驻共享kv-上限与已睡眠窗口)
 
 ## 1. 全局关系与已有源码
 
@@ -50,10 +51,10 @@
 |---|---|---|
 | 1 | [EngineStats](../../../psrl/workers/gen/stats_collector.py#L21)、[ModelTurnRecord](../../../psrl/utils/profiling/records.py#L140) | 有引擎统计和轮次记录，不等于已有跨模型与 Docker 的完整依赖图及未来空窗预测 |
 | 2 | [accounted_gpu_memory_mb](../../../psrl/workers/env_service/gpu_memory.py#L9)、[账本有效占用](../../../psrl/workers/env_service/ledger.py#L405) | 有实测加未兑现预约的算法，尚未把活跃 vLLM 的未来峰值纳入同一预约协议，也没有总完成时间优化器 |
-| 3 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L50)、[命令归还](../../../psrl/workers/env_service/command_gpu_node.py#L207) | 已有命令预算、排队和设备权限，当前按独立环境卡设计，不提供模型性能隔离 |
-| 4 | [协调器借卡入口](../../../psrl/workers/gen/rollout_coordination/coordinator.py#L272)、[prepare_env_gpu](../../../psrl/workers/gen/gpu_handoff.py#L64) | 已有生成准入关闭、等待在途请求、一级睡眠。尚无“空窗足够且值得借”的前置决策 |
+| 3 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L58)、[命令归还](../../../psrl/workers/env_service/command_gpu_node.py#L207) | 已有命令预算、排队和设备权限，当前按独立环境卡设计，不提供模型性能隔离 |
+| 4 | [协调器借卡入口](../../../psrl/workers/gen/rollout_coordination/coordinator.py#L272)、[prepare_env_gpu](../../../psrl/workers/gen/gpu_handoff.py#L105) | 已有生成准入关闭、等待在途请求、一级睡眠。尚无“空窗足够且值得借”的前置决策 |
 | 5 | [GpuLendingBinding._enter_env](../../../psrl/workers/env_service/lending.py#L63) | 睡眠后检查逐卡容量并恢复容器，当前仅一个借卡会话 |
-| 6 | [物理归还检查](../../../psrl/workers/env_service/lending_node.py#L87)、[模型恢复](../../../psrl/workers/gen/gpu_handoff.py#L92)、[最终清理](../../../psrl/workers/env_service/lending.py#L98) | 有执行机制，尚无多命令借用者的统一撤回与提前唤醒策略 |
+| 6 | [物理归还检查](../../../psrl/workers/env_service/lending_node.py#L87)、[模型恢复](../../../psrl/workers/gen/gpu_handoff.py#L133)、[最终清理](../../../psrl/workers/env_service/lending.py#L98) | 旧互斥执行机制，预测性提前归还仍待实现。新共享路径见第 10 节 |
 
 以上源码如果有理解上的问题，可以按编号继续追问。
 
@@ -163,7 +164,7 @@ offload 在这里指把模型 GPU 状态转移到主机内存以释放设备容�
 
 当前 `GpuLendingBinding` 是环境请求驱动的 ENV / MODEL 切换，没有先证明模型有长空窗。`prepare_env_gpu` 等待在途生成而不是强制杀掉它，但关闭准入后仍可能推迟新的模型请求。已有互斥交接保障可以保留为第二层的执行机制，不宜成为所有同卡任务的默认策略。
 
-当前 command 账本能计算外部占用，但其共享单位按独立环境 GPU 设计，没有登记 vLLM 的峰值承诺、生命周期变化与性能约束。将推理卡直接填入普通 unit，不等于完成受协调的同卡共享。配置中的 `rollout_replica_rank + command` 也仍然被拒绝，见 [EnvUnit 校验](../../../psrl/workers/env_service/types.py#L67)。
+普通 command unit 仍不能冒充受协调的模型共享。显式 `shared_rollout_replica_rank` 路径已经接入推理增长余量和生命周期门禁，详见第 10 节，性能收益仍需专门对照。旧的互斥借卡配置 `rollout_replica_rank + command` 仍被拒绝，见 [EnvUnit 校验](../../../psrl/workers/env_service/types.py#L67)。
 
 | 顺序 | 建议实现 | 最小验收问题 |
 |---|---|---|
@@ -173,7 +174,7 @@ offload 在这里指把模型 GPU 状态转移到主机内存以释放设备容�
 
 第一阶段的重点不是实现预测模型，而是完成容量、实际归还和性能观测。后续再决定是否需要复杂的代价估计器。不要为验证共存直接改弱模型缓存配置或替换固定 baseline 后宣称提速，模型配置变化本身需要单独对照。
 
-真实验证可用固定少量模型请求和环境 GPU 命令，先比较模型优先串行与余量共享，再另测长空窗。记录固定工作量、模型响应、环境完成时间、总完成时间、OOM、offload / wake / 清理时间和物理释放。达到问题的证据边界后停止，不需要先跑完整训练。本次未启动这些实验。若继续做历史 science ON/OFF 对照，OFF 仍固定为 `0eeead861ffafed6bf31c962d259fd847775dcf9`，不能把同版本策略对照改称该 baseline。
+真实验证可用固定少量模型请求和环境 GPU 命令，先比较模型优先串行与余量共享，再另测长空窗。记录固定工作量、模型响应、环境完成时间、总完成时间、OOM、offload / wake / 清理时间和物理释放。达到问题的证据边界后停止，不需要先跑完整训练。第 10 节先验证真实共存和物理归还，尚未进行该性能对照。若继续做历史 science ON/OFF 对照，OFF 仍固定为 `0eeead861ffafed6bf31c962d259fd847775dcf9`，不能把同版本策略对照改称该 baseline。
 
 ## 7. 跟着图读源码
 
@@ -182,12 +183,12 @@ offload 在这里指把模型 GPU 状态转移到主机内存以释放设备容�
 | 步骤 | 编号与函数 | 输入、输出或状态变化 |
 |---|---|---|
 | 获取信号 | 1，[EngineStats](../../../psrl/workers/gen/stats_collector.py#L21) | 已有引擎队列等状态，仍需加入环境依赖和空闲窗口信号 |
-| 计算容量 | 2，[accounted_gpu_memory_mb](../../../psrl/workers/env_service/gpu_memory.py#L9) | 实测总量加每个预约未兑现部分，当前模型预约接线缺失 |
-| 授权命令 | 3，[acquire](../../../psrl/workers/env_service/command_gpu.py#L50) | 队列、容量及遥测合格后授权，现有代码不会检查本方案的模型干扰目标 |
+| 计算容量 | 2，[accounted_gpu_memory_mb](../../../psrl/workers/env_service/gpu_memory.py#L9) | 实测总量加每个预约未兑现部分，显式共享路径另外加入模型增长余量，全阶段统一 owner 预算仍未完成 |
+| 授权命令 | 3，[acquire](../../../psrl/workers/env_service/command_gpu.py#L58) | 队列、容量及遥测合格后授权，现有代码不会检查本方案的模型干扰目标 |
 | 归还命令 | 3，[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L207) | 禁新设备打开，检查旧句柄与 GPU 工作，确认后才释放预算 |
 | 判断长空窗 | 2 → 4，无生产函数 | 本方案新增决策点，不把已有吞吐估计器冒充空窗预测器 |
-| 借出整副本 | 4 → 5，[prepare_env_gpu](../../../psrl/workers/gen/gpu_handoff.py#L64)、[_enter_env](../../../psrl/workers/env_service/lending.py#L63) | 关闭生成准入、睡眠、采集基线与核对容量，随后恢复容器 |
-| 恢复模型 | 6，[_freeze_gpu_lease](../../../psrl/workers/env_service/lending_node.py#L87)、[return_env_gpu](../../../psrl/workers/gen/gpu_handoff.py#L92) | 当前检查本租约归还后唤醒，未来多命令聚合撤回仍缺失 |
+| 借出整副本 | 4 → 5，[prepare_env_gpu](../../../psrl/workers/gen/gpu_handoff.py#L105)、[_enter_env](../../../psrl/workers/env_service/lending.py#L63) | 关闭生成准入、睡眠、采集基线与核对容量，随后恢复容器 |
+| 恢复模型 | 6，[_freeze_gpu_lease](../../../psrl/workers/env_service/lending_node.py#L87)、[return_env_gpu](../../../psrl/workers/gen/gpu_handoff.py#L133) | 旧互斥路径检查本租约归还后唤醒，共享路径另用命令票据聚合控制 |
 | 会话结束 | 6，[_finish](../../../psrl/workers/env_service/lending.py#L98) | 清理容器、确认归还、释放预约，失败时保持隔离 |
 
 ## 8. 可运行教学模拟与验证边界
@@ -240,11 +241,11 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/vllm_env_shari
 
 | 编号 | 函数与源码 | 状态变化 |
 |---|---|---|
-| A | [gpu_placements_from_worker_groups](../../../psrl/workers/env_service/node_policy.py#L274)、[Trainer 发布入口](../../../psrl/trainer/ppo/ray_trainer.py#L608) | 核对实际节点与所有已分配 GPU，不能只记录一个 worker 的首张卡 |
+| A | [gpu_placements_from_worker_groups](../../../psrl/workers/env_service/node_policy.py#L278)、[Trainer 发布入口](../../../psrl/trainer/ppo/ray_trainer.py#L608) | 核对实际节点与所有已分配 GPU，不能只记录一个 worker 的首张卡 |
 | B | [overlaps_train_rollout / tier](../../../psrl/workers/env_service/node_policy.py#L89)、[发布归属](../../../psrl/workers/env_service/router.py#L134) | 精确归属优先，缺失时按训推节点保守判断。有活动租约时拒绝替换归属表 |
 | C | [节点容量](../../../psrl/workers/env_service/ledger.py#L304)、[_assign_resources](../../../psrl/workers/env_service/placement.py#L188) | 优先级先于 CPU 负载和轮询顺序。同题轨迹仍按组放置，临时扣除本批已派出的容量 |
 | D | [Ray Router.try_admit](../../../psrl/workers/env_service/router.py#L537)、[账本选择](../../../psrl/workers/env_service/ledger.py#L106) | 所有健康候选共同参与选择，不按节点遍历顺序抢先批准。遥测 URL 与实际选择节点一致 |
-| E | [command 准入](../../../psrl/workers/env_service/command_gpu.py#L50)、[归还检查](../../../psrl/workers/env_service/command_gpu_node.py#L207) | 仍经真实命令预约和设备授权。容器获准排队不等于 GPU 已授权 |
+| E | [command 准入](../../../psrl/workers/env_service/command_gpu.py#L58)、[归还检查](../../../psrl/workers/env_service/command_gpu_node.py#L207) | 仍经真实命令预约和设备授权。容器获准排队不等于 GPU 已授权 |
 | F | [Router.release](../../../psrl/workers/env_service/router.py#L220) | 按原有物理归还协议收尾，再释放租约 |
 
 跟着图读源码：先从 A 的运行时 GPU 清单进入 B，得到每个 unit 的优先级，再看 C 如何把实际需求和整组轨迹数量用于放置。D 是最终准入，必须再次看当前容量，不能把 C 的快照当作已保留资源。随后沿 E 进入实际命令授权与归还，最后走 F。不同 worker 和环境命令可以并发，C 与 D 之间容量可能变化，因此该偏好不是跨所有会话的原子最优调度。以上源码可以继续按编号追问。
@@ -280,3 +281,142 @@ timeout -s INT -k 30s 360s python \
 ```
 
 原始[成功证据](../env-service-verification/results/gpu-preference-20261027-r2/run/evidence.json)、[首轮失败](../env-service-verification/results/gpu-preference-20261027/run/evidence.json)保留了代码哈希、依赖来源、设备身份、选择结果与清理数据。[独立收尾复查](../env-service-verification/results/gpu-preference-20261027-r2/physical-release.json)确认所属容器、网络、隔离 Ray 进程及 GPU 计算进程均已清空，Env Service 源码哈希与执行时一致。CPU 回归为 Env Service 全目录 309 项通过，之后新增全局 Router 选择与 URL 对应检查，定向 10 项通过，两次统计有重叠。跨两台真实机器的回退、完整 Trainer 启动、活跃 vLLM/训练共存和吞吐收益不在本次实机覆盖范围。
+
+
+## 10. 常驻共享、KV 上限与已睡眠窗口
+
+本节描述显式 `shared_rollout_replica_rank` 路径。前文第 1 节的预测决策层仍是提案，下面是已接入的执行链。共享不是让环境获得模型的缓存，而是在同一物理 GPU 上另外分配自己的显存。
+
+```text
+[1] Trainer 核对完整推理副本的 GPU，排除其他模型角色重叠
+    → [2] worker 报告推理临时内存 profile，Router 校验用户预留余量
+    → [3] 环境 command 请求，先取得模型状态票据
+         ├─ 模型醒着 → 不暂停生成，保留完整推理余量
+         ├─ 模型已睡 → 不唤醒、不额外 sleep，保留安全余量
+         └─ 控制操作已排队或正在执行 → 本次等待
+    → [4] 新鲜逐卡遥测 + 环境未兑现预约 + 模型余量，足够才打开设备权限
+    → [5] Docker 执行 CUDA，醒着的 vLLM 可同时生成
+    → [6] 关闭设备权限，确认旧 GPU 句柄和进程已退出
+    → 释放模型票据，允许排队的唤醒或权重更新继续
+
+[5] 超时分支 → 删除本租约的容器 → 物理归还确认 → 释放票据
+    任一清理确认失败 → 隔离该 unit，保留模型门禁，不冒险唤醒
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 图中编号 | 职责与函数 | 源码 |
+|---|---|---|
+| 1 | `_init_gpu_lending` 核对设备及角色 | [ray_trainer.py](../../../psrl/trainer/ppo/ray_trainer.py#L608) |
+| 2 | `env_sharing_profile` 导出瞬时容量测量，`validate_env_sharing` 校验下限 | [vllm_extension.py](../../../psrl/workers/gen/vllm_extension.py#L29)、[gpu_handoff.py](../../../psrl/workers/gen/gpu_handoff.py#L66) |
+| 3 | `acquire_env_command` 原子检查模型状态和控制队列 | [gpu_handoff.py](../../../psrl/workers/gen/gpu_handoff.py#L76) |
+| 4 | `_grant` 使用遥测、预约及逐卡余量 | [command_gpu.py](../../../psrl/workers/env_service/command_gpu.py#L106) |
+| 5 | 设备授权和环境命令执行 | [command_gpu_node.py](../../../psrl/workers/env_service/command_gpu_node.py#L192)、[真实实验脚本](../env-service-verification/scripts/real_gpu_sharing.py) |
+| 6 | `_return` 先物理归还，`release_env_command` 再放开控制 | [command_gpu.py](../../../psrl/workers/env_service/command_gpu.py#L215)、[gpu_handoff.py](../../../psrl/workers/gen/gpu_handoff.py#L94) |
+| 超时分支 | `_expire_shared` 删除所属容器，保留未确认的隔离状态 | [command_gpu.py](../../../psrl/workers/env_service/command_gpu.py#L171) |
+
+这些代码如果有理解上的问题，可以随时追问。
+
+**常驻占用为什么不等于峰值。** GPU 中同时存在几类东西：模型权重、KV 缓存池、运算临时张量、CUDA 图和第三方算子工作区。KV 是注意力机制保存的键和值，用来避免每生成一个 token 都重新计算完整前文。临时张量则是本次推理运算产生、之后可以释放的中间结果。启动后空闲时测到的占用，未必包含下一次长输入计算所需的全部临时空间。
+
+本环境核对的版本为 `0.22.1.dev0+g0b3ba88f1.d20260729.cu128`。安装来源是外置 editable 依赖，不在本仓库中。下面给出该版本的文件、函数及核对位置，不能把网上最新版本的新功能直接当成本机能力：
+
+| 依赖源码位置 | 实际行为 |
+|---|---|
+| `vllm/v1/worker/gpu_worker.py:433`，`determine_available_memory` | 自动模式用 dummy forward 测量非 KV 占用，从计划内存中扣除权重、激活峰值等，决定 KV 池容量 |
+| 同文件 `:445` | 显式设置 `kv_cache_memory_bytes` 时跳过该内存测量，不遵循 `gpu_memory_utilization` 的自动 KV 规划 |
+| 同文件 `:506` | 保存 `non_torch_memory`、`peak_activation_memory` 和图内存估计，作为本次共享校验输入 |
+| `vllm/v1/worker/gpu_model_runner.py:6926`，`_allocate_kv_cache_tensors` | 根据已经确定的大小创建 GPU tensor，物理缓存池在初始化时分配 |
+| `vllm/v1/core/sched/scheduler.py:933`，`_preempt_request` | 释放被抢占请求的 KV 块，将已计算 token 计数清零并放回等待队列，后续重新计算 |
+
+用已激活的运行环境执行 `python -c "import importlib.util; print(importlib.util.find_spec('vllm').origin)"` 可以定位实际依赖，再核对上述文件。这里的依赖行号对应本轮读取版本，不承诺升级后不变。一般机制也可对照[官方优化说明](https://docs.vllm.ai/en/stable/configuration/optimization/#preemption)与[官方缓存参数](https://docs.vllm.ai/en/stable/configuration/engine_args/#cacheconfig)。
+
+**KV 增长究竟会发生什么。** 教学假设：物理 KV 池预先分配了 20 GiB，初始有效 token 只占相当于 2 GiB 的块。生成变长后，逻辑使用量从 2 增到 15 GiB，通常仍在这 20 GiB 物理池内，没有再向 GPU 申请 13 GiB。剩余块不够时，当前 V1 的普通路径优先等待或抢占重算。`recompute` 就是释放某个请求的缓存，把它暂时退回队列，以后重新算前缀来恢复缓存，代价是额外计算和延迟。它不是默认自动扩大池，也不是默认自动换出到 CPU。
+
+`offload` 表示把数据搬到 CPU 等其他存储，需要显式的相关配置或缓存连接器支持。模型 sleep 的权重卸载与 KV 压力下的请求重算也是两个不同机制。更重要的是：如果 Docker 把推理临时张量所需的物理显存占掉，后续 PyTorch/CUDA 分配仍可能直接 OOM。重算机制管理的是缓存块，不能把跨进程显存不足自动变成可恢复排队。
+
+**本次实际采用的准入公式。** 对每张卡分别计算，单位使用 MiB：
+
+```text
+已承诺占用 = 实测总占用
+           + Σ max(0, 已有环境承诺 - 已核验归属的环境实占)
+
+醒着时：已承诺占用 + 新环境需求 + model_headroom_mb ≤ 可用预算
+睡眠时：已承诺占用 + 新环境需求 + safety_margin_mb ≤ 可用预算
+可用预算 = min(unit 配置容量, 设备物理容量)
+```
+
+多卡情况下，现有实现不能精确归属的部分继续保守全额计入预约，不把多张卡平均后的一张富余用于掩盖另一张不足。模型余量每张卡只留一份，多个环境命令不会重复扣掉多份完整模型余量。
+
+`model_headroom_mb` 是在**当前物理占用之外**保留的增长空间，不是把模型常驻显存扣掉后得到的环境容量，也不是模型总显存硬上限。绑定时要求它至少覆盖全部 worker 中最大的 `激活峰值 + 非 PyTorch 增长 + CUDA 图估计 + 安全余量`。使用最大值是为了不依赖 worker 返回顺序和物理 GPU 顺序的偶然一致。已经存在于遥测中的工作区可能再次被保守计入，这会少放一些任务，但不会借用别人尚未兑现的预算。
+
+教学假设：卡总容量 80 GiB，当前占用 58 GiB，已有环境承诺中尚未分配的部分 4 GiB，为模型再留 8 GiB。那么最多再放 10 GiB 的新需求。申请 12 GiB 必须等待，不能因为 `80−58=22` 就放行。若遥测时恰好处于推理峰值，仍再留 8 GiB，属于有意保守。
+
+这不是对任意模型输入的数学峰值证明。自动 profile 是指定模型配置下的测量，额外安全余量应结合真实最大批次、长度、算子和图配置验证。修改这些配置、启用额外 GPU 缓存组件或更换模型时，需要重新测量和配置。缺少 profile 时明确拒绝共享，尤其不把显式 KV 大小路径的缺失字段默认为零。环境申报显存也不是 CUDA 硬隔离，越预算的任意 CUDA 程序仍可能破坏容量假设。
+
+**两类共享如何与模型控制协调。** `GpuControlGate` 是一个异步门禁，使用条件变量把“模型状态检查”和“命令取得票据”连成不可交错的操作。正常生成不经过这个控制门禁，因此可以继续服务。睡眠、唤醒和权重更新等操作必须等票据全部归还。一个控制操作开始等待后，后来的共享命令不能插队，避免环境源源不断地延迟模型。
+
+已睡眠模式直接利用观察到并在门禁内锁定的状态，既不先唤醒再睡眠，也不在命令结束时自行决定恢复生成。原本负责模型状态的协调器继续拥有唤醒决策。若协调器提前要唤醒，等待当前命令物理归还，新的共享命令等待。这种方案没有预测未来空窗，也没有为环境主动 offload 模型。
+
+默认命令服务期限为 30 秒，配置上限 300 秒，不适合把无法中断的长任务直接塞进共享池。到期会终止**本租约所属环境容器**，确认 GPU 归还后才释放门禁。正常归还同样先关闭设备权限并检查残留句柄、进程。控制等待除了命令剩余期限，还可能包括清理耗时。如果物理释放无法确认，宁可保留隔离状态，也不能声称“到时间一定可以安全唤醒”。
+
+**配置示意，数字是教学值。** 在现有 `env_service.units` 中为完整推理副本声明共享 unit，具体设备和预算由部署决定：
+
+```yaml
+node_policy: prefer_other
+units:
+  - unit_id: shared-rollout-0
+    node_ip: ${oc.env:ENV_NODE_IP}
+    cpu_quota: 4
+    memory_mb: 8192
+    gpu_indices: [0]
+    gpu_memory_mb: 81920
+    max_containers: 2
+    gpu_reservation: command
+    shared_rollout_replica_rank: 0
+    model_headroom_mb: 8192
+gpu_sharing:
+  safety_margin_mb: 1024
+  max_command_s: 30
+  reuse_sleeping: true
+```
+
+这里不能同时填写旧的 `rollout_replica_rank`。旧字段表示 episode 级互斥借卡，新字段表示 command 级共享。独立 GPU 仍需单独声明 unit，并由既有优先级优先选择。已经启动的 Docker 不会因为后来出现空闲卡而自动迁移。Trainer 拒绝没有显式绑定却与模型设备重叠的 unit，拒绝共享副本与训练、验证或其他模型角色占同一设备。共享训练设备所需的完整训练峰值协议仍未实现。
+
+**跟着图读源码。** 按真实执行路径阅读：
+
+1. 图 1：[ray_trainer.py:608，`_init_gpu_lending`](../../../psrl/trainer/ppo/ray_trainer.py#L608) 输入所有 worker 的设备位置，检查完整副本及其他角色重叠，然后选择共享绑定。
+2. 图 2：[router.py:158，`bind_shared_rollout_gpu`](../../../psrl/workers/env_service/router.py#L158) 调用模型 `validate_env_sharing`，后者通过集体远程调用收集每个模型 worker 的 profile。校验通过才解除共享 unit 的初始阻塞。
+3. 图 3：[command_gpu.py:58，`acquire`](../../../psrl/workers/env_service/command_gpu.py#L58) 在 unit 锁内调用 `acquire_env_command`。这不是推理的全局串行锁，其他生成请求仍在引擎内并行推进。
+4. 图 4：[command_gpu.py:106，`_grant`](../../../psrl/workers/env_service/command_gpu.py#L106) 拉取新鲜设备遥测，根据票据对应的 resident 或 sleeping 状态计算余量，预算满足才授权 cgroup 设备访问。
+5. 图 5：调用方执行 Docker 命令，服务端同时保留期限任务。命令和模型生成是并发分支，不能读成先后顺序。
+6. 图 6：[command_gpu.py:215，`_return`](../../../psrl/workers/env_service/command_gpu.py#L215) 等待节点撤销设备权限和确认旧进程退出，再调用 `release_env_command` 通知模型控制门禁。失败分支由 `_expire_shared` / [command_gpu.py:315，`finish`](../../../psrl/workers/env_service/command_gpu.py#L315) 执行所属资源清理并保留必要隔离。
+
+**可运行 CPU 协议实验。** 在项目已配置的 Python 环境中执行：
+
+```bash
+python -m pytest tests/env_service/test_gpu_sharing.py -q
+```
+
+该脚本调用真实模型门禁和命令调度器，但用测试替身模拟设备遥测与物理清理，所以只验证协议。例子中的容量 80、模型余量 35、命令需求 51，会在醒着时等待，睡眠后保留安全余量 4 则可放行。另一个用例故意让物理归还确认等待，观察模型唤醒仍不能完成。真实容器与模型验证使用 [real_gpu_sharing.py](../env-service-verification/scripts/real_gpu_sharing.py)，执行命令参数包括模型目录、节点地址、输出目录，模型只生成少量 token，不运行训练。
+
+**Results 与验证边界。** 后台实机脚本 `real_gpu_sharing.py` 使用 Qwen2.5-3B-Instruct、单张 H20、eager 模式、最多 512 token 上下文和每次最多 16 个输出 token。自动 profile 给出的临时空间为 248 MiB，本轮配置额外预留 2296 MiB，睡眠状态仍保留 1024 MiB。整个功能实验含初始化和清理约 248.76 秒，退出码 0。
+
+| 验收问题 | 本次观察 |
+|---|---|
+| 超预算命令是否被拒绝授权 | 返回 `wait`，未打开设备权限 |
+| 模型常驻时能否执行环境 GPU 命令 | `resident` 准入成功，真实 CUDA 分配 64 MiB、内核读回 42、设备 UUID 匹配 |
+| 命令活动期间模型是否能生成 | 观测到模型与环境 CUDA 进程同时存在，生成完成，引擎保持醒着 |
+| 已睡眠路径是否可用 | 第二条命令记录为 `sleeping`，CUDA 内核读回 42，没有为取得票据先唤醒 |
+| 提前唤醒是否越过归还 | 命令活动时唤醒仍等待，命令归还后完成 |
+| 模型恢复是否有效 | 恢复后的 16 个确定性输出 token 与初始请求相同 |
+| 是否清理干净 | 脚本无清理错误、无所属容器，应用显存回到初始 3.5 MiB 且无 GPU 进程。独立后检 `nvidia-smi` 显示 0 MiB、无计算进程及本轮网络/Ray 进程 |
+
+原始证据位于本地 `env-service-verification/results/gpu-sharing-20261027/`，包含执行脚本快照、源码校验和、配置、输出、退出码、失败过的初轮 CPU 回归日志及独立清理记录，结果目录默认不随仓库发布。该目录名用于定位证据，不是新的 baseline。
+
+任务遥测报告包含缺少 host procfs 的归属错误，所以没有以其缺失数值计算模型/环境各自的显存峰值或利用率。命令准入没有因此获得额外归属抵扣，最终物理释放由独立整卡检查补充确认。这轮证明命令协议和真实模型/容器共存，不证明长时间同时运行计算内核时无性能干扰，不证明完整 PSRL 训练、NIXL 权重同步或全链路 SMG 路由已通过，也没有触发 KV 耗尽来实测重算。没有比较 Science 训练吞吐，没有重新定义固定历史 baseline。
+
+新增的 7 项共享协议 CPU 回归全部通过。初轮唯一失败是测试误读了准入返回的租约副本，改为检查服务端实时租约后通过，未为此修改调度逻辑。实机结束后另补充了“归还回调不能把已经隔离的超时命令改成成功”的竞态保护，仅通过针对性 CPU 回归验证，不为这项失败分支重复加载模型。实验脚本另外修正了初始显存快照与 resident 命令结果的同名字段，原始已执行脚本单独保留。
+
+
+补充检查：涉及的 12 个 Python 文件通过 Ruff 检查与格式检查，本文和两个知识索引共 156 个本地链接通过路径、章节锚点或行号范围校验。额外全量 `tests/env_service` 在依赖导入阶段长期等待文件系统请求，约 10 分钟后中断，结果为 `no tests ran`，不能写成全量通过。隔离副本中已执行 `pre-commit run --all-files`，仍有既有绘图脚本长行和配置注释长度等错误，没有把这些无关自动修复复制回主目录。
