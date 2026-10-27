@@ -56,14 +56,14 @@
 
 | 编号 | 职责、实现与真实源码 |
 |---|---|
-| 1 | 冻结的 [Net](env-service-verification/results/science-natural-gpu-20261022/workload/baseline.py#L44) 是原始两层卷积分类模型，[train_model](env-service-verification/results/science-natural-gpu-20261022/workload/baseline.py#L77) 创建 Hugging Face Trainer 并执行训练 |
-| 2 | [run](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_ab.py#L28) 生成任务、挂载只读工作负载，再调用真实 Science runner |
-| 3 | [NaturalGpuAgent.run](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_agent.py#L11) 同时提交协程，分别保存输出 |
-| 4a | [冻结 OFF runner](env-service-verification/results/science-natural-gpu-20261022/source/off-runner.py#L187) 使用静态 compose override，没有整卡锁 |
-| 4b | [冻结 ON exec_gpu](env-service-verification/results/science-natural-gpu-20261022/source/on-docker.py#L67) 先取得同容器锁，再申请 Router 授权，命令完成后归还 |
-| 5 | [训练包装器](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_train.py#L23) 导入原始文件，[第 51 行](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_train.py#L51) 调用原始训练函数 |
-| 6 | [代理保存输出](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_agent.py#L26) 与 [NVML 采样](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_ab.py#L15) 相互核验。NVML 是 NVIDIA 提供的设备监控接口 |
-| 7 | [有界执行和收尾](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_ab.py#L153) 保留 runner 返回结果并释放隔离 Ray |
+| 1 | 冻结的 [Net](../env-service-verification/results/science-natural-gpu-20261022/workload/baseline.py#L44) 是原始两层卷积分类模型，[train_model](../env-service-verification/results/science-natural-gpu-20261022/workload/baseline.py#L77) 创建 Hugging Face Trainer 并执行训练 |
+| 2 | [run](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_ab.py#L28) 生成任务、挂载只读工作负载，再调用真实 Science runner |
+| 3 | [NaturalGpuAgent.run](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_agent.py#L11) 同时提交协程，分别保存输出 |
+| 4a | [冻结 OFF runner](../env-service-verification/results/science-natural-gpu-20261022/source/off-runner.py#L187) 使用静态 compose override，没有整卡锁 |
+| 4b | [冻结 ON exec_gpu](../env-service-verification/results/science-natural-gpu-20261022/source/on-docker.py#L67) 先取得同容器锁，再申请 Router 授权，命令完成后归还 |
+| 5 | [训练包装器](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_train.py#L23) 导入原始文件，[第 51 行](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_train.py#L51) 调用原始训练函数 |
+| 6 | [代理保存输出](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_agent.py#L26) 与 [NVML 采样](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_ab.py#L15) 相互核验。NVML 是 NVIDIA 提供的设备监控接口 |
+| 7 | [有界执行和收尾](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_ab.py#L153) 保留 runner 返回结果并释放隔离 Ray |
 
 这些代码如果有理解上的问题，可以随时追问。图中的 16 个协程是并发调用方，不是 16 张 GPU。每条命令启动独立 Python 进程，GPU 是否真的重叠，必须结合设备进程遥测确认。
 
@@ -88,7 +88,7 @@ MLGym 不是此前 LAPS 训练数据中的题目。本次将其真实训练入�
 
 原始 500 个 warmup 步保留，十步仍在学习率预热阶段，不据此讨论收敛或分类准确率。原始训练函数确实执行前向计算、损失计算、反向传播和优化器步骤，完全不同于只申请一块显存后休眠。
 
-OFF 的[运行补丁](env-service-verification/results/science-natural-gpu-20261022/off.patch) 继续保留历史实验中必要的设备配置传递、禁用全局 prune、Ray 和 HTTP 修复。其中本次实际使用 runner 的两处改动，未加入整卡锁，也未更改 GPU 调度语义。ON 源码无补丁。实际训练使用共享环境中的 Trainer，因此本文只声称原始任务模型和训练入口保持，不能声称重建了 MLGym 原始发布环境。
+OFF 的[运行补丁](../env-service-verification/results/science-natural-gpu-20261022/off.patch) 继续保留历史实验中必要的设备配置传递、禁用全局 prune、Ray 和 HTTP 修复。其中本次实际使用 runner 的两处改动，未加入整卡锁，也未更改 GPU 调度语义。ON 源码无补丁。实际训练使用共享环境中的 Trainer，因此本文只声称原始任务模型和训练入口保持，不能声称重建了 MLGym 原始发布环境。
 
 ## 3. Results：实测结果
 
@@ -109,15 +109,15 @@ OFF 的工作区间从固定代理提交任务前开始，到全部命令输出�
 
 这是有意提前停止的负面结果，不是把 ON 的 2 个成功任务与 OFF 的 16 个任务当作完整等量比较。只要完成同等工作还需要非负时间，ON 在停止时已经不可能比 OFF 更早完成，因此足以否定“这组配置提速”。它不能提供完整 ON 吞吐、完整速度比或长期稳定性结论。
 
-停止前记录见[early-stop.json](env-service-verification/results/science-natural-gpu-20261022/early-stop.json)。本次向已核对 PID 和创建状态的 ON driver 发送 SIGINT，最终 `CancelledError()` 是主动收尾结果，不是新的训练崩溃。第三个命令被中断，其余等待者被取消，缺失的最终训练记录没有补造。
+停止前记录见[early-stop.json](../env-service-verification/results/science-natural-gpu-20261022/early-stop.json)。本次向已核对 PID 和创建状态的 ON driver 发送 SIGINT，最终 `CancelledError()` 是主动收尾结果，不是新的训练崩溃。第三个命令被中断，其余等待者被取消，缺失的最终训练记录没有补造。
 
 单进程预检已通过十步真实更新，损失和梯度有限。PyTorch 峰值实际分配约 142.68 MiB，缓存约 166 MiB。OFF 的 16 个命令与 ON 完成的 2 个命令，平均训练损失均为 `2.303740954399109`，参数和校验值均为 `-4.757167816162109`。参数和只是粗粒度一致性检查，不等于逐字节验证了整个模型。
 
 本次真实计算的并发使单命令训练阶段变慢，但同时推进 16 个任务。ON 缩短了已完成单命令的训练阶段，却把启动与训练全部串行化。这解释了为什么“单命令更快、显存更低”没有变成“整批任务更快”。导入和数据准备计时、线程等待状态支持存在共享存储启动开销，但本次没有做文件系统归因实验，不能把全部导入时间都归因于某一个存储组件。
 
-原始证据位于[本次结果目录](env-service-verification/results/science-natural-gpu-20261022)，包含固定设计、源码快照、两组提交及补丁、数据摘要、预检、逐命令 stdout、容器配置和 GPU 遥测。单次采样只能给出观测峰值，不能保证捕获比采样间隔更短的瞬时峰值。
+原始证据位于[本次结果目录](../env-service-verification/results/science-natural-gpu-20261022)，包含固定设计、源码快照、两组提交及补丁、数据摘要、预检、逐命令 stdout、容器配置和 GPU 遥测。单次采样只能给出观测峰值，不能保证捕获比采样间隔更短的瞬时峰值。
 
-汇总见[summary.json](env-service-verification/results/science-natural-gpu-20261022/summary.json)，物理释放核验见[cleanup.json](env-service-verification/results/science-natural-gpu-20261022/cleanup.json)：本次容器、网络、driver 和隔离 Ray 进程均未残留，目标 GPU 无计算进程，NVML v2 used 回到 0.19 MiB。没有清理节点上的其他任务容器。
+汇总见[summary.json](../env-service-verification/results/science-natural-gpu-20261022/summary.json)，物理释放核验见[cleanup.json](../env-service-verification/results/science-natural-gpu-20261022/cleanup.json)：本次容器、网络、driver 和隔离 Ray 进程均未残留，目标 GPU 无计算进程，NVML v2 used 回到 0.19 MiB。没有清理节点上的其他任务容器。
 
 ## 4. 为什么同卡并发不一定发生 OOM
 
@@ -135,13 +135,13 @@ ON 的同容器锁一次只放行一个 `exec_gpu` 调用，因此能够减少�
 
 | 步骤 | 图中编号 | 输入、函数和状态变化 |
 |---|---|---|
-| 1 | 1 | [准备脚本 main](env-service-verification/scripts/prepare_science_natural_gpu.py#L15) 接收原始 baseline 和固定 Parquet，输出 640 张真实图片与哈希 |
-| 2 | 2 | [run](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_ab.py#L28) 核验设备空闲，建立一个 Harbor 任务。ON 同时建立独立 Ray 和 Router |
-| 3 | 3 | [asyncio.gather](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_agent.py#L35) 并发提交 16 个请求。OFF 直接 exec，ON 先进入同容器锁 |
-| 4 | 4b | [exec_gpu](env-service-verification/results/science-natural-gpu-20261022/source/on-docker.py#L67) 持锁申请、执行、归还。未拿到锁的协程尚未向 Router 发起 GPU 申请 |
-| 5 | 5 | [main](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_train.py#L41) 用相同 seed、真实图片构造数据集，调用原始 Trainer 完成十步 |
-| 6 | 6 | [代理 finally](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_agent.py#L29) 保存每条命令的返回码与 stdout，遥测协程独立采样，不把缺失补零 |
-| 7 | 7 | [run finally](env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_ab.py#L170) 记录账本和设备状态，关闭本次隔离 Ray，检查容器物理释放 |
+| 1 | 1 | [准备脚本 main](../env-service-verification/scripts/prepare_science_natural_gpu.py#L15) 接收原始 baseline 和固定 Parquet，输出 640 张真实图片与哈希 |
+| 2 | 2 | [run](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_ab.py#L28) 核验设备空闲，建立一个 Harbor 任务。ON 同时建立独立 Ray 和 Router |
+| 3 | 3 | [asyncio.gather](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_agent.py#L35) 并发提交 16 个请求。OFF 直接 exec，ON 先进入同容器锁 |
+| 4 | 4b | [exec_gpu](../env-service-verification/results/science-natural-gpu-20261022/source/on-docker.py#L67) 持锁申请、执行、归还。未拿到锁的协程尚未向 Router 发起 GPU 申请 |
+| 5 | 5 | [main](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_train.py#L41) 用相同 seed、真实图片构造数据集，调用原始 Trainer 完成十步 |
+| 6 | 6 | [代理 finally](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_agent.py#L29) 保存每条命令的返回码与 stdout，遥测协程独立采样，不把缺失补零 |
+| 7 | 7 | [run finally](../env-service-verification/results/science-natural-gpu-20261022/source/science_natural_gpu_ab.py#L170) 记录账本和设备状态，关闭本次隔离 Ray，检查容器物理释放 |
 
 以下命令用于有 GPU 和 Docker 的已预检节点。`BASELINE` 指原始 MLGym baseline 文件，`PARQUET` 指固定 revision 的训练分片，`OUT` 指全新的结果目录，`SCRIPTS` 指本文脚本目录。准备使用真实数据，不生成随机图片：
 
@@ -178,7 +178,7 @@ python "$SCRIPTS/analyze_natural_gpu.py" "$OUT"
 - 分开记录总命令时间、导入和数据准备时间、CUDA 训练区间。`cuda_started_at` 位于数据准备之后、Trainer 构造之前，仍包含 Trainer 初始化开销，不等于纯 GPU 内核时间。
 - 实验期间节点存在其他任务容器，本次只控制指定 GPU，并保留目标卡进程遥测。不能声称独占节点 CPU、文件系统或 Docker 服务。
 
-本次五个实验与分析脚本通过定向 Ruff 检查，真实数据准备脚本在 CPU 上复跑，产出的 640 张图片和标签与实验输入逐项相同。修改文档的 195 个本地链接路径检查通过，新增目录锚点和源码行号已核对。完整 `pre-commit run --all-files` 在隔离副本运行，仍因仓库既有 Ruff 与注释、日志风格违规失败，没有将自动修改写回共享工作区。检查记录见[validation.json](env-service-verification/results/science-natural-gpu-20261022/validation.json)与[precommit.log](env-service-verification/results/science-natural-gpu-20261022/precommit.log)。
+本次五个实验与分析脚本通过定向 Ruff 检查，真实数据准备脚本在 CPU 上复跑，产出的 640 张图片和标签与实验输入逐项相同。修改文档的 195 个本地链接路径检查通过，新增目录锚点和源码行号已核对。完整 `pre-commit run --all-files` 在隔离副本运行，仍因仓库既有 Ruff 与注释、日志风格违规失败，没有将自动修改写回共享工作区。检查记录见[validation.json](../env-service-verification/results/science-natural-gpu-20261022/validation.json)与[precommit.log](../env-service-verification/results/science-natural-gpu-20261022/precommit.log)。
 
 ## 7. 启动耗时定位与修复机制
 
@@ -207,18 +207,18 @@ python "$SCRIPTS/analyze_natural_gpu.py" "$OUT"
 
 | 编号 | 实现与职责 |
 |---|---|
-| A、B | [execute_prepared](../../psrl/workers/env_service/prepared_gpu.py#L24) 创建唯一工作目录，并启动监督执行与准备就绪观察两个异步操作 |
-| F | [packages_distributions](../../patch/transformers/fast_package_metadata.py#L10) 保留声明名称，对需要推断的名称只检查到第一个存在文件 |
-| C、D | [worker](../../psrl/workers/env_service/prepared_gpu_process.py#L43) 加载程序，调用 prepare，保存 ready 后等待授权信号 |
-| E | [execute_prepared 的 GPU 调用](../../psrl/workers/env_service/prepared_gpu.py#L81) 在 CPU 准备结束后调用原 exec_gpu，不修改 GPU 准入预算或容器回收语义 |
-| F | [训练 prepare](env-service-verification/scripts/science_natural_gpu_train.py#L11) 返回捕获了真实数据集和基础模块的执行函数，在授权后导入 baseline，训练仍调用原始 train_model |
-| G | [stop](../../psrl/workers/env_service/prepared_gpu_process.py#L30) 核对进程身份并等待终止，监督进程负责 wait 回收，避免留下无人回收的后台工作进程 |
+| A、B | [execute_prepared](../../../psrl/workers/env_service/prepared_gpu.py#L24) 创建唯一工作目录，并启动监督执行与准备就绪观察两个异步操作 |
+| F | [packages_distributions](../../../patch/transformers/fast_package_metadata.py#L10) 保留声明名称，对需要推断的名称只检查到第一个存在文件 |
+| C、D | [worker](../../../psrl/workers/env_service/prepared_gpu_process.py#L43) 加载程序，调用 prepare，保存 ready 后等待授权信号 |
+| E | [execute_prepared 的 GPU 调用](../../../psrl/workers/env_service/prepared_gpu.py#L81) 在 CPU 准备结束后调用原 exec_gpu，不修改 GPU 准入预算或容器回收语义 |
+| F | [训练 prepare](../env-service-verification/scripts/science_natural_gpu_train.py#L11) 返回捕获了真实数据集和基础模块的执行函数，在授权后导入 baseline，训练仍调用原始 train_model |
+| G | [stop](../../../psrl/workers/env_service/prepared_gpu_process.py#L30) 核对进程身份并等待终止，监督进程负责 wait 回收，避免留下无人回收的后台工作进程 |
 
 这些代码如果有理解上的问题，可以随时追问。这里各个 CPU 准备阶段是并发的，GPU 执行仍串行，监督进程不是另一份训练进程，不持有 CUDA 张量。
 
 **启动时间为什么长。** `import` 不只是把一行 Python 名称放进内存，它可能继续加载很多依赖，并查询安装包的元数据。元数据是描述软件包的名称、版本、文件清单等信息。例如导入时写 `PIL`，安装包名称却是 `pillow`，Transformers 需要知道两者的对应关系，才能检查依赖版本。
 
-本节点实际 Transformers 在[模块导入时](env-service-verification/results/science-natural-gpu-fix-20261022/source/transformers-import-utils.py#L47) 构造整个名称映射。实际 Python 版本的 [Distribution.files](env-service-verification/results/science-natural-gpu-fix-20261022/source/stdlib-metadata.py#L474) 会对清单中的每个文件检查存在性，然后 [_top_level_inferred](env-service-verification/results/science-natural-gpu-fix-20261022/source/stdlib-metadata.py#L956) 才提取顶层导入名。大型机器学习环境有大量包文件，这些小查询在共享文件系统上逐个等待，每个新进程又独立做一遍。
+本节点实际 Transformers 在[模块导入时](../env-service-verification/results/science-natural-gpu-fix-20261022/source/transformers-import-utils.py#L47) 构造整个名称映射。实际 Python 版本的 [Distribution.files](../env-service-verification/results/science-natural-gpu-fix-20261022/source/stdlib-metadata.py#L474) 会对清单中的每个文件检查存在性，然后 [_top_level_inferred](../env-service-verification/results/science-natural-gpu-fix-20261022/source/stdlib-metadata.py#L956) 才提取顶层导入名。大型机器学习环境有大量包文件，这些小查询在共享文件系统上逐个等待，每个新进程又独立做一遍。
 
 本次没有根据目录名称猜测原因。限时 CPU 容器使用 Python 的导入计时与周期调用栈抓取，反复观察到 `packages_distributions → Distribution.files → Path.exists/stat`，另有读取模块文件的等待。容器关闭网络，没有加载模型权重或执行 GPU 训练。实际分段如下：
 
@@ -239,11 +239,11 @@ python "$SCRIPTS/analyze_natural_gpu.py" "$OUT"
 
 不能简单删除同容器锁：设备访问权限以容器为单位，同一租约只允许一个待执行 GPU 请求，一条命令归还时还要确认容器没有存活 CUDA 上下文。直接让同容器多条 GPU 命令同时进入，会使归还和仍在运行的命令互相冲突。修复保留这条不变量，只将明确不使用 CUDA 的准备阶段移到锁外。
 
-**CPU 准备为什么也会碰到 CUDA。** “没有创建 GPU 张量”不足以证明代码不访问 GPU。本次第一版分阶段回归把整个 baseline 导入放在 prepare 中，四个进程均在执行阶段报 `CUDA is unavailable`，这个失败结果完整保存在 [on-prepared](env-service-verification/results/science-natural-gpu-fix-20261022/on-prepared/result.json)。导入追踪确认 `Trainer → Flash Attention 集成 → is_torch_cuda_available → torch.cuda.is_available`，另有 Transformer Engine 导入时检查设备能力。CUDA 是让程序调用 NVIDIA GPU 的运行接口，默认的可用性检查会触发底层驱动初始化，此时容器 GPU 设备访问尚被拒绝，进程内的失败状态与依赖探测缓存不能当成授权后的新状态。我们未尝试绕过设备权限或伪造 CUDA 可用。
+**CPU 准备为什么也会碰到 CUDA。** “没有创建 GPU 张量”不足以证明代码不访问 GPU。本次第一版分阶段回归把整个 baseline 导入放在 prepare 中，四个进程均在执行阶段报 `CUDA is unavailable`，这个失败结果完整保存在 [on-prepared](../env-service-verification/results/science-natural-gpu-fix-20261022/on-prepared/result.json)。导入追踪确认 `Trainer → Flash Attention 集成 → is_torch_cuda_available → torch.cuda.is_available`，另有 Transformer Engine 导入时检查设备能力。CUDA 是让程序调用 NVIDIA GPU 的运行接口，默认的可用性检查会触发底层驱动初始化，此时容器 GPU 设备访问尚被拒绝，进程内的失败状态与依赖探测缓存不能当成授权后的新状态。我们未尝试绕过设备权限或伪造 CUDA 可用。
 
-修复后的 CPU 阶段只包含 NumPy、PyTorch、datasets 的基础导入和图片准备，将 baseline、Trainer 及其 CUDA 探测留在授权后。另在无 GPU 容器内把 CUDA 可用性、设备数量和底层初始化入口替换为“调用即报错”的检查函数，实际运行 prepare 成功，见 [check-cpu-prepare.log](env-service-verification/results/science-natural-gpu-fix-20261022/check-cpu-prepare.log)。这只是当前依赖版本的回归，升级依赖后需要重新检查。其余导入开销仍存在，例如 Pydantic 加载插件时还会读取安装元数据，所以不能承诺每个进程瞬间启动。
+修复后的 CPU 阶段只包含 NumPy、PyTorch、datasets 的基础导入和图片准备，将 baseline、Trainer 及其 CUDA 探测留在授权后。另在无 GPU 容器内把 CUDA 可用性、设备数量和底层初始化入口替换为“调用即报错”的检查函数，实际运行 prepare 成功，见 [check-cpu-prepare.log](../env-service-verification/results/science-natural-gpu-fix-20261022/check-cpu-prepare.log)。这只是当前依赖版本的回归，升级依赖后需要重新检查。其余导入开销仍存在，例如 Pydantic 加载插件时还会读取安装元数据，所以不能承诺每个进程瞬间启动。
 
-**跟着修复图读源码。** A/B 从 [execute_prepared](../../psrl/workers/env_service/prepared_gpu.py#L24) 接收程序路径、JSON 参数和三个时间预算，创建独立目录。C/D 在 [worker](../../psrl/workers/env_service/prepared_gpu_process.py#L43) 中得到可调用对象并写就绪标记，多个 worker 的这段执行并发。E 由 [GPU 调用](../../psrl/workers/env_service/prepared_gpu.py#L81) 经过原同容器锁与 Router 授权。F 的 [execute](env-service-verification/scripts/science_natural_gpu_train.py#L36) 导入 Trainer、执行十步、保存结果。G 的监督进程等待子进程退出，Router 确认归还，宿主机再清理临时目录。发生取消时先停止所属进程，再通知 Router，不允许留下后台 CUDA 工作后就把卡交给下一条命令。每次调用的输出和预约记录一起返回，避免异步收尾期间下一条命令覆盖全局 last_gpu_command，导致指标归错任务。
+**跟着修复图读源码。** A/B 从 [execute_prepared](../../../psrl/workers/env_service/prepared_gpu.py#L24) 接收程序路径、JSON 参数和三个时间预算，创建独立目录。C/D 在 [worker](../../../psrl/workers/env_service/prepared_gpu_process.py#L43) 中得到可调用对象并写就绪标记，多个 worker 的这段执行并发。E 由 [GPU 调用](../../../psrl/workers/env_service/prepared_gpu.py#L81) 经过原同容器锁与 Router 授权。F 的 [execute](../env-service-verification/scripts/science_natural_gpu_train.py#L36) 导入 Trainer、执行十步、保存结果。G 的监督进程等待子进程退出，Router 确认归还，宿主机再清理临时目录。发生取消时先停止所属进程，再通知 Router，不允许留下后台 CUDA 工作后就把卡交给下一条命令。每次调用的输出和预约记录一起返回，避免异步收尾期间下一条命令覆盖全局 last_gpu_command，导致指标归错任务。
 
 ## 8. Results：修复回归
 
@@ -267,22 +267,22 @@ CPU 回归已通过 29 项，覆盖真实子进程准备并发、准备失败不
 
 用本次数据理解调度变化：安全分阶段组的四个工作进程几乎同时启动，各自用约 9.53 秒导入基础依赖并准备图片。随后 GPU 授权仍逐个发放，每个命令继续用约 27.05 至 32.06 秒导入 baseline 和 Trainer，再用约 3.32 至 3.77 秒完成 Trainer 初始化与十步训练区间。节约的是重复串行等待的基础准备时间，仍有大量会触发 CUDA 探测的依赖导入留在 GPU 区间。这解释了为什么修复后有改善，但还不是理想的高吞吐方案。
 
-第一次分阶段尝试因错误地提前导入 Trainer 而四个命令全部失败，虽然只耗时 102.42 秒，**不能作为加速结果**。失败源码与输入在 [on-prepared-failed-source](env-service-verification/results/science-natural-gpu-fix-20261022/on-prepared-failed-source) 保留，修正后只续跑失败组，没有重跑已完成的完整命令组。最终两组均观察到单 GPU 进程上限，没有 OOM 或显存占位。它没有验证多卡分配、高显存压力收益，也不能与前面 16 命令 OFF 的总时间直接相除。
+第一次分阶段尝试因错误地提前导入 Trainer 而四个命令全部失败，虽然只耗时 102.42 秒，**不能作为加速结果**。失败源码与输入在 [on-prepared-failed-source](../env-service-verification/results/science-natural-gpu-fix-20261022/on-prepared-failed-source) 保留，修正后只续跑失败组，没有重跑已完成的完整命令组。最终两组均观察到单 GPU 进程上限，没有 OOM 或显存占位。它没有验证多卡分配、高显存压力收益，也不能与前面 16 命令 OFF 的总时间直接相除。
 
-GPU 与所属容器、网络、隔离 Ray 进程已做物理清理核验，见 [physical-cleanup.json](env-service-verification/results/science-natural-gpu-fix-20261022/physical-cleanup.json)。原始材料保存在[修复结果目录](env-service-verification/results/science-natural-gpu-fix-20261022)，汇总见 [analysis.json](env-service-verification/results/science-natural-gpu-fix-20261022/analysis.json)。分析脚本只在成功工作量一致时计算改进比例：
+GPU 与所属容器、网络、隔离 Ray 进程已做物理清理核验，见 [physical-cleanup.json](../env-service-verification/results/science-natural-gpu-fix-20261022/physical-cleanup.json)。原始材料保存在[修复结果目录](../env-service-verification/results/science-natural-gpu-fix-20261022)，汇总见 [analysis.json](../env-service-verification/results/science-natural-gpu-fix-20261022/analysis.json)。分析脚本只在成功工作量一致时计算改进比例：
 
 ```bash
 python docs/env-worker-deep-dive/env-service-verification/scripts/analyze_natural_gpu_fix.py \
   docs/env-worker-deep-dive/env-service-verification/results/science-natural-gpu-fix-20261022
 ```
 
-定向 CPU 回归 29 项通过，实际无 GPU 容器的准备阶段禁探测检查通过。修改文件的定向风格检查通过。完整 pre-commit 在隔离副本执行，仍被本次改动之外的既有 Ruff 和文字风格违规阻塞，见 [precommit-final.log](env-service-verification/results/science-natural-gpu-fix-20261022/precommit-final.log)。未把隔离副本中的自动格式修改写回其他人的文件。
+定向 CPU 回归 29 项通过，实际无 GPU 容器的准备阶段禁探测检查通过。修改文件的定向风格检查通过。完整 pre-commit 在隔离副本执行，仍被本次改动之外的既有 Ruff 和文字风格违规阻塞，见 [precommit-final.log](../env-service-verification/results/science-natural-gpu-fix-20261022/precommit-final.log)。未把隔离副本中的自动格式修改写回其他人的文件。
 
 ## 9. 使用分阶段接口与隔离依赖
 
 分阶段接口适用于能够明确拆出 CPU 准备阶段的 Python 程序。`prepare(payload)` 必须只做 CPU 工作，并返回无参数的执行函数，CUDA 初始化、模型搬到 GPU 和训练放在返回函数中。会间接探测 CUDA 的模块导入也必须放在返回函数中，不能只检查显式的 `.cuda()` 调用。接口不会自动拆分任意终端命令，也不是同容器内不同进程之间的硬隔离承诺。
 
-训练适配的现有例子见 [science_natural_gpu_train.py](env-service-verification/scripts/science_natural_gpu_train.py)。代理通过 [science_natural_gpu_agent.py](env-service-verification/scripts/science_natural_gpu_agent.py) 调用，多个准备进程并发，GPU 授权与输出收集仍由宿主机负责。返回后进程已退出并回收，不留下持有 CUDA 上下文的常驻 worker。
+训练适配的现有例子见 [science_natural_gpu_train.py](../env-service-verification/scripts/science_natural_gpu_train.py)。代理通过 [science_natural_gpu_agent.py](../env-service-verification/scripts/science_natural_gpu_agent.py) 调用，多个准备进程并发，GPU 授权与输出收集仍由宿主机负责。返回后进程已退出并回收，不留下持有 CUDA 上下文的常驻 worker。
 
 在仓库根目录运行以下 CPU 回归，不需要 GPU 或 Docker：
 
@@ -330,11 +330,11 @@ python patch/transformers/prepare_metadata_fix.py \
 
 | 编号 | 职责与实现 |
 |---|---|
-| H | [run](env-service-verification/scripts/run_natural_gpu_capacity.py#L26) 按低 OFF、低 ON、高 ON、高 OFF 顺序启动四组，固定工作量，设置独立日志和运行预算 |
-| I | [hold](env-service-verification/scripts/hold_gpu_capacity.py#L14) 根据实际 CUDA 空闲量分配显存，保存身份信息，只做一次微小读写校验，随后等待释放 |
-| J | [run 的压力预检](env-service-verification/scripts/science_natural_gpu_ab.py#L39) 核验占位进程身份与 GPU 占用，训练执行沿用第 1 节和第 7 节的 OFF / ON 路径 |
-| K | [analyze](env-service-verification/scripts/analyze_gpu_capacity.py#L8) 从每条命令的实际日志统计成功和 OOM，成功工作量不相同时不计算速度比 |
-| L | [released](env-service-verification/scripts/run_natural_gpu_capacity.py#L15) 有界等待 GPU 回到预期占位状态，控制脚本随后检查 Compose 项目与网络并释放占位 |
+| H | [run](../env-service-verification/scripts/run_natural_gpu_capacity.py#L26) 按低 OFF、低 ON、高 ON、高 OFF 顺序启动四组，固定工作量，设置独立日志和运行预算 |
+| I | [hold](../env-service-verification/scripts/hold_gpu_capacity.py#L14) 根据实际 CUDA 空闲量分配显存，保存身份信息，只做一次微小读写校验，随后等待释放 |
+| J | [run 的压力预检](../env-service-verification/scripts/science_natural_gpu_ab.py#L39) 核验占位进程身份与 GPU 占用，训练执行沿用第 1 节和第 7 节的 OFF / ON 路径 |
+| K | [analyze](../env-service-verification/scripts/analyze_gpu_capacity.py#L8) 从每条命令的实际日志统计成功和 OOM，成功工作量不相同时不计算速度比 |
+| L | [released](../env-service-verification/scripts/run_natural_gpu_capacity.py#L15) 有界等待 GPU 回到预期占位状态，控制脚本随后检查 Compose 项目与网络并释放占位 |
 
 这些代码如果有理解上的问题，可以随时追问。按图读源码时，H 启动的四条命令是并发提交，J 的 ON 只有 CPU 准备并发，GPU 执行仍串行。I 的占位进程独立于训练容器，在两组高压力训练之间保持相同分配，不随某条训练命令退出而释放。正常退出、控制进程终止和最长持有时间到期都触发占位释放。
 
@@ -352,7 +352,7 @@ python patch/transformers/prepare_metadata_fix.py \
 | ON unit 预算 | 高低压力均为设备物理总 MiB，外部占位通过实测 used 纳入准入检查，不把物理预算误设成剩余容量再重复扣减 |
 | 预算与停止条件 | 四组各四命令、每命令十步、零训练重试，每组工作限时 780 秒，driver 硬限时 900 秒，占位最多 1800 秒，四组结果明确后结束 |
 
-OFF 保留必要运行补丁：传递 GPU override、关闭节点级 dangling-image prune，以及已有 HTTP 连接池 / Ray 地址运行修复。这些补丁没有加入 GPU 锁或改写静态放置语义，实际补丁见 [off-runtime.patch](env-service-verification/results/science-gpu-capacity-20261022/off-runtime.patch)。ON 的实际 Python 源码补丁见 [on-runtime.patch](env-service-verification/results/science-gpu-capacity-20261022/on-runtime.patch)。两组源码清单和哈希、实验设计与相同输入的哈希均保存在[结果目录](env-service-verification/results/science-gpu-capacity-20261022)。
+OFF 保留必要运行补丁：传递 GPU override、关闭节点级 dangling-image prune，以及已有 HTTP 连接池 / Ray 地址运行修复。这些补丁没有加入 GPU 锁或改写静态放置语义，实际补丁见 [off-runtime.patch](../env-service-verification/results/science-gpu-capacity-20261022/off-runtime.patch)。ON 的实际 Python 源码补丁见 [on-runtime.patch](../env-service-verification/results/science-gpu-capacity-20261022/on-runtime.patch)。两组源码清单和哈希、实验设计与相同输入的哈希均保存在[结果目录](../env-service-verification/results/science-gpu-capacity-20261022)。
 
 ## 11. Results：高低显存压力实测
 
@@ -369,15 +369,15 @@ OFF 保留必要运行补丁：传递 GPU override、关闭节点级 dangling-im
 
 **高压力的收益。** 占位进程实际分配 95,422 MiB，CUDA 查询剩余 **1537.875 MiB**，两组共用同一个占位进程，所有成功采样都确认它始终存在。ON 四个命令全部完成十步，OFF 没有任何命令完成十步。OFF 的 47.48 秒只是四条失败返回的时间，不能与 ON 完成全部训练的 165.35 秒计算速度比。该压力点显示的是从 0/4 到 4/4 的完成率收益，没有测试自动重试后“完成相同四条成功训练”的总时长。
 
-**具体失败证据。** 两条 OFF 命令报 `OutOfMemoryError`，第三条报 CUDA `out of memory`。日志显示剩余约 **15.69 MiB** 时仍需分配 **32 MiB**，因此申请无法满足。另一条报 `CUBLAS_STATUS_ALLOC_FAILED`，cuBLAS 是 GPU 矩阵运算库，该错误发生在创建库句柄时。它与同时刻显存紧张相符，但这里单独记为库分配失败，不冒充第四条明确 OOM。四条命令的退出码都是 1，原始错误保存于 [analysis.json](env-service-verification/results/science-gpu-capacity-20261022/analysis.json) 的 commands 字段和代理原始日志。
+**具体失败证据。** 两条 OFF 命令报 `OutOfMemoryError`，第三条报 CUDA `out of memory`。日志显示剩余约 **15.69 MiB** 时仍需分配 **32 MiB**，因此申请无法满足。另一条报 `CUBLAS_STATUS_ALLOC_FAILED`，cuBLAS 是 GPU 矩阵运算库，该错误发生在创建库句柄时。它与同时刻显存紧张相符，但这里单独记为库分配失败，不冒充第四条明确 OOM。四条命令的退出码都是 1，原始错误保存于 [analysis.json](../env-service-verification/results/science-gpu-capacity-20261022/analysis.json) 的 commands 字段和代理原始日志。
 
 用实测数字理解：没有占位时，OFF 四个训练进程同时运行，增量峰值约 **2761.56 MiB**，这张卡完全放得下。高压力只留下约 **1537.88 MiB**，就无法容纳同样的同时需求。ON 同时只运行一个训练进程，该组增量峰值约 **689.56 MiB**，所以本次四个命令逐个完成。这个例子说明并发限制的取舍，不代表任何模型只要串行就一定不会 OOM，单个任务自身超过剩余显存仍然会失败。
 
 所有成功命令的最终 `train_loss` 都是 **2.303740954399109**，参数和都是 **-4.757167816162109**。这是相同工作负载结果一致性的检查，不是模型效果提升或收敛证明。四组遥测缺失数均为零，高压力训练进程计数已排除占位进程。
 
-![相同四命令的完成数量与返回时间，高压力 OFF 的短时间对应失败而非加速](env-service-verification/results/science-gpu-capacity-20261022/capacity-comparison.svg)
+![相同四命令的完成数量与返回时间，高压力 OFF 的短时间对应失败而非加速](../env-service-verification/results/science-gpu-capacity-20261022/capacity-comparison.svg)
 
-图由 [plot_gpu_capacity.py](env-service-verification/scripts/plot_gpu_capacity.py) 从 analysis.json 生成，柱形左侧分别表示成功与失败数，右侧明确标注高压力 OFF 未完成相同工作量。重新生成图只需要 CPU 和 Matplotlib：
+图由 [plot_gpu_capacity.py](../env-service-verification/scripts/plot_gpu_capacity.py) 从 analysis.json 生成，柱形左侧分别表示成功与失败数，右侧明确标注高压力 OFF 未完成相同工作量。重新生成图只需要 CPU 和 Matplotlib：
 
 ```bash
 python docs/env-worker-deep-dive/env-service-verification/scripts/plot_gpu_capacity.py \
@@ -386,7 +386,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/plot_gpu_capac
 
 本次是四组各一次的有界验证，没有反复重跑寻找更漂亮的结果，也没有建立统计置信区间。低压力 OFF→ON、高压力 ON→OFF 的顺序只能部分平衡缓存顺序影响，不能消除共享 CPU、文件系统与启动波动。
 
-四组任务、主容器、sidecar、网络、隔离 Ray 和占位进程已按归属释放，目标 GPU 没有剩余计算进程，实际 used 回到约 0.19 MiB，见 [physical-cleanup.json](env-service-verification/results/science-gpu-capacity-20261022/physical-cleanup.json)。容器预检的首次脚本挂载路径错误已单独保留在 preflight.log，修正后 CUDA 读写预检通过，未重跑已完成训练组。相关 CPU 回归六项通过，修改脚本定向 pre-commit 通过，全仓检查仍被既有违规阻塞，详见结果目录检查日志。
+四组任务、主容器、sidecar、网络、隔离 Ray 和占位进程已按归属释放，目标 GPU 没有剩余计算进程，实际 used 回到约 0.19 MiB，见 [physical-cleanup.json](../env-service-verification/results/science-gpu-capacity-20261022/physical-cleanup.json)。容器预检的首次脚本挂载路径错误已单独保留在 preflight.log，修正后 CUDA 读写预检通过，未重跑已完成训练组。相关 CPU 回归六项通过，修改脚本定向 pre-commit 通过，全仓检查仍被既有违规阻塞，详见结果目录检查日志。
 
 
 ## 12. 容量压力实验复现与边界
@@ -442,12 +442,12 @@ python "$RUN_ROOT/source/run_natural_gpu_capacity.py" \
 
 | 编号 | 职责、函数与源码 |
 |---|---|
-| A1、A3 | [训练器 fit](../../psrl/trainer/ppo/ray_trainer.py#L3343) 组织外层循环；[_update_actor](../../psrl/trainer/ppo/ray_trainer.py#L3204) 将轨迹批次交给训练 worker 更新大模型 |
-| A2 | [SciAccelAgentLoop._run_harbor_in_thread](../../examples/sciaccel_rl/agent_loop.py#L358) 调用 [run_harbor_episode](../../examples/sciaccel_rl/runner.py#L259)；[PressureTerminus2._query_llm](env-service-verification/scripts/science_pressure_agent.py#L21) 先调用真实模型，再执行明确注入的压力阶段 |
-| B1 | [组件实验 run](env-service-verification/scripts/science_natural_gpu_ab.py#L28)，[第 180 行](env-service-verification/scripts/science_natural_gpu_ab.py#L180) 调用真实 runner；[第 127 行](env-service-verification/scripts/science_natural_gpu_ab.py#L127) 启动真实 EnvRouter |
-| B2 | [NaturalGpuAgent.run](env-service-verification/scripts/science_natural_gpu_agent.py#L11)，[第 47 行](env-service-verification/scripts/science_natural_gpu_agent.py#L47) 使用 asyncio.gather 同时提交；ON 调用 exec_gpu_prepared，OFF 调用普通 exec |
-| B3 | [prepare / execute](env-service-verification/scripts/science_natural_gpu_train.py#L11) 分离准备与执行；[第 50 行](env-service-verification/scripts/science_natural_gpu_train.py#L50) 限制 CIFAR 更新数；[revoke_gpu_command](../../psrl/workers/env_service/command_gpu_node.py#L153) 检查物理归还 |
-| B4 | [实验 finally](env-service-verification/scripts/science_natural_gpu_ab.py#L195) 回收所属服务；四组实机物理核验保存在 [physical-cleanup.json](env-service-verification/results/science-gpu-capacity-20261022/physical-cleanup.json) |
+| A1、A3 | [训练器 fit](../../../psrl/trainer/ppo/ray_trainer.py#L3343) 组织外层循环；[_update_actor](../../../psrl/trainer/ppo/ray_trainer.py#L3204) 将轨迹批次交给训练 worker 更新大模型 |
+| A2 | [SciAccelAgentLoop._run_harbor_in_thread](../../../examples/sciaccel_rl/agent_loop.py#L358) 调用 [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L259)；[PressureTerminus2._query_llm](../env-service-verification/scripts/science_pressure_agent.py#L21) 先调用真实模型，再执行明确注入的压力阶段 |
+| B1 | [组件实验 run](../env-service-verification/scripts/science_natural_gpu_ab.py#L28)，[第 180 行](../env-service-verification/scripts/science_natural_gpu_ab.py#L180) 调用真实 runner；[第 127 行](../env-service-verification/scripts/science_natural_gpu_ab.py#L127) 启动真实 EnvRouter |
+| B2 | [NaturalGpuAgent.run](../env-service-verification/scripts/science_natural_gpu_agent.py#L11)，[第 47 行](../env-service-verification/scripts/science_natural_gpu_agent.py#L47) 使用 asyncio.gather 同时提交；ON 调用 exec_gpu_prepared，OFF 调用普通 exec |
+| B3 | [prepare / execute](../env-service-verification/scripts/science_natural_gpu_train.py#L11) 分离准备与执行；[第 50 行](../env-service-verification/scripts/science_natural_gpu_train.py#L50) 限制 CIFAR 更新数；[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153) 检查物理归还 |
+| B4 | [实验 finally](../env-service-verification/scripts/science_natural_gpu_ab.py#L195) 回收所属服务；四组实机物理核验保存在 [physical-cleanup.json](../env-service-verification/results/science-gpu-capacity-20261022/physical-cleanup.json) |
 
 这些代码如果有理解上的问题，可以随时追问。这里引用当前工作区实现帮助阅读；实验版本以第 10 节冻结提交及补丁为准，当前 runner 的默认 OFF 不能替代固定 baseline。
 
@@ -492,12 +492,12 @@ python "$RUN_ROOT/source/run_natural_gpu_capacity.py" \
 
 | 编号 | 职责、函数与源码 |
 |---|---|
-| C1 | [代理 gather](env-service-verification/scripts/science_natural_gpu_agent.py#L47) 同时提交，没有写成逐条 await |
-| C2 | [execute_prepared](../../psrl/workers/env_service/prepared_gpu.py#L24) 在 GPU 授权前准备；训练脚本明确将可能探测 CUDA 的 Trainer 导入留在授权之后 |
-| C3、C7 | [exec_gpu 的同容器锁](../../psrl/workers/env_service/docker.py#L104) 包住授权、执行和归还；分阶段接口最终仍经过它 |
-| C4 | [GpuCommandScheduler.acquire](../../psrl/workers/env_service/command_gpu.py#L49)，[第 63 行](../../psrl/workers/env_service/command_gpu.py#L63) 拒绝同租约的第二个等待或活动请求，随后检查申报预算及实测显存 |
-| C5 | [grant_gpu_command](../../psrl/workers/env_service/command_gpu_node.py#L139) 调用 [DeviceCgroupFence.set_access](../../psrl/workers/env_service/command_gpu_node.py#L61)，按整个容器控制设备权限 |
-| C6 | [revoke_gpu_command](../../psrl/workers/env_service/command_gpu_node.py#L153) 禁止新设备打开，并等待该容器已有句柄和 CUDA 进程消失 |
+| C1 | [代理 gather](../env-service-verification/scripts/science_natural_gpu_agent.py#L47) 同时提交，没有写成逐条 await |
+| C2 | [execute_prepared](../../../psrl/workers/env_service/prepared_gpu.py#L24) 在 GPU 授权前准备；训练脚本明确将可能探测 CUDA 的 Trainer 导入留在授权之后 |
+| C3、C7 | [exec_gpu 的同容器锁](../../../psrl/workers/env_service/docker.py#L104) 包住授权、执行和归还；分阶段接口最终仍经过它 |
+| C4 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L49)，[第 63 行](../../../psrl/workers/env_service/command_gpu.py#L63) 拒绝同租约的第二个等待或活动请求，随后检查申报预算及实测显存 |
+| C5 | [grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L139) 调用 [DeviceCgroupFence.set_access](../../../psrl/workers/env_service/command_gpu_node.py#L61)，按整个容器控制设备权限 |
+| C6 | [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153) 禁止新设备打开，并等待该容器已有句柄和 CUDA 进程消失 |
 
 **跟着图读源码。** C1 传入四份命令参数，C2 的四个 worker 分别完成准备，C3 只让一条进入 C4。因此本轮的其余三条主要在客户端等锁，不应把“四条已提交”写成“Router 有四条等待请求”。C4 授权后，C5 改变容器权限，命令得到 GPU 访问能力。执行结束进入 C6；只有实际释放得到确认，C7 才允许下一条。失败或取消走 exec_gpu 的所属进程停止及 Router cancel 分支，不能提前宣称资源可复用。
 
@@ -523,11 +523,11 @@ python "$RUN_ROOT/source/run_natural_gpu_capacity.py" \
 
 对于原目标有两类方案，以下均不表示本轮已经实现或验证：独立工作放进各自容器和租约，可以使用现有跨租约准入机制，但需要考虑额外启动开销及共享文件语义；若必须共享同一个容器，就需要重新设计命令级预算、进程归属与取消回收，并让容器设备授权持续到所有活动命令完成，避免 A 归还影响 B。后者是框架协议设计工作，不是调大 max_containers 或实验脚本并发数就能完成。
 
-具体改造方案见 [GPU 作业文档第 11 至 17 节](gpu-jobs-and-task-telemetry.md#11-同容器并发的目标架构)：推荐每作业独立预算和 cgroup 子树，覆盖外部显存与未兑现预约、授权竞态、取消及物理回收，并附已运行的 CPU 契约模型。方案和模型不代表生产框架已经支持同容器 GPU 并行。
+具体改造方案见 [GPU 作业文档第 11 至 17 节](../knowledge/gpu-jobs-and-task-telemetry.md#11-同容器并发的目标架构)：推荐每作业独立预算和 cgroup 子树，覆盖外部显存与未兑现预约、授权竞态、取消及物理回收，并附已运行的 CPU 契约模型。方案和模型不代表生产框架已经支持同容器 GPU 并行。
 
 ## 15. CPU 教学复现与后续验收边界
 
-[explain_same_container_lock.py](env-service-verification/scripts/explain_same_container_lock.py) 是标准库教学模拟，注释对应 C2/C3。在仓库根目录执行：
+[explain_same_container_lock.py](../env-service-verification/scripts/explain_same_container_lock.py) 是标准库教学模拟，注释对应 C2/C3。在仓库根目录执行：
 
 ```bash
 python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_container_lock.py
@@ -539,4 +539,4 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_c
 
 本次问题的验收是分清机制与实验层次，已有源码及日志足够，因此没有追加训练。后续若要验证框架改造，组件验收应同时要求低压力下四条真实工作能重叠、高压力时安全限制并发、失败取消后物理资源释放；通过后再接入真实 Science 代理与外层 PSRL，单独检验端到端步骤耗时和完成率。这个建议不构成本轮已完成的验证，也不要求为解释问题现在启动新实验。
 
-本次新增教学脚本的 Ruff 检查和格式检查通过，本文与总索引的 139 个本地链接路径、源码行号范围及章节锚点检查通过，新增源码引用已逐项阅读。全仓 pre-commit 在隔离副本执行，仍因既有格式及注释风格违规失败，自动改动未写回工作区；记录见 [scope-explanation-precommit.log](env-service-verification/results/science-gpu-capacity-20261022/scope-explanation-precommit.log)。
+本次新增教学脚本的 Ruff 检查和格式检查通过，本文与总索引的 139 个本地链接路径、源码行号范围及章节锚点检查通过，新增源码引用已逐项阅读。全仓 pre-commit 在隔离副本执行，仍因既有格式及注释风格违规失败，自动改动未写回工作区；记录见 [scope-explanation-precommit.log](../env-service-verification/results/science-gpu-capacity-20261022/scope-explanation-precommit.log)。

@@ -6,6 +6,8 @@
 
 > **同容器并发设计状态**：现有接口仍串行执行同容器 GPU 作业。第 11 至 17 节给出命令级预算、作业进程子组、独立设备授权和确认后归还的改造方案，并提供已运行的 CPU 契约模型。方案尚未接入生产框架，不能把模型通过写成同容器 GPU 并发已经实现。
 
+> **当前实验策略：** 用户已授权在无挂载权限时跳过可信归因门槛。后续本节点实验显式使用 `harbor.gpu_attribution_mode: observe`，保留原任务评分并记录未验证风险，资源回收检查仍然生效。可转发的说明及配置见 [procfs 挂载障碍](../experiments/host-proc-blocker.md)。这不代表部署缺口或可信进程归属已经修复。
+
 > **适用目标纠正**：用户已澄清，原需求是同一道题的多次独立 rollout，而非单次尝试内部的多命令并发。因此上述提案保留为可选能力设计，不是验证原需求的前提。原需求应使用独立环境、跨租约的 command GPU 对照，详见[多 rollout 意图纠正](env-router-current-flow.md#9-多-rollout-意图纠正与-off-的同容器能力)。
 
 ## 目录
@@ -25,6 +27,8 @@
   - [8.5 只读实验与 Results](#85-只读实验与-results)
   - [8.6 跟着图读源码](#86-跟着图读源码)
   - [8.7 下一阶段的最小验收](#87-下一阶段的最小验收)
+  - [8.8 Results：当前 procfs 报错与驱动能力的区别](#88-results当前-procfs-报错与驱动能力的区别)
+  - [8.9 设计要求、当前检查与修复边界](#89-设计要求当前检查与修复边界)
 - [9. 部署补丁与生产预检验收](#9-部署补丁与生产预检验收)
 - [10. 开发工作树与推送边界](#10-开发工作树与推送边界)
 - [11. 同容器并发的目标架构](#11-同容器并发的目标架构)
@@ -63,15 +67,15 @@
 
 | 编号 | 职责、函数及源码 |
 |---|---|
-| 1 | [runner 的 command 接线](../../examples/sciaccel_rl/runner.py#L390)及原生 CUDA 遥测预检 |
-| 2 | [TruncatingTerminus2._execute_commands](../../examples/sciaccel_rl/agent.py#L104)，只拦截明确的作业工具请求 |
-| 3 | [GpuJobManager.start](../../psrl/workers/env_service/gpu_jobs.py#L58)，后台任务拥有执行与清理 |
-| 4 | [ManagedDockerEnvironment.exec_gpu](../../psrl/workers/env_service/docker.py#L78)，沿用资源账本和设备授权协议 |
-| 5 | [_run_gpu_process](../../psrl/workers/env_service/docker.py#L192)及 [进程组助手](../../psrl/workers/env_service/gpu_job_process.py) |
-| 6 | [TaskGpuTelemetry.sample](../../psrl/workers/env_service/task_telemetry.py#L56)，核对 PID 视图、cgroup 和进程出生身份 |
-| 7 | [revoke_gpu_command](../../psrl/workers/env_service/command_gpu_node.py#L153)，物理确认后才解除 GPU 预算 |
-| 8 | [apply_gpu_activity_gate](../../examples/sciaccel_rl/gpu_grading.py)，结合每个检查的宿主机报告调整训练奖励 |
-| 9 | [ManagedDockerEnvironment.stop](../../psrl/workers/env_service/docker.py)，作业汇合后进入 Harbor 容器清理，runner 再归还租约 |
+| 1 | [runner 的 command 接线](../../../examples/sciaccel_rl/runner.py#L390)及原生 CUDA 遥测预检 |
+| 2 | [TruncatingTerminus2._execute_commands](../../../examples/sciaccel_rl/agent.py#L104)，只拦截明确的作业工具请求 |
+| 3 | [GpuJobManager.start](../../../psrl/workers/env_service/gpu_jobs.py#L58)，后台任务拥有执行与清理 |
+| 4 | [ManagedDockerEnvironment.exec_gpu](../../../psrl/workers/env_service/docker.py#L78)，沿用资源账本和设备授权协议 |
+| 5 | [_run_gpu_process](../../../psrl/workers/env_service/docker.py#L192)及 [进程组助手](../../../psrl/workers/env_service/gpu_job_process.py) |
+| 6 | [TaskGpuTelemetry.sample](../../../psrl/workers/env_service/task_telemetry.py#L56)，核对 PID 视图、cgroup 和进程出生身份 |
+| 7 | [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153)，物理确认后才解除 GPU 预算 |
+| 8 | [apply_gpu_activity_gate](../../../examples/sciaccel_rl/gpu_grading.py)，结合每个检查的宿主机报告调整训练奖励 |
+| 9 | [ManagedDockerEnvironment.stop](../../../psrl/workers/env_service/docker.py)，作业汇合后进入 Harbor 容器清理，runner 再归还租约 |
 
 ## 2. 作业入口与重叠边界
 
@@ -163,7 +167,7 @@ Harbor Docker 环境 + 持久终端
 EnvRouter / EnvNodeService：准入、GPU 授权、遥测、归还
 ```
 
-图例：目标中的执行 Worker 与统一会话接口尚无完整实现。当前可复用部分是图 1 的 [作业管理器](../../psrl/workers/env_service/gpu_jobs.py)、[Harbor 适配器](../../psrl/workers/env_service/docker.py)和 [节点服务](../../psrl/workers/env_service/node.py)。旧执行器仍为 [ContainerShell / EnvWorker](../../psrl/workers/env_worker/worker.py)，Science 仍在 [agent_loop](../../examples/sciaccel_rl/agent_loop.py) 中调用 Harbor。
+图例：目标中的执行 Worker 与统一会话接口尚无完整实现。当前可复用部分是图 1 的 [作业管理器](../../../psrl/workers/env_service/gpu_jobs.py)、[Harbor 适配器](../../../psrl/workers/env_service/docker.py)和 [节点服务](../../../psrl/workers/env_service/node.py)。旧执行器仍为 [ContainerShell / EnvWorker](../../../psrl/workers/env_worker/worker.py)，Science 仍在 [agent_loop](../../../examples/sciaccel_rl/agent_loop.py) 中调用 Harbor。
 
 实施顺序应为：先固定会话协议与等价测试，再将 MLGym 接到 Harbor 环境和持久终端，随后把 science 的 Harbor 调用移到专门执行 Worker，最后删除重复的 shell 与线程执行路径。MLGym 不必被强行改成 Harbor 内置代理循环，它可以通过同一会话接口逐轮调用；共享的是容器执行后端。
 
@@ -173,7 +177,7 @@ EnvRouter / EnvNodeService：准入、GPU 授权、遥测、归还
 
 ## 5. Results 与复现
 
-本节记录限定规模的小实验，不代表完整 science 训练或固定 OFF 提交对照。原始日志保存在运行输出目录，便于分享的结果摘要在 [summary.json](gpu-job-validation/summary.json)。
+本节记录限定规模的小实验，不代表完整 science 训练或固定 OFF 提交对照。原始日志保存在运行输出目录，便于分享的结果摘要在 [summary.json](../gpu-job-validation/summary.json)。
 
 | 检查 | 实际观察 | 结论边界 |
 |---|---|---|
@@ -186,7 +190,7 @@ EnvRouter / EnvNodeService：准入、GPU 授权、遥测、归还
 | 回归 | 61 项针对性检查通过 | 覆盖作业生命周期、归还协议、归因过滤、原生任务预检及 science 工具接线 |
 | 物理收尾 | GPU 计算进程为 0，显存回到约 0.19 MiB 的启动基线 | 所属容器及 sidecar 已清理，未停止共享 Ray 或重启 Docker |
 
-![受控作业重叠时长](gpu-job-validation/latency.svg)
+![受控作业重叠时长](../gpu-job-validation/latency.svg)
 
 时长来自首轮作业原型，当时逐进程归因未正确匹配，不能用这组数值估计完整、有效遥测部署后的开销。后续只补验故障修复和未完成项目，没有为追求更漂亮的时长重跑对照。
 
@@ -216,7 +220,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/gpu_job_probe.
 
 脚本最多运行 300 秒，使用两只小容器和一张 GPU。默认要求正向归因通过。只诊断缺少宿主机视图的失败路径时，显式加 `--allow-unavailable-attribution`，结果不能称为正向归因成功。`--skip-latency` 用于已有时长证据、只补验后续项目的情况。
 
-CPU 后端契约脚本是 [harbor_shell_contract.py](env-service-verification/scripts/harbor_shell_contract.py)，用 `--image` 指定包含 tmux 的缓存 science 镜像，`--output` 指定独立目录。它比较真实 ContainerShell 和 Harbor TmuxSession，不加载模型。
+CPU 后端契约脚本是 [harbor_shell_contract.py](../env-service-verification/scripts/harbor_shell_contract.py)，用 `--image` 指定包含 tmux 的缓存 science 镜像，`--output` 指定独立目录。它比较真实 ContainerShell 和 Harbor TmuxSession，不加载模型。
 
 ## 6. 跟着图读源码
 
@@ -267,12 +271,12 @@ CPU 后端契约脚本是 [harbor_shell_contract.py](env-service-verification/sc
 
 | 编号 | 职责 | 对应源码 |
 |---|---|---|
-| A、B、C | 部署环境层级，内核和平台容器不是 PSRL 创建 | [只读诊断脚本](env-service-verification/scripts/host_proc_diagnostic.py)观测 procfs 挂载及 Docker daemon 的进程视图 |
-| 1 | NVML 是 NVIDIA 的设备管理接口，返回进程显存和利用率样本 | [NvmlProbe.read_process_snapshot](../../psrl/workers/env_service/probe.py#L103) |
-| 2 | 按 procfs 中的 cgroup 归属和出生时间筛选样本 | [process_identities](../../psrl/workers/env_service/task_telemetry.py#L10)、[check_proc_root / sample](../../psrl/workers/env_service/task_telemetry.py#L51) |
-| 3 | 通过本地 Unix socket 请求 Docker 管理接口 | [_local_get](../../psrl/workers/env_service/docker_api.py#L9) |
-| C | 适配器授权后执行 GPU 程序，进程组助手保留生命周期身份 | [_run_gpu_process](../../psrl/workers/env_service/docker.py#L192)、[gpu_job_process.py](../../psrl/workers/env_service/gpu_job_process.py) |
-| 4 | 撤销设备访问，核对已有句柄、映射和计算进程，随后确认归还 | [revoke_gpu_command](../../psrl/workers/env_service/command_gpu_node.py#L153) |
+| A、B、C | 部署环境层级，内核和平台容器不是 PSRL 创建 | [只读诊断脚本](../env-service-verification/scripts/host_proc_diagnostic.py)观测 procfs 挂载及 Docker daemon 的进程视图 |
+| 1 | NVML 是 NVIDIA 的设备管理接口，返回进程显存和利用率样本 | [NvmlProbe.read_process_snapshot](../../../psrl/workers/env_service/probe.py#L103) |
+| 2 | 按 procfs 中的 cgroup 归属和出生时间筛选样本 | [process_identities](../../../psrl/workers/env_service/task_telemetry.py#L10)、[check_proc_root / sample](../../../psrl/workers/env_service/task_telemetry.py#L51) |
+| 3 | 通过本地 Unix socket 请求 Docker 管理接口 | [_local_get](../../../psrl/workers/env_service/docker_api.py#L9) |
+| C | 适配器授权后执行 GPU 程序，进程组助手保留生命周期身份 | [_run_gpu_process](../../../psrl/workers/env_service/docker.py#L192)、[gpu_job_process.py](../../../psrl/workers/env_service/gpu_job_process.py) |
+| 4 | 撤销设备访问，核对已有句柄、映射和计算进程，随后确认归还 | [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153) |
 
 宿主机是相对概念。C 的 Docker 管理服务运行在 B，B 是 C 的直接宿主环境。B 自身又是 A 上的平台容器，所以不能把 B 的进程列表当成 A 的完整进程列表。这里的容器共享底层内核，并不是每层都启动了一个独立 Linux 内核。
 
@@ -367,11 +371,11 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/host_proc_diag
 
 ### 8.6 跟着图读源码
 
-1. [B、2] [runner.py](../../examples/sciaccel_rl/runner.py#L396) 在原生 CUDA 任务创建前请求遥测能力预检。
-2. [1、2] [Router.require_gpu_attribution](../../psrl/workers/env_service/router.py#L218) 找到租约归属节点。[check_gpu_attribution_support](../../psrl/workers/env_service/command_gpu_node.py#L111) 先检查 procfs，再查询 NVML 支持情况。
-3. [3、C] 正常授权时，[DeviceCgroupFence](../../psrl/workers/env_service/command_gpu_node.py#L17) 从 Docker 容器身份得到其 cgroup，核对设备映射并控制访问权限。此步骤使用本地 Docker 对应的 PID 视图。
-4. [1、2] 授权后启动后台遥测，GPU 执行和采样并行。[sample](../../psrl/workers/env_service/task_telemetry.py#L56) 用宿主机 PID 读取身份，[consume](../../psrl/workers/env_service/task_telemetry.py#L72) 聚合本任务样本。这一步需要与 NVML 一致的宿主机视图。
-5. [4] [revoke_gpu_command](../../psrl/workers/env_service/command_gpu_node.py#L153) 撤权并停止采样，核实归还后把报告与完成结果交回。它不会因为报告缺失而虚构成功的 GPU 活动评分。
+1. [B、2] [runner.py](../../../examples/sciaccel_rl/runner.py#L396) 在原生 CUDA 任务创建前请求遥测能力预检。
+2. [1、2] [Router.require_gpu_attribution](../../../psrl/workers/env_service/router.py#L218) 找到租约归属节点。[check_gpu_attribution_support](../../../psrl/workers/env_service/command_gpu_node.py#L111) 先检查 procfs，再查询 NVML 支持情况。
+3. [3、C] 正常授权时，[DeviceCgroupFence](../../../psrl/workers/env_service/command_gpu_node.py#L17) 从 Docker 容器身份得到其 cgroup，核对设备映射并控制访问权限。此步骤使用本地 Docker 对应的 PID 视图。
+4. [1、2] 授权后启动后台遥测，GPU 执行和采样并行。[sample](../../../psrl/workers/env_service/task_telemetry.py#L56) 用宿主机 PID 读取身份，[consume](../../../psrl/workers/env_service/task_telemetry.py#L72) 聚合本任务样本。这一步需要与 NVML 一致的宿主机视图。
+5. [4] [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153) 撤权并停止采样，核实归还后把报告与完成结果交回。它不会因为报告缺失而虚构成功的 GPU 活动评分。
 
 这些源码或两个 PID 视图的区别有不清楚的地方，可以随时追问。
 
@@ -380,6 +384,86 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/host_proc_diag
 先解决宿主机视图的部署输入，再运行已有 GPU 探针的 `--skip-latency` 模式。验收只要求：忙任务获得自己的有效样本、相邻 CPU 任务不获得忙任务样本、取消与归还后所属进程和容器消失。限定一张空闲卡、两个小容器和 300 秒总预算，不重做已有时长对照。
 
 随后才推进原生 `laps-accel-cuda` 的三个检查。已核对它声明 1 张 GPU、使用 allowlist 网络策略，并提供独立 verifier。依次核对镜像和执行入口，验证数值结果与任务归因报告能对应。当前只是源码与配置核对，没有构建、运行或评分成功记录。完整训练、模型指标变化和固定 OFF 对照仍是另一个验收范围。
+
+### 8.8 Results：当前 procfs 报错与驱动能力的区别
+
+**结论：当前拒绝来自进程视图不匹配，不能据此判断 GPU 驱动不支持 CUDA 或进程遥测。** `procfs` 是 Linux 内核提供的虚拟文件系统，通常挂载在 `/proc`。读取文件时由内核提供状态，并非从磁盘读取应用写下的日志。它还包含系统信息，并非只有进程目录。基础机制和三层调用图见第 8.1、8.2 节。
+
+例如 `/proc/2000/stat` 包含进程的出生时刻，`/proc/2000/cgroup` 表示进程属于哪个资源组，`/proc/1/ns/pid` 指向 PID 1 所属的进程编号命名空间。命名空间就是一套可见进程及其编号的范围。同一个 CUDA 进程可以在物理宿主机叫 2000，在平台节点里叫 300，在任务容器里叫 17。这些是第 8.2 节的教学数字，不是现场进程号。
+
+假设 NVIDIA 管理接口 NVML 返回“2000 占用 512 MiB”，节点必须用宿主机的 2000 查所属容器。如果拿节点自身的 `/proc/2000` 去查，可能找不到，也可能读到无关进程。框架还要核对出生时间，防止旧进程退出后编号被新进程复用。只有这些信息一致，才能把 GPU 使用量计入某条 science 任务。
+
+生产入口实际分两步，不能混为同一个驱动报错：
+
+| 顺序 | 检查及失败含义 | 源码 |
+|---|---|---|
+| 1 | `check_proc_root` 比较所选 procfs 的 PID 1 命名空间对象 inode 与 `0xEFFFFFFC`，即 4026531836。不匹配时抛出 `GPU attribution needs host PID procfs` | [task_telemetry.py:51](../../../psrl/workers/env_service/task_telemetry.py#L51) |
+| 2 | 第一步成功后才查询 NVML 进程利用率能力。接口明确不支持时抛出另一个错误 `This GPU does not support process utilization attribution` | [command_gpu_node.py:111](../../../psrl/workers/env_service/command_gpu_node.py#L111) |
+
+这里的 inode 用来识别命名空间对象，与磁盘 inode 耗尽、Docker 无法创建文件不是一类问题。该常量是当前实现采用的 Linux 初始命名空间检查条件，并不等于检查完成后全部权限和驱动能力都已验证。
+
+2026-10-26 在用户指定私有节点重新执行了[只读诊断脚本](../env-service-verification/scripts/host_proc_diagnostic.py)，没有启动模型、任务容器或 CUDA 负载：
+
+| 现场结果 | 含义 |
+|---|---|
+| `/proc/1/ns/pid` 和 dockerd 都是 `pid:[4026549832]` | 当前节点及 Docker daemon 使用嵌套进程视图，不满足当前实现要求 |
+| `PSRL_GPU_HOST_PROC` 未设置，`/host/proc/1/ns/pid` 不存在 | 未发现配置好的宿主机进程视图 |
+| Docker `/_ping` 返回 200 / OK | 本次并非 Docker daemon 不响应 |
+| 8 张 H20 被识别，驱动版本 535.247.01 | 驱动可被查询，不能单凭此项证明 CUDA 或全部遥测接口可用 |
+
+原始证据：[namespace.json](../env-service-verification/results/procfs-handoff-20261026/namespace.json)、[driver.json](../env-service-verification/results/procfs-handoff-20261026/driver.json)。当天另一轮已完成的容器检查有真实 CUDA 计算成功，见 [preflight.log](../env-service-verification/results/unified-gpu-20261026/preflight.log)。本次没有重复 GPU 计算，也没有越过第一步宣称 NVML 进程利用率接口已经通过。
+
+修复应落在外层节点部署：把真正宿主机的 `/proc` 只读提供给可信 EnvNodeService，并给该服务设置 `PSRL_GPU_HOST_PROC`。具体补丁和权限边界见第 9 节。仅设置一个不存在的路径、把节点自己的 `/proc` 重命名，或升级 NVIDIA 驱动，均不会改变当前编号视图。完成挂载后还应重新验证读取权限、cgroup 对应关系和 NVML 能力，再验收原生 science GPU 评分。
+
+**这项错误也不能直接推导出 vLLM 与环境交接完全不可用。** 当前任务归因需要把每个进程准确分给任务，而借还协议通过 GPU UUID、计算进程集合和显存基线确认物理归还，两条路径的检查目标不同。同卡交接的现有实现和边界见[借还文档第 16 节](rollout-gpu-lending.md#16-当前交接能力与-procfs-报错的关系)。当实验同时要求原生 science 归因评分时，仍必须补齐本节的部署条件。
+
+### 8.9 设计要求、当前检查与修复边界
+
+**宿主机 procfs 挂载不是 9 月 21 日原稿规定的通用 EnvRouter 部署条件。准确归属是目标，挂载和 inode 检查是当前实现选择的手段。** 原稿是工作区本地资料 [2026-09-21-env-service-design.md](../../../../2026-09-21-env-service-design.md)。需要区分三层要求：
+
+| 层次 | 原稿或当前实现实际要求 | 对本次错误的含义 |
+|---|---|---|
+| 容量准入 | 原稿第 6.3 节 Gate A 在创建环境前检查容量 | 整卡显存与声明预算足以支持该层的部分决策，不普遍要求按进程读取宿主机 procfs |
+| 避免评分误归因 | 原稿第 5.4 节指出整卡利用率会把邻居的 GPU 活动算给 CPU 任务，当时方案限制评分窗口的并发计算 | 问题确实已在原稿提出，但未规定当前的进程归属实现 |
+| 当前可信进程归属 | 节点用 NVML 的宿主 PID，结合 procfs 中的出生时间和 cgroup 关联任务 | 当前算法必须获得编号一致的进程视图，不能只删除前置检查 |
+
+原稿第 4.6 节要求实测占用优先于 agent 的逻辑阶段，第 6.6 节列出 `nvidia-smi pmon` 作为 `measured_util_by_pid` 来源。全文没有要求 `PSRL_GPU_HOST_PROC`、`/host/proc` 或固定命名空间 inode。原稿的 `/proc/driver/nvidia/version` 用于寻找匹配驱动库，`/proc/loadavg` 用于 CPU 负载，都不是当前进程归属检查。原稿第 6.3 节还规定 Gate B 是有界等待且到期放行，因此不能把旧方案描述为任意后台 GPU 进程都受严格串行控制。
+
+本次修复判断沿以下路径进行，生产调用节点和源码图例见第 1、8.1 节：
+
+```text
+原生 CUDA 的 command 路径
+  → runner 要求任务归属能力
+  → 节点检查 procfs 编号范围 → 不满足则在任务启动前拒绝
+  → 满足后查询 NVML 支持，再关联 PID / 出生时间 / cgroup
+
+修复路径：外层启动模板提供宿主 procfs
+  → 可信节点服务设置 PSRL_GPU_HOST_PROC
+  → 重新运行生产预检
+  → 两个容器最小验证：自己的计算被计入，邻居的计算不被误计
+```
+
+对应入口是 [runner.py:402](../../../examples/sciaccel_rl/runner.py#L402)、[command_gpu_node.py:111](../../../psrl/workers/env_service/command_gpu_node.py#L111)、[process_identities](../../../psrl/workers/env_service/task_telemetry.py#L10)。该强制预检目前针对 `command` 下的原生 `laps-accel-cuda`，不是所有 science 或所有 EnvRouter 工作负载的共同启动要求。普通命令遥测仍可能因相同条件缺失而不可用。
+
+**Results：** 本次追加只读核查发现，NVML 返回的运行中 GPU 进程 PID 为 1477384，当前节点 `/proc/1477384` 不存在。这说明不能只把 inode 条件删掉后继续做数字 PID 关联。一次查询不能排除短时进程退出，但它与此前确认的嵌套命名空间、缺宿主挂载共同说明当前没有可靠关联证据。8 张设备的进程利用率接口均返回 `no_samples`，没有返回 `unsupported`，这仍不等于已经采到任务活动样本。原始证据见 [readiness.json](../env-service-verification/results/procfs-repair-20261026/readiness.json)。没有启动 GPU 工作，没有操作这条现有进程。
+
+当前会话没有提供平台 API 服务地址，按集群默认服务名访问也未成功。此前第 9 节记录的平台访问为 403，本次不能把网络不可达改写成新的权限拒绝。启动模板和真实容器名称尚待确认，因此没有修改运行中的节点，也没有把部署修复写成已完成。
+
+**如何定位平台实例：** 不应只查通用的 `JOB_ID`、`TASK_ID`、`POD_NAME`。本环境使用 `TJ_INSTANCE_ID`，另有 `TAIJI_IDE_ID` 和 `TAIJI_IDE_POD_NAME`，后两项在本次检查时为空。登录目标节点后可运行以下只读命令，只输出这些身份字段：
+
+```bash
+python -c 'import os; print("\n".join("{}={}".format(k, os.environ.get(k) or "(empty)") for k in ("TJ_INSTANCE_ID", "TAIJI_IDE_ID", "TAIJI_IDE_POD_NAME")))'
+```
+
+本次已取得非空平台实例 ID，以及从 cgroup 路径读到的 Pod UID，见 [platform-identity.json](../env-service-verification/results/procfs-repair-20261026/platform-identity.json)。Pod 是平台运行容器的单元，UID 是它的唯一身份。平台实例 ID、训练任务 ID、Pod UID 和节点 IP 属于不同层次，不能直接互换。以实例 ID 或节点 IP 在创建该资源的平台页面检索，打开匹配的开发实例或任务详情，再核对关联任务、启动配置和挂载设置。页面的具体栏目名称尚未通过平台界面核实。
+
+例如，平台实例详情显示其访问地址等于当前私有节点地址，这就建立了实例与登录环境的对应关系，再从该实例的启动配置定位挂载位置。如果页面还有关联训练任务，才把其任务 ID 单独记录，不能根据实例 ID 推造一个训练任务 ID。当前机器名是通用名称，不能用 `hostname` 代替平台实例身份。节点内也未发现 `kubectl`、`taiji` 或 `tj` 命令，因此本次没有通过这些客户端查询物理 Kubernetes Node 名称或所属控制器。
+
+第 9 节已有补丁生成器，可在取得真实可信容器名称后生成可审阅的部署修改。示例结构分别保存为 [Pod 片段](../env-service-verification/results/procfs-repair-20261026/host-proc-pod.patch.json)和[控制器模板片段](../env-service-verification/results/procfs-repair-20261026/host-proc-controller.patch.json)。其中 `experiment-node` 是示例容器名，不能直接冒充现场配置。平台自定义任务模板还需核对具体嵌套位置。挂载应通过外层启动配置生效，不能靠给内部 science 容器添加同名目录解决。
+
+**CPU 验证：** 已运行 3 项现有回归，覆盖邻居计算不能激活本任务奖励、本人样本去重和出生时间过滤、精确 cgroup 及后代匹配，全部通过，见 [cpu-checks.log](../env-service-verification/results/procfs-repair-20261026/cpu-checks.log)。从仓库根目录在项目环境中运行 `pytest -q tests/env_service/test_task_telemetry.py -k 'busy_neighbor or owned_samples or host_proc_matches'` 可复现。这些使用教学数据和临时 procfs 文件，证明归因约束，不证明私有节点部署已经修好。
+
+**可信归因验收的停止条件：** 取得配置并补齐部署后，只做一次生产预检和有界正反归因验证，确认自己活动有效、邻居活动无效及资源清理后即可结束。无挂载权限期间，用户授权的性能实验可使用显式 `observe` 模式保留原任务评分，但必须记录 GPU 归因未验证，不能把它写成这一验收通过。替代方案与风险见 [procfs 挂载障碍](../experiments/host-proc-blocker.md)。
 
 ## 9. 部署补丁与生产预检验收
 
@@ -401,11 +485,11 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/host_proc_diag
 
 | 步骤 | 输入和状态变化 | 源码 |
 |---|---|---|
-| 1 | 外层可信容器名称和模板类型，输出 JSON 补丁，不调用平台接口 | [mount_patch](../../examples/sciaccel_rl/prepare/host_proc_mount_patch.py#L8) |
-| 2 | 节点进程读取配置路径，挂载动作属于平台 | [TaskGpuTelemetry.__init__](../../psrl/workers/env_service/task_telemetry.py#L33) |
-| 3 | 在创建任务容器前执行真实节点服务的能力检查 | [probe_node](env-service-verification/scripts/gpu_job_probe.py#L50)、[check_gpu_attribution_support](../../psrl/workers/env_service/command_gpu_node.py#L111) |
-| 3 的退出 | 成功、失败或取消都进入节点连接清理 | [probe](env-service-verification/scripts/gpu_job_probe.py#L41) |
-| 4 | 验证本任务样本、邻居隔离、进程取消和配额归还 | [gpu_job_probe.py](env-service-verification/scripts/gpu_job_probe.py) |
+| 1 | 外层可信容器名称和模板类型，输出 JSON 补丁，不调用平台接口 | [mount_patch](../../../examples/sciaccel_rl/prepare/host_proc_mount_patch.py#L8) |
+| 2 | 节点进程读取配置路径，挂载动作属于平台 | [TaskGpuTelemetry.__init__](../../../psrl/workers/env_service/task_telemetry.py#L33) |
+| 3 | 在创建任务容器前执行真实节点服务的能力检查 | [probe_node](../env-service-verification/scripts/gpu_job_probe.py#L50)、[check_gpu_attribution_support](../../../psrl/workers/env_service/command_gpu_node.py#L111) |
+| 3 的退出 | 成功、失败或取消都进入节点连接清理 | [probe](../env-service-verification/scripts/gpu_job_probe.py#L41) |
+| 4 | 验证本任务样本、邻居隔离、进程取消和配额归还 | [gpu_job_probe.py](../env-service-verification/scripts/gpu_job_probe.py) |
 
 这些源码或部署边界有不清楚的地方，可以随时追问。
 
@@ -453,7 +537,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/gpu_job_probe.
 
 **Results：** 本轮真实生产节点方法在优先实验节点执行，Docker 与设备控制检查通过，宿主机 PID 视图检查拒绝。没有启动任务容器或 CUDA 工作，节点服务连接已关闭。平台权限检查的三个结果均为拒绝，实际 Pod 查询为 403。两种部署补丁结构已在 CPU 上生成并检查，非法容器名被拒绝。GPU 正向归因、原生 science 三项评分和训练均未执行。
 
-可分享的结果见 [deployment-summary.json](gpu-job-validation/deployment-summary.json)。新增 [4 项 CPU 回归](../../tests/env_service/test_gpu_probe_preflight.py)通过，覆盖正式运行前的拒绝、只预检模式的拒绝与通过、准备阶段取消后的连接清理。这里的通过分支使用测试替身，不是宿主机视图已经部署成功。
+可分享的结果见 [deployment-summary.json](../gpu-job-validation/deployment-summary.json)。新增 [4 项 CPU 回归](../../../tests/env_service/test_gpu_probe_preflight.py)通过，覆盖正式运行前的拒绝、只预检模式的拒绝与通过、准备阶段取消后的连接清理。这里的通过分支使用测试替身，不是宿主机视图已经部署成功。
 
 修改文件的 Ruff、格式及注释检查通过，索引与本文链接已校验。全仓 hooks 在隔离副本仍因其他文件的已有问题失败，自动格式修改没有回写。
 
@@ -495,7 +579,7 @@ git -C psrl-gpu-jobs remote get-url origin
 
 ## 11. 同容器并发的目标架构
 
-**本节及后续改造均为设计提案。** 目标是一个任务容器内四条小命令可以按容量并行，放不下时排队，取消其中一条只回收它的进程和预算。实现单位应统一成 GPU 作业，容器只保留 CPU、主机内存和文件系统等会话级资源。它承接[同容器实验的归因](science-natural-gpu-concurrency.md#14-同容器限制与问题归因)，不改变已有实验结论。
+**本节及后续改造均为设计提案。** 目标是一个任务容器内四条小命令可以按容量并行，放不下时排队，取消其中一条只回收它的进程和预算。实现单位应统一成 GPU 作业，容器只保留 CPU、主机内存和文件系统等会话级资源。它承接[同容器实验的归因](../experiments/science-natural-gpu-concurrency.md#14-同容器限制与问题归因)，不改变已有实验结论。
 
 ```text
 [P1] Science GPU 工具 / 同步执行接口 / 分阶段准备接口
@@ -522,12 +606,12 @@ git -C psrl-gpu-jobs remote get-url origin
 
 | 编号 | 当前职责、函数与改造落点 |
 |---|---|
-| P1 | [dispatch_gpu_tool](../../examples/sciaccel_rl/gpu_tools.py#L26) 接受作业请求；[execute_prepared](../../psrl/workers/env_service/prepared_gpu.py#L24) 处理分阶段程序，需要统一到同一作业后端 |
-| P2 | [GpuJob / GpuJobManager](../../psrl/workers/env_service/gpu_jobs.py#L11) 已有独立 ID 与状态，但缺少命令预算，_run 仍持有串行锁 |
-| P3 | [GpuCommandScheduler.acquire](../../psrl/workers/env_service/command_gpu.py#L49) 当前按 lease 计费且禁止同租约多请求；[账本显存求和](../../psrl/workers/env_service/ledger.py#L325) 当前依赖 gpu_active 布尔值 |
-| P4 | [DeviceCgroupFence](../../psrl/workers/env_service/command_gpu_node.py#L14) 当前授权整个容器；[进程组启动助手](../../psrl/workers/env_service/gpu_job_process.py#L35) 当前不是作业 cgroup 启动器 |
-| P5、P6 | [revoke_gpu_command](../../psrl/workers/env_service/command_gpu_node.py#L153) 当前扫描整个容器；[TaskGpuTelemetry](../../psrl/workers/env_service/task_telemetry.py#L30) 当前按容器路径归因，需收窄到作业路径 |
-| P7 | [GpuJobManager.close](../../psrl/workers/env_service/gpu_jobs.py#L127) 与 [Router.finish_gpu_command_lease](../../psrl/workers/env_service/router.py#L240) 负责汇合和租约回收，需要遍历全部作业并核验物理状态 |
+| P1 | [dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py#L26) 接受作业请求；[execute_prepared](../../../psrl/workers/env_service/prepared_gpu.py#L24) 处理分阶段程序，需要统一到同一作业后端 |
+| P2 | [GpuJob / GpuJobManager](../../../psrl/workers/env_service/gpu_jobs.py#L11) 已有独立 ID 与状态，但缺少命令预算，_run 仍持有串行锁 |
+| P3 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L49) 当前按 lease 计费且禁止同租约多请求；[账本显存求和](../../../psrl/workers/env_service/ledger.py#L325) 当前依赖 gpu_active 布尔值 |
+| P4 | [DeviceCgroupFence](../../../psrl/workers/env_service/command_gpu_node.py#L14) 当前授权整个容器；[进程组启动助手](../../../psrl/workers/env_service/gpu_job_process.py#L35) 当前不是作业 cgroup 启动器 |
+| P5、P6 | [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153) 当前扫描整个容器；[TaskGpuTelemetry](../../../psrl/workers/env_service/task_telemetry.py#L30) 当前按容器路径归因，需收窄到作业路径 |
+| P7 | [GpuJobManager.close](../../../psrl/workers/env_service/gpu_jobs.py#L127) 与 [Router.finish_gpu_command_lease](../../../psrl/workers/env_service/router.py#L240) 负责汇合和租约回收，需要遍历全部作业并核验物理状态 |
 
 这些代码如果有理解上的问题，可以随时追问。方案需要同时改调度、节点执行和接口状态，不能只把 asyncio.Lock 换成 Semaphore(4)。后者只控制固定数量，不知道每条命令的显存大小，也不能解决 A 完成时撤销 B 权限的问题。
 
@@ -669,7 +753,7 @@ start 返回独立 job_id，四次 start 可以登记四条作业。gpu_memory_m
 
 ## 16. 可运行模型与验收边界
 
-配套 [model_concurrent_gpu_jobs.py](env-service-verification/scripts/model_concurrent_gpu_jobs.py) 是确定性的标准库契约模型，模拟图中的 P3、P4、P6。它实际运行在 CPU 上，不启动进程树、容器、Ray 或 GPU。示例中的授权集合和 empty 确认都是模拟输入，不能据此宣称 Linux 子组隔离、异步 RPC 竞态或真实 CUDA 取消已通过。
+配套 [model_concurrent_gpu_jobs.py](../env-service-verification/scripts/model_concurrent_gpu_jobs.py) 是确定性的标准库契约模型，模拟图中的 P3、P4、P6。它实际运行在 CPU 上，不启动进程树、容器、Ray 或 GPU。示例中的授权集合和 empty 确认都是模拟输入，不能据此宣称 Linux 子组隔离、异步 RPC 竞态或真实 CUDA 取消已通过。
 
 在仓库根目录运行：
 
@@ -691,7 +775,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_concurre
 
 所有 GPU 阶段都需要重新现场预检、确认所属资源和独占或共享约定，不能拿之前空闲状态当保证。正式 CPU 回归、Linux 子组、真实 GPU 并发及外层训练均为后续实施验收项，**本次只完成源码设计核对和教学模型运行**。
 
-模型脚本的定向 Ruff 与格式检查通过；本次三篇文档的本地路径、源码行号范围及章节锚点检查通过，新增源码引用另做语义核对。全仓 pre-commit 在隔离副本运行，仍被既有 Ruff 和注释风格违规阻塞，自动修改未回写共享工作区，日志见 [concurrent-design-precommit.log](gpu-job-validation/concurrent-design-precommit.log)。
+模型脚本的定向 Ruff 与格式检查通过；本次三篇文档的本地路径、源码行号范围及章节锚点检查通过，新增源码引用另做语义核对。全仓 pre-commit 在隔离副本运行，仍被既有 Ruff 和注释风格违规阻塞，自动修改未回写共享工作区，日志见 [concurrent-design-precommit.log](../gpu-job-validation/concurrent-design-precommit.log)。
 
 ## 17. 跟着方案读源码
 

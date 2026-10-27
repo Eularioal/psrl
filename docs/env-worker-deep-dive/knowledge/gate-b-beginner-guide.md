@@ -72,9 +72,9 @@
 
 **这个类比的边界**：①真实代码里被扣住的是"模型的回复"，不是厨师本人，agent 不知道自己被节流，只觉得"模型今天回得慢"；②"火熄了"在代码里是"利用率 ≤ 5% **且** 显存 ≤ 256 MB"这个具体判据；③扣的时间有上限，**到点必放**，不会真的把厨师饿死。
 
-**为什么要扣？** 这是**设计意图**，来源是代码注释（[`session_router.py:120-138`](../../psrl/workers/gen/session_router.py#L120)）和设计提案，我没有验证过这个因果：模型刚刚下达的一条工具命令（比如又跑一个程序），如果直接放行，可能会和"马上要复用同一张卡的评分程序（verifier）"撞车；而且设计提案担心 GPU 遥测读的是**整张卡**的计数器，邻居的负载会"污染"判断（见 设计提案译文 03 §5.4（本地资料，未随仓库发布））。
+**为什么要扣？** 这是**设计意图**，来源是代码注释（[`session_router.py:120-138`](../../../psrl/workers/gen/session_router.py#L120)）和设计提案，我没有验证过这个因果：模型刚刚下达的一条工具命令（比如又跑一个程序），如果直接放行，可能会和"马上要复用同一张卡的评分程序（verifier）"撞车；而且设计提案担心 GPU 遥测读的是**整张卡**的计数器，邻居的负载会"污染"判断（见 设计提案译文 03 §5.4（本地资料，未随仓库发布））。
 
-**为什么扣"回复"而不是扣"下一次请求"？** 因为 SessionRouter 能控制的就是"什么时候把模型的回复交回去"。扣住回复，agent 那边看起来只是"这次 HTTP 请求耗时更长"。这也带来一个硬约束：agent 的 LLM 请求超时是 900 秒且不重试（[`runner.py:316-317`](../../examples/sciaccel_rl/runner.py#L316)），扣的时间必须小于它，所以默认上限是 600 秒，**超时放行而不是报错**——超出软目标只损失一点吞吐，让 episode 失败会毁掉最长四小时的工作（设计提案 §6.3 的逻辑，见 译文 04（本地资料，未随仓库发布））。
+**为什么扣"回复"而不是扣"下一次请求"？** 因为 SessionRouter 能控制的就是"什么时候把模型的回复交回去"。扣住回复，agent 那边看起来只是"这次 HTTP 请求耗时更长"。这也带来一个硬约束：agent 的 LLM 请求超时是 900 秒且不重试（[`runner.py:316-317`](../../../examples/sciaccel_rl/runner.py#L316)），扣的时间必须小于它，所以默认上限是 600 秒，**超时放行而不是报错**——超出软目标只损失一点吞吐，让 episode 失败会毁掉最长四小时的工作（设计提案 §6.3 的逻辑，见 译文 04（本地资料，未随仓库发布））。
 
 ## 2. 全局图：五个零件在图上的位置
 
@@ -122,18 +122,18 @@
 
 | 图上 | 内容 | 源码 |
 |---|---|---|
-| ① | `SessionState.gpu_device` 字段（默认 `None`） | [`session_router.py:203-210`](../../psrl/workers/gen/session_router.py#L203) |
-| ① 之前 | 本 episode 的 session 在 episode 开始时就创建好了，所以后面绑定时一定找得到 | [`agent_loop.py:140`](../../examples/sciaccel_rl/agent_loop.py#L140) |
-| ② 路由注册 | 把网址 `/control/gpu_bind` 接到处理函数 | [`session_router.py:270-272`](../../psrl/workers/gen/session_router.py#L270) |
-| ② 处理函数 | `control_gpu_bind` | [`session_router.py:535-573`](../../psrl/workers/gen/session_router.py#L535) |
-| ③ 调参数 | 四个环境变量阈值与缓存/超时常量 | [`session_router.py:43-52`](../../psrl/workers/gen/session_router.py#L43) |
-| ③ 设备名转编号 | `/dev/nvidia1` → `1` | [`session_router.py:55-61`](../../psrl/workers/gen/session_router.py#L55) |
-| ③ 读遥测 | `_read_gpu_utilization` | [`session_router.py:64-107`](../../psrl/workers/gen/session_router.py#L64) |
-| ③ 等空闲 | `_wait_for_gpu_idle` | [`session_router.py:120-172`](../../psrl/workers/gen/session_router.py#L120) |
-| ④ 出口钩子 | `session_chat_completions` 末尾 | [`session_router.py:425-435`](../../psrl/workers/gen/session_router.py#L425) |
-| ⑤ 调用函数 | `_bind_gate_b` | [`runner.py:41-68`](../../examples/sciaccel_rl/runner.py#L41) |
-| ⑤ 绑定时机 | Gate A 拿到卡之后立刻绑 | [`runner.py:245`](../../examples/sciaccel_rl/runner.py#L245) |
-| ⑤ 解绑时机 | 容器确认删除、释放设备之后 | [`runner.py:402-404`](../../examples/sciaccel_rl/runner.py#L402) |
+| ① | `SessionState.gpu_device` 字段（默认 `None`） | [`session_router.py:203-210`](../../../psrl/workers/gen/session_router.py#L203) |
+| ① 之前 | 本 episode 的 session 在 episode 开始时就创建好了，所以后面绑定时一定找得到 | [`agent_loop.py:140`](../../../examples/sciaccel_rl/agent_loop.py#L140) |
+| ② 路由注册 | 把网址 `/control/gpu_bind` 接到处理函数 | [`session_router.py:270-272`](../../../psrl/workers/gen/session_router.py#L270) |
+| ② 处理函数 | `control_gpu_bind` | [`session_router.py:535-573`](../../../psrl/workers/gen/session_router.py#L535) |
+| ③ 调参数 | 四个环境变量阈值与缓存/超时常量 | [`session_router.py:43-52`](../../../psrl/workers/gen/session_router.py#L43) |
+| ③ 设备名转编号 | `/dev/nvidia1` → `1` | [`session_router.py:55-61`](../../../psrl/workers/gen/session_router.py#L55) |
+| ③ 读遥测 | `_read_gpu_utilization` | [`session_router.py:64-107`](../../../psrl/workers/gen/session_router.py#L64) |
+| ③ 等空闲 | `_wait_for_gpu_idle` | [`session_router.py:120-172`](../../../psrl/workers/gen/session_router.py#L120) |
+| ④ 出口钩子 | `session_chat_completions` 末尾 | [`session_router.py:425-435`](../../../psrl/workers/gen/session_router.py#L425) |
+| ⑤ 调用函数 | `_bind_gate_b` | [`runner.py:41-68`](../../../examples/sciaccel_rl/runner.py#L41) |
+| ⑤ 绑定时机 | Gate A 拿到卡之后立刻绑 | [`runner.py:245`](../../../examples/sciaccel_rl/runner.py#L245) |
+| ⑤ 解绑时机 | 容器确认删除、释放设备之后 | [`runner.py:402-404`](../../../examples/sciaccel_rl/runner.py#L402) |
 
 这些代码如果有理解上的问题，可以随时追问。
 
@@ -149,13 +149,13 @@ class SessionState:
     ...
     gpu_device: str | None = None
 ```
-—— 节选自 [`session_router.py:175-210`](../../psrl/workers/gen/session_router.py#L175)（省略了其他字段，所以不用行号块）
+—— 节选自 [`session_router.py:175-210`](../../../psrl/workers/gen/session_router.py#L175)（省略了其他字段，所以不用行号块）
 
 逐个拆开：
 
 - **`str | None`**：值要么是形如 `"/dev/nvidia1"` 的字符串，要么是 `None`（Python 里的"空"）。
 - **默认 `None`**：新建的档案卡这一栏是空的，表示"没有 GPU 绑定"。
-- **"完全不受影响"是怎么保证的**：出口钩子里是 `if gpu_device:`（见第 7 节），`None` 是"假值"，条件不成立，整段 Gate B 代码被跳过。所以所有**非 GPU 任务**，以及根本不会去调 `gpu_bind` 的其他例子，对它们来说 Gate B 就像不存在。唯一的"开销"是钩子里多读一次这个字段时拿一下 `state.lock`（微秒级，见 [`session_router.py:429-430`](../../psrl/workers/gen/session_router.py#L429)）。
+- **"完全不受影响"是怎么保证的**：出口钩子里是 `if gpu_device:`（见第 7 节），`None` 是"假值"，条件不成立，整段 Gate B 代码被跳过。所以所有**非 GPU 任务**，以及根本不会去调 `gpu_bind` 的其他例子，对它们来说 Gate B 就像不存在。唯一的"开销"是钩子里多读一次这个字段时拿一下 `state.lock`（微秒级，见 [`session_router.py:429-430`](../../../psrl/workers/gen/session_router.py#L429)）。
 - **为什么要显式加在类里**：`@dataclass(slots=True)` 的意思是这个类只允许有声明过的字段，运行时不能随手 `state.xxx = ...` 新增属性，所以必须先在类里声明一栏。
 
 ## 5. 第二行：绑定端点
@@ -164,10 +164,10 @@ class SessionState:
 
 **先问一个问题：为什么需要一个"端点"，不能路由器自己知道哪张卡吗？** 不能，原因有两层：
 
-1. **路由器看不到卡号**：agent 问模型的 URL 形如 `{路由器}/sessions/s-abc/v1/chat/completions`（见 [`session_agent_loop.py:95`](../../psrl/workers/agent_loop/loops/session_agent_loop.py#L95)），请求里只有 session id，没有卡号。
+1. **路由器看不到卡号**：agent 问模型的 URL 形如 `{路由器}/sessions/s-abc/v1/chat/completions`（见 [`session_agent_loop.py:95`](../../../psrl/workers/agent_loop/loops/session_agent_loop.py#L95)），请求里只有 session id，没有卡号。
 2. **分卡的人和路由器不在同一个进程**：分卡（Gate A）发生在 `AgentLoopWorker` 的进程里，档案卡在 SessionRouter 的进程里。两个进程不共享内存（甚至可能在两台机器上），唯一的沟通办法是**发网络请求**。所以路由器开一个窗口，谁分了卡，谁就过来说一声："s-abc 现在用 `/dev/nvidia1`"。
 
-**请求长什么样**（示意，格式来自 [`control_gpu_bind` 的文档字符串](../../psrl/workers/gen/session_router.py#L535) 和 [`runner.py:57-61`](../../examples/sciaccel_rl/runner.py#L57)；下面是教学例子，不是从线上抓到的）：
+**请求长什么样**（示意，格式来自 [`control_gpu_bind` 的文档字符串](../../../psrl/workers/gen/session_router.py#L535) 和 [`runner.py:57-61`](../../../examples/sciaccel_rl/runner.py#L57)；下面是教学例子，不是从线上抓到的）：
 
 ```
 POST {session_router_url}/control/gpu_bind
@@ -175,7 +175,7 @@ POST {session_router_url}/control/gpu_bind
 [{"session_id": "s-abc", "gpu_device": null}]               ← 解绑
 ```
 
-**处理函数做了什么**（[`session_router.py:535-573`](../../psrl/workers/gen/session_router.py#L535)），按顺序：
+**处理函数做了什么**（[`session_router.py:535-573`](../../../psrl/workers/gen/session_router.py#L535)），按顺序：
 
 | 步骤 | 代码做什么 | 为什么 |
 |---|---|---|
@@ -188,7 +188,7 @@ POST {session_router_url}/control/gpu_bind
 
 **"绑定"和"清空"为什么共用一个端点**：只是字段值不同（字符串 vs `null`），逻辑是同一行赋值，所以"各调用一次"就是：拿到卡时绑，还卡时清。
 
-**一个可能的疑问：绑定时 session 一定存在吗？** 从代码看是的：`agent_loop.py:140` 先 `create_session`，之后才把 `session_id` 传给 `run_harbor_episode`（[`agent_loop.py:151-156`](../../examples/sciaccel_rl/agent_loop.py#L151)），所以 `runner.py:245` 绑定时路由器里已经有这张档案卡。
+**一个可能的疑问：绑定时 session 一定存在吗？** 从代码看是的：`agent_loop.py:140` 先 `create_session`，之后才把 `session_id` 传给 `run_harbor_episode`（[`agent_loop.py:151-156`](../../../examples/sciaccel_rl/agent_loop.py#L151)），所以 `runner.py:245` 绑定时路由器里已经有这张档案卡。
 
 ## 6. 第三行：怎么判断 GPU 空闲
 
@@ -201,7 +201,7 @@ POST {session_router_url}/control/gpu_bind
 ```
 nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader,nounits
 ```
-—— [`session_router.py:82-88`](../../psrl/workers/gen/session_router.py#L82)
+—— [`session_router.py:82-88`](../../../psrl/workers/gen/session_router.py#L82)
 
 | 片段 | 含义 |
 |---|---|
@@ -236,7 +236,7 @@ for line in stdout.decode(errors="replace").splitlines():
     except ValueError:
         continue
 ```
-—— [`session_router.py:96-104`](../../psrl/workers/gen/session_router.py#L96)
+—— [`session_router.py:96-104`](../../../psrl/workers/gen/session_router.py#L96)
 
 手算一遍 `"1, 97, 18000"`：`split(",")` 得到 `["1", " 97", " 18000"]` → `strip()` 去掉空格 → `data[1] = (97.0, 18000.0)`。最终 `data = {0: (0.0, 0.0), 1: (97.0, 18000.0)}`。**读不懂的行被直接跳过**（列数不对，或者不是数字），这样那张卡就不在字典里，后面会走"读不到 → 放行"的分支。
 
@@ -244,7 +244,7 @@ for line in stdout.decode(errors="replace").splitlines():
 
 场景：一台节点上同时有 20 个 GPU session，它们的回复恰好在同一瞬间到达出口，**每个都要看一眼 GPU 忙不忙**。如果每个都去启动一次 `nvidia-smi` 子进程，一瞬间就是 20 个子进程，既浪费又可能拖慢 `nvidia-smi` 本身（这是个"惊群"问题：大家同时醒来干同一件事）。
 
-代码的做法（[`session_router.py:74-80`](../../psrl/workers/gen/session_router.py#L74)）：
+代码的做法（[`session_router.py:74-80`](../../../psrl/workers/gen/session_router.py#L74)）：
 
 1. 一个模块级的 `asyncio.Lock`：同一时刻只允许一个协程进入"读遥测"这段；
 2. 拿到锁之后先看缓存：距离上次读取不到 1 秒（`_GATE_B_SMI_CACHE_TTL_SEC = 1.0`），直接返回上次的结果；
@@ -260,12 +260,12 @@ except (OSError, asyncio.TimeoutError) as exc:
     _gate_b_smi_cache_data = {}
     return _gate_b_smi_cache_data
 ```
-—— [`session_router.py:90-94`](../../psrl/workers/gen/session_router.py#L90)
+—— [`session_router.py:90-94`](../../../psrl/workers/gen/session_router.py#L90)
 
 - `OSError`：命令不存在（比如没装驱动的开发机、纯 CPU 机器，Python 会抛 `FileNotFoundError`，它属于 `OSError`）；
 - `TimeoutError`：5 秒内 `nvidia-smi` 没返回（`_GATE_B_SMI_TIMEOUT_SEC = 5.0`）。
 
-两种情况都返回**空字典 `{}`**。在 `_wait_for_gpu_idle` 里，空字典意味着"这张卡的编号不在遥测里"，直接放行（[`session_router.py:146-147`](../../psrl/workers/gen/session_router.py#L146)）。这就是**失败开放**。
+两种情况都返回**空字典 `{}`**。在 `_wait_for_gpu_idle` 里，空字典意味着"这张卡的编号不在遥测里"，直接放行（[`session_router.py:146-147`](../../../psrl/workers/gen/session_router.py#L146)）。这就是**失败开放**。
 
 打个比方：门禁刷卡机坏了。"失败关闭"是门死锁，谁也进不去；"失败开放"是门默认敞开。Gate B 选了后者，因为它本来就只是个软节流，不能因为"监控设备坏了"就让所有 GPU 任务停摆。
 
@@ -292,7 +292,7 @@ if gpu_device:
 
 return self.build_response(result)
 ```
-—— [`session_router.py:429-435`](../../psrl/workers/gen/session_router.py#L429)
+—— [`session_router.py:429-435`](../../../psrl/workers/gen/session_router.py#L429)
 
 两个细节：
 
@@ -317,9 +317,9 @@ while True:
         return
     await asyncio.sleep(_GATE_B_POLL_INTERVAL_SEC)
 ```
-—— 节选自 [`session_router.py:120-172`](../../psrl/workers/gen/session_router.py#L120)（省略日志语句，所以不用行号块）
+—— 节选自 [`session_router.py:120-172`](../../../psrl/workers/gen/session_router.py#L120)（省略日志语句，所以不用行号块）
 
-> **关于这段节选（2026-10-12 校正）：** 上面是提交 `72ca50c` 里的**单设备版本**，便于入门；工作区当前的真实源码在此基础上多了两点：①`device` 可以是逗号连接的多个设备，先用 `_parse_gpu_indices`（[`:110`](../../psrl/workers/gen/session_router.py#L110)）拆成编号列表，**全部**设备都空闲才放行；②多了 `shared` 参数，共享卡（同一个 unit 的多个容器共用一张卡）只看利用率、不看显存，因为常驻的模型权重会让显存一直不为零。下文的讲解和表格仍按单设备、非共享的情况成立；这两点是工作区新增的行为，详见 [Env Service 实现讲解](env-service-implementation.md)。文中所有行号都已校正为工作区当前行号。
+> **关于这段节选（2026-10-12 校正）：** 上面是提交 `72ca50c` 里的**单设备版本**，便于入门；工作区当前的真实源码在此基础上多了两点：①`device` 可以是逗号连接的多个设备，先用 `_parse_gpu_indices`（[`:110`](../../../psrl/workers/gen/session_router.py#L110)）拆成编号列表，**全部**设备都空闲才放行；②多了 `shared` 参数，共享卡（同一个 unit 的多个容器共用一张卡）只看利用率、不看显存，因为常驻的模型权重会让显存一直不为零。下文的讲解和表格仍按单设备、非共享的情况成立；这两点是工作区新增的行为，详见 [Env Service 实现讲解](env-service-implementation.md)。文中所有行号都已校正为工作区当前行号。
 
 这个循环可以看成"轮询"（每隔一会儿看一眼）。每看一次，四选一：
 
@@ -331,7 +331,7 @@ while True:
 | 已经等过 `deadline`（默认 600 秒） | 打 WARNING 日志，**照样放行** | 保险：一个卡死的 episode 不能永远堵住 |
 | 以上都不是 | 睡 2 秒，回到循环开头再读 | 继续等 |
 
-四个阈值/参数都是环境变量，默认值如下（[`session_router.py:43-48`](../../psrl/workers/gen/session_router.py#L43)）：
+四个阈值/参数都是环境变量，默认值如下（[`session_router.py:43-48`](../../../psrl/workers/gen/session_router.py#L43)）：
 
 | 环境变量 | 默认 | 含义 |
 |---|---|---|
@@ -363,7 +363,7 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
     except Exception as exc:  # noqa: BLE001
         psrl_logger.debug(...)
 ```
-—— 节选自 [`runner.py:41-68`](../../examples/sciaccel_rl/runner.py#L41)（省略了文档字符串和日志参数，所以不用行号块）
+—— 节选自 [`runner.py:41-68`](../../../examples/sciaccel_rl/runner.py#L41)（省略了文档字符串和日志参数，所以不用行号块）
 
 **"best-effort（尽力而为）"是什么意思**：做得到最好，做不到也不算出错。这里体现在 `try/except Exception`：不管是路由器连不上、session 已被删，还是别的错，**统统吞掉，只打一条 debug 日志**，episode 照常往下走。
 
@@ -373,8 +373,8 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
 
 | 时机 | 代码 | 传的值 |
 |---|---|---|
-| Gate A 拿到设备后 | [`runner.py:245`](../../examples/sciaccel_rl/runner.py#L245) `_bind_gate_b(session_router_url, session_id, allocated_gpu.device)` | `"/dev/nvidia1"`（绑定） |
-| 容器确认删除、设备释放之后 | [`runner.py:402-404`](../../examples/sciaccel_rl/runner.py#L402) `_bind_gate_b(..., None)` | `None`（解绑） |
+| Gate A 拿到设备后 | [`runner.py:245`](../../../examples/sciaccel_rl/runner.py#L245) `_bind_gate_b(session_router_url, session_id, allocated_gpu.device)` | `"/dev/nvidia1"`（绑定） |
+| 容器确认删除、设备释放之后 | [`runner.py:402-404`](../../../examples/sciaccel_rl/runner.py#L402) `_bind_gate_b(..., None)` | `None`（解绑） |
 
 解绑放在释放设备**之后**，是因为在这之前容器还可能在使用这张卡，Gate B 还应该继续生效。
 
@@ -398,14 +398,14 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
 
 | 步骤 | 对应图上 | 调用位置 |
 |---|---|---|
-| 1 | 前置 | [`agent_loop.py:140`](../../examples/sciaccel_rl/agent_loop.py#L140) `create_session` → [`:151-156`](../../examples/sciaccel_rl/agent_loop.py#L151) 把 `session_id` 交给 runner |
-| 2 | Gate A | [`runner.py:240-241`](../../examples/sciaccel_rl/runner.py#L240) 拿到 `allocated_gpu` |
-| 3 | ⑤ 绑定 | [`runner.py:245`](../../examples/sciaccel_rl/runner.py#L245) → [`:41-61`](../../examples/sciaccel_rl/runner.py#L41) `post(.../control/gpu_bind)` |
-| 4 | ② 端点 | [`session_router.py:272`](../../psrl/workers/gen/session_router.py#L272) 路由 → [`:535`](../../psrl/workers/gen/session_router.py#L535) `control_gpu_bind` → [`:567`](../../psrl/workers/gen/session_router.py#L567) 写 `state.gpu_device` |
-| 5 | ① 字段 | [`session_router.py:210`](../../psrl/workers/gen/session_router.py#L210) |
-| 6 | ④ 钩子 | 每轮回复：[`session_router.py:429-433`](../../psrl/workers/gen/session_router.py#L429) |
-| 7 | ③ 等空闲 | [`:120`](../../psrl/workers/gen/session_router.py#L120) `_wait_for_gpu_idle` → [`:145`](../../psrl/workers/gen/session_router.py#L145) `_read_gpu_utilization` → [`:82`](../../psrl/workers/gen/session_router.py#L82) `nvidia-smi` |
-| 8 | ⑤ 解绑 | [`runner.py:402-404`](../../examples/sciaccel_rl/runner.py#L402) |
+| 1 | 前置 | [`agent_loop.py:140`](../../../examples/sciaccel_rl/agent_loop.py#L140) `create_session` → [`:151-156`](../../../examples/sciaccel_rl/agent_loop.py#L151) 把 `session_id` 交给 runner |
+| 2 | Gate A | [`runner.py:240-241`](../../../examples/sciaccel_rl/runner.py#L240) 拿到 `allocated_gpu` |
+| 3 | ⑤ 绑定 | [`runner.py:245`](../../../examples/sciaccel_rl/runner.py#L245) → [`:41-61`](../../../examples/sciaccel_rl/runner.py#L41) `post(.../control/gpu_bind)` |
+| 4 | ② 端点 | [`session_router.py:272`](../../../psrl/workers/gen/session_router.py#L272) 路由 → [`:535`](../../../psrl/workers/gen/session_router.py#L535) `control_gpu_bind` → [`:567`](../../../psrl/workers/gen/session_router.py#L567) 写 `state.gpu_device` |
+| 5 | ① 字段 | [`session_router.py:210`](../../../psrl/workers/gen/session_router.py#L210) |
+| 6 | ④ 钩子 | 每轮回复：[`session_router.py:429-433`](../../../psrl/workers/gen/session_router.py#L429) |
+| 7 | ③ 等空闲 | [`:120`](../../../psrl/workers/gen/session_router.py#L120) `_wait_for_gpu_idle` → [`:145`](../../../psrl/workers/gen/session_router.py#L145) `_read_gpu_utilization` → [`:82`](../../../psrl/workers/gen/session_router.py#L82) `nvidia-smi` |
+| 8 | ⑤ 解绑 | [`runner.py:402-404`](../../../examples/sciaccel_rl/runner.py#L402) |
 
 ## 11. 可运行实验
 
@@ -466,4 +466,4 @@ python3 docs/psrl/scripts/gate_b_throttle_demo.py
 - [提交 72ca50c 代码讲解](commit-72ca50c-gate-ab-walkthrough.md)：本文的"专业版"，含 Gate A 的逐段讲解、与设计提案的对照和 6 处注意点。
 - [SciAccel GPU Gate 实测与部署](sciaccel-gpu-gate.md)：§16.5 是 Gate B 那张 5 行表格的出处。
 - Env Service 设计文档译文（本地资料，未随仓库发布）：Gate A / Gate B 的设计动机（§6.3 两道门）。
-- [PSRL 笔记总索引](../README.md)
+- [PSRL 笔记总索引](../../README.md)

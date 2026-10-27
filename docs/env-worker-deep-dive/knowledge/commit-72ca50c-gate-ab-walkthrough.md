@@ -75,21 +75,21 @@ run_harbor_episode()                                   ← runner.py
 
 | 图上 | 内容 | 源码 |
 |---|---|---|
-| ① | 进程内计数信号量（原有，未改动逻辑） | [`agent_loop.py:349`](../../examples/sciaccel_rl/agent_loop.py#L349) |
-| ② 发现设备 | `PSRL_SCIACCEL_GPU_DEVICES` 覆盖，否则 glob `/dev/nvidia[0-9]*` | [`gpu_device_gate.py:69`](../../psrl/utils/concurrency/gpu_device_gate.py#L69) |
-| ② 抢卡 | `GpuDeviceGate.acquire` | [`gpu_device_gate.py:117-147`](../../psrl/utils/concurrency/gpu_device_gate.py#L117) |
-| ② 文件锁 | `SlotManager.acquire`（`flock` 非阻塞 + 0.2s 轮询） | [`slot.py:29-73`](../../psrl/utils/concurrency/slot.py#L29) |
-| ② 生成 override | `build_gpu_override` | [`gpu_device_gate.py:158-194`](../../psrl/utils/concurrency/gpu_device_gate.py#L158) |
-| ②③ 接入点 | `run_harbor_episode` 里的 Gate A 块 | [`runner.py:230-262`](../../examples/sciaccel_rl/runner.py#L230) |
-| ③ 绑定调用 | `_bind_gate_b`（尽力而为，永不抛错） | [`runner.py:41-68`](../../examples/sciaccel_rl/runner.py#L41) |
-| ③ 传参 | agent_loop 把 `session_router_url` 传给 runner | [`agent_loop.py:358`](../../examples/sciaccel_rl/agent_loop.py#L358) |
-| ③ 绑定端点 | `POST /control/gpu_bind` | [`session_router.py:272`](../../psrl/workers/gen/session_router.py#L272)（注册）、[`:535-572`](../../psrl/workers/gen/session_router.py#L535)（实现） |
-| ③ 状态字段 | `SessionState.gpu_device` | [`session_router.py:210`](../../psrl/workers/gen/session_router.py#L210) |
-| ⑤ 出口钩子 | 回复返回前的 Gate B | [`session_router.py:425-433`](../../psrl/workers/gen/session_router.py#L425) |
-| ⑤ 等空闲 | `_wait_for_gpu_idle` | [`session_router.py:120-172`](../../psrl/workers/gen/session_router.py#L120) |
-| ⑤ 读遥测 | `_read_gpu_utilization`（`nvidia-smi`，1s 缓存，失败即"全空闲"） | [`session_router.py:64-107`](../../psrl/workers/gen/session_router.py#L64) |
-| ⑥ 释放 | `finally` 末尾 | [`runner.py:402-406`](../../examples/sciaccel_rl/runner.py#L402) |
-| 测试 | 3 个 EnvWorker GPU 集成测试 | [`test_worker_gpu_integration.py:63,90,131`](../../tests/env_worker/test_worker_gpu_integration.py#L63) |
+| ① | 进程内计数信号量（原有，未改动逻辑） | [`agent_loop.py:349`](../../../examples/sciaccel_rl/agent_loop.py#L349) |
+| ② 发现设备 | `PSRL_SCIACCEL_GPU_DEVICES` 覆盖，否则 glob `/dev/nvidia[0-9]*` | [`gpu_device_gate.py:69`](../../../psrl/utils/concurrency/gpu_device_gate.py#L69) |
+| ② 抢卡 | `GpuDeviceGate.acquire` | [`gpu_device_gate.py:117-147`](../../../psrl/utils/concurrency/gpu_device_gate.py#L117) |
+| ② 文件锁 | `SlotManager.acquire`（`flock` 非阻塞 + 0.2s 轮询） | [`slot.py:29-73`](../../../psrl/utils/concurrency/slot.py#L29) |
+| ② 生成 override | `build_gpu_override` | [`gpu_device_gate.py:158-194`](../../../psrl/utils/concurrency/gpu_device_gate.py#L158) |
+| ②③ 接入点 | `run_harbor_episode` 里的 Gate A 块 | [`runner.py:230-262`](../../../examples/sciaccel_rl/runner.py#L230) |
+| ③ 绑定调用 | `_bind_gate_b`（尽力而为，永不抛错） | [`runner.py:41-68`](../../../examples/sciaccel_rl/runner.py#L41) |
+| ③ 传参 | agent_loop 把 `session_router_url` 传给 runner | [`agent_loop.py:358`](../../../examples/sciaccel_rl/agent_loop.py#L358) |
+| ③ 绑定端点 | `POST /control/gpu_bind` | [`session_router.py:272`](../../../psrl/workers/gen/session_router.py#L272)（注册）、[`:535-572`](../../../psrl/workers/gen/session_router.py#L535)（实现） |
+| ③ 状态字段 | `SessionState.gpu_device` | [`session_router.py:210`](../../../psrl/workers/gen/session_router.py#L210) |
+| ⑤ 出口钩子 | 回复返回前的 Gate B | [`session_router.py:425-433`](../../../psrl/workers/gen/session_router.py#L425) |
+| ⑤ 等空闲 | `_wait_for_gpu_idle` | [`session_router.py:120-172`](../../../psrl/workers/gen/session_router.py#L120) |
+| ⑤ 读遥测 | `_read_gpu_utilization`（`nvidia-smi`，1s 缓存，失败即"全空闲"） | [`session_router.py:64-107`](../../../psrl/workers/gen/session_router.py#L64) |
+| ⑥ 释放 | `finally` 末尾 | [`runner.py:402-406`](../../../examples/sciaccel_rl/runner.py#L402) |
+| 测试 | 3 个 EnvWorker GPU 集成测试 | [`test_worker_gpu_integration.py:63,90,131`](../../../tests/env_worker/test_worker_gpu_integration.py#L63) |
 
 这些代码如果有理解上的疑问，可以随时追问。
 
@@ -150,13 +150,13 @@ run_harbor_episode()                                   ← runner.py
 
 `flock(LOCK_EX | LOCK_NB)` 是操作系统级的互斥文件锁，"NB"表示拿不到就立刻抛 `BlockingIOError` 而不是阻塞。它跨进程生效，这正是选它而不选 `asyncio.Semaphore` 的原因：同一台节点上可能有多个 `AgentLoopWorker` **独立进程**，互相看不到对方的 Python 内存。背景原理（advisory 锁、为什么进程崩溃锁会自动释放）见 [SciAccel GPU Gate §19](sciaccel-gpu-gate.md#19-追加问题2026-10-08fcntl-文件锁背景知识与-gate-a-的分配粒度)，这里不重复。
 
-锁目录由 `jobs_dir` 的路径哈希决定：`/tmp/{prefix}_{sha1(abspath(jobs_dir))[:12]}`（[`slot.py:25-26`](../../psrl/utils/concurrency/slot.py#L25)），所以**同一个 `jobs_dir` 的所有进程共用一个池**。默认 `jobs_dir` 是 `/tmp/sciaccel_jobs`（[`config.py:22`](../../examples/sciaccel_rl/config.py#L22)）。
+锁目录由 `jobs_dir` 的路径哈希决定：`/tmp/{prefix}_{sha1(abspath(jobs_dir))[:12]}`（[`slot.py:25-26`](../../../psrl/utils/concurrency/slot.py#L25)），所以**同一个 `jobs_dir` 的所有进程共用一个池**。默认 `jobs_dir` 是 `/tmp/sciaccel_jobs`（[`config.py:22`](../../../examples/sciaccel_rl/config.py#L22)）。
 
 ### 4.4 设备发现与"哪些设备算可独占"
 
-[`is_exclusive_gpu_device`](../../psrl/utils/concurrency/gpu_device_gate.py#L57) 只认 `/dev/nvidia` 后面**全是数字**的路径（`/dev/nvidia0`、`/dev/nvidia12`）。`/dev/nvidiactl`、`/dev/nvidia-uvm`、`/dev/nvidia-uvm-tools` 是整机共用的控制设备，不对应某一张卡，可以原样挂进每个容器。
+[`is_exclusive_gpu_device`](../../../psrl/utils/concurrency/gpu_device_gate.py#L57) 只认 `/dev/nvidia` 后面**全是数字**的路径（`/dev/nvidia0`、`/dev/nvidia12`）。`/dev/nvidiactl`、`/dev/nvidia-uvm`、`/dev/nvidia-uvm-tools` 是整机共用的控制设备，不对应某一张卡，可以原样挂进每个容器。
 
-[`discover_gpu_devices`](../../psrl/utils/concurrency/gpu_device_gate.py#L69) 优先读环境变量 `PSRL_SCIACCEL_GPU_DEVICES`（逗号分隔），否则 glob `/dev/nvidia[0-9]*` 并按数字排序。环境变量的作用是让没有真 GPU 的机器（开发机、CI、诊断脚本）也能跑通这套逻辑，设备只是字符串。
+[`discover_gpu_devices`](../../../psrl/utils/concurrency/gpu_device_gate.py#L69) 优先读环境变量 `PSRL_SCIACCEL_GPU_DEVICES`（逗号分隔），否则 glob `/dev/nvidia[0-9]*` 并按数字排序。环境变量的作用是让没有真 GPU 的机器（开发机、CI、诊断脚本）也能跑通这套逻辑，设备只是字符串。
 
 ### 4.5 生成"只挂这张卡"的 override：`build_gpu_override`
 
@@ -174,7 +174,7 @@ run_harbor_episode()                                   ← runner.py
     override_file.write_text(yaml.dump({"services": {"main": main}}))
 ```
 
-做法：读静态 [`gpu-compose-override.yaml`](../../examples/sciaccel_rl/config/gpu-compose-override.yaml)，**只改 `services.main.devices`** 这一项：独占设备那一行（`/dev/nvidia0:/dev/nvidia0`）换成预留的设备，`nvidiactl`/`nvidia-uvm*` 原样保留；其余键（驱动库挂载、环境变量等）一概不动。
+做法：读静态 [`gpu-compose-override.yaml`](../../../examples/sciaccel_rl/config/gpu-compose-override.yaml)，**只改 `services.main.devices`** 这一项：独占设备那一行（`/dev/nvidia0:/dev/nvidia0`）换成预留的设备，`nvidiactl`/`nvidia-uvm*` 原样保留；其余键（驱动库挂载、环境变量等）一概不动。
 
 注意：这意味着静态文件里写死的驱动库挂载（文件名里带 `535.247.01`）**依然生效**，这个提交没有去解决"驱动库版本写死"的问题，见 [§6](#6-与设计提案对照做了什么没做什么)。
 
@@ -192,7 +192,7 @@ run_harbor_episode()                                   ← runner.py
 三个分支：
 
 1. **拿到卡**：生成临时 override，追加进 compose 文件列表，并通知 SessionRouter 绑定（Gate B）。
-2. **没发现任何设备**（`acquire` 返回 `None`）：回退成旧的静态映射，并打印 WARNING "no per-device exclusivity"（[`runner.py:246-256`](../../examples/sciaccel_rl/runner.py#L246)）。设计意图是不要悄悄假装提供了互斥。
+2. **没发现任何设备**（`acquire` 返回 `None`）：回退成旧的静态映射，并打印 WARNING "no per-device exclusivity"（[`runner.py:246-256`](../../../examples/sciaccel_rl/runner.py#L246)）。设计意图是不要悄悄假装提供了互斥。
 3. **没有 GPU 需求**：整个块跳过。
 
 释放在 `finally` 的最末尾：
@@ -217,7 +217,7 @@ run_harbor_episode()                                   ← runner.py
 
 **绑定**：Gate A 拿到卡之后，runner 向 SessionRouter 发一次 HTTP：
 
-下面是 [`runner.py:41-68`](../../examples/sciaccel_rl/runner.py#L41) 的骨架（省略了 docstring 与日志参数，所以不用行号块格式）：
+下面是 [`runner.py:41-68`](../../../examples/sciaccel_rl/runner.py#L41) 的骨架（省略了 docstring 与日志参数，所以不用行号块格式）：
 
 ```python
 async def _bind_gate_b(session_router_url: str, session_id: str, device: str | None) -> None:
@@ -233,7 +233,7 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
         psrl_logger.debug(...)   # 只记 debug 日志，不抛出
 ```
 
-端点 [`control_gpu_bind`](../../psrl/workers/gen/session_router.py#L535) 解析请求体，找到 `self.states[sid]`，在 `state.lock` 保护下写 `state.gpu_device`；`device` 为空则清空（解绑）。找不到 session 就记进 `missing` 返回。整个绑定调用**失败只记 debug 日志，绝不让 episode 失败**。
+端点 [`control_gpu_bind`](../../../psrl/workers/gen/session_router.py#L535) 解析请求体，找到 `self.states[sid]`，在 `state.lock` 保护下写 `state.gpu_device`；`device` 为空则清空（解绑）。找不到 session 就记进 `missing` 返回。整个绑定调用**失败只记 debug 日志，绝不让 episode 失败**。
 
 **等待**：每个模型回复返回前，钩子读 `state.gpu_device`，非空才进入等待：
 
@@ -253,20 +253,20 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
 
 没有绑定的 session（所有非 GPU 任务、AIRS-Bench/MLGym）完全跳过，所以对它们是零开销。
 
-[`_wait_for_gpu_idle`](../../psrl/workers/gen/session_router.py#L120) 是一个轮询循环，判定规则可以用一张表说清：
+[`_wait_for_gpu_idle`](../../../psrl/workers/gen/session_router.py#L120) 是一个轮询循环，判定规则可以用一张表说清：
 
 | 情况 | 动作 | 对应代码 |
 |---|---|---|
-| `nvidia-smi` 读不到这张卡（没装、超时、设备不在输出里） | **立刻放行**（fail open） | [`:146-147`](../../psrl/workers/gen/session_router.py#L146) |
-| `util ≤ 5%` 且 `mem ≤ 256 MB` | 放行 | [`:150`](../../psrl/workers/gen/session_router.py#L150) |
-| 已超过 `PSRL_GATE_B_MAX_WAIT_SEC`（默认 600 秒） | 打 WARNING，**照样放行** | [`:160-170`](../../psrl/workers/gen/session_router.py#L160) |
-| 其他 | 睡 `PSRL_GATE_B_POLL_INTERVAL_SEC`（默认 2 秒）后再读 | [`:172`](../../psrl/workers/gen/session_router.py#L172) |
+| `nvidia-smi` 读不到这张卡（没装、超时、设备不在输出里） | **立刻放行**（fail open） | [`:146-147`](../../../psrl/workers/gen/session_router.py#L146) |
+| `util ≤ 5%` 且 `mem ≤ 256 MB` | 放行 | [`:150`](../../../psrl/workers/gen/session_router.py#L150) |
+| 已超过 `PSRL_GATE_B_MAX_WAIT_SEC`（默认 600 秒） | 打 WARNING，**照样放行** | [`:160-170`](../../../psrl/workers/gen/session_router.py#L160) |
+| 其他 | 睡 `PSRL_GATE_B_POLL_INTERVAL_SEC`（默认 2 秒）后再读 | [`:172`](../../../psrl/workers/gen/session_router.py#L172) |
 
-阈值与超时都是环境变量（[`session_router.py:43-48`](../../psrl/workers/gen/session_router.py#L43)）：`PSRL_GATE_B_MAX_WAIT_SEC=600`、`PSRL_GATE_B_POLL_INTERVAL_SEC=2`、`PSRL_GATE_B_IDLE_UTIL_PCT=5`、`PSRL_GATE_B_IDLE_MEM_MB=256`。
+阈值与超时都是环境变量（[`session_router.py:43-48`](../../../psrl/workers/gen/session_router.py#L43)）：`PSRL_GATE_B_MAX_WAIT_SEC=600`、`PSRL_GATE_B_POLL_INTERVAL_SEC=2`、`PSRL_GATE_B_IDLE_UTIL_PCT=5`、`PSRL_GATE_B_IDLE_MEM_MB=256`。
 
-**为什么超时要"放行"而不是"失败"**：SciAccel agent 的 LLM 请求超时是 900 秒且不重试（[`runner.py:316-317`](../../examples/sciaccel_rl/runner.py#L316)），Gate B 在这次请求**内部**等，所以必须小于 900；超时放行是因为"超出软容量目标只损失吞吐，让 episode 失败会毁掉最长四小时的工作"（设计提案 §6.3 的原话意思，见 译文 04（本地资料，未随仓库发布））。
+**为什么超时要"放行"而不是"失败"**：SciAccel agent 的 LLM 请求超时是 900 秒且不重试（[`runner.py:316-317`](../../../examples/sciaccel_rl/runner.py#L316)），Gate B 在这次请求**内部**等，所以必须小于 900；超时放行是因为"超出软容量目标只损失吞吐，让 episode 失败会毁掉最长四小时的工作"（设计提案 §6.3 的原话意思，见 译文 04（本地资料，未随仓库发布））。
 
-**读遥测**：[`_read_gpu_utilization`](../../psrl/workers/gen/session_router.py#L64) 执行 `nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader,nounits`，解析成 `{index: (util, mem)}`。有一个模块级锁和 1 秒缓存，避免几十个 session 同一瞬间各开一个子进程；`nvidia-smi` 不存在或 5 秒超时则返回空字典，即"全部当空闲"。这里用的是**整卡**计数器，而不是设计提案建议的 `pmon` 按进程口径。
+**读遥测**：[`_read_gpu_utilization`](../../../psrl/workers/gen/session_router.py#L64) 执行 `nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader,nounits`，解析成 `{index: (util, mem)}`。有一个模块级锁和 1 秒缓存，避免几十个 session 同一瞬间各开一个子进程；`nvidia-smi` 不存在或 5 秒超时则返回空字典，即"全部当空闲"。这里用的是**整卡**计数器，而不是设计提案建议的 `pmon` 按进程口径。
 
 **解绑**：episode 结束后 `_bind_gate_b(..., None)`，`gpu_device` 置空，下一次回复就跳过 Gate B。
 
@@ -291,7 +291,7 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
 | `EnvRouter`（全局 Ray actor，unit 注册表、准入、租约、回收） | **没有**。全仓库零命中 |
 | `EnvUnit`（一个 unit 多个容器，带显存预算） | **没有**。Gate A 是"一个 episode 独占一整张卡"（`LOCK_EX`），不能多容器共享 |
 | Gate A：按设备显存/主机内存/CPU/容器数**加总**准入 | **没有**。只做"哪张卡"的互斥；容器数仍靠进程内信号量 |
-| Gate A 在 `Job.create` 之前、可无限期等待 | **是**。[`runner.py:240`](../../examples/sciaccel_rl/runner.py#L240) 先于 `job_dir` 与 `Job.create`（[`:278`](../../examples/sciaccel_rl/runner.py#L278)、[`:339`](../../examples/sciaccel_rl/runner.py#L339)）；`SlotManager` 的循环没有超时 |
+| Gate A 在 `Job.create` 之前、可无限期等待 | **是**。[`runner.py:240`](../../../examples/sciaccel_rl/runner.py#L240) 先于 `job_dir` 与 `Job.create`（[`:278`](../../../examples/sciaccel_rl/runner.py#L278)、[`:339`](../../../examples/sciaccel_rl/runner.py#L339)）；`SlotManager` 的循环没有超时 |
 | Gate B：有界等待、超时放行、仅 GPU unit | **是**。600 秒、fail open、只对被 `gpu_bind` 的 session 生效 |
 | Gate B 判据：并发活跃的 env 调用数 | **没有**。改用整卡 `util ≤ 5%` 且 `mem ≤ 256 MB` |
 | 按 `/proc/driver/nvidia/version` 在运行时解析驱动库（B1） | **没有**。静态 override 里的驱动库挂载原样保留，只改 `devices` |
@@ -305,25 +305,25 @@ async def _bind_gate_b(session_router_url: str, session_id: str, device: str | N
 
 下面每一条都是**读代码结构得出的推断**，我没有在真实多节点 GPU 集群上运行验证。
 
-1. **Gate A 的设备池是"整机所有 `/dev/nvidia[0-9]*`"，不知道谁占着哪张卡。** `discover_gpu_devices` 只做 glob（[`gpu_device_gate.py:69`](../../psrl/utils/concurrency/gpu_device_gate.py#L69)），不看 Ray 把哪些卡分给了 vLLM 或训练。如果 agent worker 所在节点同时跑训练/推理，Gate A 仍可能把一张正被引擎使用的卡发给某个 episode。这就是 [SciAccel GPU Gate §17.3](sciaccel-gpu-gate.md#173-对比envworker-路径为什么天然安全sciaccelgate-a路径为什么需要额外小心) 讨论的问题，这个提交没有解决它，只是让"同一个字符串被所有人拿到"变成了"在整机卡里互斥"。
-2. **池按 `jobs_dir` 的哈希分。** `/tmp/{prefix}_{sha1(abspath(jobs_dir))[:12]}`（[`slot.py:25-26`](../../psrl/utils/concurrency/slot.py#L25)）。两个用不同 `jobs_dir` 的任务在同一节点上互相看不到对方的占用。
-3. **Gate B 的 `nvidia-smi` 跑在 SessionRouter 子进程所在的节点，不一定是容器所在的节点。** SessionRouter 由 `RolloutGateway` Actor 用 `multiprocessing.Process` 拉起，并绑定该 Actor 所在节点的 IP（[`rollout_gateway.py:112,148,187`](../../psrl/workers/gen/rollout_gateway.py#L112)）；而 episode 的容器和 Gate A 在 `AgentLoopWorker` 所在节点。示例脚本把 agent worker 限定在 `AGENT_NODE_IPS`（[`fsdp_qwen35_4b.sh:93`](../../examples/sciaccel_rl/fsdp_qwen35_4b.sh#L93)），而 `RolloutGateway` 是不带节点亲和创建的（[`ray_trainer.py:600-605`](../../psrl/trainer/ppo/ray_trainer.py#L600)）。如果两者不在同一台机器，Gate B 读的是**别的机器上同名 index 的卡**；那台机器没有 `nvidia-smi` 时则整个 Gate B 悄悄退化为空操作。单节点部署不受影响。
+1. **Gate A 的设备池是"整机所有 `/dev/nvidia[0-9]*`"，不知道谁占着哪张卡。** `discover_gpu_devices` 只做 glob（[`gpu_device_gate.py:69`](../../../psrl/utils/concurrency/gpu_device_gate.py#L69)），不看 Ray 把哪些卡分给了 vLLM 或训练。如果 agent worker 所在节点同时跑训练/推理，Gate A 仍可能把一张正被引擎使用的卡发给某个 episode。这就是 [SciAccel GPU Gate §17.3](sciaccel-gpu-gate.md#173-对比envworker-路径为什么天然安全sciaccelgate-a路径为什么需要额外小心) 讨论的问题，这个提交没有解决它，只是让"同一个字符串被所有人拿到"变成了"在整机卡里互斥"。
+2. **池按 `jobs_dir` 的哈希分。** `/tmp/{prefix}_{sha1(abspath(jobs_dir))[:12]}`（[`slot.py:25-26`](../../../psrl/utils/concurrency/slot.py#L25)）。两个用不同 `jobs_dir` 的任务在同一节点上互相看不到对方的占用。
+3. **Gate B 的 `nvidia-smi` 跑在 SessionRouter 子进程所在的节点，不一定是容器所在的节点。** SessionRouter 由 `RolloutGateway` Actor 用 `multiprocessing.Process` 拉起，并绑定该 Actor 所在节点的 IP（[`rollout_gateway.py:112,148,187`](../../../psrl/workers/gen/rollout_gateway.py#L112)）；而 episode 的容器和 Gate A 在 `AgentLoopWorker` 所在节点。示例脚本把 agent worker 限定在 `AGENT_NODE_IPS`（[`fsdp_qwen35_4b.sh:93`](../../../examples/sciaccel_rl/fsdp_qwen35_4b.sh#L93)），而 `RolloutGateway` 是不带节点亲和创建的（[`ray_trainer.py:600-605`](../../../psrl/trainer/ppo/ray_trainer.py#L600)）。如果两者不在同一台机器，Gate B 读的是**别的机器上同名 index 的卡**；那台机器没有 `nvidia-smi` 时则整个 Gate B 悄悄退化为空操作。单节点部署不受影响。
 4. **Gate B 多半在等"自己的后台 GPU 任务"。** Gate A 已保证这张卡只有本 episode 在用，而 Gate B 读的是整卡计数器，所以 agent 用 `nohup ./solver &` 启动后台任务后，**下一轮**的模型回复会被扣住，直到 solver 结束或 600 秒到。这是否符合设计意图我没有确认（提交注释强调的是防止与 verifier 赛跑）；它和"agent 可以后台跑任务然后 `tail log`"这个正常用法是有张力的。600 秒加生成时间仍小于 900 秒的 LLM 请求超时，所以不会因此直接超时。
-5. **Gate A 在拿到 episode 计数名额之后才排队等卡。** 入口顺序是先 `_acquire_episode_slot`（[`agent_loop.py:349`](../../examples/sciaccel_rl/agent_loop.py#L349)），再进 `run_harbor_episode` 里等卡。若卡数少于 `max_concurrent_episodes`，等卡的 GPU episode 会一直占着计数名额，可能挡住本可以开跑的 CPU episode。
-6. **两处小的实现细节。** ① `build_gpu_override` 用的是 `tempfile.mktemp`（只生成名字不创建文件，标准库文档不推荐，存在竞态），见 [`gpu_device_gate.py:192`](../../psrl/utils/concurrency/gpu_device_gate.py#L192)；② `_read_gpu_utilization` 在 `wait_for` 超时的分支里没有 `kill` 那个 `nvidia-smi` 子进程（[`session_router.py:89-94`](../../psrl/workers/gen/session_router.py#L89)），从代码看超时的子进程会被丢下。
+5. **Gate A 在拿到 episode 计数名额之后才排队等卡。** 入口顺序是先 `_acquire_episode_slot`（[`agent_loop.py:349`](../../../examples/sciaccel_rl/agent_loop.py#L349)），再进 `run_harbor_episode` 里等卡。若卡数少于 `max_concurrent_episodes`，等卡的 GPU episode 会一直占着计数名额，可能挡住本可以开跑的 CPU episode。
+6. **两处小的实现细节。** ① `build_gpu_override` 用的是 `tempfile.mktemp`（只生成名字不创建文件，标准库文档不推荐，存在竞态），见 [`gpu_device_gate.py:192`](../../../psrl/utils/concurrency/gpu_device_gate.py#L192)；② `_read_gpu_utilization` 在 `wait_for` 超时的分支里没有 `kill` 那个 `nvidia-smi` 子进程（[`session_router.py:89-94`](../../../psrl/workers/gen/session_router.py#L89)），从代码看超时的子进程会被丢下。
 
 ## 8. 跟着图读源码：执行路径
 
 | 步骤 | 对应图上 | 调用 |
 |---|---|---|
-| 1 | ① | [`agent_loop.py:349`](../../examples/sciaccel_rl/agent_loop.py#L349) 拿计数名额 → [`:358`](../../examples/sciaccel_rl/agent_loop.py#L358) 把 `session_router_url` 传给 `run_harbor_episode` |
-| 2 | ② | [`runner.py:240-241`](../../examples/sciaccel_rl/runner.py#L240) `GpuDeviceGate(...).acquire()` |
-| 3 | ② | [`gpu_device_gate.py:127`](../../psrl/utils/concurrency/gpu_device_gate.py#L127) `discover_gpu_devices()` → [`:137`](../../psrl/utils/concurrency/gpu_device_gate.py#L137) `SlotManager.acquire` → [`slot.py:66`](../../psrl/utils/concurrency/slot.py#L66) `flock` |
-| 4 | ② | [`runner.py:243`](../../examples/sciaccel_rl/runner.py#L243) `build_gpu_override` → 追加进 `extra_compose_paths` |
-| 5 | ③ | [`runner.py:245`](../../examples/sciaccel_rl/runner.py#L245) `_bind_gate_b` → HTTP `POST /control/gpu_bind` → [`session_router.py:567`](../../psrl/workers/gen/session_router.py#L567) 写 `state.gpu_device` |
-| 6 | ④ | [`runner.py:339`](../../examples/sciaccel_rl/runner.py#L339) `Job.create` 起容器（compose 文件里已含单卡 override） |
-| 7 | ⑤ | 每轮回复：[`session_router.py:425-433`](../../psrl/workers/gen/session_router.py#L425) → [`:120`](../../psrl/workers/gen/session_router.py#L120) `_wait_for_gpu_idle` → [`:64`](../../psrl/workers/gen/session_router.py#L64) `_read_gpu_utilization` |
-| 8 | ⑥ | [`runner.py:402-406`](../../examples/sciaccel_rl/runner.py#L402) 释放锁、解绑、删临时 override |
+| 1 | ① | [`agent_loop.py:349`](../../../examples/sciaccel_rl/agent_loop.py#L349) 拿计数名额 → [`:358`](../../../examples/sciaccel_rl/agent_loop.py#L358) 把 `session_router_url` 传给 `run_harbor_episode` |
+| 2 | ② | [`runner.py:240-241`](../../../examples/sciaccel_rl/runner.py#L240) `GpuDeviceGate(...).acquire()` |
+| 3 | ② | [`gpu_device_gate.py:127`](../../../psrl/utils/concurrency/gpu_device_gate.py#L127) `discover_gpu_devices()` → [`:137`](../../../psrl/utils/concurrency/gpu_device_gate.py#L137) `SlotManager.acquire` → [`slot.py:66`](../../../psrl/utils/concurrency/slot.py#L66) `flock` |
+| 4 | ② | [`runner.py:243`](../../../examples/sciaccel_rl/runner.py#L243) `build_gpu_override` → 追加进 `extra_compose_paths` |
+| 5 | ③ | [`runner.py:245`](../../../examples/sciaccel_rl/runner.py#L245) `_bind_gate_b` → HTTP `POST /control/gpu_bind` → [`session_router.py:567`](../../../psrl/workers/gen/session_router.py#L567) 写 `state.gpu_device` |
+| 6 | ④ | [`runner.py:339`](../../../examples/sciaccel_rl/runner.py#L339) `Job.create` 起容器（compose 文件里已含单卡 override） |
+| 7 | ⑤ | 每轮回复：[`session_router.py:425-433`](../../../psrl/workers/gen/session_router.py#L425) → [`:120`](../../../psrl/workers/gen/session_router.py#L120) `_wait_for_gpu_idle` → [`:64`](../../../psrl/workers/gen/session_router.py#L64) `_read_gpu_utilization` |
+| 8 | ⑥ | [`runner.py:402-406`](../../../examples/sciaccel_rl/runner.py#L402) 释放锁、解绑、删临时 override |
 
 ## 9. 可运行实验与实测输出
 
@@ -374,4 +374,4 @@ python3 examples/sciaccel_rl/diagnostics/gate_a_after.py --cross-process --num-w
 - Env Service 设计文档译文（本地资料，未随仓库发布）：Gate A/B、`EnvRouter`、`EnvUnit` 的完整设计提案。
 - 并发/并行全景（本地资料，未随仓库发布）：协程、线程、进程的分层，以及 SciAccel 的 Harbor 线程。
 - EnvWorker 代码详解（本地资料，未随仓库发布）：Path A（`EnvWorker` + `EnvWorkerCoordinator`）的现状代码。
-- [PSRL 笔记总索引](../README.md)
+- [PSRL 笔记总索引](../../README.md)

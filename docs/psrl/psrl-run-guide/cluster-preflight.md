@@ -86,6 +86,8 @@ export PYTHONPATH="${PSRL_PATH}${PYTHONPATH:+:${PYTHONPATH}}"
 
 ## 集群踩坑总表与最小复现（2026-10-13）
 
+**无宿主 procfs 的实验策略：** 用户允许此部署问题暂不阻断本节点 science 性能实验。后续实验在实际 science agent 配置中显式设置 `harbor.gpu_attribution_mode: observe`，保留原任务评分并记录 GPU 归因未验证风险，优先使用正确性、完成量、OOM 和耗时作结论。容量准入、取消、物理归还与清理仍须执行，不能把缺失遥测补零。需要验收可信 GPU 评分时仍用 `required`。配置、可转发说明及替代方案见 [procfs 挂载障碍](../../env-worker-deep-dive/experiments/host-proc-blocker.md)。
+
 **一句话结论：先确认“实际运行哪份代码、连哪个 Ray、在哪台机器用哪张卡”，再确认数据与训练预算。当前最直接的阻塞是本机 Docker 无响应，以及普通共享环境仍加载未修复的 veRL 张量代码。**
 
 这节汇总本工作区现存日志、当前源码和本次最小复现。它不是全体集群节点的健康证明。检查基于 `90a4178` 加当时未提交改动，工作树快照保存在探针 JSON 中。未提交的修复和外置补丁依赖不属于上游提交自带能力。
@@ -283,7 +285,7 @@ PYTHONPATH="$PSRL_PATH:$task_root/.verification-deps" python -m pytest -q \
 
 2026-10-16 的 science 最小训练尝试发现：把 `max_resp_len` 缩到 512，却沿用默认 `overlong_buffer_cfg.len=3072`，会在奖励模块创建时断言失败。即使 `enable=False`，当前构造函数仍要求前者不小于后者。实验配置已显式设 `reward.managers.dapo.reward_kwargs.overlong_buffer_cfg.len=0`，并在启动 Ray/GPU 前构造真实奖励模块进行 CPU 预检。旧配置失败、新配置通过，但本次按预算没有再次启动训练，不能将构造校验说成完整训练修复通过。
 
-另发现旧 science runner 漏传 `HarborConfig.override_gpus=0`，导致真实 Harbor 在容器创建前拒绝 GPU 任务；已补上传参，38 项回归与单 GPU 容器对照通过。后续类似验证先做奖励配置构造检查和最小 Harbor 任务检查，再付出模型初始化成本。完整原因、源码、脚本与实机边界见[Science 资源账本对照](../../env-worker-deep-dive/science-env-router-comparison.md)。
+另发现旧 science runner 漏传 `HarborConfig.override_gpus=0`，导致真实 Harbor 在容器创建前拒绝 GPU 任务；已补上传参，38 项回归与单 GPU 容器对照通过。后续类似验证先做奖励配置构造检查和最小 Harbor 任务检查，再付出模型初始化成本。完整原因、源码、脚本与实机边界见[Science 资源账本对照](../../env-worker-deep-dive/experiments/science-env-router-comparison.md)。
 
 ### 16.16 独立 Ray 不等于物理 GPU 独占
 
@@ -291,14 +293,14 @@ PYTHONPATH="$PSRL_PATH:$task_root/.verification-deps" python -m pytest -q \
 
 2026-10-16 的原始 LAPS 训练在开始时 GPU 空闲，随后同卡外部进程占用约 76 GiB，训练进程在首步前向阶段 OOM。四条任务已产生评分，但没有完成 optimizer step。应在调度平台获得独占 GPU 时间窗口，或让所有竞争者共享统一分配机制，再做性能对照。不能仅靠 EnvRouter 约束那些未接入其账本的外部进程，也不能把外部进程造成的 GPU 高利用率当作本方案收益。
 
-本次还修复了实验监控超时误杀训练、science runner 隐式清理全机无标签镜像的问题。每组开跑前再次检查 GPU，一组失败后停止配对实验。遥测缺失应记录为缺失，不应变成零利用率或触发训练退出。原始日志、显存冲突图、源码与清理边界见 [真实 LAPS 训练对照尝试](../../env-worker-deep-dive/science-training-router-ab.md)。
+本次还修复了实验监控超时误杀训练、science runner 隐式清理全机无标签镜像的问题。每组开跑前再次检查 GPU，一组失败后停止配对实验。遥测缺失应记录为缺失，不应变成零利用率或触发训练退出。原始日志、显存冲突图、源码与清理边界见 [真实 LAPS 训练对照尝试](../../env-worker-deep-dive/experiments/science-training-router-ab.md)。
 
 
 ## 17. Science 训练复盘与下次执行规则
 
 2026-10-18 晚间实际 GPU 压力实验的新约束见 [第 18 节](#18-跨任务池压力实验与事件循环归属)，尤其是不能跨事件循环复用 HTTP 连接池。
 
-**记录日期：2026-10-18；实验日期：2026-10-16。** 本节复核已有结果与当前脚本，整理可复用的决策规则；没有重新启动训练，也没有把历史空闲状态当作当前状态。完整过程、角色协作图及源码阅读路径见 [真实 LAPS 对照报告](../../env-worker-deep-dive/science-training-router-ab.md)，最终成功运行见其 [第 9 节](../../env-worker-deep-dive/science-training-router-ab.md#9-释放占位后重新运行真实训练)。
+**记录日期：2026-10-18；实验日期：2026-10-16。** 本节复核已有结果与当前脚本，整理可复用的决策规则；没有重新启动训练，也没有把历史空闲状态当作当前状态。完整过程、角色协作图及源码阅读路径见 [真实 LAPS 对照报告](../../env-worker-deep-dive/experiments/science-training-router-ab.md)，最终成功运行见其 [第 9 节](../../env-worker-deep-dive/experiments/science-training-router-ab.md#9-释放占位后重新运行真实训练)。
 
 **先承认执行上的问题。** 用户最初要验证功能，早期工作出现了范围扩大、耗时偏长；后来用户明确要求真实训练对比，才有必要付出模型加载与训练的成本。另一次只完成了显存占位，尚未启动实验，需要用户再次催促。这些属于任务推进方式的问题，不能都归因于 Docker 或集群环境。以后先写验收边界，再执行已授权的实际工作；占位、进程启动和完成训练分别报告。
 
@@ -312,16 +314,16 @@ PYTHONPATH="$PSRL_PATH:$task_root/.verification-deps" python -m pytest -q \
 | 任务结束时执行了节点级无标签镜像清理 | 实验生命周期调用了全局 prune，超出自己的资源归属 | 清理必须按 Compose project、actor、lease 和 PID/创建时间核对；不因镜像“无标签”就认定属于本实验 | runner 已移除全局调用，保留本次项目清理；有历史回归 |
 | 通用 reward=0.5，但训练 score=0 | 数据指定的是 reward_repair，和通用 reward 不是同一个字段 | 保存 reward_key、评分器原始字典、最终训练 score，按实际键解读 | 字段选择是现有正确行为，不需要为匹配图表改奖励 |
 | loss/梯度为零，或者有轨迹却没有有效更新 | 同一任务的组内奖励可能相同；有效 token、优化器调用、梯度非零是不同条件 | 检查训练 mask、组内奖励差异、global_step、有限 loss/grad_norm 和退出码；不为了得到非零梯度无限补采 | 最终两组都各有一个零梯度 step 和一个非零梯度 step，仍完成训练 |
-| 主训练配置检查通过，代理创建仍因 null 类型失败 | 代理 YAML 在 worker 内另行按 dataclass 合并，GPU override 是 str，不接受 None | 将无 GPU override 写为空字符串，在创建 Ray 和模型前调用实际 build_runtime_config 校验代理配置。任一组失败就停止后续组 | [配置故障修复](../../env-worker-deep-dive/science-single-gpu-training-control.md#9-results不注入压力的原生任务对照)已在续跑中通过真实代理创建，双方完成两步，第三步另遇镜像请求故障，见[续跑记录](../../env-worker-deep-dive/science-single-gpu-training-control.md#10-results无压力续跑与共同完成的两步) |
-| 镜像预热成功，运行中独立评分器构建仍失败 | Harbor 源码任务每次仍走 compose build，基础镜像标签元数据查询可能访问远端，缓存层不能保证离线 | 训练前核对主任务和评分器实际使用预构建镜像的分支。若仍需构建，保留网络失败并触发有界退出，不把异常零分算成成功 | [无压力续跑](../../env-worker-deep-dive/science-single-gpu-training-control.md#10-results无压力续跑与共同完成的两步)第三步出现镜像请求 EOF，未修改共享 Docker 配置或追加长训练 |
+| 主训练配置检查通过，代理创建仍因 null 类型失败 | 代理 YAML 在 worker 内另行按 dataclass 合并，GPU override 是 str，不接受 None | 将无 GPU override 写为空字符串，在创建 Ray 和模型前调用实际 build_runtime_config 校验代理配置。任一组失败就停止后续组 | [配置故障修复](../../env-worker-deep-dive/experiments/science-single-gpu-training-control.md#9-results不注入压力的原生任务对照)已在续跑中通过真实代理创建，双方完成两步，第三步另遇镜像请求故障，见[续跑记录](../../env-worker-deep-dive/experiments/science-single-gpu-training-control.md#10-results无压力续跑与共同完成的两步) |
+| 镜像预热成功，运行中独立评分器构建仍失败 | Harbor 源码任务每次仍走 compose build，基础镜像标签元数据查询可能访问远端，缓存层不能保证离线 | 训练前核对主任务和评分器实际使用预构建镜像的分支。若仍需构建，保留网络失败并触发有界退出，不把异常零分算成成功 | [无压力续跑](../../env-worker-deep-dive/experiments/science-single-gpu-training-control.md#10-results无压力续跑与共同完成的两步)第三步出现镜像请求 EOF，未修改共享 Docker 配置或追加长训练 |
 | 同请求重试设为 1，仍出现额外开始的请求 | 请求内 retry 与组级 refill 不同，失败阈值唤醒训练器后，并发回调仍可能派发替补组 | 核对开始标记、最终记录和补采日志，未落盘的中断轨迹不算成功。严格零补采需验证组级停止分支，不能只看 retry_limit | 本轮 ON 有 26 个开始标记、24 份最终记录，退出期间两个替补请求失败，已释放资源 |
 | 两组都跑完，但没有速度或利用率优势 | OFF 已有四任务信号量；CPU 同构任务不触发 GPU 借还或装箱；仅两个 step 且生成长度不同 | 设计时写清机制触发条件、基线保护、同等工作量与计时口径；结果不支持优势就如实结束，不改弱基线、不反复跑到出现优势 | 最终对照已完成，未测出性能优势 |
-| 声明 GPU 或启动许多协程，被误当成高显存压力 | CPU oracle 不会因任务声明 gpus=1 而变为 GPU 程序，轻量模型的同卡并发也可能远低于设备容量 | 先确认原生 CUDA 计算、任务代码与真实输入，再观察实际进程重叠和整卡显存，用户未明确要求时，不额外占位或放大输入来制造 OOM | [真实 GPU 多协程实验](../../env-worker-deep-dive/science-natural-gpu-concurrency.md)记录任务选择、原始模型和边界 |
-| 同容器很多命令在等，但 Router 等待计数为零 | exec_gpu 在 Router 申请之前取得同容器异步锁，等待者可能尚未到达 Router | 同时看代理提交时间、锁前等待、Router 授权和 CUDA 进程，不把本地串行当作跨 worker 排队证据 | 当前接口行为，见[执行链路](../../env-worker-deep-dive/science-natural-gpu-concurrency.md#1-执行链路与源码对应) |
-| 每个训练命令的准备时间远大于十步训练 | 新 Python 进程重复导入依赖，共享存储上的安装文件清单检查会放大等待，完整 exec_gpu 还把 CPU 准备纳入串行区 | 先抓导入栈并分段计时。依赖补丁只放隔离目录，核验包名映射一致。可控 Python 程序用显式 prepare 接口并行准备，不删除同容器 GPU 归还保护 | [启动耗时与修复](../../env-worker-deep-dive/science-natural-gpu-concurrency.md#7-启动耗时定位与修复机制) |
+| 声明 GPU 或启动许多协程，被误当成高显存压力 | CPU oracle 不会因任务声明 gpus=1 而变为 GPU 程序，轻量模型的同卡并发也可能远低于设备容量 | 先确认原生 CUDA 计算、任务代码与真实输入，再观察实际进程重叠和整卡显存，用户未明确要求时，不额外占位或放大输入来制造 OOM | [真实 GPU 多协程实验](../../env-worker-deep-dive/experiments/science-natural-gpu-concurrency.md)记录任务选择、原始模型和边界 |
+| 同容器很多命令在等，但 Router 等待计数为零 | exec_gpu 在 Router 申请之前取得同容器异步锁，等待者可能尚未到达 Router | 同时看代理提交时间、锁前等待、Router 授权和 CUDA 进程，不把本地串行当作跨 worker 排队证据 | 当前接口行为，见[执行链路](../../env-worker-deep-dive/experiments/science-natural-gpu-concurrency.md#1-执行链路与源码对应) |
+| 每个训练命令的准备时间远大于十步训练 | 新 Python 进程重复导入依赖，共享存储上的安装文件清单检查会放大等待，完整 exec_gpu 还把 CPU 准备纳入串行区 | 先抓导入栈并分段计时。依赖补丁只放隔离目录，核验包名映射一致。可控 Python 程序用显式 prepare 接口并行准备，不删除同容器 GPU 归还保护 | [启动耗时与修复](../../env-worker-deep-dive/experiments/science-natural-gpu-concurrency.md#7-启动耗时定位与修复机制) |
 | CPU 准备后拿到 GPU，进程仍报告 CUDA 不可用 | Trainer 等导入可能在 GPU 授权前探测 CUDA，失败初始化或依赖缓存不能视为授权后状态 | 将会探测 CUDA 的导入推迟到授权后。在无 GPU 容器中用调用即报错的 CUDA 检查入口验证 prepare。不能用伪造可用性或放开设备权限绕过 | 分阶段接口只接受协作程序，不自动拆分任意 shell 命令 |
-| 绝对路径 Python 的 CUDA 预检成功，受管理作业却退出 127 | 作业监督器通过容器 PATH 查找 python3，训练命令的绝对路径成功不代表监督器可启动 | 同时检查容器内 python3 和 bash，再执行 GPU 作业。挂载独立 Python 环境时将 bin 加入容器 PATH，不修改共享解释器 | [统一后端实机验证](../../env-worker-deep-dive/unified-gpu-execution.md#4-真实-docker-gpu-任务验证)保留首次失败、环境修复和两种模式通过证据 |
-| 显存占位结果被误写成原生压力或小显卡性能 | 外部分配只改变剩余可用显存，没有改变设备算力、带宽或原生任务需求 | 仅在用户明确要求时注入占位，保存 PID/创建时间/UUID，限制持有时间，监控确认两组全程保持占位，按相同模型、输入和并发比较。失败更快不是提速 | [高低可用显存对照](../../env-worker-deep-dive/science-natural-gpu-concurrency.md#10-固定-off-与修复后-on-的容量压力对照) |
+| 绝对路径 Python 的 CUDA 预检成功，受管理作业却退出 127 | 作业监督器通过容器 PATH 查找 python3，训练命令的绝对路径成功不代表监督器可启动 | 同时检查容器内 python3 和 bash，再执行 GPU 作业。挂载独立 Python 环境时将 bin 加入容器 PATH，不修改共享解释器 | [统一后端实机验证](../../env-worker-deep-dive/knowledge/unified-gpu-execution.md#4-真实-docker-gpu-任务验证)保留首次失败、环境修复和两种模式通过证据 |
+| 显存占位结果被误写成原生压力或小显卡性能 | 外部分配只改变剩余可用显存，没有改变设备算力、带宽或原生任务需求 | 仅在用户明确要求时注入占位，保存 PID/创建时间/UUID，限制持有时间，监控确认两组全程保持占位，按相同模型、输入和并发比较。失败更快不是提速 | [高低可用显存对照](../../env-worker-deep-dive/experiments/science-natural-gpu-concurrency.md#10-固定-off-与修复后-on-的容量压力对照) |
 | 无计算进程，NVML 却显示数百 MiB used | 本节点旧接口 used 包含驱动保留内存，新接口分离 used 与 reserved | 用 NVML v2 区分驱动保留量和实际进程占用，并核对 UUID、进程和物理释放。不得按 index 直接拼设备 minor | 本次空闲 used 约 0.19 MiB，另有约 586 MiB reserved，已按接口区分 |
 | 账本不超额，却不能保证所有容器物理资源都受限 | 每个租约可含主容器、独立评分器及网络辅助容器；sidecar 没有单独 CPU/内存上限 | 同时核对账本和 Docker inspect 的真实限制与归属；未覆盖的开销、排队和跨 worker 行为必须列为边界 | 主容器限制已现场验证；sidecar 缺少单独硬上限仍未解决 |
 | 结果文件读取失败或图中出现不属于本轮的故障说明 | 读到了尚未写完整的 JSON；旧绘图逻辑写死历史 OOM | 运行中将不完整文件视为未完成；收尾核对完整性。缺失数据不补造，故障标签从本轮日志提取，保存运行时脚本快照 | 绘图硬编码已修复；读取规则补入 AGENTS |
@@ -356,14 +358,14 @@ PYTHONPATH="$PSRL_PATH:$task_root/.verification-deps" python -m pytest -q \
 | 训练奖励字段 | [compute_score](../../../examples/sciaccel_rl/reward.py#L44)、[实际数据键](../../env-worker-deep-dive/env-service-verification/results/science-training-ab-20261016-live/training-reward-keys.json) |
 | 最终成功与边界 | [结果统计](../../env-worker-deep-dive/env-service-verification/results/science-training-ab-20261016-live/experiment-status.json)、[容器限制](../../env-worker-deep-dive/env-service-verification/results/science-training-ab-20261016-live/on/docker-admission-evidence.json)、[物理清理](../../env-worker-deep-dive/env-service-verification/results/science-training-ab-20261016-live/cleanup-verified.json) |
 
-需要学习准入机制时，可运行已有的 [unit_fragmentation_demo.py](../../env-worker-deep-dive/env-service-verification/scripts/unit_fragmentation_demo.py)：它用教学需求调用真实账本，只需要 CPU，不启动 Docker 或训练；运行方式和预期结果见 [unit 粒度说明](../../env-worker-deep-dive/science-env-router-comparison.md)。本次没有重跑这个演示，也没有把历史回归成功写成今天重新执行通过。
+需要学习准入机制时，可运行已有的 [unit_fragmentation_demo.py](../../env-worker-deep-dive/env-service-verification/scripts/unit_fragmentation_demo.py)：它用教学需求调用真实账本，只需要 CPU，不启动 Docker 或训练；运行方式和预期结果见 [unit 粒度说明](../../env-worker-deep-dive/experiments/science-env-router-comparison.md)。本次没有重跑这个演示，也没有把历史回归成功写成今天重新执行通过。
 
 **持久化方式。** 根目录 AGENTS.md（本地资料，未随仓库发布） 保存运行前必须读本节的入口与简明规则；当天 memory（本地资料，未随仓库发布） 保存复盘日期、范围和链接。以后新增教训优先维护本指南，避免让日记、实验报告和运行规则各写一套不一致的结论。
 
 
 ## 18. 跨任务池压力实验与事件循环归属
 
-这轮使用相同 science 任务副本、同等 CUDA 压力比较 OFF/ON，详细数值、图解、源码和可运行复现统一维护在 [GPU 压力实验报告](../../env-worker-deep-dive/science-gpu-pressure-ab.md)。与第 17 节此前的 CPU 容器对照是不同实验。
+这轮使用相同 science 任务副本、同等 CUDA 压力比较 OFF/ON，详细数值、图解、源码和可运行复现统一维护在 [GPU 压力实验报告](../../env-worker-deep-dive/experiments/science-gpu-pressure-ab.md)。与第 17 节此前的 CPU 容器对照是不同实验。
 
 | 下次必须检查的点 | 本次发现的机制 | 执行动作与验证边界 |
 |---|---|---|
@@ -374,7 +376,7 @@ PYTHONPATH="$PSRL_PATH:$task_root/.verification-deps" python -m pytest -q \
 | 原生异常不能只看 Ray 通用提示 | ON worker core 显示 uvloop/libuv 读回调 SIGSEGV，不是已证实的 CUDA OOM | 保存 stderr、core 栈和依赖来源；确定下游无法推进就停止占用，不空等到超时 |
 | 不等长实验不能伪装成完整配对 | OFF 四步完成、ON 两步后崩溃 | 展示等量前缀及全部实际点，同时披露崩溃；不补造缺失 step，不据此前缀宣称长期稳定 |
 
-具体例子：同一个进程中循环 A 创建 client P，循环 B 调用旧全局获取函数也拿到 P，但 `P._loop` 仍是 A。修复后 A、B 分别获得自己的连接池，A 关闭时 B 的实际 HTTP 请求仍成功。该 CPU 检查验证了对象归属缺陷及修复；它没有再次触发或排除所有可能的原生段错误。完整流程与源码映射见 [报告第 8 节](../../env-worker-deep-dive/science-gpu-pressure-ab.md#8-on-段错误调查与-http-连接池修复)。
+具体例子：同一个进程中循环 A 创建 client P，循环 B 调用旧全局获取函数也拿到 P，但 `P._loop` 仍是 A。修复后 A、B 分别获得自己的连接池，A 关闭时 B 的实际 HTTP 请求仍成功。该 CPU 检查验证了对象归属缺陷及修复；它没有再次触发或排除所有可能的原生段错误。完整流程与源码映射见 [报告第 8 节](../../env-worker-deep-dive/experiments/science-gpu-pressure-ab.md#8-on-段错误调查与-http-连接池修复)。
 
 优先运行 `PYTHONPATH=. python -m pytest tests/utils/test_http_loop_ownership.py -q`（在激活的项目环境、`psrl/` 仓库目录内）。本次三个测试通过，包含 asyncio 与 uvloop 两种组合共 162 次本地 HTTP 请求。不要把该结果写成修复后四步训练通过，也不要为验证连接池修复默认重启整套长训练。
 

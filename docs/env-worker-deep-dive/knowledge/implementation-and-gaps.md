@@ -2,12 +2,12 @@
 
 ## TL;DR
 
-- **修复后状态见 [2026-10-14 修复与对比实验](airs-bench-audit/fixes-and-results.md)**。本文第 17 节保留修复前审查，相关链接改指向有 SHA-256 校验的 baseline 快照，不能再当成当前实现。
+- **修复后状态见 [2026-10-14 修复与对比实验](../airs-bench-audit/fixes-and-results.md)**。本文第 17 节保留修复前审查，相关链接改指向有 SHA-256 校验的 baseline 快照，不能再当成当前实现。
 - 2026-10-13 的 AIRS-Bench 审查见本文第 17 节：标签暴露、shell 超时串线、资源回收缺口成立，但“永久死锁”“排队异常无人处理”“只改三个方法已完成接入”需要修正。
 - 当前配置指向的 MLGym 源码可读，真实继承方法的最小重放确认初始化和超时中断都会因 `container_obj=None` 触发断言。
 - 第 13、15 节是较早的实现分析，其涉及新 Env Service、GPU 支持及其他配方的“当前”判断不能作为本次代码版本的结论。第 17 节明确区分当前静态证据、CPU 复现与尚未验证的集群行为。
 
-> 本文是 [`psrl-env-service-envworker-design.md`](../psrl/psrl-env-service-envworker-design.md)（EnvWorker 设计详细版）原第 13、15 节拆分出来的独立文档。章节编号沿用原文档编号（13、15），没有从 1 重新编号，方便和速查表、其他文档里已经写好的"详细版 §13.x/§15.x"引用对应。
+> 本文是 [`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md)（EnvWorker 设计详细版）原第 13、15 节拆分出来的独立文档。章节编号沿用原文档编号（13、15），没有从 1 重新编号，方便和速查表、其他文档里已经写好的"详细版 §13.x/§15.x"引用对应。
 >
 > 读本文前建议先读完详细版的第 0-10 节（问题背景、角色分工、unit、流程、GPU 难点）；本文只讲"现在跑着的代码具体长什么样、和提案原文逐节对照之后还差什么"，不重复讲设计动机。
 
@@ -60,7 +60,7 @@ EnvWorker × N（每个 unit 一个 Ray actor，绑定在具体某个节点上�
 真实容器（可能有很多个，同一个 EnvWorker 名下）
 ```
 
-用一个具体数字例子过一遍："节点 B 的 cpu_slots=8"这句话在代码里到底是什么：`WorkerSlot`（[`coordinator.py:24-41`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L24)）只有 6 个字段，`used_cpu`/`used_gpu` 是两个整数计数器，不记录"是哪个任务占的"，也不记录任何超时时间。假设节点 B 已经跑了 5 个 CPU 任务、请求方要新开一个 GPU 任务：
+用一个具体数字例子过一遍："节点 B 的 cpu_slots=8"这句话在代码里到底是什么：`WorkerSlot`（[`coordinator.py:24-41`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L24)）只有 6 个字段，`used_cpu`/`used_gpu` 是两个整数计数器，不记录"是哪个任务占的"，也不记录任何超时时间。假设节点 B 已经跑了 5 个 CPU 任务、请求方要新开一个 GPU 任务：
 
 ```text
 WorkerSlot(worker_id=1, cpu_slots=8, used_cpu=5, gpu_slots=2, used_gpu=1)
@@ -68,7 +68,7 @@ has_cpu_capacity  →  5 < 8            → True
 has_gpu_capacity(1) →  1 + 1 <= 2     → True
 ```
 
-两个布尔值都为真，这个 worker 才会进入 `select_by_method` 的候选集合（[`coordinator.py:67`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L67)）；`least_loaded` 策略再从候选集合里挑 `used_cpu` 最小的那个（[`coordinator.py:71-72`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L71)）。这一步"先检查、再在同一个 `async with self._lock` 块里原子地 `used_cpu += 1`"（[`coordinator.py:170-177`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L170)），正是第 4 节强调的"检查和预留必须是不可插入的一步"在代码里的样子——不是提案里才有，现在就是这么实现的。
+两个布尔值都为真，这个 worker 才会进入 `select_by_method` 的候选集合（[`coordinator.py:67`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L67)）；`least_loaded` 策略再从候选集合里挑 `used_cpu` 最小的那个（[`coordinator.py:71-72`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L71)）。这一步"先检查、再在同一个 `async with self._lock` 块里原子地 `used_cpu += 1`"（[`coordinator.py:170-177`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L170)），正是第 4 节强调的"检查和预留必须是不可插入的一步"在代码里的样子——不是提案里才有，现在就是这么实现的。
 
 ### 13.2 一次 episode 里，资源到底被占用了多久
 
@@ -93,10 +93,10 @@ handle.destroy()                                           ← docker rm -f，�
 这 84 秒里，容器绝大部分时间（60 秒）根本没有在执行任何命令，纯粹是在"等模型想下一步"，但 `used_cpu` 计数器从 `create_sandbox` 那一刻起就已经 +1，直到 84 秒后 `destroy()` 才会 -1。这不是实现疏漏，而是必须如此：
 
 1. **容器状态要跨轮次保留。** 第 1 轮里 `sed -i` 改的文件，如果容器在第 1、2 轮之间被销毁重建，第 2 轮再 `cat solver.py` 就看不到刚才的修改了——这正是第 1 节"一个 episode 通常会有很多轮，但共用同一个任务容器"的原因。
-2. **重建容器本身有真实开销。** `create_sandbox` 里除了 `docker run`，还要等 shell 探测通过（[`worker.py:248-254`](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L248)），这段延迟受 `startup_timeout_s` 预算限制但绝对不是 0；如果每轮都重开一次容器，这份开销会被乘以轮数，直接堆进模型等待时间里。
+2. **重建容器本身有真实开销。** `create_sandbox` 里除了 `docker run`，还要等 shell 探测通过（[`worker.py:248-254`](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L248)），这段延迟受 `startup_timeout_s` 预算限制但绝对不是 0；如果每轮都重开一次容器，这份开销会被乘以轮数，直接堆进模型等待时间里。
 3. **GPU 任务还要加上显存/权重的重复加载成本。** 如果任务在第 1 轮往显存里加载了一个模型，第 3 轮的命令还要用它，中途销毁重建就要重新加载一遍——对大模型来说这可能比命令本身跑得还慢。
 
-这里的释放粒度是整个 episode，不是单条命令。`handle.destroy()` 在 episode 结束时执行，容器状态才能跨轮保留。`EnvWorker._last_used_at` 虽然记录最后使用时间，[reap_idle_sandboxes](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L361) 却没有周期调用方，不能说它已经提供了自动兜底。并且该方法本身只销毁沙箱、不归还 coordinator 计数，具体证据见第 17.6 节。租约、心跳和清理确认需要形成完整协议，不能把一个空闲检查函数等同于它们。
+这里的释放粒度是整个 episode，不是单条命令。`handle.destroy()` 在 episode 结束时执行，容器状态才能跨轮保留。`EnvWorker._last_used_at` 虽然记录最后使用时间，[reap_idle_sandboxes](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L361) 却没有周期调用方，不能说它已经提供了自动兜底。并且该方法本身只销毁沙箱、不归还 coordinator 计数，具体证据见第 17.6 节。租约、心跳和清理确认需要形成完整协议，不能把一个空闲检查函数等同于它们。
 
 ### 13.3 资源管理为什么困难：三个不确定性叠在一起
 
@@ -112,12 +112,12 @@ handle.destroy()                                           ← docker rm -f，�
 
 ### 13.4 EnvRouter 和 EnvWorker 分别在扛哪一种困难
 
-回头看现在这份代码，你会发现"拆分"这件事其实已经发生了，只是提案里把它进一步做重：`EnvWorkerCoordinator` 这个类的文档字符串第一行就写着"Route sandbox requests **without owning container or placement mechanics**"（[`coordinator.py:1`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L1)）——整份 `coordinator.py` 里没有一处 `subprocess`、`docker` 字样，它只做内存里的字典读写和一次 `worker_handle.create_sandbox.remote(spec)` 转发；真正跑 `docker run`/`docker exec`/`docker rm` 的代码全部在 `worker.py` 里。所以现在的 `EnvWorkerCoordinator` 就是一个"轻量版 EnvRouter"，`EnvWorker` 就是文档里说的"EnvWorker"，两者在职责边界上已经和提案是一致的，提案要加的只是 Gate A、跨训练任务的全局 unit 注册表、租约/TTL 这些还没做的能力（对应第 9 节的推进顺序）。
+回头看现在这份代码，你会发现"拆分"这件事其实已经发生了，只是提案里把它进一步做重：`EnvWorkerCoordinator` 这个类的文档字符串第一行就写着"Route sandbox requests **without owning container or placement mechanics**"（[`coordinator.py:1`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L1)）——整份 `coordinator.py` 里没有一处 `subprocess`、`docker` 字样，它只做内存里的字典读写和一次 `worker_handle.create_sandbox.remote(spec)` 转发；真正跑 `docker run`/`docker exec`/`docker rm` 的代码全部在 `worker.py` 里。所以现在的 `EnvWorkerCoordinator` 就是一个"轻量版 EnvRouter"，`EnvWorker` 就是文档里说的"EnvWorker"，两者在职责边界上已经和提案是一致的，提案要加的只是 Gate A、跨训练任务的全局 unit 注册表、租约/TTL 这些还没做的能力（对应第 9 节的推进顺序）。
 
 这两种活儿的"重量"差得很远，可以用数字感受：
 
-- **决策这一侧（Coordinator）**：一次 `select_worker` 只是遍历内存里的 `WorkerSlot` 列表比大小（[`coordinator.py:44-76`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L44)），哪怕有几十个 worker，这个操作也是亚毫秒级的；配置里给它开的并发上限是 `coordinator_max_concurrency`，默认 **64**（[`manager.py:67`](airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L67)）。
-- **执行这一侧（Worker）**：一次 `exec` 是真的在等一个 shell 命令跑完，`ContainerShell.drain()` 的注释提到 MLGym 的命令"经常跑到 3600 秒"（[`worker.py:72`](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L72)）；配置给它开的并发上限是 `cpu_slots + 4`（[`manager.py:85`](airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L85)），这个数字是按"这台机器能扛得住多少个容器"定的，不是按"每秒要处理多少次路由请求"定的。
+- **决策这一侧（Coordinator）**：一次 `select_worker` 只是遍历内存里的 `WorkerSlot` 列表比大小（[`coordinator.py:44-76`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L44)），哪怕有几十个 worker，这个操作也是亚毫秒级的；配置里给它开的并发上限是 `coordinator_max_concurrency`，默认 **64**（[`manager.py:67`](../airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L67)）。
+- **执行这一侧（Worker）**：一次 `exec` 是真的在等一个 shell 命令跑完，`ContainerShell.drain()` 的注释提到 MLGym 的命令"经常跑到 3600 秒"（[`worker.py:72`](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L72)）；配置给它开的并发上限是 `cpu_slots + 4`（[`manager.py:85`](../airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L85)），这个数字是按"这台机器能扛得住多少个容器"定的，不是按"每秒要处理多少次路由请求"定的。
 
 一个亚毫秒级、要同时服务全局请求的决策服务，和一个单次调用可能挂起一个小时的执行服务，如果揉进同一个类、同一个 Ray actor，会发生什么？决策请求会被同一个并发池里正在阻塞的长 `exec` 调用挤占配额——本该几十微秒答完的"你有没有空位"，可能要排在一个还剩 3599 秒才会返回的 `exec` 后面。这是拆分的第一个理由：**决策的并发特性和执行的并发特性不是一回事，合用一个资源池谁都会吃亏**。
 
@@ -125,7 +125,7 @@ handle.destroy()                                           ← docker rm -f，�
 
 > **配图：这个"决策/执行分离"不是 EnvWorker 独有的发明，是 PSRL 所依赖的 veRL 框架本身的设计**
 >
-> PSRL 是在 [veRL](https://github.com/volcengine/verl)（字节跳动开源的 RL 训练框架，HybridFlow 论文的开源实现；参见本目录上级 [`README.md`](../README.md) 里"当前工作区没有...外部 verl/vLLM 源码"的说明）之上做的二次开发。veRL 官方文档 [`docs/hybrid_flow.rst`](https://github.com/volcengine/verl/blob/main/docs/hybrid_flow.rst)"Overall Execution Diagram"一节的原图（图片实际托管在社区仓库 [`eric-haibin-lin/verl-community`](https://github.com/eric-haibin-lin/verl-community/blob/main/docs/driver_worker.png)）：
+> PSRL 是在 [veRL](https://github.com/volcengine/verl)（字节跳动开源的 RL 训练框架，HybridFlow 论文的开源实现；参见本目录上级 [`README.md`](../../README.md) 里"当前工作区没有...外部 verl/vLLM 源码"的说明）之上做的二次开发。veRL 官方文档 [`docs/hybrid_flow.rst`](https://github.com/volcengine/verl/blob/main/docs/hybrid_flow.rst)"Overall Execution Diagram"一节的原图（图片实际托管在社区仓库 [`eric-haibin-lin/verl-community`](https://github.com/eric-haibin-lin/verl-community/blob/main/docs/driver_worker.png)）：
 >
 > ![veRL execution diagram: single-process controller dispatching to multi-process actor/rollout/critic workers, credit to eric-haibin-lin/verl-community](https://raw.githubusercontent.com/eric-haibin-lin/verl-community/main/docs/driver_worker.png)
 >
@@ -135,8 +135,8 @@ handle.destroy()                                           ← docker rm -f，�
 >
 > | veRL 概念 | 本文对应 | 共同点 |
 > |---|---|---|
-> | Controller（单进程，只做数据流决策，不碰实际计算） | `EnvWorkerCoordinator`（[`coordinator.py:1`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L1)，docstring 就写着"without owning container or placement mechanics"） | 决策者天生该是单点、轻量、亚毫秒级 |
-> | Generator/Actor/Critic Worker（多进程，真正跑计算，按资源组摆放） | `EnvWorker × N`（[`worker.py:133`](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L133)，真正 `docker run`/`exec`，钉死在具体节点上） | 执行者天生该是多点、可能长时间阻塞 |
+> | Controller（单进程，只做数据流决策，不碰实际计算） | `EnvWorkerCoordinator`（[`coordinator.py:1`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L1)，docstring 就写着"without owning container or placement mechanics"） | 决策者天生该是单点、轻量、亚毫秒级 |
+> | Generator/Actor/Critic Worker（多进程，真正跑计算，按资源组摆放） | `EnvWorker × N`（[`worker.py:133`](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L133)，真正 `docker run`/`exec`，钉死在具体节点上） | 执行者天生该是多点、可能长时间阻塞 |
 >
 > 也就是说：13.4 论证的"轻决策不能和重执行塞进同一个并发池"这个结论，不是本文凭空推导出来的设计原则，而是 PSRL 所依赖的底层框架本身就在用的架构模式——EnvWorkerCoordinator/EnvWorker 只是把这套模式从"调度模型计算"搬到了"调度做题容器"这个新场景。
 
@@ -151,7 +151,7 @@ handle.destroy()                                           ← docker rm -f，�
 
 ### 13.6 多个 task 并发申请资源时，名额具体怎么分
 
-`select_worker`（[`coordinator.py:153-183`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L153)）是一个**轮询等待循环**，不是一个严格排队的等号系统。用 3 个并发请求过一遍具体过程：假设集群只有 2 个 worker，`cpu_slots` 都是 2，此刻都已经用满（`used_cpu=2`）；同一时刻来了 3 个 `create_sandbox` 请求 X、Y、Z：
+`select_worker`（[`coordinator.py:153-183`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L153)）是一个**轮询等待循环**，不是一个严格排队的等号系统。用 3 个并发请求过一遍具体过程：假设集群只有 2 个 worker，`cpu_slots` 都是 2，此刻都已经用满（`used_cpu=2`）；同一时刻来了 3 个 `create_sandbox` 请求 X、Y、Z：
 
 ```text
 t=0.0s  X、Y、Z 几乎同时进入 select_worker 的 while 循环
@@ -169,9 +169,9 @@ t=0.5s  X、Y、Z 的 sleep 几乎同时到期，重新尝试 async with self._l
 几个关键点要分开说清楚：
 
 1. **锁保护的是"检查 + 占用"这一步，不是整条等待队列。** `async with self._lock` 只在真正读写 `used_cpu`/`used_gpu` 的那几行生效，X/Y/Z 在 `sleep` 期间根本没有持锁，所以它们不是排在一条 FIFO 队列里等叫号，而是"每隔 0.5 秒各自醒来抢一次"。上面例子里 Y 抢到而 X 没抢到，纯粹取决于 asyncio 事件循环当次唤醒协程的顺序，这个顺序不保证按请求发起的先后来——也就是说，**当前实现不保证先申请的 task 先拿到资源**，存在（大概率很小但确实存在的）"后来的请求插队"的可能。
-2. **选哪个 worker 由 `routing_method` 决定，默认 `least_loaded`。** 它只按 `slot.used_cpu`（外加 `worker_id` 破平局）排序（[`coordinator.py:71-72`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L71)），**不看 `used_gpu`**。也就是说，即使某个 GPU 任务的目标是"找 GPU 负载最低的节点"，`least_loaded` 实际比的是 CPU 占用数，这是当前实现的一个真实特点，不是笔误。
-3. **等不到资源不会一直等下去。** `create_sandbox` 默认 `timeout_s=3600.0`（[`coordinator.py:185`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L185)），轮询到这个时限还抢不到名额就抛 `RuntimeError`；调用方（agent loop）需要自己处理这个失败，不是无限排队。
-4. **拿到 worker 之后还可能失败一次，会换一个 worker 重试一次。** `create_sandbox` 最多试 2 次（`for attempt in range(2)`，[`coordinator.py:202`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L202)）：如果 coordinator 选中的 worker 在真正建容器时报错（比如该 worker 自己的物理 GPU 索引表 `_busy_gpu_indices` 因为某种原因已经不准，见 13.7），就释放这次预占的名额、换下一个 worker 再试一次；两次都失败才最终报错给调用方。
+2. **选哪个 worker 由 `routing_method` 决定，默认 `least_loaded`。** 它只按 `slot.used_cpu`（外加 `worker_id` 破平局）排序（[`coordinator.py:71-72`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L71)），**不看 `used_gpu`**。也就是说，即使某个 GPU 任务的目标是"找 GPU 负载最低的节点"，`least_loaded` 实际比的是 CPU 占用数，这是当前实现的一个真实特点，不是笔误。
+3. **等不到资源不会一直等下去。** `create_sandbox` 默认 `timeout_s=3600.0`（[`coordinator.py:185`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L185)），轮询到这个时限还抢不到名额就抛 `RuntimeError`；调用方（agent loop）需要自己处理这个失败，不是无限排队。
+4. **拿到 worker 之后还可能失败一次，会换一个 worker 重试一次。** `create_sandbox` 最多试 2 次（`for attempt in range(2)`，[`coordinator.py:202`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L202)）：如果 coordinator 选中的 worker 在真正建容器时报错（比如该 worker 自己的物理 GPU 索引表 `_busy_gpu_indices` 因为某种原因已经不准，见 13.7），就释放这次预占的名额、换下一个 worker 再试一次；两次都失败才最终报错给调用方。
 
 ### 13.7 agent 进程崩溃之后，容器和资源到底会不会被回收——要按"崩溃发生在哪一层"分情况
 
@@ -195,7 +195,7 @@ Coordinator 侧：那个 worker 的 used_cpu/used_gpu 永远不会被减回去�
 
 注意这两份账本会**一致地卡死**，不会互相矛盾——它们本来就是同一次 `create_sandbox` 里前后脚一起加上去的，没人调用 `destroy()` 也就没人把两边一起减下去。表面看起来"资源统计没出错"，但实际是这台 worker 从此少了这几个名额，而且没有任何机制知道这是"真泄漏"还是"任务还在正常跑"。
 
-那第 7 节提到的"idle 超时兜底"呢？`EnvWorker.reap_idle_sandboxes()`（[`worker.py:362-378`](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L362)）确实实现了"超过 `idle_sandbox_timeout_s`（默认 7200 秒）没人用就强制销毁"的逻辑，**但需要明确指出**：在当前代码里检索不到任何地方定时调用这个方法——`manager.py`、`ray_trainer.py` 里都没有起一个后台循环去周期性地对每个 worker 执行 `reap_idle_sandboxes.remote()`。也就是说，这个方法目前是一个**已经写好但没有被接入调度的能力**，不能当作"崩溃后 2 小时会自动清理"的既成事实——如果要依赖它兜底，需要额外自己起一个定时任务去调用它；现状下，一次 Ray 进程级崩溃造成的容器和资源泄漏，实际上要等到人工发现或整个训练任务重启（`EnvWorkerManager.shutdown()` 会 `ray.kill` 所有 worker 和 coordinator，[`manager.py:110-115`](airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L110)）才会被清理。这正是提案第 7 节要引入租约（lease）、心跳（heartbeat）、TTL 的动机——用"调用方必须定期证明自己还活着"取代"被动等一个没人触发的超时检查"。
+那第 7 节提到的"idle 超时兜底"呢？`EnvWorker.reap_idle_sandboxes()`（[`worker.py:362-378`](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L362)）确实实现了"超过 `idle_sandbox_timeout_s`（默认 7200 秒）没人用就强制销毁"的逻辑，**但需要明确指出**：在当前代码里检索不到任何地方定时调用这个方法——`manager.py`、`ray_trainer.py` 里都没有起一个后台循环去周期性地对每个 worker 执行 `reap_idle_sandboxes.remote()`。也就是说，这个方法目前是一个**已经写好但没有被接入调度的能力**，不能当作"崩溃后 2 小时会自动清理"的既成事实——如果要依赖它兜底，需要额外自己起一个定时任务去调用它；现状下，一次 Ray 进程级崩溃造成的容器和资源泄漏，实际上要等到人工发现或整个训练任务重启（`EnvWorkerManager.shutdown()` 会 `ray.kill` 所有 worker 和 coordinator，[`manager.py:110-115`](../airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L110)）才会被清理。这正是提案第 7 节要引入租约（lease）、心跳（heartbeat）、TTL 的动机——用"调用方必须定期证明自己还活着"取代"被动等一个没人触发的超时检查"。
 
 ## 15. 两份文档到底是什么关系：逐节对照，以及提案里没落地的部分现在该怎么看
 
@@ -231,9 +231,9 @@ Coordinator 侧：那个 worker 的 used_cpu/used_gpu 永远不会被减回去�
 
 #### (1) Gate A 真正接到 Harbor 路径上，而不是只在旧 EnvWorker 里生效
 
-**现状（截至本节最初写下时）：** `coordinator.py` 的 `has_cpu_capacity`/`has_gpu_capacity` 加原子锁（[`coordinator.py:170-177`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L170)）其实已经实现了 Gate A 的核心思路——"检查预算、原子预留、再创建容器"。但它只服务于走旧 EnvWorker 的 MLGym/AIRS-Bench 配方；走 Harbor 的 SciAccel 路径（Path B）完全绕开了这套账本，直接调用 Harbor 的 `Job.create`。而原文第 7.4 节已经核实过：**Harbor 自己的 `n_concurrent_trials` 只是一个不区分 cpu/mem/gpu 的计数信号量**，8 个并发配额在 2 卡主机上会把 8 个 `gpus=1` 的任务全部放行。
+**现状（截至本节最初写下时）：** `coordinator.py` 的 `has_cpu_capacity`/`has_gpu_capacity` 加原子锁（[`coordinator.py:170-177`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L170)）其实已经实现了 Gate A 的核心思路——"检查预算、原子预留、再创建容器"。但它只服务于走旧 EnvWorker 的 MLGym/AIRS-Bench 配方；走 Harbor 的 SciAccel 路径（Path B）完全绕开了这套账本，直接调用 Harbor 的 `Job.create`。而原文第 7.4 节已经核实过：**Harbor 自己的 `n_concurrent_trials` 只是一个不区分 cpu/mem/gpu 的计数信号量**，8 个并发配额在 2 卡主机上会把 8 个 `gpus=1` 的任务全部放行。
 
-**更新（已部分落地，见 [`sciaccel-gpu-gate.md`](sciaccel-gpu-gate.md) §16.5）：** 上面说的是**数量预算**层面的问题（CPU/内存/GPU 总量核验），这部分目前仍未接入 `EnvWorkerCoordinator`，还是本节最初描述的状态，没有变化。但 §16 另外发现的**设备身份**层面问题（同时放行的多个 GPU episode 会拿到完全相同的 `/dev/nvidia0` 字符串，哪怕数量预算本身没超）已经用 §16.3 的"轻量方案"修复并部署：`GpuDeviceGate`（[`gpu_device_gate.py`](../../psrl/utils/concurrency/gpu_device_gate.py)）接入了 [`runner.py`](../../examples/sciaccel_rl/runner.py) 的 `run_harbor_episode`，两个问题不是同一件事，不要把"设备身份已修复"误读成"数量预算也已经接入"。
+**更新（已部分落地，见 [`sciaccel-gpu-gate.md`](sciaccel-gpu-gate.md) §16.5）：** 上面说的是**数量预算**层面的问题（CPU/内存/GPU 总量核验），这部分目前仍未接入 `EnvWorkerCoordinator`，还是本节最初描述的状态，没有变化。但 §16 另外发现的**设备身份**层面问题（同时放行的多个 GPU episode 会拿到完全相同的 `/dev/nvidia0` 字符串，哪怕数量预算本身没超）已经用 §16.3 的"轻量方案"修复并部署：`GpuDeviceGate`（[`gpu_device_gate.py`](../../../psrl/utils/concurrency/gpu_device_gate.py)）接入了 [`runner.py`](../../../examples/sciaccel_rl/runner.py) 的 `run_harbor_episode`，两个问题不是同一件事，不要把"设备身份已修复"误读成"数量预算也已经接入"。
 
 **不做会怎样：** 这不是假设性风险——按第 5.3 节的实测，显存是相加且不可压缩的；如果 8 个任务真被 Harbor 同时放行，且这台机器显存装不下，会直接触发 OOM，而不是排队等待。
 
@@ -243,15 +243,15 @@ Coordinator 侧：那个 worker 的 used_cpu/used_gpu 永远不会被减回去�
 
 **现状（最初写下本节时）：** 完全没有。当前 `SessionRouter` 的 `hang` 机制只挡"下一次模型请求"，不会在模型已经生成回复、agent 即将执行工具命令之前插入任何等待（第 8 节已说明）。
 
-**更新（已实现，见 [`sciaccel-gpu-gate.md`](sciaccel-gpu-gate.md) §16.5）：** 已按下面"初步实现路径"描述的思路落地，挂在 `session_chat_completions` 返回模型回复之前（[`session_router.py`](../../psrl/workers/gen/session_router.py) 的 `_wait_for_gpu_idle`），只对被 `POST /control/gpu_bind` 显式绑定过 GPU 设备的 session 生效——`examples/sciaccel_rl/runner.py` 的 Gate A 在拿到设备后会调用这个端点。空闲判断用的是 `nvidia-smi --query-gpu=index,utilization.gpu,memory.used`（真实整卡计数器，不是逐进程的 `pmon`——这是本次实现和下面"初步实现路径"建议的一处差异，会在整卡有其它无关进程时把"空闲"判断得偏保守，即误判为"忙"而多等，但不会误判为"空闲"而少等，方向上是安全的），默认最长等待 600 秒（`PSRL_GATE_B_MAX_WAIT_SEC`），超时直接放行。
+**更新（已实现，见 [`sciaccel-gpu-gate.md`](sciaccel-gpu-gate.md) §16.5）：** 已按下面"初步实现路径"描述的思路落地，挂在 `session_chat_completions` 返回模型回复之前（[`session_router.py`](../../../psrl/workers/gen/session_router.py) 的 `_wait_for_gpu_idle`），只对被 `POST /control/gpu_bind` 显式绑定过 GPU 设备的 session 生效——`examples/sciaccel_rl/runner.py` 的 Gate A 在拿到设备后会调用这个端点。空闲判断用的是 `nvidia-smi --query-gpu=index,utilization.gpu,memory.used`（真实整卡计数器，不是逐进程的 `pmon`——这是本次实现和下面"初步实现路径"建议的一处差异，会在整卡有其它无关进程时把"空闲"判断得偏保守，即误判为"忙"而多等，但不会误判为"空闲"而少等，方向上是安全的），默认最长等待 600 秒（`PSRL_GATE_B_MAX_WAIT_SEC`），超时直接放行。
 
 **不做会怎样：** 直接对应第 5.4 节的实测结论——`nvidia-smi` 的 GPU 利用率读数是整卡计数器，不是按进程区分。如果同一张卡上有两个任务的 solver 真的同时在算，其中一个任务的评分会被另一个任务的 GPU 活动"污染"（把别人的计算误判成自己的）。这不是理论推演，是原文用两个各分配 8GB 的容器同时压 `/dev/nvidia0` 实测出来的现象（第 5.3 节）。
 
-**初步实现路径（原文第 6.3 节加第 6.5 节）：** 挂在 SessionRouter 返回模型回复之前的出口 hook，只对 GPU unit 生效；最多等待 `admission_timeout_s`（默认 600 秒，必须小于 agent 自己的 LLM 请求超时——SciAccel 现在是 900 秒，见 [`runner.py:250-252`](../../examples/sciaccel_rl/runner.py#L250)），超时就直接放行而不是判失败，因为放行只是"多花一点吞吐"，判失败是"丢掉最多四小时的 episode"。判断"GPU 是否真的空闲"要用 `nvidia-smi pmon` 的逐进程占用，不能只看 session 状态是不是 `env`（否则会被 `nohup ./solver &` 这种正常的后台用法骗过去，见第 6 节）。
+**初步实现路径（原文第 6.3 节加第 6.5 节）：** 挂在 SessionRouter 返回模型回复之前的出口 hook，只对 GPU unit 生效；最多等待 `admission_timeout_s`（默认 600 秒，必须小于 agent 自己的 LLM 请求超时——SciAccel 现在是 900 秒，见 [`runner.py:250-252`](../../../examples/sciaccel_rl/runner.py#L250)），超时就直接放行而不是判失败，因为放行只是"多花一点吞吐"，判失败是"丢掉最多四小时的 episode"。判断"GPU 是否真的空闲"要用 `nvidia-smi pmon` 的逐进程占用，不能只看 session 状态是不是 `env`（否则会被 `nohup ./solver &` 这种正常的后台用法骗过去，见第 6 节）。
 
 #### (3) 验证式的 borrow/return（`RETURNING` 状态）加真正接入调度的租约/心跳，取代现在"写了但没人调用"的空转超时
 
-**现状：** 第 13.7 节已经核实过：`reap_idle_sandboxes()` 这个方法本身存在（[`worker.py:362-378`](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L362)），但整个代码库里没有任何地方定时调用它。释放/归还只有两种状态——"占用中"和"已释放"，中间没有原文第 6.2 节设计的 `RETURNING`（正在归还，需要核验空闲后才能标记 `FREE`）过渡状态，也没有心跳/租约续期机制去区分"任务还在正常算"和"调用方已经崩溃"。
+**现状：** 第 13.7 节已经核实过：`reap_idle_sandboxes()` 这个方法本身存在（[`worker.py:362-378`](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L362)），但整个代码库里没有任何地方定时调用它。释放/归还只有两种状态——"占用中"和"已释放"，中间没有原文第 6.2 节设计的 `RETURNING`（正在归还，需要核验空闲后才能标记 `FREE`）过渡状态，也没有心跳/租约续期机制去区分"任务还在正常算"和"调用方已经崩溃"。
 
 **不做会怎样：** 正是前面回答的那个缺口——一次 Ray 进程级崩溃会让容器和 coordinator 的账本一起卡死，没有任何自动机制能分辨这是真泄漏还是长 episode 正常运行，只能靠人工发现或整个训练任务重启。
 
@@ -259,7 +259,7 @@ Coordinator 侧：那个 worker 的 used_cpu/used_gpu 永远不会被减回去�
 
 #### (4) 周期性负载快照（`measured_gpu_memory_mb`、`measured_util_by_pid`）
 
-**现状：** `WorkerSlot` 只有 `used_cpu`/`used_gpu` 两个自己维护的整数计数器（[`coordinator.py:24-41`](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L24)），没有任何一处真正去问 `nvidia-smi` 实际显存/利用率是多少，也没有定期上报的通道。
+**现状：** `WorkerSlot` 只有 `used_cpu`/`used_gpu` 两个自己维护的整数计数器（[`coordinator.py:24-41`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L24)），没有任何一处真正去问 `nvidia-smi` 实际显存/利用率是多少，也没有定期上报的通道。
 
 **不做会怎样：** 前面已经指出，默认 `least_loaded` 路由策略只看 `used_cpu`，连 `used_gpu` 都不看，更别提区分"申报 18 GiB"和"实测已经飙到 21 GiB"这种原文第 7 节强调的偏差。没有测量数据，调度只能盲选。
 
@@ -267,15 +267,15 @@ Coordinator 侧：那个 worker 的 used_cpu/used_gpu 永远不会被减回去�
 
 #### (5) 统一 Path A / Path B（Roadmap Phase 0）
 
-**现状：** 第 9 节已经说明，SciAccel（Path B）现在仍然自己维护一个**进程级**（不是节点级）`asyncio.Semaphore`（[`agent_loop.py:60-84`](../../examples/sciaccel_rl/agent_loop.py#L60)），没有接入 `coordinator.py` 的任何账本。
+**现状：** 第 9 节已经说明，SciAccel（Path B）现在仍然自己维护一个**进程级**（不是节点级）`asyncio.Semaphore`（[`agent_loop.py:60-84`](../../../examples/sciaccel_rl/agent_loop.py#L60)），没有接入 `coordinator.py` 的任何账本。
 
 **不做会怎样：** 就是原文 B4 描述、且已经在启动脚本里写死变通方案的真实故障——同一节点上堆更多 worker 进程，会把这个节点的容器数按 worker 数成倍放大，原文引用的证据是 `examples/sciaccel_rl/fsdp_qwen35_4b.sh:105-114` 那段注释。
 
-**初步实现路径（原文第 9 节 Phase 0 四步）：** 把 SciAccel 的 Harbor 调用挪到一个 EnvWorker actor 背后（行为不变）；把进程级 `Semaphore` 换成节点级的 `SlotManager`（[`psrl/utils/concurrency/slot.py`](../../psrl/utils/concurrency/slot.py)，本来就是现成的、mini SWE loop 已经在用的节点级原语，只是 SciAccel 没用）；给容器打上自己的标签（这一步在旧 EnvWorker 里其实**已经做了**——`SANDBOX_LABEL_KEY`/`ACTOR_LABEL_KEY`，见 [`worker.py:21-22,189-196`](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L21)，只是 Path B 没有）；确认 Harbor 的 terminus-2 episode 能像旧 shell 一样在多轮之间保留容器内状态之后，再删掉旧的 exec-shell 后端。
+**初步实现路径（原文第 9 节 Phase 0 四步）：** 把 SciAccel 的 Harbor 调用挪到一个 EnvWorker actor 背后（行为不变）；把进程级 `Semaphore` 换成节点级的 `SlotManager`（[`psrl/utils/concurrency/slot.py`](../../../psrl/utils/concurrency/slot.py)，本来就是现成的、mini SWE loop 已经在用的节点级原语，只是 SciAccel 没用）；给容器打上自己的标签（这一步在旧 EnvWorker 里其实**已经做了**——`SANDBOX_LABEL_KEY`/`ACTOR_LABEL_KEY`，见 [`worker.py:21-22,189-196`](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L21)，只是 Path B 没有）；确认 Harbor 的 terminus-2 episode 能像旧 shell 一样在多轮之间保留容器内状态之后，再删掉旧的 exec-shell 后端。
 
 #### (6) 两个已知的 GPU 驱动库 bug（B1/B2），核实结果是：现在的代码里确实还没修
 
-这一条不是"提案设想的风险"，是刚刚直接读 [`sandbox.py:20-23`](airs-bench-audit/baseline/psrl/workers/env_worker/sandbox.py#L20) 核实到的、现在就存在的问题：
+这一条不是"提案设想的风险"，是刚刚直接读 [`sandbox.py:20-23`](../airs-bench-audit/baseline/psrl/workers/env_worker/sandbox.py#L20) 核实到的、现在就存在的问题：
 
 ```python
 DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
@@ -291,7 +291,7 @@ DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
 
 #### (7) 提升 `retry_limit`（B8）：成本最低，但也没做
 
-**现状：** 已核实，`rollout.agent.retry_limit` 配置默认值是 `1`（[`psrl_rollout.yaml:154`](../../psrl/trainer/config/rollout/psrl_rollout.yaml#L154)、[`rollout.py:84`](../../psrl/workers/config/rollout.py#L84)），[`worker.py:389-427`](../../psrl/workers/agent_loop/worker.py#L389) 里那段重试循环 `for retry_attempt in range(1, retry_limit + 1)` 在这个默认值下等价于只跑一次，重试分支实际是死代码。
+**现状：** 已核实，`rollout.agent.retry_limit` 配置默认值是 `1`（[`psrl_rollout.yaml:154`](../../../psrl/trainer/config/rollout/psrl_rollout.yaml#L154)、[`rollout.py:84`](../../../psrl/workers/config/rollout.py#L84)），[`worker.py:389-427`](../../../psrl/workers/agent_loop/worker.py#L389) 里那段重试循环 `for retry_attempt in range(1, retry_limit + 1)` 在这个默认值下等价于只跑一次，重试分支实际是死代码。
 
 **不做会怎样：** 一次偶发的基础设施错误（比如第 10 节提到的节点 Docker daemon 卡死）会直接判这个 episode 失败，白白扔掉已经花费的时间，不会有任何重试机会。
 
@@ -301,13 +301,13 @@ DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
 
 ## 延伸阅读
 
-- 设计动机和角色分工：[`psrl-env-service-envworker-design.md`](../psrl/psrl-env-service-envworker-design.md) 第 0-10 节。
+- 设计动机和角色分工：[`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md) 第 0-10 节。
 - 怎么把现有 EnvWorker 接进 PSRL、怎么写 GPU 集成测试：[`onboarding-and-gpu-validation.md`](onboarding-and-gpu-validation.md)。
 - SciAccel 接 GPU Gate 的实测与部署（第 (1)(2) 条已落地的具体内容）：[`sciaccel-gpu-gate.md`](sciaccel-gpu-gate.md)。
 
 ## 17. AIRS-Bench 接入批评核对与最小复现
 
-核对日期：2026-10-13。本次只做审查、CPU 最小复现和知识留档，没有修改训练实现或运行真实集群。PSRL HEAD 为 `90a4178f40b4de3e90ada1c9ebc4baf15815921a`，工作区已有未提交修改，因此判断以实际读取的文件为准，不以 HEAD 代表全部内容。复现文件的 SHA-256 摘要保存在 [results.json](airs-bench-audit/results.json)。
+核对日期：2026-10-13。本次只做审查、CPU 最小复现和知识留档，没有修改训练实现或运行真实集群。PSRL HEAD 为 `90a4178f40b4de3e90ada1c9ebc4baf15815921a`，工作区已有未提交修改，因此判断以实际读取的文件为准，不以 HEAD 代表全部内容。复现文件的 SHA-256 摘要保存在 [results.json](../airs-bench-audit/results.json)。
 
 ### 17.1 全局串联图和源码位置
 
@@ -347,16 +347,16 @@ DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
 
 | 图中部分 | 修复前快照与可跳转位置 |
 |---|---|
-| [1] 启动与 actor 池 | [ray_trainer.py:1867](../../psrl/trainer/ppo/ray_trainer.py#L1867)，[EnvWorkerManager:63](airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L63) |
-| [2] 准备任务与提前开会话 | [MLGymEnvironment.reset:235](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L235)，[MLGymAgentLoop.run:171](airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L171)，[session_scope:85](../../psrl/workers/agent_loop/loops/session_agent_loop.py#L85) |
-| [3] 排队与启动 | [coordinator.select_worker:153](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L153)，[create_sandbox:185](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L185)，[worker.create_sandbox:198](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L198) |
-| [4] 同步 runner 与外部 MLGym | [线程池等待:131](airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L131)，[run_mlgym_agent:91](airs-bench-audit/baseline/examples/airs_bench/runner.py#L91)，[继承适配类:145](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L145) |
-| [4] 模型请求与记录 | [host_url 配置:55](airs-bench-audit/baseline/examples/airs_bench/runner.py#L55)，[session_api_url:93](../../psrl/workers/agent_loop/loops/session_agent_loop.py#L93)，[get_training_data:183](../../psrl/workers/agent_loop/loops/session_agent_loop.py#L183) |
-| [5] 命令桥接 | [适配器 _communicate:175](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L175)，[sync_exec:103](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L103)，[handle.exec:94](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L94)，[worker.exec:256](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L256) |
-| [5] 数据与评分边界 | [整目录挂载:94](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L94)，[prepare 标签要求:266](../../examples/airs_bench/prepare/prepare_airs_data.py#L266)，[scripted 评分:184](airs-bench-audit/baseline/examples/airs_bench/scripted_episode.py#L184) |
-| [7a] 正常释放 | [handle.destroy:111](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L111)，[worker.destroy_sandbox:343](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L343)，[coordinator.release:219](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L219) |
-| [6] 训练数据与奖励 | [runner 分数整理:151](airs-bench-audit/baseline/examples/airs_bench/runner.py#L151)，[训练数据/奖励:190](airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L190)，[reward 分数消费:122](../../examples/airs_bench/reward.py#L122) |
-| [7b] 会话关闭及本机兜底 | [session_scope finally:90](../../psrl/workers/agent_loop/loops/session_agent_loop.py#L90)，[env.close:269](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L269) |
+| [1] 启动与 actor 池 | [ray_trainer.py:1867](../../../psrl/trainer/ppo/ray_trainer.py#L1867)，[EnvWorkerManager:63](../airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L63) |
+| [2] 准备任务与提前开会话 | [MLGymEnvironment.reset:235](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L235)，[MLGymAgentLoop.run:171](../airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L171)，[session_scope:85](../../../psrl/workers/agent_loop/loops/session_agent_loop.py#L85) |
+| [3] 排队与启动 | [coordinator.select_worker:153](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L153)，[create_sandbox:185](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L185)，[worker.create_sandbox:198](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L198) |
+| [4] 同步 runner 与外部 MLGym | [线程池等待:131](../airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L131)，[run_mlgym_agent:91](../airs-bench-audit/baseline/examples/airs_bench/runner.py#L91)，[继承适配类:145](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L145) |
+| [4] 模型请求与记录 | [host_url 配置:55](../airs-bench-audit/baseline/examples/airs_bench/runner.py#L55)，[session_api_url:93](../../../psrl/workers/agent_loop/loops/session_agent_loop.py#L93)，[get_training_data:183](../../../psrl/workers/agent_loop/loops/session_agent_loop.py#L183) |
+| [5] 命令桥接 | [适配器 _communicate:175](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L175)，[sync_exec:103](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L103)，[handle.exec:94](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L94)，[worker.exec:256](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L256) |
+| [5] 数据与评分边界 | [整目录挂载:94](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L94)，[prepare 标签要求:266](../../../examples/airs_bench/prepare/prepare_airs_data.py#L266)，[scripted 评分:184](../airs-bench-audit/baseline/examples/airs_bench/scripted_episode.py#L184) |
+| [7a] 正常释放 | [handle.destroy:111](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L111)，[worker.destroy_sandbox:343](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L343)，[coordinator.release:219](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L219) |
+| [6] 训练数据与奖励 | [runner 分数整理:151](../airs-bench-audit/baseline/examples/airs_bench/runner.py#L151)，[训练数据/奖励:190](../airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L190)，[reward 分数消费:122](../../../examples/airs_bench/reward.py#L122) |
+| [7b] 会话关闭及本机兜底 | [session_scope finally:90](../../../psrl/workers/agent_loop/loops/session_agent_loop.py#L90)，[env.close:269](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L269) |
 
 这些代码如果有理解上的问题，可以随时追问。Actor 是 Ray 管理的有状态远程对象，这里分别承载调度计数和实际容器。Episode 是 agent 完成一次任务尝试的全过程。TITO 在本接入中负责记录模型输入输出的 token（模型处理文本的离散单位）和对应概率信息，供训练使用。
 
@@ -383,7 +383,7 @@ DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
 
 证据链是完整的：准备阶段要求存在 train、test、test_with_labels，`build_sandbox_spec` 将它们共同的任务父目录挂在 agent 的 `data/` 下，挂载模式是 `ro`。`ro` 是 read-only，只禁止对挂载内容写入，不限制目录遍历或读取。沙箱评分程序能够以 agent 身份读标签，同一身份运行的 agent 命令也能读。
 
-实际只读检查发现，配置的数据根目录下有 20 个任务的 `test_with_labels`。抽查 `TextualClassificationSickAccuracy` 和 `TimeSeriesForecastingSolarWeeklyMAE` 的标签 Arrow 文件为 `0644`，即文件所有者可读写、组和其他用户可读。Sick 任务的 evaluate.py:17（本地资料，未随仓库发布） 直接读取 `test_with_labels` 的 `label` 列。独立的 [scripted_episode.py:56](airs-bench-audit/baseline/examples/airs_bench/scripted_episode.py#L56) 也直接在容器中读取标签目录。
+实际只读检查发现，配置的数据根目录下有 20 个任务的 `test_with_labels`。抽查 `TextualClassificationSickAccuracy` 和 `TimeSeriesForecastingSolarWeeklyMAE` 的标签 Arrow 文件为 `0644`，即文件所有者可读写、组和其他用户可读。Sick 任务的 evaluate.py:17（本地资料，未随仓库发布） 直接读取 `test_with_labels` 的 `label` 列。独立的 [scripted_episode.py:56](../airs-bench-audit/baseline/examples/airs_bench/scripted_episode.py#L56) 也直接在容器中读取标签目录。
 
 手算教学例子：测试答案为 `[0, 1, 0, 1]`，正常模型预测 `[0, 0, 0, 1]`，准确率是 3/4。若直接读取答案并提交 `[0, 1, 0, 1]`，准确率是 4/4，却没有学会分类。这就是 reward hacking（利用评分漏洞获取奖励）：优化目标奖励了读取答案的行为，而非期望的学习过程。上述四条数据为教学示例，没有声称本次完成了实际攻击提交。
 
@@ -391,7 +391,7 @@ DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
 
 ### 17.4 P0：哨兵协议损坏，与 MLGym 契约缺口分开判断
 
-哨兵是命令执行完后额外打印的结束标记。当前 [wrap_command:23](airs-bench-audit/baseline/psrl/workers/env_worker/shell.py#L23) 附加 `///PROCESS-DONE:<退出码>:PROCESS-DONE///`，但里面没有标识命令的唯一编号。[parse_sentinel:56](airs-bench-audit/baseline/psrl/workers/env_worker/shell.py#L56) 取输出中第一个符合格式的标记，将它当成本次命令结果。
+哨兵是命令执行完后额外打印的结束标记。当前 [wrap_command:23](../airs-bench-audit/baseline/psrl/workers/env_worker/shell.py#L23) 附加 `///PROCESS-DONE:<退出码>:PROCESS-DONE///`，但里面没有标识命令的唯一编号。[parse_sentinel:56](../airs-bench-audit/baseline/psrl/workers/env_worker/shell.py#L56) 取输出中第一个符合格式的标记，将它当成本次命令结果。
 
 超时只是 Python 停止等待。Bash 的前台命令还在执行，所以新的 B 命令写入 stdin 后也要排在 A 后面。`drain()` 在 B 发出前只能清空已经到达的字节，无法清掉未来才出现的 A 尾部输出。结果就是 A 的结束标记触发 B 返回，再把 B 的结束标记交给后续命令。
 
@@ -403,7 +403,7 @@ DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
 | B：sleep 0.35，打印 B-output，false | B-output，退出码 1 | A-end，退出码 0 |
 | C：打印 C-output，true | C-output，退出码 0 | B-output 和 C-output，退出码 1 |
 
-完整输出在 [results.json](airs-bench-audit/results.json)。C 返回多少混合文本取决于读取分块时机，不能把“固定错一格”当成协议保证。退出码 0 表示 shell 命令成功，非零表示失败，本例说明成功/失败判断也会被串线。
+完整输出在 [results.json](../airs-bench-audit/results.json)。C 返回多少混合文本取决于读取分块时机，不能把“固定错一格”当成协议保证。退出码 0 表示 shell 命令成功，非零表示失败，本例说明成功/失败判断也会被串线。
 
 当前配置指向的 MLGym checkout 实际存在，提交为 `9d40c1b5035202018cd7091fb4e83a9c68b377c0`，本次检查工作树无修改。其关键路径如下：
 
@@ -411,7 +411,7 @@ DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
 |---|---|
 | 是 communicate 还是 step 捕获超时 | env.py:667（本地资料，未随仓库发布） 的 communicate 不捕获该超时，step:458（本地资料，未随仓库发布） 捕获并调用 interrupt |
 | interrupt 是否绕开 _communicate | interrupt:803（本地资料，未随仓库发布） 断言两个容器对象非空，然后通过 Docker exec_run 杀进程、读取原 Popen 管道并做健康检查 |
-| 子类提供了什么 | [mlgym_env.py:170](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L170) 将 container 与 container_obj 都设为 None，且没有覆盖 interrupt |
+| 子类提供了什么 | [mlgym_env.py:170](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L170) 将 container 与 container_obj 都设为 None，且没有覆盖 interrupt |
 | 为什么更早就可能失败 | 父类初始化:249（本地资料，未随仓库发布） 调用 _reset_container:954（本地资料，未随仓库发布），之后的 _init_scripts:1045（本地资料，未随仓库发布） 立即断言 container_obj 非空 |
 | 还有哪些绕过通信接口的调用 | _setup_workspace:1193（本地资料，未随仓库发布）、reset:334（本地资料，未随仓库发布）、add_commands:759（本地资料，未随仓库发布） 都直接依赖 Docker 对象 |
 
@@ -423,13 +423,13 @@ DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
 
 ### 17.5 P1：56 对 8 的瓶颈、异常处理和控制请求饥饿
 
-配方默认 N_RESP_PER_PROMPT=4、TRAIN_BATCH_SIZE=14、staleness=0，对应 [trainer 公式:395](../../psrl/trainer/ppo/ray_trainer.py#L395) 的 4×14×1=56。一个 env 节点、每节点 1 worker、每 worker 8 个沙箱槽，对应同时 8 个沙箱。56 个请求均到达且没有完成时，48 个在等待。这里 cpu_slots 是沙箱数量槽，不是物理 CPU 核数，每个 SandboxSpec 实际另限 8 CPU 和 32g 内存。
+配方默认 N_RESP_PER_PROMPT=4、TRAIN_BATCH_SIZE=14、staleness=0，对应 [trainer 公式:395](../../../psrl/trainer/ppo/ray_trainer.py#L395) 的 4×14×1=56。一个 env 节点、每节点 1 worker、每 worker 8 个沙箱槽，对应同时 8 个沙箱。56 个请求均到达且没有完成时，48 个在等待。这里 cpu_slots 是沙箱数量槽，不是物理 CPU 核数，每个 SandboxSpec 实际另限 8 CPU 和 32g 内存。
 
-这些是静态配置推算，不是实际排队测量。agent worker 的 `max_concurrency` 限制 RPC（远程方法调用），但 [generate_trajectory:304](../../psrl/workers/agent_loop/worker.py#L304) 又创建独立 asyncio task 后返回。因此也不应把 trainer 的 56 当成所有训练/验证/补采路径严格统一的硬信号量。
+这些是静态配置推算，不是实际排队测量。agent worker 的 `max_concurrency` 限制 RPC（远程方法调用），但 [generate_trajectory:304](../../../psrl/workers/agent_loop/worker.py#L304) 又创建独立 asyncio task 后返回。因此也不应把 trainer 的 56 当成所有训练/验证/补采路径严格统一的硬信号量。
 
-会话创建早于沙箱等待，见图中 [2]、[3]。这会增加空闲会话的存续时间，但没有证据表明每个空会话都会立即占满 GPU 显存。`episode_timeout_s` 的 10800 秒仅包住 runner，未覆盖排队、启动及 finally 清理。外层 [base_agent_loop.py:690](../../psrl/workers/agent_loop/loops/base_agent_loop.py#L690) 支持整条轨迹超时，但 [默认配置:136](../../psrl/trainer/config/rollout/psrl_rollout.yaml#L136) 为 null，AIRS 启动脚本未覆盖。
+会话创建早于沙箱等待，见图中 [2]、[3]。这会增加空闲会话的存续时间，但没有证据表明每个空会话都会立即占满 GPU 显存。`episode_timeout_s` 的 10800 秒仅包住 runner，未覆盖排队、启动及 finally 清理。外层 [base_agent_loop.py:690](../../../psrl/workers/agent_loop/loops/base_agent_loop.py#L690) 支持整条轨迹超时，但 [默认配置:136](../../../psrl/trainer/config/rollout/psrl_rollout.yaml#L136) 为 null，AIRS 启动脚本未覆盖。
 
-排队到期确实抛 RuntimeError，但外层 [worker.py:397](../../psrl/workers/agent_loop/worker.py#L397) 捕获为 ROLLOUT_ERROR。默认 retry_limit=1 是总尝试次数，当前 worker 不会再试第二遍，随后 [worker.py:430](../../psrl/workers/agent_loop/worker.py#L430) 通知 manager，后者进行组补采，连续失败达到阈值则 [manager.py:558](../../psrl/workers/agent_loop/manager.py#L558) 熔断。故问题是超时归类和失败成本，并非完全无人处理的裸异常。
+排队到期确实抛 RuntimeError，但外层 [worker.py:397](../../../psrl/workers/agent_loop/worker.py#L397) 捕获为 ROLLOUT_ERROR。默认 retry_limit=1 是总尝试次数，当前 worker 不会再试第二遍，随后 [worker.py:430](../../../psrl/workers/agent_loop/worker.py#L430) 通知 manager，后者进行组补采，连续失败达到阈值则 [manager.py:558](../../../psrl/workers/agent_loop/manager.py#L558) 熔断。故问题是超时归类和失败成本，并非完全无人处理的裸异常。
 
 Coordinator 的并发名额是另一套资源。`await asyncio.sleep` 让出事件循环的执行权，但方法尚未完成，仍占一个活跃 RPC 名额。[Ray 官方文档](https://docs.ray.io/en/latest/ray-core/actors/async_api.html) 将 max_concurrency 定义为同时运行的方法数量。当 64 个排队 create 调用占满名额后，release 也无法进入同一 actor，于是本来可以结束的沙箱不能及时归还计数。
 
@@ -441,15 +441,15 @@ Coordinator 的并发名额是另一套资源。`await asyncio.sleep` 让出事�
 
 租约是附带有效期的占用凭证。TTL 是 time to live，即有效时长；心跳让仍存活的持有者定期续期。例如教学设定 TTL=90 秒、每 30 秒续约，持有者最后一次续约之后消失，90 秒到期才触发回收。这些数字是教学假设，当前 EnvWorkerCoordinator 没有这套协议。
 
-[WorkerSlot:25](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L25) 只记录 used_cpu、used_gpu 等汇总计数，没有 sandbox_id 到持有者的租约关联。`finally: handle.destroy()` 只对协程正常展开有效，进程直接死亡时无法执行。
+[WorkerSlot:25](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L25) 只记录 used_cpu、used_gpu 等汇总计数，没有 sandbox_id 到持有者的租约关联。`finally: handle.destroy()` 只对协程正常展开有效，进程直接死亡时无法执行。
 
-[reap_idle_sandboxes:361](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L361) 没有生产调用方，也不读取 spec.idle_timeout_s。即使手动调用，它只执行 destroy_sandbox，不调用 coordinator.release。本次用真实 reaper 方法、仅替换物理 Docker 删除动作的 CPU 实验，容器移除记录为 orphan，而 used_cpu 仍为 1。接上定时任务不能单独修复账本泄漏。
+[reap_idle_sandboxes:361](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L361) 没有生产调用方，也不读取 spec.idle_timeout_s。即使手动调用，它只执行 destroy_sandbox，不调用 coordinator.release。本次用真实 reaper 方法、仅替换物理 Docker 删除动作的 CPU 实验，容器移除记录为 orphan，而 used_cpu 仍为 1。接上定时任务不能单独修复账本泄漏。
 
 还不能把“多久没收到 exec”直接当作持有者死亡：`_last_used_at` 在命令结束时更新，一条长命令仍在执行时也可能被错误判空闲。租约续期与命令输出活跃度应分开。
 
-确实存在通用 agent actor 的 [sidecar reaper:69](../../psrl/workers/agent_loop/worker.py#L69)，不能笼统说整个项目没有 reaper。但该机制依赖本机 Docker 和 actor 标签。AIRS 请求没有显式把 agent actor_id 放进 spec，EnvWorker 的 [标签读取:193](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L193) 发生在另一个 actor 进程里，不能假定 agent 的 os.environ 修改会传播过去。它也没有归还旧 coordinator 计数的接口。
+确实存在通用 agent actor 的 [sidecar reaper:69](../../../psrl/workers/agent_loop/worker.py#L69)，不能笼统说整个项目没有 reaper。但该机制依赖本机 Docker 和 actor 标签。AIRS 请求没有显式把 agent actor_id 放进 spec，EnvWorker 的 [标签读取:193](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L193) 发生在另一个 actor 进程里，不能假定 agent 的 os.environ 修改会传播过去。它也没有归还旧 coordinator 计数的接口。
 
-`MLGymEnvironment.close()` 直接调用 [本机 docker ps/rm:105](../../psrl/utils/common/docker_utils.py#L105)。在通常连接本地 Docker daemon 的部署下，agent 不在 env 节点时清不到目标容器；即使同机删到了，也不自动归还计数。若 DOCKER_HOST 特意指向远程 daemon，位置结论会变，因此关键是清理请求是否发往容器实际归属端。
+`MLGymEnvironment.close()` 直接调用 [本机 docker ps/rm:105](../../../psrl/utils/common/docker_utils.py#L105)。在通常连接本地 Docker daemon 的部署下，agent 不在 env 节点时清不到目标容器；即使同机删到了，也不自动归还计数。若 DOCKER_HOST 特意指向远程 daemon，位置结论会变，因此关键是清理请求是否发往容器实际归属端。
 
 合理修复是把 AIRS 生命周期接入已有租约服务，并让实际 EnvWorker/Docker 执行端负责清理，验证容器确实消失后再归还容量。必须有独立清理通道、过期回收和幂等释放（同一租约多次释放只生效一次）。不能只给已有计数器减一，也不能只开 env_service.enable 就声称 AIRS 已接入。
 
@@ -457,36 +457,36 @@ Coordinator 的并发名额是另一套资源。`await asyncio.sleep` 让出事�
 
 | 项目 | 本次核对与证据 |
 |---|---|
-| CPU/内存双轨 | [run 脚本:188](airs-bench-audit/baseline/examples/airs_bench/run_qwen3-4b.sh#L188) 写 env_worker.sandbox_cpus/memory，但实际 spec 来自 [runtime 配置:91](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L91)。同名默认值碰巧一致会掩盖改配置不生效的问题 |
-| 输出截断双轨 | [runtime.max_observation_chars:48](airs-bench-audit/baseline/examples/airs_bench/config.py#L48) 无执行消费者，真正传给 worker 的是 [manager.py:93](airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L93) 读取的 env_worker 配置 |
-| 默认命令超时 | [exec_default_timeout_s:153](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L153) 被存储，但 exec 要求调用者显式传 timeout_s，没有取该缺省值 |
-| 启动进程退出 | [read_until:103](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L103) 不检查 poll/EOF。本次退出码已为 7 的 Bash 仍等待完整的 0.2 秒实验预算。放大到默认 600 秒是代码路径推论，不是实测等待了 10 分钟。若 write 先遇到断管，则会更早失败 |
-| 重试节点 | [create_sandbox:202](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L202) 不排除上次失败 worker，least_loaded 释放计数后可再选同一台，与 docstring 不符 |
-| 线程取消 | [wait_for + executor:131](airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L131) 超时后不能杀掉已执行线程。本次标准库实验确认 future 被取消时线程仍运行，脚本随后显式通知退出，没有遗留线程 |
-| 网络与代理 | [build_sandbox_spec:84](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L84) 继承代理变量并使用 host 网络，agent 能读传入容器的变量，也能访问宿主网络命名空间内服务。是否含凭据、能访问哪些服务须按部署核实 |
-| sudo apt | [Dockerfile:35](../../examples/airs_bench/docker/Dockerfile#L35) 对 apt/apt-get 免密放行且不限制参数。APT 的 [Pre-Invoke 官方说明](https://manpages.debian.org/bookworm/apt/apt.conf.5.en.html#HOW_APT_CALLS_DPKG(1)) 明确支持执行 shell hook，因此不能把这看成仅有“安装包”而没有容器内 root 执行能力。没有据此声称发生了宿主逃逸 |
-| README reaper | [故障表:147](airs-bench-audit/baseline/examples/airs_bench/README.md#L147) 描述了并未接通的周期性空闲回收，容易错误引导排障 |
-| baseline 开关 | 实际开关在 [runner.py:131](airs-bench-audit/baseline/examples/airs_bench/runner.py#L131)，上游 env.py:365（本地资料，未随仓库发布） 仍调用 baseline 更新函数，376 行开关控制结果写回 task YAML。README 将它描述为缓存容器镜像并推断 agent 看不到 baseline，混淆了 cache_baseline_scores 和 cache_task_images |
+| CPU/内存双轨 | [run 脚本:188](../airs-bench-audit/baseline/examples/airs_bench/run_qwen3-4b.sh#L188) 写 env_worker.sandbox_cpus/memory，但实际 spec 来自 [runtime 配置:91](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L91)。同名默认值碰巧一致会掩盖改配置不生效的问题 |
+| 输出截断双轨 | [runtime.max_observation_chars:48](../airs-bench-audit/baseline/examples/airs_bench/config.py#L48) 无执行消费者，真正传给 worker 的是 [manager.py:93](../airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L93) 读取的 env_worker 配置 |
+| 默认命令超时 | [exec_default_timeout_s:153](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L153) 被存储，但 exec 要求调用者显式传 timeout_s，没有取该缺省值 |
+| 启动进程退出 | [read_until:103](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L103) 不检查 poll/EOF。本次退出码已为 7 的 Bash 仍等待完整的 0.2 秒实验预算。放大到默认 600 秒是代码路径推论，不是实测等待了 10 分钟。若 write 先遇到断管，则会更早失败 |
+| 重试节点 | [create_sandbox:202](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L202) 不排除上次失败 worker，least_loaded 释放计数后可再选同一台，与 docstring 不符 |
+| 线程取消 | [wait_for + executor:131](../airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L131) 超时后不能杀掉已执行线程。本次标准库实验确认 future 被取消时线程仍运行，脚本随后显式通知退出，没有遗留线程 |
+| 网络与代理 | [build_sandbox_spec:84](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L84) 继承代理变量并使用 host 网络，agent 能读传入容器的变量，也能访问宿主网络命名空间内服务。是否含凭据、能访问哪些服务须按部署核实 |
+| sudo apt | [Dockerfile:35](../../../examples/airs_bench/docker/Dockerfile#L35) 对 apt/apt-get 免密放行且不限制参数。APT 的 [Pre-Invoke 官方说明](https://manpages.debian.org/bookworm/apt/apt.conf.5.en.html#HOW_APT_CALLS_DPKG(1)) 明确支持执行 shell hook，因此不能把这看成仅有“安装包”而没有容器内 root 执行能力。没有据此声称发生了宿主逃逸 |
+| README reaper | [故障表:147](../airs-bench-audit/baseline/examples/airs_bench/README.md#L147) 描述了并未接通的周期性空闲回收，容易错误引导排障 |
+| baseline 开关 | 实际开关在 [runner.py:131](../airs-bench-audit/baseline/examples/airs_bench/runner.py#L131)，上游 env.py:365（本地资料，未随仓库发布） 仍调用 baseline 更新函数，376 行开关控制结果写回 task YAML。README 将它描述为缓存容器镜像并推断 agent 看不到 baseline，混淆了 cache_baseline_scores 和 cache_task_images |
 
 ### 17.8 跟着图读源码
 
 | 顺序 | 对应图 | 入口/函数 | 观察重点 |
 |---|---|---|---|
-| 1 | [1] | [RayTrainer 初始化:1867](../../psrl/trainer/ppo/ray_trainer.py#L1867) → [EnvWorkerManager.__init__:52](airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L52) | 命名 actor、worker 放置、64 个 RPC 名额和 8 个沙箱槽是不同限制 |
-| 2 | [2] | [MLGymAgentLoop.run:138](airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L138) → [env.reset:235](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L235) → [session_scope:85](../../psrl/workers/agent_loop/loops/session_agent_loop.py#L85) | 任务路径如何进入 observation，会话何时创建 |
-| 3 | [3] | [_run_episode_logic:89](airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L89) → [coordinator.create_sandbox:185](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L185) → [worker.create_sandbox:198](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L198) | 先预留后启动，失败如何归还，等待和启动分别计时 |
-| 4 | [4] | [runner.run_mlgym_agent:125](airs-bench-audit/baseline/examples/airs_bench/runner.py#L125) → [适配子类初始化:148](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L148) | 当前继承契约断在 _init_scripts，不应假定已经进入 agent.run |
-| 5 | [5] | [sync_exec:127](airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L127) → [handle.exec:101](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L101) → [worker.exec:284](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L284) → [read_until:88](airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L88) | 同步线程通过事件循环发远程调用，结束标记没有请求身份 |
-| 6 | [7a] | [episode finally:135](airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L135) → [handle.destroy:111](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L111) → [release:219](airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L219) | runner 已整理分数，返回 run 之前先删容器并归还计数 |
-| 7 | [6] | [collect_scores_from_info:64](airs-bench-audit/baseline/examples/airs_bench/runner.py#L64) 整理的结果 → [训练数据/评分:190](airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L190) | 分数与 token 记录是两条数据流，最终在输出中汇合 |
-| 8 | [7b] | [session_scope finally:90](../../psrl/workers/agent_loop/loops/session_agent_loop.py#L90) → [env.close:212](airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L212) | 退出会话后执行 env 本机兜底，容器删除、槽位归还、线程退出、会话关闭是不同状态 |
-| 9 | 错误分支 | [base wrapper:690](../../psrl/workers/agent_loop/loops/base_agent_loop.py#L690) → [worker retry:391](../../psrl/workers/agent_loop/worker.py#L391) → [manager 补采:842](../../psrl/workers/agent_loop/manager.py#L842) | 局部异常不等于直接打崩 trainer，也不等于训练已成功 |
+| 1 | [1] | [RayTrainer 初始化:1867](../../../psrl/trainer/ppo/ray_trainer.py#L1867) → [EnvWorkerManager.__init__:52](../airs-bench-audit/baseline/psrl/workers/env_worker/manager.py#L52) | 命名 actor、worker 放置、64 个 RPC 名额和 8 个沙箱槽是不同限制 |
+| 2 | [2] | [MLGymAgentLoop.run:138](../airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L138) → [env.reset:235](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L235) → [session_scope:85](../../../psrl/workers/agent_loop/loops/session_agent_loop.py#L85) | 任务路径如何进入 observation，会话何时创建 |
+| 3 | [3] | [_run_episode_logic:89](../airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L89) → [coordinator.create_sandbox:185](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L185) → [worker.create_sandbox:198](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L198) | 先预留后启动，失败如何归还，等待和启动分别计时 |
+| 4 | [4] | [runner.run_mlgym_agent:125](../airs-bench-audit/baseline/examples/airs_bench/runner.py#L125) → [适配子类初始化:148](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L148) | 当前继承契约断在 _init_scripts，不应假定已经进入 agent.run |
+| 5 | [5] | [sync_exec:127](../airs-bench-audit/baseline/psrl/environments/mlgym_env.py#L127) → [handle.exec:101](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L101) → [worker.exec:284](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L284) → [read_until:88](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L88) | 同步线程通过事件循环发远程调用，结束标记没有请求身份 |
+| 6 | [7a] | [episode finally:135](../airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L135) → [handle.destroy:111](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L111) → [release:219](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L219) | runner 已整理分数，返回 run 之前先删容器并归还计数 |
+| 7 | [6] | [collect_scores_from_info:64](../airs-bench-audit/baseline/examples/airs_bench/runner.py#L64) 整理的结果 → [训练数据/评分:190](../airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L190) | 分数与 token 记录是两条数据流，最终在输出中汇合 |
+| 8 | [7b] | [session_scope finally:90](../../../psrl/workers/agent_loop/loops/session_agent_loop.py#L90) → [env.close:212](../airs-bench-audit/baseline/psrl/workers/agent_loop/loops/mlgym_agent_loop.py#L212) | 退出会话后执行 env 本机兜底，容器删除、槽位归还、线程退出、会话关闭是不同状态 |
+| 9 | 错误分支 | [base wrapper:690](../../../psrl/workers/agent_loop/loops/base_agent_loop.py#L690) → [worker retry:391](../../../psrl/workers/agent_loop/worker.py#L391) → [manager 补采:842](../../../psrl/workers/agent_loop/manager.py#L842) | 局部异常不等于直接打崩 trainer，也不等于训练已成功 |
 
 该顺序是一次 episode 的调用关系。不同 actor、runner 线程和 asyncio 协程可以并发执行，不能把整个训练系统理解成一个顺序线程。
 
 ### 17.9 可运行复现和验证边界
 
-脚本：[reproduce.py](airs-bench-audit/reproduce.py)。从本工作区根目录执行：
+脚本：[reproduce.py](../airs-bench-audit/reproduce.py)。从本工作区根目录执行：
 
 ```bash
 python docs/env-worker-deep-dive/airs-bench-audit/reproduce.py
@@ -496,7 +496,7 @@ python docs/env-worker-deep-dive/airs-bench-audit/reproduce.py
 
 脚本保留源代码文件名及行号，直接编译当前生产定义，仅替换环境依赖导入和物理删除动作。输出包括真实 shell 串线、已退出进程读取等待、空闲回收后账本计数、线程取消，以及 MLGym 两条继承路径断言。并发池部分明确是信号量模型，用于展示等待者占满名额后释放请求进不去，不是 Ray 实机证明。代码注释标注了图中步骤，可逐项对照。
 
-没有执行完整 MLGym 初始化、LLM 调用、训练 step、真实容器取消、远程 actor 崩溃回收或评分攻击。本次也没有测量队列长度、吞吐、超时频率、reward hacking 发生率。现有 [MLGym adapter 测试](../../tests/environments/test_mlgym_env.py) 主要验证配置、挂载、history processor 和 sync_exec，不能替代真实上游环境契约测试。[scripted_episode:153](airs-bench-audit/baseline/examples/airs_bench/scripted_episode.py#L153) 手动上传文件并直接 exec，不经过 PSRLMLGymEnv/MLGymEnv 初始化，所以它通过也不能证明完整接入成立。
+没有执行完整 MLGym 初始化、LLM 调用、训练 step、真实容器取消、远程 actor 崩溃回收或评分攻击。本次也没有测量队列长度、吞吐、超时频率、reward hacking 发生率。现有 [MLGym adapter 测试](../../../tests/environments/test_mlgym_env.py) 主要验证配置、挂载、history processor 和 sync_exec，不能替代真实上游环境契约测试。[scripted_episode:153](../airs-bench-audit/baseline/examples/airs_bench/scripted_episode.py#L153) 手动上传文件并直接 exec，不经过 PSRLMLGymEnv/MLGymEnv 初始化，所以它通过也不能证明完整接入成立。
 
 ### 17.10 是否修，以及合理顺序
 

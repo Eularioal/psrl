@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-> 本文是 [`psrl-env-service-envworker-design.md`](../psrl/psrl-env-service-envworker-design.md)（EnvWorker 设计详细版）原第 11、12 节拆分出来的独立文档。章节编号沿用原文档编号（11、12），没有从 1 重新编号，方便和速查表、其他文档里已经写好的"详细版 §11/§12"引用对应。
+> 本文是 [`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md)（EnvWorker 设计详细版）原第 11、12 节拆分出来的独立文档。章节编号沿用原文档编号（11、12），没有从 1 重新编号，方便和速查表、其他文档里已经写好的"详细版 §11/§12"引用对应。
 >
 > 读本文前建议先读完详细版的第 0-10 节（问题背景、角色分工、unit、流程、GPU 难点），了解"为什么需要 EnvWorker"；本文只讲"现在这份代码怎么接、怎么验证"，不重复讲设计动机。
 
@@ -30,7 +30,7 @@
 
 ### 第一步：打开开关，配置资源池
 
-编辑训练配置里的 `psrl.env_worker`（默认值见 [`env_worker.yaml`](../../psrl/trainer/config/psrl/env_worker.yaml)）：
+编辑训练配置里的 `psrl.env_worker`（默认值见 [`env_worker.yaml`](../../../psrl/trainer/config/psrl/env_worker.yaml)）：
 
 ```yaml
 psrl:
@@ -57,7 +57,7 @@ if self.config.psrl.env_worker.enable:
     psrl_logger.info("Env worker pool built.")
 ```
 
-`EnvWorkerManager.__init__`（[`manager.py:52-104`](../../psrl/workers/env_worker/manager.py#L52)）会：
+`EnvWorkerManager.__init__`（[`manager.py:52-104`](../../../psrl/workers/env_worker/manager.py#L52)）会：
 
 1. 用 `ray.nodes()` 找出存活节点，按 `placement` 策略筛出目标节点（第 4/9 节讲过的 `resolve_placement_node_ips`）。
 2. 创建一个 `EnvWorkerCoordinator` Ray actor，并注册成**全局可按名字查到的 actor**：`.options(name="env_worker_coordinator")`。这一行是接入的关键——任何 agent loop 都能靠这个固定名字拿到它，不需要手动传引用。
@@ -65,7 +65,7 @@ if self.config.psrl.env_worker.enable:
 
 ### 第三步：写自己的 Environment 子类，只负责"这次任务长什么样"
 
-参考 [`MLGymEnvironment`](../../psrl/environments/mlgym_env.py)。核心分工：`Environment.reset()` 不创建沙箱，只把"创建沙箱需要的原始参数"整理成一个 dict 返回给 agent loop：
+参考 [`MLGymEnvironment`](../../../psrl/environments/mlgym_env.py)。核心分工：`Environment.reset()` 不创建沙箱，只把"创建沙箱需要的原始参数"整理成一个 dict 返回给 agent loop：
 
 ```python
 # 简化伪代码，改写自 mlgym_env.py:235-263
@@ -82,11 +82,11 @@ class YourTaskEnvironment(Environment[dict, None]):
         return observation, {}
 ```
 
-`Environment.get_environment(name, ...)`（[`base.py:138-158`](../../psrl/environments/base.py#L138)）按名字从注册表里取实例，`name` 通常来自 dataset 行的 `env_class` 字段或 rollout 配置里的默认值。
+`Environment.get_environment(name, ...)`（[`base.py:138-158`](../../../psrl/environments/base.py#L138)）按名字从注册表里取实例，`name` 通常来自 dataset 行的 `env_class` 字段或 rollout 配置里的默认值。
 
 ### 第四步：写自己的 AgentLoop 子类，负责"拿号、执行、还号"
 
-参考 [`MLGymAgentLoop`](../../psrl/workers/agent_loop/loops/mlgym_agent_loop.py)。三个必须做的事：
+参考 [`MLGymAgentLoop`](../../../psrl/workers/agent_loop/loops/mlgym_agent_loop.py)。三个必须做的事：
 
 ```python
 # 简化伪代码，改写自 mlgym_agent_loop.py:70-136
@@ -111,11 +111,11 @@ class YourAgentLoop(SessionAgentLoop):
             await handle.destroy()                                     # 还号：销毁容器 + 归还容量
 ```
 
-`coordinator.create_sandbox` 内部会重试一次、选一个有空位的 worker（[`coordinator.py:185-217`](../../psrl/workers/env_worker/coordinator.py#L185)），`handle.destroy()` 销毁容器后自动调用 `coordinator.release`（[`coordinator.py:111-120`](../../psrl/workers/env_worker/coordinator.py#L111)）归还名额——这一步放进 `finally`，是为了保证哪怕执行中抛异常，名额也不会被卡死不还。
+`coordinator.create_sandbox` 内部会重试一次、选一个有空位的 worker（[`coordinator.py:185-217`](../../../psrl/workers/env_worker/coordinator.py#L185)），`handle.destroy()` 销毁容器后自动调用 `coordinator.release`（[`coordinator.py:111-120`](../../../psrl/workers/env_worker/coordinator.py#L111)）归还名额——这一步放进 `finally`，是为了保证哪怕执行中抛异常，名额也不会被卡死不还。
 
 ### 第五步：dataset 行里指名用哪个 agent/env
 
-模仿 AIRS-Bench 的 `build_row`（[`build_parquet.py:51-85`](../../examples/airs_bench/prepare/build_parquet.py#L51)），每一行至少要有：
+模仿 AIRS-Bench 的 `build_row`（[`build_parquet.py:51-85`](../../../examples/airs_bench/prepare/build_parquet.py#L51)），每一行至少要有：
 
 ```python
 {
@@ -135,7 +135,7 @@ class YourAgentLoop(SessionAgentLoop):
 
 ### 第六步：先脱离 LLM 跑通链路，再接训练
 
-不要第一次就带着模型一起调。仿照 [`scripted_episode.py`](../../examples/airs_bench/scripted_episode.py) 的做法：手写固定的沙箱命令序列（不经过任何 LLM 推理），直接调用 `EnvWorkerManager` 和 `coordinator_handle()` 跑一次，确认容器能起、能执行、能销毁、日志里能看到 `Registered env worker ... with N cpu slot(s)` 这类字样。链路通了之后，再把 `psrl.env_worker.enable=True` 和你的 `agent_name` 接进真实训练配置。
+不要第一次就带着模型一起调。仿照 [`scripted_episode.py`](../../../examples/airs_bench/scripted_episode.py) 的做法：手写固定的沙箱命令序列（不经过任何 LLM 推理），直接调用 `EnvWorkerManager` 和 `coordinator_handle()` 跑一次，确认容器能起、能执行、能销毁、日志里能看到 `Registered env worker ... with N cpu slot(s)` 这类字样。链路通了之后，再把 `psrl.env_worker.enable=True` 和你的 `agent_name` 接进真实训练配置。
 
 ## 12. 构造 GPU 推理测试 case：验证 unit 真的用上了 GPU
 
@@ -143,7 +143,7 @@ class YourAgentLoop(SessionAgentLoop):
 
 ### 12.1 为什么"分到配额"不等于"能用 GPU"
 
-回顾 GPU 直通的实现（[`sandbox.py::build_gpu_argv`](../../psrl/workers/env_worker/sandbox.py)）：它给容器传 `--device /dev/nvidiaN` 加上几个 NVIDIA 控制设备，再把宿主机的驱动库（`libcuda.so.1`、`libnvidia-ml.so.1`）和 `nvidia-smi` 只读挂载进容器。这条路径不依赖 `nvidia-container-runtime`，但也意味着它对"容器操作系统的 libc 版本、CUDA 用户态库版本是否与宿主机驱动匹配"更敏感——文档第 11 节末尾提到的"`nvidia-smi` 正常但 CUDA 初始化失败"就是这一类问题的真实记录。也就是说：
+回顾 GPU 直通的实现（[`sandbox.py::build_gpu_argv`](../../../psrl/workers/env_worker/sandbox.py)）：它给容器传 `--device /dev/nvidiaN` 加上几个 NVIDIA 控制设备，再把宿主机的驱动库（`libcuda.so.1`、`libnvidia-ml.so.1`）和 `nvidia-smi` 只读挂载进容器。这条路径不依赖 `nvidia-container-runtime`，但也意味着它对"容器操作系统的 libc 版本、CUDA 用户态库版本是否与宿主机驱动匹配"更敏感——文档第 11 节末尾提到的"`nvidia-smi` 正常但 CUDA 初始化失败"就是这一类问题的真实记录。也就是说：
 
 ```text
 分到 --device /dev/nvidia0     ≠     容器里的 torch.cuda.is_available() 一定是 True
@@ -163,7 +163,7 @@ class YourAgentLoop(SessionAgentLoop):
 
 ### 12.3 新增的集成测试怎么用
 
-新文件 [`tests/env_worker/test_worker_gpu_integration.py`](../../tests/env_worker/test_worker_gpu_integration.py) 提供三个测试：
+新文件 [`tests/env_worker/test_worker_gpu_integration.py`](../../../tests/env_worker/test_worker_gpu_integration.py) 提供三个测试：
 
 1. `test_gpu_sandbox_sees_the_assigned_device`：在容器里跑 `nvidia-smi --query-gpu=index --format=csv,noheader`，确认 exit_code 为 0 且真的输出了一个设备号——只验证"设备直通"这一步，不涉及深度学习框架。
 2. `test_gpu_inference_runs_on_the_assigned_device`：在容器里跑一段 `python -c "..."`，用 `torch.cuda.is_available()` + 一次 1024×1024 矩阵乘法作为最小的"GPU 推理"样例，脚本打印一行 `GPU_PROBE_RESULT cuda_ok=True matmul_sum=...`，测试断言这一行真的出现且 `cuda_ok=True`。这是最接近用户所说"使用 GPU 推理的那些任务"的一条测试。
@@ -182,7 +182,7 @@ PSRL_GPU_PROBE_IMAGE=pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime \
 
 ### 12.4 如果要接成真实的训练数据集：一条 GPU 推理任务的行长什么样
 
-12.3 的三个测试只验证 EnvWorker 本身，不产生任何训练样本。如果你想让"GPU 推理任务"变成第 11 节第五步里说的那种 dataset 行，参照 AIRS-Bench `build_row` 的形状（[`build_parquet.py:51-85`](../../examples/airs_bench/prepare/build_parquet.py#L51)），可以这样设计（下面是教学示例，不是仓库里已经存在的真实文件）：
+12.3 的三个测试只验证 EnvWorker 本身，不产生任何训练样本。如果你想让"GPU 推理任务"变成第 11 节第五步里说的那种 dataset 行，参照 AIRS-Bench `build_row` 的形状（[`build_parquet.py:51-85`](../../../examples/airs_bench/prepare/build_parquet.py#L51)），可以这样设计（下面是教学示例，不是仓库里已经存在的真实文件）：
 
 ```python
 def build_gpu_probe_row(task_id: str, image: str) -> dict:
@@ -205,10 +205,10 @@ def build_gpu_probe_row(task_id: str, image: str) -> dict:
 
 对应的 reward 函数只需要解析 `result.stdout` 里的 `GPU_PROBE_RESULT` 那一行：出现 `cuda_ok=True` 记 1 分，否则记 0 分或标记为基础设施错误（呼应第 6 节 `ROLLOUT_ERROR` 与真实任务失败的区分——探针失败大概率是环境问题，不该当成模型的错）。这只是把 12.3 的探针脚本套进了 dataset 行的壳子，`Environment.reset` 和 `AgentLoop.run` 仍是第 11 节第三、四步写的那两个类，没有新概念。
 
-需要强调：这里给出的是**设计和最小可运行示例**，用来验证"EnvWorker 能不能把 GPU 真正交给一个做推理的容器"；它不是一个已经验证过分数分布、可直接拿去训练出效果的正式任务，真实任务的 reward 通常要比"是否检测到 GPU"复杂得多（参考 AIRS-Bench 的归一化分数设计，[`reward.py`](../../examples/airs_bench/reward.py)）。
+需要强调：这里给出的是**设计和最小可运行示例**，用来验证"EnvWorker 能不能把 GPU 真正交给一个做推理的容器"；它不是一个已经验证过分数分布、可直接拿去训练出效果的正式任务，真实任务的 reward 通常要比"是否检测到 GPU"复杂得多（参考 AIRS-Bench 的归一化分数设计，[`reward.py`](../../../examples/airs_bench/reward.py)）。
 
 ## 延伸阅读
 
-- 设计动机和角色分工：[`psrl-env-service-envworker-design.md`](../psrl/psrl-env-service-envworker-design.md) 第 0-10 节。
+- 设计动机和角色分工：[`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md) 第 0-10 节。
 - 现状代码深读（账本结构、崩溃回收、Coordinator/Worker 为什么要拆）：[`implementation-and-gaps.md`](implementation-and-gaps.md)。
 - SciAccel 接 GPU Gate 的实测与部署：[`sciaccel-gpu-gate.md`](sciaccel-gpu-gate.md)。

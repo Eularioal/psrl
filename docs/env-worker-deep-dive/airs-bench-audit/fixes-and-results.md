@@ -33,7 +33,7 @@
 
 ## 修复后的完整路径
 
-本报告承接 [修复前审查第 17 节](../implementation-and-gaps.md#17-airs-bench-接入批评核对与最小复现)。旧结论对应的源码已保存为 `baseline/`，其中五个关键文件与旧结果记录的 SHA-256 完全一致。本次是对修复前后实现的比较，不将历史记录改写为本次实测。
+本报告承接 [修复前审查第 17 节](../knowledge/implementation-and-gaps.md#17-airs-bench-接入批评核对与最小复现)。旧结论对应的源码已保存为 `baseline/`，其中五个关键文件与旧结果记录的 SHA-256 完全一致。本次是对修复前后实现的比较，不将历史记录改写为本次实测。
 
 ```text
 [1] EnvWorkerManager：注册远端 worker 与资源预算
