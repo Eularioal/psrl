@@ -1,36 +1,76 @@
 """Attribute host GPU samples to a container's live process identities."""
 
 import asyncio
-import os
 import threading
 import time
-from pathlib import Path
+
+from psrl.workers.env_service.process_identity import ProcfsIdentity
 
 
-def process_identities(pids, root=Path("/proc"), membership=None):
-    """Pair kernel birth ticks with an absolute timestamp for stale sample filtering."""
-    boot = time.time() - time.clock_gettime(time.CLOCK_BOOTTIME)
-    ticks_per_second = os.sysconf("SC_CLK_TCK")
-    identities = {}
-    for pid in pids:
+def read_command_memory(probe, tasks, indices):
+    """
+    Read current device memory and disjoint owner credits with verified process identities.
+
+    Missing process attribution or process memory retains the full reservation. Historical
+    peaks and utilization samples never count as current allocated memory.
+    """
+    eligible, errors = {}, {}
+    for lease_id, task in tasks.items():
         try:
-            proc = root / str(pid)
-            if membership is not None:
-                groups = [line.split(":", 2) for line in (proc / "cgroup").read_text().splitlines()]
-                paths = [Path(path) for _, controllers, path in groups if "devices" in controllers.split(",")]
-                if not any(path.is_relative_to(membership) for path in paths):
-                    continue
-            ticks = int((proc / "stat").read_text().rsplit(")", 1)[1].split()[19])
-            identities[pid] = (ticks, int((boot + ticks / ticks_per_second) * 1e6))
-        except FileNotFoundError:
+            task.check_identity_support()
+            eligible[lease_id] = task
+        except (OSError, RuntimeError) as exc:
+            errors[lease_id] = str(exc)
+    initial = probe.read_gpu_snapshot(indices)
+    pids = {pid for reading in initial.values() for pid in reading["pids"]}
+    before = {}
+    for lease_id, task in eligible.items():
+        try:
+            before[lease_id] = task._owners(pids)
+        except (OSError, RuntimeError) as exc:
+            errors[lease_id] = str(exc)
+    started_us = int(time.time() * 1e6)
+    readings = probe.read_gpu_snapshot(indices) if before else initial
+    owners, claimed = {}, set()
+    for lease_id, identities in before.items():
+        try:
+            after = eligible[lease_id]._owners(pids)
+        except (OSError, RuntimeError) as exc:
+            errors[lease_id] = str(exc)
             continue
-    return identities
+        stable = {
+            pid
+            for pid, identity in identities.items()
+            if after.get(pid, (None,))[0] == identity[0] and identity[1] <= started_us
+        }
+        if stable & claimed:
+            raise RuntimeError("GPU memory ownership overlaps between command leases.")
+        claimed.update(stable)
+        owners[lease_id] = stable
+    credits = {lease_id: 0.0 for lease_id in owners}
+    for index, reading in readings.items():
+        if reading["uuid"] != initial[index]["uuid"]:
+            raise RuntimeError("GPU identity changed during memory attribution.")
+        amounts = {}
+        for lease_id, owned in owners.items():
+            values = (
+                [reading["memory_mb_by_pid"].get(pid) for pid in owned] if index in eligible[lease_id].indices else []
+            )
+            amounts[lease_id] = sum(value for value in values if value is not None)
+            if any(value is None for value in values):
+                errors[lease_id] = "Some owned process memory is unavailable. Its reservation remains charged."
+        if sum(amounts.values()) > reading["used_mb"]:
+            errors[f"device:{index}"] = "Process memory exceeds the device sample. Ownership credit is withheld."
+            continue
+        for lease_id, amount in amounts.items():
+            credits[lease_id] += amount
+    return {"devices": readings, "owned_mb": credits, "attribution_errors": errors}
 
 
 class TaskGpuTelemetry:
     """Keep only owned samples and report missing support instead of fabricated zeros."""
 
-    def __init__(self, probe, fence, indices, *, interval_sec=0.2):
+    def __init__(self, probe, fence, indices, *, interval_sec=0.2, identity_backend=None):
         self.probe, self.fence, self.indices = probe, fence, indices
         self.interval_sec = interval_sec
         self.started_us = int(time.time() * 1e6)
@@ -40,21 +80,26 @@ class TaskGpuTelemetry:
         self.stop_event = asyncio.Event()
         self.task = None
         self._lock = threading.Lock()
-        self.proc_root = Path(os.environ.get("PSRL_GPU_HOST_PROC", "/proc"))
+        self.identity = identity_backend or ProcfsIdentity()
+        self.owner = self.identity.bind(fence) if fence is not None else None
 
     def start(self):
         self.task = asyncio.create_task(self._run())
 
     def _owners(self, pids):
-        return process_identities(pids, self.proc_root, self.fence.membership)
+        if self.owner is None:
+            raise RuntimeError("Task GPU telemetry needs a bound container identity.")
+        return self.owner.owners(pids)
 
-    def check_proc_root(self):
-        # Linux reserves this inode for the initial PID namespace, matching NVML host PIDs.
-        if (self.proc_root / "1/ns/pid").stat().st_ino != 0xEFFFFFFC:
-            raise RuntimeError("GPU attribution needs host PID procfs. Mount it read-only and set PSRL_GPU_HOST_PROC.")
+    def check_identity_support(self):
+        self.identity.check_support()
+
+    def close_identity(self):
+        if self.owner is not None:
+            self.owner.close()
 
     def sample(self):
-        self.check_proc_root()
+        self.check_identity_support()
         started_us = int(time.time() * 1e6)
         readings = self.probe.read_process_snapshot(self.indices, self.since_us)
         pids = {pid for reading in readings.values() for pid in reading["memory_mb_by_pid"]}
@@ -131,6 +176,7 @@ class TaskGpuTelemetry:
         with self._lock:
             return {
                 "source": "host_nvml_container_cgroup",
+                "identity_backend": self.identity.name,
                 "started_us": self.started_us,
                 "devices": {i: dict(value) for i, value in self.devices.items()},
                 "errors": list(self.errors),

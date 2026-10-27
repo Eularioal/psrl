@@ -12,6 +12,7 @@ import yaml
 from harbor.environments.docker.docker import DockerEnvironment
 
 from psrl.workers.env_service import gpu_job_process
+from psrl.workers.env_service.container_budget import ContainerBudget
 from psrl.workers.env_service.gpu_execution import GpuExecutionBackend, reservation_policy
 from psrl.workers.env_service.gpu_jobs import GpuJob, GpuJobManager
 from psrl.workers.env_service.overlay import command_security_options
@@ -43,6 +44,7 @@ class ManagedDockerEnvironment(DockerEnvironment):
         self,
         *args,
         lease_overlay: dict | None = None,
+        container_budget: dict | None = None,
         actor_id: str = "",
         gpu_lending=None,
         gpu_commands=None,
@@ -66,6 +68,7 @@ class ManagedDockerEnvironment(DockerEnvironment):
         self._gpu_jobs = GpuJobManager(self._execute_gpu_job)
         self._prepared_commands = set()
         self._lease_overlay = lease_overlay or {}
+        self._container_budget = ContainerBudget(**container_budget) if container_budget is not None else None
         self._actor_id = actor_id
         self._ownership_dir = tempfile.TemporaryDirectory(prefix="psrl-compose-")
         self._ownership_path = Path(self._ownership_dir.name) / "ownership.yaml"
@@ -288,6 +291,10 @@ class ManagedDockerEnvironment(DockerEnvironment):
             services.update(document.get("services", {}))
         overlay = {name: {"labels": labels} for name in services}
         overlay["main"].update(main)
+        budget = getattr(self, "_container_budget", None)
+        if budget is not None:
+            for name, limits in budget.service_limits(services).items():
+                overlay[name].update(limits)
         if self._gpu_commands:
             overlay["main"].update(command_security_options())
         overlay["main"]["labels"] = labels

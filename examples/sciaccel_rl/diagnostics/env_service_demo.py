@@ -61,9 +61,9 @@ def one_card_several_containers(episodes: int, card_gb: int, task_gb: int, cards
     print(f"  exclusive cards (GpuDeviceGate): {exclusive} episodes run, {episodes - exclusive} wait")
     print(f"  shared units (env service):      {len(running)} episodes run, {len(waiting)} wait")
     for snap in ledger.snapshot():
-        bar = "#" * snap.containers_running + "." * (snap.max_containers - snap.containers_running)
+        bar = "#" * snap.leases_active + "." * (snap.max_containers - snap.leases_active)
         print(
-            f"    {snap.unit_id}: [{bar}] {snap.containers_running}/{snap.max_containers} containers, "
+            f"    {snap.unit_id}: [{bar}] {snap.leases_active}/{snap.max_containers} containers, "
             f"{snap.declared_gpu_memory_mb // 1024}/{snap.gpu_memory_mb // 1024} GB declared"
         )
 
@@ -85,7 +85,7 @@ def one_card_several_containers(episodes: int, card_gb: int, task_gb: int, cards
 
 def node_policies() -> bool:
     print("=" * 78)
-    print(f"2. Node policy. {TRAIN_NODE} hosts the trainer and vLLM; {ENV_NODE} is an env node")
+    print(f"2. Node policy. {TRAIN_NODE} hosts the trainer and vLLM. {ENV_NODE} is an env node")
     print("=" * 78)
     units = [
         EnvUnit("train-cpu", TRAIN_NODE, 32.0, 131072, (), 4, 0),
@@ -114,7 +114,7 @@ def node_policies() -> bool:
 
         print(f"  {policy:<14}{show(cpu):<34}{show(gpu)}")
         # Under these policies a worker on the train node may host CPU episodes only (cpu_only)
-        # or nothing at all (avoid); `any` allows both; `prefer_other` allows both as a fallback.
+        # or nothing at all (avoid). `any` and `prefer_other` allow both.
         expected_cpu = {"any": GRANTED, "cpu_only": GRANTED, "avoid": REJECT, "prefer_other": GRANTED}[policy]
         expected_gpu = {"any": GRANTED, "cpu_only": REJECT, "avoid": REJECT, "prefer_other": GRANTED}[policy]
         all_ok &= cpu.status == expected_cpu and gpu.status == expected_gpu

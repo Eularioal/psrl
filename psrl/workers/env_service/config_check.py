@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from psrl.workers.env_service.node_policy import parse_policy
+from psrl.workers.env_service.process_identity import validate_identity_backend
 from psrl.workers.env_service.types import EnvUnit, validate_units
 
 
@@ -26,6 +27,7 @@ def validate_env_service_config(cfg: Mapping) -> list[EnvUnit]:
         ValueError: With a message naming the offending key, on the first problem found.
     """
     parse_policy(cfg.get("node_policy", "cpu_only"))  # raises with the valid choices
+    validate_identity_backend(cfg.get("gpu_identity_backend", "procfs"))
 
     raw_units = list(cfg.get("units") or ())
     if not raw_units:

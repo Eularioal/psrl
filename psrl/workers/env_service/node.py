@@ -12,6 +12,7 @@ from psrl.workers.env_service.docker_api import ping_docker
 from psrl.workers.env_service.lending_node import GpuLendingNodeMixin
 from psrl.workers.env_service.overlay import LEASE_LABEL
 from psrl.workers.env_service.probe import read_gpu_telemetry
+from psrl.workers.env_service.resource_telemetry import read_node_resources
 
 psrl_logger = logging.getLogger(__file__)
 
@@ -19,9 +20,10 @@ psrl_logger = logging.getLogger(__file__)
 class EnvNodeService(GpuCommandNodeMixin, GpuLendingNodeMixin):
     """Serve one node for the lifetime of the owning router actor."""
 
-    def __init__(self, router, node_ip: str):
+    def __init__(self, router, node_ip: str, gpu_identity_backend="procfs"):
         self.router = router
         self.node_ip = node_ip
+        self._identity_mode = gpu_identity_backend
         self._pending = {}
         self._lock = asyncio.Lock()
         self._runner = None
@@ -51,7 +53,12 @@ class EnvNodeService(GpuCommandNodeMixin, GpuLendingNodeMixin):
         await ping_docker()
         if indices:
             await asyncio.to_thread(self._gpu_probe().read_gpu_devices)
-            await self.gpu_lending_snapshot(indices)
+            return await self.gpu_lending_snapshot(indices)
+        return {}
+
+    async def resource_snapshot(self, unit_ids, timeout_s=4):
+        """Serve observability independently of lease cleanup and device authorization."""
+        return await read_node_resources(unit_ids, timeout_s=timeout_s)
 
     async def close(self):
         """Stop background work before releasing this service's driver connection."""
@@ -62,14 +69,22 @@ class EnvNodeService(GpuCommandNodeMixin, GpuLendingNodeMixin):
         if self._runner is not None:
             await self._runner.cleanup()
             self._runner = None
+        for state in getattr(self, "_gpu_lease_states", {}).values():
+            if state.get("command_telemetry"):
+                await state["command_telemetry"].stop()
         if hasattr(self, "_nvml_probe"):
             await asyncio.to_thread(self._nvml_probe.close)
+        self._identity_closed = True
+        if hasattr(self, "_identity_lock"):
+            async with self._identity_lock:
+                if hasattr(self, "_identity_source"):
+                    await asyncio.to_thread(self._identity_source.close)
 
     async def cleanup(self) -> int:
         """Retain failed removals for retry and return the remaining lease count."""
         async with self._lock:
             await self.router.reclaim_gpu_phases.remote(self.node_ip)
-            expired = await self.router.pop_reaped.remote(self.node_ip)
+            expired = await self.router.pending_reaped.remote(self.node_ip)
             self._pending.update((lease.lease_id, lease) for lease in expired)
             for lease_id in tuple(self._pending):
                 try:
@@ -97,6 +112,7 @@ class EnvNodeService(GpuCommandNodeMixin, GpuLendingNodeMixin):
                             await self.router.finish_gpu_lease.remote(lease_id, lease.unit_id)
                         if lease.gpu_reservation == "command":
                             await self.router.finish_gpu_command_lease.remote(lease_id, lease.unit_id)
+                        await self.router.acknowledge_reaped.remote(self.node_ip, lease_id)
                         del self._pending[lease_id]
                 except Exception as exc:
                     psrl_logger.warning(f"Lease cleanup failed for {lease_id!r}: {exc!r}.")

@@ -8,6 +8,9 @@ enable: False
 # Ray actor name of the router. Agent loop workers look it up by this name.
 router_name: psrl_env_router
 
+# Process attribution requires host procfs or an explicitly enabled node eBPF collector.
+gpu_identity_backend: procfs
+
 # Start configured node services while the trainer continues model initialization.
 prewarm:
   enable: True
@@ -33,6 +36,22 @@ heartbeat_interval_s: 60
 poll_interval_s: 1.0
 max_poll_interval_s: 5.0
 
+# Stop retrying an unhealthy node after this bounded recovery budget.
+health:
+  interval_s: 5
+  timeout_s: 30
+  max_failures: 3
+
+# Retry placement before marking requests as running. Never dispatch blindly on stale health.
+dispatch_attempts: 3
+dispatch_backoff_s: 5
+
+# Physical observations are sampled independently from admission and expire when stale.
+telemetry:
+  interval_s: 5
+  timeout_s: 8
+  max_age_s: 15
+
 # How episode containers treat nodes that host train, rollout, validation or reward-model GPUs.
 #   any           no restriction (the behaviour before this service existed)
 #   cpu_only      CPU episodes and explicitly bound rollout lending units only on those nodes
@@ -55,15 +74,16 @@ deny_node_ips: []
 #
 # units:
 #   - unit_id: n1-gpu01
-#     node_ip: 28.49.55.40
+#     node_ip: 192.168.1.40
 #     cpu_quota: 16.0
 #     memory_mb: 65536
 #     gpu_indices: [0, 1]
 #     max_containers: 3
 #     gpu_memory_mb: 195742
+#     gpu_memory_per_device_mb: [97871, 97871]
 #     gpu_reservation: episode
 #   - unit_id: n1-cpu
-#     node_ip: 28.49.55.40
+#     node_ip: 192.168.1.40
 #     cpu_quota: 32.0
 #     memory_mb: 131072
 #     gpu_indices: []

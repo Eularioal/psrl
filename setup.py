@@ -11,6 +11,7 @@ setup(
             "trainer/config/**/*.yaml",
             "eval/config/*.yaml",
             "eval/config/**/*.yaml",
+            "workers/env_service/*.bpf.c",
         ],
     },
     include_package_data=True,

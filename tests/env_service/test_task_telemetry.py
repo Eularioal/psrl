@@ -4,7 +4,12 @@ from types import SimpleNamespace
 
 import pytest
 from examples.sciaccel_rl.gpu_grading import apply_gpu_activity_gate
-from psrl.workers.env_service.task_telemetry import TaskGpuTelemetry, activity_verified, process_identities
+from psrl.workers.env_service.process_identity import process_identities
+from psrl.workers.env_service.task_telemetry import (
+    TaskGpuTelemetry,
+    activity_verified,
+    read_command_memory,
+)
 
 
 def reading(samples, memory=None, status="available"):
@@ -70,7 +75,7 @@ def test_every_required_check_needs_its_own_completed_report():
 def test_kernel_identity_is_stable_when_wall_clock_conversion_drifts(monkeypatch):
     task = TaskGpuTelemetry(SimpleNamespace(read_process_snapshot=lambda *args: reading([], {42: 100})), None, (0,))
     identities = iter([{42: (123, 1000000)}, {42: (123, 1000002)}])
-    monkeypatch.setattr(task, "check_proc_root", lambda: None)
+    monkeypatch.setattr(task, "check_identity_support", lambda: None)
     monkeypatch.setattr(task, "_owners", lambda pids: next(identities))
     task.sample()
     assert task.summary()["devices"][0]["peak_memory_mb"] == 100
@@ -79,7 +84,7 @@ def test_kernel_identity_is_stable_when_wall_clock_conversion_drifts(monkeypatch
 def test_process_replaced_during_query_is_not_attributed(monkeypatch):
     task = TaskGpuTelemetry(SimpleNamespace(read_process_snapshot=lambda *args: reading([], {42: 100})), None, (0,))
     identities = iter([{42: (123, 1000000)}, {42: (124, 1010000)}])
-    monkeypatch.setattr(task, "check_proc_root", lambda: None)
+    monkeypatch.setattr(task, "check_identity_support", lambda: None)
     monkeypatch.setattr(task, "_owners", lambda pids: next(identities))
     task.sample()
     assert task.summary()["devices"][0]["peak_memory_mb"] == 0
@@ -99,7 +104,7 @@ def test_host_proc_matches_exact_cgroup_and_descendants(tmp_path):
 @pytest.mark.asyncio
 async def test_missing_host_proc_stops_sampler_and_rejects_grading(tmp_path):
     task = TaskGpuTelemetry(None, None, (0,))
-    task.proc_root = tmp_path
+    task.identity.root = tmp_path
     await task._sample()
     assert task.stop_event.is_set() and task.summary()["errors"]
     with pytest.raises(RuntimeError, match="host process attribution"):
@@ -110,3 +115,53 @@ async def test_missing_host_proc_stops_sampler_and_rejects_grading(tmp_path):
             ],
             ["a"],
         )
+
+
+def memory_probe(amount=14):
+    return SimpleNamespace(
+        read_gpu_snapshot=lambda indices: {
+            0: {"uuid": "gpu", "used_mb": 84, "pids": [42, 99], "memory_mb_by_pid": {42: amount, 99: 70}}
+        }
+    )
+
+
+def test_admission_credits_current_owned_memory_instead_of_peak_or_neighbor():
+    task = SimpleNamespace(
+        indices=(0,),
+        check_identity_support=lambda: None,
+        _owners=lambda pids: {42: (123, 0)},
+        devices={0: {"peak_memory_mb": 80}},
+    )
+    result = read_command_memory(memory_probe(), {"ours": task}, (0,))
+    assert result["owned_mb"] == {"ours": 14}, "Neither the peak nor the foreign process may offset our promise."
+    result = read_command_memory(memory_probe(None), {"ours": task}, (0,))
+    assert result["owned_mb"] == {"ours": 0}, "Unavailable process memory earns no credit."
+    assert "ours" in result["attribution_errors"], "Missing attribution must be observable."
+
+
+def test_admission_keeps_reservation_without_trusted_host_proc(tmp_path):
+    task = TaskGpuTelemetry(None, None, (0,))
+    task.identity.root = tmp_path
+    result = read_command_memory(memory_probe(), {"ours": task}, (0,))
+    assert result["owned_mb"] == {}, "Missing procfs must not credit any task memory."
+    assert result["devices"][0]["used_mb"] == 84, "The device occupancy must still be charged."
+    assert result["attribution_errors"], "The conservative admission reason must be retained."
+
+
+def test_admission_rejects_pid_reuse_and_incoherent_memory_samples():
+    identities = iter([{42: (123, 0)}, {42: (124, 0)}])
+    task = SimpleNamespace(indices=(0,), check_identity_support=lambda: None, _owners=lambda pids: next(identities))
+    assert read_command_memory(memory_probe(), {"ours": task}, (0,))["owned_mb"] == {"ours": 0}, (
+        "A reused process identity cannot provide memory credit."
+    )
+    task._owners = lambda pids: {42: (123, 0)}
+    result = read_command_memory(memory_probe(100), {"ours": task}, (0,))
+    assert result["owned_mb"] == {"ours": 0} and result["attribution_errors"], (
+        "An inconsistent process snapshot must retain the full reservation."
+    )
+
+
+def test_admission_rejects_ambiguous_container_ownership():
+    task = SimpleNamespace(indices=(0,), check_identity_support=lambda: None, _owners=lambda pids: {42: (123, 0)})
+    with pytest.raises(RuntimeError, match="overlaps"):
+        read_command_memory(memory_probe(), {"a": task, "b": task}, (0,))

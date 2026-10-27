@@ -78,9 +78,9 @@ def test_acquire_grants_a_lease_and_release_frees_it():
         client = _client(core)
         handle = await client.acquire("s0", GPU)
         assert handle.lease.gpu_indices == (0,) and handle.lease.unit_id == "g0"
-        assert (await core.snapshot())[0].containers_running == 1
+        assert (await core.snapshot())[0].leases_active == 1
         await handle.release()
-        assert (await core.snapshot())[0].containers_running == 0
+        assert (await core.snapshot())[0].leases_active == 0
         await handle.release()  # idempotent
 
     _run(scenario())
@@ -222,7 +222,7 @@ def test_heartbeat_keeps_a_lease_alive_across_the_ttl():
         handle = await client.acquire("s0", EnvDemand())
         await asyncio.sleep(0.8)  # well past the 0.3s TTL, but the heartbeat refreshed it
         assert core._ledger.reap() == []
-        assert (await core.snapshot())[1].containers_running == 1
+        assert (await core.snapshot())[1].leases_active == 1
         await handle.release()
 
     _run(scenario())
@@ -236,10 +236,12 @@ def test_a_lease_that_stops_heartbeating_is_reclaimed_and_cleaned_up_on_its_node
         await asyncio.sleep(0.35)
         reaped = core._ledger.reap()
         assert [r.lease_id for r in reaped] == [handle.lease.lease_id]
-        assert (await core.snapshot())[1].containers_running == 0
+        assert (await core.snapshot())[1].leases_active == 0
 
-        assert [lease.lease_id for lease in await core.pop_reaped(NODE)] == [handle.lease.lease_id]
-        assert await core.pop_reaped(NODE) == [], "Expired leases were delivered twice."
+        assert [lease.lease_id for lease in await core.pending_reaped(NODE)] == [handle.lease.lease_id]
+        assert len(await core.pending_reaped(NODE)) == 1
+        await core.acknowledge_reaped(NODE, handle.lease.lease_id)
+        assert await core.pending_reaped(NODE) == []
         handle._heartbeat_task.cancel()
 
     _run(scenario())

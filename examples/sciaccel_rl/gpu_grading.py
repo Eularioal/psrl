@@ -19,16 +19,35 @@ def is_laps_cuda(task_path):
     return name.rsplit("/", 1)[-1] == "laps-accel-cuda"
 
 
-def save_gpu_reports(directory, reports, rewards):
+def save_gpu_reports(directory, reports, rewards, *, mode=None):
+    if mode is not None:
+        validate_attribution_mode(mode)
     directory.mkdir(parents=True, exist_ok=True)
     destination = directory / "gpu-job-reports.json"
     temporary = destination.with_suffix(".tmp")
-    temporary.write_text(json.dumps({"jobs": reports, "training_rewards": rewards}, indent=2))
+    payload = {"jobs": reports, "training_rewards": rewards}
+    if mode is not None:
+        payload["gpu_attribution"] = {
+            "mode": mode,
+            "enforced": mode == "required",
+            "score_source": "task_verifier_unverified" if mode == "observe" else "host_process_attribution",
+            "preflight": "skipped_by_policy" if mode == "observe" else "required",
+            "risk": "Whole-device activity can include neighboring tasks." if mode == "observe" else None,
+        }
+    temporary.write_text(json.dumps(payload, indent=2))
     temporary.replace(destination)
 
 
-def apply_gpu_activity_gate(rewards, reports, checks):
+def validate_attribution_mode(mode):
+    if mode not in ("required", "observe"):
+        raise ValueError(f"Unknown GPU attribution mode {mode!r}.")
+
+
+def apply_gpu_activity_gate(rewards, reports, checks, *, mode="required"):
     """Preserve numerical correctness while replacing whole-device activity attribution."""
+    validate_attribution_mode(mode)
+    if mode == "observe":
+        return {**rewards, "gpu_attribution_enforced": 0.0}
     for report in reports:
         if report["tag"] in checks:
             telemetry = report.get("telemetry")

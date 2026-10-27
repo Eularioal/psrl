@@ -12,7 +12,7 @@ import asyncio
 import logging
 import os
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
@@ -30,6 +30,7 @@ from psrl.utils.common.docker_utils import (
 from psrl.utils.common.http_utils import post
 from psrl.utils.concurrency.gpu_device_gate import AllocatedGpu, GpuDeviceGate, build_gpu_override
 from psrl.workers.env_service.client import EnvLeaseHandle, EnvServiceClient
+from psrl.workers.env_service.harbor_resources import demand_from_task, with_container_budget
 from psrl.workers.env_service.overlay import (
     DriverLibraryError,
     build_lease_overlay,
@@ -145,6 +146,9 @@ async def _apply_env_lease(
     extra_compose_paths.append(overlay_path)
     env_kwargs["import_path"] = "psrl.workers.env_service.docker:ManagedDockerEnvironment"
     env_kwargs.setdefault("kwargs", {})["lease_overlay"] = overlay
+    env_kwargs["kwargs"]["container_budget"] = (
+        asdict(lease.demand.container_budget) if lease.demand.container_budget else None
+    )
     if lease.gpu_indices:
         env_kwargs["override_gpus"] = 0
         devices = ",".join(
@@ -343,7 +347,10 @@ async def run_harbor_episode(
     if env_client is not None:
         # Wait for admission before creating containers, and classify admission failures as episode errors.
         try:
-            lease_handle = await env_client.acquire(job_name, env_demand or EnvDemand(needs_gpu=needs_gpu))
+            demand = with_container_budget(
+                task_path, env_demand or demand_from_task(task_path, needs_gpu_hint=needs_gpu)
+            )
+            lease_handle = await env_client.acquire(job_name, demand)
         except asyncio.CancelledError:
             raise
         except Exception as exc:  # noqa: BLE001
@@ -400,7 +407,14 @@ async def run_harbor_episode(
                     env_kwargs["kwargs"]["gpu_commands"] = binding
             try:
                 if lease_handle.lease.gpu_reservation == "command" and is_laps_cuda(task_path):
-                    await env_client.router.require_gpu_attribution.remote(lease_handle.lease.lease_id)
+                    if config.harbor.gpu_attribution_mode == "required":
+                        await env_client.router.require_gpu_attribution.remote(lease_handle.lease.lease_id)
+                    else:
+                        psrl_logger.warning(
+                            "GPU attribution preflight skipped for lease %s in observation mode. "
+                            "Task GPU scores remain unverified and can include neighboring activity.",
+                            lease_handle.lease.lease_id,
+                        )
                 lease_overlay_path = await _apply_env_lease(
                     lease_handle.lease, extra_compose_paths, env_kwargs, session_router_url, session_id
                 )
@@ -540,9 +554,17 @@ async def run_harbor_episode(
         if lease_handle is not None and lease_handle.lease.gpu_reservation == "command":
             reports = await env_client.router.gpu_job_reports.remote(lease_handle.lease.lease_id)
             if is_laps_cuda(task_path):
-                rewards = apply_gpu_activity_gate(rewards, reports, LAPS_CUDA_CHECKS)
-            if reports:
-                await asyncio.to_thread(save_gpu_reports, Path(job_config.jobs_dir) / job_name, reports, rewards)
+                rewards = apply_gpu_activity_gate(
+                    rewards, reports, LAPS_CUDA_CHECKS, mode=config.harbor.gpu_attribution_mode
+                )
+            if reports or is_laps_cuda(task_path):
+                await asyncio.to_thread(
+                    save_gpu_reports,
+                    Path(job_config.jobs_dir) / job_name,
+                    reports,
+                    rewards,
+                    mode=config.harbor.gpu_attribution_mode if is_laps_cuda(task_path) else None,
+                )
 
         return HarborEpisodeResult(
             task_name=tr.task_name,

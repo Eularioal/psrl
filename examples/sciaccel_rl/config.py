@@ -23,6 +23,8 @@ class HarborConfig:
     agent_name: str = "terminus-2"
     override_gpus: int | None = None
     gpu_compose_override: str = ""
+    # Observation mode retains task scores without requiring host process attribution.
+    gpu_attribution_mode: str = "required"
     # Byte cap on one terminal observation. Harbor hardcodes 10000, so a lower value
     # needs the `agent.py` subclass that `agent_name` must point at.
     max_observation_bytes: int = 10000
@@ -32,6 +34,10 @@ class HarborConfig:
     # Harbor containers are invisible to Ray scheduling, so nothing else bounds this.
     # Teardown is asynchronous, so an episode's containers outlive it.
     max_concurrent_episodes: int = 8
+
+    def __post_init__(self):
+        if self.gpu_attribution_mode not in ("required", "observe"):
+            raise ValueError(f"Unknown GPU attribution mode {self.gpu_attribution_mode!r}.")
 
 
 @dataclass

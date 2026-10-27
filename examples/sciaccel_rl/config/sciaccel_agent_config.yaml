@@ -19,6 +19,8 @@
     max_concurrent_episodes: 16
     override_gpus: null
     gpu_compose_override: ""
+    # Set to observe for experiments that retain task scores without trusted GPU attribution.
+    gpu_attribution_mode: required
   # Harbor enforces this externally so agents cannot forge the clock. A long episode
   # is a stuck one, so the budget is tight. Watch `finished` if you cut it further.
   task_timeout_sec: 2700.0

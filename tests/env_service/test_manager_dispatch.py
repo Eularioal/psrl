@@ -17,7 +17,9 @@ import random
 import sys
 import types
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -240,14 +242,14 @@ def test_a_missing_extra_info_column_degrades_to_cpu_placement_instead_of_failin
     assert list(plan) == [0]
 
 
-def test_a_stale_snapshot_falls_back_to_round_robin_even_with_a_dispatcher():
+def test_a_stale_snapshot_stops_dispatch_before_choosing_an_ineligible_worker():
     clock = [0.0]
     d = EnvAwareDispatcher(["a", "b"], clock=lambda: clock[0])
     d.update({"a": NodeCapacity(0, 0, True, False), "b": NodeCapacity(5, 5, True, True)})
     clock[0] = 999.0
     m = _manager(num_workers=2, rollout_n=1, dispatch_idx=0, dispatcher=d)
-    plan = _plan(m, FakeBatch(uid=[0], extra_info=[{"gpus": 1}]))
-    assert list(plan) == [0]  # plain round robin, ignoring the stale preference for worker 1
+    with pytest.raises(RuntimeError, match="fresh"):
+        _plan(m, FakeBatch(uid=[0], extra_info=[{"gpus": 1}]))
 
 
 # --------------------------------------------------------------------------- capacity refresh
@@ -319,6 +321,32 @@ def test_a_failing_router_never_raises_and_warns_only_once():
 def test_refresh_is_a_no_op_without_the_env_service():
     m = _manager()
     asyncio.run(Manager._refresh_env_capacity(m))  # must not touch a missing router
+
+
+def test_failed_placement_wakes_training_and_validation_waiters_before_any_handoff():
+    async def run():
+        m = _manager(num_workers=1, dispatcher=EnvAwareDispatcher(["dead"]))
+        m._env_dispatch_attempts = 3
+        m._env_dispatch_backoff_s = 0.001
+        m._refresh_env_capacity = AsyncMock()
+        m._refill_breaker_diagnosis = None
+        train_waiter = asyncio.get_running_loop().create_future()
+        val_waiter = asyncio.get_running_loop().create_future()
+        m._train_buffer_waiters = {0: [train_waiter]}
+        m._train_chunk_waiters = {}
+        m._resolved_train_chunks = {}
+        m._val_buffer_waiters = {0: [val_waiter]}
+        m.ps_manager_handle = MagicMock()
+        batch = FakeBatch(uid=[0], parent_id=[0], version_tag=[0], extra_info=[{}])
+        with patch.object(manager_module, "tu", _FakeTu), pytest.raises(RuntimeError, match="fresh"):
+            await Manager._inner_dispatch_data(m, batch)
+        m.ps_manager_handle.update_request_status.remote.assert_not_called()
+        assert m._refresh_env_capacity.await_count == 3, "Placement must stop at the configured retry limit."
+        for future in (train_waiter, val_waiter):
+            with pytest.raises(RuntimeError, match="dispatch exhausted"):
+                await future
+
+    asyncio.run(run())
 
 
 if __name__ == "__main__":

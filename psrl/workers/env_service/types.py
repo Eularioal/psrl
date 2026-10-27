@@ -9,7 +9,9 @@ loop client, and CPU-only tests alike. See
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
+
+from psrl.workers.env_service.container_budget import ContainerBudget
 
 GRANTED = "granted"
 WAIT = "wait"
@@ -47,8 +49,19 @@ class EnvUnit:
     gpu_memory_mb: int = 0
     rollout_replica_rank: int | None = None
     gpu_reservation: str = "episode"
+    gpu_memory_per_device_mb: tuple[int, ...] = ()
 
     def __post_init__(self) -> None:
+        if self.gpu_indices and not self.gpu_memory_per_device_mb:
+            if len(self.gpu_indices) != 1:
+                raise ValueError("Multi-device units require explicit gpu_memory_per_device_mb budgets.")
+            object.__setattr__(self, "gpu_memory_per_device_mb", (self.gpu_memory_mb,))
+        if len(self.gpu_memory_per_device_mb) != len(self.gpu_indices):
+            raise ValueError("GPU budgets must match gpu_indices in order.")
+        if any(m <= 0 for m in self.gpu_memory_per_device_mb):
+            raise ValueError("Each GPU memory budget must be positive.")
+        if sum(self.gpu_memory_per_device_mb) != self.gpu_memory_mb:
+            raise ValueError("Per-device GPU budgets must sum to gpu_memory_mb.")
         if self.gpu_reservation not in ("episode", "command"):
             raise ValueError(f"Unknown GPU reservation mode {self.gpu_reservation!r}.")
         if self.gpu_reservation == "command" and (not self.gpu_indices or self.rollout_replica_rank is not None):
@@ -95,6 +108,7 @@ class EnvUnit:
                 int(raw["rollout_replica_rank"]) if raw.get("rollout_replica_rank") is not None else None
             ),
             gpu_reservation=str(raw.get("gpu_reservation", "episode")),
+            gpu_memory_per_device_mb=tuple(int(m) for m in raw.get("gpu_memory_per_device_mb", ())),
         )
 
 
@@ -139,11 +153,29 @@ class EnvDemand:
     memory_mb: int = 0
     needs_gpu: bool = False
     gpu_memory_mb: int = 0
+    gpu_memory_per_device_mb: tuple[int, ...] = ()
+    container_budget: ContainerBudget | None = None
+
+    def __post_init__(self):
+        if self.container_budget and (
+            self.cpu != self.container_budget.cpu or self.memory_mb != self.container_budget.memory_mb
+        ):
+            raise ValueError("Host demand must match the complete container budget.")
+        if self.gpu_memory_per_device_mb and (
+            not self.needs_gpu
+            or any(m <= 0 for m in self.gpu_memory_per_device_mb)
+            or sum(self.gpu_memory_per_device_mb) != self.gpu_memory_mb
+        ):
+            raise ValueError("GPU demand must declare positive per-device budgets summing to gpu_memory_mb.")
+
+    def device_memory(self, unit: EnvUnit) -> tuple[int, ...]:
+        """Assume an unpartitioned request can concentrate its entire budget on any device."""
+        return self.gpu_memory_per_device_mb or (self.gpu_memory_mb,) * len(unit.gpu_indices)
 
     def with_default_gpu_memory(self, default_mb: int) -> EnvDemand:
         """Return a copy whose GPU memory is filled in when it is a GPU demand left at zero."""
         if self.needs_gpu and self.gpu_memory_mb <= 0:
-            return EnvDemand(self.cpu, self.memory_mb, True, int(default_mb))
+            return replace(self, gpu_memory_mb=int(default_mb))
         return self
 
 
@@ -215,6 +247,24 @@ class NodeCapacity:
     gpu_free: int = 0
     cpu_eligible: bool = False
     gpu_eligible: bool = False
+    available: bool = True
+    reason: str = ""
+    units: tuple[UnitCapacity, ...] = ()
+    node_load_per_cpu: float | None = None
+
+
+@dataclass(frozen=True)
+class UnitCapacity:
+    """Expose resource headroom and policy eligibility for one placement candidate."""
+
+    unit: EnvUnit
+    containers_free: int
+    cpu_free: float
+    memory_free_mb: int
+    gpu_free_mb: tuple[float, ...]
+    gpu_total_free_mb: float
+    cpu_eligible: bool
+    gpu_eligible: bool
 
 
 @dataclass(frozen=True)
@@ -223,7 +273,7 @@ class UnitSnapshot:
 
     unit_id: str
     node_ip: str
-    containers_running: int
+    leases_active: int
     max_containers: int
     cpu_used: float
     cpu_quota: float
@@ -236,3 +286,11 @@ class UnitSnapshot:
     sessions_waiting: int = 0
     gpu_commands_active: int = 0
     gpu_commands_waiting: int = 0
+    containers_running: int | None = None
+    containers_total: int | None = None
+    measured_memory_mb: float | None = None
+    measured_cpu_cores: float | None = None
+    node_cpu_load_1m: float | None = None
+    node_cpu_count: int | None = None
+    resource_sample_age_s: float | None = None
+    resource_error: str = "No physical resource sample received."

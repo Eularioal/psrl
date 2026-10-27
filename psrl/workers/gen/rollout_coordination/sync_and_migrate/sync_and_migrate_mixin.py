@@ -307,22 +307,21 @@ class SyncAndMigrateMixin:
                 level=logging.INFO,
                 event_type=EventType.OTHER,
             ):
-                await self._set_routing_loop_running(False)
-                psrl_logger.info("Paused routing for migration")
-                await self.exec_command(
-                    Command(
-                        type=CommandType.ABORT,
-                        instance_ids=migrate_instance_ids,
-                    ),
-                    blocking=True,
-                )
-                if wait_interrupted_partial_requests_loop_back:
-                    await self._wait_interrupted_partial_requests_loop_back(migrate_instance_ids)
-                    psrl_logger.info(
-                        f"Looped back interrupted migration requests: instance_ids={migrate_instance_ids!r}."
+                async with self._routing_pause_controller().pause():
+                    psrl_logger.info("Paused routing for migration.")
+                    await self.exec_command(
+                        Command(
+                            type=CommandType.ABORT,
+                            instance_ids=migrate_instance_ids,
+                        ),
+                        blocking=True,
                     )
-                await self._set_routing_loop_running(True)
-                psrl_logger.info("Resumed routing after migration")
+                    if wait_interrupted_partial_requests_loop_back:
+                        await self._wait_interrupted_partial_requests_loop_back(migrate_instance_ids)
+                        psrl_logger.info(
+                            f"Looped back interrupted migration requests: instance_ids={migrate_instance_ids!r}."
+                        )
+                psrl_logger.info("Released the migration routing pause.")
 
     async def _check_should_migrate(self) -> list[RolloutInstanceId]:
         filtered_instance_ids = []

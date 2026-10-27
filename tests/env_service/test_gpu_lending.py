@@ -132,11 +132,11 @@ async def test_repeated_docker_model_docker_cycles_preserve_lease_and_fence_wake
         await client.set_phase("model")
         await asyncio.wait_for(competing_wake, 1)
         assert node.paused and not engine.sleeping
-        assert (await router.snapshot())[0].containers_running == 1
+        assert (await router.snapshot())[0].leases_active == 1
         await client.set_phase("env")
     await router.release(lease.lease_id)
     assert node.removed and not engine.sleeping
-    assert binding.owner is None and (await router.snapshot())[0].containers_running == 0
+    assert binding.owner is None and (await router.snapshot())[0].leases_active == 0
 
 
 @pytest.mark.asyncio

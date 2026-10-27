@@ -29,7 +29,12 @@ from psrl.utils.transferqueue_utils import (
     validate_ready_payload,
 )
 from psrl.workers.agent_loop.loops.utils import TerminateReason
-from psrl.workers.env_service.placement import EnvAwareDispatcher, needs_gpu_from_extra_info
+from psrl.workers.env_service.placement import (
+    EnvAwareDispatcher,
+    EnvPlacementUnavailable,
+    demand_from_extra_info,
+    needs_gpu_from_extra_info,
+)
 from psrl.workers.gen.utils import RolloutInstanceId
 from psrl.workers.ps.request_status_tracker import PSRL_RequestStatus
 from psrl.workers.ps.staleness_controller import EntryInfo
@@ -157,6 +162,12 @@ class PSRL_AgentLoopManager:
         self._env_dispatcher: EnvAwareDispatcher | None = None
         self._env_capacity_refresh_s = 2.0
         self._env_capacity_warned = False
+        env_config = self.config.psrl.get("env_service", {})
+        self._env_dispatch_attempts = int(env_config.get("dispatch_attempts", 3))
+        self._env_dispatch_backoff_s = float(env_config.get("dispatch_backoff_s", 5))
+        if self._env_dispatch_attempts < 1 or self._env_dispatch_backoff_s <= 0:
+            raise ValueError("Environment dispatch retry count and backoff must be positive.")
+        self._env_default_gpu_memory_mb = int(env_config.get("default_gpu_memory_mb", 24000))
         if env_router_handle is not None and worker_node_ips:
             if len(worker_node_ips) != len(agent_loop_workers):
                 raise ValueError(
@@ -222,19 +233,8 @@ class PSRL_AgentLoopManager:
             str | int, list[EntryInfo]
         ] = {}  # Maps parent request ids to "occupied" child entries
 
-        # Track groups whose failure has already been processed to avoid duplicate handling
-        # when multiple siblings in the same group fail concurrently. Train and validation
-        # are kept apart because their lifetimes differ: the validation record is per-round
-        # and reset by `set_val_buffer_size`, while the train record must survive every
-        # validation round for the whole run. Sharing one set made a validation round
-        # forget which train groups had died, readmitting their stragglers.
-        #
-        # The train record is bounded instead of cleared. Train prompt ids never repeat
-        # within a realistic run, so it needs no clear-point for correctness, and no step
-        # boundary is a valid one: with `staleness > 0` an in-flight prompt outlives
-        # several buffers. The cap is sized well past the dispatch window that
-        # `_get_expected_ps_version` throttles to, so an id is only ever retired long
-        # after any request of that vintage could still arrive.
+        # Deduplicate failed siblings independently for training and each validation round.
+        # Bound training history beyond the dispatch window because stale groups outlive buffers.
         failed_id_capacity = max(4 * self.entries_per_buffer * (self.staleness + 1), 65536)
         self._failed_train_group_ids: BoundedIdSet = BoundedIdSet(failed_id_capacity)
         self._failed_val_group_ids: set[int] = set()
@@ -242,10 +242,7 @@ class PSRL_AgentLoopManager:
         # Preserve an all-failed validation result for waiters that register late.
         self._val_round_all_failed: bool = False
 
-        # Refill breaker state (train only). A failed group is purged before it is
-        # replaced, so an unbounded refill loop is the run making no progress rather
-        # than recovering. Counted consecutively and cleared by any occupied group, so
-        # sporadic failures over a long run never accumulate into a trip.
+        # Trip on consecutive failed refills and reset on progress, so sporadic failures do not accumulate.
         self.refill_failure_threshold = self.config.psrl.agentic_rl.get("refill_failure_threshold", 32)
         self._consecutive_group_failures = 0
         self._group_failure_reasons: Counter = Counter()
@@ -891,6 +888,24 @@ class PSRL_AgentLoopManager:
         uids = tu.get(data, "uid")
         versions = tu.get(data, "version_tag")
 
+        for attempt in range(self._env_dispatch_attempts):
+            await self._refresh_env_capacity()
+            try:
+                dispatch_plan = self.get_dispatch_plan(data, is_validate=is_validate)
+                break
+            except Exception as exc:
+                retryable = isinstance(exc, EnvPlacementUnavailable)
+                if not retryable or attempt + 1 == self._env_dispatch_attempts:
+                    reason = "exhausted its retry budget" if retryable else "received invalid resource metadata"
+                    self._trip_refill_breaker(f"Environment dispatch {reason}. {exc}")
+                    for futures in self._val_buffer_waiters.values():
+                        for future in futures:
+                            if not future.done():
+                                future.set_exception(self._refill_breaker_error())
+                    self._val_buffer_waiters.clear()
+                    raise
+                await asyncio.sleep(self._env_dispatch_backoff_s)
+
         # Update request status from PENDING to RUNNING
         update_status_success = await self.ps_manager_handle.update_request_status.remote(
             uids,
@@ -901,17 +916,14 @@ class PSRL_AgentLoopManager:
         if not update_status_success:
             return
 
-        await self._refresh_env_capacity()
-        dispatch_plan = self.get_dispatch_plan(data, is_validate=is_validate)
         for worker_index, batch in dispatch_plan.items():
             self.agent_loop_workers[worker_index].add_agent_program.remote(batch)
 
     async def _refresh_env_capacity(self) -> None:
         """Refresh the per-node free-capacity snapshot that unit-aware dispatch reads.
 
-        A no-op without the env service. A failed refresh keeps the old snapshot, which goes
-        stale after a few seconds and then makes dispatch fall back to plain round robin, so
-        an unreachable router slows placement down but never stops dispatch.
+        A failed refresh retains the last snapshot until its age limit. Placement then
+        fails through the bounded retry path instead of ignoring known node constraints.
         """
         dispatcher = getattr(self, "_env_dispatcher", None)
         if dispatcher is None:
@@ -925,7 +937,7 @@ class PSRL_AgentLoopManager:
             if not self._env_capacity_warned:
                 self._env_capacity_warned = True
                 psrl_logger.warning(
-                    f"Env router capacity unavailable ({exc!r}); dispatching round robin until it returns."
+                    f"Env router capacity unavailable ({exc!r}). Placement requires a fresh healthy snapshot."
                 )
             return
         self._env_capacity_warned = False
@@ -964,7 +976,18 @@ class PSRL_AgentLoopManager:
         dispatcher = getattr(self, "_env_dispatcher", None)
         if dispatcher is not None:
             needs_gpu = self._groups_need_gpu(data, [first_row[g] for g in group_ids])
-            assigned = dispatcher.assign(needs_gpu, self._dispatch_idx)
+            try:
+                infos = tu.get(data, "extra_info")
+            except KeyError:
+                infos = [None] * len(prompt_ids)
+            demands = [
+                demand_from_extra_info(infos[first_row[g]], getattr(self, "_env_default_gpu_memory_mb", 24000))
+                for g in group_ids
+            ]
+            counts = Counter(prompt_ids)
+            assigned = dispatcher.assign(
+                needs_gpu, self._dispatch_idx, demands=demands, group_sizes=[counts[g] for g in group_ids]
+            )
         else:
             # Round-robin dispatching
             assigned = [(self._dispatch_idx + k) % num_workers for k in range(len(group_ids))]
@@ -1164,10 +1187,7 @@ class PSRL_AgentLoopManager:
                             )
                             # Clear the reserved entries for the group entry.
                             await self.ps_manager_handle.clear_reserved_entries.remote(prompt_id, is_validate)
-                            # Notify agent loop manager to retry new requests.
-                            # Not counted against the refill breaker: the filter dropped
-                            # this group on purpose, so it is an algorithmic decision
-                            # rather than a rollout fault.
+                            # Intentional algorithmic filtering triggers refill without counting as a rollout failure.
                             await self._refill_failed_group(
                                 n_prompts=1,
                                 context="Group post-processing filter",
@@ -1962,8 +1982,10 @@ class PSRL_AgentLoopManager:
 
     async def wait_for_validation_batch(self, buffer_id: int) -> KVBatchMeta:
         """Await a validation batch, returning a ``KVBatchMeta``."""
+        self._raise_if_refill_breaker_tripped()
         async with AsyncBusyPollingRayLock(self.ps_manager_handle):
             await self.ps_manager_handle.ensure_validate_buffer_exists.remote()
+        self._raise_if_refill_breaker_tripped()
 
         if buffer_id in self.val_data_buffers:
             # If the buffer is ready, return immediately

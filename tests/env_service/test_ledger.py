@@ -43,7 +43,16 @@ def _ledger(units, rules=None, clock=None, **kwargs):
 
 
 def _gpu_unit(unit_id="g0", node=NODE_A, indices=(0,), max_containers=10, gpu_mb=80000):
-    return EnvUnit(unit_id, node, 16.0, 65536, indices, max_containers, gpu_mb)
+    return EnvUnit(
+        unit_id,
+        node,
+        16.0,
+        65536,
+        indices,
+        max_containers,
+        gpu_mb,
+        gpu_memory_per_device_mb=(gpu_mb // len(indices),) * len(indices),
+    )
 
 
 def _cpu_unit(unit_id="c0", node=NODE_A, cpu=16.0, mem=65536, max_containers=8):
@@ -86,9 +95,7 @@ def test_cpu_episode_on_a_gpu_unit_does_not_charge_device_memory():
 
 
 def test_cpu_episodes_do_not_drift_onto_a_gpu_unit_just_because_it_looks_emptier():
-    # The CPU unit is half busy (load 3/4) while the GPU unit is empty (load 1/3). Picking on
-    # load alone would put the CPU episode on the GPU unit, where it burns one of that unit's
-    # three container slots and can leave a GPU episode waiting for a card that is free.
+    # CPU placement must preserve GPU slots despite the lower load on the empty GPU unit.
     cpu = _cpu_unit("c0", max_containers=4)
     gpu = _gpu_unit("g0", max_containers=3)
     ledger = _ledger([cpu, gpu])
@@ -97,7 +104,7 @@ def test_cpu_episodes_do_not_drift_onto_a_gpu_unit_just_because_it_looks_emptier
     assert ledger.try_admit("next", EnvDemand(), NODE_A).lease.unit_id == "c0"
     # The GPU unit's slots are all still free for GPU episodes.
     snap = {s.unit_id: s for s in ledger.snapshot()}
-    assert snap["g0"].containers_running == 0
+    assert snap["g0"].leases_active == 0
 
 
 def test_a_cpu_episode_still_falls_back_to_a_gpu_unit_when_no_cpu_unit_has_room():
@@ -142,9 +149,7 @@ def test_release_is_idempotent():
 
 
 def test_selection_is_resource_weighted_not_a_container_count():
-    # Unit A holds one heavy container (14 of 16 CPUs). Unit B holds three light ones.
-    # A count-based balancer would pick A (1 < 3). The resource-weighted load after placing
-    # one more CPU is A: max(2/8, 15/16)=0.9375, B: max(4/8, 4/16)=0.5, so B must win.
+    # Post-placement weighted loads are 0.9375 for A and 0.5 for B, despite fewer containers on A.
     a = _cpu_unit("a", cpu=16.0)
     b = _cpu_unit("b", cpu=16.0)
     ledger = _ledger([a, b])
@@ -202,13 +207,16 @@ def test_measured_memory_larger_than_declared_wins():
     assert result.status == WAIT
 
 
-def test_measured_memory_smaller_than_declared_does_not_free_capacity():
-    # A loading container declared 24000 but has only touched 1000 so far. Believing the
-    # 1000 would over-admit once it finishes loading, so the declared figure holds.
+def test_unattributed_usage_cannot_pay_down_a_loading_reservation():
     ledger = _ledger([_gpu_unit(gpu_mb=48000)], default_gpu_memory_mb=24000)
     assert ledger.try_admit("a", GPU_DEMAND, NODE_A, {0: 1000.0}).status == GRANTED
-    assert ledger.try_admit("b", GPU_DEMAND, NODE_A, {0: 1000.0}).status == GRANTED  # 48000 <= 48000
-    assert ledger.try_admit("c", GPU_DEMAND, NODE_A, {0: 1000.0}).status == WAIT
+    assert ledger.try_admit("b", GPU_DEMAND, NODE_A, {0: 1000.0}).status == WAIT, (
+        "Unknown usage and two full reservations would need 49000 MB."
+    )
+    assert ledger.try_admit("b", GPU_DEMAND, NODE_A, {0: 0.0}).status == GRANTED, (
+        "Two pending reservations fit after the unowned allocation disappears."
+    )
+    assert ledger.try_admit("c", GPU_DEMAND, NODE_A, {0: 0.0}).status == WAIT, "Loading reservations remain charged."
 
 
 def test_a_stale_measurement_is_ignored():
@@ -219,10 +227,11 @@ def test_a_stale_measurement_is_ignored():
     assert ledger.try_admit("a", GPU_DEMAND, NODE_A).status == GRANTED
 
 
-def test_a_measurement_missing_one_of_the_units_devices_is_ignored():
+def test_partial_measurement_still_blocks_a_known_overloaded_device():
     ledger = _ledger([_gpu_unit(indices=(0, 1), gpu_mb=160000)], default_gpu_memory_mb=24000)
-    # Only device 0 reported, so the unit-wide figure is unknown rather than a partial sum.
-    assert ledger.try_admit("a", GPU_DEMAND, NODE_A, {0: 150000.0}).status == GRANTED
+    assert ledger.try_admit("a", GPU_DEMAND, NODE_A, {0: 150000.0}).status == WAIT, (
+        "An unknown neighbour must not erase known pressure on device zero."
+    )
 
 
 # --------------------------------------------------------------------------- node policy
@@ -276,11 +285,13 @@ def test_a_lease_without_heartbeats_is_reclaimed_and_queued_for_node_cleanup():
     clock.now = 101.0
     reaped = ledger.reap()
     assert [r.lease_id for r in reaped] == [lease.lease_id]
-    # Capacity is free again immediately...
+    # Logical capacity is free. Production admission separately waits for physical cleanup.
     assert ledger.try_admit("next", GPU_DEMAND, NODE_A).status == GRANTED
-    # ...and the node learns exactly once which containers to stop.
-    assert [r.lease_id for r in ledger.pop_reaped(NODE_A)] == [lease.lease_id]
-    assert ledger.pop_reaped(NODE_A) == []
+    # Delivery repeats until physical cleanup is acknowledged.
+    assert [r.lease_id for r in ledger.pending_reaped(NODE_A)] == [lease.lease_id]
+    assert [r.lease_id for r in ledger.pending_reaped(NODE_A)] == [lease.lease_id]
+    ledger.acknowledge_reaped(NODE_A, lease.lease_id)
+    assert ledger.pending_reaped(NODE_A) == []
 
 
 def test_heartbeats_keep_a_lease_alive():
@@ -307,7 +318,7 @@ def test_snapshot_reports_declared_and_measured_memory_and_waiters():
     ledger.try_admit("a", GPU_DEMAND, NODE_A, {0: 5000.0})
     ledger.try_admit("b", GPU_DEMAND, NODE_A, {0: 5000.0})  # waits
     snap = ledger.snapshot()[0]
-    assert snap.containers_running == 1
+    assert snap.leases_active == 1
     assert snap.declared_gpu_memory_mb == 24000
     assert snap.measured_gpu_memory_mb == 5000.0
     assert snap.sessions_waiting == 1

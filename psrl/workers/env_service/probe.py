@@ -92,11 +92,17 @@ class NvmlProbe:
                 handle = nvml.nvmlDeviceGetHandleByIndex(index)
                 # Version 2 excludes driver reserved memory from application usage, matching `nvidia-smi`.
                 memory = nvml.nvmlDeviceGetMemoryInfo(handle, version=nvml.nvmlMemory_v2)
+                processes = nvml.nvmlDeviceGetComputeRunningProcesses(handle)
+                process_memory = {}
+                for process in processes:
+                    value = process.usedGpuMemory
+                    process_memory[process.pid] = None if value is None or value >= 2**64 - 1 else value / 1024**2
                 readings[index] = {
                     "uuid": nvml.nvmlDeviceGetUUID(handle),
                     "used_mb": memory.used / 1024**2,
                     "total_mb": memory.total / 1024**2,
-                    "pids": [process.pid for process in nvml.nvmlDeviceGetComputeRunningProcesses(handle)],
+                    "pids": [process.pid for process in processes],
+                    "memory_mb_by_pid": process_memory,
                 }
             return readings
 

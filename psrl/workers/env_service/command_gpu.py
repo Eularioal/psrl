@@ -19,6 +19,7 @@ class CommandRequest:
     returned_at: float | None = None
     tag: str = ""
     telemetry: dict | None = None
+    admission_memory: dict | None = None
 
 
 class GpuCommandScheduler:
@@ -78,14 +79,38 @@ class GpuCommandScheduler:
             if self.ledger._declared_gpu_mb(unit) + lease.demand.gpu_memory_mb > unit.gpu_memory_mb:
                 return {"status": "wait"}
             node = await self.get_node(lease.node_ip)
-            readings = await node.gpu_lending_snapshot.remote(self._node_indices(lease.node_ip))
+            commands = [
+                (r.lease_id, r.container_id, r.epoch)
+                for r in self.requests.values()
+                if r.unit_id == lease.unit_id and r.state in ("active", "returning")
+            ]
+            memory = await node.gpu_command_memory_snapshot.remote(self._node_indices(lease.node_ip), commands)
+            if self.ledger._leases.get(lease_id) is not lease or lease.unit_id in self.ledger._blocked_units:
+                raise RuntimeError("GPU command lease expired during telemetry.")
+            readings = memory["devices"]
             self.ledger.report_measurement(lease.node_ip, {i: r["used_mb"] for i, r in readings.items()})
-            used = self.ledger._effective_gpu_mb(unit, self.ledger._clock())
+            used = self.ledger._effective_gpu_mb(unit, self.ledger._clock(), memory["owned_mb"])
+            request.admission_memory = {
+                "effective_mb": used,
+                "owned_mb": memory["owned_mb"],
+                "attribution_errors": memory["attribution_errors"],
+            }
             physical_capacity = sum(readings[index]["total_mb"] for index in lease.gpu_indices)
             if used + lease.demand.gpu_memory_mb > min(unit.gpu_memory_mb, physical_capacity):
                 return {"status": "wait"}
-            if self.ledger._leases.get(lease_id) is not lease or lease.unit_id in self.ledger._blocked_units:
-                raise RuntimeError("GPU command lease expired during telemetry.")
+            device_used = (
+                (used,)
+                if len(unit.gpu_indices) == 1
+                else self.ledger._effective_gpu_by_device(unit, self.ledger._clock())
+            )
+            request.admission_memory["effective_per_device_mb"] = dict(zip(unit.gpu_indices, device_used))
+            if any(
+                occupied + requested > min(budget, readings[index]["total_mb"])
+                for index, occupied, requested, budget in zip(
+                    unit.gpu_indices, device_used, lease.demand.device_memory(unit), unit.gpu_memory_per_device_mb
+                )
+            ):
+                return {"status": "wait"}
             self.epochs[lease_id] += 1
             request.epoch = self.epochs[lease_id]
             request.state = "enabling"
@@ -198,7 +223,13 @@ class GpuCommandScheduler:
     def reports(self, lease_id):
         self._lease(lease_id)
         return [
-            {"request_id": key, "tag": request.tag, "state": request.state, "telemetry": request.telemetry}
+            {
+                "request_id": key,
+                "tag": request.tag,
+                "state": request.state,
+                "telemetry": request.telemetry,
+                "admission_memory": request.admission_memory,
+            }
             for key, request in self.requests.items()
             if request.lease_id == lease_id
         ]

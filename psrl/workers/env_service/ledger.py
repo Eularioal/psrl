@@ -12,9 +12,8 @@ What it decides, in the vocabulary of `docs/psrl/2026-09-21-env-service-design.m
 * **One card, several containers** (section 5.3): a unit owns whole devices and shares
   them among its containers. SM time is time-sliced by the driver, but device memory adds
   exactly, so memory is the ceiling and it is summed rather than queued per card.
-* **Measurement beats intent** (section 4.6): a caller may report measured device memory,
-  and the ledger charges `max(declared, measured)`. A container can hold memory it never
-  declared, for example a backgrounded solver or a neighbouring vLLM engine.
+* **Memory promises**: measured device usage is charged along with each reservation's
+  unallocated remainder. Only verified current ownership can offset that reservation.
 * **TTL reclaim** (section 8.1): a lease that stops heartbeating is dropped and queued for
   node-local container cleanup, because the session layer never cleans up a crashed agent.
 """
@@ -27,6 +26,7 @@ import time
 import uuid
 from collections.abc import Callable, Iterable, Mapping
 
+from psrl.workers.env_service.gpu_memory import accounted_gpu_memory_mb
 from psrl.workers.env_service.node_policy import NodeRules
 from psrl.workers.env_service.types import (
     GRANTED,
@@ -37,6 +37,7 @@ from psrl.workers.env_service.types import (
     EnvLease,
     EnvUnit,
     NodeCapacity,
+    UnitCapacity,
     UnitSnapshot,
     validate_units,
 )
@@ -159,10 +160,7 @@ class EnvUnitLedger:
             fitting = [u for t, u in eligible if t == tier and self._fits_now(u, demand, now)]
             if not fitting:
                 continue
-            # A CPU episode prefers a CPU-only unit even when a GPU unit looks emptier: it
-            # would spend one of that unit's container slots and could leave a GPU episode
-            # waiting for a card that is actually free. It still falls back to a GPU unit
-            # when no CPU unit has room, rather than being refused.
+            # Prefer CPU units to preserve GPU container slots, then use GPU units if needed.
             unit = min(
                 fitting,
                 key=lambda u: (u.has_gpu and not demand.needs_gpu, self._load(u, demand, now), u.unit_id),
@@ -227,23 +225,33 @@ class EnvUnitLedger:
         """Reclaim every lease past its TTL. Returns the reclaimed leases."""
         return self._reap(self._clock())
 
-    def pop_reaped(self, node_ip: str) -> list[EnvLease]:
-        """
-        Hand a node the leases reclaimed on it, exactly once.
+    def pending_reaped(self, node_ip: str) -> list[EnvLease]:
+        """Redeliver cleanup obligations until the node acknowledges physical removal."""
+        return [dataclasses.replace(lease) for lease in self._reaped.get(node_ip, ())]
 
-        The ledger frees the capacity at once, but the router runs on a different machine
-        from the Docker daemon, so the containers are stopped by the next agent loop worker
-        on that node, by the `psrl.env_lease` label.
-        """
-        return self._reaped.pop(node_ip, [])
+    def acknowledge_reaped(self, node_ip: str, lease_id: str) -> None:
+        """Retire only the acknowledged cleanup obligation, leaving concurrent expiries intact."""
+        pending = [lease for lease in self._reaped.get(node_ip, ()) if lease.lease_id != lease_id]
+        if pending:
+            self._reaped[node_ip] = pending
+        else:
+            self._reaped.pop(node_ip, None)
+
+    def retire(self, lease_id: str) -> bool:
+        """Remove a live reservation while retaining its physical cleanup obligation."""
+        lease = self._leases.get(lease_id)
+        if lease is None:
+            return False
+        if lease.gpu_reservation == "command":
+            self.block_gpu_cleanup(lease.lease_id, lease.unit_id)
+        self.release(lease_id)
+        self._reaped.setdefault(lease.node_ip, []).append(lease)
+        return True
 
     def _reap(self, now: float) -> list[EnvLease]:
         expired = [lease for lease in self._leases.values() if now - lease.last_seen > self._lease_ttl_s]
         for lease in expired:
-            if lease.gpu_reservation == "command":
-                self.block_gpu_cleanup(lease.lease_id, lease.unit_id)
-            self.release(lease.lease_id)
-            self._reaped.setdefault(lease.node_ip, []).append(lease)
+            self.retire(lease.lease_id)
         for sid in [s for s, ts in self._waiting.items() if now - ts > self._wait_ttl_s]:
             del self._waiting[sid]
         return expired
@@ -265,7 +273,7 @@ class EnvUnitLedger:
                 UnitSnapshot(
                     unit_id=unit.unit_id,
                     node_ip=unit.node_ip,
-                    containers_running=len(leases),
+                    leases_active=len(leases),
                     max_containers=unit.max_containers,
                     cpu_used=sum(lease.demand.cpu for lease in leases),
                     cpu_quota=unit.cpu_quota,
@@ -295,9 +303,30 @@ class EnvUnitLedger:
         cpu_probe = EnvDemand(cpu=0.0)
         gpu_probe = EnvDemand(cpu=0.0, needs_gpu=True, gpu_memory_mb=self._default_gpu_memory_mb)
         per_node: dict[str, dict[str, int | bool]] = {}
+        resources = {}
         for unit in self._units.values():
             entry = per_node.setdefault(
                 unit.node_ip, {"cpu_free": 0, "gpu_free": 0, "cpu_eligible": False, "gpu_eligible": False}
+            )
+            if unit.unit_id in self._blocked_units:
+                continue
+            leases = self._unit_leases(unit.unit_id)
+            resources.setdefault(unit.node_ip, []).append(
+                UnitCapacity(
+                    unit=unit,
+                    containers_free=unit.max_containers - len(leases),
+                    cpu_free=unit.cpu_quota - sum(lease.demand.cpu for lease in leases),
+                    memory_free_mb=unit.memory_mb - sum(lease.demand.memory_mb for lease in leases),
+                    gpu_free_mb=tuple(
+                        budget - used
+                        for budget, used in zip(
+                            unit.gpu_memory_per_device_mb, self._effective_gpu_by_device(unit, now)
+                        )
+                    ),
+                    gpu_total_free_mb=unit.gpu_memory_mb - self._effective_gpu_mb(unit, now),
+                    cpu_eligible=self._rules.tier(unit, cpu_probe) is not None,
+                    gpu_eligible=unit.has_gpu and self._rules.tier(unit, gpu_probe) is not None,
+                )
             )
             containers_free = max(0, unit.max_containers - len(self._unit_leases(unit.unit_id)))
             if self._rules.tier(unit, cpu_probe) is not None:
@@ -310,7 +339,7 @@ class EnvUnitLedger:
                 entry["gpu_free"] += (
                     containers_free if unit.gpu_reservation == "command" else min(containers_free, by_memory)
                 )
-        return {ip: NodeCapacity(**vals) for ip, vals in per_node.items()}
+        return {ip: NodeCapacity(**vals, units=tuple(resources.get(ip, ()))) for ip, vals in per_node.items()}
 
     # ------------------------------------------------------------------ arithmetic
 
@@ -354,26 +383,55 @@ class EnvUnitLedger:
             return None
         return sum(used[index] for index in unit.gpu_indices)
 
-    def _effective_gpu_mb(self, unit: EnvUnit, now: float) -> float:
+    def _effective_gpu_mb(self, unit: EnvUnit, now: float, owned_mb: Mapping[str, float] | None = None) -> float:
         """
-        Device memory charged against a unit: the larger of declared and measured.
+        Charge measured usage plus reservations not covered by verified current ownership.
 
-        Declared is a reservation for a container still loading its model. Measured is
-        fact, and also catches memory nobody declared. Taking the larger errs toward
-        refusing, which is the safe side because device memory cannot be reclaimed.
+        Unattributed usage cannot pay down a reservation. Lending uses its separate
+        physical handoff protocol and only charges the borrowed task's reservation.
         """
         if unit.rollout_replica_rank is not None:
             return float(self._declared_gpu_mb(unit))
         measured = self._measured_gpu_mb(unit, now)
-        return max(float(self._declared_gpu_mb(unit)), measured if measured is not None else 0.0)
+        reservations = {
+            lease.lease_id: lease.demand.gpu_memory_mb
+            for lease in self._unit_leases(unit.unit_id)
+            if lease.demand.needs_gpu and lease.gpu_active
+        }
+        return accounted_gpu_memory_mb(measured or 0.0, reservations, owned_mb if measured is not None else None)
 
     def _could_ever_fit(self, unit: EnvUnit, demand: EnvDemand) -> bool:
         """Whether the demand fits an empty unit. If not, waiting would be forever."""
         if demand.cpu > unit.cpu_quota + _EPS or demand.memory_mb > unit.memory_mb:
             return False
-        return not (demand.needs_gpu and demand.gpu_memory_mb > unit.gpu_memory_mb)
+        if demand.needs_gpu:
+            per_device = demand.device_memory(unit)
+            return (
+                len(per_device) == len(unit.gpu_indices)
+                and demand.gpu_memory_mb <= unit.gpu_memory_mb
+                and all(m <= capacity for m, capacity in zip(per_device, unit.gpu_memory_per_device_mb))
+            )
+        return True
+
+    def _effective_gpu_by_device(self, unit: EnvUnit, now: float) -> tuple[float, ...]:
+        """Account separately on each device without inventing per-device ownership."""
+        measured = {}
+        reading = self._measured.get(unit.node_ip)
+        if unit.rollout_replica_rank is None and reading and now - reading[0] <= self._measurement_ttl_s:
+            measured = reading[1]
+        reservations = [
+            lease.demand.device_memory(unit)
+            for lease in self._unit_leases(unit.unit_id)
+            if lease.demand.needs_gpu and lease.gpu_active
+        ]
+        return tuple(
+            measured.get(index, 0.0) + sum(values[position] for values in reservations)
+            for position, index in enumerate(unit.gpu_indices)
+        )
 
     def _fits_now(self, unit: EnvUnit, demand: EnvDemand, now: float) -> bool:
+        if not self._could_ever_fit(unit, demand):
+            return False
         if unit.unit_id in self._blocked_units:
             return False
         leases = self._unit_leases(unit.unit_id)
@@ -385,6 +443,15 @@ class EnvUnitLedger:
             return False
         if unit.gpu_reservation == "command":
             return self._could_ever_fit(unit, demand)
+        if demand.needs_gpu and any(
+            used + requested > capacity + _EPS
+            for used, requested, capacity in zip(
+                self._effective_gpu_by_device(unit, now),
+                demand.device_memory(unit),
+                unit.gpu_memory_per_device_mb,
+            )
+        ):
+            return False
         return not (
             demand.needs_gpu and self._effective_gpu_mb(unit, now) + demand.gpu_memory_mb > unit.gpu_memory_mb + _EPS
         )

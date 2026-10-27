@@ -40,7 +40,9 @@ def fake_nvml(monkeypatch):
         nvmlDeviceGetUUID=lambda handle: f"GPU-{handle}",
         nvmlDeviceGetMemoryInfo=memory,
         nvmlMemory_v2=2,
-        nvmlDeviceGetComputeRunningProcesses=lambda handle: [SimpleNamespace(pid=pid) for pid in state["pids"]],
+        nvmlDeviceGetComputeRunningProcesses=lambda handle: [
+            SimpleNamespace(pid=pid, usedGpuMemory=3 * 1024**2) for pid in state["pids"]
+        ],
     )
     monkeypatch.setitem(sys.modules, "pynvml", module)
     return state
@@ -56,9 +58,13 @@ def test_inventory_preserves_physical_minor_mapping(monkeypatch):
 
 def test_snapshot_reads_live_selected_devices_and_fails_closed(monkeypatch):
     state = fake_nvml(monkeypatch)
-    assert read_gpu_snapshot((1,))[1] == {"uuid": "GPU-1", "used_mb": 4, "total_mb": 80, "pids": [17]}, (
-        "Telemetry must retain the admission and return fields."
-    )
+    assert read_gpu_snapshot((1,))[1] == {
+        "uuid": "GPU-1",
+        "used_mb": 4,
+        "total_mb": 80,
+        "pids": [17],
+        "memory_mb_by_pid": {17: 3},
+    }, "Telemetry must retain the admission and return fields."
     state.update(used=0, pids=[])
     assert read_gpu_snapshot((1,))[1]["pids"] == [], "A returned process must disappear without cached telemetry."
     with pytest.raises(RuntimeError, match="unavailable"):

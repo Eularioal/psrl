@@ -1,7 +1,8 @@
 """Read local container identity without spawning a Docker command line client."""
 
+import json
 import os
-from urllib.parse import quote, urlsplit
+from urllib.parse import quote, urlencode, urlsplit
 
 import aiohttp
 
@@ -29,3 +30,14 @@ async def ping_docker():
     """Require a live local daemon before declaring a node service ready."""
     if (await _local_get("/_ping", timeout_s=5, json_response=False)).strip() != "OK":
         raise RuntimeError("Local Docker daemon returned an invalid readiness response.")
+
+
+async def list_unit_containers(*, timeout_s=3):
+    """Read environment containers without inspecting unrelated daemon workloads."""
+    query = urlencode({"all": "1", "filters": json.dumps({"label": ["psrl.env_unit"]})})
+    return await _local_get(f"/containers/json?{query}", timeout_s=timeout_s)
+
+
+async def container_stats(container_id, *, timeout_s=3):
+    """Read one bounded Docker resource sample without keeping a stream open."""
+    return await _local_get(f"/containers/{quote(container_id, safe='')}/stats?stream=false", timeout_s=timeout_s)

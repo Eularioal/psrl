@@ -10,8 +10,10 @@ from collections.abc import Iterable, Mapping
 from dataclasses import replace
 
 from psrl.workers.env_service.command_gpu import GpuCommandScheduler
+from psrl.workers.env_service.health import NodeHealth
 from psrl.workers.env_service.ledger import EnvUnitLedger
 from psrl.workers.env_service.node_policy import NodeRules, lint_units
+from psrl.workers.env_service.process_identity import validate_identity_backend
 from psrl.workers.env_service.types import (
     Admission,
     EnvDemand,
@@ -44,6 +46,7 @@ class EnvRouterCore:
     """
 
     def __init__(self, config: Mapping, train_rollout_node_ips: Iterable[str] = ()):
+        self._gpu_identity_backend = validate_identity_backend(config.get("gpu_identity_backend", "procfs"))
         units = [EnvUnit.from_mapping(raw) for raw in (config.get("units") or ())]
         rules = NodeRules.build(
             policy=config.get("node_policy", "cpu_only"),
@@ -71,6 +74,14 @@ class EnvRouterCore:
         )
         self._reap_interval_s = max(1.0, float(config.get("slot_ttl_s", 1800.0)) / 10.0)
         self._reaper: asyncio.Task | None = None
+        telemetry = dict(config.get("telemetry") or {})
+        self._resource_interval_s = float(telemetry.get("interval_s", 5))
+        self._resource_timeout_s = float(telemetry.get("timeout_s", 8))
+        self._resource_max_age_s = float(telemetry.get("max_age_s", 15))
+        if min(self._resource_interval_s, self._resource_timeout_s, self._resource_max_age_s) <= 0:
+            raise ValueError("Resource telemetry interval, timeout and freshness bound must be positive.")
+        self._resource_samples = {}
+        self._resource_errors = {}
 
     def _ensure_reaper(self) -> None:
         """Start the reaper on the actor's own loop the first time any method runs."""
@@ -200,6 +211,8 @@ class EnvRouterCore:
             await self.finish_gpu_lease(lease_id, lease.unit_id)
         if lease is not None and lease.gpu_reservation == "command":
             await self.finish_gpu_command_lease(lease_id, lease.unit_id)
+        if lease is not None and not lease.gpu_lending and lease.gpu_reservation != "command":
+            return self._ledger.retire(lease_id)
         return self._ledger.release(lease_id)
 
     async def _gpu_command_node(self, node_ip):
@@ -248,14 +261,49 @@ class EnvRouterCore:
     async def cancel_wait(self, session_id: str) -> None:
         self._ledger.cancel_wait(session_id)
 
-    async def pop_reaped(self, node_ip: str) -> list[EnvLease]:
-        return self._ledger.pop_reaped(node_ip)
+    async def pending_reaped(self, node_ip: str) -> list[EnvLease]:
+        return self._ledger.pending_reaped(node_ip)
+
+    async def acknowledge_reaped(self, node_ip: str, lease_id: str):
+        self._ledger.acknowledge_reaped(node_ip, lease_id)
 
     async def snapshot(self) -> list[UnitSnapshot]:
-        return self._ledger.snapshot()
+        snapshots = []
+        for snapshot in self._ledger.snapshot():
+            sample, age, error = self._resource_state(snapshot.node_ip)
+            measured = sample.get("units", {}).get(snapshot.unit_id, {})
+            snapshots.append(
+                replace(
+                    snapshot,
+                    containers_running=measured.get("containers_running"),
+                    containers_total=measured.get("containers_total"),
+                    measured_memory_mb=measured.get("measured_memory_mb"),
+                    measured_cpu_cores=measured.get("measured_cpu_cores"),
+                    node_cpu_load_1m=sample.get("cpu_load_1m"),
+                    node_cpu_count=sample.get("cpu_count"),
+                    resource_sample_age_s=age,
+                    resource_error=error or measured.get("error", ""),
+                )
+            )
+        return snapshots
+
+    def _resource_state(self, node_ip):
+        reading = self._resource_samples.get(node_ip)
+        age = None if reading is None else time.monotonic() - reading[0]
+        error = self._resource_errors.get(node_ip, "")
+        if reading is None:
+            return {}, age, error or "No physical resource sample received."
+        if error or age > self._resource_max_age_s:
+            return {}, age, error or "Physical resource sample is stale."
+        return reading[1], age, ""
 
     async def node_capacity(self) -> dict[str, NodeCapacity]:
-        return self._ledger.node_capacity()
+        capacity = self._ledger.node_capacity()
+        for ip, cap in capacity.items():
+            sample, _, _ = self._resource_state(ip)
+            load, cpus = sample.get("cpu_load_1m"), sample.get("cpu_count")
+            capacity[ip] = replace(cap, node_load_per_cpu=load / cpus if load is not None and cpus else None)
+        return capacity
 
     async def warnings(self) -> list[str]:
         return list(self._warnings)
@@ -282,6 +330,28 @@ try:
             if self._node_start_timeout_s <= 0 or concurrency <= 0:
                 raise ValueError("Node startup timeout and concurrency must be positive.")
             self._node_start_slots = asyncio.Semaphore(concurrency)
+            health = dict(config.get("health") or {})
+            self._health_interval_s = float(health.get("interval_s", 5))
+            self._health_timeout_s = float(health.get("timeout_s", 30))
+            self._health_max_failures = int(health.get("max_failures", 3))
+            if min(self._health_interval_s, self._health_timeout_s, self._health_max_failures) <= 0:
+                raise ValueError("Health probe interval, timeout and retry budget must be positive.")
+            self._node_health = {u.node_ip: NodeHealth() for u in self._ledger._units.values()}
+            self._health_tasks = {}
+            self._resource_tasks = {}
+
+        async def _poll_node_resources(self, node_ip):
+            unit_ids = tuple(u.unit_id for u in self._ledger._units.values() if u.node_ip == node_ip)
+            while not self._nodes_closing:
+                try:
+                    async with asyncio.timeout(self._resource_timeout_s):
+                        service, _ = await asyncio.shield(self._node_task(node_ip))
+                        sample = await service.resource_snapshot.remote(unit_ids, self._resource_timeout_s / 2)
+                    self._resource_samples[node_ip] = (time.monotonic(), sample)
+                    self._resource_errors.pop(node_ip, None)
+                except Exception as exc:
+                    self._resource_errors[node_ip] = f"{type(exc).__name__}: {exc}"
+                await asyncio.sleep(self._resource_interval_s)
 
         def _create_node(self, node_ip):
             from psrl.workers.env_service.node import EnvNodeService
@@ -290,7 +360,7 @@ try:
             service = (
                 ray.remote(num_cpus=0)(EnvNodeService)
                 .options(scheduling_strategy=NodeAffinitySchedulingStrategy(nodes[node_ip], soft=False))
-                .remote(ray.get_runtime_context().current_actor, node_ip)
+                .remote(ray.get_runtime_context().current_actor, node_ip, self._gpu_identity_backend)
             )
             return service
 
@@ -306,13 +376,72 @@ try:
                         if any(u.gpu_reservation == "command" for u in units):
                             await service.check_gpu_command_support.remote()
                         indices = tuple(sorted({i for u in units for i in u.gpu_indices}))
-                        await service.prepare.remote(indices)
+                        readings = await service.prepare.remote(indices)
+                        self._validate_device_budgets(units, readings)
                         return service, url
             except BaseException:
                 if service is not None:
                     ray.kill(service, no_restart=True)
                     self._node_handles.pop(node_ip, None)
                 raise
+
+        @staticmethod
+        def _validate_device_budgets(units, readings):
+            for unit in units:
+                for index, budget in zip(unit.gpu_indices, unit.gpu_memory_per_device_mb):
+                    if budget > readings[index]["total_mb"]:
+                        raise ValueError(f"GPU {index} budget exceeds physical device capacity.")
+
+        async def _check_node(self, node_ip):
+            state = self._node_health[node_ip]
+            try:
+                async with asyncio.timeout(self._health_timeout_s):
+                    task = self._node_services.get(node_ip)
+                    if task is not None and task.done() and not task.cancelled() and task.exception():
+                        self._node_services.pop(node_ip)
+                    service, _ = await asyncio.shield(self._node_task(node_ip))
+                    units = [u for u in self._ledger._units.values() if u.node_ip == node_ip]
+                    indices = tuple(sorted({i for u in units for i in u.gpu_indices}))
+                    readings = await service.prepare.remote(indices)
+                    self._validate_device_budgets(units, readings)
+                    if readings:
+                        self._ledger.report_measurement(node_ip, {i: r["used_mb"] for i, r in readings.items()})
+                    pending = await service.cleanup.remote()
+                    state.success(time.monotonic(), bool(pending))
+            except Exception as exc:
+                state.fail(time.monotonic(), exc)
+                if isinstance(exc, ray.exceptions.RayActorError):
+                    active = any(lease.node_ip == node_ip for lease in self._ledger._leases.values())
+                    bound = any(binding.unit.node_ip == node_ip for binding in self._gpu_bindings.values())
+                    gpu_cleanup = any(lease.gpu_indices for lease in self._ledger.pending_reaped(node_ip))
+                    if not active and not bound and not gpu_cleanup:
+                        self._node_services.pop(node_ip, None)
+                        self._node_handles.pop(node_ip, None)
+                        self._resource_errors[node_ip] = "Node service died. Awaiting fresh resource measurements."
+            return state
+
+        def _health_task(self, node_ip, *, force=False):
+            if self._nodes_closing:
+                return None
+            state = self._node_health[node_ip]
+            task = self._health_tasks.get(node_ip)
+            if task is not None and not task.done():
+                return task
+            if state.failures >= self._health_max_failures:
+                return None
+            if force or time.monotonic() - state.checked_at >= self._health_interval_s:
+                task = asyncio.create_task(self._check_node(node_ip))
+                self._health_tasks[node_ip] = task
+                return task
+            return None
+
+        async def node_capacity(self):
+            capacity = await super().node_capacity()
+            for ip, cap in capacity.items():
+                self._health_task(ip)
+                state = self._node_health[ip]
+                capacity[ip] = replace(cap, available=state.available, reason=state.error)
+            return capacity
 
         def _node_task(self, node_ip):
             if self._nodes_closing:
@@ -324,6 +453,8 @@ try:
                 # Observe background failures while retaining them for the first consumer.
                 task.add_done_callback(lambda done: None if done.cancelled() else done.exception())
                 self._node_services[node_ip] = task
+            if node_ip not in self._resource_tasks:
+                self._resource_tasks[node_ip] = asyncio.create_task(self._poll_node_resources(node_ip))
             return self._node_services[node_ip]
 
         async def begin_prewarm(self):
@@ -343,7 +474,19 @@ try:
             """Stop owned startup tasks and services after all leases have been released."""
             if self._ledger._leases:
                 raise RuntimeError("Cannot close node services with active environment leases.")
+            for node_ip in tuple(self._ledger._reaped):
+                async with asyncio.timeout(self._health_timeout_s):
+                    service, _ = await asyncio.shield(self._node_task(node_ip))
+                    await service.cleanup.remote()
+                if self._ledger._reaped.get(node_ip):
+                    raise RuntimeError("Cannot close node services before physical cleanup is acknowledged.")
             self._nodes_closing = True
+            for task in self._resource_tasks.values():
+                task.cancel()
+            await asyncio.gather(*self._resource_tasks.values(), return_exceptions=True)
+            for task in self._health_tasks.values():
+                task.cancel()
+            await asyncio.gather(*self._health_tasks.values(), return_exceptions=True)
             tasks = list(self._node_services.values())
             for task in tasks:
                 if not task.done():
@@ -386,17 +529,24 @@ try:
             node_ips = [node_ip] if node_ip else list({unit.node_ip for unit in self._ledger._units.values()})
             urls = {}
             for ip in node_ips:
-                service, urls[ip] = await asyncio.shield(self._node_task(ip))
-                if await service.cleanup.remote():
-                    return Admission(status="wait", reason="Expired containers are still being removed.")
-            if any(self._ledger._reaped.get(ip) for ip in node_ips):
-                return Admission(status="wait", reason="Expired containers are awaiting cleanup.")
-            admission = self._ledger.try_admit(session_id, demand, node_ip, measured_gpu_used_mb, reap=False)
-            if admission.lease is not None:
-                admission = replace(
-                    admission, lease=replace(admission.lease, node_service_url=urls[admission.lease.node_ip])
-                )
-            return admission
+                if ip not in self._node_health:
+                    return Admission(status="reject", reason="Node has no configured environment unit.")
+                state = self._node_health[ip]
+                task = self._health_task(ip, force=state.available)
+                if task is not None:
+                    await asyncio.shield(task)
+                if state.available and not self._ledger._reaped.get(ip):
+                    _, urls[ip] = await asyncio.shield(self._node_task(ip))
+            for ip in urls:
+                # Node preparation is newer than telemetry sampled before this RPC.
+                admission = self._ledger.try_admit(session_id, demand, ip, reap=False)
+                if admission.lease is not None:
+                    return replace(admission, lease=replace(admission.lease, node_service_url=urls[ip]))
+                if node_ip:
+                    return admission
+            if all(self._node_health[ip].failures >= self._health_max_failures for ip in node_ips):
+                return Admission(status="reject", reason="Node health retry budget exhausted.")
+            return Admission(status="wait", reason="Eligible nodes are full, unhealthy or awaiting cleanup.")
 
     # No Ray CPU reservation: this actor does bookkeeping, and reserving a core could
     # fail to schedule on a fully packed cluster.

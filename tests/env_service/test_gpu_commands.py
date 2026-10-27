@@ -25,6 +25,13 @@ class Node:
         self.snapshots += 1
         return {0: {"used_mb": len(self.active) * 50, "total_mb": 95, "uuid": "gpu", "pids": []}}
 
+    async def gpu_command_memory_snapshot(self, indices, commands):
+        return {
+            "devices": await self.gpu_lending_snapshot(indices),
+            "owned_mb": {lease_id: 50 for lease_id, _, _ in commands if lease_id in self.active},
+            "attribution_errors": {},
+        }
+
     async def grant_gpu_command(self, lease_id, container_id, indices, epoch):
         if self.gate is not None:
             await self.gate.wait()

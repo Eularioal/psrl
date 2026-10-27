@@ -6,6 +6,8 @@ import json
 import logging
 import os
 
+from psrl.workers.gen.rollout_coordination.routing_pause import RoutingPauseController
+
 psrl_logger = logging.getLogger(__file__)
 psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
 
@@ -37,6 +39,16 @@ class CoordinatorBase:
             return json.loads(text)
 
     async def _set_routing_loop_running(self, running: bool):
+        await self._routing_pause_controller().set_running(running)
+
+    def _routing_pause_controller(self):
+        if not hasattr(self, "_routing_pauses"):
+            self._routing_pauses = RoutingPauseController(
+                lambda: self._gateway_get_json("/routing_loop/status"), self._write_routing_loop_running
+            )
+        return self._routing_pauses
+
+    async def _write_routing_loop_running(self, running: bool):
         path = "/routing_loop/resume" if running else "/routing_loop/pause"
         # A synchronous pause prevents routing with the pre-sync model version.
         params = {"wait": "true"} if not running else {}

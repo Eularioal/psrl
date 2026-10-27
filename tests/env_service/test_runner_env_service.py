@@ -46,6 +46,7 @@ def _cfg(max_containers=2):
                 "gpu_indices": [0, 1],
                 "max_containers": max_containers,
                 "gpu_memory_mb": 160000,
+                "gpu_memory_per_device_mb": [80000, 80000],
             },
             {"unit_id": "c0", "node_ip": NODE, "cpu_quota": 16, "memory_mb": 65536, "max_containers": 4},
         ],
@@ -81,7 +82,17 @@ _LIBS = DriverLibs(
 )
 
 
-def _run_episode(core, *, needs_gpu, create_side_effect=None, driver_version="535.1", events=None, gate_b=None):
+def _run_episode(
+    core,
+    *,
+    needs_gpu,
+    create_side_effect=None,
+    driver_version="535.1",
+    events=None,
+    gate_b=None,
+    runtime=None,
+    task_path="/t",
+):
     """
     Run one episode through the env service path with Harbor and Docker mocked.
 
@@ -131,10 +142,10 @@ def _run_episode(core, *, needs_gpu, create_side_effect=None, driver_version="53
         job_cls.create = AsyncMock(side_effect=create)
         result = asyncio.run(
             runner.run_harbor_episode(
-                task_path="/t",
+                task_path=task_path,
                 model_base_url="u",
                 model_name="m",
-                config=SciAccelRuntimeConfig(),
+                config=runtime or SciAccelRuntimeConfig(),
                 needs_gpu=needs_gpu,
                 session_id=SESSION,
                 session_router_url="http://router:8200",
@@ -191,7 +202,7 @@ def test_command_gpu_wires_explicit_execution_and_skips_model_reply_gate():
 
 
 def _ledger_containers(core):
-    return sum(snap.containers_running for snap in asyncio.run(core.snapshot()))
+    return sum(snap.leases_active for snap in asyncio.run(core.snapshot()))
 
 
 def test_deferred_gpu_return_failure_cannot_be_accepted_as_a_successful_episode():

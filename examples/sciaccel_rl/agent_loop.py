@@ -9,7 +9,6 @@ import os
 import threading
 
 from examples.sciaccel_rl.config import SciAccelRuntimeConfig, build_runtime_config
-from examples.sciaccel_rl.env_demand import demand_from_task
 from examples.sciaccel_rl.runner import HarborEpisodeResult, run_harbor_episode
 from omegaconf import OmegaConf
 from psrl.utils.agent.overflow import is_prompt_overflow
@@ -18,6 +17,7 @@ from psrl.workers.agent_loop.context import AgentLoopContext
 from psrl.workers.agent_loop.loops.session_agent_loop import SessionAgentLoop
 from psrl.workers.agent_loop.loops.utils import TerminateReason, register
 from psrl.workers.env_service.client import EnvServiceClient
+from psrl.workers.env_service.harbor_resources import demand_from_task
 from psrl.workers.gen.utils import TokenOutput
 
 psrl_logger = logging.getLogger("psrl.sciaccel_rl.agent_loop")
@@ -127,9 +127,7 @@ class SciAccelAgentLoop(SessionAgentLoop):
         runtime_kwargs = {k: kwargs[k] for k in ("harbor", "task_timeout_sec", "verifier_timeout_sec") if k in kwargs}
         self.runtime_config: SciAccelRuntimeConfig = build_runtime_config(runtime_kwargs)
 
-        # `psrl.env_service` is a plain dict here so the client has no OmegaConf dependency.
-        # It stays `None` for a recipe that never enabled the service, which keeps the
-        # legacy admission path (process semaphore plus `GpuDeviceGate`).
+        # Keep the client independent of OmegaConf. Disabled recipes retain local admission.
         env_service_cfg = context.config.psrl.get("env_service")
         self.env_service_cfg: dict | None = (
             OmegaConf.to_container(env_service_cfg, resolve=True) if env_service_cfg is not None else None

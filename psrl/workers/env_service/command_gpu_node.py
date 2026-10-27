@@ -8,7 +8,8 @@ from pathlib import Path
 
 from psrl.workers.env_service.docker_api import inspect_container
 from psrl.workers.env_service.overlay import CONTROL_DEVICES, LEASE_LABEL
-from psrl.workers.env_service.task_telemetry import TaskGpuTelemetry
+from psrl.workers.env_service.process_identity import build_identity_backend
+from psrl.workers.env_service.task_telemetry import TaskGpuTelemetry, read_command_memory
 
 
 class DeviceCgroupFence:
@@ -18,8 +19,9 @@ class DeviceCgroupFence:
         config = container["HostConfig"]
         if config.get("Privileged") or config.get("DeviceRequests") or config.get("DeviceCgroupRules"):
             raise RuntimeError("GPU command containers must use explicit, restricted device mappings.")
-        if set(config.get("CapAdd") or ()) & {"ALL", "SYS_ADMIN"}:
-            raise RuntimeError("GPU command containers cannot administer device cgroups.")
+        capabilities = {name.removeprefix("CAP_") for name in config.get("CapAdd") or ()}
+        if capabilities & {"ALL", "SYS_ADMIN", "BPF", "PERFMON"}:
+            raise RuntimeError("GPU command containers cannot administer device cgroups or kernel tracing.")
         self.devices = []
         paths = {d["PathOnHost"] for d in config.get("Devices") or ()}
         if paths != set(allowed_paths):
@@ -103,14 +105,65 @@ class DeviceCgroupFence:
 class GpuCommandNodeMixin:
     """Apply command epochs to owned containers without freezing their CPU processes."""
 
+    async def _gpu_identity(self):
+        if not hasattr(self, "_identity_lock"):
+            self._identity_lock = asyncio.Lock()
+        async with self._identity_lock:
+            if getattr(self, "_identity_closed", False):
+                raise RuntimeError("The node process identity backend has closed.")
+            if not hasattr(self, "_identity_source"):
+                pending = asyncio.create_task(
+                    asyncio.to_thread(build_identity_backend, getattr(self, "_identity_mode", "procfs"))
+                )
+                try:
+                    self._identity_source = await asyncio.shield(pending)
+                except BaseException:
+                    try:
+                        orphan = await pending
+                    except Exception:
+                        pass
+                    else:
+                        await asyncio.to_thread(orphan.close)
+                    raise
+            return self._identity_source
+
     async def check_gpu_command_support(self):
         if not Path("/sys/fs/cgroup/devices/devices.list").exists():
             raise RuntimeError("GPU command reservations require a cgroup v1 devices controller.")
         return True
 
+    async def gpu_command_memory_snapshot(self, indices, commands):
+        """
+        Attribute a fresh memory observation only to the requested live command epochs.
+        """
+        tasks = {}
+        for lease_id, container_id, epoch in commands:
+            state = self._gpu_lease_state(lease_id)
+            if (
+                state.get("command_epoch") != epoch
+                or state.get("command_container") != container_id
+                or state["retired"]
+            ):
+                raise RuntimeError("GPU memory query has a stale command identity.")
+            if not state.get("command_returned"):
+                tasks[lease_id] = state["command_telemetry"]
+        result = await asyncio.wait_for(
+            asyncio.to_thread(read_command_memory, self._gpu_probe(), tasks, indices), timeout=10
+        )
+        for lease_id, container_id, epoch in commands:
+            state = self._gpu_lease_state(lease_id)
+            if (
+                state.get("command_epoch") != epoch
+                or state.get("command_container") != container_id
+                or state["retired"]
+                or state.get("command_returned")
+            ):
+                result["owned_mb"].pop(lease_id, None)
+        return result
+
     async def check_gpu_attribution_support(self, indices):
-        telemetry = TaskGpuTelemetry(self._gpu_probe(), None, indices)
-        telemetry.check_proc_root()
+        identity = await self._gpu_identity()
+        await asyncio.to_thread(identity.check_support)
         readings = await asyncio.wait_for(
             asyncio.to_thread(self._gpu_probe().read_process_snapshot, indices, 0), timeout=5
         )
@@ -145,9 +198,10 @@ class GpuCommandNodeMixin:
             state["command_container"] = container_id
             state["command_returned"] = False
             fence = await self._command_container(lease_id, container_id, indices)
-            await asyncio.to_thread(fence.set_access, True)
-            telemetry = TaskGpuTelemetry(self._gpu_probe(), fence, indices)
+            identity = await self._gpu_identity()
+            telemetry = TaskGpuTelemetry(self._gpu_probe(), fence, indices, identity_backend=identity)
             state["command_telemetry"] = telemetry
+            await asyncio.to_thread(fence.set_access, True)
             telemetry.start()
 
     async def revoke_gpu_command(self, lease_id, container_id, indices, epoch, telemetry_indices):
@@ -165,8 +219,14 @@ class GpuCommandNodeMixin:
                 pids = await asyncio.to_thread(fence.processes)
                 handles = await asyncio.to_thread(fence.gpu_handles, pids)
                 readings = await self.gpu_lending_snapshot(telemetry_indices)
-                computing = pids & {pid for reading in readings.values() for pid in reading["pids"]}
+                gpu_pids = {pid for reading in readings.values() for pid in reading["pids"]}
+                if telemetry and telemetry.identity.name == "ebpf":
+                    computing = set(await asyncio.to_thread(telemetry._owners, gpu_pids))
+                else:
+                    computing = pids & gpu_pids
                 if not handles and not computing:
+                    if telemetry:
+                        telemetry.close_identity()
                     state["command_returned"] = True
                     for reading in readings.values():
                         reading["task_telemetry"] = report

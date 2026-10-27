@@ -10,8 +10,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from examples.sciaccel_rl.env_demand import demand_from_task  # noqa: E402
 from psrl.workers.env_service.config_check import validate_env_service_config  # noqa: E402
+from psrl.workers.env_service.harbor_resources import demand_from_task  # noqa: E402
 
 GOOD_GPU = {
     "unit_id": "g0",
@@ -103,8 +103,8 @@ def _task_dir(toml_text):
 
 
 def test_demand_reads_cpus_memory_and_gpus_from_task_toml():
-    demand = demand_from_task(_task_dir('[environment]\ncpus = 4\nmemory_mb = 8192\ngpus = 1\n'))
-    assert (demand.cpu, demand.memory_mb, demand.needs_gpu) == (4.0, 8192, True)
+    demand = demand_from_task(_task_dir("[environment]\ncpus = 4\nmemory_mb = 8192\ngpus = 1\n"))
+    assert (demand.cpu, demand.memory_mb, demand.needs_gpu) == (4.25, 8320, True)
     assert demand.gpu_memory_mb == 0  # Harbor declares none, so the router default applies
 
 
@@ -125,21 +125,21 @@ def test_the_dataset_rows_gpu_claim_is_never_silently_dropped():
 
 def test_a_missing_task_toml_degrades_to_one_cpu_instead_of_failing_the_episode():
     demand = demand_from_task(_task_dir(None), needs_gpu_hint=True)
-    assert (demand.cpu, demand.memory_mb, demand.needs_gpu) == (1.0, 0, True)
+    assert (demand.cpu, demand.memory_mb, demand.needs_gpu) == (1.25, 2176, True)
 
 
 def test_a_malformed_task_toml_degrades_the_same_way():
     demand = demand_from_task(_task_dir("this is = = not toml ["))
-    assert (demand.cpu, demand.memory_mb, demand.needs_gpu) == (1.0, 0, False)
+    assert (demand.cpu, demand.memory_mb, demand.needs_gpu) == (1.25, 2176, False)
 
 
 def test_junk_resource_values_fall_back_to_defaults():
     demand = demand_from_task(_task_dir('[environment]\ncpus = "many"\nmemory_mb = "lots"\ngpus = "x"\n'))
-    assert (demand.cpu, demand.memory_mb, demand.needs_gpu) == (1.0, 0, False)
+    assert (demand.cpu, demand.memory_mb, demand.needs_gpu) == (1.25, 2176, False)
 
 
 def test_a_zero_cpu_declaration_still_charges_one_cpu():
-    assert demand_from_task(_task_dir("[environment]\ncpus = 0\n")).cpu == 1.0
+    assert demand_from_task(_task_dir("[environment]\ncpus = 0\n")).cpu == 1.25
 
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ import os
 import tempfile
 from pathlib import Path
 
+import pytest
 import yaml
 from psrl.workers.env_service import (
     EnvDemand,
@@ -349,17 +350,19 @@ def _dispatcher(nodes, clock=None):
     return EnvAwareDispatcher(nodes, clock=clock or _Clock())
 
 
-def test_without_a_snapshot_dispatch_is_plain_round_robin():
+def test_without_a_snapshot_dispatch_requires_health_information():
     d = _dispatcher(["a", "b", "c"])
-    assert d.assign([False] * 4, rr_start=1) == [1, 2, 0, 1]
+    with pytest.raises(RuntimeError, match="fresh"):
+        d.assign([False] * 4, rr_start=1)
 
 
-def test_a_stale_snapshot_falls_back_to_round_robin():
+def test_a_stale_snapshot_does_not_override_known_node_constraints():
     clock = _Clock()
     d = _dispatcher(["a", "b"], clock)
     d.update({"a": NodeCapacity(0, 0, True, False), "b": NodeCapacity(5, 5, True, True)})
     clock.now = 100.0  # older than max_snapshot_age_s
-    assert d.assign([True], rr_start=0) == [0]
+    with pytest.raises(RuntimeError, match="fresh"):
+        d.assign([True], rr_start=0)
 
 
 def test_gpu_groups_skip_workers_on_nodes_without_gpu_capacity():
@@ -397,10 +400,11 @@ def test_when_every_node_is_full_a_group_goes_to_a_node_that_could_host_it_later
     assert d.assign([True], rr_start=0) == [1]
 
 
-def test_when_no_node_is_eligible_dispatch_still_returns_a_worker():
+def test_when_no_node_is_eligible_dispatch_reports_unavailability():
     d = _dispatcher(["a", "b"])
     d.update({"a": NodeCapacity(), "b": NodeCapacity()})
-    assert d.assign([True], rr_start=1) == [1]  # round-robin default, admission will reject it loudly
+    with pytest.raises(RuntimeError, match="eligible"):
+        d.assign([True], rr_start=1)
 
 
 def test_siblings_share_a_group_so_slots_are_counted_per_group_not_per_child():

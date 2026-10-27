@@ -105,6 +105,8 @@ class GpuLendingNodeMixin:
             if state.get("command_telemetry"):
                 await state["command_telemetry"].stop()
             await self._remove_gpu_lease(lease_id)
+            if state.get("command_telemetry"):
+                state["command_telemetry"].close_identity()
 
     async def _remove_gpu_lease(self, lease_id):
         for container in await self._lease_containers(lease_id):
