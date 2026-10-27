@@ -190,6 +190,9 @@ class TestConsecutiveFailureBreaker:
 
             assert manager._refill_breaker_diagnosis is not None
             assert TerminateReason.ROLLOUT_ERROR.value in manager._refill_breaker_diagnosis
+            assert manager.data_processor.sample_train_prompts.remote.await_count == 2, (
+                "The threshold failure must stop before sampling another replacement."
+            )
 
         asyncio.run(_run())
 

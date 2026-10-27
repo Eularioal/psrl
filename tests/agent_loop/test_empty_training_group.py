@@ -23,6 +23,7 @@ def make_manager():
     manager.refill_failure_threshold = 2
     manager._train_buffer_waiters = {}
     manager._train_chunk_waiters = {}
+    manager._val_buffer_waiters = {}
     manager._resolved_train_chunks = {}
     manager.ps_manager_handle = SimpleNamespace(clear_reserved_entries=SimpleNamespace(remote=AsyncMock()))
     manager._refill_failed_group = AsyncMock(return_value=2)

@@ -151,6 +151,7 @@ class PSRL_AgentLoopManager:
         self.val_data_queue: asyncio.Queue = asyncio.Queue(maxsize=data_queue_size)
         self.result_queue = asyncio.Queue()
         self.agent_loop_workers = agent_loop_workers
+        self._worker_dispatch_tasks: set[asyncio.Task] = set()
         self.ps_manager_handle = ps_manager_handle
         self.data_processor = data_processor
         self.reward_manager = None
@@ -341,35 +342,37 @@ class PSRL_AgentLoopManager:
         ):
             return
 
-        # Start the busy loop of agent loop workers.
         await self._init_distributed_post_pool()
-        await asyncio.gather(*[worker.start_busy_loop.remote() for worker in self.agent_loop_workers])
 
         # Start the background task to process data
         self.running_loop = asyncio.get_running_loop()
         self.train_dispatch_task = self.running_loop.create_task(self._train_dispatch_data())
-        self.train_dispatch_task.add_done_callback(lambda f: f.result())
+        self.train_dispatch_task.add_done_callback(lambda f: None if f.cancelled() else f.result())
         self.val_dispatch_task = self.running_loop.create_task(self._val_dispatch_data())
-        self.val_dispatch_task.add_done_callback(lambda f: f.result())
+        self.val_dispatch_task.add_done_callback(lambda f: None if f.cancelled() else f.result())
         self.collect_task = self.running_loop.create_task(self._collect_results())
-        self.collect_task.add_done_callback(lambda f: f.result())
+        self.collect_task.add_done_callback(lambda f: None if f.cancelled() else f.result())
 
     async def stop_busy_loop(self):
         """Stop the busy loop and wait for all tasks to complete."""
-        if (
-            (not self.train_dispatch_task or self.train_dispatch_task.done())
-            and (not self.val_dispatch_task or self.val_dispatch_task.done())
-            and (not self.collect_task or self.collect_task.done())
-        ):
-            return
-
         self.stop_train_dispatch_task = True
         self.stop_val_dispatch_task = True
         self.stop_collect_task = True
-        await asyncio.gather(self.train_dispatch_task, self.val_dispatch_task, self.collect_task)
-
-        await asyncio.gather(*[worker.stop_busy_loop.remote() for worker in self.agent_loop_workers])
-        await self._shutdown_distributed_post_pool()
+        loops = [task for task in (self.train_dispatch_task, self.val_dispatch_task, self.collect_task) if task]
+        tasks = [*loops, *self._worker_dispatch_tasks]
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        try:
+            await asyncio.wait_for(
+                asyncio.gather(
+                    *[worker.stop_agent_programs.remote() for worker in self.agent_loop_workers],
+                    return_exceptions=True,
+                ),
+                timeout=30,
+            )
+        finally:
+            await self._shutdown_distributed_post_pool()
 
     async def put_data(self, batch: TensorDict, is_validate: bool = False):
         """Put objectref of data into the manager's data queue."""
@@ -578,12 +581,8 @@ class PSRL_AgentLoopManager:
     def _trip_refill_breaker(self, diagnosis: str) -> None:
         """Latch a refill failure and fail every training waiter with it.
 
-        Raising from the caller cannot stop the run: `notify_group_failed` is invoked
-        as a fire-and-forget task in the agent loop worker, whose done-callback logs
-        exceptions and discards them. The driver's only blocking calls into this actor
-        are `wait_for_training_batch` and `wait_for_training_chunk`, so the diagnosis is
-        latched here and converted into an exception there. Both waiter maps are failed
-        directly as well, because the trainer usually blocks before the breaker trips.
+        The driver observes rollout failures through its batch waiters. Latch the
+        diagnosis for late waiters and fail already registered train and validation waiters.
 
         Args:
             diagnosis (str): Human-readable explanation carried to the driver.
@@ -609,6 +608,11 @@ class PSRL_AgentLoopManager:
                     fut.set_exception(self._refill_breaker_error())
             del self._train_chunk_waiters[chunk_key]
         self._resolved_train_chunks.clear()
+        for futures in self._val_buffer_waiters.values():
+            for future in futures:
+                if not future.done():
+                    future.set_exception(self._refill_breaker_error())
+        self._val_buffer_waiters.clear()
 
     def _refill_breaker_error(self) -> RuntimeError:
         """Build the exception that reports a tripped refill breaker."""
@@ -638,6 +642,8 @@ class PSRL_AgentLoopManager:
         Returns:
             int: Number of requests dispatched.
         """
+        if self._refill_breaker_diagnosis is not None:
+            return 0
         dispatched = await self._retry_data(n_prompts=n_prompts)
         if dispatched == 0:
             self._trip_refill_breaker(
@@ -884,6 +890,7 @@ class PSRL_AgentLoopManager:
 
     async def _inner_dispatch_data(self, data: TensorDict, is_validate: bool = False):
         """Update request status to RUNNING in PSManager, then fan out to workers."""
+        self._raise_if_refill_breaker_tripped()
         # Rows are ordered as contiguous groups of `rollout_n` children per parent.
         uids = tu.get(data, "uid")
         versions = tu.get(data, "version_tag")
@@ -917,7 +924,25 @@ class PSRL_AgentLoopManager:
             return
 
         for worker_index, batch in dispatch_plan.items():
-            self.agent_loop_workers[worker_index].add_agent_program.remote(batch)
+            task = asyncio.create_task(self._supervise_worker_batch(worker_index, batch))
+            self._worker_dispatch_tasks.add(task)
+            task.add_done_callback(self._worker_dispatch_tasks.discard)
+
+    async def _supervise_worker_batch(self, worker_index, batch):
+        """Observe execution through completion and surface actor death to all waiters."""
+        reference = None
+        try:
+            self._raise_if_refill_breaker_tripped()
+            reference = self.agent_loop_workers[worker_index].add_agent_program.remote(batch)
+            await reference
+        except asyncio.CancelledError:
+            if reference is not None:
+                ray.cancel(reference)
+            raise
+        except Exception as exc:
+            self._trip_refill_breaker(
+                f"Agent worker {worker_index} failed during execution. {type(exc).__name__}: {exc}"
+            )
 
     async def _refresh_env_capacity(self) -> None:
         """Refresh the per-node free-capacity snapshot that unit-aware dispatch reads.
@@ -1901,6 +1926,7 @@ class PSRL_AgentLoopManager:
         self._raise_if_refill_breaker_tripped()
 
         await self.ps_manager_handle.ensure_train_buffer_exists.remote(buffer_id)
+        self._raise_if_refill_breaker_tripped()
 
         if buffer_id in self.train_data_buffers:
             # If the buffer is ready, return immediately
@@ -1922,6 +1948,7 @@ class PSRL_AgentLoopManager:
 
         # If the buffer is still not ready after the abort and truncate strategy, wait for it to be ready
         psrl_logger.info(f"Waiting for training buffer: buffer_id={buffer_id}.")
+        self._raise_if_refill_breaker_tripped()
         fut = asyncio.get_event_loop().create_future()
         self._train_buffer_waiters.setdefault(buffer_id, []).append(fut)
         batch_meta = await fut

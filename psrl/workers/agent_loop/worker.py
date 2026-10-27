@@ -4,7 +4,6 @@ import logging
 import os
 import traceback
 import uuid
-from collections import deque
 
 import hydra
 import ray
@@ -134,10 +133,7 @@ class PSRL_AgentLoopWorker:
 
         self.agent_programs = set()
         self.put_tasks = set()
-        self.pending_program_queue = deque()
-        self.running_loop = None
-        self.busy_loop_task = None
-        self.stop_busy_loop_task = False
+        self._programs_closing = False
 
         # Register agent loop configs from file
         agent_loop_config_path = config.gen_actor_rollout_ref.rollout.agent.agent_loop_config_path
@@ -221,58 +217,31 @@ class PSRL_AgentLoopWorker:
             start_index=producer_index,
         )
 
-    def add_agent_program(self, batch: TensorDict | None):
-        """Add a new agent program to the pending queue for processing.
-
-        Args:
-            batch (TensorDict or None): Data to process, or None to signal termination.
-        """
-        if batch is None:
-            self.pending_program_queue.append(None)
+    async def add_agent_program(self, batch: TensorDict):
+        """Keep the caller's RPC pending until every submitted trajectory finishes."""
+        if self._programs_closing:
+            raise RuntimeError("Agent worker is closing.")
+        if len(batch) == 0:
             return
-
-        n = len(batch)
-        if n == 0:
-            return
-        requests = batch.chunk(n)
-        for request in requests:
-            self.pending_program_queue.append(request)
-
-    def start_busy_loop(self):
-        """Start the busy loop to continuously process agent programs from the queue."""
-        if self.busy_loop_task is not None and not self.busy_loop_task.done():
-            return
-
-        # Start the background task to process data
-        self.stop_busy_loop_task = False
-        self.running_loop = asyncio.get_running_loop()
-        self.busy_loop_task = self.running_loop.create_task(self._launch_agent_loop())
-        self.busy_loop_task.add_done_callback(lambda f: f.result())  # To avoid silent error in async tasks
-
-    async def stop_busy_loop(self):
-        """Stop the busy loop and wait for the current task to complete."""
-        if not self.busy_loop_task or self.busy_loop_task.done():
-            return
-
-        self.stop_busy_loop_task = True
-        # Wait for the background task to finish
-        # Note: This is now async-safe and won't deadlock when called from Ray actors
+        tasks = []
         try:
-            await asyncio.wait_for(self.busy_loop_task, timeout=10.0)
-        except asyncio.TimeoutError:
-            psrl_logger.warning("Timeout waiting for busy loop task to complete")
-            self.busy_loop_task.cancel()
+            for request in batch.chunk(len(batch)):
+                tasks.append(await self.generate_trajectory(request))
+            await asyncio.gather(*tasks)
+        finally:
+            for task in tasks:
+                if not task.done() and not task.cancelling():
+                    task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
 
-    async def _launch_agent_loop(self):
-        """Main loop that processes agent programs from the pending queue."""
-        while not self.stop_busy_loop_task:
-            if len(self.pending_program_queue) > 0:
-                program = self.pending_program_queue.popleft()
-                if program is None:
-                    self.stop_busy_loop_task = True
-                    continue
-                await self.generate_trajectory(program)
-            await asyncio.sleep(0)
+    async def stop_agent_programs(self):
+        """Cancel owned trajectories and join their environment cleanup."""
+        self._programs_closing = True
+        tasks = tuple(self.agent_programs)
+        for task in tasks:
+            if not task.done() and not task.cancelling():
+                task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
 
     def _create_task_done_callback(self, task):
         """Create a callback function to handle task completion."""
@@ -280,6 +249,8 @@ class PSRL_AgentLoopWorker:
         def task_done_callback(future):
             try:
                 future.result()  # This will raise an exception if the task failed
+            except asyncio.CancelledError:
+                pass
             except Exception as e:
                 tb_str = "".join(traceback.format_exception(type(e), e, e.__traceback__))
                 psrl_logger.error(f"Task failed: task={task!r}, error={e!r}.\nTraceback:\n{tb_str}")
@@ -291,8 +262,7 @@ class PSRL_AgentLoopWorker:
     async def generate_trajectory(self, batch: TensorDict):
         """Generate trajectories using the specified agent type based on configuration.
 
-        This method only create the task (agent_loop) and add the task to the agent_programs set.
-        But the task is not await here so different agent_loop can be run in parallel.
+        Return the tracked task so the batch RPC can observe completion and failure.
 
         Args:
             batch (TensorDict): Input batch metadata containing prompts and metadata.
@@ -304,6 +274,7 @@ class PSRL_AgentLoopWorker:
         task = asyncio.create_task(self._run_agent_loop(agent_name, batch))
         task.add_done_callback(self._create_task_done_callback(task))
         self.agent_programs.add(task)
+        return task
 
     async def _run_agent_loop(
         self,
@@ -389,8 +360,11 @@ class PSRL_AgentLoopWorker:
                 event_type=EventType.GEN,
             ):
                 retry_limit = self.config.gen_actor_rollout_ref.rollout.agent.retry_limit
+                if retry_limit < 1:
+                    raise ValueError("Agent retry limit must allow at least one attempt.")
                 raised_error = None
                 for retry_attempt in range(1, retry_limit + 1):
+                    raised_error = None
                     raise_on_error = (
                         retry_attempt == retry_limit
                     ) and self.config.gen_actor_rollout_ref.rollout.agent.raise_on_error
@@ -480,8 +454,7 @@ class PSRL_AgentLoopWorker:
                 )
                 await self.ps_manager_handle.abort_requests.remote(request_ids)
 
-            # After ALL cleanup is complete (notify_group_failed + abort_requests),
-            # re-raise the original error so it propagates to the task callback.
+            # Failure bookkeeping must complete before the batch RPC reports its error.
             if raised_error is not None:
                 raise raised_error
 
