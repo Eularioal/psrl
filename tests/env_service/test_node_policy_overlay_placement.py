@@ -77,9 +77,9 @@ def test_select_worker_nodes_prefer_other_falls_back_instead_of_failing():
     rules = NodeRules.build("prefer_other", train_rollout_node_ips=[TRAIN])
     selected, note = select_worker_nodes([("n1", TRAIN)], rules)
     assert [ip for _, ip in selected] == [TRAIN]
-    assert "falling back" in note
+    assert "fallback" in note
     selected, _ = select_worker_nodes([("n1", TRAIN), ("n2", ENV)], rules)
-    assert [ip for _, ip in selected] == [ENV]
+    assert [ip for _, ip in selected] == [ENV, TRAIN]
 
 
 def test_select_worker_nodes_cpu_only_and_any_keep_every_node():

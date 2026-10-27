@@ -138,6 +138,9 @@ class EnvAwareDispatcher:
         for k, needs_gpu in enumerate(group_needs_gpu):
             kind = "gpu" if needs_gpu else "cpu"
             order = [(rr_start + k + j) % n for j in range(n)]
+            order.sort(
+                key=lambda w: getattr(self._capacity.get(self._worker_nodes[w], NodeCapacity()), f"{kind}_priority")
+            )
             pick = next((w for w in order if free.get(self._worker_nodes[w], {}).get(kind, 0) > 0), None)
             if pick is None:
                 # Nothing has room right now. Prefer a node that could host it once a slot
@@ -175,10 +178,11 @@ class EnvAwareDispatcher:
             room = min(room, int(cap.cpu_free // demand.cpu))
         if demand.memory_mb > 0:
             room = min(room, cap.memory_free_mb // demand.memory_mb)
-        if demand.needs_gpu and cap.unit.gpu_reservation == "episode":
+        if demand.needs_gpu:
             room = min(room, int(cap.gpu_total_free_mb // demand.gpu_memory_mb))
             for free, requested in zip(cap.gpu_free_mb, demand.device_memory(cap.unit)):
-                room = min(room, int(free // requested))
+                if requested:
+                    room = min(room, int(free // requested))
         return max(0, room)
 
     def _assign_resources(self, demands, group_sizes, rr_start):
@@ -188,10 +192,20 @@ class EnvAwareDispatcher:
             count = group_sizes[k] if group_sizes else 1
             order = [(rr_start + k + j) % len(self._worker_nodes) for j in range(len(self._worker_nodes))]
             candidates = {}
+            priorities = {}
             for worker in order:
                 caps = [c for c in units.get(self._worker_nodes[worker], ()) if self._eligible(c, demand)]
                 if caps:
                     candidates[worker] = sum(self._room(c, demand) for c in caps)
+                    levels = sorted({self._priority(c, demand) for c in caps})
+                    priorities[worker] = next(
+                        (
+                            level
+                            for level in levels
+                            if sum(self._room(c, demand) for c in caps if self._priority(c, demand) <= level) >= count
+                        ),
+                        levels[0],
+                    )
             if not candidates:
                 raise EnvPlacementUnavailable("No healthy unit can accommodate this request's resource shape.")
 
@@ -200,17 +214,21 @@ class EnvAwareDispatcher:
                 return (load is None, load if load is not None else 0.0)
 
             fitting = [w for w, room in candidates.items() if room >= count]
-            pick = min(fitting, key=load_key) if fitting else None
+            pick = min(fitting, key=lambda w: (priorities[w], *load_key(w))) if fitting else None
             if pick is None:
-                pick = min(candidates, key=lambda w: (-candidates[w], *load_key(w)))
+                pick = min(candidates, key=lambda w: (-candidates[w], priorities[w], *load_key(w)))
             caps = units[self._worker_nodes[pick]]
             for _ in range(count):
-                index = max(
+                index = min(
                     (i for i, c in enumerate(caps) if self._eligible(c, demand)),
-                    key=lambda i: self._room(caps[i], demand),
+                    key=lambda i: (
+                        self._room(caps[i], demand) == 0,
+                        self._priority(caps[i], demand),
+                        -self._room(caps[i], demand),
+                    ),
                 )
                 cap = caps[index]
-                charge_gpu = demand.needs_gpu and cap.unit.gpu_reservation == "episode"
+                charge_gpu = demand.needs_gpu
                 caps[index] = replace(
                     cap,
                     containers_free=cap.containers_free - 1,
@@ -225,3 +243,7 @@ class EnvAwareDispatcher:
                 )
             chosen.append(pick)
         return chosen
+
+    @staticmethod
+    def _priority(cap, demand):
+        return cap.gpu_priority if demand.needs_gpu else cap.cpu_priority

@@ -606,35 +606,52 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
             self.env_router_handle = None
 
     def _init_gpu_lending(self, all_wg):
-        """Bind borrowing units only after model initialization and placement validation."""
+        """Publish device ownership, then bind explicitly borrowed rollout replicas."""
         if self.env_router_handle is None:
             return
+        from psrl.workers.env_service.node_policy import gpu_placements_from_worker_groups
         from psrl.workers.env_service.types import EnvUnit
 
+        node_ips = {node["NodeID"]: node["NodeManagerAddress"] for node in ray.nodes() if node["Alive"]}
+        placements = gpu_placements_from_worker_groups(all_wg, node_ips)
+        protected = {}
+        for devices in placements.values():
+            for ip, index in devices:
+                protected.setdefault(ip, set()).add(index)
+        ray.get(self.env_router_handle.set_gpu_placement.remote(protected))
+
         units = [EnvUnit.from_mapping(raw) for raw in self.config.psrl.env_service.units]
-        units = [unit for unit in units if unit.rollout_replica_rank is not None]
+        for unit in units:
+            overlap = set(unit.gpu_indices) & protected.get(unit.node_ip, set())
+            if overlap and unit.rollout_replica_rank is None and unit.shared_rollout_replica_rank is None:
+                raise ValueError(f"Environment unit {unit.unit_id!r} overlaps model GPUs without an explicit binding.")
+        units = [
+            unit
+            for unit in units
+            if unit.rollout_replica_rank is not None or unit.shared_rollout_replica_rank is not None
+        ]
         if not units:
             return
-        if self.config.psrl.profile.fix_weight:
+        if self.config.psrl.profile.fix_weight and any(unit.rollout_replica_rank is not None for unit in units):
             raise ValueError("GPU lending requires weight restoration with profile.fix_weight=False.")
-        node_ips = {node["NodeID"]: node["NodeManagerAddress"] for node in ray.nodes() if node["Alive"]}
-        placements = {
-            name: ClusterTopology.collect_gpu_slots_from_worker_group(group)
-            for name, group in all_wg.items()
-            if not name.startswith("ps")
-        }
         for unit in units:
-            name = f"rollout_{unit.rollout_replica_rank}"
+            replica = unit.rollout_replica_rank
+            if replica is None:
+                replica = unit.shared_rollout_replica_rank
+            name = f"rollout_{replica}"
             slots = placements.get(name, frozenset())
-            actual = {(node_ips[slot.node_id], slot.gpu_id) for slot in slots}
+            actual = set(slots)
             expected = {(unit.node_ip, index) for index in unit.gpu_indices}
             if actual != expected:
                 raise ValueError(f"GPU lending unit {unit.unit_id!r} does not match complete replica {name!r}.")
             for other_name, other_slots in placements.items():
                 if other_name != name and slots & other_slots:
                     raise ValueError(f"GPU lending replica {name!r} overlaps another GPU owner {other_name!r}.")
-            server = ray.get(self.rollout_coordinator.get_gpu_lending_server.remote(unit.rollout_replica_rank))
-            ray.get(self.env_router_handle.bind_rollout_gpu.remote(unit.unit_id, server, self.rollout_coordinator))
+            server = ray.get(self.rollout_coordinator.get_gpu_lending_server.remote(replica))
+            if unit.shared_rollout_replica_rank is not None:
+                ray.get(self.env_router_handle.bind_shared_rollout_gpu.remote(unit.unit_id, server))
+            else:
+                ray.get(self.env_router_handle.bind_rollout_gpu.remote(unit.unit_id, server, self.rollout_coordinator))
 
     def init_agent_loop_manager(self):
         if self.agent_loop_manager is not None:
@@ -1944,9 +1961,7 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
             alive_nodes = selected
         restricted_by_env_policy = False
         if env_rules is not None:
-            # A container lands on the node of the worker that starts it, so the node policy
-            # is also what decides whether containers can share a node with train or rollout
-            # GPUs. Raises when the policy leaves no node.
+            # Docker executes on the worker's node, so eligibility must precede worker placement.
             from psrl.workers.env_service.node_policy import restrict_to_unit_nodes, select_worker_nodes
 
             candidates = [(n["NodeID"], n["NodeManagerAddress"]) for n in alive_nodes]
@@ -1961,6 +1976,8 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
             restricted_by_env_policy = len(kept_ids) < len(alive_nodes)
             alive_nodes = [n for n in alive_nodes if n["NodeID"] in kept_ids]
         alive_node_ids = [n["NodeID"] for n in alive_nodes]
+        if env_rules is not None and env_rules.policy.value == "prefer_other" and num_agent_workers < len(alive_nodes):
+            raise ValueError("prefer_other requires at least one agent worker per eligible environment node.")
         node_id_to_ip = {n["NodeID"]: n["NodeManagerAddress"] for n in alive_nodes}
         self.agent_worker_node_ips = []
         for i in range(num_agent_workers):
@@ -1970,11 +1987,9 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
                 PSRL_AgentLoopWorker.options(
                     name=f"agent_loop_worker_{i}",
                     max_concurrency=max_concurrency_per_worker,
-                    # Hard affinity when an allow list or a node policy narrowed the nodes,
-                    # because a soft placement lets Ray fall back to exactly the node being
-                    # excluded.
+                    # Env dispatch relies on Docker running on this exact node.
                     scheduling_strategy=NodeAffinitySchedulingStrategy(
-                        node_id=node_id, soft=not (allowed_ips or restricted_by_env_policy)
+                        node_id=node_id, soft=not (allowed_ips or restricted_by_env_policy or env_rules is not None)
                     ),
                 ).remote(
                     self.config,
@@ -1985,7 +2000,10 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
                     worker_num=num_agent_workers,
                 )
             )
-            psrl_logger.info(f"Agent loop worker {i} scheduled on node {node_id} (soft=True).")
+            psrl_logger.info(
+                f"Agent loop worker {i} scheduled on node {node_id} "
+                f"(soft={not (allowed_ips or restricted_by_env_policy or env_rules is not None)})."
+            )
 
         # start rollout coordinator
         self.init_rollout_coordinator()

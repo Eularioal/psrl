@@ -26,6 +26,19 @@ psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
 
 
 class vLLMWorkerExtension(vLLMColocateWorkerExtension):
+    def env_sharing_profile(self):
+        """Report transient capacity without treating utilization as a hard memory cap."""
+        import math
+
+        names = ("peak_activation_memory", "non_torch_memory", "cudagraph_memory_estimate")
+        values = [getattr(self, name, None) for name in names]
+        transient = (
+            None
+            if any(value is None for value in values)
+            else math.ceil(sum(max(0, value) for value in values) / 1024**2)
+        )
+        return {"transient_mb": transient, "profile_bytes": dict(zip(names, values))}
+
     def load_weights(self, weights, blocking: bool = True):
         """
         Load weights into the vLLM model runner.

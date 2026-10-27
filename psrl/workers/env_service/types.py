@@ -50,6 +50,8 @@ class EnvUnit:
     rollout_replica_rank: int | None = None
     gpu_reservation: str = "episode"
     gpu_memory_per_device_mb: tuple[int, ...] = ()
+    shared_rollout_replica_rank: int | None = None
+    model_headroom_mb: int = 0
 
     def __post_init__(self) -> None:
         if self.gpu_indices and not self.gpu_memory_per_device_mb:
@@ -66,6 +68,16 @@ class EnvUnit:
             raise ValueError(f"Unknown GPU reservation mode {self.gpu_reservation!r}.")
         if self.gpu_reservation == "command" and (not self.gpu_indices or self.rollout_replica_rank is not None):
             raise ValueError("Command reservations require dedicated environment GPUs.")
+        if self.shared_rollout_replica_rank is not None:
+            if (
+                self.shared_rollout_replica_rank < 0
+                or self.rollout_replica_rank is not None
+                or self.gpu_reservation != "command"
+                or self.model_headroom_mb <= 0
+            ):
+                raise ValueError("Shared rollout GPUs require command mode and positive model headroom.")
+        elif self.model_headroom_mb:
+            raise ValueError("Model headroom requires an explicit shared rollout replica.")
         if self.rollout_replica_rank is not None:
             if self.rollout_replica_rank < 0 or not self.gpu_indices or self.max_containers != 1:
                 raise ValueError("A borrowed unit requires one container slot, GPUs and a nonnegative replica rank.")
@@ -107,6 +119,10 @@ class EnvUnit:
             rollout_replica_rank=(
                 int(raw["rollout_replica_rank"]) if raw.get("rollout_replica_rank") is not None else None
             ),
+            shared_rollout_replica_rank=(
+                int(raw["shared_rollout_replica_rank"]) if raw.get("shared_rollout_replica_rank") is not None else None
+            ),
+            model_headroom_mb=int(raw.get("model_headroom_mb", 0)),
             gpu_reservation=str(raw.get("gpu_reservation", "episode")),
             gpu_memory_per_device_mb=tuple(int(m) for m in raw.get("gpu_memory_per_device_mb", ())),
         )
@@ -251,6 +267,8 @@ class NodeCapacity:
     reason: str = ""
     units: tuple[UnitCapacity, ...] = ()
     node_load_per_cpu: float | None = None
+    cpu_priority: int = 0
+    gpu_priority: int = 0
 
 
 @dataclass(frozen=True)
@@ -265,6 +283,8 @@ class UnitCapacity:
     gpu_total_free_mb: float
     cpu_eligible: bool
     gpu_eligible: bool
+    cpu_priority: int = 0
+    gpu_priority: int = 0
 
 
 @dataclass(frozen=True)

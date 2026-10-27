@@ -63,6 +63,17 @@ class EnvRouterCore:
         self._lending_config = dict(config.get("gpu_lending") or {})
         self._gpu_bindings = {}
         self._gpu_commands = GpuCommandScheduler(self._ledger, self._gpu_command_node)
+        sharing = dict(config.get("gpu_sharing") or {})
+        self._sharing_margin_mb = int(sharing.get("safety_margin_mb", 1024))
+        self._gpu_commands.shared_margin_mb = self._sharing_margin_mb
+        self._gpu_commands.shared_max_command_s = float(sharing.get("max_command_s", 30))
+        self._gpu_commands.reuse_sleeping = bool(sharing.get("reuse_sleeping", True))
+        import math
+
+        if self._sharing_margin_mb <= 0 or not (0 < self._gpu_commands.shared_max_command_s <= 300):
+            raise ValueError("GPU sharing requires positive margin and a command deadline of at most 300 seconds.")
+        if not math.isfinite(self._gpu_commands.shared_max_command_s):
+            raise ValueError("GPU sharing command deadline must be finite.")
         self._warnings = lint_units(units, rules)
         for warning in self._warnings:
             psrl_logger.warning("env_service: %s", warning)
@@ -130,6 +141,29 @@ class EnvRouterCore:
         if self._lending_unavailable(demand, node_ip):
             return Admission(status="reject", reason="Eligible GPU lending units are quarantined.")
         return self._ledger.try_admit(session_id, demand, node_ip, measured_gpu_used_mb)
+
+    def set_gpu_placement(self, gpu_indices):
+        """Install a complete worker placement before admitting environment sessions."""
+        if self._ledger._leases:
+            raise RuntimeError("GPU placement cannot change while environment leases exist.")
+        if any(int(index) < 0 for indices in gpu_indices.values() for index in indices):
+            raise ValueError("GPU placement indices must be nonnegative.")
+        rules = self._ledger._rules
+        self._ledger._rules = replace(
+            rules,
+            train_rollout_gpu_indices={ip: frozenset(map(int, indices)) for ip, indices in gpu_indices.items()},
+        )
+        self._warnings = lint_units(list(self._ledger._units.values()), self._ledger._rules)
+
+    async def bind_shared_rollout_gpu(self, unit_id, server):
+        """Validate the model profile before making its shared command unit available."""
+        unit = self._ledger._units[unit_id]
+        if unit.shared_rollout_replica_rank is None or unit_id in self._gpu_commands.shared_servers:
+            raise ValueError("Shared rollout binding is duplicate or not configured.")
+        profile = await server.validate_env_sharing.remote(unit.model_headroom_mb, self._sharing_margin_mb)
+        self._gpu_commands.shared_servers[unit_id] = server
+        self._ledger._blocked_units.discard(unit_id)
+        return profile
 
     async def set_gpu_phase(self, lease_id: str, phase: str, sequence: int):
         """Switch only a live lease whose unit has a verified rollout binding."""
@@ -537,12 +571,13 @@ try:
                     await asyncio.shield(task)
                 if state.available and not self._ledger._reaped.get(ip):
                     _, urls[ip] = await asyncio.shield(self._node_task(ip))
-            for ip in urls:
-                # Node preparation is newer than telemetry sampled before this RPC.
-                admission = self._ledger.try_admit(session_id, demand, ip, reap=False)
+            if urls:
+                admission = self._ledger.try_admit(session_id, demand, node_ip, reap=False, available_node_ips=urls)
                 if admission.lease is not None:
-                    return replace(admission, lease=replace(admission.lease, node_service_url=urls[ip]))
-                if node_ip:
+                    return replace(
+                        admission, lease=replace(admission.lease, node_service_url=urls[admission.lease.node_ip])
+                    )
+                if node_ip or len(urls) == len(node_ips):
                     return admission
             if all(self._node_health[ip].failures >= self._health_max_failures for ip in node_ips):
                 return Admission(status="reject", reason="Node health retry budget exhausted.")

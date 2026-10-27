@@ -14,6 +14,8 @@ class GpuControlGate:
         self.reservation = None
         self.task = None
         self.depth = 0
+        self.shared_commands = {}
+        self.pending_operations = 0
 
     @asynccontextmanager
     async def operation(self, borrower=None, sleeping=False):
@@ -23,15 +25,20 @@ class GpuControlGate:
             self.depth += 1
         else:
             async with self.condition:
-                await self.condition.wait_for(
-                    lambda: (
-                        self.task is None
-                        and (self.borrower is None or self.borrower == borrower)
-                        and (not sleeping or self.reservation is None)
+                self.pending_operations += 1
+                try:
+                    await self.condition.wait_for(
+                        lambda: (
+                            self.task is None
+                            and not self.shared_commands
+                            and (self.borrower is None or self.borrower == borrower)
+                            and (not sleeping or self.reservation is None)
+                        )
                     )
-                )
-                self.task = task
-                self.depth = 1
+                    self.task = task
+                    self.depth = 1
+                finally:
+                    self.pending_operations -= 1
         try:
             yield
         finally:
@@ -55,6 +62,40 @@ def gpu_control(method):
 
 class GpuHandoffMixin:
     """Expose acknowledged GPU handoff while fencing every ordinary control path."""
+
+    async def validate_env_sharing(self, headroom_mb, margin_mb):
+        """Require measured inference workspace plus an explicit deployment margin."""
+        profiles = await self.collective_rpc(method="env_sharing_profile")
+        if not profiles or any(p["transient_mb"] is None for p in profiles):
+            raise ValueError("Resident sharing requires vLLM automatic memory profiling.")
+        required = max(p["transient_mb"] for p in profiles) + margin_mb
+        if headroom_mb < required:
+            raise ValueError(f"Model headroom {headroom_mb} MiB is below profiled requirement {required} MiB.")
+        return {"profiles": profiles, "required_headroom_mb": required}
+
+    async def acquire_env_command(self, owner, reuse_sleeping=True):
+        """Fence control without pausing inference or waking an already sleeping engine."""
+        gate = self._gpu_control
+        async with gate.condition:
+            if owner in gate.shared_commands:
+                return gate.shared_commands[owner]
+            if gate.task is not None or gate.pending_operations or gate.borrower or gate.reservation:
+                return None
+            # Hold the condition until the snapshot and reservation are committed together.
+            sleeping = await self.engine.is_sleeping()
+            if (sleeping and not reuse_sleeping) or (not sleeping and self._gpu_sync_active):
+                return None
+            if not sleeping and not self._gpu_weights_valid:
+                return None
+            mode = "sleeping" if sleeping else "resident"
+            gate.shared_commands[owner] = mode
+            return mode
+
+    async def release_env_command(self, owner):
+        """Release only after the node has acknowledged physical command cleanup."""
+        async with self._gpu_control.condition:
+            self._gpu_control.shared_commands.pop(owner, None)
+            self._gpu_control.condition.notify_all()
 
     def validate_gpu_lending(self):
         """Reject engines that cannot release their GPU allocations."""

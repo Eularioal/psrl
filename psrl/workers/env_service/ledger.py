@@ -89,7 +89,11 @@ class EnvUnitLedger:
         self._id_factory = id_factory or (lambda: uuid.uuid4().hex[:8])
         self._counter = itertools.count(1)
 
-        self._blocked_units = {unit.unit_id for unit in unit_list if unit.rollout_replica_rank is not None}
+        self._blocked_units = {
+            unit.unit_id
+            for unit in unit_list
+            if unit.rollout_replica_rank is not None or unit.shared_rollout_replica_rank is not None
+        }
         self._leases: dict[str, EnvLease] = {}
         self._by_session: dict[str, str] = {}
         # node_ip -> (reported_at, {device_index: used_mb})
@@ -111,6 +115,7 @@ class EnvUnitLedger:
         measured_gpu_used_mb: Mapping[int, float] | None = None,
         *,
         reap: bool = True,
+        available_node_ips=None,
     ) -> Admission:
         """
         Try to place one episode right now.
@@ -138,12 +143,16 @@ class EnvUnitLedger:
         existing_id = self._by_session.get(session_id)
         if existing_id is not None:
             lease = self._leases[existing_id]
+            if available_node_ips is not None and lease.node_ip not in available_node_ips:
+                return Admission(WAIT, reason="the existing lease's node is unavailable")
             lease.last_seen = now
             return Admission(GRANTED, dataclasses.replace(lease))
 
         demand = demand.with_default_gpu_memory(self._default_gpu_memory_mb)
         eligible: list[tuple[int, EnvUnit]] = []
         for unit in self._units.values():
+            if available_node_ips is not None and unit.node_ip not in available_node_ips:
+                continue
             if node_ip is not None and unit.node_ip != node_ip:
                 continue
             tier = self._rules.tier(unit, demand)
@@ -156,14 +165,18 @@ class EnvUnitLedger:
             self._waiting.pop(session_id, None)
             return Admission(REJECT, reason=self._explain_too_big(demand, [u for _, u in eligible]))
 
-        for tier in sorted({t for t, _ in eligible}):
-            fitting = [u for t, u in eligible if t == tier and self._fits_now(u, demand, now)]
-            if not fitting:
-                continue
-            # Prefer CPU units to preserve GPU container slots, then use GPU units if needed.
-            unit = min(
+        fitting = [(tier, unit) for tier, unit in eligible if self._fits_now(unit, demand, now)]
+        if fitting:
+            # Command sessions may queue, but usable capacity elsewhere takes precedence.
+            _, unit = min(
                 fitting,
-                key=lambda u: (u.has_gpu and not demand.needs_gpu, self._load(u, demand, now), u.unit_id),
+                key=lambda item: (
+                    not self._gpu_fits_now(item[1], demand, now),
+                    item[0],
+                    item[1].has_gpu and not demand.needs_gpu,
+                    self._load(item[1], demand, now),
+                    item[1].unit_id,
+                ),
             )
             lease = EnvLease(
                 lease_id=f"{unit.unit_id}-{next(self._counter)}-{self._id_factory()}",
@@ -326,6 +339,8 @@ class EnvUnitLedger:
                     gpu_total_free_mb=unit.gpu_memory_mb - self._effective_gpu_mb(unit, now),
                     cpu_eligible=self._rules.tier(unit, cpu_probe) is not None,
                     gpu_eligible=unit.has_gpu and self._rules.tier(unit, gpu_probe) is not None,
+                    cpu_priority=self._rules.tier(unit, cpu_probe) or 0,
+                    gpu_priority=self._rules.tier(unit, gpu_probe) or 0,
                 )
             )
             containers_free = max(0, unit.max_containers - len(self._unit_leases(unit.unit_id)))
@@ -339,7 +354,15 @@ class EnvUnitLedger:
                 entry["gpu_free"] += (
                     containers_free if unit.gpu_reservation == "command" else min(containers_free, by_memory)
                 )
-        return {ip: NodeCapacity(**vals, units=tuple(resources.get(ip, ()))) for ip, vals in per_node.items()}
+        return {
+            ip: NodeCapacity(
+                **vals,
+                units=tuple(resources.get(ip, ())),
+                cpu_priority=min((c.cpu_priority for c in resources.get(ip, ()) if c.cpu_eligible), default=0),
+                gpu_priority=min((c.gpu_priority for c in resources.get(ip, ()) if c.gpu_eligible), default=0),
+            )
+            for ip, vals in per_node.items()
+        }
 
     # ------------------------------------------------------------------ arithmetic
 
@@ -398,7 +421,9 @@ class EnvUnitLedger:
             for lease in self._unit_leases(unit.unit_id)
             if lease.demand.needs_gpu and lease.gpu_active
         }
-        return accounted_gpu_memory_mb(measured or 0.0, reservations, owned_mb if measured is not None else None)
+        return accounted_gpu_memory_mb(
+            measured or 0.0, reservations, owned_mb if measured is not None else None
+        ) + unit.model_headroom_mb * len(unit.gpu_indices)
 
     def _could_ever_fit(self, unit: EnvUnit, demand: EnvDemand) -> bool:
         """Whether the demand fits an empty unit. If not, waiting would be forever."""
@@ -425,7 +450,7 @@ class EnvUnitLedger:
             if lease.demand.needs_gpu and lease.gpu_active
         ]
         return tuple(
-            measured.get(index, 0.0) + sum(values[position] for values in reservations)
+            measured.get(index, 0.0) + sum(values[position] for values in reservations) + unit.model_headroom_mb
             for position, index in enumerate(unit.gpu_indices)
         )
 
@@ -443,6 +468,10 @@ class EnvUnitLedger:
             return False
         if unit.gpu_reservation == "command":
             return self._could_ever_fit(unit, demand)
+        return self._gpu_fits_now(unit, demand, now)
+
+    def _gpu_fits_now(self, unit: EnvUnit, demand: EnvDemand, now: float) -> bool:
+        """Compare device headroom even when a command session may enter a queue."""
         if demand.needs_gpu and any(
             used + requested > capacity + _EPS
             for used, requested, capacity in zip(

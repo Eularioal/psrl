@@ -14,7 +14,7 @@ filters which units the router may grant.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -64,6 +64,7 @@ class NodeRules:
     train_rollout_node_ips: frozenset[str] = field(default_factory=frozenset)
     allow_node_ips: frozenset[str] = field(default_factory=frozenset)
     deny_node_ips: frozenset[str] = field(default_factory=frozenset)
+    train_rollout_gpu_indices: Mapping[str, frozenset[int]] = field(default_factory=dict)
 
     @classmethod
     def build(
@@ -72,16 +73,27 @@ class NodeRules:
         train_rollout_node_ips: Iterable[str] = (),
         allow_node_ips: Iterable[str] = (),
         deny_node_ips: Iterable[str] = (),
+        train_rollout_gpu_indices: Mapping[str, Iterable[int]] | None = None,
     ) -> NodeRules:
         return cls(
             policy=parse_policy(policy),
             train_rollout_node_ips=frozenset(train_rollout_node_ips),
             allow_node_ips=frozenset(allow_node_ips),
             deny_node_ips=frozenset(deny_node_ips),
+            train_rollout_gpu_indices={ip: frozenset(ids) for ip, ids in (train_rollout_gpu_indices or {}).items()},
         )
 
     def is_train_rollout(self, node_ip: str) -> bool:
-        return node_ip in self.train_rollout_node_ips
+        return node_ip in self.train_rollout_node_ips or node_ip in self.train_rollout_gpu_indices
+
+    def overlaps_train_rollout(self, unit: EnvUnit) -> bool:
+        """Treat unknown placement on a protected node conservatively."""
+        if unit.rollout_replica_rank is not None or unit.shared_rollout_replica_rank is not None:
+            return True
+        indices = self.train_rollout_gpu_indices.get(unit.node_ip)
+        if indices is None:
+            return self.is_train_rollout(unit.node_ip)
+        return not indices.isdisjoint(unit.gpu_indices)
 
     def node_allowed(self, node_ip: str) -> bool:
         """Whether the allow and deny lists permit this node at all."""
@@ -99,14 +111,19 @@ class NodeRules:
         """
         if not self.node_allowed(unit.node_ip):
             return None
-        if not self.is_train_rollout(unit.node_ip):
-            return 0
         if self.policy is NodePolicy.ANY:
             return 0
-        if self.policy is NodePolicy.CPU_ONLY:
-            return None if demand.needs_gpu and unit.rollout_replica_rank is None else 0
         if self.policy is NodePolicy.AVOID:
-            return None
+            return None if self.is_train_rollout(unit.node_ip) else 0
+        protected = self.overlaps_train_rollout(unit) if demand.needs_gpu else self.is_train_rollout(unit.node_ip)
+        if not protected:
+            return 0
+        if self.policy is NodePolicy.CPU_ONLY:
+            return (
+                None
+                if demand.needs_gpu and unit.rollout_replica_rank is None and unit.shared_rollout_replica_rank is None
+                else int(demand.needs_gpu and unit.shared_rollout_replica_rank is not None)
+            )
         return 1  # PREFER_OTHER
 
 
@@ -120,7 +137,7 @@ def lint_units(units: Sequence[EnvUnit], rules: NodeRules) -> list[str]:
     """
     warnings: list[str] = []
     for unit in units:
-        if not rules.is_train_rollout(unit.node_ip):
+        if not rules.overlaps_train_rollout(unit):
             continue
         if unit.rollout_replica_rank is not None:
             continue
@@ -178,9 +195,8 @@ def select_worker_nodes(
             )
         return others, f"policy=avoid removed {len(permitted) - len(others)} train/rollout node(s)"
     if rules.policy is NodePolicy.PREFER_OTHER:
-        if others:
-            return others, f"policy=prefer_other kept {len(others)} non-train/rollout node(s)"
-        return permitted, "policy=prefer_other found no other node, falling back to train/rollout nodes"
+        fallback = [(nid, ip) for nid, ip in permitted if rules.is_train_rollout(ip)]
+        return others + fallback, "policy=prefer_other retains fallback nodes for capacity based dispatch"
     return permitted, ""
 
 
@@ -257,3 +273,20 @@ def node_ips_from_worker_groups(
                 if ip:
                     ips.add(ip)
     return frozenset(ips)
+
+
+def gpu_placements_from_worker_groups(worker_groups, node_id_to_ip):
+    """Read every assigned device after GPU workers have initialized."""
+    placements = {}
+    for name, group in worker_groups.items():
+        if name.startswith("ps"):
+            continue
+        gpu_ids = group.execute_all_sync("get_runtime_gpu_ids")
+        node_ids = group.execute_all_sync("get_node_id")
+        devices = set()
+        for node_id, indices in zip(node_ids, gpu_ids, strict=True):
+            if node_id not in node_id_to_ip:
+                raise ValueError(f"GPU worker node {node_id!r} is absent from the live node inventory.")
+            devices.update((node_id_to_ip[node_id], int(index)) for index in indices)
+        placements[name] = frozenset(devices)
+    return placements

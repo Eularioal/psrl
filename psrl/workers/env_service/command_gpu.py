@@ -20,6 +20,9 @@ class CommandRequest:
     tag: str = ""
     telemetry: dict | None = None
     admission_memory: dict | None = None
+    shared_owner: str | None = None
+    shared_mode: str | None = None
+    baseline: dict | None = None
 
 
 class GpuCommandScheduler:
@@ -33,6 +36,11 @@ class GpuCommandScheduler:
         self.epochs: dict[str, int] = defaultdict(int)
         self.returns: dict[str, asyncio.Task] = {}
         self.return_timeout_s = 30.0
+        self.shared_servers = {}
+        self.shared_deadlines = {}
+        self.shared_max_command_s = 30.0
+        self.reuse_sleeping = True
+        self.shared_margin_mb = 1024
 
     def _lease(self, lease_id):
         lease = self.ledger._leases.get(lease_id)
@@ -78,54 +86,109 @@ class GpuCommandScheduler:
             # Full declared capacity cannot be rescued by telemetry, so avoid polling the device.
             if self.ledger._declared_gpu_mb(unit) + lease.demand.gpu_memory_mb > unit.gpu_memory_mb:
                 return {"status": "wait"}
-            node = await self.get_node(lease.node_ip)
-            commands = [
-                (r.lease_id, r.container_id, r.epoch)
-                for r in self.requests.values()
-                if r.unit_id == lease.unit_id and r.state in ("active", "returning")
-            ]
-            memory = await node.gpu_command_memory_snapshot.remote(self._node_indices(lease.node_ip), commands)
-            if self.ledger._leases.get(lease_id) is not lease or lease.unit_id in self.ledger._blocked_units:
-                raise RuntimeError("GPU command lease expired during telemetry.")
-            readings = memory["devices"]
-            self.ledger.report_measurement(lease.node_ip, {i: r["used_mb"] for i, r in readings.items()})
-            used = self.ledger._effective_gpu_mb(unit, self.ledger._clock(), memory["owned_mb"])
-            request.admission_memory = {
-                "effective_mb": used,
-                "owned_mb": memory["owned_mb"],
-                "attribution_errors": memory["attribution_errors"],
-            }
-            physical_capacity = sum(readings[index]["total_mb"] for index in lease.gpu_indices)
-            if used + lease.demand.gpu_memory_mb > min(unit.gpu_memory_mb, physical_capacity):
-                return {"status": "wait"}
-            device_used = (
-                (used,)
-                if len(unit.gpu_indices) == 1
-                else self.ledger._effective_gpu_by_device(unit, self.ledger._clock())
-            )
-            request.admission_memory["effective_per_device_mb"] = dict(zip(unit.gpu_indices, device_used))
-            if any(
-                occupied + requested > min(budget, readings[index]["total_mb"])
-                for index, occupied, requested, budget in zip(
-                    unit.gpu_indices, device_used, lease.demand.device_memory(unit), unit.gpu_memory_per_device_mb
-                )
-            ):
-                return {"status": "wait"}
-            self.epochs[lease_id] += 1
-            request.epoch = self.epochs[lease_id]
-            request.state = "enabling"
-            lease.gpu_active = True
             try:
-                await node.grant_gpu_command.remote(lease_id, container_id, lease.gpu_indices, request.epoch)
-                if self.ledger._leases.get(lease_id) is not lease:
-                    raise RuntimeError("GPU command lease expired during device activation.")
+                if unit.shared_rollout_replica_rank is not None:
+                    server = self.shared_servers[unit.unit_id]
+                    request.shared_owner = request_id
+                    request.shared_mode = await server.acquire_env_command.remote(request_id, self.reuse_sleeping)
+                    if request.shared_mode is None:
+                        request.shared_owner = None
+                        return {"status": "wait"}
+                result = await self._grant(lease, request, request_id, unit, lease_id, container_id)
+                if result["status"] == "wait":
+                    await self._release_model(request)
+                return result
             except BaseException:
                 request.state = "quarantined"
                 self.ledger.block_gpu_cleanup(lease_id, lease.unit_id)
                 raise
-            request.state = "active"
-            self.ledger._gpu_command_waiters.pop(request_id, None)
-            return {"status": "granted", "epoch": request.epoch}
+
+    async def _grant(self, lease, request, request_id, unit, lease_id, container_id):
+        node = await self.get_node(lease.node_ip)
+        commands = [
+            (r.lease_id, r.container_id, r.epoch)
+            for r in self.requests.values()
+            if r.unit_id == lease.unit_id and r.state in ("active", "returning")
+        ]
+        memory = await node.gpu_command_memory_snapshot.remote(self._node_indices(lease.node_ip), commands)
+        if self.ledger._leases.get(lease_id) is not lease or lease.unit_id in self.ledger._blocked_units:
+            raise RuntimeError("GPU command lease expired during telemetry.")
+        readings = memory["devices"]
+        request.baseline = readings
+        self.ledger.report_measurement(lease.node_ip, {i: r["used_mb"] for i, r in readings.items()})
+        used = self.ledger._effective_gpu_mb(unit, self.ledger._clock(), memory["owned_mb"])
+        headroom = max(0, unit.model_headroom_mb - self.shared_margin_mb) if request.shared_mode == "sleeping" else 0
+        used -= headroom * len(unit.gpu_indices)
+        request.admission_memory = {
+            "model_mode": request.shared_mode,
+            "model_headroom_per_device_mb": unit.model_headroom_mb - headroom,
+            "effective_mb": used,
+            "owned_mb": memory["owned_mb"],
+            "attribution_errors": memory["attribution_errors"],
+        }
+        physical_capacity = sum(readings[index]["total_mb"] for index in lease.gpu_indices)
+        if used + lease.demand.gpu_memory_mb > min(unit.gpu_memory_mb, physical_capacity):
+            return {"status": "wait"}
+        device_used = (
+            (used,)
+            if len(unit.gpu_indices) == 1
+            else tuple(x - headroom for x in self.ledger._effective_gpu_by_device(unit, self.ledger._clock()))
+        )
+        request.admission_memory["effective_per_device_mb"] = dict(zip(unit.gpu_indices, device_used))
+        if any(
+            occupied + requested > min(budget, readings[index]["total_mb"])
+            for index, occupied, requested, budget in zip(
+                unit.gpu_indices, device_used, lease.demand.device_memory(unit), unit.gpu_memory_per_device_mb
+            )
+        ):
+            return {"status": "wait"}
+        self.epochs[lease_id] += 1
+        request.epoch = self.epochs[lease_id]
+        request.state = "enabling"
+        lease.gpu_active = True
+        try:
+            await node.grant_gpu_command.remote(lease_id, container_id, lease.gpu_indices, request.epoch)
+            if self.ledger._leases.get(lease_id) is not lease:
+                raise RuntimeError("GPU command lease expired during device activation.")
+        except BaseException:
+            request.state = "quarantined"
+            self.ledger.block_gpu_cleanup(lease_id, lease.unit_id)
+            raise
+        request.state = "active"
+        self.ledger._gpu_command_waiters.pop(request_id, None)
+        if request.shared_owner:
+            self.shared_deadlines[request_id] = asyncio.create_task(self._expire_shared(lease, request_id, request))
+        return {"status": "granted", "epoch": request.epoch}
+
+    async def _release_model(self, request):
+        if request.shared_owner:
+            await self.shared_servers[request.unit_id].release_env_command.remote(request.shared_owner)
+            task = self.shared_deadlines.pop(request.shared_owner, None)
+            if task is not None and task is not asyncio.current_task():
+                task.cancel()
+            request.shared_owner = None
+
+    async def _expire_shared(self, lease, request_id, request):
+        """Bound model control delay by removing only the timed out environment lease."""
+        await asyncio.sleep(self.shared_max_command_s)
+        async with self.locks[lease.unit_id]:
+            if request.state not in ("active", "returning") or not request.shared_owner:
+                return
+            lease.gpu_closing = True
+            request.state = "quarantined"
+            request.error = "Shared GPU command exceeded its service deadline."
+            self.ledger.block_gpu_cleanup(lease.lease_id, lease.unit_id)
+            try:
+                node = await self.get_node(lease.node_ip)
+                async with asyncio.timeout(self.return_timeout_s):
+                    await node.remove_gpu_lease.remote(lease.lease_id)
+                    await node.confirm_gpu_return.remote(
+                        lease.gpu_indices, request.baseline, self.ledger._units[lease.unit_id].model_headroom_mb
+                    )
+                    await self._release_model(request)
+                lease.gpu_active = False
+            except Exception as exc:
+                request.error += f" Cleanup unconfirmed: {exc!r}."
 
     def return_status(self, lease_id, request_id, epoch):
         """Read an owned command without allowing a stale acknowledgement to change state."""
@@ -166,6 +229,7 @@ class GpuCommandScheduler:
                     raise RuntimeError("GPU command lease expired during return.")
                 self.ledger.report_measurement(lease.node_ip, {i: r["used_mb"] for i, r in readings.items()})
                 request.telemetry = next(iter(readings.values())).get("task_telemetry")
+                await self._release_model(request)
                 lease.gpu_active = False
                 request.returned_at = time.time()
                 request.state = "completed"
@@ -266,6 +330,13 @@ class GpuCommandScheduler:
             readings = await node.gpu_lending_snapshot.remote(self._node_indices(unit.node_ip))
             self.ledger.report_measurement(unit.node_ip, {i: r["used_mb"] for i, r in readings.items()})
             for key in [key for key, request in self.requests.items() if request.lease_id == lease_id]:
+                request = self.requests[key]
+                if request.shared_owner:
+                    if request.baseline is not None:
+                        await node.confirm_gpu_return.remote(
+                            unit.gpu_indices, request.baseline, unit.model_headroom_mb
+                        )
+                    await self._release_model(request)
                 del self.requests[key]
                 self.returns.pop(key, None)
                 self.ledger._gpu_command_waiters.pop(key, None)

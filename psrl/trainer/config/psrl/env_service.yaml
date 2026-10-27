@@ -52,11 +52,8 @@ telemetry:
   timeout_s: 8
   max_age_s: 15
 
-# How episode containers treat nodes that host train, rollout, validation or reward-model GPUs.
-#   any           no restriction (the behaviour before this service existed)
-#   cpu_only      CPU episodes and explicitly bound rollout lending units only on those nodes
-#   avoid         no container at all on those nodes; agent loop workers stay off them too
-#   prefer_other  like avoid, but spill onto those nodes when no other node can take the episode
+# cpu_only permits independent GPUs and explicit lending. Unknown placement stays protected.
+# prefer_other prioritizes independent GPUs. It does not authorize safe sharing with active models.
 node_policy: cpu_only
 
 # Nodes that host train, rollout, validation or reward-model GPUs. Empty means "derive it from
@@ -101,3 +98,9 @@ gpu_lending:
   max_env_phase_s: 300
   return_tolerance_mb: 16
   safety_margin_mb: 1024
+
+# Shared commands retain profiled inference headroom and never initiate model sleep.
+gpu_sharing:
+  safety_margin_mb: 1024
+  max_command_s: 30
+  reuse_sleeping: true
