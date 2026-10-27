@@ -108,7 +108,7 @@ async def check_case(args, name, token):
             ),
         )
         assert evidence["before_wait"]["containers"] == evidence["while_blocked"]["containers"]
-        assert evidence["while_blocked"]["snapshot"][0]["containers_running"] < unit["max_containers"]
+        assert evidence["while_blocked"]["snapshot"][0]["leases_active"] < unit["max_containers"]
         if gpu:
             evidence["cuda_results"] = [r.model_dump() for r in await asyncio.gather(*commands)]
             assert all(r["return_code"] == 0 for r in evidence["cuda_results"])

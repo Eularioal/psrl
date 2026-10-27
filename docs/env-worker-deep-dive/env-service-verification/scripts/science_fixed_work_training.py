@@ -53,6 +53,7 @@ def prepare(args, out):
         "sciaccel/laps-repair-coef-2d-rktmod-l18k4",
         "sciaccel/laps-repair-subtle-2d-rktmod-l18k3",
     ]
+    names = names[: args.task_count]
     selected = frame.set_index("task_name").loc[names].reset_index()
     for i, row in selected.iterrows():
         info = dict(row.extra_info)
@@ -96,15 +97,16 @@ def prepare(args, out):
                 ),
                 "task_names": names,
                 "steps_per_arm": args.steps,
-                "batch_size": 4,
+                "batch_size": args.task_count,
                 "rollout_n": args.rollout_n,
-                "task_pools": 4,
-                "accepted_rollouts": 4 * args.rollout_n * args.steps,
+                "task_pools": args.task_count,
+                "accepted_rollouts": args.task_count * args.rollout_n * args.steps,
                 "max_attempts_per_slot": 12,
                 "common_active_attempt_limit": 4,
                 "model_gpus": [0, 1, 2],
                 "environment_gpus": args.environment_gpus,
-                "unit_budget_mib": 81920,
+                "unit_budget_mib": args.unit_budget_gib * 1024,
+                "resident_pressure_gib": args.resident_gib,
                 "task_demand_mib": (args.pressure_gib + 1) * 1024,
                 "max_containers_per_unit": 4,
                 "timeout_per_arm_s": args.timeout,
@@ -120,7 +122,7 @@ def prepare(args, out):
                 "data_shuffle": False,
                 "device_mapping": {str(i): dataclasses.asdict(devices[i]) for i in args.environment_gpus},
                 "stopping_rule": (
-                    f"{4 * args.rollout_n * args.steps} non-OOM graded rollouts, "
+                    f"{args.task_count * args.rollout_n * args.steps} non-OOM graded rollouts, "
                     f"{args.steps} GRPO steps, or the recorded phase time budgets. "
                     "Failures are not completion."
                 ),
@@ -158,7 +160,7 @@ def build_agent_configs(args, out, mode):
             "task_timeout_sec": args.task_timeout,
             "verifier_timeout_sec": 900,
         }
-        for i in range(4)
+        for i in range(getattr(args, "task_count", 4))
     ]
     if args.workload == "native":
         for config in agent:
@@ -170,12 +172,56 @@ def build_agent_configs(args, out, mode):
     return agent
 
 
+def prewarm_tasks(out):
+    """Warm task images and verify container CUDA before model initialization."""
+    evidence = []
+    token = uuid.uuid4().hex[:8]
+    tags = []
+    name = f"resident-smoke-{token}"
+    try:
+        with (out / "prewarm.log").open("w") as log:
+            for index, task in enumerate(sorted((out / "tasks").iterdir())):
+                for part in ("environment", "tests"):
+                    tag = f"psrl-resident-prewarm-{token}-{index}-{part}:latest"
+                    tags.append(tag)
+                    started = time.time()
+                    subprocess.run(
+                        ["docker", "build", "--pull=false", "-t", tag, str(task / part)],
+                        stdout=log,
+                        stderr=subprocess.STDOUT,
+                        timeout=180,
+                        check=True,
+                    )
+                    evidence.append({"task": task.name, "part": part, "seconds": time.time() - started})
+                    if index == 0 and part == "environment":
+                        overlay = yaml.safe_load((out / "gpu-overlay.yaml").read_text())["services"]["main"]
+                        command = ["docker", "run", "--rm", "--name", name]
+                        for field, option in (
+                            ("devices", "--device"),
+                            ("volumes", "--volume"),
+                            ("environment", "--env"),
+                        ):
+                            for value in overlay[field]:
+                                command.extend([option, value])
+                        command.extend(
+                            [tag, "python3", "/opt/verification/cuda_pressure.py", "--gib", "1", "--hold", "0"]
+                        )
+                        result = subprocess.run(command, capture_output=True, text=True, timeout=45, check=True)
+                        evidence.append({"container_cuda": json.loads(result.stdout)})
+    finally:
+        subprocess.run(["docker", "rm", "-f", name], capture_output=True, timeout=15, check=False)
+        if tags:
+            subprocess.run(["docker", "image", "rm", *tags], capture_output=True, timeout=30, check=False)
+        (out / "prewarm.json").write_text(json.dumps(evidence, indent=2))
+
+
 def run_arm(args, out, mode, device):
     arm = out / mode
     arm.mkdir()
     evidence = {"mode": mode, "started_at": time.time(), "budget_seconds": args.timeout}
     token = uuid.uuid4().hex[:8]
     child = None
+    resident = None
     owned = {}
     try:
         agent = build_agent_configs(args, out, mode)
@@ -183,6 +229,16 @@ def run_arm(args, out, mode, device):
         evidence["gpu_baseline"] = baseline
         selected = {0, 1, 2, *args.environment_gpus}
         require_idle_gpus(baseline, selected)
+        if args.resident_gib:
+            from resident_gpu_pressure import ResidentPressure
+
+            resident = ResidentPressure(
+                args.environment_gpus[0],
+                args.resident_gib,
+                arm,
+                (args.initialization_timeout + args.work_timeout or args.timeout) + 180,
+            )
+            evidence["resident_pressure"] = resident.start()
         info = ray.init(
             address="local",
             num_cpus=32,
@@ -220,7 +276,7 @@ def run_arm(args, out, mode, device):
             OUTPUT_DIR=str(arm),
             DATA_DIR=str(out / "data"),
             HINT_LEVEL="L1",
-            TRAIN_BATCH_SIZE="4",
+            TRAIN_BATCH_SIZE=str(args.task_count),
             TOTAL_TRAINING_STEPS=str(args.steps),
             MAX_RESPONSE_LENGTH=str(args.response_length),
             MAX_TOKENS_PER_GPU=str(args.response_length + 2048),
@@ -252,7 +308,7 @@ def run_arm(args, out, mode, device):
             "gen_actor_rollout_ref.rollout.agent.retry_limit=1",
             "gen_actor_rollout_ref.rollout.agent.raise_on_error=True",
             "psrl.agentic_rl.refill_failure_threshold=1",
-            "psrl.staleness_buffer_entries=4",
+            f"psrl.staleness_buffer_entries={args.task_count}",
             "psrl.deployment.n_rollout_instances=1",
             "psrl.deployment.rollout_nnodes_per_instance=1",
             "psrl.deployment.rollout_ngpus_per_node_per_instance=1",
@@ -271,7 +327,7 @@ def run_arm(args, out, mode, device):
                 + ",".join(
                     (
                         f"{{unit_id:pressure-{i},node_ip:{args.node_ip},cpu_quota:16,memory_mb:32768,"
-                        f"gpu_indices:[{i}],gpu_memory_mb:81920,max_containers:4,"
+                        f"gpu_indices:[{i}],gpu_memory_mb:{args.unit_budget_gib * 1024},max_containers:4,"
                         f"gpu_reservation:{'command' if mode == 'command' else 'episode'}}}"
                     )
                     for i in args.environment_gpus
@@ -350,6 +406,8 @@ def run_arm(args, out, mode, device):
                 deadline = time.monotonic() + args.initialization_timeout
             router = None
             while child.poll() is None and time.monotonic() < deadline:
+                if resident is not None and resident.process.poll() is not None:
+                    raise RuntimeError("Resident pressure exited before training completed.")
                 if phase == "initialization":
                     markers = list(arm.glob("pool-*/slot-starts/*.json"))
                     if markers:
@@ -398,6 +456,8 @@ def run_arm(args, out, mode, device):
         if child is not None and child.poll() is None:
             os.killpg(child.pid, 15)
             child.wait(timeout=20)
+        if resident is not None:
+            evidence["resident_cleanup"] = resident.stop()
         ray.shutdown()
         leftovers = []
         for pid, created in owned.items():
@@ -492,6 +552,7 @@ def save_sources(args):
         "science_pressure_audit.py",
         "science_native_workload.py",
         "cuda_pressure.py",
+        "resident_gpu_pressure.py",
     ):
         (snapshot / filename).write_bytes(Path(__file__).with_name(filename).read_bytes())
     (args.output / "sources.json").write_text(json.dumps(sources, indent=2))
@@ -558,6 +619,9 @@ if __name__ == "__main__":
     parser.add_argument("--rollout-n", type=int, default=4)
     parser.add_argument("--pressure-gib", type=int, default=50)
     parser.add_argument("--pressure-hold", type=float, default=45)
+    parser.add_argument("--resident-gib", type=int, default=0)
+    parser.add_argument("--unit-budget-gib", type=int, default=80)
+    parser.add_argument("--task-count", type=int, choices=range(1, 5), default=4)
     parser.add_argument("--response-length", type=int, default=32768)
     parser.add_argument("--timeout", type=int, default=3600)
     parser.add_argument("--initialization-timeout", type=int, default=0)
@@ -567,9 +631,14 @@ if __name__ == "__main__":
     parser.add_argument("--turns", type=int, default=16)
     parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--prepare-only", action="store_true")
+    parser.add_argument("--prewarm", action="store_true")
     parser.add_argument("--workload", choices=["cuda-pressure", "native"], default="cuda-pressure")
     parser.add_argument("--modes", nargs="+", default=["off", "on"])
     args = parser.parse_args()
+    if args.resident_gib < 0 or args.unit_budget_gib <= 0:
+        parser.error("Resident pressure must be nonnegative and the unit budget must be positive.")
+    if args.workload == "native" and (args.resident_gib or args.task_count != 4):
+        parser.error("Resident pressure and reduced task counts require the CUDA workload.")
     if args.workload == "native":
         if any(mode not in ("off", "on") for mode in args.modes):
             parser.error("Native CPU tasks use off/on modes without GPU command reservations.")
@@ -581,6 +650,8 @@ if __name__ == "__main__":
     save_sources(args)
     validate_reward_config()
     device = prepare(args, args.output)
+    if args.prewarm:
+        prewarm_tasks(args.output)
     if args.prepare_only:
         raise SystemExit(0)
     codes = []

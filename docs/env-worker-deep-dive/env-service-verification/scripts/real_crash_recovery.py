@@ -63,7 +63,7 @@ class LeaseOwner:
 
 
 class CrashWorker(PSRL_AgentLoopWorker.__ray_metadata__.modified_class):
-    """Keep the real worker constructor/reaper; add only a fixture launch method."""
+    """Keep the real worker constructor/reaper and add only a fixture launch method."""
 
     async def start_crash_fixture(self, router, task, out, token):
         self.fixture_client = EnvServiceClient(router, ray.util.get_node_ip_address(), heartbeat_interval_s=1)
@@ -189,7 +189,7 @@ async def main(args):
             snapshot=await snapshot(router),
             containers=inspect_ids(docker("ps", "-aq", "--filter", f"label=psrl.env_lease={lease_id}").split()),
         )
-        assert after_ttl["snapshot"][0]["containers_running"] == 0
+        assert after_ttl["snapshot"][0]["leases_active"] == 0
         if args.expect_fixed:
             assert not after_ttl["containers"], "Expired containers must be reaped without a new acquire."
         else:
@@ -259,7 +259,7 @@ async def main(args):
             await asyncio.sleep(1)
         assert verifier_id, "Separate verifier must be running before the crash."
         evidence["before_worker_kill"] = rows
-        print(f"Real worker is alive with {len(rows)} Harbor containers; killing actor now.", flush=True)
+        print(f"Real worker is alive with {len(rows)} Harbor containers. Killing actor now.", flush=True)
         killed_at = time.monotonic()
         ray.kill(worker, no_restart=True)
         for _ in range(15):
@@ -276,7 +276,7 @@ async def main(args):
             ),
             tagged_containers_remaining=any(r["labels"].get("psrl.actor_id") == info["actor_label"] for r in rows),
             unlabelled_containers_survive=bool(evidence["after_lease_cleanup"]),
-            lease_released=(await snapshot(router))[0]["containers_running"] == 0,
+            lease_released=(await snapshot(router))[0]["leases_active"] == 0,
         )
         assert not evidence["findings"]["tagged_containers_remaining"]
         assert evidence["findings"]["lease_released"]

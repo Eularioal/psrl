@@ -26,7 +26,7 @@ def main():
     assert retry.status == "granted"
     for session in ("large-1", "large-2", "large-3"):
         ledger.release_session(session)
-    assert ledger.snapshot()[0].containers_running == 0
+    assert ledger.snapshot()[0].leases_active == 0
     print(
         json.dumps(
             {
@@ -36,7 +36,7 @@ def main():
                 "smaller_task_admission": small.status,
                 "after_smaller_task": after,
                 "large_retry_after_release": retry.status,
-                "final_active_leases": ledger.snapshot()[0].containers_running,
+                "final_active_leases": ledger.snapshot()[0].leases_active,
             },
             indent=2,
         )

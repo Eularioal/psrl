@@ -112,7 +112,7 @@ async def run(args):
         "status": "running",
         "unit_id": unit_id,
         "budget": {"gpus": 1, "docker_rounds": 2, "model_max_tokens": 16, "work_timeout_s": 480},
-        "boundary": "Real Ray, EnvRouter, lease, node checks, Harbor Docker and vLLM. No training, NIXL or SMG routing.",
+        "boundary": "Real Ray, EnvRouter, leases, node checks, Harbor Docker and vLLM. No training, NIXL or SMG.",
         "events": [],
     }
     observer = GpuLendingNodeMixin()
@@ -224,7 +224,7 @@ async def run(args):
             assert check.return_code == 0 and "file-preserved" in check.stdout, "Container state was lost."
         await handle.release()
         evidence["snapshot_after_release"] = [dataclasses.asdict(x) for x in await router.snapshot.remote()]
-        assert all(x["containers_running"] == 0 for x in evidence["snapshot_after_release"]), "Lease leaked."
+        assert all(x["leases_active"] == 0 for x in evidence["snapshot_after_release"]), "Lease leaked."
         await record("released_model_awake")
         evidence["status"] = "passed"
 

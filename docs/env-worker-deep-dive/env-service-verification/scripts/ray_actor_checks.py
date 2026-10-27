@@ -70,15 +70,15 @@ check(
 snap = ray.get(router.snapshot.remote())
 check(
     "snapshot over Ray serialises dataclasses and agrees",
-    snap[0].containers_running == 4,
-    f"running={snap[0].containers_running}/{snap[0].max_containers}",
+    snap[0].leases_active == 4,
+    f"running={snap[0].leases_active}/{snap[0].max_containers}",
 )
 
 # 2. Release frees capacity.
 first_lease = ray.get(router.try_admit.remote(granted_session, EnvDemand(cpu=1.0), node_ip)).lease
 check(
     "repeat admission of an already-granted session returns its lease, not a new slot",
-    first_lease is not None and ray.get(router.snapshot.remote())[0].containers_running == 4,
+    first_lease is not None and ray.get(router.snapshot.remote())[0].leases_active == 4,
 )
 check("release over Ray", ray.get(router.release.remote(first_lease.lease_id)) is True)
 again = ray.get(router.try_admit.remote("late", EnvDemand(cpu=1.0), node_ip))
@@ -92,7 +92,7 @@ check(
     repr(rej.reason)[:80],
 )
 
-# 4. Heartbeat keeps a lease alive past the TTL; silence loses it within TTL + reaper interval.
+# 4. Heartbeat keeps a lease alive past the TTL. Silence loses it within TTL + reaper interval.
 ttl = 3
 r2 = create_env_router(cfg("ttl", ttl=ttl))
 lease = ray.get(r2.try_admit.remote("hb", EnvDemand(cpu=1.0), node_ip)).lease
@@ -105,10 +105,10 @@ while time.time() - t0 < 2 * ttl:
     time.sleep(1.0)
 check(
     "heartbeating lease survives 2x TTL",
-    alive and ray.get(r2.snapshot.remote())[0].containers_running == 1,
+    alive and ray.get(r2.snapshot.remote())[0].leases_active == 1,
     f"elapsed={time.time() - t0:.1f}s ttl={ttl}s",
 )
-while ray.get(r2.snapshot.remote())[0].containers_running != 0 and time.time() - t_last < 30:
+while ray.get(r2.snapshot.remote())[0].leases_active != 0 and time.time() - t_last < 30:
     time.sleep(0.25)
 silent_s = time.time() - t_last
 check(
@@ -116,11 +116,11 @@ check(
     ttl < silent_s < ttl + 1.0 + 0.75,
     f"reclaimed {silent_s:.2f}s after the last heartbeat (ttl={ttl}s, reaper tick=1s)",
 )
-reaped = ray.get(r2.pop_reaped.remote(node_ip))
-check(
-    "pop_reaped hands the node its orphan once",
-    [l.lease_id for l in reaped] == [lease.lease_id] and ray.get(r2.pop_reaped.remote(node_ip)) == [],
-)
+reaped = ray.get(r2.pending_reaped.remote(node_ip))
+check("pending cleanup retains its orphan", [item.lease_id for item in reaped] == [lease.lease_id])
+check("cleanup is redelivered until acknowledged", ray.get(r2.pending_reaped.remote(node_ip)) == reaped)
+ray.get(r2.acknowledge_reaped.remote(node_ip, lease.lease_id))
+check("acknowledged cleanup is retired", ray.get(r2.pending_reaped.remote(node_ip)) == [])
 check("heartbeat on a reclaimed lease returns False", ray.get(r2.heartbeat.remote(lease.lease_id)) is False)
 
 # 5. Named actor reuse and client construction from config.

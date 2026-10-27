@@ -77,15 +77,15 @@ def gate_a_cases():
     ledger.release(a.lease.lease_id)
     assert ledger.try_admit("B", demand(50), unit.node_ip).status == "granted"
 
-    # Diagram A: Total telemetry cannot separate an owner's unused reservation from foreign use.
+    # Diagram A: Unknown ownership retains every reservation alongside measured usage.
     ledger = EnvUnitLedger([unit], rules)
     ledger.try_admit("A", demand(50), unit.node_ip)
     ledger.report_measurement(unit.node_ip, {0: 40 * gib})
     foreign_case = ledger.try_admit("B", demand(30), unit.node_ip)
-    assert foreign_case.status == "granted"
+    assert foreign_case.status == "wait"
     return {
         "known_demands": {"first": a.status, "second": b.status, "after_release": "granted"},
-        "foreign_usage_teaching_counterexample": {
+        "foreign_usage_conservative_admission": {
             "capacity_gib": 80,
             "A_declared_gib": 50,
             "A_actual_now_gib": 20,

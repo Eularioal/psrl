@@ -46,7 +46,7 @@ async def main():
     assert all(x.status == "granted" for x in retried)
     for item in retried:
         ledger.release(item.lease.lease_id)
-    assert all(s.containers_running == 0 for s in ledger.snapshot())
+    assert all(s.leases_active == 0 for s in ledger.snapshot())
     print(
         json.dumps(
             {

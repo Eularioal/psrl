@@ -4,13 +4,13 @@ Before/after conflict experiment on real H20 memory.
 Each "episode" is a process that really allocates `--gib` GiB on the card it is given and
 holds it for `--hold` seconds. What differs between scenarios is only HOW a card is chosen:
 
-  A  static    c00354c: every GPU episode mounts the static override -> always /dev/nvidia0
-  B  gate      72ca50c: real GpuDeviceGate, one episode per whole card
-  C  service   00db595: real EnvRouter Ray actor + EnvServiceClient, containers share a card
-  D1 service   a stranger holds 80 GiB on the card; the client reports real nvidia-smi
-  D2 service   same stranger, but the client reports nothing (declared-only accounting)
+A static c00354c: every GPU episode mounts the static override -> always /dev/nvidia0
+B gate 72ca50c: real GpuDeviceGate, one episode per whole card
+C service 00db595: real EnvRouter Ray actor + EnvServiceClient, containers share a card
+D1 service a stranger holds 80 GiB on the card and the client reports real nvidia-smi
+D2 service same stranger, but the client reports nothing (declared-only accounting)
 
-Run A/B with PYTHONPATH pointing at the matching source tree; C/D with the new tree.
+Run A/B with PYTHONPATH pointing at the matching source tree and C/D with the new tree.
 """
 
 import argparse
@@ -215,7 +215,7 @@ async def scenario_c(n, gib, hold):
         records = await asyncio.gather(*(service_episode(client, i, gib, hold) for i in range(n)))
         await sampler.stop()
         snap = await router.snapshot.remote()
-        leftover = sum(s.containers_running for s in snap)
+        leftover = sum(s.leases_active for s in snap)
         return report(
             "C env service, real Ray actor (00db595)", list(records), sampler, t0, {"leases_left_after": leftover}
         )

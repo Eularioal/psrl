@@ -1,7 +1,7 @@
 """Audit the requested Git baseline and replay admission on CPU, without Docker.
 
 The old semaphore function is extracted unchanged from its AST. Separate global
-namespaces represent two worker processes; this does not replay a Ray deployment.
+namespaces represent two worker processes. This does not replay a Ray deployment.
 Current admission calls the production EnvUnitLedger. No CUDA OOM is simulated.
 """
 
@@ -20,7 +20,7 @@ REPO = next(parent for parent in Path(__file__).resolve().parents if (parent / "
 REV = "0eeead861ffafed6bf31c962d259fd847775dcf9"
 sys.path.insert(0, str(REPO))
 
-from psrl.workers.env_service import EnvDemand, EnvUnit, EnvUnitLedger, NodeRules
+from psrl.workers.env_service import EnvDemand, EnvUnit, EnvUnitLedger, NodeRules  # noqa: E402
 
 
 def git(*args):
@@ -94,7 +94,7 @@ def main():
     for d in later:
         ledger.release(d.lease.lease_id)
     current["after_release"] = [d.status for d in later]
-    assert all(s.containers_running == 0 for s in ledger.snapshot())
+    assert all(s.leases_active == 0 for s in ledger.snapshot())
 
     matched_path = args.output.parent / "matched-comparison.json"
     matched = json.loads(matched_path.read_text())

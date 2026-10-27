@@ -44,7 +44,7 @@ class UnifiedGpuAgent(NopAgent):
                 assert reservation["capacity_released"] == (spec["mode"] == "command")
                 units = [dataclasses.asdict(unit) for unit in await router.snapshot.remote()]
                 record.setdefault("after_job_units", []).append(units)
-                assert sum(unit["containers_running"] for unit in units) == 1
+                assert sum(unit["leases_active"] for unit in units) == 1
                 declared = sum(unit["declared_gpu_memory_mb"] for unit in units)
                 assert (declared > 0) == (spec["mode"] == "episode")
                 if index == 0:
