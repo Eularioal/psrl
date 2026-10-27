@@ -227,6 +227,8 @@ class GpuCommandScheduler:
             async with self.locks[request.unit_id]:
                 if self.ledger._leases.get(lease.lease_id) is not lease:
                     raise RuntimeError("GPU command lease expired during return.")
+                if request.state != "returning":
+                    raise RuntimeError("GPU command was quarantined before return completed.")
                 self.ledger.report_measurement(lease.node_ip, {i: r["used_mb"] for i, r in readings.items()})
                 request.telemetry = next(iter(readings.values())).get("task_telemetry")
                 await self._release_model(request)

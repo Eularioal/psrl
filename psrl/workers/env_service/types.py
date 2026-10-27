@@ -23,9 +23,9 @@ class EnvUnit:
     """
     One allocatable resource bundle on one node.
 
-    A unit owns whole GPU devices outright and shares them among every container it
-    hosts, so several containers may sit on one card as long as their summed device
-    memory fits `gpu_memory_mb`. Episode reservations retain this budget until cleanup.
+    A unit declares GPU devices and shares its budget among the containers it
+    hosts. Explicit rollout sharing also reserves model headroom. Summed device
+    memory must fit `gpu_memory_mb`. Episode reservations retain this budget until cleanup.
     Command reservations charge it only while a fenced GPU command is active. Host
     resources remain reserved for the container lifetime in both modes.
 

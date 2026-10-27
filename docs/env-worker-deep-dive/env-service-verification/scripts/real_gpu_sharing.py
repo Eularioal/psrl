@@ -82,7 +82,9 @@ async def run(args):
         profiles = await server.collective_rpc.remote("env_sharing_profile")
         headroom = max(p["transient_mb"] for p in profiles) + 2048
         capacity = math.ceil(resident[0]["used_mb"] + headroom + 1024)
-        evidence.update(resident=resident, profiles=profiles, model_headroom_mb=headroom, unit_capacity_mb=capacity)
+        evidence.update(
+            resident_snapshot=resident, profiles=profiles, model_headroom_mb=headroom, unit_capacity_mb=capacity
+        )
         config = {
             "node_policy": "prefer_other",
             "slot_ttl_s": 120,

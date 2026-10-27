@@ -99,17 +99,35 @@ async def test_failed_cleanup_keeps_model_fenced():
 
 @pytest.mark.asyncio
 async def test_deadline_removes_only_own_lease_before_model_return():
-    _, scheduler, node, (lease, _, _), model = shared_setup()
+    ledger, scheduler, node, (lease, _, _), model = shared_setup()
     model.sleeping = True
     scheduler.shared_max_command_s = 0.01
     node.confirm_gpu_return = AsyncMock()
     await scheduler.acquire(lease.lease_id, "c", "r")
     await asyncio.wait_for(scheduler.shared_deadlines["r"], 1)
     assert not node.active and not model._gpu_control.shared_commands, "Deadline must physically release first."
-    assert lease.gpu_closing, "A timed out environment must not accept more work."
+    assert ledger._leases[lease.lease_id].gpu_closing, "A timed out environment must not accept more work."
     node.confirm_gpu_return.assert_awaited_once()
 
 
 def test_shared_units_require_command_scope_and_explicit_margin():
     with pytest.raises(ValueError, match="command mode"):
         EnvUnit("u", "n", 1, 100, (0,), 1, 100, shared_rollout_replica_rank=0)
+
+
+@pytest.mark.asyncio
+async def test_late_return_cannot_turn_quarantine_into_success():
+    _, scheduler, node, (lease, _, _), model = shared_setup()
+    model.sleeping = True
+    grant = await scheduler.acquire(lease.lease_id, "c", "r")
+    node.return_gate = asyncio.Event()
+    returning = asyncio.create_task(scheduler.release(lease.lease_id, "r", grant["epoch"]))
+    await node.return_started.wait()
+    scheduler.requests["r"].state = "quarantined"
+    node.return_gate.set()
+    with pytest.raises(RuntimeError, match="quarantined"):
+        await returning
+    assert model._gpu_control.shared_commands, "A late acknowledgement must not clear a failure fence."
+    node.confirm_gpu_return = AsyncMock()
+    await scheduler.finish(lease.lease_id, lease.unit_id)
+    assert not model._gpu_control.shared_commands, "Verified lease cleanup must release the failure fence."
