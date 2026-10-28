@@ -11,7 +11,9 @@ import subprocess
 import time
 import uuid
 from dataclasses import replace
+from pathlib import Path
 
+from psrl.workers.env_worker.process import ProcessResult, run_process
 from psrl.workers.env_worker.sandbox import ExecResult, SandboxSpec, build_docker_run_argv
 from psrl.workers.env_worker.shell import parse_sentinel, truncate_observation, wrap_command
 
@@ -340,6 +342,58 @@ class EnvWorker:
             except BaseException:
                 await self.destroy_sandbox(sandbox_id)
                 raise
+
+    def container_name(self, sandbox_id: str) -> str:
+        """Resolve only an open sandbox owned by this worker."""
+        if sandbox_id in self._closing or sandbox_id not in self._container_names:
+            raise RuntimeError("Sandbox is absent or closing.")
+        return self._container_names[sandbox_id]
+
+    async def exec_process(
+        self,
+        sandbox_id: str,
+        command: str,
+        timeout_s: float | None = None,
+        cwd: str | None = None,
+        env: dict[str, str] | None = None,
+        user: str | int | None = None,
+        output_callback=None,
+    ) -> ProcessResult:
+        """Execute in a fresh shell and destroy the sandbox on uncertain command completion."""
+        argv = ["docker", "exec"]
+        if cwd is not None:
+            argv.extend(["--workdir", cwd])
+        if user is not None:
+            argv.extend(["--user", str(user)])
+        for key, value in sorted((env or {}).items()):
+            argv.extend(["--env", f"{key}={value}"])
+        argv.extend([self.container_name(sandbox_id), "/bin/bash", "-c", command])
+        self._last_used_at[sandbox_id] = time.monotonic()
+        try:
+            result = await run_process(
+                argv, self.exec_default_timeout_s if timeout_s is None else timeout_s, output_callback=output_callback
+            )
+            self._last_used_at[sandbox_id] = time.monotonic()
+            return result
+        except BaseException:
+            cleanup = asyncio.create_task(self.destroy_sandbox(sandbox_id))
+            try:
+                await asyncio.shield(cleanup)
+            except asyncio.CancelledError:
+                await cleanup
+            raise
+
+    async def copy_path(self, sandbox_id: str, host_path: str, container_path: str, upload: bool) -> None:
+        """Transfer a file or directory through the same owned container lifecycle."""
+        container = self.container_name(sandbox_id)
+        local = str(Path(host_path).resolve())
+        if upload and host_path.endswith("/."):
+            local += "/."
+        remote = f"{container}:{container_path}"
+        source, target = (local, remote) if upload else (remote, local)
+        result = await run_process(["docker", "cp", source, target], 30)
+        if result.return_code:
+            raise RuntimeError(f"Sandbox file transfer failed: {result.stderr!r}.")
 
     async def read_file(self, sandbox_id: str, path: str) -> bytes:
         """Copy one file out of a sandbox via docker exec."""

@@ -14,6 +14,7 @@
 |---|---|
 | [EnvRouter 当前流程与优化总览](env-router-current-flow.md) | 首读入口。串联任务放置、命令借还、预热和清理，区分现有流程与通用接入提案。 |
 | [Worker 重试、整组补采与重派发](worker-retry-and-redispatch.md) | 区分已有恢复和同请求跨 worker 转移，解释执行监督、熔断修复与真实进程死亡实验。 |
+| [EnvWorker 与 Harbor 共用容器后端](native-harbor-backend.md) | 容器生命周期复用、两种 shell 语义及真实 Harbor oracle 验证，明确 CPU 原型与 science GPU 路径的边界。 |
 | [GPU 统一执行后端](unified-gpu-execution.md) | episode 与 command 的提交、等待、取消和收尾，附组件验证及原生 science 验收边界。 |
 | [GPU 作业入口与任务遥测](gpu-jobs-and-task-telemetry.md) | 作业状态、资源归属和部署条件。同容器并发部分为方案与 CPU 模型，未作为生产能力验收。 |
 | [不用 procfs 标识进程](process-identity-without-procfs.md) | procfs 与 eBPF 的通俗比较、可选统一归属后端及双容器实测，也解释 SSH 容器层次和 pidfd 生命周期。 |

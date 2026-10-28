@@ -55,8 +55,9 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 - [GPU 作业入口、任务遥测与执行后端统一](env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md)：显式 GPU 作业与遥测、宿主机部署前提及 Science 接线，区分 procfs 视图错误与驱动能力。附同容器并发的预算、子组、独立回收方案及 CPU 模型，明确生产能力边界。
 - [implementation-and-gaps.md](env-worker-deep-dive/knowledge/implementation-and-gaps.md) —— EnvWorker 计数与回收缺口，含 AIRS-Bench 标签隔离、MLGym 适配、shell 超时、排队与清理问题审查。
 - [Docker 借用 rollout GPU](env-worker-deep-dive/knowledge/rollout-gpu-lending.md)：解释 science 与 vLLM 同卡交接的当前调用链、配置条件和状态卸载边界，区分任务归因与物理归还。附 unit 配额、CPU 模拟、真实 GPU 借还结果及阶段租约、抢占和预测回填方案。
-- [vLLM 与环境同卡共享策略](env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md)：先使用其他独立 GPU，再考虑训推余量与长空窗。包含设备优先级、常驻 command 共享、KV 缓存上限与已睡眠窗口协议。预测性主动 offload 仍是提案，附 CPU 协议实验与真实 GPU 验证边界。
+- [vLLM 与环境同卡共享策略](env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md)：先使用其他独立 GPU，再考虑训推余量与长空窗。包含设备优先级、常驻 command 共享、KV 缓存上限与已睡眠窗口协议。预测性主动 offload 仍是提案，并区分计算竞争、控制等待及已有实测的证据边界。
 - [EnvRouter 命令阶段配额](env-worker-deep-dive/knowledge/command-gpu-reservations.md)：保留容器状态、按命令归还 GPU 配额及后台归还与规划重叠的实现，包含慢查询定位与直接接口修复的 GPU 对照、失败验收、CPU 教学模拟及跨节点调度提案。
+- [EnvWorker 与 Harbor 共用容器后端](env-worker-deep-dive/knowledge/native-harbor-backend.md)：保留 Harbor 任务层、复用 EnvWorker 的容器管理，解释持久与独立命令语义，附 CPU 回归和真实 Docker oracle 验证及 GPU/远程调度边界。
 - [GPU 统一执行后端](env-worker-deep-dive/knowledge/unified-gpu-execution.md)：episode 与 command 共用作业执行、等待和取消，说明固定模式配置、Docker 与 vLLM 的资源关系、GPU 组件验证和原生 science 验收优先级。
 - [GPU 显存准入与未兑现预约](env-worker-deep-dive/knowledge/gpu-memory-admission.md)：用实测占用加逐任务预约余量替代总量 max，说明可信归属、保守准入、OOM 修复与短验证。
 - [Env Service 初期实现讲解](env-worker-deep-dive/knowledge/env-service-implementation.md)：租约、unit、overlay 与节点策略，按 2026-10-12 版本阅读。
