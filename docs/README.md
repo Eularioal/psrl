@@ -50,13 +50,15 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 
 [知识分类索引](env-worker-deep-dive/knowledge/README.md)区分流程专题、基础接入与早期版本讲解。优先阅读当前流程总览，旧版文中的「当前」以原文版本为准。
 
+- [GPU workload 与 benchmark 接入调研](env-worker-deep-dive/knowledge/gpu-workload-benchmark-survey.md)：比较容器训练、GPU kernel、自动研究和 AI 基础设施任务，给出首批接入顺序、源码依据与验证边界。
 - [EnvRouter 当前流程与优化总览](env-worker-deep-dive/knowledge/env-router-current-flow.md)：串联任务放置、命令借还、预热与清理，梳理独立 rollout 与同容器作业关系；解释 episode／command 的适用边界，并提供通用 GPU 任务接入提案、状态释放恢复成本分析及 CPU 教学模拟。
 - [Worker 重试、整组补采与重派发](env-worker-deep-dive/knowledge/worker-retry-and-redispatch.md)：说明框架已有的两层恢复与同请求转移的区别，记录执行监督、熔断和等待竞态修复，以及真实 Ray/Docker 故障验证。
 - [GPU 作业入口、任务遥测与执行后端统一](env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md)：显式 GPU 作业与遥测、宿主机部署前提及 Science 接线，区分 procfs 视图错误与驱动能力。附同容器并发的预算、子组、独立回收方案及 CPU 模型，明确生产能力边界。
 - [implementation-and-gaps.md](env-worker-deep-dive/knowledge/implementation-and-gaps.md) —— EnvWorker 计数与回收缺口，含 AIRS-Bench 标签隔离、MLGym 适配、shell 超时、排队与清理问题审查。
 - [Docker 借用 rollout GPU](env-worker-deep-dive/knowledge/rollout-gpu-lending.md)：解释 science 与 vLLM 同卡交接的当前调用链、配置条件和状态卸载边界，区分任务归因与物理归还。附 unit 配额、CPU 模拟、真实 GPU 借还结果及阶段租约、抢占和预测回填方案。
-- [vLLM 与环境同卡共享策略](env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md)：先使用其他独立 GPU，再考虑训推余量与长空窗。包含设备优先级、常驻 command 共享、KV 缓存上限与已睡眠窗口协议。预测性主动 offload 仍是提案，并区分计算竞争、控制等待及已有实测的证据边界。
+- [vLLM 与环境同卡共享策略](env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md)：独立 GPU 优先、常驻 command 共享、KV 上限与已睡眠窗口协议。解释 MPS、SM 与时间片调度，区分计算竞争、控制等待和已有实测边界，预测性主动 offload 仍是提案。
 - [EnvRouter 命令阶段配额](env-worker-deep-dive/knowledge/command-gpu-reservations.md)：保留容器状态、按命令归还 GPU 配额及后台归还与规划重叠的实现，包含慢查询定位与直接接口修复的 GPU 对照、失败验收、CPU 教学模拟及跨节点调度提案。
+- [原生后端修复与 science 短验证](env-worker-deep-dive/experiments/native-backend-fixes-and-science.md)：生命周期与整次任务准入修复，固定 baseline 的真实 LAPS oracle 对照，区分任务耗时改善、服务启动成本和未验证的 GPU 竞争。
 - [EnvWorker 与 Harbor 共用容器后端](env-worker-deep-dive/knowledge/native-harbor-backend.md)：保留 Harbor 任务层、复用 EnvWorker 的容器管理，解释持久与独立命令语义，附 CPU 回归和真实 Docker oracle 验证及 GPU/远程调度边界。
 - [GPU 统一执行后端](env-worker-deep-dive/knowledge/unified-gpu-execution.md)：episode 与 command 共用作业执行、等待和取消，说明固定模式配置、Docker 与 vLLM 的资源关系、GPU 组件验证和原生 science 验收优先级。
 - [GPU 显存准入与未兑现预约](env-worker-deep-dive/knowledge/gpu-memory-admission.md)：用实测占用加逐任务预约余量替代总量 max，说明可信归属、保守准入、OOM 修复与短验证。

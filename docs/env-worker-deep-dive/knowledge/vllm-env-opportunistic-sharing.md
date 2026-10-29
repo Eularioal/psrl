@@ -17,6 +17,7 @@
 - [9. 独立 GPU 优先的实现与实机验证](#9-独立-gpu-优先的实现与实机验证)
 - [10. 常驻共享、KV 上限与已睡眠窗口](#10-常驻共享kv-上限与已睡眠窗口)
 - [11. 计算竞争与控制等待：已经验证到哪里](#11-计算竞争与控制等待已经验证到哪里)
+- [12. MPS、SM 与时分复用：怎样理解多进程共享](#12-mpssm-与时分复用怎样理解多进程共享)
 
 ## 1. 全局关系与已有源码
 
@@ -494,3 +495,125 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/vllm_env_shari
 | 含初始化和清理约 249 秒能否表示共享开销 | 只有整个功能实验的总时长 | 不能，据此不能声称模型无减速或训练加速 |
 
 若后续要回答性能幅度，应固定模型、输入 token、输出长度、预热和 GPU，分别测模型独占、环境仅持有显存、环境持续计算三组。记录首 token 延迟、生成总时长、输出 token 数、命令耗时，并单独记录控制请求到达至门禁放行的时间。需要触发相同工作量和明确的计算重叠，不能把持有显存的休眠当作计算负载。本次没有启动这项额外模型性能实验。
+
+## 12. MPS、SM 与时分复用：怎样理解多进程共享
+
+**核心结论**：显存共存、不同进程的 GPU 内核重叠、整个任务并发是三件事。普通 CUDA 上下文在同一 GPU 计算引擎上采用时间片调度，MPS 可使不同进程的工作具备并发执行机会。但时间片调度不等于一个任务跑到结束才轮到下一个，MPS 也不保证所有负载加速。
+
+**先从一条真实命令理解，2026-10-29 补充。** 用户在容器 A 运行 Python，Python 仍是 CPU 上的进程。当它调用矩阵乘法时，CUDA 库向 GPU 提交计算内核，GPU 执行后把完成状态返回。容器 B 也可以做同样的事。Router 决定是否允许这两份工作进入，驱动决定它们提交的内核何时执行。容器进程存活、命令已提交、数据还在显存中，都不意味着这个进程此刻正在 SM 上计算。
+
+```text
+EnvRouter 容量准入 → 容器 A/B 获准执行
+                         ↓
+任务 A 进程 → CUDA 上下文 A ─┐
+                            ├→ 驱动 / GPU 计算调度 → SM 执行内核
+任务 B 进程 → CUDA 上下文 B ─┘
+      │
+      └→ A、B 的数据可以同时常驻显存，不必随每次计算切换搬走
+
+普通上下文：计算时间片 A → B → A → B
+启用 MPS ：满足资源条件时，A 与 B 的内核可在同一时间推进
+EnvRouter：在上述执行之前检查容量、决定允许或等待，结束后核验归还
+```
+
+图中上下文与 MPS 属于 NVIDIA 驱动机制，不是 PSRL 自己实现的 SM 调度器。图例与源码对应如下：
+
+| 图中部分 | 对应实现或资料 |
+|---|---|
+| 容量检查与授权 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L58)、[显存记账](../../../psrl/workers/env_service/gpu_memory.py#L9) |
+| 模型进程提交生成 | [vLLM generate](../../../psrl/workers/gen/vllm_async_server.py#L945) |
+| 模型控制与归还 | [共享票据](../../../psrl/workers/gen/gpu_handoff.py#L76)、[命令归还](../../../psrl/workers/env_service/command_gpu.py#L215) |
+| 上下文时间片与 MPS | [NVIDIA 架构说明](https://docs.nvidia.com/deploy/mps/595/architecture.html)，属于外部机制，PSRL 无对应 SM 调度源码 |
+
+跟着图读源码：先沿容量检查取得命令授权，随后环境与模型分别提交工作，由驱动决定计算的实际交叠。命令结束后沿归还路径释放票据，唤醒或权重更新才可继续。模型生成与环境执行是并发分支，不是同一个 Python 顺序调用。具体函数可继续追问，第 11 节给出了更完整的控制等待关系。
+
+**显存和 SM 分别是什么。** 显存保存模型权重、输入、输出和中间张量。SM 是 Streaming Multiprocessor，中文常称流式多处理器，是执行大量 GPU 线程的计算单元。kernel 即内核，是提交到 GPU 上执行的一段程序，其线程块被调度到 SM。两个进程各占 20 GiB 显存，只说明数据同时存得下，不说明计算各拿到一半 SM。显存带宽还决定每秒能搬多少数据，它与容量、SM 数量也不同。
+
+**“一个时刻只有一个进程跑”应怎样限定。** NVIDIA 对普通 CUDA 上下文的说明是：不同上下文提交到同一计算引擎的内核不能并发，采用时间片调度。同一上下文内的不同 stream 则可能并发。stream 是按顺序提交 GPU 操作的队列。不同进程通常各有自己的上下文，所以 Docker 隔离不会消除这层差异。以上不是说整个机器只运行一个进程，也不是说其他进程无法进行 CPU 工作、I/O 或保留显存，更不表示等待一个完整 episode 结束才切换。[官方依据](https://docs.nvidia.com/deploy/mps/595/architecture.html)
+
+**MPS 改变的是跨进程提交与调度条件。** MPS 是 Multi-Process Service，即 NVIDIA 多进程服务。客户端仍是独立进程，现代 MPS 客户端有各自 GPU 地址空间，并可直接提交工作，由服务协调共享资源，不应理解成所有运算都经过一个 Python 中转队列。资源条件合适时，不同客户端的内核可以重叠。若每个内核单独已经吃满计算或带宽，重叠不代表凭空多出吞吐。[架构说明](https://docs.nvidia.com/deploy/mps/595/architecture.html)
+
+**MPS 到底是一个什么东西？** 它是一套 NVIDIA 提供的软件运行服务，不是一块额外 GPU，也不是 PyTorch 的 batch 参数。控制程序 `nvidia-cuda-mps-control` 负责服务启动和连接协调，`nvidia-cuda-mps-server` 协调客户端共享 GPU 调度资源，应用通过 CUDA 驱动库 `libcuda.so` 接入。适用的程序通常不需要重写计算内核，但须在 CUDA 初始化时正确接入服务。服务运行在哪里与最终算在哪张物理 GPU 上，是两件事。[官方组件说明](https://docs.nvidia.com/deploy/mps/latest/index.html)
+
+把“时间片”理解为轮流获得计算机会即可，不要假定固定几毫秒切一次，也不要假定轮到 A 就能用满 GPU。教学假设 GPU 有 100 个 SM，A 的内核只有足以用 20 个 SM 的并行工作，B 也只有 20 个，显存与带宽均足够：
+
+```text
+普通独立上下文，示意而非固定时间片长度：
+时间段一：A 用 20 个 SM，另 80 个没有被这两个任务利用
+时间段二：B 用 20 个 SM，另 80 个没有被这两个任务利用
+
+MPS 允许有效重叠时的一种可能：
+同一时间：A 用 20 个 + B 用 20 个，仍剩 60 个
+```
+
+MPS 的价值是在有合适工作时填补余量，而不是给每个程序复制整张卡。若 A、B 各自已经需要全部 100 个 SM，并且始终算满，总计算能力没有增加。两者同时推进可能各自更慢，总完成时间未必缩短。普通时间片切换也不等于把 A 的全部显存卸载到 CPU，因此不能把它与 episode 的 offload/reload 混为一谈。
+
+**“分 SM”需要区分两种机制。**
+
+| 方式 | 实际含义 | 不应推导成什么 |
+|---|---|---|
+| MPS 动态执行额度，如 active thread percentage | 限制某个客户端可使用的执行资源上限，减少其影响范围 | 50% 不等于永久独占固定的一半 SM，也不保证半速或一半显存带宽 |
+| MPS 静态 SM 分区 | 支持的版本和硬件上，显式为客户端指定 SM 分区 | 不是旧版百分比开关的同义词，也不等于显存、带宽等全部资源都隔离 |
+
+官方文档明确动态额度不预留专属资源，不同客户端的工作仍可能落到同一个 SM。CUDA 编程指南记载从 CUDA 13.1 开始支持显式 MPS 静态分区。是否能用要核对实际驱动、工具及 GPU 支持，不能把新文档能力直接当成本机已安装能力。[MPS 资源配置](https://docs.nvidia.com/deploy/mps/when-to-use-mps.html)、[CUDA 分区机制对比](https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/green-contexts.html)
+
+**为什么不能直接说“与 Router 串行排队一样快”。** 下面全部是教学假设，忽略切换和启动成本：
+
+| 负载 | 整任务串行 | 允许任务共存 | 原因 |
+|---|---|---|---|
+| A、B 各持续占满 GPU 计算 5 秒 | 总计 10 秒 | 公平时间片下总计仍约 10 秒，可能额外有切换成本 | 没有空闲计算能力可挖掘，单个任务延迟也可能变大 |
+| A、B 各做 GPU 2 秒、CPU 6 秒、GPU 2 秒 | 总计 20 秒 | 不需要内核重叠，也可排成 12 秒 | A 做 CPU 时 GPU 可交给 B，等待阶段能重叠 |
+| A、B 各有一个只用部分 SM 的 5 秒内核，且其他资源够用 | 10 秒 | MPS 若使二者有效重叠，理想情况下接近 5 秒 | 填补单个上下文不能利用的计算余量，真实收益必须测量 |
+
+第二个例子的合法时间线是：A 的 GPU 阶段 0到2秒、CPU 阶段2到8秒、GPU 阶段8到10秒。B 的 GPU 阶段2到4秒、CPU 阶段4到10秒、GPU 阶段10到12秒。任何时刻都没有两个 GPU 阶段同时执行，但两条任务比整任务串行更早完成。
+
+这里还取决于 Router 排队粒度。如果 Router 已经在每次 GPU 阶段完成后让位，它也可以得到上述 12 秒调度，不应把这个收益误算成 MPS 独有。若一个 GPU 命令进程内部包含长时间 CPU 工作，Router 持有整条命令的额度，与驱动只在有实际 GPU 工作时执行的时间片调度又不同。比较前必须说明排队保护的是会话、命令还是内核。
+
+**这对当前 Env 结果意味着什么。** 高压力训练的主要结果是 OOM 从 18 次降到 0 次，减少失败补采。它不要求两个环境内核同时运行，因此没有 MPS 不会推翻这项结论。低压力共享能否进一步提吞吐、模型会慢多少，则没有得到充分证明。已有共享 probe 只启动小内核，随后持有显存并在 CPU 上 sleep，不能据此声称持续计算时内核重叠或双方无减速。
+
+对 Router 可以把问题分为三个层次：第一层是容量准入，保证不重复承诺同一份显存。第二层是进入后的计算共享，普通驱动时间片或 MPS 决定内核怎样推进。第三层是结束后的归属与清理，确认本任务退出后其他工作仍能继续。只开启 MPS 不会自动完成第一和第三层。当前 command 预算不够只放行一条时，MPS 也没有第二个已获准任务可重叠。
+
+**接入 MPS 对当前代码还有实际适配工作。** 本地 [task_telemetry](../../../psrl/workers/env_service/task_telemetry.py#L25) 使用 GPU 进程身份做任务归属，[归还检查](../../../psrl/workers/env_service/command_gpu_node.py#L207) 检查所属进程、设备句柄与 GPU 活动。MPS 监控可能把活动归到共享 server，不能将 server 的全部占用算到某个容器，也不能因容器 PID 不在 GPU 列表中就判定已释放。这是结合源码与官方监控说明得出的接入风险，尚非本机故障实测。还需对照 MPS 客户端终止协议验证超时取消，不能将直接杀容器天然视为对其他客户端无影响。官方提供定向终止客户端上下文的机制，跨容器时需使用服务所见的进程编号。[监控与客户端终止要求](https://docs.nvidia.com/deploy/mps/when-to-use-mps.html)
+
+**Docker 内可以使用 MPS，也可以运行 MPS 服务。** NVIDIA 提供了服务和客户端分别运行在容器里的示例。因此答案不是“容器一定不能开”，而是要把 GPU 设备、用户身份和进程间通信配置完整。IPC 是进程间通信，IPC namespace 是这类资源的隔离视图。服务与客户端需要能找到并使用彼此的通信资源。
+
+```text
+同一节点、同一物理 GPU
+  ├─ MPS 服务：可以在宿主机，也可以在专用服务容器
+  ├─ 任务容器 A ─┐
+  └─ 任务容器 B ─┴→ 连接同一个 MPS 服务
+                    共享所需通信目录与 IPC 视图
+```
+
+两种容器用法分别是：
+
+- **容器接入已有服务**：把服务通信目录挂入任务容器，正确设置 `CUDA_MPS_PIPE_DIRECTORY`，匹配用户身份及 GPU 可见性，并按部署方式配置 IPC。不是在每个任务容器内各开一个服务就会自动合并。
+- **在专用容器里开服务**：服务容器运行 MPS 工具，任务容器连接它。NVIDIA 的 Compose 示例使用共享通信卷和 `ipc: container:mps-daemon`。该示例较旧，仅用于证明确有这种拓扑，不能原样当作当前集群配置。
+
+官方示例还将“修改 GPU 计算模式”放在单独具备额外权限的容器中，这说明管理 GPU 模式的权限与运行 MPS 服务不是同一件事。单用户 MPS 有普通用户启动路径，容器内 root 则不等于宿主管理权限。是否适用于腾讯节点，仍需检查实际驱动、工具、设备和平台授权。本次没有连接节点核验或启动服务。[NVIDIA 容器示例](https://gitlab.com/nvidia/container-images/samples/-/raw/master/mps/docker-compose.yml)、[单用户部署](https://docs.nvidia.com/deploy/mps/common-tasks.html)、[通信目录](https://docs.nvidia.com/deploy/topics/topic_5_2_2.html)
+
+MPS 不是“装了 CUDA 就必定已开启”。需要服务已启动且客户端真正接入。平台可能预配置服务，也可能没有，所以需现场核对版本、服务进程、客户端连接、容器目录挂载与用户身份。容器内看不到宿主服务进程也不能单独证明没开。只设置一个额度环境变量或看到两条 nvidia-smi 进程记录，都不是接入或内核并行的证据。[官方启动与接入检查](https://docs.nvidia.com/deploy/mps/quick-start.html)
+
+**可运行的 CPU 教学计算。** 以下只检验上面的时间线算术，不模拟 CUDA 时间片长度、不检测 MPS、更不是性能实测：
+
+```bash
+python3 - <<'PY'
+# 图中的 A/B：内存可以共存，GPU 计算阶段仍不重叠。
+gpu, cpu = 2, 6
+whole_task_serial = 2 * (gpu + cpu + gpu)
+a_first_end = gpu
+b_first_end = a_first_end + gpu
+a_second_start = max(a_first_end + cpu, b_first_end)
+a_end = a_second_start + gpu
+b_second_start = max(b_first_end + cpu, a_end)
+b_end = b_second_start + gpu
+print("whole_task_serial_s:", whole_task_serial)
+print("interleaved_without_kernel_overlap_s:", b_end)
+assert (whole_task_serial, b_end) == (20, 12)
+# 满负载的理想下界，与未占满时 MPS 的理想重叠假设分开。
+print("two_saturated_jobs_total_work_s:", 5 + 5)
+print("ideal_small_kernel_overlap_s:", max(5, 5))
+PY
+```
+
+输出为 20、12、10、5。最后的 5 依赖两个小内核确实能有效重叠，不是启用 MPS 后必然达到的结果。后续若做实机对照，应分别测单任务、Router 串行、无 MPS 多进程、MPS 多进程，固定成功工作量并记录总时间、单任务响应和内核时间线。小内核与持续满载应分开，模型与环境的依赖也要保留，不能只看整卡利用率或显存占用。

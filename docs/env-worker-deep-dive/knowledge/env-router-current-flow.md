@@ -25,6 +25,7 @@
 - [11. 通用 GPU 执行服务的具体设计](#11-通用-gpu-执行服务的具体设计)
 - [12. Results：持有范围的 CPU 教学验证](#12-results持有范围的-cpu-教学验证)
 - [13. 常驻 GPU 状态与释放恢复成本](#13-常驻-gpu-状态与释放恢复成本)
+- [14. unit 如何共享及命令能否跨机器](#14-unit-如何共享及命令能否跨机器)
 
 ## 1. 完整流程与角色
 
@@ -650,3 +651,83 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_gpu_susp
 当前 command 的主要目标仍是利用程序自然结束后本来就存在的空档，而不是为一个持续运行程序反复制造昂贵的销毁重建。前者的性能对照应只算相对 baseline 新增的开销，若 OFF 本来每次也启动同一个 Python 程序，就不能把双方共有的全部加载成本只归因于 ON。真正的状态卸载恢复，需要新契约和实测后再决定何时值得做。
 
 本节新增脚本实际 CPU 运行及 Ruff／格式检查通过，文档与总索引的 172 个本地链接、行号范围及章节锚点检查通过。全仓 pre-commit 在隔离副本仍因其他文件的既有 Ruff／格式与 prose-style 问题失败，日志保存在本节结果目录。未修改生产调度代码、未运行 GPU、未提交或推送。
+
+## 14. unit 如何共享及命令能否跨机器
+
+**结论**：unit 是预先配置在一台节点上的资源池，session 获得的是该池中的一份 lease 租约，不是独占整个池。多个环境可以共享同一个 unit，但需满足数量、CPU、主存和 GPU 策略约束。跨节点放置与命令阶段排队是两层不同决策。
+
+```text
+[U1] 任务组 → 派发器选择有 worker 的节点
+                 ├→ 节点 A 的 worker
+                 │      ↓ [U2] science 客户端限定节点 A 申请
+                 │   [U3] Router 选择 A 上的一个 unit
+                 │      unit-A：CPU / 主存 / GPU设备 / 预算 / 会话上限
+                 │      ├→ [U4] lease-a → 环境 a → 多轮命令
+                 │      └→ [U4] lease-b → 环境 b → 多轮命令
+                 │                         ↓
+                 │                  [U5] 在原 unit 内申请 GPU 阶段预算
+                 │                         ↓
+                 │                  [U6] 确认归还，最后清理会话
+                 └→ 节点 B 的 worker → unit-B → 其他环境
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 编号 | 实际函数与职责 | 源码 |
+|---|---|---|
+| U1 | `EnvAwareDispatcher._assign_resources` 按节点容量和任务组需求选择 worker | [placement.py:188](../../../psrl/workers/env_service/placement.py#L188) |
+| U2 | `EnvServiceClient.acquire` 把执行 worker 的 node_ip 传给 Router | [client.py:159](../../../psrl/workers/env_service/client.py#L159) |
+| U3 | `EnvUnitLedger.try_admit` 过滤节点、选择 unit，按需求创建租约 | [ledger.py:106](../../../psrl/workers/env_service/ledger.py#L106) |
+| U4 | `EnvLease` 固定 unit_id、node_ip、gpu_indices，runner 应用设备与环境绑定 | [types.py:199](../../../psrl/workers/env_service/types.py#L199)、[runner.py:100](../../../examples/sciaccel_rl/runner.py#L100) |
+| U5 | `GpuCommandScheduler._grant` 从租约对应的 unit 和节点申请设备权限 | [command_gpu.py:106](../../../psrl/workers/env_service/command_gpu.py#L106) |
+| U6 | `release` 等待归还，Router 会话释放负责最终清理 | [command_gpu.py:244](../../../psrl/workers/env_service/command_gpu.py#L244)、[router.py:241](../../../psrl/workers/env_service/router.py#L241) |
+
+这些代码如果有理解上的问题，可以随时按编号追问。**跟着图读源码**：U1 先给任务组选 worker，U2 才提交受节点约束的会话申请，U3 返回租约，U4 建立环境，U5 在每次 GPU 命令时重复执行，U6 分别处理阶段归还与会话结束。不同环境可以并发，U1 的容量快照不是资源授权，最终仍需 U3/U5 检查。当前同题多条 rollout 通常按组派给同一个 worker，不是逐条命令在集群里重新选机器。
+
+**一个 unit 可以给几个环境？** `max_containers` 是会话名额上限，默认值为 1，多环境共享需显式调大。账本实际按活动 lease 数计名额，不应把它理解成包含所有辅助容器的 Docker 实例总数。旧互斥借卡 unit 另有只能一个会话的限制。每个 unit 属于一台机器，可以配置一张或多张 GPU，但不是跨机器资源包。当前同一 Router 配置中的多个 unit 不允许重复声明同节点同一张 GPU，不能把一张卡随意拆成几个重叠 unit。
+
+**unit 大但任务小，余额可以复用。** 以下为教学配置，不是实测：unit-A 有 8 CPU、32 GiB 主存、80 GiB GPU 预算和 4 个会话名额。A 申报 2 CPU、8 GiB 主存、20 GiB GPU，B 申报 2 CPU、8 GiB 主存、30 GiB GPU。episode 模式下两者同属该 unit，合计预约 4 CPU、16 GiB 主存、50 GiB GPU，还剩 4 CPU、16 GiB 主存、30 GiB GPU 与两个名额，可接纳合适的新环境。实际还要计入外部占用、设备容量和清理状态，不能只做这张教学表的减法。
+
+| 资源状态 | 是否可用于其他环境 |
+|---|---|
+| unit 未分配的额度 | 可以，前提是其他各项资源也满足需求 |
+| A 预约 20 GiB，但暂时实际只分配 5 GiB | 剩余 15 GiB 仍是对 A 的承诺，不能自动借给 B，否则 A 稍后增长可能 OOM |
+| command 的 GPU 阶段结束并确认归还 | 该阶段预算释放，其他环境可以申请，但 A 容器、CPU、主存及会话名额仍保留 |
+| episode 等模型回复，但会话没有结束 | GPU 需求预算继续保留，不自动 offload 或缩减 |
+| 整个会话结束且所属资源清理确认 | 释放该租约剩余预算及名额，unit 配置本身继续存在 |
+
+这里 CPU 和主存也按申报需求记账，不能因为当前使用率低就把已承诺额度再次分配。一个维度有余额不保证任务能进来，例如 GPU 还剩 30 GiB，但 CPU 已满或名额耗尽，仍需等待。command 会话则可以在 GPU 暂无容量时先获准保留主机资源，真正 GPU 命令在第二层排队。其显存需求目前沿用租约声明，不是每条命令自由申报不同数值。
+
+**Router 究竟会不会分到不同机器？** 管理多个节点是支持的，但当前 science 路径通常先由派发器选 worker 所在节点，再由该 worker 的客户端限定本节点申请 unit。Router 的通用准入 API 在不指定节点时可以跨健康候选选择，这不等于 science 客户端会自动远程启动容器。必须同时有对应 worker、授权配置和执行能力。
+
+环境一旦取得租约，其节点、unit 和设备集合就固定下来。下一轮命令仍在同一容器里执行，GPU 满时等待原 unit，不会自动把命令搬到另一台空闲机器，甚至不会因为同节点另一张卡空闲就自动改绑。新会话可重新选择节点或 unit。活容器跨节点迁移、逐命令远程执行或运行中换卡，需要另行处理文件、进程状态和设备权限，目前不能视作已有能力。
+
+**可运行教学模拟。** 以下仅用 Python 标准功能演示账本承诺与阶段释放，不执行 Docker、遥测、FIFO 排队或真实派发。容量单位简写为 GiB，假设主机资源和名额足够、无外部占用、物理归还已经确认。
+
+```bash
+python3 - <<'PY'
+# U3/U4：A 与 B 在同一个 unit 上取得租约，节点绑定不随命令改变。
+capacity = 80
+sessions = {"A": ("node-A", "unit-A"), "B": ("node-A", "unit-A")}
+reserved = {"A": 20, "B": 30}
+actual = {"A": 5, "B": 30}
+
+def free():
+    # U5：实际已用加未兑现承诺，不能把 A 暂未使用的 15 再借出去。
+    return capacity - sum(actual.values()) - sum(
+        max(0, budget - actual[name]) for name, budget in reserved.items()
+    )
+
+print("before_return:", free())
+print("request_40:", "granted" if free() >= 40 else "wait")
+# U6：教学假设 A 的 command 已完成物理归还，整个会话仍存在。
+reserved.pop("A")
+actual.pop("A")
+print("after_return:", free())
+print("request_40:", "granted" if free() >= 40 else "wait")
+print("A_binding:", sessions["A"])
+assert free() == 50 and sessions["A"] == ("node-A", "unit-A")
+PY
+```
+
+预期依次输出 `before_return: 30`、`request_40: wait`、`after_return: 50`、`request_40: granted`、`A_binding: ('node-A', 'unit-A')`。A 只是实际用得少时，40 GiB 请求不能获准。确认归还之后才可放行，而 A 的下一条命令仍绑定原节点和 unit。episode 若不结束，则不会发生上述阶段预算释放。

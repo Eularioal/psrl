@@ -21,12 +21,13 @@
 | [命令阶段配额](command-gpu-reservations.md) | 保留容器状态、归还 GPU 预算、后台归还与规划重叠，附实测和跨节点调度提案。 |
 | [GPU 显存准入与未兑现预约](gpu-memory-admission.md) | 实测占用与逐任务预约余量如何共同参与准入，附故障修复和验证边界。 |
 | [Docker 借用 rollout GPU](rollout-gpu-lending.md) | vLLM 睡眠、Docker 借卡与确认归还，区分当前实现、早期设计和配套实验。 |
-| [vLLM 与环境同卡共享策略](vllm-env-opportunistic-sharing.md) | 独立 GPU 优先、常驻 command 共享及已睡眠窗口协议，解释 KV 上限和余量计算，并区分功能验证与性能收益。 |
+| [vLLM 与环境同卡共享策略](vllm-env-opportunistic-sharing.md) | 独立 GPU 优先、常驻共享与已睡眠窗口，解释 KV 余量、MPS/SM 与时间片调度，区分功能共存和性能收益。 |
 
 ## 基础概念与接入
 
 | 文档 | 阅读用途与边界 |
 |---|---|
+| [GPU workload 与 benchmark 接入调研](gpu-workload-benchmark-survey.md) | GPU kernel、容器训练、自动研究与 AI4Infra 候选比较，区分已有 recipe、接入提案和真实 GPU 验证。 |
 | [EnvWorker 接入与 GPU 验证方法](onboarding-and-gpu-validation.md) | EnvWorker 路径的配置、环境类与 AgentLoop 接入，以及分层验证方法。不能直接替代 EnvRouter 当前接口说明。 |
 | [Gate B 新手讲解](gate-b-beginner-guide.md) | 学习会话绑定、遥测轮询和模型回复节流，包含教学模拟。讲解的是旧 Gate B 路径。 |
 | [从 Gate B 学 HTTP](http-basics-for-gate-b.md) | 从一次请求理解端口、URL、POST、连接和响应，以旧 Gate B 接口为例。 |
