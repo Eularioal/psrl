@@ -103,7 +103,7 @@ async def _apply_env_lease(
     env_kwargs: dict,
     session_router_url: str,
     session_id: str,
-) -> Path:
+) -> Path | None:
     """
     Turn a granted lease into the Compose overlay and Harbor settings that realise it.
 
@@ -122,11 +122,21 @@ async def _apply_env_lease(
         session_id: The TITO session id Gate B binds to.
 
     Returns:
-        Path of the overlay file. The caller deletes it once the containers are gone.
+        Path of the overlay file, or None for native CPU lease bindings.
+        The caller deletes any overlay once the containers are gone.
 
     Raises:
         DriverLibraryError: When a GPU lease cannot find driver libraries matching the kernel.
     """
+
+    if env_kwargs.get("import_path") == "psrl.workers.env_worker.harbor:EnvWorkerEnvironment":
+        if lease.gpu_indices:
+            raise ValueError("The native Harbor backend does not yet implement GPU lease execution.")
+        env_kwargs.setdefault("kwargs", {}).update(
+            lease_labels={"psrl.env_lease": lease.lease_id, "psrl.env_unit": lease.unit_id},
+            container_budget=asdict(lease.demand.container_budget),
+        )
+        return None
 
     def prepare_overlay():
         driver_libs = None
@@ -334,6 +344,13 @@ async def run_harbor_episode(
     """
     extra_body = harness_extra_body(thinking_template)
     env_kwargs: dict = {}
+    if config.harbor.environment_backend == "env_worker":
+        if env_client is None:
+            raise ValueError("The native science backend requires EnvRouter admission.")
+        env_kwargs["import_path"] = "psrl.workers.env_worker.harbor:EnvWorkerEnvironment"
+        env_kwargs["kwargs"] = {"actor_id": actor_id}
+    elif config.harbor.environment_backend != "docker":
+        raise ValueError("Unknown Harbor environment backend.")
     if config.harbor.override_gpus is not None:
         env_kwargs["override_gpus"] = config.harbor.override_gpus
     extra_compose_paths: list[Path] = []
@@ -431,11 +448,15 @@ async def run_harbor_episode(
 
         main_override: dict = {}
         if actor_id:
-            main_override["labels"] = [f"psrl.actor_id={actor_id}"]
-            env_kwargs["import_path"] = "psrl.workers.env_service.docker:ManagedDockerEnvironment"
+            if config.harbor.environment_backend == "docker":
+                main_override["labels"] = [f"psrl.actor_id={actor_id}"]
+            env_kwargs.setdefault("import_path", "psrl.workers.env_service.docker:ManagedDockerEnvironment")
             env_kwargs.setdefault("kwargs", {})["actor_id"] = actor_id
         if config.harbor.memory_mb_override > 0:
-            main_override["mem_limit"] = f"{config.harbor.memory_mb_override}m"
+            if config.harbor.environment_backend == "env_worker":
+                env_kwargs["override_memory_mb"] = config.harbor.memory_mb_override
+            else:
+                main_override["mem_limit"] = f"{config.harbor.memory_mb_override}m"
 
         if main_override:
             import tempfile

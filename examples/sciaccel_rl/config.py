@@ -19,6 +19,7 @@ class HarborConfig:
     Harbor Job execution settings.
     """
 
+    environment_backend: str = "docker"
     jobs_dir: str = "/tmp/sciaccel_jobs"
     agent_name: str = "terminus-2"
     override_gpus: int | None = None

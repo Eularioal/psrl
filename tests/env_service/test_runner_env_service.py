@@ -507,3 +507,24 @@ if __name__ == "__main__":
                 failed += 1
                 print(f"FAIL  {name}: {type(exc).__name__}: {exc}")
     sys.exit(1 if failed else 0)
+
+
+def test_native_backend_uses_episode_budget_without_compose(tmp_path):
+    from types import SimpleNamespace
+
+    from psrl.workers.env_service.container_budget import ContainerBudget
+
+    lease = SimpleNamespace(
+        lease_id="native-lease",
+        unit_id="cpu",
+        gpu_indices=(),
+        demand=SimpleNamespace(container_budget=ContainerBudget(2, 512, 0, 2)),
+    )
+    kwargs = {"import_path": "psrl.workers.env_worker.harbor:EnvWorkerEnvironment"}
+    overlays = []
+    result = asyncio.run(runner._apply_env_lease(lease, overlays, kwargs, "", "session"))
+    assert result is None and not overlays, "Native CPU admission must not create a Compose overlay."
+    assert kwargs["kwargs"]["container_budget"]["environments"] == 2, "Both environments must share one episode plan."
+    assert kwargs["kwargs"]["lease_labels"]["psrl.env_lease"] == "native-lease", (
+        "Containers must retain lease ownership."
+    )
