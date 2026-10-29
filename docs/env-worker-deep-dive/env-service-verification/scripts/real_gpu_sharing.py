@@ -78,6 +78,13 @@ async def run(args):
         evidence["worker"] = await server.ready.remote()
         assert evidence["worker"]["node_ip"] == args.node_ip, "Wrong execution node."
         evidence["generation_before"] = await server.query.remote()
+        evidence["latency_samples"] = []
+        for _ in range(3):
+            started = time.monotonic()
+            response = await server.query.remote()
+            evidence["latency_samples"].append(
+                {"phase": "alone", "seconds": time.monotonic() - started, "tokens": len(response["token_ids"])}
+            )
         resident = probe.read_gpu_snapshot([0])
         profiles = await server.collective_rpc.remote("env_sharing_profile")
         headroom = max(p["transient_mb"] for p in profiles) + 2048
@@ -134,15 +141,20 @@ async def run(args):
         await env.start(force_build=False)
         await env.exec("mkdir -p /logs/artifacts", timeout_sec=10)
         await env.upload_file(Path(__file__).with_name("cuda_driver_probe.py"), "/tmp/probe.py")
-        for sleeping in (False, True):
-            phase = "sleeping" if sleeping else "resident"
+        for phase in ("resident", "resident_busy", "sleeping"):
+            sleeping = phase == "sleeping"
             if sleeping:
                 await server.nixl_sleep.remote(1)
             command = asyncio.create_task(
-                env.exec_gpu("PROBE_HOLD_SECONDS=6 python3 /tmp/probe.py", timeout_sec=20, wait_timeout_sec=10)
+                env.exec_gpu(
+                    f"PROBE_BUSY={int(phase == 'resident_busy')} PROBE_HOLD_SECONDS=6 python3 /tmp/probe.py",
+                    timeout_sec=20,
+                    wait_timeout_sec=10,
+                )
             )
             await active_command()
             if sleeping:
+                wake_started = time.monotonic()
                 wake = asyncio.ensure_future(server.nixl_wake_up.remote())
                 await asyncio.sleep(0.2)
                 assert not wake.done(), "Wake must wait until the active CUDA command returns."
@@ -152,7 +164,19 @@ async def run(args):
                     while len(probe.read_gpu_snapshot([0])[0]["pids"]) < 2:
                         await asyncio.sleep(0.1)
                 evidence["during_resident_command"] = probe.read_gpu_snapshot([0])
-                evidence["concurrent_generation"] = await server.query.remote()
+                await asyncio.sleep(0.5)
+                for _ in range(3):
+                    started = time.monotonic()
+                    response = await server.query.remote()
+                    evidence["latency_samples"].append(
+                        {
+                            "phase": phase,
+                            "seconds": time.monotonic() - started,
+                            "tokens": len(response["token_ids"]),
+                            "command_pending": not command.done(),
+                        }
+                    )
+                evidence["concurrent_generation"] = response
                 assert not await server.is_sleeping.remote(), "Resident sharing must keep inference awake."
             result = await command
             assert result.return_code == 0, f"CUDA command failed: {result.stderr!r}."
@@ -162,15 +186,18 @@ async def run(args):
             evidence[phase] = parsed
             if sleeping:
                 await asyncio.wait_for(wake, 20)
+                evidence["wake_request_to_completion_s"] = time.monotonic() - wake_started
             save(out / "evidence.json", evidence)
         evidence["generation_after"] = await server.query.remote()
         assert evidence["generation_after"]["token_ids"] == evidence["generation_before"]["token_ids"], (
             "Weights must survive the sleep window."
         )
         evidence["reports"] = await router.gpu_job_reports.remote(handle.lease.lease_id)
-        assert [r["admission_memory"]["model_mode"] for r in evidence["reports"]] == ["resident", "sleeping"], (
-            "Both sharing paths must be exercised."
-        )
+        assert [r["admission_memory"]["model_mode"] for r in evidence["reports"]] == [
+            "resident",
+            "resident",
+            "sleeping",
+        ], "Both sharing paths must be exercised."
         evidence["passed"] = True
 
     try:

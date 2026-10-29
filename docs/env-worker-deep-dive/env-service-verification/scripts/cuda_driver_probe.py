@@ -62,6 +62,38 @@ result = dict(
 )
 print(json.dumps(result), flush=True)
 Path("/logs/artifacts/cuda-probe.json").write_text(json.dumps(result, indent=2))
-time.sleep(float(os.environ.get("PROBE_HOLD_SECONDS", "10")))
+hold_s = float(os.environ.get("PROBE_HOLD_SECONDS", "10"))
+if os.environ.get("PROBE_BUSY") == "1":
+    busy_ptx = b""".version 7.0
+.target sm_80
+.address_size 64
+.visible .entry busy(.param .u64 output) {
+ .reg .pred %p;
+ .reg .u32 %r, %block, %thread, %index;
+ .reg .u64 %base, %offset, %address;
+ ld.param.u64 %base, [output];
+ mov.u32 %block, %ctaid.x;
+ mov.u32 %thread, %tid.x;
+ mad.lo.u32 %index, %block, 256, %thread;
+ mul.wide.u32 %offset, %index, 4;
+ add.u64 %address, %base, %offset;
+ mov.u32 %r, 0;
+loop:
+ add.u32 %r, %r, 1;
+ st.volatile.global.u32 [%address], %r;
+ setp.lt.u32 %p, %r, 10000;
+ @%p bra loop;
+ ret;
+}
+"""
+    busy_module, busy_kernel = c.c_void_p(), c.c_void_p()
+    call("cuModuleLoadData", c.byref(busy_module), c.c_char_p(busy_ptx))
+    call("cuModuleGetFunction", c.byref(busy_kernel), busy_module, b"busy")
+    until = time.monotonic() + hold_s
+    while time.monotonic() < until:
+        call("cuLaunchKernel", busy_kernel, 256, 1, 1, 256, 1, 1, 0, None, params, None)
+        call("cuCtxSynchronize")
+else:
+    time.sleep(hold_s)
 call("cuMemFree_v2", memory)
 call("cuCtxDestroy_v2", context)
