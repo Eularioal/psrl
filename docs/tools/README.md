@@ -22,7 +22,7 @@
 | 文档 | 内容 |
 |---|---|
 | [codex/codex-agents-md-scope.md](codex/codex-agents-md-scope.md) | `AGENTS.md` 是什么、作用范围如何按目录层级决定、全局规则 vs 项目规则、`AGENTS.override.md` |
-| [codex/codex-session-management.md](codex/codex-session-management.md) | 会话恢复、前几轮问答的浏览与搜索、TCodex 安装与共享会话、输入历史的区别、历史版本命名限制、`/goal`，以及终端回滚与 tmux 排查 |
+| [codex/codex-session-management.md](codex/codex-session-management.md) | 会话恢复、问答浏览与搜索、发送图片、TCodex 安装与共享会话、输入历史的区别、历史版本命名限制、`/goal`，以及终端回滚与 tmux 排查 |
 | [codex/codex-config-backup-restore.md](codex/codex-config-backup-restore.md) | `config.toml` 实际读 `CODEX_HOME` 而非 `~/.codex`、没有 git 时靠备份副本回退（`cp -p` 先存当前再覆盖）、`diff` 选版本、整文件覆盖的代价与更稳的做法 |
 
 ## Shell / Python 基础
