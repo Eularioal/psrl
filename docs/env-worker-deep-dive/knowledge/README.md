@@ -22,6 +22,9 @@
 | [GPU 显存准入与未兑现预约](gpu-memory-admission.md) | 实测占用与逐任务预约余量如何共同参与准入，附故障修复和验证边界。 |
 | [Docker 借用 rollout GPU](rollout-gpu-lending.md) | vLLM 睡眠、Docker 借卡与确认归还，区分当前实现、早期设计和配套实验。 |
 | [vLLM 与环境同卡共享策略](vllm-env-opportunistic-sharing.md) | 独立 GPU 优先、常驻共享与已睡眠窗口，解释 KV 余量、MPS/SM 与时间片调度，区分功能共存和性能收益。 |
+| [CUDA 上下文开销与计算竞争](cuda-context-and-compute-contention.md) | 零基础展开 CUDA 上下文、SM、stream、MPS 四个概念；**§4.1-4.3** 把"同上下文并发 vs 跨上下文时间片"拆成层1/层2讲清楚，并纠正 MPS 是"从源头上只建一个 context 共用"而非"事后合并两个已有 context"的常见误读；`accounted_gpu_memory_mb`/`_effective_gpu_mb` 怎么用实测值兜底上下文开销；**§3.1** 纠正 `model_headroom_mb * len(unit.gpu_indices)` 容易被误读成"一张卡挂了几个 GPU"的问题，讲清楚 `EnvUnit` 可跨多张卡（张量并行副本）。 |
+| [CPU 与 GPU 多任务并行架构设计对比](cpu-gpu-parallelism-architecture-comparison.md) | 跳出 PSRL 具体代码，讲清楚 CPU 核心"按进程独立分配"和 GPU SM"按 context 整体轮转"这组调度粒度差异分别从哪来——CPU 面对少量异构任务、GPU 面对海量同构任务的设计取向差异，上下文切换成本为什么天生不对等；延伸到 MPS（软件代理，没改硬件调度粒度）和 MIG（硬件真分区，向 CPU 核心模型靠拢但要牺牲弹性共享）分别补的是哪一层。 |
+| [GPU 准入/归属/恢复新设计：eBPF 身份识别与两个新协程模式](gpu-admission-attribution-ebpf-identity.md) | 零基础展开 eBPF/BTF/raw_tracepoint/libbpf FFI/cgroup v1 devices 控制器桥接技巧；`accounted_gpu_memory_mb` 显存会计公式、`ContainerBudget` 容器预算、`NodeHealth` 熔断恢复状态机逐一手算；`resource_telemetry.py`/`routing_pause.py` 两个新协程清理模式（有限并发+截止时间收尾、多持有者引用计数+取消安全清理）；跟着图读 `router.py`/`bpf_identity.py`/`bpf_identity.bpf.c` 等源码行号；配套可运行脚本复刻全部手算结果。 |
 
 ## 基础概念与接入
 
