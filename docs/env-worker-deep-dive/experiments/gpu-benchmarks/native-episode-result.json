@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-30",
+  "backend": "env_worker",
+  "import_path": "psrl.workers.env_worker.harbor:EnvWorkerEnvironment",
+  "policy": "episode",
+  "gpu": "NVIDIA H20",
+  "upstream": {
+    "revision": "228791fb499afffb54b46200aca536f79142f117",
+    "environment_backend": "env_worker",
+    "assets": {
+      "upstream_revision": "228791fb499afffb54b46200aca536f79142f117",
+      "base_url": "https://huggingface.co/datasets/karpathy/climbmix-400b-shuffle/resolve/main",
+      "num_train_shards": 1,
+      "validation_shard": "shard_06542.parquet",
+      "kernel_repo": "varunneal/flash-attention-3",
+      "kernel_package": "flash_attention_3",
+      "kernel_variant": "torch29-cxx11-cu128-x86_64-linux",
+      "kernel_revision": "de87b9b5af06dd9984df595bef90b2eba44b181a",
+      "sha256": {
+        "data/shard_00000.parquet": "054ddbd98abf30d773c54de578fc9d579bafeb6c14e04e97bd36aa90e825bf9b",
+        "data/shard_06542.parquet": "769fe59d108dfd2cfa186c63173b83fbfb90a7adb3519519ba6eaa6ca9889f94",
+        "tokenizer/token_bytes.pt": "f44a3d5f8cfaf7d1cf7fc64751fd896badcfdf620a75b2f8be854a49082d68c7",
+        "tokenizer/tokenizer.pkl": "14915209a2c791b62608396040608c65fb9458b190216422216d399200abde1c"
+      }
+    }
+  },
+  "source_sha256": {
+    "examples/gpu_benchmarks/run.py": "fa7e8c2404264056e0466f9833761b7622a094ef60657e16fc713dee6f0a9c01",
+    "examples/sciaccel_rl/runner.py": "d6d5504e625dd67071f6b296e82569cde5ff85f7131aa6028b109bf8569a01dd",
+    "psrl/workers/env_worker/harbor.py": "a342bb59edeb330308b707c907601c1e9d891fdd07c14d0c303e460e00e07938",
+    "psrl/workers/env_service/managed_execution.py": "27d2512c2dfbf605602c4d0630a80b6b5f15285bfa50d8278dd12d0ffc3b015b"
+  },
+  "candidate_equals_upstream": true,
+  "candidate_sha256": "2954175f4ac42ad65164aef40910ef953789abcd05a5cc886ac9ba5a00814414",
+  "rewards": {
+    "reward": 0.4632713369846853,
+    "val_bpb": 1.1585622078601807
+  },
+  "training_metrics": {
+    "val_bpb": 1.158562,
+    "training_seconds": 300.1,
+    "total_seconds": 382.5,
+    "peak_vram_mb": 45060.2,
+    "total_tokens_M": 160.4,
+    "num_steps": 306.0,
+    "num_params_M": 50.3,
+    "depth": 8.0
+  },
+  "elapsed_launcher_seconds": 424.0016939640045,
+  "sampling": {
+    "total": 80,
+    "gpu_active_samples": 75,
+    "all_gpu_active_samples_have_episode_budget": true,
+    "declared_gpu_memory_mb": 65536,
+    "first_to_last_reserved_sample_seconds": 388.43623542785645,
+    "first_to_last_gpu_active_sample_seconds": 378.2414677143097,
+    "peak_nvml_used_mb": 49369.0625,
+    "telemetry_error_samples": 1,
+    "session_count": 1
+  },
+  "cleanup": {
+    "containers_remaining": 0,
+    "gpu_processes": 0,
+    "gpu_used_mb": 0.1875,
+    "leases_active": 0,
+    "declared_gpu_memory_mb": 0
+  },
+  "boundary": "Real oracle task, benchmark model training and evaluation. No policy model rollout, PSRL optimizer step, persistent inference server or OFF/ON comparison."
+}

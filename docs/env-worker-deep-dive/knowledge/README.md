@@ -16,14 +16,18 @@
 | [Worker 重试、整组补采与重派发](worker-retry-and-redispatch.md) | 区分已有恢复和同请求跨 worker 转移，解释执行监督、熔断修复与真实进程死亡实验。 |
 | [EnvWorker 与 Harbor 共用容器后端](native-harbor-backend.md) | 容器生命周期复用、两种 shell 语义及真实 Harbor oracle 验证，明确 CPU 原型与 science GPU 路径的边界。 |
 | [GPU 统一执行后端](unified-gpu-execution.md) | episode 与 command 的提交、等待、取消和收尾，附组件验证及原生 science 验收边界。 |
-| [GPU 作业入口与任务遥测](gpu-jobs-and-task-telemetry.md) | 作业状态、资源归属和部署条件。同容器并发部分为方案与 CPU 模型，未作为生产能力验收。 |
-| [不用 procfs 标识进程](process-identity-without-procfs.md) | procfs 与 eBPF 的通俗比较、可选统一归属后端及双容器实测，也解释 SSH 容器层次和 pidfd 生命周期。 |
+| [MPS 并行执行后端](mps-parallel-execution.md) | 同容器与跨容器作业并行、按显存排队、独立取消回收，含配置与真实 Docker 验证。 |
+| [GPU 作业入口与任务遥测](gpu-jobs-and-task-telemetry.md) | 作业状态、资源归属和部署条件。同容器设计提案与 MPS 实现边界分别说明。 |
+| [不用 procfs 标识进程](process-identity-without-procfs.md) | procfs 与 eBPF 的比较、PID 分层设计原因、MPS 控制编号与 GPU 归属边界，附教学模拟。 |
+| [GPU 命令动态放置](dynamic-command-placement.md) | 固定 unit 排队的局限、PD 分离启发、同节点换卡与两层租约提案，附成本和公平性分析及 CPU 教学模拟。 |
 | [命令阶段配额](command-gpu-reservations.md) | 保留容器状态、归还 GPU 预算、后台归还与规划重叠，附实测和跨节点调度提案。 |
 | [GPU 显存准入与未兑现预约](gpu-memory-admission.md) | 实测占用与逐任务预约余量如何共同参与准入，附故障修复和验证边界。 |
 | [Docker 借用 rollout GPU](rollout-gpu-lending.md) | vLLM 睡眠、Docker 借卡与确认归还，区分当前实现、早期设计和配套实验。 |
-| [vLLM 与环境同卡共享策略](vllm-env-opportunistic-sharing.md) | 独立 GPU 优先、常驻共享与已睡眠窗口，解释 KV 余量、MPS/SM 与时间片调度，区分功能共存和性能收益。 |
+| [vLLM 与环境同卡共享策略](vllm-env-opportunistic-sharing.md) | 独立 GPU 优先、常驻共享与已睡眠窗口，包含 Docker MPS 接入、定向取消实测和 PID 视图适配规划。 |
 
 ## 基础概念与接入
+
+[GPU benchmark 接入 recipe](gpu-benchmark-recipes.md)：四类 GPU workload 的官方资产下载、准备器、EnvRouter 运行、PSRL 会话与奖励接口，配套实机验收记录。
 
 | 文档 | 阅读用途与边界 |
 |---|---|

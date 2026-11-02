@@ -1,0 +1,29 @@
+{
+  "compiled": true,
+  "correctness": true,
+  "metadata": {
+    "hardware": "NVIDIA H20",
+    "device": "cuda:0",
+    "correctness_trials": "(3 / 3)"
+  },
+  "runtime": 7.8,
+  "runtime_stats": {
+    "mean": 7.8,
+    "std": 0.00465,
+    "min": 7.8,
+    "max": 7.81,
+    "num_trials": 10,
+    "hardware": "NVIDIA H20",
+    "device": "cuda:0"
+  },
+  "ref_runtime": 4.55,
+  "ref_runtime_stats": {
+    "mean": 4.55,
+    "std": 0.00121,
+    "min": 4.55,
+    "max": 4.55,
+    "num_trials": 10,
+    "hardware": "NVIDIA H20",
+    "device": "cuda:0"
+  }
+}

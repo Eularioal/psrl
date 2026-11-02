@@ -17,6 +17,7 @@
 - [跟着图读源码](#跟着图读源码)
 - [后续实现顺序与边界](#后续实现顺序与边界)
 - [接口资料](#接口资料)
+- [PID 为什么分层及 MPS 应该用哪个编号](#pid-为什么分层及-mps-应该用哪个编号)
 
 ## 用一个任务理解两种方案
 
@@ -391,3 +392,73 @@ pytest -q tests/env_service/test_process_identity.py tests/env_service/test_task
 - [Linux capabilities 手册](https://man7.org/linux/man-pages/man7/capabilities.7.html)：权限位的用途与版本边界。
 - [NVIDIA NVML 进程信息结构](https://docs.nvidia.com/deploy/archive/R510/nvml-api/structnvmlProcessInfo__t.html)：当前讨论的 PID、显存与 MIG 字段。
 - [NVIDIA CUPTI 接口](https://docs.nvidia.com/cupti-python/cupti.html)：进程内 CUDA 上下文与采样接口，不能直接替代宿主 PID 映射。
+
+## PID 为什么分层及 MPS 应该用哪个编号
+
+本节接着上面的“SSH 私有节点为什么也是容器”和“唯一编号究竟指什么”，也对应 [GPU 遥测文档第 8.2 节](gpu-jobs-and-task-telemetry.md#82-pid-为什么会对不上)。这三处讲的是同一个障碍：**编号属于某个观察范围，不能拿到另一个范围里直接用。**
+
+先看全局层次。下图为 Linux 概念图，数字是教学假设，不是新增实测。
+
+```text
+[A] 物理宿主机的 PID 空间
+    同一个 Python 进程 P 在这里叫 2000
+    │
+    └── [B] SSH 登录的私有节点，实际是平台容器
+         P 在这里叫 300，内层 Docker daemon 在这里运行
+         │
+         ├── [C] science 任务容器
+         │    P 在这里叫 17，任务通过 getpid() 得到 17
+         │
+         └── [D] MPS 服务容器
+              默认独立空间：没有给同级 C 中的 P 分配本地编号
+              使用 --pid=host：共享 B 的视图，可以用 300 找到 P
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 图中部分 | 对应机制或实现 |
+|---|---|
+| A、B、C 的分层编号 | Linux 内核机制，不是 PSRL 自己重写 PID。定义见 [PID namespace 手册](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html) |
+| A 视角的 GPU 观测 | [NvmlProbe.read_gpu_snapshot](../../../psrl/workers/env_service/probe.py#L85)，读取驱动报告的进程编号和显存 |
+| C 的任务进程及本地取消 | [gpu_job_process.identity](../../../psrl/workers/env_service/gpu_job_process.py#L12)、[cancel](../../../psrl/workers/env_service/gpu_job_process.py#L20) |
+| D 的服务视图选择 | [MPS Docker 探针](../env-service-verification/scripts/mps_docker_probe.py)，只让服务使用 Docker 所在节点的 PID 视图 |
+| B 到 D 的身份核对 | [MpsClientController](../../../psrl/workers/env_service/mps.py#L50)，核对本地出生信息、namespace、服务代次和客户端连接 |
+
+**一个进程为什么有三个号码。** PID 是 Process ID，即进程编号。namespace 是命名空间，可以理解为一张独立的“名字对应对象”表。创建进程 P 时，内核在它所属的空间及各级祖先空间分别登记编号。CPU 实际执行的仍是同一个进程，显存也不是复制三份。任务内部调用 `getpid()` 时得到 17，B 管理这个进程用 300，A 管理它用 2000。不同层也可能碰巧分到相同数字，所以不能靠数字大小猜层级。
+
+**为什么这样设计。** 第一，为每个容器提供独立的进程世界，容器可以有自己的 PID 1 和完整进程树，不必依赖宿主当前已经用了哪些号码。第二，容器内部的进程不能仅靠遍历 PID 就看到或操作外部进程，减少信息暴露和误操作范围。第三，迁移或恢复容器时，可以保留内部进程编号，而不要求新宿主的全局编号恰好空闲。这是分层命名的用途，不表示 PID namespace 单独就实现了全部安全隔离，还需要权限、用户空间隔离和资源限制。[Linux 手册](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html)
+
+**可见方向不是对称的。** A 可以看见自己的进程和 B、C 的后代进程，B 可以看见 C，C 不能通过本地 PID 操作 B 的其他进程。同级的独立 D 也看不到 C。这里“看见”指能在自己的编号空间定位到对象，是否有权发送信号还要检查权限。MPS 显示 PID 0、namespace 为问号是本次部署的不可定位现象，不能把 0 当成一个可取消的正常任务编号。
+
+**为什么 `--pid=host` 还不是物理宿主。** `host` 是相对启动 Docker 的 daemon 而言。我们的内层 daemon 在 B，服务共享到的是 B。它获得 300 这个编号后就能管理 C，但不会自动获得 A 的 2000。把 B 的 `/proc` 挂载成 `/host/proc` 也只改访问路径，不会将 B 的进程表升级成 A 的表。
+
+**`/proc`、NSpid 与 pidfd 分别是什么。** `/proc` 是内核提供的进程信息文件视图，展示哪层编号与该 procfs 挂载的 PID 空间有关。若从 A 的 procfs 读 P 的 `status`，`NSpid` 可能显示 `2000 300 17`，从 B 的视图则只显示 `300 17`。它不能倒推自己看不到的祖先号码。pidfd 是一个进程引用句柄，适合避免进程退出后 PID 复用导致误操作，但不会自动告诉你另一个 namespace 里的号码。查看自己当前可见的层次可以运行 `grep '^NSpid:' /proc/self/status`，输出数字数量取决于环境，不能把最左边一项无条件称为物理宿主 PID。
+
+**回到 MPS，三个问题要分别回答。**
+
+| 操作 | 应当使用的编号或身份 | 错用的后果 |
+|---|---|---|
+| 任务在自身容器里管理子进程 | C 中的 PID，配出生身份或 pidfd | 把宿主 PID 当本地 PID，可能找不到或找错进程 |
+| MPS 定向取消客户端 | D 的服务所见 PID，本例为 B 中的 300 | 把 NVML 的 2000 发过去，可能无效或误指别的客户端 |
+| 按 NVML 数据给任务记账 | 驱动报告的 PID，经可信归属链连接到 job | 没找到本地 `/proc/2000` 不代表显存为零 |
+
+**新增控制组件如何工作。** 探针通过 Docker inspect 取得本次自建容器的进程号，不再仅凭任务 stdout 自报 namespace 来选择取消对象。控制组件读取该本地 PID 的出生 ticks 和 namespace，与 MPS 客户端表匹配，再记录服务进程出生信息。取消时要求同一 job 和 epoch，并复查客户端及服务身份，收到 MPS 成功确认之后才允许后续进程回收。epoch 是某次授权的代号，防止旧请求作用于后续一轮。
+
+跟着图读源码：B 的 Docker 确定进程 → [bind](../../../psrl/workers/env_service/mps.py#L57) 连接本地身份和 D 的客户端记录 → [validate](../../../psrl/workers/env_service/mps.py#L70) 检查进程及服务是否变更 → [terminate](../../../psrl/workers/env_service/mps.py#L80) 向 D 请求定向终止 → [统一执行器清理顺序](../../../psrl/workers/env_service/gpu_execution.py#L151) 依次执行 MPS 确认、进程回收、预约取消。A 与 B 的 GPU 工作是并行存续的，不是这条控制流程中的串行任务。
+
+这些代码如果有理解上的问题，可以随时追问。这个组件只解决可信、受控客户端的控制身份校验，还没有补齐 NVML 最外层身份映射，也没有消除校验与发送指令间的所有竞态。MPS 取消接口接受裸 PID，正式投产还需要停止新接入、串行管理生命周期，并验证派生进程与重连，不能将这次校验称为任意不可信任务下的原子身份保证。
+
+**可运行教学模拟。** 下例只模拟不同名字表的查找，不创建真实 namespace，也不会给任何进程发信号。
+
+```bash
+python - <<'PY'
+views = {'physical': {2000: 'P'}, 'node': {300: 'P'}, 'task': {17: 'P'}}
+for view, table in views.items():
+    print(view, next(iter(table)), '->', next(iter(table.values())))
+assert views['node'].get(2000) is None
+assert views['node'][300] == views['physical'][2000] == views['task'][17]
+print('MPS in node view: use 300, not 2000 or 17')
+PY
+```
+
+预期前三行的号码分别为 2000、300、17，全部指向 P，最后说明 MPS 在节点视图必须使用 300。真实 Docker GPU 入口与条件见 [MPS 接入探索](vllm-env-opportunistic-sharing.md#13-docker-mps-接入探索与框架落点)。

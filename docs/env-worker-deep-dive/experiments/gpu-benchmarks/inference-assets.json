@@ -1,0 +1,108 @@
+{
+  "model": "mistralai/Mistral-7B-Instruct-v0.3",
+  "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+  "download_complete": true,
+  "file_count": 15,
+  "total_bytes": 28995471365,
+  "hf_sharded_tensor_count": 291,
+  "files": [
+    {
+      "name": ".gitattributes",
+      "bytes": 1519
+    },
+    {
+      "name": "README.md",
+      "bytes": 7893
+    },
+    {
+      "name": "config.json",
+      "bytes": 601
+    },
+    {
+      "name": "consolidated.safetensors",
+      "bytes": 14496078512,
+      "sha256": "76d5729be995fb6510c7f103c5b8825d3d82f8126ac949db6be367a638694d1f",
+      "matched": true
+    },
+    {
+      "name": "generation_config.json",
+      "bytes": 116
+    },
+    {
+      "name": "model-00001-of-00003.safetensors",
+      "bytes": 4949453792,
+      "sha256": "ce6fb6f6f4d0183f4813cbf4ece24109da629a08d4210da46f77e1d8b0bd5c19",
+      "matched": true
+    },
+    {
+      "name": "model-00002-of-00003.safetensors",
+      "bytes": 4999819336,
+      "sha256": "8c0e72f148366b6a3709e002a98706a33d31aec8515090c856c95b2044f92ae0",
+      "matched": true
+    },
+    {
+      "name": "model-00003-of-00003.safetensors",
+      "bytes": 4546807800,
+      "sha256": "905dd405363e43d95779c1c1155a2dbfd36155914ae95dbd934e12e490cfb4ca",
+      "matched": true
+    },
+    {
+      "name": "model.safetensors.index.json",
+      "bytes": 23950
+    },
+    {
+      "name": "params.json",
+      "bytes": 202
+    },
+    {
+      "name": "special_tokens_map.json",
+      "bytes": 414
+    },
+    {
+      "name": "tokenizer.json",
+      "bytes": 1961548
+    },
+    {
+      "name": "tokenizer.model",
+      "bytes": 587404,
+      "sha256": "37f00374dea48658ee8f5d0f21895b9bc55cb0103939607c8185bfd1c6ca1f89",
+      "matched": true
+    },
+    {
+      "name": "tokenizer.model.v3",
+      "bytes": 587404
+    },
+    {
+      "name": "tokenizer_config.json",
+      "bytes": 140874
+    }
+  ],
+  "datasets": {
+    "TIGER-Lab/MMLU-Pro": {
+      "split": "test",
+      "rows": 12032,
+      "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be"
+    },
+    "THUDM/LongBench-v2": {
+      "split": "train",
+      "rows": 503,
+      "revision": "2b48e494f2c7a2f0af81aae178e05c7e1dde0fe9"
+    }
+  },
+  "sample_seeds": [
+    21,
+    248,
+    428,
+    777,
+    999,
+    1337
+  ],
+  "mmlupro_samples_per_seed": 500,
+  "longbench_samples_per_seed": 503,
+  "benchmark_verified": false,
+  "blockers": [
+    "Missing real Torch quality baseline and vLLM scenario A speed baseline",
+    "No Anthropic judge credential configured",
+    "Preferred node has H20, official task requires H100!"
+  ]
+}

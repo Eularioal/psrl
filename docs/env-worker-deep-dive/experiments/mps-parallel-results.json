@@ -1,0 +1,150 @@
+{
+  "scope": "Docker CUDA functionality, not native science training or performance comparison",
+  "date": "2026-10-30",
+  "gpu": "H20",
+  "unit_budget_mib": 2304,
+  "job_budget_mib": 1024,
+  "runs": [
+    {
+      "run": "native-command-5",
+      "passed": true,
+      "cuda_launches_at_overlap": [
+        365,
+        728
+      ],
+      "visible_sms": [
+        78,
+        78
+      ],
+      "per_job_peak_mb": [
+        570.0,
+        570.0
+      ],
+      "cancel_state": "cancelled",
+      "queue_state": "queued",
+      "remaining_containers": false,
+      "remaining_gpu_processes": 0,
+      "after_used_mb": [
+        0.1875
+      ],
+      "queued_cancel": null,
+      "execution_timeout": null,
+      "post_timeout_exit_code": null,
+      "memory_limit_cuda_error": null
+    },
+    {
+      "run": "native-episode-1",
+      "passed": true,
+      "cuda_launches_at_overlap": [
+        382,
+        755
+      ],
+      "visible_sms": [
+        78,
+        78
+      ],
+      "per_job_peak_mb": [
+        570.0,
+        570.0
+      ],
+      "cancel_state": "cancelled",
+      "queue_state": "queued",
+      "remaining_containers": false,
+      "remaining_gpu_processes": 0,
+      "after_used_mb": [
+        0.1875
+      ],
+      "queued_cancel": "cancelled",
+      "execution_timeout": "failed",
+      "post_timeout_exit_code": 0,
+      "memory_limit_cuda_error": null
+    },
+    {
+      "run": "compose-command-3",
+      "passed": true,
+      "cuda_launches_at_overlap": [
+        747,
+        1505
+      ],
+      "visible_sms": [
+        78,
+        78
+      ],
+      "per_job_peak_mb": [
+        570.0,
+        570.0
+      ],
+      "cancel_state": "cancelled",
+      "queue_state": "queued",
+      "remaining_containers": false,
+      "remaining_gpu_processes": 0,
+      "after_used_mb": [
+        0.1875
+      ],
+      "queued_cancel": null,
+      "execution_timeout": null,
+      "post_timeout_exit_code": null,
+      "memory_limit_cuda_error": null
+    },
+    {
+      "run": "compose-episode-2",
+      "passed": true,
+      "cuda_launches_at_overlap": [
+        1116,
+        1479
+      ],
+      "visible_sms": [
+        78,
+        78
+      ],
+      "per_job_peak_mb": [
+        570.0,
+        570.0
+      ],
+      "cancel_state": "cancelled",
+      "queue_state": "queued",
+      "remaining_containers": false,
+      "remaining_gpu_processes": 0,
+      "after_used_mb": [
+        0.1875
+      ],
+      "queued_cancel": null,
+      "execution_timeout": null,
+      "post_timeout_exit_code": null,
+      "memory_limit_cuda_error": null
+    },
+    {
+      "run": "final-limits",
+      "passed": true,
+      "cuda_launches_at_overlap": [
+        740,
+        728
+      ],
+      "visible_sms": [
+        38,
+        38
+      ],
+      "per_job_peak_mb": [
+        420.0,
+        420.0
+      ],
+      "cancel_state": "cancelled",
+      "queue_state": "queued",
+      "remaining_containers": false,
+      "remaining_gpu_processes": 0,
+      "after_used_mb": [
+        0.1875
+      ],
+      "queued_cancel": "cancelled",
+      "execution_timeout": "failed",
+      "post_timeout_exit_code": 0,
+      "memory_limit_cuda_error": 2
+    }
+  ],
+  "regression": {
+    "passed": 374,
+    "targeted_style": "passed",
+    "all_files_precommit": "existing unrelated failures",
+    "local_links_checked": 352
+  }
+}

@@ -3,6 +3,8 @@
 > **核心结论**：以整批任务完成时间为目标，先使用未被训推占用的其他 GPU，包括同机的独立 GPU。只有这些资源紧张时，才考虑 vLLM 正常服务时的安全余量。再放不下且有足够长的真实空闲窗口时，才评估睡眠借卡。不能把设备都已分配给训推理解成每张卡都没有物理余量，也不能把物理余量当作不影响模型的保证。
 >
 > 本文是 2026-10-27 的方案分析及阶段实现记录。设备级优先级已接入 worker 放置、派发及准入，CPU 回归与真实 CUDA 验证见第 9 节。显式共享 command 已加入推理余量与模型控制门禁，并支持已睡眠窗口，见第 10 节。统一训练峰值预约、空窗预测与按总时长决策仍未实现，没有同卡训练性能实测。计算竞争与控制等待的机制、已有实验的证据边界见第 11 节。
+>
+> 第 13 节给出 Docker MPS 接入探索。真实双客户端 CUDA、计算额度与定向取消已验证，EnvRouter 的 MPS 后端、跨视图身份映射及 science 性能收益仍未完成。
 
 ## 目录
 
@@ -18,6 +20,8 @@
 - [10. 常驻共享、KV 上限与已睡眠窗口](#10-常驻共享kv-上限与已睡眠窗口)
 - [11. 计算竞争与控制等待：已经验证到哪里](#11-计算竞争与控制等待已经验证到哪里)
 - [12. MPS、SM 与时分复用：怎样理解多进程共享](#12-mpssm-与时分复用怎样理解多进程共享)
+- [13. Docker MPS 接入探索与框架落点](#13-docker-mps-接入探索与框架落点)
+- [14. MPS 控制组件与统一执行器取消验证](#14-mps-控制组件与统一执行器取消验证)
 
 ## 1. 全局关系与已有源码
 
@@ -573,7 +577,7 @@ MPS 的价值是在有合适工作时填补余量，而不是给每个程序复�
 
 对 Router 可以把问题分为三个层次：第一层是容量准入，保证不重复承诺同一份显存。第二层是进入后的计算共享，普通驱动时间片或 MPS 决定内核怎样推进。第三层是结束后的归属与清理，确认本任务退出后其他工作仍能继续。只开启 MPS 不会自动完成第一和第三层。当前 command 预算不够只放行一条时，MPS 也没有第二个已获准任务可重叠。
 
-**接入 MPS 对当前代码还有实际适配工作。** 本地 [task_telemetry](../../../psrl/workers/env_service/task_telemetry.py#L25) 使用 GPU 进程身份做任务归属，[归还检查](../../../psrl/workers/env_service/command_gpu_node.py#L207) 检查所属进程、设备句柄与 GPU 活动。MPS 监控可能把活动归到共享 server，不能将 server 的全部占用算到某个容器，也不能因容器 PID 不在 GPU 列表中就判定已释放。这是结合源码与官方监控说明得出的接入风险，尚非本机故障实测。还需对照 MPS 客户端终止协议验证超时取消，不能将直接杀容器天然视为对其他客户端无影响。官方提供定向终止客户端上下文的机制，跨容器时需使用服务所见的进程编号。[监控与客户端终止要求](https://docs.nvidia.com/deploy/mps/when-to-use-mps.html)
+**接入 MPS 对当前代码还有实际适配工作。** 本地 [task_telemetry](../../../psrl/workers/env_service/task_telemetry.py#L25) 使用 GPU 进程身份做任务归属，[归还检查](../../../psrl/workers/env_service/command_gpu_node.py#L207) 检查所属进程、设备句柄与 GPU 活动。不能将共享 server 的全部占用算到某个容器，也不能因容器 PID 不在 GPU 列表中就判定已释放。第 13 节实测中 NVML 同时报告 server 和客户端，不能笼统地说开启 MPS 后就丢失所有客户端显存。当前节点的实际障碍是监控和控制使用的 PID 视图不同。还需对照 MPS 客户端终止协议适配框架超时取消，不能将直接杀容器天然视为对其他客户端无影响。官方提供定向终止客户端上下文的机制，跨容器时需使用服务所见的进程编号。[监控与客户端终止要求](https://docs.nvidia.com/deploy/mps/when-to-use-mps.html)
 
 **Docker 内可以使用 MPS，也可以运行 MPS 服务。** NVIDIA 提供了服务和客户端分别运行在容器里的示例。因此答案不是“容器一定不能开”，而是要把 GPU 设备、用户身份和进程间通信配置完整。IPC 是进程间通信，IPC namespace 是这类资源的隔离视图。服务与客户端需要能找到并使用彼此的通信资源。
 
@@ -590,7 +594,7 @@ MPS 的价值是在有合适工作时填补余量，而不是给每个程序复�
 - **容器接入已有服务**：把服务通信目录挂入任务容器，正确设置 `CUDA_MPS_PIPE_DIRECTORY`，匹配用户身份及 GPU 可见性，并按部署方式配置 IPC。不是在每个任务容器内各开一个服务就会自动合并。
 - **在专用容器里开服务**：服务容器运行 MPS 工具，任务容器连接它。NVIDIA 的 Compose 示例使用共享通信卷和 `ipc: container:mps-daemon`。该示例较旧，仅用于证明确有这种拓扑，不能原样当作当前集群配置。
 
-官方示例还将“修改 GPU 计算模式”放在单独具备额外权限的容器中，这说明管理 GPU 模式的权限与运行 MPS 服务不是同一件事。单用户 MPS 有普通用户启动路径，容器内 root 则不等于宿主管理权限。是否适用于腾讯节点，仍需检查实际驱动、工具、设备和平台授权。本次没有连接节点核验或启动服务。[NVIDIA 容器示例](https://gitlab.com/nvidia/container-images/samples/-/raw/master/mps/docker-compose.yml)、[单用户部署](https://docs.nvidia.com/deploy/mps/common-tasks.html)、[通信目录](https://docs.nvidia.com/deploy/topics/topic_5_2_2.html)
+官方示例还将“修改 GPU 计算模式”放在单独具备额外权限的容器中，这说明管理 GPU 模式的权限与运行 MPS 服务不是同一件事。单用户 MPS 有普通用户启动路径，容器内 root 则不等于宿主管理权限。第 13 节已经在目标环境启动独立服务容器，验证无需修改整机计算模式即可接入。其他节点仍需检查实际驱动、工具、设备和平台权限。[NVIDIA 容器示例](https://gitlab.com/nvidia/container-images/samples/-/raw/master/mps/docker-compose.yml)、[单用户部署](https://docs.nvidia.com/deploy/mps/common-tasks.html)、[通信目录](https://docs.nvidia.com/deploy/topics/topic_5_2_2.html)
 
 MPS 不是“装了 CUDA 就必定已开启”。需要服务已启动且客户端真正接入。平台可能预配置服务，也可能没有，所以需现场核对版本、服务进程、客户端连接、容器目录挂载与用户身份。容器内看不到宿主服务进程也不能单独证明没开。只设置一个额度环境变量或看到两条 nvidia-smi 进程记录，都不是接入或内核并行的证据。[官方启动与接入检查](https://docs.nvidia.com/deploy/mps/quick-start.html)
 
@@ -617,3 +621,119 @@ PY
 ```
 
 输出为 20、12、10、5。最后的 5 依赖两个小内核确实能有效重叠，不是启用 MPS 后必然达到的结果。后续若做实机对照，应分别测单任务、Router 串行、无 MPS 多进程、MPS 多进程，固定成功工作量并记录总时间、单任务响应和内核时间线。小内核与持续满载应分开，模型与环境的依赖也要保留，不能只看整卡利用率或显存占用。
+
+## 13. Docker MPS 接入探索与框架落点
+
+**接入方向：保留现有显存准入，把 MPS 作为可选的计算执行方式，并配套任务身份和取消适配。** `command/episode` 决定预算持有多久，MPS 决定已经获准的进程如何共享 GPU，两者是独立维度。可以组合成 command + MPS，也可以是 episode + MPS。MPS 不会替 episode 自动释放模型显存，也不会解除现有同容器执行锁。
+
+先串起已有实现、这次探针与建议扩展。图中“待实现”没有接入正式训练链路。
+
+```text
+[1] science / 其他任务 → 统一 GPU 执行后端
+           │                 command 或 episode 预约策略
+           ↓
+[2] EnvRouter：检查容量并持有任务预算
+           ↓
+[3] 节点 MPS 管理器（待实现）
+    按节点、物理 GPU、用户与隔离域管理服务
+    绑定 lease / job / epoch 与 CUDA 客户端身份
+           │
+           ├── [4] 容器 A：独立 PID 空间 → CUDA 客户端 A ─┐
+           └── [4] 容器 B：独立 PID 空间 → CUDA 客户端 B ─┤
+                                                       ↓
+                                    [5] 同一个 MPS 服务 → 同一 GPU
+                                        ↑             │
+                       [6] 身份映射 ← MPS 客户端表 + NVML 显存观测
+                                        │
+             完成或取消 → [7] 撤销新接入，终止目标上下文，核实退出
+                                        ↓
+                              [2] 释放这条任务的预算
+
+本次探针实际验证 [4] → [5] → [6] 的观测与 [7] 的定向终止。
+没有运行 science、EnvRouter actor 或完整 PSRL 训练。
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 编号 | 当前源码与职责 | MPS 接入边界 |
+|---|---|---|
+| 1 | [GpuExecutionBackend.execute](../../../psrl/workers/env_service/gpu_execution.py#L102)，执行和异常清理 | 可以保留预约策略，执行控制需要增加 MPS 客户端协议 |
+| 2 | [GpuCommandScheduler._grant](../../../psrl/workers/env_service/command_gpu.py#L106)，读取测量并检查预约 | 显存准入仍必须存在，MPS 不代替它 |
+| 3 | 尚无 MPS 管理器，节点侧现有 [GpuCommandNodeMixin](../../../psrl/workers/env_service/command_gpu_node.py#L105) | 待增加服务健康、客户端登记和隔离域生命周期 |
+| 4 | [探针 client](../env-service-verification/scripts/mps_docker_probe.py#L128) | 独立容器共享通信目录及服务 IPC，仍保留各自 PID 空间 |
+| 5 | [探针服务启动](../env-service-verification/scripts/mps_docker_probe.py#L155) | 使用匹配驱动的 MPS 工具，服务具有祖先 PID 视图 |
+| 6 | [NvmlProbe.read_gpu_snapshot](../../../psrl/workers/env_service/probe.py#L85)、[read_command_memory](../../../psrl/workers/env_service/task_telemetry.py#L10) | 设备观测已复用，正式跨 PID 视图绑定仍待实现 |
+| 7 | [探针定向取消](../env-service-verification/scripts/mps_docker_probe.py#L178)、[正式物理归还](../../../psrl/workers/env_service/command_gpu_node.py#L207) | 探针验证 MPS 协议，正式回收路径尚未采用 |
+
+这些源码如果有理解上的问题，可以按图中编号继续追问。
+
+**Results：2026-10-29 的真实 Docker CUDA 验证。** 代码基于工作树 `e8ab9bf`，另加本节两份探针。现有工作树的其他未提交修改不是本实验的 MPS 后端实现。硬件为一张 H20，驱动 `535.247.01`，Docker `26.1.3`。使用缓存的 science 环境镜像，但只运行自包含 CUDA 程序，不执行题目、模型、rollout 或优化器。每个客户端申请 256 MiB，反复执行一个小内核并检查输出 42，单客户端上限 40 秒，单轮外层预算 240 秒。
+
+| 验证项 | 观察 | 能得出的结论 |
+|---|---|---|
+| 普通 Docker CUDA | 内核输出 42，正常释放 | 先排除镜像和驱动挂载不兼容 |
+| MPS 双客户端连接 | 服务存在，两个客户端成功计算 | Docker 内 MPS 确实可用，不能只靠环境变量推断接入 |
+| 计算额度 | A 可见 78 个 SM，B 设置 50% 后可见 38 个 SM | 额度生效且有硬件取整，不代表 B 的速度固定为 A 一半 |
+| 服务使用独立 PID 空间 | MPS 显示 PID 0，命名空间未知 | 服务无法可靠区分客户端，第一轮主动停止且完整清理 |
+| 服务改用 `--pid=host` | MPS 能列出 A、B 的不同 PID 和 PID namespace | 服务可定位目标，客户端仍维持独立 PID 空间 |
+| 定向取消 A | `terminate_client` 返回 0，A 收到 CUDA 错误 810 | A 的 CUDA 上下文被按预期终止，A 退出码 1 是取消结果 |
+| B 不受本次取消影响 | 取消后仍继续提交，最终完成 2046 次内核并返回 42 | 本次定向取消没有破坏 B，不能外推所有故障均隔离 |
+| 资源回收 | 无实验容器，无 GPU 计算进程，显存回到约 0.19 MiB | 与第二轮起点一致，MPS 服务已关闭 |
+
+**为什么第一轮会看到 PID 0。** PID namespace 是进程编号的隔离视图，两个容器内部都可以有 PID 1。服务如果也在独立的同级空间，不能用自己的编号定位另一个空间的进程。本次只扩大可信服务的 PID 视图，任务容器没有改成共享宿主 PID。这里的 `host` 是 Docker 所在节点的视图，不能理解成一定拿到了物理宿主机最外层视图。
+
+修复之后仍存在三层编号：任务容器里的 A 是 PID 1，MPS 中是另一个编号，NVML 又报告更外层编号。本次实际观察到 MPS 的 A 为 `2744797`，NVML 中随 A 退出而消失的记录为 `3527537`。这个对应关系由受控实验的单独退出推断，**不能用“显存数刚好相同”或消失顺序作为生产身份认证**。应将容器身份、进程出生标识、MPS 服务代次与控制视图 PID 绑定，再连接已有 eBPF 身份信息。仅有裸 PID 或 namespace 编号不足以防复用。
+
+**显存记账并没有必然失效，但需要准确映射。** 两个客户端运行时，NVML 给出三条记录：约 58 MiB 的服务占用、570 MiB 的 A 和 420 MiB 的 B，整卡约 1058 MiB。A 被取消后只留下服务和 B，整卡约 487 MiB。用户申请的 256 MiB 不包括全部 CUDA 上下文开销，所以不能按申请数组大小直接写任务预算。这里的任务对应来自受控退出观察，尚未验证现有 procfs/eBPF 到 MPS 的完整归属链。
+
+正式记账应继续采用“设备当前占用 + 各任务尚未兑现的预约”。例如，**教学假设** A 预约 1024 MiB，可信观测到它已用 570 MiB，就只再保留 454 MiB 的未兑现部分。MPS 服务自己的内存仍包含在设备占用中，不能抵扣给 A。如果暂时无法确认 A 的归属，继续保留完整 1024 MiB 预约会偏保守，但比误把 B 的占用抵扣给 A 更可靠。实现见 [accounted_gpu_memory_mb](../../../psrl/workers/env_service/gpu_memory.py#L9)。
+
+**跟着图读源码。** 下面是探针的真实执行路径。A 与 B 运行期间是并发的，表格列的是控制器观察顺序。
+
+1. 步骤 [4] 前置检查 → [main](../env-service-verification/scripts/mps_docker_probe.py#L70)：检查 Docker、镜像、UUID、minor 与实时占用，卡不空闲则退出。
+2. 步骤 [4] 普通 CUDA → [direct 探针](../env-service-verification/scripts/mps_docker_probe.py#L152)：先运行不接 MPS 的小内核，确认真实容器 CUDA 可执行。
+3. 步骤 [5] 启动服务 → [服务参数](../env-service-verification/scripts/mps_docker_probe.py#L155)：挂载设备、匹配版本的驱动库和工具，共享 IPC，服务使用祖先 PID 视图。
+4. 步骤 [4] 并发客户端 → [启动 A/B](../env-service-verification/scripts/mps_docker_probe.py#L170)：两个独立容器持续计算，B 在创建上下文之前设置计算额度。
+5. 步骤 [6] 观察和定位 → [客户端表与 NVML](../env-service-verification/scripts/mps_docker_probe.py#L174)：通过本实验可信客户端提供的 namespace 匹配 MPS 行，不直接拿 NVML PID 发取消指令。
+6. 步骤 [7] 定向终止 → [terminate_client](../env-service-verification/scripts/mps_docker_probe.py#L186)：收到成功确认后检查 A 的 810 错误，确认 B 的已完成内核数继续增加。
+7. 步骤 [7] 正常退出与最终清理 → [finally](../env-service-verification/scripts/mps_docker_probe.py#L228)：协作停止剩余任务，等待退出，关闭本次 MPS，删除带本次标签的容器，复查物理资源。
+
+**复现入口。** 在已有项目 Python 环境和可访问 Docker 的执行节点，先按运行指南预检。`MPS_PROBE_IMAGE` 填本地已有、含 Python 3 的受信任镜像，`MPS_PROBE_GPU` 填现场确认的空闲 GPU index，`MPS_PROBE_OUTPUT` 填尚不存在的结果目录。脚本要求节点有与驱动匹配的 MPS 工具。它使用显式设备与驱动库挂载，不依赖 Docker NVIDIA runtime。
+
+```bash
+: "${MPS_PROBE_IMAGE:?Set a cached Python image}"
+: "${MPS_PROBE_GPU:?Set an idle GPU index}"
+: "${MPS_PROBE_OUTPUT:?Set a new output directory}"
+timeout 240 python docs/env-worker-deep-dive/env-service-verification/scripts/mps_docker_probe.py \
+  --image "$MPS_PROBE_IMAGE" --gpu "$MPS_PROBE_GPU" --output "$MPS_PROBE_OUTPUT"
+```
+
+预期 `result.json` 中 `status=passed`、`terminate_response="0"`、`a_after_cancel.cuda_error=810`、`b_completed.answer=42`、`containers_remaining=""`，且没有 `cleanup_errors`。每次运行保留实际命令、客户端输出和 MPS 日志。`--server-pid-mode private` 可以复现本次 PID 可见性障碍，该组预期失败而不是性能对照。两轮原始结果保存在本地 `env-service-verification/results/mps-integration-20261029/`，不作为可移植的仓库依赖。
+
+**建议实现顺序及 TODO。** 以下是基于本次证据的设计，不是已交付的正式后端。
+
+| 优先级 | 实现内容 | 验收条件 |
+|---|---|---|
+| P0 | 节点管理一个有明确设备、用户和服务代次的 MPS 隔离域，服务生命周期独立于单个任务 | 服务重启使旧绑定失效，某任务退出不停止其他任务的服务 |
+| P0 | 给统一执行后端增加可选 MPS 控制，保留 command/episode 预约策略 | 两种策略都经过同一套绑定、取消和归还，不通过脚本绕过 Router |
+| P0 | 绑定 job、lease、epoch、进程出生身份及不同 PID 视图 | 取消、显存抵扣都只作用于确证属于本次任务的客户端 |
+| P0 | 取消先停止新客户端接入，再执行 MPS 定向终止，最后回收 OS 进程并验证显存 | 不能沿用直接 SIGKILL 的顺序，失败保留预约并隔离待清理资源 |
+| P0 | 验证 MPS 下设备权限撤销和通信入口控制，处理任务派生子进程与重新连接 | 禁止已归还任务借仍可访问的 MPS 入口重新开始 CUDA 工作 |
+| P1 | 计算额度与客户端显存上限配置，先使用固定配置 | 每进程额度不冒充整个任务的总预算，多进程任务仍需总账本 |
+| P1 | 真实 science 工作负载做固定成功工作量对照 | 比较 Router 串行、普通多进程、MPS 多进程，分别测总时长和单任务延迟 |
+
+当前 [gpu_job_process.cancel](../../../psrl/workers/env_service/gpu_job_process.py#L20) 直接给任务进程组发送 SIGKILL，[统一后端异常路径](../../../psrl/workers/env_service/gpu_execution.py#L151) 先调用进程取消再调用预约取消。MPS 接入不能只添加容器环境变量。第 14 节已增加前置清理扩展点，但普通任务尚未自动绑定 MPS 控制。探针客户端是可信的，且共享 MPS 通信目录，因此也没有证明任意不可信任务之间具备管理权限隔离。正式接入需限定信任域并保护控制接口，目录只读不能自动阻止 Unix socket 管理请求。
+
+初期优先限定在环境专用 GPU，多容器任务共享一个 MPS 服务。不先把 vLLM 纳入同一故障域，也不实现自动切换 command/episode 或预测 offload。MPS 服务参与多个任务后，单任务是否可取消、可记账、可归还，比先追求吞吐数字更优先。本次已经满足 Docker 接入探索的必要证据，因此停止 GPU 验证。**没有 science 加速结论，没有内核重叠时间线，没有训推同卡性能隔离结论。**
+
+## 14. MPS 控制组件与统一执行器取消验证
+
+**实现范围：** 新增 [MpsClientController](../../../psrl/workers/env_service/mps.py#L50)，以控制服务所在视图的真实 PID、进程出生信息、namespace、MPS 客户端 ID 和服务出生信息绑定 job/epoch。探针从 Docker inspect 获取本次自建容器 PID，而不是把任务 stdout 当作可信身份来源。PID 分层的设计原因和三层编号例子见 [PID 分层讲解](process-identity-without-procfs.md#pid-为什么分层及-mps-应该用哪个编号)。
+
+[统一执行器](../../../psrl/workers/env_service/gpu_execution.py#L102) 增加 `before_cancel` 扩展点，清理顺序为：MPS 定向终止确认 → 任务进程回收 → 预约取消。任何前置清理失败都会阻止后续预约取消。这里的“保留预算”不是自动完成了隔离和重试，失败资源仍需要节点后续受控回收。
+
+**Results：2026-10-30。** 23 项 CPU 回归通过，覆盖不可用 PID、旧 epoch、客户端出生变化、服务重启、连接变化、MPS 拒绝及清理失败。真实双 Docker CUDA 探针通过新增控制组件和统一执行器的超时路径：A 收到预期 810，进程退出码 1，B 继续执行并最终完成 3059 次小内核、返回 42。实验容器和服务全部删除，GPU 无计算进程，NVML 显存约 0.19 MiB。后台有界执行的原始证据保存在本地 `env-service-verification/results/mps-controller-20261030/`。
+
+本次使用真实 `GpuExecutionBackend` 和 episode 预约策略，但**没有运行 Router actor，未验证真实租约记账链路**。进程取消回调在 CUDA 终止后等待客户端正常退出，没有额外向正在计算的客户端发送 SIGKILL。脚本源码和复现命令仍使用第 13 节入口。
+
+**当前接入另见 [MPS 并行后端](mps-parallel-execution.md)**：节点服务、显式配置、作业设备组、eBPF 显存关联和正常取消回收已接入，两种容器 provider 与两种预算模式完成真实 CUDA 验收。以下仅描述本节独立控制组件的调用边界。真实 science 性能对照和不可信任务隔离仍未完成。`before_cancel` 目前由探针显式接入，默认路径仍不启用 MPS，配置 mps 后走节点的专用执行路径。控制表校验和终止指令不是原子操作，因此组件仅用于受控、可信且由调用方串行管理生命周期的客户端，不能宣称已解决所有 PID 复用竞态。当前成果是后端控制组件与清理顺序的实机验证，不是完整 MPS 调度后端已上线。

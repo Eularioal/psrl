@@ -1,0 +1,642 @@
+[
+  {
+    "seconds": 11.808418989181519,
+    "leases": 0,
+    "declared_gpu_mb": 0,
+    "nvml_used_mb": 0.1875,
+    "gpu_process_count": 0,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 17.00255060195923,
+    "leases": null,
+    "declared_gpu_mb": null,
+    "nvml_used_mb": null,
+    "gpu_process_count": null,
+    "telemetry_error": "TimeoutError()"
+  },
+  {
+    "seconds": 27.015573263168335,
+    "leases": 0,
+    "declared_gpu_mb": 0,
+    "nvml_used_mb": 0.1875,
+    "gpu_process_count": 0,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 32.09276986122131,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 0.1875,
+    "gpu_process_count": 0,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 37.207802057266235,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 3.5,
+    "gpu_process_count": 0,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 42.287537574768066,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 613.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 47.36475729942322,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 1027.0,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 52.457223653793335,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 4359.0,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 57.56517267227173,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 45177.0,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 62.6655387878418,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 45241.0,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 67.76499557495117,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 72.87778329849243,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 77.96151733398438,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 83.08660793304443,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 88.17272067070007,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 93.26691102981567,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 98.35618042945862,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 103.43471503257751,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 108.53448748588562,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 113.63153409957886,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 118.72697472572327,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 123.86405777931213,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 128.95886659622192,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 134.1160604953766,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 139.20655059814453,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 144.37941718101501,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 149.47256088256836,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 154.55653047561646,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 159.6494710445404,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 164.74504280090332,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 169.83968234062195,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 174.93876481056213,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 180.03146362304688,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 185.12577724456787,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 190.2177815437317,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 195.3131902217865,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 200.4039900302887,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 205.8891634941101,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 210.9768626689911,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 216.07230925559998,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 221.21270060539246,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 226.30502486228943,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 231.4307062625885,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 236.5187737941742,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 241.66207575798035,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 246.75798988342285,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 251.8833727836609,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 256.9815630912781,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 262.06590843200684,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 267.3851101398468,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 272.46800684928894,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 277.56646394729614,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 282.67457818984985,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 287.77720069885254,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 292.93113684654236,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 298.01871728897095,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 303.1156315803528,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 308.2123131752014,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 313.33502769470215,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 318.4175431728363,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 323.53224444389343,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 328.6132855415344,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 333.70115423202515,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 338.79558205604553,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 343.88462805747986,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 348.9884600639343,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 354.08662009239197,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 359.1686038970947,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 364.26087045669556,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 369.34000515937805,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 374.49389028549194,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 379.5900933742523,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 384.7421364784241,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 389.9182424545288,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 395.01147055625916,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 400.1055598258972,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 405.2078366279602,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 410.29890060424805,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 415.3883981704712,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  },
+  {
+    "seconds": 420.52900528907776,
+    "leases": 1,
+    "declared_gpu_mb": 65536,
+    "nvml_used_mb": 49369.0625,
+    "gpu_process_count": 1,
+    "telemetry_error": null
+  }
+]

@@ -6,6 +6,10 @@
 
 > **当前修复状态**：准备阶段对外拒绝命令、清理失败保留待回收状态已修复。CPU 后端已接 science runner 的整次任务准入，并通过真实 LAPS oracle 与固定 baseline 对照。第 7 节保留修复前复现，最新结果与未完成项见[修复与 science 验证](../experiments/native-backend-fixes-and-science.md)。
 
+> **GPU 接入更新**：原生与 Compose 创建路径已共用 `ManagedGpuExecution`，原生 command GPU 准入、CUDA 执行、异步作业、取消和归还已通过实机检查。下面的 CPU 原型限制与修复记录按其版本阅读，最新能力和剩余差异见[统一执行层第 9 节](unified-gpu-execution.md#9-两种容器创建方式共用托管执行层)。
+
+> **长任务期限语义**：Harbor 未传单条命令期限时，原生执行不再附加 EnvWorker 的默认期限，由 Harbor 外层控制。显式期限和取消仍生效。真实 autoresearch episode 验证与问题复现见[长任务记录](../experiments/gpu-benchmarks/FINDINGS.md#原生-env-的-episode-长任务验证)。
+
 ## 目录
 
 - [1. 全局关系：统一哪一层](#1-全局关系统一哪一层)

@@ -280,7 +280,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_concurre
 |---|---|
 | R1、R2 | [run_harbor_episode 申请租约](../../../examples/sciaccel_rl/runner.py#L346) → [EnvServiceClient.acquire](../../../psrl/workers/env_service/client.py#L159) → [Ledger.try_admit](../../../psrl/workers/env_service/ledger.py#L105)，输入 session_id 和环境需求，输出 EnvLeaseHandle |
 | R3 | [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L99) 配置设备与归属；[JobConfig](../../../examples/sciaccel_rl/runner.py#L440) 绑定一个任务和代理；[Job.create / run](../../../examples/sciaccel_rl/runner.py#L502) 进入 Harbor 执行 |
-| R4 | [dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py#L28) 调用已有环境的 [start_gpu_job](../../../psrl/workers/env_service/docker.py#L156)，[GpuJobManager.start](../../../psrl/workers/env_service/gpu_jobs.py#L60) 创建 job_id 并启动后台生命周期，没有申请新容器 |
+| R4 | [dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py#L28) 调用已有环境的 [start_gpu_job](../../../psrl/workers/env_service/managed_execution.py#L130)，[GpuJobManager.start](../../../psrl/workers/env_service/gpu_jobs.py#L60) 创建 job_id 并启动后台生命周期，没有申请新容器 |
 | R5 | [exec_gpu](../../../psrl/workers/env_service/docker.py#L92) 读取已有 lease_id 和 main container ID，将它们与 request_id 送入 [Scheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L49)；[物理归还](../../../psrl/workers/env_service/command_gpu_node.py#L153) 成功后释放 GPU 预算 |
 | R6 | [runner 的 finally](../../../examples/sciaccel_rl/runner.py#L555) 先清理本次 Compose 容器，再调用 [lease_handle.release](../../../examples/sciaccel_rl/runner.py#L577)，停止心跳并释放环境资源 |
 
@@ -403,10 +403,10 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_c
 |---|---|---|
 | G1 独立尝试 | [agent_loop.run](../../../examples/sciaccel_rl/agent_loop.py#L171)、[runner](../../../examples/sciaccel_rl/runner.py#L346) | 每次尝试自己的 session，申请自己的 lease |
 | G2 两种持有策略 | [Ledger.try_admit](../../../psrl/workers/env_service/ledger.py#L105)、[gpu_active 初始化](../../../psrl/workers/env_service/ledger.py#L182)、[_fits_now](../../../psrl/workers/env_service/ledger.py#L376) | episode 立即计 GPU 预算，command 暂不计活动 GPU 预算 |
-| G3 工具入口 | [agent._execute_commands](../../../examples/sciaccel_rl/agent.py#L104) → [dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py#L28) → [start_gpu_job](../../../psrl/workers/env_service/docker.py#L156) | 显式 psrl-gpu 请求转成受管理的作业 |
+| G3 工具入口 | [agent._execute_commands](../../../examples/sciaccel_rl/agent.py#L104) → [dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py#L28) → [start_gpu_job](../../../psrl/workers/env_service/managed_execution.py#L130) | 显式 psrl-gpu 请求转成受管理的作业 |
 | G3 等待与执行 | [exec_gpu](../../../psrl/workers/env_service/docker.py#L92) → [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L49) → [grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L139) | 额度与物理占用检查通过后授权，当前同租约仍只允许一条待执行／活动命令 |
 | G4 输出与异步归还 | [exec_gpu 的 overlap_return](../../../psrl/workers/env_service/gpu_execution.py#L55)、[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153) | 输出就绪与物理归还分开，后台确认完成前继续计费 |
-| G5 最终清理 | [ManagedDockerEnvironment.stop](../../../psrl/workers/env_service/docker.py#L238)、[runner finally](../../../examples/sciaccel_rl/runner.py#L555) | 处理在途命令、回收所属容器、释放租约 |
+| G5 最终清理 | [ManagedDockerEnvironment.stop](../../../psrl/workers/env_service/docker.py#L76)、[runner finally](../../../examples/sciaccel_rl/runner.py#L555) | 处理在途命令、回收所属容器、释放租约 |
 
 这些代码如果有理解上的问题，可以随时追问。跟着图读源码时，先读 G1 的申请与 G2 的初始状态，再沿 G3 看工具到授权，接着读 G4 的双分支，最后读 G5。G4 的模型请求和归还检查是并发关系，不能读成先释放预算再让模型思考。异常也会直接进入 G5，不保证每条命令都正常返回。
 
@@ -653,6 +653,8 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_gpu_susp
 本节新增脚本实际 CPU 运行及 Ruff／格式检查通过，文档与总索引的 172 个本地链接、行号范围及章节锚点检查通过。全仓 pre-commit 在隔离副本仍因其他文件的既有 Ruff／格式与 prose-style 问题失败，日志保存在本节结果目录。未修改生产调度代码、未运行 GPU、未提交或推送。
 
 ## 14. unit 如何共享及命令能否跨机器
+
+> **动态调度设计补充**：本节解释现有固定绑定。如何在下一条命令就绪时重新选 GPU、哪些 PD 分离原则可以借鉴、以及同节点换卡的权限与公平性约束，见[GPU 命令动态放置](dynamic-command-placement.md)。该方案尚未实现。
 
 **结论**：unit 是预先配置在一台节点上的资源池，session 获得的是该池中的一份 lease 租约，不是独占整个池。多个环境可以共享同一个 unit，但需满足数量、CPU、主存和 GPU 策略约束。跨节点放置与命令阶段排队是两层不同决策。
 

@@ -32,6 +32,8 @@
 
 ## 故障与接入验证
 
+[四类 GPU benchmark 接入验证](gpu-benchmarks/FINDINGS.md)：KernelBench 与 autoresearch 真实 H20 执行、原生 Env 的 episode 长任务与超时修复，以及官方资产准备与未验证项。
+
 | 报告 | 验证对象与边界 |
 |---|---|
 | [Worker 重试与执行监督](../knowledge/worker-retry-and-redispatch.md#7-可运行验证与-results) | 真实 Ray worker 死亡、训练等待方错误传播和 Harbor 容器回收，不是完整 science 训练。 |

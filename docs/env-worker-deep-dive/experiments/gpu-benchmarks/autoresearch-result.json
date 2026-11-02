@@ -1,0 +1,49 @@
+{
+  "scope": "One real autoresearch oracle task through PSRL runner and EnvRouter. Training updates belong to the benchmark model, not the PSRL policy.",
+  "provenance": {
+    "revision": "228791fb499afffb54b46200aca536f79142f117",
+    "assets": {
+      "upstream_revision": "228791fb499afffb54b46200aca536f79142f117",
+      "base_url": "https://huggingface.co/datasets/karpathy/climbmix-400b-shuffle/resolve/main",
+      "num_train_shards": 1,
+      "validation_shard": "shard_06542.parquet",
+      "kernel_repo": "varunneal/flash-attention-3",
+      "kernel_package": "flash_attention_3",
+      "kernel_variant": "torch29-cxx11-cu128-x86_64-linux",
+      "kernel_revision": "de87b9b5af06dd9984df595bef90b2eba44b181a",
+      "sha256": {
+        "data/shard_00000.parquet": "054ddbd98abf30d773c54de578fc9d579bafeb6c14e04e97bd36aa90e825bf9b",
+        "data/shard_06542.parquet": "769fe59d108dfd2cfa186c63173b83fbfb90a7adb3519519ba6eaa6ca9889f94",
+        "tokenizer/token_bytes.pt": "f44a3d5f8cfaf7d1cf7fc64751fd896badcfdf620a75b2f8be854a49082d68c7",
+        "tokenizer/tokenizer.pkl": "14915209a2c791b62608396040608c65fb9458b190216422216d399200abde1c"
+      }
+    }
+  },
+  "candidate_equals_upstream": true,
+  "candidate_sha256": "2954175f4ac42ad65164aef40910ef953789abcd05a5cc886ac9ba5a00814414",
+  "gpu": "NVIDIA H20",
+  "reward": {
+    "reward": 0.4635185772464368,
+    "val_bpb": 1.157410833327473
+  },
+  "upstream_stdout_metrics": {
+    "val_bpb": 1.157411,
+    "training_seconds": 300.1,
+    "total_seconds": 393.6,
+    "peak_vram_mb": 45060.2,
+    "total_tokens_M": 160.4,
+    "num_steps": 306.0,
+    "num_params_M": 50.3,
+    "depth": 8.0
+  },
+  "elapsed_episode_seconds": 479.76508045196533,
+  "cleanup": {
+    "containers_remaining": 0,
+    "gpu_compute_processes": 0,
+    "gpu_used_mb": 0.1875,
+    "leases_active": 0,
+    "declared_gpu_memory_mb": 0
+  },
+  "verification_boundary": "One official training shard instead of default ten. Original train.py and prepare.py constants. No LLM agent rollout, PSRL optimizer update, H100 comparison or quality improvement claim.",
+  "workspace_note": "Uncommitted main workspace, with concurrent Env backend refactoring. During-run source state was recorded separately, not an immutable launch-time snapshot."
+}
