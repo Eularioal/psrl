@@ -92,6 +92,10 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 - [AIRS-Bench 审查与复现](env-worker-deep-dive/knowledge/implementation-and-gaps.md#17-airs-bench-接入批评核对与最小复现) —— 2026-10-13 修复前代码裁定、真实 Bash 复现、上游 MLGym 契约检查和修复顺序建议。
 - [Env Service 设计与修复验证](env-worker-deep-dive/env-service-verification/README.md)：早期进程、容器、跨节点与训练验证，保留各阶段验收边界。
 
+- [CUDA 上下文与计算竞争](env-worker-deep-dive/knowledge/cuda-context-and-compute-contention.md)：解释 context、stream、SM 与 MPS，以及上下文开销的显存准入。
+- [CPU 与 GPU 并行架构对比](env-worker-deep-dive/knowledge/cpu-gpu-parallelism-architecture-comparison.md)：比较处理器调度粒度、上下文切换及 MPS、MIG 的适用边界。
+- [GPU 准入、归属与恢复](env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md)：串联 eBPF 身份识别、资源预算、节点恢复和协程清理，附 CPU 演示。
+
 ## 开发工具
 
 - [inode 与 Docker 写回阻塞](tools/linux/inode-basics.md)：用真实六字节文件实验解释文件名、inode、硬链接、删除后的打开引用，以及 inode 容量与写回等待的区别。
