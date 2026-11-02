@@ -27,7 +27,7 @@ HF_MODEL_PATH=${HF_MODEL_PATH:-${PSRL_WORKSPACE:-}/models/Qwen3.5-4B}
 HINT_LEVEL=${HINT_LEVEL:-L1}
 # Built by `prepare/prepare_all.sh`, one directory per (env, category, tier).
 DATA_DIR=${DATA_DIR:-${PSRL_PATH}/examples/sciaccel_rl/data/pluto-cooling-chemistry/repair_easy}
-train_files=${DATA_DIR}/train/${HINT_LEVEL}.parquet
+train_files=${TRAIN_FILES:-${DATA_DIR}/train/${HINT_LEVEL}.parquet}
 # Hinted eval matches the training distribution. `L3` is the unhinted control, so its
 # in-distribution eval set IS the unhinted one. Override with VAL_FILES.
 if [ "${HINT_LEVEL}" = "L3" ]; then
@@ -60,8 +60,8 @@ PSRL_LOG_DIR=${OUTPUT_DIR}/psrl_logs/${experiment_name}
 mkdir -p "${CKPTS_DIR}" "${PSRL_LOG_DIR}"
 
 # --- Agent loop config ---
-agent_loop_config_path=${PSRL_PATH}/examples/sciaccel_rl/config/sciaccel_agent_config.yaml
-reward_path=${PSRL_PATH}/examples/sciaccel_rl/reward.py
+agent_loop_config_path=${AGENT_LOOP_CONFIG_PATH:-${PSRL_PATH}/examples/sciaccel_rl/config/sciaccel_agent_config.yaml}
+reward_path=${REWARD_PATH:-${PSRL_PATH}/examples/sciaccel_rl/reward.py}
 
 # --- Batch and sequence lengths ---
 
@@ -90,7 +90,7 @@ max_turns=${MAX_TURNS:-50}
 
 # Nodes allowed to host agent loop workers, and therefore Docker containers. A node
 # with a degraded daemon accepts actors and then hangs. Empty means every alive node.
-AGENT_NODE_IPS=${AGENT_NODE_IPS:-28.49.55.85,28.49.196.175}
+AGENT_NODE_IPS="${AGENT_NODE_IPS?Set AGENT_NODE_IPS for your cluster (empty allows all live nodes).}"
 
 # One worker per allowed node. Placement is round-robin, so more workers than nodes
 # stacks them and multiplies the container count `max_concurrent_episodes` bounds.
@@ -207,7 +207,7 @@ PYTHONUNBUFFERED=1 python3 -m psrl.trainer.main_ppo \
     gen_actor_rollout_ref.rollout.multi_turn.enable=True \
     gen_actor_rollout_ref.rollout.multi_turn.max_turns=${max_turns} \
     gen_actor_rollout_ref.rollout.agent.agent_loop_config_path=${agent_loop_config_path} \
-    gen_actor_rollout_ref.rollout.agent.default_agent_loop=sciaccel \
+    gen_actor_rollout_ref.rollout.agent.default_agent_loop=${DEFAULT_AGENT_LOOP:-sciaccel} \
     gen_actor_rollout_ref.rollout.agent.num_workers=${AGENT_LOOP_WORKERS} \
     `# Restrict which nodes host agent loop workers, and therefore Docker containers.` \
     `# Set AGENT_NODE_IPS='' to fall back to every alive node.` \

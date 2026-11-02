@@ -1,0 +1,18 @@
+{
+  "kernel_bench": {
+    "url": "https://github.com/ScalingIntelligence/KernelBench",
+    "revision": "423217d9fda91e0c2d67e4a43bf62f96f6d104f1"
+  },
+  "mle_bench": {
+    "url": "https://github.com/openai/mle-bench",
+    "revision": "507f92e1138bb6e40dac5c6ee7a6758e6424bf97"
+  },
+  "inference_bench": {
+    "url": "https://github.com/aisa-group/InferenceBench",
+    "revision": "108ec747fab0bd92fd9de501f62157d074c50ed5"
+  },
+  "autoresearch": {
+    "url": "https://github.com/karpathy/autoresearch",
+    "revision": "228791fb499afffb54b46200aca536f79142f117"
+  }
+}
