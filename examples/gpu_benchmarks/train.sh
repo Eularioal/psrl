@@ -1,12 +1,15 @@
 #!/bin/bash
 # Launch benchmark training through the shared PSRL Harbor training recipe.
 set -euo pipefail
-recipe=${1:?Pass kernel_bench, mle_bench, inference_bench, or autoresearch}
+recipe=${1:?Pass kernel_bench, mle_bench, inference_bench, autoresearch, or re_bench}
 shift
 case "$recipe" in
-  kernel_bench|mle_bench|inference_bench|autoresearch) ;;
+  kernel_bench|mle_bench|inference_bench|autoresearch|re_bench) ;;
   *) exit 2 ;;
 esac
+if [[ "$recipe" == re_bench ]]; then
+  : "${REBENCH_JOBS_DIR:?Set REBENCH_JOBS_DIR to a dedicated shared job directory}"
+fi
 repo=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 : "${TRAIN_FILES:?Set TRAIN_FILES to prepared training Parquet}"
 : "${VAL_FILES:?Set VAL_FILES to a disjoint validation Parquet}"

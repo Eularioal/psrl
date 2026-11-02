@@ -133,7 +133,8 @@ def test_env_cannot_be_disabled():
 
 
 @pytest.mark.asyncio
-async def test_session_trajectory_reward_and_cleanup():
+@pytest.mark.parametrize("benchmark", ["kernel_bench", "re_bench"])
+async def test_session_trajectory_reward_and_cleanup(benchmark):
     from types import SimpleNamespace
     from unittest.mock import AsyncMock
 
@@ -151,7 +152,11 @@ async def test_session_trajectory_reward_and_cleanup():
     loop.delete_session = AsyncMock()
     loop.get_training_data = AsyncMock(return_value=[{"num_turns": 1, "response_ids": [10, 11]}])
     loop._run_harbor_in_thread = AsyncMock(
-        return_value=HarborEpisodeResult(task_name="kernel", reward=1.0, rewards={"reward": 1.0, "correctness": 1.0})
+        return_value=HarborEpisodeResult(
+            task_name=benchmark,
+            reward=1.0,
+            rewards={"reward": 1.0, "correctness": 1.0, "judge_valid": 1, "official_evaluation": 1},
+        )
     )
     loop.build_token_output = lambda item, extra_fields: {"tokens": item["response_ids"], **extra_fields}
 
@@ -163,7 +168,7 @@ async def test_session_trajectory_reward_and_cleanup():
     output, reason = await loop.run(
         {
             "uid": "test",
-            "data_source": "kernel_bench",
+            "data_source": benchmark,
             "extra_info": {"task_path": "/test/task", "gpus": 1, "gpu_memory_mb": 4096},
         }
     )

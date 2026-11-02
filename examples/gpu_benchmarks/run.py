@@ -39,6 +39,8 @@ async def run(args):
     from psrl.workers.env_service.harbor_resources import demand_from_task
     from psrl.workers.env_service.router import EnvRouter
 
+    args.task = args.task.resolve()
+    args.output = args.output.resolve()
     args.output.mkdir(parents=True, exist_ok=False)
     tag = "bench-" + uuid.uuid4().hex[:10]
     config = tomllib.loads((args.task / "task.toml").read_text())
@@ -188,8 +190,8 @@ async def run(args):
         raise RuntimeError("Episode or physical cleanup failed. Inspect evidence.json.")
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+def build_parser(description=__doc__):
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument("--task", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--node-ip", required=True)
@@ -201,7 +203,11 @@ def main():
     parser.add_argument("--model", default="unused")
     parser.add_argument("--max-turns", type=int, default=4)
     parser.add_argument("--timeout", type=int, default=1200)
-    asyncio.run(run(parser.parse_args()))
+    return parser
+
+
+def main():
+    asyncio.run(run(build_parser().parse_args()))
 
 
 if __name__ == "__main__":

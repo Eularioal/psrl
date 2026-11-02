@@ -1,0 +1,96 @@
+{
+  "profile": "RE-Bench GPT-2 XL real-asset CUDA smoke, not official preference evaluation",
+  "psrl_base_commit": "affe7c2a39e40c3198423c1170614a54f34573c1",
+  "upstream_commit": "a0cc6d4a91b20f84ebef505d5c72358f88b3b389",
+  "scoring_commit": "fb4cb7880fddf1e2b4bb103cf2002e0efaee022f",
+  "assets": {
+    "dataset": "tatsu-lab/alpaca",
+    "dataset_revision": "dce01c9b08f87459cf36a430d809084718273017",
+    "model": "gpt2-xl",
+    "model_revision": "15ea56dee5df4983c59b2538573817e1667135e2",
+    "training_prompts": 51490,
+    "heldout_prompts": 512,
+    "sha256": {
+      "public": "d6bc4a0c06688a3fd8130bf24fa393599906a86b32a413cca7ed10a79eef8227",
+      "private": "feb3fc083ca3ce4e38a0a865bf40ff3e26e5c54669abd808b0be7ee611e3d724"
+    }
+  },
+  "gpu": {
+    "name": "NVIDIA H20",
+    "total_mb": 97871.0
+  },
+  "model": "gpt2-xl",
+  "torch": "2.9.1+cu128",
+  "transformers": "4.44.2",
+  "python": "3.10.20",
+  "native_backend": "env_worker",
+  "passed": true,
+  "rewards": {
+    "reward": 0.0,
+    "smoke_valid": 1,
+    "official_evaluation": 0,
+    "judge_valid": 0
+  },
+  "samples": 2,
+  "generated_tokens_limit": 8,
+  "optimizer_steps": 1,
+  "loss": 4.456255912780762,
+  "workload_elapsed_s": 21.21316704340279,
+  "driver_elapsed_s": 53.672027349472046,
+  "torch_observations": [
+    {
+      "phase": "model_loaded",
+      "pid": 42,
+      "elapsed_s": 20.29454807192087,
+      "allocated_bytes": 6421929472,
+      "reserved_bytes": 6438256640
+    },
+    {
+      "phase": "generated",
+      "pid": 42,
+      "elapsed_s": 20.980267582461238,
+      "allocated_bytes": 6456532480,
+      "reserved_bytes": 9829351424
+    },
+    {
+      "phase": "optimizer_step",
+      "pid": 42,
+      "elapsed_s": 21.21316704340279,
+      "allocated_bytes": 19239225856,
+      "reserved_bytes": 33256636416
+    }
+  ],
+  "final_leases": 0,
+  "containers_remaining": false,
+  "gpu_processes_remaining": 0,
+  "gpu_used_after_mb": 0.1875,
+  "cleanup_error": null,
+  "full_preference_evaluation": "Not run. REPLICATE_API_TOKEN unavailable.",
+  "source_sha256": {
+    "examples/re_bench/__init__.py": "11b1972918db2ab70e34b0dafcaf02784dd78290a455593cb4a9c738a8068d62",
+    "examples/re_bench/download.py": "cb309214ef3919522811c84ddea580f55d98780e5a406a44f36e911130953bba",
+    "examples/re_bench/image.py": "1b402e21b8035117eb6ba37a584e60b470bfb37331a7f693d56cb3e7f4bc8e26",
+    "examples/re_bench/judge.py": "07c2ab06494b724867b6ee29aa54114860a9b59c5bd8c2d338676861fbf44b8e",
+    "examples/re_bench/prepare.py": "034b07191574fb6acf07825c3fe74d539854586a6f3d848ee9f1cd9a0ce4e68d",
+    "examples/re_bench/replicate.py": "73b9b534aa3dd86589a674aec2e8c373596255df690dc264d335534d727bc901",
+    "examples/re_bench/run.py": "203a01a9a900541b326701f40d229a20f1f4dd5caaea29e4a39a9b303296a2d9",
+    "examples/re_bench/smoke.py": "98218cd6848c820d4d0dd02842e8f20364374856c958e7578652c89c48969071",
+    "examples/re_bench/strict_evaluation.py": "591259641f98ac1c6b6a584a93f54b0f9c92983eeaf9caa9717625db1333e7a9",
+    "examples/re_bench/verify.py": "70f7279d27fe0bf671398cd418498e00b0db2b548eeb1853b2965d27bfb2b07b"
+  },
+  "cpu_tests": 25,
+  "initial_failures": [
+    "Oracle attempted to invoke psrl-gpu inside a shell script.",
+    "Offline model cache lacked the pinned main reference.",
+    "Separate verifier image needed a baked test.sh."
+  ],
+  "validation": {
+    "scoped_ruff": "passed",
+    "scoped_format": "passed",
+    "scoped_prose_style": "passed",
+    "shell_syntax": "passed",
+    "local_document_links": 412,
+    "local_document_link_errors": 0,
+    "full_pre_commit": "failed on unrelated files in disposable snapshot"
+  }
+}

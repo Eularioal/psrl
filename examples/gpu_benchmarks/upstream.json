@@ -1,4 +1,8 @@
 {
+  "re_bench": {
+    "url": "https://github.com/METR/RE-Bench",
+    "revision": "a0cc6d4a91b20f84ebef505d5c72358f88b3b389"
+  },
   "kernel_bench": {
     "url": "https://github.com/ScalingIntelligence/KernelBench",
     "revision": "423217d9fda91e0c2d67e4a43bf62f96f6d104f1"
