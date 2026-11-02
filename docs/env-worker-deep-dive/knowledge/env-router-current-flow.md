@@ -2,7 +2,7 @@
 
 > **核心结论**：本文用于追溯命令阶段配额、通用接入和持有范围的设计讨论，混有不同阶段实现与提案。了解现在的完整设计请先读[当前设计](current-design.md)，再按本文目录查设计理由。
 >
-> **阅读边界**：正文“同容器串行”“同容器并发暂不实施”对应 direct 路径或当时阶段，显式 [MPS 后端](mps-parallel-execution.md)已支持同容器并发。原生 Harbor 适配器的 CPU 原型限制也不代表当前 GPU 能力，见[统一执行层第 9 节](unified-gpu-execution.md#9-两种容器创建方式共用托管执行层)。第 10 至 13 节的完整通用接入设计不可整体当成已经完成。
+> **阅读边界**：正文区分 direct 的同容器串行、显式 [MPS 后端](mps-parallel-execution.md)的同容器并发，以及原设计与历史实验的适用阶段。原生 Harbor 适配器的 CPU 原型限制也不代表当前 GPU 能力，见[统一执行层第 9 节](unified-gpu-execution.md#9-两种容器创建方式共用托管执行层)。第 10 至 13 节的完整通用接入设计不可整体当成已经完成。
 
 ## 目录
 
@@ -156,7 +156,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/plot_router_pr
 
 ## 7. command GPU 异步与同容器并发有什么区别
 
-**用户记得的异步设计已经存在。** command GPU 的基本能力是把 GPU 使用期从整个任务会话中分离：A 的某条 GPU 命令结束并确认归还后，A 的容器仍然存活，可以等待模型或执行 CPU 工作，B 则使用腾出的容量。`overlap_return=True` 又允许 A 的模型规划与后台归还检查重叠。新提案继续保留这些能力，增加同容器内多作业同时使用 GPU、逐作业取消和回收。
+**用户记得的异步设计已经存在。** command GPU 的基本能力是把 GPU 使用期从整个任务会话中分离：A 的某条 GPU 命令结束并确认归还后，A 的容器仍然存活，可以等待模型或执行 CPU 工作，B 则使用腾出的容量。`overlap_return=True` 又允许 A 的模型规划与后台归还检查重叠。显式 MPS 后端已在这些基础上提供同容器内多作业同时使用 GPU、逐作业取消和回收。下文比较 direct 协议与并发设计，MPS 部署条件见[专题](mps-parallel-execution.md)。
 
 先看完整关系。图中 A、B 是不同任务容器；A1、A2、A3 是同一容器内的不同作业。前半段是已有实现，后半段是尚未落地的提案。
 
@@ -172,7 +172,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/plot_router_pr
                            ↓
                     [C6] 会话结束，收敛回收并清理容器
 
-同容器并发提案，示例假设容量足够容纳两个作业：
+同容器并发的目标语义，显式 MPS 后端已实现这一能力，示例假设容量足够容纳两个作业：
 [N1] 容器 A 提交 A1、A2、A3，每作业独立预算
           ├─ A1 运行 ───→ 仅回收 A1 ───→ A3 获准
           └─ A2 运行 ───────────────────→ 仅回收 A2
@@ -189,23 +189,23 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/plot_router_pr
 | C3 | [begin_return](../../../psrl/workers/env_service/command_gpu.py#L112) 创建服务持有的后台任务，[_return](../../../psrl/workers/env_service/command_gpu.py#L127) 等待 [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153) 后才释放预算 |
 | C4、C5 | [acquire](../../../psrl/workers/env_service/command_gpu.py#L49) 判断队列与容量；[同租约限制](../../../psrl/workers/env_service/command_gpu.py#L63) 禁止一份租约多个待执行或活动命令，说明不是同容器多 GPU 作业并行 |
 | C6 | [wait_gpu_command_returns](../../../psrl/workers/env_service/router.py#L234)、[finish_gpu_command_lease](../../../psrl/workers/env_service/router.py#L240) 收敛归还与租约清理 |
-| N1 | 新协议没有生产实现，落点与契约模型见 [GPU 作业并发提案](gpu-jobs-and-task-telemetry.md#11-同容器并发的目标架构)，不能把现有同容器锁说成新调度器 |
+| N1 | 当前实现入口为 [ManagedGpuExecution._execute_mps_job](../../../psrl/workers/env_service/managed_execution.py#L187) 与 [MpsDomain](../../../psrl/workers/env_service/parallel_gpu.py#L29)，更广范围契约见 [原提案](gpu-jobs-and-task-telemetry.md#11-同容器并发的目标架构) |
 
 这些代码如果有理解上的问题，可以随时追问。
 
 **三个经常被混用的“异步”。** 协程是可在等待点暂停、让其他调用继续推进的程序执行方式。它让出 CPU 执行机会，不会自动释放它持有的 GPU 资源。现有作业 start 接口立即返回 job_id，表示调用方不必等待作业完成；作业此时可能排队，也可能正在使用 GPU。`overlap_return=True` 则发生在输出稳定之后，让调用方不必等物理回收检查全部结束才能规划。它们都不等于“两条 GPU 作业已经同时执行”。
 
-| 能力 | 当前 command GPU 及异步作业 | 同容器并发提案 |
+| 能力 | direct command GPU 及异步作业 | 显式 MPS 后端 |
 |---|---|---|
 | GPU 命令结束后，容器继续等待模型，其他容器利用空档 | 已有，物理归还后放开预算 | 保留 |
-| 物理归还检查与独立 CPU／模型规划重叠 | 已有，overlap_return 显式开启；异步作业路径使用它 | 保留 |
+| 物理归还检查与独立 CPU／模型规划重叠 | 已有，overlap_return 显式开启；异步作业路径使用它 | 异步提交可继续规划，MPS 作业完成状态仍等待节点清理，不复用 direct 的 overlap_return 路径 |
 | 提交 GPU 作业后先做其他独立工作 | 已有 start/status/wait/cancel 接口 | 保留 |
 | 不同容器的 GPU 命令在容量足够时并行 | 当前准入机制允许，仍受配置和遥测约束 | 保留 |
-| 同一容器的 A1、A2 在容量足够时并行 | 当前同容器锁、作业管理锁与同租约协议不允许 | 新增目标 |
-| 同容器每条命令申报不同预算并单独记账 | 当前命令额度来自 lease.demand，不是各 job 的独立需求 | 新增目标 |
-| A1 结束或取消时，A2 保持运行和授权 | 当前不允许这种同容器 GPU 重叠，因此未提供此种隔离 | 新增目标 |
-| 自动暂停任意仍持有显存的 CUDA 程序，把它稍后无损恢复 | 没有 | 此提案也不提供 |
-| 独立环境卡 command 与 vLLM 同卡借还直接组合 | 配置明确拒绝 | 此提案也不自动解决组合问题 |
+| 同一容器的 A1、A2 在容量足够时并行 | 当前同容器锁、作业管理锁与同租约协议不允许 | 已实现，受 MPS 配置与部署条件约束 |
+| 同容器每条命令申报不同预算并单独记账 | 当前命令额度来自 lease.demand，不是各 job 的独立需求 | 已实现，受 MPS 配置与部署条件约束 |
+| A1 结束或取消时，A2 保持运行和授权 | 当前不允许这种同容器 GPU 重叠，因此未提供此种隔离 | 已实现，受 MPS 配置与部署条件约束 |
+| 自动暂停任意仍持有显存的 CUDA 程序，把它稍后无损恢复 | 没有 | MPS 也不提供 |
+| 独立环境卡 command 与 vLLM 同卡借还直接组合 | 配置明确拒绝 | MPS 也不自动解决组合问题 |
 
 不能把区别粗略概括成“旧方案只能串行，新方案才会并行”。旧方案已经有跨容器并行、跨任务空档复用和 CPU／模型规划重叠。新增范围是同一容器、同一会话租约里的多个 GPU 作业，要求进一步细化资源归属。
 
@@ -219,7 +219,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/plot_router_pr
 
 此例假设 B 归还无额外延迟，隔离出 A 的等待成本，不是生产时延预测。
 
-**数字例子二：旧方案缺少的同容器能力。** 同一个容器里 A1、A2 各需要 1 GiB，卡上有足够容量。当前仍让 A1 执行并归还后再执行 A2。提案让 A1、A2 各自记 1 GiB，同时运行，A1 结束只释放自己的 1 GiB；A2 仍运行时可以准入 A3。若卡只剩足够一个作业的容量，新方案也必须排队，它不会改变资源不足这一事实。
+**数字例子二：direct 与 MPS 的同容器能力差异。** 同一个容器里 A1、A2 各需要 1 GiB，卡上有足够容量。direct 仍让 A1 执行并归还后再执行 A2。显式 MPS 让 A1、A2 各自记 1 GiB，同时运行，A1 结束只释放自己的 1 GiB；A2 仍运行时可以准入 A3。若卡只剩足够一个作业的容量，新方案也必须排队，它不会改变资源不足这一事实。
 
 **“发给 vLLM 就暂时不用 GPU”需要区分三种情况。** vLLM 是大模型推理服务，替代理生成下一步操作。代理等待回复时，可以不占环境 GPU，但推理服务本身仍需使用模型 GPU。
 
@@ -240,7 +240,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_concurre
 
 第一个脚本的 short_queue_sync / short_queue_async 对应数字例子一，教学逻辑时间分别为 15 和 12 秒；两组 B 都从 t=3 开始。脚本另有 remote 分支，是未实现跨节点方案的教学假设，不属于本次 command 已有能力。第二个脚本对应同容器新协议的预算与回收契约，低压力四授权、高压力一授权，取消 B 后 A/C/D 的模拟授权保留。
 
-本次实际在 CPU 中调用上述模拟及契约检查，结果保存于 [models.json](../env-service-verification/results/command-vs-concurrency-20261026/models.json)。它们没有调用生产 Router、Docker、vLLM 或 CUDA。生产同容器并发仍处于设计状态。本次修改在主开发目录完成，只更新说明和验证记录，没有新增功能分支、修改生产调度代码、提交、推送或合并。
+本次实际在 CPU 中调用上述模拟及契约检查，结果保存于 [models.json](../env-service-verification/results/command-vs-concurrency-20261026/models.json)。它们没有调用生产 Router、Docker、vLLM 或 CUDA。这份 2026-10-26 的 CPU 记录不能作为后续 MPS 后端的实现或验收状态，后者见 [MPS 专题](mps-parallel-execution.md)。本次修改在主开发目录完成，只更新说明和验证记录，没有新增功能分支、修改生产调度代码、提交、推送或合并。
 
 本页及总索引的 94 个本地链接路径、源码行号范围与章节锚点检查通过，相关源码位置已核对并修正。全仓 pre-commit 在隔离副本运行，仍因仓库既有 Ruff 与注释风格违规失败，未将自动修改回写工作区；检查记录与日志保存在上述结果目录。
 
@@ -263,7 +263,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_concurre
      直接在环境中执行                 均绑定已有 L 与主容器 C
                                         ↓ 不是再次创建 C
 [R5] Router 逐次处理 GPU 命令申请：等待 → 授权 → 执行 → 确认归还
-     当前同容器只允许一条活动 GPU 命令，其他已提交作业等待
+     direct 同容器只允许一条活动 GPU 命令，MPS 分支见专题
         ↓ 可以继续模型交互，再提交下一条命令
 [R6] episode 结束：汇合命令及回收结果 → 清理所属容器 → 释放 L
 ```
@@ -315,7 +315,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_concurre
 
 配置也应按层读：实验中的 max_concurrent_episodes=1 限制 episode 并发，unit.max_containers=1 在 [账本中按活动 lease 数计名额](../../../psrl/workers/env_service/ledger.py#L380)，都不是“容器内最多只能提交一个命令”。把 max_containers 改成 4 不会自动生成四个环境，也不会把四个命令拆成四份租约。必须真正启动四次独立 episode，才会沿 R1/R2 产生相应环境申请。
 
-**跟着图读源码。** R1 调用 runner 后先进入 R2，成功返回 lease 后才进入 R3 的 Harbor 环境执行。R4 可以发生零次或多次，每次使用同一个 environment；GPU 分支进入 R5，CPU 分支不申请 GPU。多条 GPU 调用可以同时登记，但当前在同容器锁处等待，不能把提交当成执行。每条 R5 结束仅归还 GPU，后续仍可回到 R4；整个 episode 结束才进入 R6，关闭所属容器并释放会话资源。独立 episode 则各自运行这条链，可以在 Router 的容量约束下并发。
+**跟着图读源码。** R1 调用 runner 后先进入 R2，成功返回 lease 后才进入 R3 的 Harbor 环境执行。R4 可以发生零次或多次，每次使用同一个 environment；GPU 分支进入 R5，CPU 分支不申请 GPU。多条 GPU 调用可以同时登记，但 direct 后端在同容器锁处等待，MPS 走节点级逐作业准入。不能把提交当成执行。每条 R5 结束仅归还 GPU，后续仍可回到 R4；整个 episode 结束才进入 R6，关闭所属容器并释放会话资源。独立 episode 则各自运行这条链，可以在 Router 的容量约束下并发。
 
 **可运行教学示例。** 复用 [explain_same_container_lock.py](../env-service-verification/scripts/explain_same_container_lock.py)，在仓库根目录运行：
 
@@ -409,7 +409,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_c
 | GPU 使用权持有多久 | 整次会话 | 每次受管理 GPU 执行及其归还确认期间 |
 | 等模型时一定交还显存吗 | 不交还额度 | 仅在上一 GPU 阶段真实结束且归还确认后交还 |
 | 高显存压力如何处理 | 会话准入时排队 | GPU 执行准入时排队，已建环境可继续非 GPU 工作 |
-| 低压力可以多任务同时运行吗 | 可以，需求与宿主容量足够即可 | 不同容器／租约可以，同容器目前串行 |
+| 低压力可以多任务同时运行吗 | 可以，需求与宿主容量足够即可 | 不同容器／租约可以，direct 同容器串行，MPS 可并行 |
 | 适合哪种 GPU 程序 | 常驻服务、跨工具调用保留 GPU 状态的程序 | 能独立启动、结束并释放资源的前台程序 |
 | 显存是硬隔离吗 | 否，声明是预算 | 否，设备权限控制也不是显存配额硬限制 |
 
@@ -427,7 +427,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_c
 
 ## 11. 通用 GPU 执行服务的具体设计
 
-**本节是完整设计提案。执行后端及标准 Science 作业入口已完成[第一阶段实现](unified-gpu-execution.md)，本节的任务级配置、混合范围账本及动态状态策略尚未完成。** 目标是新任务声明资源与生命周期，再接标准执行适配器，即可复用调度与控制优化。首期保持每个环境一次最多执行一条 GPU 命令，各独立 rollout 可以共享 GPU 容量。同容器并发见 [ENV-GPU-SAME-CONTAINER TODO](gpu-jobs-and-task-telemetry.md#7-尚未完成的目标)，不作为这项设计的前置条件。
+**本节是完整设计提案。执行后端及标准 Science 作业入口已完成[第一阶段实现](unified-gpu-execution.md)，本节的任务级配置、混合范围账本及动态状态策略尚未完成。** 目标是新任务声明资源与生命周期，再接标准执行适配器，即可复用调度与控制优化。首期保持每个环境一次最多执行一条 GPU 命令，各独立 rollout 可以共享 GPU 容量。同容器并发见 [已实现的 MPS 后端](mps-parallel-execution.md)，不作为这项设计的前置条件。
 
 ```text
 新 GPU 任务：资源声明 + 生命周期声明 + 启动／工具／评分入口

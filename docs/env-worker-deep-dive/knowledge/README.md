@@ -36,7 +36,7 @@
 | [Harbor 与 EnvWorker 后端](native-harbor-backend.md) | 容器生命周期、命令与文件接口 | GPU 当前结构见统一执行层，正文 CPU 原型限制有版本范围 |
 | [命令阶段配额](command-gpu-reservations.md) | 容器保留、逐命令借还、异步归还 | 第 9 节跨节点调度是提案 |
 | [显存准入](gpu-memory-admission.md) | 实测、可信归属与未兑现预约 | 区分 unit 总容量和动态余量 |
-| [MPS 并行执行](mps-parallel-execution.md) | 同容器及跨容器作业准入、并行和独立取消 | 专用环境 GPU，不等于 vLLM 同卡 MPS 已接入 |
+| [MPS 并行执行](mps-parallel-execution.md) | 同容器及跨容器作业准入、并行、独立取消与控制通道串行化 | 专用环境 GPU，性能另查 [autoresearch 对照](../experiments/mps-training-comparison.md)，不等于 vLLM 同卡 MPS 已接入 |
 | [GPU 作业与遥测](gpu-jobs-and-task-telemetry.md) | 作业身份、状态、归属与观测 | 含早期同容器提案，已落地后端查 MPS 专题 |
 | [GPU 准入、归属与恢复](gpu-admission-attribution-ebpf-identity.md) | 内核身份、资源预算、节点健康及协程清理 | 深入机制阅读，不是全局入门 |
 | [vLLM 与环境共享](vllm-env-opportunistic-sharing.md#10-常驻共享kv-上限与已睡眠窗口) | 独立 GPU 优先、显式共享与睡眠窗口 | 第 10 节查共享协议，MPS 探索须与环境专用后端区分 |
@@ -47,7 +47,9 @@
 
 | 文档 | 阅读用途 |
 |---|---|
+| [五篇近期顶会论文](recent-top-conference-papers.md) | RollArt、DynaRL、Murakkab、Prism、Weave 与环境执行、GPU 调度课题的关系及阅读顺序 |
 | [GPU benchmark 接入 recipe](gpu-benchmark-recipes.md) | 实际任务资产、准备、环境调用和 PSRL 接口，接入首选 |
+| [RE-Bench 原生接入](re-bench-recipe.md) | 聊天模型训练、隔离裁判传输、正式评分与真实资产 smoke 的区分 |
 | [GPU workload 调研](gpu-workload-benchmark-survey.md) | 比较任务候选，调研建议不等于全部已接入 |
 | [InferenceBench 评分](inferencebench-scoring.md) | 官方性能奖励、质量门槛与本地功能检查分数的区别 |
 | [EnvWorker 接入与 GPU 验证](onboarding-and-gpu-validation.md) | EnvWorker 环境类、AgentLoop 和分层验证，不替代当前 Router 接口 |

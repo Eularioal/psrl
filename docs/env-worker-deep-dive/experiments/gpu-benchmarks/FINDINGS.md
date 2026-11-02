@@ -1,6 +1,8 @@
-# 四类 GPU benchmark 接入验证
+# GPU benchmark 接入验证
 
 > **核心结论**：KernelBench、autoresearch 已通过真实 GPU 执行与回收。InferenceBench 固定常驻服务已完成两类 H20 ON/OFF 对照：早期 24 GiB 人工配额只验证排队且更慢；episode 记账修复后采用整卡容量与 7 项真实任务，OFF 一次 OOM，ON 无 OOM，完成相同工作量的任务阶段耗时下降 17.9%。其官方完整评分仍未通过，MLE-bench 暂缓 Kaggle 接入。没有执行语言模型 agent rollout 或 PSRL 策略优化器更新。
+
+> RE-Bench 聊天训练已有原生 Env/PSRL 接入，真实 GPT-2 XL、Alpaca 提示、生成和一次 CUDA 更新已通过。正式偏好训练及隐藏集评分缺 Replicate 凭据，smoke 的 `reward=0`，不冒充正式成绩。
 
 ## 目录
 
@@ -12,6 +14,7 @@
 - [InferenceBench 常驻服务 ON/OFF Results](#inferencebench-常驻服务-onoff-results)
 - [为什么本次 ON 更慢且 GPU 进程更少](#为什么本次-on-更慢且-gpu-进程更少)
 - [episode 记账修复后的整卡压力对照](#episode-记账修复后的整卡压力对照)
+- [RE-Bench 原生接入验证](#re-bench-原生接入验证)
 - [评分教学脚本验证](#评分教学脚本验证)
 - [修复与验证边界](#修复与验证边界)
 - [复现入口](#复现入口)
@@ -24,8 +27,9 @@
 | MLE-bench | 官方 public/private 数据映射、独立 registry/grader、above_median 奖励 | 官方 SDK 认证失败，缺凭据，未取得正式竞赛数据 |
 | InferenceBench | 官方完整 recipe 与固定常驻服务实验入口分开 | 完整任务生成缺官方基线，固定 Mistral 服务与真实样本 ON/OFF 已通过 |
 | autoresearch | 固定 prepare.py、缓存挂载、独立训练重放、捕获官方评估调用 | 官方资产准备完成，原始训练脚本在 GPU 上真实通过 |
+| RE-Bench | 真实资产下载、原生任务、独立 verifier、宿主裁判传输、PSRL 奖励 | 单 H20 真实资产 CUDA smoke 通过，官方反馈和评分待凭据 |
 
-四项均要求 EnvRouter，不能关闭 Env 后回退裸 Docker。资源策略暂限 episode。公共代码复用 science 的会话与 runner，并新增强制准入路径，避免已有全局 science client 缓存影响新 recipe。
+这些 recipe 均要求 EnvRouter，不能关闭 Env 后回退裸 Docker。资源策略暂限 episode。公共代码复用 science 的会话与 runner，并新增强制准入路径，避免已有全局 science client 缓存影响新 recipe。RE-Bench 默认使用原生 EnvWorker。
 
 ## KernelBench Results
 
@@ -311,6 +315,34 @@ python examples/inference_bench/resident_analyze.py \
 
 这个命令已经实际通过。它只复核已保存结果，要求相同工作量和预算、OFF 存在 OOM、ON 无 OOM、有可信抵扣和等待，并核验逐样本输出与清理。知识解释和不需要 GPU 的教学脚本见 [episode 记账说明](../../knowledge/gpu-memory-admission.md#9-episode-归属记账修复)。所有改动当前保留在主目录，未提交、未推送、未合并。
 
+## RE-Bench 原生接入验证
+
+2026-11-02 在首选实验节点的一张独立空闲 H20 上运行。PSRL 基准为 `affe7c2` 加本次接入修改，上游 RE-Bench 为 `a0cc6d4a91b20f84ebef505d5c72358f88b3b389`。模型和数据是真实官方资产，下载与来源见 [re-bench-smoke.json](re-bench-smoke.json)。下载首轮因耗时退出，保留缓存续传完成，没有将部分权重当作完整模型。
+
+本次待验证结论是原生 Env 能否接纳并执行此任务的真实 CUDA 工作，以及任务、独立 verifier、奖励字段和清理能否串联。每次 agent 上限 240 秒，运行器总上限 480 秒。连接、Docker、GPU 身份映射、容器 CUDA、小型算子和数据隔离预检已执行。正式模式缺凭据时在启动 GPU 前拒绝，未调用外部裁判。
+
+| 项目 | 本次结果 |
+|---|---|
+| 模型 | 官方 GPT-2 XL，完整权重，约 15.56 亿非位置嵌入参数 |
+| 数据 | 固定 Alpaca revision，51,490 条公开训练提示与 512 条隐藏提示，smoke 使用公开部分前两条 |
+| 任务内工作 | 每条最多生成 8 token，然后用一段公开提示 token 做一次 Adam 更新，loss 有限 |
+| Env | EnvRouter episode 准入，原生 EnvWorker，独立 verifier，单任务声明 49,152 MiB，unit 按整卡 97,871 MiB 配置 |
+| 功能评分 | `smoke_valid=1`，`reward=0`，`official_evaluation=0`，`judge_valid=0` |
+| 耗时 | 工作负载内部约 21.21 秒，含初始化与清理的 driver 总耗时约 53.67 秒 |
+| 训练后框架内存观测 | PyTorch allocated 19,239,225,856 字节，reserved 33,256,636,416 字节，不当作整轮 NVML 峰值 |
+| 清理 | 最终租约 0，本次容器 0，GPU 计算进程 0，GPU 遥测回到约 0.19 MiB |
+| CPU 回归 | 25 项通过，覆盖共享 recipe、RE-Bench 数据与评分、PSRL 会话奖励传递、裁判请求预算及错误退出 |
+
+实际 runtime 为 Python 3.10.20、PyTorch 2.9.1+cu128、Transformers 4.44.2，复用隔离镜像依赖，未改共享环境。官方依赖和两张 H100 的资源配置不同，因此这是单 H20 本地接入验证，不是原版环境复现。评分库源码固定 v0.2.1，其元数据要求 Python 3.11 以上，本次只验证了在上述 runtime 中的导入和已运行路径，完整评分仍应单独验收。
+
+**修复及失败记录。** 第一轮 oracle 把 `psrl-gpu` 当作脚本内可执行文件调用而失败，另有独立 verifier 未预置测试脚本。oracle 改为在已获得 episode 预算的容器中执行固定训练命令，公共运行器将任务和输出路径转为绝对路径。随后发现离线缓存缺少固定 revision 对应的 `main` 引用，补齐后离线配置解析通过。独立评分镜像预置 `/tests/test.sh`，通过可信 verifier 环境变量传入模式与超时。修复后真实模型任务通过，失败轮均记录并核验清理，没有重跑成功任务追求更高分。
+
+**验证边界。** 本次一次更新的目标是公开提示的语言模型损失，没有制造裁判偏好。它证明 CUDA 生成与更新能在 Env 中执行，不证明官方 RL 反馈训练完成。外部裁判桥接经过 CPU 测试替身验证，没有真实 Replicate 调用。没有验证实际裁判等待曲线、自动 offload/reload、ON/OFF 性能、语言模型 agent 自主优化或 PSRL 策略训练。接入以最终模型评分，未实现原版中间评分取最佳的完整协议。
+
+**静态检查。** 本次代码的 Ruff、格式检查、prose-style 和启动脚本语法检查通过，相关文档 412 个本地链接及章节、源码行号范围检查通过。全仓 `pre-commit run --all-files` 在临时快照中执行，仍因本次范围外的既有长行、格式和注释风格问题失败。快照内自动修改未回写工作区，未将全仓检查记为通过。
+
+操作入口、执行图与源码路径见 [RE-Bench recipe](../../knowledge/re-bench-recipe.md)。本次验收已达到无裁判条件下的必要边界，停止 GPU 验证并保留日志。
+
 ## 评分教学脚本验证
 
 2026-11-02 运行 [评分演示脚本](../../env-service-verification/scripts/explain_inferencebench_score.py)，只使用 CPU 与标准库。性能和质量输入是明确标注的教学数字，PSRL 奖励门槛调用真实 [compute_score](../../../../examples/gpu_benchmarks/reward.py#L6)。
@@ -322,7 +354,7 @@ python examples/inference_bench/resident_analyze.py \
 | 候选答对 360/500，质量比例 0.9 | 0 | 0 |
 | 候选质量达标且原始分为 5，但污染标记为 1 | 5 | 0 |
 
-C 场景教学吞吐为 8、27、64 请求/秒，输出几何平均 24。脚本 Ruff 与格式检查通过。这只验证手算例子和本地奖励检查的连接，没有启动 GPU 服务、运行官方质量题集或调用裁判。详细定义见 [评分说明](../../knowledge/inferencebench-scoring.md)。PostTrainBench 和 RE-Bench 此次仅完成官方资料和代码调研，不能据此宣称已通过 Env 实机验证。
+C 场景教学吞吐为 8、27、64 请求/秒，输出几何平均 24。脚本 Ruff 与格式检查通过。这只验证手算例子和本地奖励检查的连接，没有启动 GPU 服务、运行官方质量题集或调用裁判。详细定义见 [评分说明](../../knowledge/inferencebench-scoring.md)。本节评分教学与调研本身不包含 GPU 验证。PostTrainBench 尚未接入，RE-Bench 的独立实机验证见上文，仍未验证完整偏好评分。
 
 本次文档检查覆盖 279 个本地链接及 79 个源码行引用，路径和行号范围通过，相关评分函数与调用位置已人工核对。全仓 `pre-commit run --all-files` 在隔离快照执行，因 `docs/conf.py`、其他实验脚本及已有注释规范等问题失败。快照中的自动格式修改没有回写主目录。此结果不影响上述 CPU 演示结论，也不代表全仓检查通过。
 

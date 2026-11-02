@@ -2,7 +2,7 @@
 
 > **核心结论**：按验证对象选择报告，先核对版本、工作负载、完成边界和计时口径。CPU 模拟、GPU 组件验证与真实训练的结论不能互相替代。报告中的历史「当前」只指其记录时的状态，理解实现请看[知识索引](../knowledge/README.md)。
 
-向他人介绍项目时，优先转发[Env 设计与收益简版](env-design-and-results-brief.md)，图示、必要条件和结果均包含在同一文件中。[详细版](env-status-and-roadmap.md)保留完整设计与解释。需要查完整实验记录时，再通过下表选择报告。
+介绍当前架构先读[当前设计](../knowledge/current-design.md)。[Env 设计与收益简版](env-design-and-results-brief.md)与[详细版](env-status-and-roadmap.md)是 2026-10-28 阶段报告，保留当时图示、实验条件和结果。需要查完整实验记录时，再通过下表选择报告。
 
 ## 目录
 
@@ -17,6 +17,7 @@
 
 | 报告 | 验证对象与边界 |
 |---|---|
+| [MPS 真实 GPU 训练并发对照](mps-training-comparison.md) | autoresearch 固定更新的三组对照与 MPS 控制通道修复，不是原生 LAPS 或历史 OFF/ON。 |
 | [Science 单卡真实训练对照](science-single-gpu-training-control.md) | 固定 OFF 与 ON 的显存压力、原生任务及多步训练。各节分别记录完成范围，三步修复后结果集中在第 12 节。 |
 | [Science GPU 压力与 Router 训练对照](science-gpu-pressure-ab.md) | 跨任务池竞争、显存不足补采与等完成量比较。固定历史基线和更早的整卡锁对照分别标注。 |
 | [真实 LAPS 训练的 Router 开关对照](science-training-router-ab.md) | 训练曲线、资源账本和回收。该轮任务容器使用 CPU，不能证明 GPU 容器装箱或同卡借还。 |
@@ -34,7 +35,7 @@
 
 [GPU benchmark 任务导览](gpu-benchmarks/README.md)：先选任务目标，再判断 command 边界，常驻服务推荐 episode。
 
-[四类 GPU benchmark 接入验证](gpu-benchmarks/FINDINGS.md)：KernelBench、autoresearch 真实 H20 执行，原生 Env 的长任务与常驻 Mistral 服务 ON/OFF，含 episode 记账修复后的整卡 OOM 压力对照，以及官方完整评分的未验证项。
+[GPU benchmark 接入验证](gpu-benchmarks/FINDINGS.md)：KernelBench、autoresearch、RE-Bench 真实资产 H20 执行，原生 Env 常驻 Mistral 服务 ON/OFF，分别说明偏好反馈、官方完整评分及性能对照的验证边界。
 
 | 报告 | 验证对象与边界 |
 |---|---|

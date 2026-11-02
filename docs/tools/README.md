@@ -8,6 +8,7 @@
 - [Codex CLI](#codex-cli)
 - [Shell / Python 基础](#shell--python-基础)
 - [Linux 文件系统](#linux-文件系统)
+- [文档维护](#文档维护)
 - [延伸](#延伸)
 
 ## Claude Code CLI
@@ -38,6 +39,10 @@
 | 文档 | 内容 |
 |---|---|
 | [inode 与 Docker 写回阻塞](linux/inode-basics.md) | 用真实文件实验解释 inode、硬链接、重命名、删除后的打开引用，区分容量耗尽与写回阻塞 |
+
+## 文档维护
+
+- [docs 文档时效巡检](docs-freshness-audit.md)：全目录静态扫描、架构现状矛盾修订、源码核验依据与未覆盖范围。
 
 ## 延伸
 

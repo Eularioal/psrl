@@ -70,7 +70,7 @@
 
 **跟着图读源码。** C1 的容量选择仅决定把任务派到哪个 worker，C2 才是真正的资源准入。C2 创建会话后，C3 把选择固化为实际 Docker 设备配置。每次进入 C4，调度器都从同一份 lease 读取 unit_id，构造请求并在该 unit 内等待。C5 的物理检查在后台进行，输出就绪不等于预算已经归还。确认后只清除活动 GPU 记账，原 lease 不迁移。任务再次要 GPU 时重复 C4，最终才进入 C6。不同会话可以并行，unit 的短期准入锁不代表整张 GPU 永远只能跑一条命令。
 
-当前工作区新增的 MPS 路径用于多进程共享 GPU 执行，参见 [MpsDomain.admit](../../../psrl/workers/env_service/parallel_gpu.py#L219)。它有作业级显存请求，但仍使用域绑定的 self.unit，且 unit 配置要求单张独立环境 GPU。本文没有重新验收该分支，普通 direct 路径的租约级显存需求不能笼统推广为所有执行后端都只能这么申报。
+当前工作区新增的 MPS 路径用于多进程共享 GPU 执行，参见 [MpsDomain.admit](../../../psrl/workers/env_service/parallel_gpu.py#L208)。它有作业级显存请求，但仍使用域绑定的 self.unit，且 unit 配置要求单张独立环境 GPU。本文没有重新验收该分支，普通 direct 路径的租约级显存需求不能笼统推广为所有执行后端都只能这么申报。
 
 ## 2. 用户担忧成立的条件
 

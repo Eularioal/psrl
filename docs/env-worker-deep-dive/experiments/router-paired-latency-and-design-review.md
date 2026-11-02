@@ -322,7 +322,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/simulate_gate_
 | B1 驱动库版本、B2 PTX JIT 库 | [resolve_driver_libs](../../../psrl/workers/env_service/overlay.py#L93)解析匹配库，旧 sandbox 路径也引用它。真实 CUDA 有通过证据，但原稿“特定不匹配版本必定报指定错误码”的观察不能当作现在所有节点的事实 |
 | B3 固定映射 GPU 0 | 启用 EnvRouter 后按租约动态生成设备映射。用户固定 OFF 仍保留其静态调度语义，不将 OFF 或其他未启用路径说成也受这份账本管理 |
 | B4 进程内信号量 | ON 绕过本地信号量并使用共享账本，OFF 分支保留原有路径，见 [agent_loop](../../../examples/sciaccel_rl/agent_loop.py#L394) |
-| B5 独立 verifier 泄漏、B6 无归属标签 | 已有 [环境标签覆盖](../../../psrl/workers/env_service/docker.py#L158)与 [runner 收尾](../../../examples/sciaccel_rl/runner.py#L550)，历史故障回收通过。标签覆盖不等于 sidecar 等整个集合都有独立的资源硬限制，也不保证所有 Docker 永久故障均能自动恢复 |
+| B5 独立 verifier 泄漏、B6 无归属标签 | 已有 [环境标签覆盖](../../../psrl/workers/env_service/docker.py#L108)与 [runner 收尾](../../../examples/sciaccel_rl/runner.py#L550)，历史故障回收通过。标签覆盖不等于 sidecar 等整个集合都有独立的资源硬限制，也不保证所有 Docker 永久故障均能自动恢复 |
 | B7 暂停路由后异常未恢复 | **原函数仍未彻底修复**。[check_and_migrate](../../../psrl/workers/gen/rollout_coordination/sync_and_migrate/sync_and_migrate_mixin.py#L290)暂停后执行 ABORT 和等待，恢复操作仍未放进 `finally`。中途抛异常可能跳过恢复，这是当前源码风险，本次没有在实机注入该故障。新的借卡协议有自己的保护，不能替代修复这个函数 |
 | B8 默认只尝试一次 | [默认 retry_limit](../../../psrl/trainer/config/rollout/psrl_rollout.yaml#L154)仍为 1。[worker 重试循环](../../../psrl/workers/agent_loop/worker.py#L362)与 manager 补采存在，但实验代理的受控重试不等于默认 science 配方已启用同样策略 |
 
@@ -431,7 +431,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/audit_science_
 |---|---|
 | 1 | [EnvAwareDispatcher.assign](../../../psrl/workers/env_service/placement.py#L84)、[get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L984)：按组派发，读取空闲槽位和 GPU 类型提示 |
 | 2 | [Ledger.try_admit](../../../psrl/workers/env_service/ledger.py#L105)、[_reap](../../../psrl/workers/env_service/ledger.py#L240)、[RayEnvRouter.try_admit](../../../psrl/workers/env_service/router.py#L381)：资源账本、租约过期与物理清理门槛 |
-| 3 | [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L99)、[_docker_compose_paths](../../../psrl/workers/env_service/docker.py#L276)：动态映射与整组服务归属标签 |
+| 3 | [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L99)、[_docker_compose_paths](../../../psrl/workers/env_service/docker.py#L108)：动态映射与整组服务归属标签 |
 | 4 | [TruncatingTerminus2._execute_commands](../../../examples/sciaccel_rl/agent.py#L104)、[dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py#L28)、[GpuExecutionBackend.execute](../../../psrl/workers/env_service/gpu_execution.py#L102)：显式作业、队列与生命周期 |
 | 5 | [TaskGpuTelemetry.check_proc_root](../../../psrl/workers/env_service/task_telemetry.py#L111)、[apply_gpu_activity_gate](../../../examples/sciaccel_rl/gpu_grading.py#L46)：可信进程视图与活动评分策略 |
 | 6 | [runner finally](../../../examples/sciaccel_rl/runner.py#L569)、[EnvNodeService.cleanup](../../../psrl/workers/env_service/node.py#L68)、[confirm_gpu_cleanup](../../../psrl/workers/env_service/ledger.py#L337)：正常结束及异步清理确认 |
@@ -475,7 +475,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/audit_science_
 
 **D. 多卡 unit 仍只有总显存预算，没有逐卡峰值约束。** [EnvDemand](../../../psrl/workers/env_service/types.py#L126)只有单个 `gpu_memory_mb`，[账本](../../../psrl/workers/env_service/ledger.py#L343)将多张卡占用相加，命令准入也将物理容量求和。教学例子：两张各 40 GiB 的卡合计 80 GiB，一个只在单卡分配 60 GiB 的程序仍可能获准。新的显存公式修复“怎么算占用”，没有增加“分配到哪张卡”的需求向量。当前单环境卡三步实验不覆盖此项；可先保持一张卡一个 unit，扩展时增加逐卡需求与映射验收。
 
-**E. 容器集合的预算与硬限制仍不完整。** 标签覆盖了 Compose 全部服务，但 [overlay](../../../psrl/workers/env_service/docker.py#L289)给附属服务追加的是标签，没有统一为 sidecar 分配 CPU／主存硬限制。主容器和 verifier 自身的限制也不自动成为“整个任务集合共享一个总限额”。`containers_running` 实际是租约数，`cpu_used` 是需求声明之和，不能当作实际容器计数和 CPU 繁忙度。需要明确 unit 管的是会话预算还是物理容器集合，并覆盖附属服务的最坏同时占用。
+**E. 修复前的容器集合预算缺口。** 本段记录第 11 节检查时的问题，第 12 节已补实现。修复前 overlay 给附属服务追加的是标签，没有统一为 sidecar 分配 CPU／主存硬限制。当前 [overlay](../../../psrl/workers/env_service/docker.py#L122)已应用容器集合预算，不能拿这条历史问题判断当前仍无侧车限制。主容器和 verifier 自身的限制也不自动成为“整个任务集合共享一个总限额”。`containers_running` 实际是租约数，`cpu_used` 是需求声明之和，不能当作实际容器计数和 CPU 繁忙度。需要明确 unit 管的是会话预算还是物理容器集合，并覆盖附属服务的最坏同时占用。
 
 **F. 设备所有权与控制器恢复仍有边界。** unit 不重叠检查只覆盖同一个 Router 的配置，另一个 Router、手工 Docker、未绑定的模型进程不自动登记在同一份权威账本中。新的公式能保守处理已看见的占用，但不能禁止外部进程随后增长。普通 `node_policy=any` 也不等于平台给了物理独占。建议校验训练／推理和环境的设备分配，跨服务使用时明确唯一所有者或借还绑定。账本和节点待清理集合仍在内存中，尚无控制器重启后重建租约、接管孤儿容器和网络分区恢复的完整验收。
 
@@ -535,7 +535,7 @@ verifier 是检查答案、执行测试和评分的组件。在独立 verifier �
 |---|---|
 | 2 | [get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L984)选择运行节点 |
 | 3/4 | [节点检查](../../../psrl/workers/env_service/router.py#L336)、[准入检查](../../../psrl/workers/env_service/ledger.py#L425)决定是否允许启动 |
-| 5 | [完整容器预算](../../../psrl/workers/env_service/container_budget.py#L7)、[最终容器限制](../../../psrl/workers/env_service/docker.py#L280)覆盖主服务与附属服务 |
+| 5 | [完整容器预算](../../../psrl/workers/env_service/container_budget.py#L7)、[最终容器限制](../../../psrl/workers/env_service/docker.py#L122)覆盖主服务与附属服务 |
 | 7 | [RoutingPauseController](../../../psrl/workers/gen/rollout_coordination/routing_pause.py#L7)记录并释放暂停持有者 |
 
 下面数字都是教学假设，不是训练实测。
@@ -591,7 +591,7 @@ verifier 是检查答案、执行测试和评分的组件。在独立 verifier �
 | 2 | [manager.py：get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L984)统计组内条数，[placement.py：_assign_resources](../../../psrl/workers/env_service/placement.py#L184)按资源形状放置 |
 | 3 | [router.py：_check_node](../../../psrl/workers/env_service/router.py#L334)检查节点并保留清理状态，[try_admit](../../../psrl/workers/env_service/router.py#L444)在确认后准入 |
 | 4 | [ledger.py：_could_ever_fit](../../../psrl/workers/env_service/ledger.py#L396)、[_fits_now](../../../psrl/workers/env_service/ledger.py#L425)区分永远放不下与当前需等待 |
-| 5 | [runner.py](../../../examples/sciaccel_rl/runner.py#L149)把预算放入 Harbor 环境参数，[docker.py](../../../psrl/workers/env_service/docker.py#L280)为最终全部 Compose 服务施加限制 |
+| 5 | [runner.py](../../../examples/sciaccel_rl/runner.py#L149)把预算放入 Harbor 环境参数，[docker.py](../../../psrl/workers/env_service/docker.py#L122)为最终全部 Compose 服务施加限制 |
 | 6 | [command_gpu.py：acquire](../../../psrl/workers/env_service/command_gpu.py#L50)在设备授权前检查每张卡，不修改可信进程识别机制 |
 | 7 | [check_and_migrate](../../../psrl/workers/gen/rollout_coordination/sync_and_migrate/sync_and_migrate_mixin.py#L290)使用 [RoutingPauseController](../../../psrl/workers/gen/rollout_coordination/routing_pause.py#L7)管理暂停持有者 |
 

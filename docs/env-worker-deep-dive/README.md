@@ -12,8 +12,8 @@
 
 | 想了解什么 | 入口 | 内容边界 |
 |---|---|---|
-| 向他人介绍阶段设计、收益与重点规划 | [Env 设计与收益简版](experiments/env-design-and-results-brief.md) | 可单文件转发，保留结构图、baseline 对照和必要实验边界。 |
-| 详细了解实现进度、收益与规划 | [Env 状态与路线图](experiments/env-status-and-roadmap.md) | 详细版，以结构图和表格对比固定 baseline、当前实现及未来策略，实验条件、数据和边界均在正文中。 |
+| 向他人介绍阶段设计、收益与重点规划 | [Env 设计与收益简版](experiments/env-design-and-results-brief.md) | 2026-10-28 阶段报告，保留当时结构与实验边界，当前实现先读现状入口。 |
+| 详细了解实现进度、收益与规划 | [Env 状态与路线图](experiments/env-status-and-roadmap.md) | 2026-10-28 阶段详细版，比较固定 baseline、当时实现及未来策略，不能替代当前设计。 |
 | 现在怎样工作，接口怎样使用 | [当前设计](knowledge/current-design.md) | 当前结构、模式区别、源码与能力边界，专题查[分类索引](knowledge/README.md)。 |
 | 测过什么，结果如何，哪里失败 | [实验与验证](experiments/README.md) | 训练对照、组件验证、性能分析、故障与未验证项。 |
 | 从概念出发理解为什么这样设计 | [EnvWorker 设计讲解](../psrl/psrl-env-service-envworker-design.md) | 问题背景与设计动机，阅读时区分提案和实现。 |
@@ -22,7 +22,7 @@
 
 ## 推荐阅读顺序
 
-当前实现以[当前设计](knowledge/current-design.md)为首读入口。项目交流可读[设计与收益简版](experiments/env-design-and-results-brief.md)，需要展开时读[详细版](experiments/env-status-and-roadmap.md)，再按下面的路径查实现细节。
+当前实现以[当前设计](knowledge/current-design.md)为首读入口。回顾 2026-10-28 阶段设计与收益可读[设计与收益简版](experiments/env-design-and-results-brief.md)，需要展开时读[详细版](experiments/env-status-and-roadmap.md)，再按下面的路径查实现细节。
 
 1. [当前设计](knowledge/current-design.md)：串联准入、容器提供者、direct / MPS 分支、预算持有与清理。
 2. [统一执行后端](knowledge/unified-gpu-execution.md)和[GPU 作业与遥测](knowledge/gpu-jobs-and-task-telemetry.md)：理解实际接口、状态与部署条件。

@@ -1,8 +1,10 @@
 # GPU benchmark 的 Env 与 PSRL recipe
 
-> **核心结论**：四个 recipe 共用 `GpuBenchmarkAgentLoop`，强制通过 EnvRouter 准入，支持 Docker 与原生 Env 后端的 episode GPU 持有。准备器生成 Harbor 任务与 PSRL Parquet。长训练可以包装为一条 command，跨请求常驻模型才更直接体现持续持有的必要性。InferenceBench 另有固定真实请求的资源调度实验入口，不能与官方榜单评分混淆。
+> **核心结论**：GPU recipe 共用 `GpuBenchmarkAgentLoop`，强制通过 EnvRouter 准入，支持 Docker 与原生 Env 后端的 episode GPU 持有。准备器生成 Harbor 任务与 PSRL Parquet。长训练可以包装为一条 command，跨请求常驻模型才更直接体现持续持有的必要性。InferenceBench 另有固定真实请求实验，RE-Bench 另有真实资产 CUDA smoke，两者都不能与官方评分混淆。
 
-先读 [README 导览](../experiments/gpu-benchmarks/README.md) 了解任务目标、具体例子与 command 适用性。验证结果见 [四类 GPU benchmark 接入验证](../experiments/gpu-benchmarks/FINDINGS.md)。官方性能分、质量门槛与本地功能分的区别见 [InferenceBench 评分说明](inferencebench-scoring.md)。
+先读 [README 导览](../experiments/gpu-benchmarks/README.md) 了解任务目标、具体例子与 command 适用性。验证结果见 [GPU benchmark 接入验证](../experiments/gpu-benchmarks/FINDINGS.md)。官方性能分、质量门槛与本地功能分的区别见 [InferenceBench 评分说明](inferencebench-scoring.md)。
+
+新增的 RE-Bench 聊天模型训练使用原生 Env，镜像、裁判桥接和正式评分准备步骤见 [RE-Bench recipe](re-bench-recipe.md)。下文四类准备命令保留各自入口，不使用通用准备器的 autoresearch 分支处理 RE-Bench。
 
 ## 目录
 
@@ -25,6 +27,7 @@
 | MLE-bench | [prepare.py](../../../examples/mle_bench/prepare.py) | 使用官方已准备的竞赛数据及 grader |
 | InferenceBench | [prepare.py](../../../examples/inference_bench/prepare.py) | 导入上游生成的 Harbor 任务，将 Modal handoff 改为本地 Docker bind |
 | autoresearch | [prepare.py](../../../examples/autoresearch/prepare.py) | 使用固定数据缓存，提交训练脚本，独立容器重放 |
+| RE-Bench | [prepare.py](../../../examples/re_bench/prepare.py) | GPT-2 XL 聊天训练，原生 Env、宿主裁判请求桥接与独立官方评分 |
 | 公共准备器 | [prepare.py](../../../examples/gpu_benchmarks/prepare.py) | 记录源码版本、生成任务与 Parquet |
 | PSRL 循环 | [agent_loop.py](../../../examples/gpu_benchmarks/agent_loop.py) | 复用会话轨迹收集，强制 EnvRouter，不允许本地无准入回退 |
 | 环境验证 | [run.py](../../../examples/gpu_benchmarks/run.py) | 私有 Ray、EnvRouter、任务执行、清理证据 |
@@ -95,7 +98,7 @@ H20 可以作为本地实验硬件，官方模板中的 `H100!` 属于配置约�
 当前实现的相关位置：
 
 - [run.py:57](../../../examples/gpu_benchmarks/run.py#L57) 核对任务声明的 GPU 类型，不匹配就拒绝运行。这是配置校验，不是 CUDA 运行失败。
-- [reward.py:12](../../../examples/gpu_benchmarks/reward.py#L12) 要求官方完整性与质量门槛。固定负载实验不能沿用这个入口，再把缺失的裁判字段补成成功。
+- [reward.py:16](../../../examples/gpu_benchmarks/reward.py#L16) 要求官方完整性与质量门槛。固定负载实验不能沿用这个入口，再把缺失的裁判字段补成成功。
 - 官方 checkout 的 `src/harbor_adapter/adapter.py` 中 `baselines()` 实际检查质量和速度文件，缺失即拒绝生成任务。上游源码不随 PSRL 仓库分发，版本见本文的 upstream.json 链接。
 
 可以随时针对这些源码继续追问。实验应固定模型、服务代码、数据、精度及请求序列，比较任务完成量、总耗时、排队、失败/OOM 和物理回收。官方场景 A 含 128 个请求、名义输入 8192 token、输出上限 1024 token，存在长度浮动配置。本次常驻服务采用另一组有界的真实 MMLU-Pro 请求，不能标成完整场景 A。

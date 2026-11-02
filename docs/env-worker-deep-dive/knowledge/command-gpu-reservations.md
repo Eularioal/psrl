@@ -94,7 +94,7 @@
 
 **几个容易误解的边界。** episode 不等于独占整卡，例如预算 80 GiB、两条各申报 20 GiB，宿主预算也够时仍可并发。预留 20 GiB 是账本承诺，不是提前在 CUDA 中分配了 20 GiB。command 也不是自动抢占，不能把还在运行的任意 GPU 进程暂停并搬走。当前每次命令计入的额度仍取自 `lease.demand.gpu_memory_mb`，没有逐命令传入不同显存需求的接口，细化的是持有时间，而非自动预测实际峰值。
 
-默认 Science 代理现已通过显式 psrl-gpu 工具接入受管理 GPU 作业，但普通终端调用、任意自定义代理、任务初始化及所有 verifier 尚未统一自动转换成命令协议。通用化需要明确资源与生命周期契约，详见[当前流程第 10 至 12 节](env-router-current-flow.md#10-episode-与-command-的区别及通用性边界)。反过来，仅调用一个名为 `exec_gpu` 的方法也不能证明命令模式已开启：[实现](../../../psrl/workers/env_service/docker.py#L82)在未配置 `gpu_commands` 时直接执行普通命令，必须核对 unit 配置与 runner 注入。设备、节点身份当前仍随会话固定，归还额度不会迁移容器。模型同卡借还另有 sleep/wake 协议，不能将当前 command 模式与该分支任意组合。
+默认 Science 代理现已通过显式 psrl-gpu 工具接入受管理 GPU 作业，但普通终端调用、任意自定义代理、任务初始化及所有 verifier 尚未统一自动转换成命令协议。通用化需要明确资源与生命周期契约，详见[当前流程第 10 至 12 节](env-router-current-flow.md#10-episode-与-command-的区别及通用性边界)。反过来，仅调用一个名为 `exec_gpu` 的方法也不能证明命令模式已开启：[公共执行入口](../../../psrl/workers/env_service/managed_execution.py#L53)会读取 `gpu_execution` 持有策略，仅在没有受管理后端时走普通命令。episode 绑定也可以不带 `gpu_commands`，因此必须核对租约模式与 runner 注入，不能只凭旧参数是否存在判断。设备、节点身份当前仍随会话固定，归还额度不会迁移容器。模型同卡借还另有 sleep/wake 协议，不能将当前 command 模式与该分支任意组合。
 
 `episode` 模式把“这个任务可能再用 GPU”作为资源声明的有效期。即使某个 Python 进程退出、显存已经释放，容器仍可能在下一轮对话里执行 CUDA 命令。如果 Router 此时仅仅把账本数字清零，而容器仍能随时访问 GPU，就会出现 A、B 同时认为自己有资源的情况。
 

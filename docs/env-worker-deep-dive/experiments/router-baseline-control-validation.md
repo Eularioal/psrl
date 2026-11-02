@@ -46,12 +46,12 @@
       完成固定数量或达到预算 → [6] 清理及物理释放核验
 ```
 
-图例：图里每个部分对应的源码位置：
+图例：图里描述的是该节实验时的控制路径。当前实现已抽取公共执行层，下面的 Compose 属性和启动链接定位到现有对应函数，历史调用顺序及耗时不据此更新。
 
 | 编号 | 职责与源码 |
 |---|---|
 | 1 | [实验驱动](../env-service-verification/scripts/science_router_control_ab.py) 的 `run` 选择实际导入的 science runner，保持相同并发及补采规则。旧 runner 的实验快照见[基线源码](../env-service-verification/results/router-baseline-control-20261020/baseline-runner.py#L132) |
-| 2 | [固定代理](../env-service-verification/scripts/science_router_control_agent.py#L12) 的 `run` 执行两条相同 CUDA 命令，中间执行 CPU 等待。ON 调用 [exec_gpu](../../../psrl/workers/env_service/docker.py#L73) |
+| 2 | [固定代理](../env-service-verification/scripts/science_router_control_agent.py#L12) 的 `run` 执行两条相同 CUDA 命令，中间执行 CPU 等待。ON 调用 [现有 exec_gpu 入口](../../../psrl/workers/env_service/managed_execution.py#L53) |
 | 3 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L47) 检查先入先出队列、预算及实时显存 |
 | 4 | [grant_gpu_command / revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L120) 检查容器归属并授予、撤销设备权限。使用[本机 Docker 接口](../../../psrl/workers/env_service/docker_api.py#L9)与 [NVML 查询](../../../psrl/workers/env_service/probe.py#L74) |
 | 5 | 驱动的 `prepare_tasks` 写入 verifier，检查两条命令均成功且 CUDA 写入、读回值均为 42 |
@@ -216,7 +216,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/plot_router_co
 [6] 连接关闭：等待正在进行的查询结束，再释放 NVML 引用
 ```
 
-图例：图里每个部分对应的源码位置：
+图例：图里描述的是该节实验时的控制路径。当前实现已抽取公共执行层，下面的 Compose 属性和启动链接定位到现有对应函数，历史调用顺序及耗时不据此更新。
 
 | 编号 | 对应函数与职责 |
 |---|---|
@@ -325,7 +325,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/analyze_router
 [6] 结束或启动失败：回收本次资源、结束服务和未完成的预热任务
 ```
 
-图例：图里每个部分对应的源码位置：
+图例：图里描述的是该节实验时的控制路径。当前实现已抽取公共执行层，下面的 Compose 属性和启动链接定位到现有对应函数，历史调用顺序及耗时不据此更新。
 
 | 编号 | 已有实现与拟新增部分 |
 |---|---|
@@ -459,16 +459,16 @@ ON：
   → [5] 等待必要确认 → 评分、容器和会话清理 → 完成
 ```
 
-图例：图里每个部分对应的源码位置：
+图例：图里描述的是该节实验时的控制路径。当前实现已抽取公共执行层，下面的 Compose 属性和启动链接定位到现有对应函数，历史调用顺序及耗时不据此更新。
 
 | 编号 | 真实调用、输入和状态 |
 |---|---|
 | 0 | [create_env_router](../../../psrl/workers/env_service/router.py#L407) 提交预热，[Node.prepare](../../../psrl/workers/env_service/node.py#L49) 探活并初始化查询能力，不占任务配额 |
 | 1 | [固定基线 runner 快照](../env-service-verification/results/router-prewarm-private-20261020/baseline-runner.py#L191) 静态映射；ON 经 [Client.acquire](../../../psrl/workers/env_service/client.py#L159) 申请会话，再由 [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L98) 准备设备、驱动库和 Compose 覆盖配置 |
-| 2 | [exec_gpu](../../../psrl/workers/env_service/docker.py#L73) 在记录 `reservation.requested_at` 前执行归还等待、获取句柄及 `compose ps -q main`；[_docker_compose_paths](../../../psrl/workers/env_service/docker.py#L157) 每次访问会读配置、生成归属文件 |
-| 3 | [acquire](../../../psrl/workers/env_service/command_gpu.py#L47) 校验预算并等待节点授权；[exec_gpu 调用父类执行](../../../psrl/workers/env_service/docker.py#L108) 后运行 [CUDA 脚本](../env-service-verification/scripts/cuda_pressure.py#L10) |
+| 2 | [现有 exec_gpu 入口](../../../psrl/workers/env_service/managed_execution.py#L53) 在记录 `reservation.requested_at` 前执行归还等待、获取句柄及 `compose ps -q main`；[_docker_compose_paths](../../../psrl/workers/env_service/docker.py#L108) 每次访问会读配置、生成归属文件 |
+| 3 | [acquire](../../../psrl/workers/env_service/command_gpu.py#L47) 校验预算并等待节点授权；[当前普通命令传输](../../../psrl/workers/env_service/docker.py#L65) 后运行 [CUDA 脚本](../env-service-verification/scripts/cuda_pressure.py#L10) |
 | 4 | [begin_return](../../../psrl/workers/env_service/command_gpu.py#L109) 交接后台任务，[_return](../../../psrl/workers/env_service/command_gpu.py#L124) 确认撤权及物理状态后提交配额释放 |
-| 5 | [stop](../../../psrl/workers/env_service/docker.py#L126) 汇合未完成的归还，随后清理容器；[runner](../../../examples/sciaccel_rl/runner.py#L507) 收敛归还错误并处理评分结果 |
+| 5 | [stop](../../../psrl/workers/env_service/docker.py#L76) 汇合未完成的归还，随后清理容器；[runner](../../../examples/sciaccel_rl/runner.py#L507) 收敛归还错误并处理评分结果 |
 
 这些源码如果有不容易理解的地方，可以随时追问。Harbor 内部 Docker 子进程、daemon 请求和 CUDA 每个驱动调用没有独立计时，图中不能将这些未观测步骤的时间强行拆分。
 
@@ -564,7 +564,7 @@ Docker 容器内独立进程
   这些驱动操作有自己的耗时，不能与宿主事件循环延迟混为一项
 ```
 
-图例：图里每个部分对应的源码位置：
+图例：图里描述的是该节实验时的控制路径。当前实现已抽取公共执行层，下面的 Compose 属性和启动链接定位到现有对应函数，历史调用顺序及耗时不据此更新。
 
 | 编号 | 实现、观测和边界 |
 |---|---|
@@ -666,16 +666,16 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/analyze_scienc
              CPU 间隔／下一条命令 → 评分 → [6] 清理容器、租约和物理资源
 ```
 
-图例：图里每个部分对应的源码位置：
+图例：图里描述的是该节实验时的控制路径。当前实现已抽取公共执行层，下面的 Compose 属性和启动链接定位到现有对应函数，历史调用顺序及耗时不据此更新。
 
 | 编号 | 职责、函数与源码 |
 |---|---|
 | 1 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L258) 调用会话准入，再进入容器准备 |
 | 2 | [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L129) 在线程执行只读准备，`write_overlay` 和清理列表登记仍在调用协程里连续完成 |
 | 3 | [runner 调用入口](../../../examples/sciaccel_rl/runner.py#L500)、[prepare_runtime / _warm_kernel_probe](../../../psrl/workers/env_service/docker.py#L18) 使用 Harbor 原有缓存，探测失败结果也保持原值 |
-| 4 | [start / _detect_daemon_os](../../../psrl/workers/env_service/docker.py#L133) 每次启动新查 daemon 类型，原 Harbor 校验随后读取这次结果 |
-| 5 | [exec_gpu](../../../psrl/workers/env_service/docker.py#L73)、[GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L47) 继续执行原准入和归还协议 |
-| 6 | [stop](../../../psrl/workers/env_service/docker.py#L126) 汇合延迟归还，[runner finally](../../../examples/sciaccel_rl/runner.py#L550) 负责本次容器与租约清理 |
+| 4 | [start / _detect_daemon_os](../../../psrl/workers/env_service/docker.py#L84) 每次启动新查 daemon 类型，原 Harbor 校验随后读取这次结果 |
+| 5 | [现有 exec_gpu 入口](../../../psrl/workers/env_service/managed_execution.py#L53)、[GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L47) 继续执行原准入和归还协议 |
+| 6 | [stop](../../../psrl/workers/env_service/docker.py#L76) 汇合延迟归还，[runner finally](../../../examples/sciaccel_rl/runner.py#L550) 负责本次容器与租约清理 |
 
 **为什么有用。** 事件循环是让多个任务轮流处理请求、完成通知和定时器的执行线程。函数声明为 `async` 并不能让其中的同步调用自动变成后台操作。NVML 是 NVIDIA 的设备查询库，初始化、枚举或关闭连接如果耗时，直接在事件循环调用它，就会同时推迟其他任务收到完成通知。Docker 的同步 `subprocess.run` 也有同样问题。
 

@@ -2,7 +2,7 @@
 
 > **核心结论**：配置 `gpu_execution_backend: mps` 后，一个环境容器内和不同环境容器之间的 GPU 作业都能按显存预算并发，放不下的作业排队。每条作业分别记账、取消和回收。native EnvWorker 与 Harbor Compose 共用这套执行实现，command 与 episode 仍决定预算的持有范围。
 >
-> 此后端面向同一可信实验域内的任务、环境专用的单张 GPU 和 cgroup v1 节点。它不是不可信租户之间的安全隔离，也不是 vLLM 与环境同卡共享功能。以下结果是功能验收，不是 science 训练加速比。
+> 此后端面向同一可信实验域内的任务、环境专用的单张 GPU 和 cgroup v1 节点。它不是不可信租户之间的安全隔离，也不是 vLLM 与环境同卡共享功能。本文主体结果是功能验收，不是 science 训练加速比。[真实 GPU 训练并发对照](../experiments/mps-training-comparison.md)单独报告固定 autoresearch 工作量的性能证据。该验证暴露的并发管理连接竞争已通过按服务串行控制请求修复，原失败训练组的定向复测通过。该结论不等于所有工作负载长期稳定。
 
 ## 目录
 
@@ -41,17 +41,19 @@ MPS 是 NVIDIA 的多进程服务，负责让不同 CUDA 进程的 GPU 工作具
 [7] 归还作业预算，唤醒等待者。最后一份租约结束时停止自建 MPS 服务
 ```
 
+第 6 步的查询和终止命令统一经过 [MpsControlChannel](../../../psrl/workers/env_service/mps.py#L11)，同一服务同时只建立一条受管管理连接。锁不覆盖第 5 步的 CUDA 计算，不改变多作业并行。
+
 图例：图里每个部分对应的源码位置。cgroup 是 Linux 对进程的资源分组机制，devices 控制设备访问，freezer 用于短暂冻结进程。eBPF 在内核侧记录进程归属，NVML 是 NVIDIA 的 GPU 遥测接口。
 
 | 图中部分 | 职责与对应实现 |
 |---|---|
 | 1 | [dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py#L32) 把 science 的 JSON 工具请求转换为受管作业调用 |
-| 2 | [ManagedGpuExecution](../../../psrl/workers/env_service/managed_execution.py#L187) 传输作业与观察结果，[Router.submit_mps_job](../../../psrl/workers/env_service/router.py#L259) 核对租约 |
-| 3 | [MpsDomain.admit](../../../psrl/workers/env_service/parallel_gpu.py#L219) 按新鲜遥测和未兑现预约判断准入 |
-| 4 | [MpsDomain.launch](../../../psrl/workers/env_service/parallel_gpu.py#L278)、[JobFence](../../../psrl/workers/env_service/job_fence.py#L11) 建立作业归属与设备授权 |
-| 5 | [MpsDomain.register](../../../psrl/workers/env_service/parallel_gpu.py#L56) 创建独立 Docker MPS 服务，[TaskGpuTelemetry](../../../psrl/workers/env_service/task_telemetry.py#L70) 采样 |
-| 6 | [MpsDomain.cleanup](../../../psrl/workers/env_service/parallel_gpu.py#L353)、[MpsClientController.terminate](../../../psrl/workers/env_service/mps.py#L80) 执行定向回收 |
-| 7 | [MpsDomain.release](../../../psrl/workers/env_service/parallel_gpu.py#L419) 回收租约和服务，[Node.cleanup](../../../psrl/workers/env_service/node.py#L154) 处理失联租约 |
+| 2 | [ManagedGpuExecution](../../../psrl/workers/env_service/managed_execution.py#L14) 传输作业与观察结果，[Router.submit_mps_job](../../../psrl/workers/env_service/router.py#L259) 核对租约 |
+| 3 | [MpsDomain.admit](../../../psrl/workers/env_service/parallel_gpu.py#L208) 按新鲜遥测和未兑现预约判断准入 |
+| 4 | [MpsDomain.launch](../../../psrl/workers/env_service/parallel_gpu.py#L267)、[JobFence](../../../psrl/workers/env_service/job_fence.py#L11) 建立作业归属与设备授权 |
+| 5 | [MpsDomain.register](../../../psrl/workers/env_service/parallel_gpu.py#L45) 创建独立 Docker MPS 服务，[TaskGpuTelemetry](../../../psrl/workers/env_service/task_telemetry.py#L73) 采样 |
+| 6 | [MpsDomain.cleanup](../../../psrl/workers/env_service/parallel_gpu.py#L342)、[MpsClientController.terminate](../../../psrl/workers/env_service/mps.py#L123) 执行定向回收 |
+| 7 | [MpsDomain.release](../../../psrl/workers/env_service/parallel_gpu.py#L408) 回收租约和服务，[Node.cleanup](../../../psrl/workers/env_service/node.py#L182) 处理失联租约 |
 
 GPU 内核究竟在多长时间内同时运行，由 GPU 和 MPS 调度决定。程序生命周期重叠、两条 CUDA 循环同时推进，不等于已经测得内核重叠百分比或吞吐提升。
 
@@ -201,16 +203,17 @@ python -m pytest tests/env_service/test_parallel_gpu.py tests/env_service/test_m
 
 ## 7. 使用边界与后续工作
 
+- **控制通道约束**：[MpsControlChannel](../../../psrl/workers/env_service/mps.py#L11) 按 domain 串行管理连接，GPU 计算仍并行。排队和执行共用 10 秒期限，失败不盲目重试，无法确认物理释放仍保留预算。真实训练收尾复测见[故障定位与修复](../experiments/mps-training-comparison.md#6-控制通道故障定位与修复)。
 - 默认仍是 direct，MPS 必须显式启用。模式选择仍是 unit 的静态配置，没有自动选择 command/episode、预测 offload 或动态迁移实现。
 - 当前支持 cgroup v1 的 devices/freezer、具备相应管理权限的节点、支持所用 MPS 控制接口的 NVIDIA GPU/驱动。cgroup v2、非 root 客户端、多 GPU unit 明确不在本次支持范围。
 - MPS 控制表查询与终止不是原子事务。当前实现用于可信实验域，配合作业组稳定身份，不宣称能防御恶意客户端重连、篡改工具或对同容器同 UID 进程发送信号。
 - MPS 通信目录和 IPC namespace 在 domain 内共享，不是多租户安全边界。显存申报也不是恶意多进程任务的聚合硬上限。
 - SM 利用率可能缺少可归属样本，记账支持不等于利用率评分一定可用。science 的活动奖励仍应遵守原归因门槛，不应补造利用率或把整卡忙碌当作本作业贡献。
-- 尚未测量固定成功工作量下的 science 吞吐收益、内核重叠时间线和 vLLM 同卡性能影响。后续应选择真正使用 GPU 的科学求解器，分别比较串行 direct、普通多进程和 MPS，保持输入、评分及预算一致。
+- 固定 autoresearch 训练的串行、普通多进程和 MPS 对照见[性能报告](../experiments/mps-training-comparison.md)。它不覆盖原生 science 求解器或 vLLM 同卡性能，时间线采样与训练计时也分别报告。
 
 ## 8. 原理与当前效果应该怎样理解
 
-本节于 2026-11-02 核对当前源码和 2026-10-30 的 MPS 验收记录，未重新启动 GPU 实验。结论是功能闭环经过有界验收，性能收益和长期可靠性仍需分别验证，不能将“实现完成”理解为所有工作负载均已证明更快、无 OOM 或无故障。
+本节区分 2026-10-30 的 MPS 功能验收与 2026-11-02 的固定 autoresearch 训练性能验证。性能结论只适用于测过的负载和条件，不能将“实现完成”理解为所有工作负载均已证明更快、无 OOM 或无故障。实现对应本地代码快照，实际实验版本和工作区补丁见性能报告，不代表远端合并或全局部署。
 
 先沿第 1 节的完整图理解：工具提交 → Router/节点决定准入 → 作业组授权设备 → CUDA/MPS 执行 → 定向回收 → 归还预算。Router 不逐个调度 GPU 内核，MPS 也不替 Router 管理实验任务的生命周期。
 
@@ -240,13 +243,13 @@ MPS 也不自动释放等待模型回复期间的常驻显存。episode 作业�
 |---|---|---|
 | 功能 | native/Compose × command/episode 四种组合通过。并发提交、队列、取消、子进程超时回收和最终清理经过实机验收 | 任意任务、任意驱动或长时间压力均可靠 |
 | 资源控制 | eBPF 能区分两个作业的显存，线程比例生效，客户端超限返回预期 CUDA 错误 | 所有进程树都获得显存硬隔离，SM 利用率评分总能归属 |
-| 性能 | 两条 CUDA 循环都在同一段时间内取得进展 | 已测得内核重叠率、science 训练加速比或高负载尾延迟改善 |
+| 性能 | 已增加真实 autoresearch 固定训练工作量的三组对照，具体数据与时间线边界见[性能报告](../experiments/mps-training-comparison.md) | 原生 science 训练加速、高负载尾延迟改善，或任意任务均因 MPS 而更快 |
 
 374 项是相关目录的回归测试总数，不是 374 次真实 GPU 实验。真实 GPU 验收记录是第 5 节的功能矩阵及额外限额组，负载为小型 CUDA 程序，使用 science 镜像和工具入口也不等于运行了原生科学求解器。
 
 正常取消已验证不影响邻居，但设备致命错误、驱动重置、服务意外死亡、客户端异常退出等还不能据此视为全面覆盖。特别是 MPS 客户端在无法连接服务时存在退回普通 CUDA 的驱动行为，当前 `launch` 设置连接环境并检查容器配置，没有实现覆盖所有服务失联时刻的持续连接证明。此项应列为后续故障注入验收，不能把配置了 MPS 环境变量当作任何时刻都一定通过 MPS 执行的证据。服务故障可能影响同 GPU 的其他 MPS 客户端，参见 [NVIDIA 故障与提前终止说明](https://docs.nvidia.com/deploy/mps/595/when-to-use-mps.html)。
 
-下一步最有价值的是用真正的 GPU science 求解器、固定输入和相同成功工作量，对照“串行执行”“相同预算下普通多进程”“相同预算下 MPS 多进程”。记录总完成时间、单任务延迟、失败率，并用 GPU profiler 的内核时间线确认重叠。该三组是机制分析对照，不能冒充项目指定的固定历史 OFF baseline。
+autoresearch 对照补充了真实训练计算的证据。若要进一步声称原生 science 收益，仍须使用真正的 GPU 科学求解器、固定输入和相同成功工作量，记录总完成时间、单任务延迟及失败率。三组机制对照不能冒充项目指定的固定历史 OFF baseline，也不应为了追求加速数字反复更换负载。
 
 **可运行的 CPU 教学模型。** 从仓库根目录运行：
 

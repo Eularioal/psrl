@@ -1,8 +1,8 @@
 # GPU 环境工作负载调研与 benchmark 接入顺序
 
-> **核心结论**：已有四类 recipe 的实测状态看 [导览](../experiments/gpu-benchmarks/README.md)。继续补充图中 high GPU 任务，优先选择 PostTrainBench 的 Qwen3-1.7B × GSM8K。要研究训练状态跨外部反馈等待期间驻留，RE-Bench 的聊天模型强化学习任务更有针对性。高 GPU 计算需求本身不说明必须使用 episode。
+> **核心结论**：已有 recipe 的实测状态看 [导览](../experiments/gpu-benchmarks/README.md)。为研究训练状态跨外部反馈等待驻留，已新增 [RE-Bench 原生接入](re-bench-recipe.md)，正式反馈与评分仍待裁判凭据。PostTrainBench 的 Qwen3-1.7B × GSM8K 是后续训练候选。高 GPU 计算需求本身不说明必须使用 episode。
 >
-> 初始调研日期为 2026-10-29，图中六项 high GPU 的专项核对日期为 2026-11-02。本文中的选型和适配建议不是新 benchmark 已接入的证明。此次补充仅查官方资料和代码，没有下载新增候选的模型、数据或启动 GPU 实验。
+> 初始调研日期为 2026-10-29，图中六项 high GPU 的专项核对日期为 2026-11-02。候选表不是逐项已验证的证明，RE-Bench 的资产、接入和本次运行边界单列在 [recipe](re-bench-recipe.md) 与 [验证记录](../experiments/gpu-benchmarks/FINDINGS.md#re-bench-原生接入验证)。
 
 ## 目录
 
@@ -20,7 +20,7 @@
 
 这里的 workload 指实际交给计算资源执行的一段工作。我们关心 agent 在环境中启动的训练、计算核和模型服务。驱动 agent 思考的大语言模型也需要算力，但它属于 PSRL 的策略模型训推资源，需要另记。
 
-下图是接入目标图。实线主流程可映射到本地 science 路径，候选分支的实际覆盖以各 recipe 为准，PostTrainBench 与 RE-Bench 仍是提案。
+下图是接入目标图。实线主流程可映射到本地 science 路径，候选分支的实际覆盖以各 recipe 为准，PostTrainBench 仍是提案，RE-Bench 已有原生接线但完整评分待验证。
 
 ```text
 [1] benchmark 任务与资源需求
@@ -84,7 +84,7 @@ GPU 形态是根据任务机制作的接入判断，不是本地测得的资源�
 | [InferenceBench](https://github.com/aisa-group/InferenceBench) | agent 优化模型推理服务，涵盖首 token 时延、后续 token 时延、吞吐及综合场景 | 模型服务常驻显存，外部请求产生 GPU 压力 | **第一批 AI4Infra**。官方仓库公开 Mistral-7B 和每次 2 小时设置。重点是服务生命周期与性能隔离，不是普通命令执行 |
 | [autoresearch](https://github.com/karpathy/autoresearch) | agent 修改训练代码，运行实验后保留或放弃修改 | 单张 NVIDIA GPU，每次训练固定 5 分钟，另计启动、编译和评估 | **第一批补充负载**。是研究循环框架，不直接视为标准多任务 benchmark。必须额外设置总轮数与总期限 |
 | [MLGym](https://github.com/facebookresearch/MLGym) | 13 个开放研究任务，覆盖监督学习、强化学习等 | 不同任务差异大，训练类可用 GPU | AIRS 已复用其 agent，接入成本可能较低，但新增资源形态有限。上游页面显示仓库已归档，需固定依赖 |
-| [RE-Bench](https://github.com/METR/RE-Bench) | 7 类研究工程任务，包括训练脚本优化、模型修复、Triton 前缀和 | 同时覆盖长训练与短 kernel，逐任务审核卡数和评分环境 | **第二批**。可选优化 LLM Foundry 任务补充训练系统优化。上游已归档，不默认依赖会继续维护 |
+| [RE-Bench](https://github.com/METR/RE-Bench) | 7 类研究工程任务，包括训练脚本优化、模型修复、Triton 前缀和 | 同时覆盖长训练与短 kernel，逐任务审核卡数和评分环境 | 聊天训练任务已有原生 Env 接入，真实资产 CUDA smoke 通过，完整偏好评分待凭据。其他任务尚未接入，上游已归档 |
 | [PostTrainBench](https://github.com/aisa-group/PostTrainBench) | 自动对基础语言模型做后训练 | 官方设置为一张 H100、10 小时，训练和评估均可能占 GPU | **第二批 RSI 相关**。权重、优化器状态与评分成本较重。官网已出现版本更新入口，不沿用图片的固定目标集数量 |
 | [TritonBench](https://github.com/thunlp/TritonBench) | 生成 Triton 算子，Triton 是便于编写 GPU 并行计算的语言与编译系统 | GPU 正确性与性能评测 | KernelBench 接口稳定后扩充 kernel 题型，初期无需两个近似负载同时接 |
 | [InfraDev 论文](https://arxiv.org/abs/2610.36589) | 2026-10-27 发布，36 个源自 Megatron-LM、vLLM、verl 的真实修改任务 | 多 GPU 执行与隐藏验证 | **跟进候选**。论文定位明确，公开任务包、运行入口、每题硬件预算本次尚未核实，不能宣称可立即运行 |
@@ -103,14 +103,14 @@ GPU 形态是根据任务机制作的接入判断，不是本地测得的资源�
 | [Automated LLM Speedrunning](https://github.com/facebookresearch/llm-speedrunner/blob/main/config/task/nanogpt_speedrun/default_config.yaml) | 修改 GPT-2 训练代码，在验证损失不高于 3.28 的条件下缩短训练时间 | 官方配置固定 8 张 H100，使用 8 进程 `torchrun`。完整训练作业可是一条 command | 多卡资源重，优先级低于单卡后训练。不把缩成单 H20 的结果称作原版成绩 |
 | [MLE-bench](https://github.com/openai/mle-bench) | 75 个 Kaggle 竞赛，做特征、训练、预测和提交 | 选择 GPU 图像或语言模型方案。训练和预测可以分别作为 command | 保留现有接入，按用户安排暂缓 Kaggle 权限和数据 |
 | [MLGym-Bench](https://github.com/facebookresearch/MLGym/blob/main/configs/tasks/languageModelingFineWeb.yaml) | 例如 `languageModelingFineWeb`，训练 GPT-2 风格模型做下一个 token 预测 | 官方要求保存 `model.pt` 与 `model_config.pt`，天然有落盘边界。单次训练超时 2400 秒，不等于必须跨命令保留模型 | 可作为较直接的持续训练候选，套件的博弈题不都需要 GPU |
-| [RE-Bench](https://github.com/METR/RE-Bench/blob/main/ai_rd_nanogpt_chat_rl/ai_rd_nanogpt_chat_rl.py) | 例如用强化学习把 GPT-2 XL 训练成聊天模型，按外部模型偏好训练 | GPU 生成、外部裁判等待、GPU 更新交替。官方起始代码在等待时保留 CUDA 模型 | 最贴近“自然等待期间仍保留训练状态”，但需 Replicate 裁判访问，仓库已归档 |
+| [RE-Bench](https://github.com/METR/RE-Bench/blob/main/ai_rd_nanogpt_chat_rl/ai_rd_nanogpt_chat_rl.py) | 例如用强化学习把 GPT-2 XL 训练成聊天模型，按外部模型偏好训练 | GPU 生成、外部裁判等待、GPU 更新交替。官方起始代码在等待时保留 CUDA 模型 | 已有原生接入，最贴近“自然等待期间仍保留训练状态”；实际反馈等待及完整评分仍待 Replicate 凭据 |
 | [PostTrainBench](https://github.com/aisa-group/PostTrainBench/blob/main/src/harbor_adapter/README.md) | 对基础语言模型后训练，提高数学、知识或代码等目标能力 | 官方单 H100、默认 10 小时，训练后交付最终模型。完整训练或评估可作为 command | 优先新增 Qwen3-1.7B × GSM8K，已存在官方 Harbor 适配，但尚未接到本地 Env |
 
 **PostTrainBench 为什么值得先选。** 后训练是在已有基础模型上继续优化参数，使其更擅长指定任务。选 Qwen3-1.7B-Base 与 GSM8K，输入是基础权重及数学任务要求，agent 设计数据和训练方法，在 GPU 上训练，交付 `final_model/`，再由验收器检查数学答题表现。这比固定推理请求多出了真实训练和模型交付。这里的示例任务不是本次已经跑通的实验。
 
 当前官方 Harbor 文档标注 v1.2，支持 4 个基础模型与 6 个评测目标，共 24 种组合，不能继续照搬图片中的 5 个目标。目标包括 AIME2025、ArenaHardWriting、GPQA、GSM8K、HealthBench、HumanEval。官方设置的 10 小时是 agent 预算，独立 verifier 还会额外占时间，不能把它当作整次运行的严格总上限。原版 Harbor 运行依赖 Modal、HF 下载身份及裁判 API。迁移到本地 Env 时，需替换容器执行和模型交付存储，保留可信评分。单 H20 上的镜像、CUDA 和显存可用性本次尚未验证，官方 H100 设置也不是 H20 必然不兼容的证明。
 
-**RE-Bench 的驻留证据更具体。** 下面是已查阅的上游起始代码流程，不是本地已接入流程，也不是虚构的 CPU 等待：
+**RE-Bench 的驻留证据更具体。** 下面是已查阅的上游起始代码流程，本地接入复用该训练程序。它描述正式裁判链的状态生命周期，不是无裁判 smoke 已测得的等待曲线：
 
 ```text
 [R1] GPT-2 XL 放到 CUDA，建立 Adam 优化器

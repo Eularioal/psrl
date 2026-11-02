@@ -422,7 +422,7 @@ pytest -q tests/env_service/test_process_identity.py tests/env_service/test_task
 | A 视角的 GPU 观测 | [NvmlProbe.read_gpu_snapshot](../../../psrl/workers/env_service/probe.py#L85)，读取驱动报告的进程编号和显存 |
 | C 的任务进程及本地取消 | [gpu_job_process.identity](../../../psrl/workers/env_service/gpu_job_process.py#L12)、[cancel](../../../psrl/workers/env_service/gpu_job_process.py#L20) |
 | D 的服务视图选择 | [MPS Docker 探针](../env-service-verification/scripts/mps_docker_probe.py)，只让服务使用 Docker 所在节点的 PID 视图 |
-| B 到 D 的身份核对 | [MpsClientController](../../../psrl/workers/env_service/mps.py#L50)，核对本地出生信息、namespace、服务代次和客户端连接 |
+| B 到 D 的身份核对 | [MpsClientController](../../../psrl/workers/env_service/mps.py#L93)，核对本地出生信息、namespace、服务代次和客户端连接 |
 
 **一个进程为什么有三个号码。** PID 是 Process ID，即进程编号。namespace 是命名空间，可以理解为一张独立的“名字对应对象”表。创建进程 P 时，内核在它所属的空间及各级祖先空间分别登记编号。CPU 实际执行的仍是同一个进程，显存也不是复制三份。任务内部调用 `getpid()` 时得到 17，B 管理这个进程用 300，A 管理它用 2000。不同层也可能碰巧分到相同数字，所以不能靠数字大小猜层级。
 
@@ -444,7 +444,7 @@ pytest -q tests/env_service/test_process_identity.py tests/env_service/test_task
 
 **新增控制组件如何工作。** 探针通过 Docker inspect 取得本次自建容器的进程号，不再仅凭任务 stdout 自报 namespace 来选择取消对象。控制组件读取该本地 PID 的出生 ticks 和 namespace，与 MPS 客户端表匹配，再记录服务进程出生信息。取消时要求同一 job 和 epoch，并复查客户端及服务身份，收到 MPS 成功确认之后才允许后续进程回收。epoch 是某次授权的代号，防止旧请求作用于后续一轮。
 
-跟着图读源码：B 的 Docker 确定进程 → [bind](../../../psrl/workers/env_service/mps.py#L57) 连接本地身份和 D 的客户端记录 → [validate](../../../psrl/workers/env_service/mps.py#L70) 检查进程及服务是否变更 → [terminate](../../../psrl/workers/env_service/mps.py#L80) 向 D 请求定向终止 → [统一执行器清理顺序](../../../psrl/workers/env_service/gpu_execution.py#L151) 依次执行 MPS 确认、进程回收、预约取消。A 与 B 的 GPU 工作是并行存续的，不是这条控制流程中的串行任务。
+跟着图读源码：B 的 Docker 确定进程 → [bind](../../../psrl/workers/env_service/mps.py#L100) 连接本地身份和 D 的客户端记录 → [validate](../../../psrl/workers/env_service/mps.py#L113) 检查进程及服务是否变更 → [terminate](../../../psrl/workers/env_service/mps.py#L123) 向 D 请求定向终止 → [统一执行器清理顺序](../../../psrl/workers/env_service/gpu_execution.py#L151) 依次执行 MPS 确认、进程回收、预约取消。A 与 B 的 GPU 工作是并行存续的，不是这条控制流程中的串行任务。
 
 这些代码如果有理解上的问题，可以随时追问。这个组件只解决可信、受控客户端的控制身份校验，还没有补齐 NVML 最外层身份映射，也没有消除校验与发送指令间的所有竞态。MPS 取消接口接受裸 PID，正式投产还需要停止新接入、串行管理生命周期，并验证派生进程与重连，不能将这次校验称为任意不可信任务下的原子身份保证。
 

@@ -61,7 +61,7 @@ Harbor 是任务运行框架，负责读任务定义，让 agent 操作环境，
 
 这对应原提案所说的 **L2：替换 Harbor 环境实现**，见[原设计的接入深度说明](../../psrl/psrl-env-service-envworker-design.md#9-当前代码是什么样新方案准备怎样接入)。它沿用 Harbor 的环境插件入口，不修改共享安装的 Harbor 包。已有 [ManagedDockerEnvironment](../../../psrl/workers/env_service/docker.py#L29) 则是在 Harbor Docker 后端之上增加资源管理。
 
-当前 science runner 的 [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L100) 已支持显式选择 CPU 原生后端并传入整次任务预算，GPU 仍使用原有路径。此次没有把 GPU 接线替换完成，也没有把两个资源调度器的账本合并。每个新适配器目前持有一个本地 EnvWorker 实例，说明的是共用实现，不是多任务已经共用一个远程 actor。
+当前 science runner 支持显式选择原生后端，并通过 [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L145) 注入会话预算与 GPU 设备映射。GPU 作业绑定由 [runner](../../../examples/sciaccel_rl/runner.py#L412) 传入公共执行层。此接入没有合并全部资源账本。每个新适配器目前持有一个本地 EnvWorker 实例，说明的是共用实现，不是多任务已经共用一个远程 actor。
 
 ## 2. 具体难点：相同容器，不同执行语义
 
@@ -89,12 +89,12 @@ Harbor 是任务运行框架，负责读任务定义，让 agent 操作环境，
 
 命令由 [run_process](../../../psrl/workers/env_worker/process.py#L17) 并行读取 stdout/stderr，保留真实退出码并调用 Harbor 输出回调。两个流合计输出上限为 8 MiB，防止一个无限输出命令拖垮宿主进程。超时或取消会结束 Docker 客户端。**结束客户端不等于结束容器内命令**，所以 `exec_process` 的异常分支还会等待删除所属容器。
 
-这个清理策略有明确代价：一条命令超时，整个 sandbox 的未保存内存状态都会丢失，其他在其中运行的命令也会结束。它不是“只取消该作业且其他作业无感”的细粒度隔离。本次不支持在这一后端里承诺同容器独立作业取消。文件拷贝失败向上抛错，由任务生命周期清理收尾，不声称文件拷贝具有事务回滚。
+这个清理策略有明确代价：一条命令超时，整个 sandbox 的未保存内存状态都会丢失，其他在其中运行的命令也会结束。它不是“只取消该作业且其他作业无感”的细粒度隔离。这段描述限于普通命令及持久 shell 的失败收尾。显式 MPS 受管 GPU 作业使用节点侧逐作业取消和回收，不能将整个容器删除的策略套用到它的正常取消路径，见 [MPS 后端](mps-parallel-execution.md)。文件拷贝失败向上抛错，由任务生命周期清理收尾，不声称文件拷贝具有事务回滚。
 
 能力校验在创建容器前拒绝以下配置，避免默默忽略要求后继续运行：
 
 - 没有预构建镜像，或者任务包含 Dockerfile、Compose 定义、强制构建要求。
-- GPU 资源或原有 GPU command/lease 等绑定参数。
+- 绕过租约设备映射的原始 GPU 请求，以及旧 `gpu_lending` 模型睡眠绑定。有效的 `gpu_execution` 与 `lease_overlay` 已受支持，command 设备初始权限及租约身份必须一致，见[构造校验](../../../psrl/workers/env_worker/harbor.py#L22)。runner 的[原生接线](../../../examples/sciaccel_rl/runner.py#L145)传入租约映射并关闭 Harbor 自行分配 GPU 的覆盖项。
 - 非禁网策略、动态阶段网络策略及不支持的挂载类型。
 - 磁盘配额要求，以及 `stop(delete=False)` 的保留容器要求。
 
@@ -154,15 +154,15 @@ CUDA_VISIBLE_DEVICES='' timeout --signal=INT --kill-after=30 240 \
 | 想获得的自由度 | 为什么统一实现有帮助 | 还要付出的工作 |
 |---|---|---|
 | 直接控制容器生命周期 | 生命周期入口由 PSRL 持有，资源标签和删除确认可以共用 | 进程重启后的持久所有权与恢复、远程 worker 失联回收 |
-| 精确控制命令阶段 | Harbor 命令统一经过 `exec_process`，便于接 GPU 作业入口和超时监督 | 接入现有 GPU lease、设备授权、归还确认，不能绕过安全预算 |
+| 精确控制命令阶段 | 受管 GPU 入口已共用 `ManagedGpuExecution` 并接入租约授权与归还 | 继续核验具体任务初始化与 verifier 的调用覆盖，普通命令不自动变成受管作业 |
 | 镜像预热、容器复用 | 可在统一创建入口制定策略 | 镜像构建缓存、多服务依赖；容器复用还需彻底清理任务状态，不能只复用一个脏 shell |
-| 统一观测与取消 | 命令开始、输出、结束和异常都有明确入口 | 容器内逐作业隔离、进程归属、独立回收，当前仍以整个容器删除兜底 |
+| 统一观测与取消 | MPS 受管作业已有独立归属和定向取消，普通 shell 失败仍可能使环境失效 | 不可信任务隔离、服务故障及更广泛恢复需另行验收 |
 | 跨节点放置 | 后端 API 可以作为远程调用契约 | 远程文件传输、回调流量、重试幂等性和统一资源账本，远程部分尚未接入，CPU 整次任务预算已接入 |
 | 更自由的网络和挂载 | 由后端明确决定执行参数 | 精确兑现白名单、阶段切换、代理 sidecar、多服务卷语义，而不是“能启动就算支持” |
 
-因此可继续沿“保留 Harbor 任务层、由 PSRL 管理执行后端”的方向推进。CPU science 接线与真实 LAPS oracle 验证已完成，下一步仍需接入 GPU 资源协议与远程 worker 生命周期，之后才考虑替换默认路径。不能因为 CPU oracle 通过就删除仍然承担 GPU、网络与 Compose 能力的已有后端。
+因此可继续沿“保留 Harbor 任务层、由 PSRL 管理执行后端”的方向推进。CPU science 接线、GPU 租约接线及两种提供者共用托管执行层已经完成对应验证，远程 worker 池和更广泛生命周期仍需单独推进。默认提供者仍由配置显式选择。不能因为 CPU oracle 通过就删除仍然承担 GPU、网络与 Compose 能力的已有后端。
 
-这与[执行路径审查](../experiments/router-paired-latency-and-design-review.md)及 [GPU 统一执行后端](unified-gpu-execution.md)是不同层面的统一：GPU 作业协议统一解决 submit/wait/cancel；本文解决 Harbor 环境接口到 EnvWorker 容器实现的复用。二者最终应接起来，但本轮只完成了后者的 CPU 范围。
+这与[执行路径审查](../experiments/router-paired-latency-and-design-review.md)及 [GPU 统一执行后端](unified-gpu-execution.md)是不同层面的统一：GPU 作业协议统一解决 submit/wait/cancel；本文解决 Harbor 环境接口到 EnvWorker 容器实现的复用。二者已经通过 `ManagedGpuExecution` 接起来。第 5 节保留的是早期 CPU 验证，不能用它单独证明 GPU 能力，GPU 证据见[统一执行层第 9 节](unified-gpu-execution.md#9-两种容器创建方式共用托管执行层)。
 
 
 ## 7. 后续修复优先级与生命周期故障复现

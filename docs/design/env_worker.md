@@ -335,9 +335,16 @@ the SessionRouter.
 
 ## Harbor 的 EnvService 路径
 
-Science 示例通过 `EnvRouter → EnvServiceClient → ManagedDockerEnvironment → Harbor`
-管理容器。它与上文的 `EnvWorkerCoordinator → EnvWorker` 是两条独立执行路径。
-启用 `psrl.env_service.enable` 不会自动把 Harbor 的命令执行转到 EnvWorker。
+Science 的实际顺序是 runner 通过 EnvServiceClient 向 EnvRouter 申请租约，再由 Harbor
+组织任务。环境提供者可显式选择默认 Docker/Compose 或原生 EnvWorker，两者共用
+`ManagedGpuExecution`。启用 `psrl.env_service.enable` 本身不会切换提供者。
+
+[runner 的后端选择](../../examples/sciaccel_rl/runner.py#L349)由
+`config.harbor.environment_backend` 控制。原生路径使用
+[EnvWorkerEnvironment](../../psrl/workers/env_worker/harbor.py#L19)，
+通过[租约接线](../../examples/sciaccel_rl/runner.py#L145)接入设备映射和资源预算，
+并非自动加入上文的共享 EnvWorkerCoordinator 池。完整结构、direct / MPS 分支和
+生命周期见[当前设计](../env-worker-deep-dive/knowledge/current-design.md)。
 
 `EnvRouter` 负责资源准入及租约。每个参与节点由路由器创建一个 `EnvNodeService`
 actor，负责本机 GPU 遥测和过期租约容器回收。节点间须允许访问该服务返回的 HTTP

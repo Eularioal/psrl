@@ -4,7 +4,7 @@
 >
 > 本文是 2026-10-27 的方案分析及阶段实现记录。设备级优先级已接入 worker 放置、派发及准入，CPU 回归与真实 CUDA 验证见第 9 节。显式共享 command 已加入推理余量与模型控制门禁，并支持已睡眠窗口，见第 10 节。统一训练峰值预约、空窗预测与按总时长决策仍未实现，没有同卡训练性能实测。计算竞争与控制等待的机制、已有实验的证据边界见第 11 节。
 >
-> 第 13 节给出 Docker MPS 接入探索。真实双客户端 CUDA、计算额度与定向取消已验证，EnvRouter 的 MPS 后端、跨视图身份映射及 science 性能收益仍未完成。
+> 第 13 节给出 Docker MPS 接入探索。真实双客户端 CUDA、计算额度与定向取消已验证，环境专用 GPU 的 EnvRouter MPS 后端与作业身份映射已接入，见 [MPS 专题](mps-parallel-execution.md)。该后端不等于 vLLM 同卡 MPS 接入，性能结果须单独阅读对应报告。
 
 ## 目录
 
@@ -710,7 +710,7 @@ timeout 240 python docs/env-worker-deep-dive/env-service-verification/scripts/mp
 
 预期 `result.json` 中 `status=passed`、`terminate_response="0"`、`a_after_cancel.cuda_error=810`、`b_completed.answer=42`、`containers_remaining=""`，且没有 `cleanup_errors`。每次运行保留实际命令、客户端输出和 MPS 日志。`--server-pid-mode private` 可以复现本次 PID 可见性障碍，该组预期失败而不是性能对照。两轮原始结果保存在本地 `env-service-verification/results/mps-integration-20261029/`，不作为可移植的仓库依赖。
 
-**建议实现顺序及 TODO。** 以下是基于本次证据的设计，不是已交付的正式后端。
+**2026-10-29 探索阶段的实现顺序。** 下表保留当时设计与验收目标。节点服务、逐作业预算与取消已在环境专用 MPS 后端接入，更广泛故障恢复和隔离仍需独立验收，不再将整张表视为当前未完成清单。
 
 | 优先级 | 实现内容 | 验收条件 |
 |---|---|---|
@@ -722,13 +722,13 @@ timeout 240 python docs/env-worker-deep-dive/env-service-verification/scripts/mp
 | P1 | 计算额度与客户端显存上限配置，先使用固定配置 | 每进程额度不冒充整个任务的总预算，多进程任务仍需总账本 |
 | P1 | 真实 science 工作负载做固定成功工作量对照 | 比较 Router 串行、普通多进程、MPS 多进程，分别测总时长和单任务延迟 |
 
-当前 [gpu_job_process.cancel](../../../psrl/workers/env_service/gpu_job_process.py#L20) 直接给任务进程组发送 SIGKILL，[统一后端异常路径](../../../psrl/workers/env_service/gpu_execution.py#L151) 先调用进程取消再调用预约取消。MPS 接入不能只添加容器环境变量。第 14 节已增加前置清理扩展点，但普通任务尚未自动绑定 MPS 控制。探针客户端是可信的，且共享 MPS 通信目录，因此也没有证明任意不可信任务之间具备管理权限隔离。正式接入需限定信任域并保护控制接口，目录只读不能自动阻止 Unix socket 管理请求。
+当前 [gpu_job_process.cancel](../../../psrl/workers/env_service/gpu_job_process.py#L20) 直接给任务进程组发送 SIGKILL，[统一后端异常路径](../../../psrl/workers/env_service/gpu_execution.py#L151) 先调用进程取消再调用预约取消。MPS 接入不能只添加容器环境变量。第 14 节已增加前置清理扩展点，默认 direct 任务不会自动绑定 MPS，显式 mps 配置已通过节点专用路径调用 [MpsDomain.cleanup](../../../psrl/workers/env_service/parallel_gpu.py#L342)。探针客户端是可信的，且共享 MPS 通信目录，因此也没有证明任意不可信任务之间具备管理权限隔离。正式接入需限定信任域并保护控制接口，目录只读不能自动阻止 Unix socket 管理请求。
 
 初期优先限定在环境专用 GPU，多容器任务共享一个 MPS 服务。不先把 vLLM 纳入同一故障域，也不实现自动切换 command/episode 或预测 offload。MPS 服务参与多个任务后，单任务是否可取消、可记账、可归还，比先追求吞吐数字更优先。本次已经满足 Docker 接入探索的必要证据，因此停止 GPU 验证。**没有 science 加速结论，没有内核重叠时间线，没有训推同卡性能隔离结论。**
 
 ## 14. MPS 控制组件与统一执行器取消验证
 
-**实现范围：** 新增 [MpsClientController](../../../psrl/workers/env_service/mps.py#L50)，以控制服务所在视图的真实 PID、进程出生信息、namespace、MPS 客户端 ID 和服务出生信息绑定 job/epoch。探针从 Docker inspect 获取本次自建容器 PID，而不是把任务 stdout 当作可信身份来源。PID 分层的设计原因和三层编号例子见 [PID 分层讲解](process-identity-without-procfs.md#pid-为什么分层及-mps-应该用哪个编号)。
+**实现范围：** 新增 [MpsClientController](../../../psrl/workers/env_service/mps.py#L93)，以控制服务所在视图的真实 PID、进程出生信息、namespace、MPS 客户端 ID 和服务出生信息绑定 job/epoch。探针从 Docker inspect 获取本次自建容器 PID，而不是把任务 stdout 当作可信身份来源。PID 分层的设计原因和三层编号例子见 [PID 分层讲解](process-identity-without-procfs.md#pid-为什么分层及-mps-应该用哪个编号)。
 
 [统一执行器](../../../psrl/workers/env_service/gpu_execution.py#L102) 增加 `before_cancel` 扩展点，清理顺序为：MPS 定向终止确认 → 任务进程回收 → 预约取消。任何前置清理失败都会阻止后续预约取消。这里的“保留预算”不是自动完成了隔离和重试，失败资源仍需要节点后续受控回收。
 
@@ -736,4 +736,4 @@ timeout 240 python docs/env-worker-deep-dive/env-service-verification/scripts/mp
 
 本次使用真实 `GpuExecutionBackend` 和 episode 预约策略，但**没有运行 Router actor，未验证真实租约记账链路**。进程取消回调在 CUDA 终止后等待客户端正常退出，没有额外向正在计算的客户端发送 SIGKILL。脚本源码和复现命令仍使用第 13 节入口。
 
-**当前接入另见 [MPS 并行后端](mps-parallel-execution.md)**：节点服务、显式配置、作业设备组、eBPF 显存关联和正常取消回收已接入，两种容器 provider 与两种预算模式完成真实 CUDA 验收。以下仅描述本节独立控制组件的调用边界。真实 science 性能对照和不可信任务隔离仍未完成。`before_cancel` 目前由探针显式接入，默认路径仍不启用 MPS，配置 mps 后走节点的专用执行路径。控制表校验和终止指令不是原子操作，因此组件仅用于受控、可信且由调用方串行管理生命周期的客户端，不能宣称已解决所有 PID 复用竞态。当前成果是后端控制组件与清理顺序的实机验证，不是完整 MPS 调度后端已上线。
+**当前接入另见 [MPS 并行后端](mps-parallel-execution.md)**：节点服务、显式配置、作业设备组、eBPF 显存关联和正常取消回收已接入，两种容器 provider 与两种预算模式完成真实 CUDA 验收。以下仅描述本节独立控制组件的调用边界。真实 science 性能对照和不可信任务隔离仍未完成。`before_cancel` 目前由探针显式接入，默认路径仍不启用 MPS，配置 mps 后走节点的专用执行路径。控制表校验和终止指令不是原子操作，因此组件仅用于受控、可信且由调用方串行管理生命周期的客户端，不能宣称已解决所有 PID 复用竞态。本节的历史成果限于控制组件和清理顺序。当前环境专用 MPS 调度实现另见上述专题，实际集群是否已部署须现场核对。

@@ -2,7 +2,7 @@
 
 > **核心结论**：了解现状先读本文。当前受管理路径由 EnvRouter 决定资源准入，Harbor 组织任务，原生 EnvWorker 或 Compose 创建容器，两者共用 GPU 作业执行接口。`episode` / `command` 决定预算持有多久，`direct` / `mps` 决定作业如何执行。这是两组不同的选择，不能混为一谈。
 >
-> **核对范围**：2026-11-02 的主开发目录，HEAD 为 `8d1fc65`，包含当时尚未提交的显存记账与遥测修改。本文描述工作区源码，不代表远端已合并版本或集群已部署状态。默认配置仍关闭 Env Service。本次只核对源码和运行 CPU 教学例子，没有重新执行 GPU 或训练实验。
+> **核对范围**：2026-11-02 的主开发目录，HEAD 为 `affe7c2`，包含本次尚未提交的 MPS 控制通道修复。本文描述工作区源码，不代表远端已合并版本或集群已部署状态。默认配置仍关闭 Env Service。本文架构说明基于源码和 CPU 教学例子。[MPS 真实训练性能验证](../experiments/mps-training-comparison.md)单独记录实验条件和结果，不能从架构图推断吞吐收益。
 
 ## 目录
 
@@ -98,7 +98,9 @@ GiB 是显存容量单位，1 GiB 等于 1024 MiB。unit 配额是调度容量�
 | 下一条命令能否自动换卡或跨节点迁移 | 租约仍绑定 unit，两层租约和动态放置是提案 | [动态放置提案](dynamic-command-placement.md) |
 | 等待模型时能否自动卸载任意 GPU 状态 | 未完成通用自动卸载与恢复，常驻模型需显式管理生命周期 | [接入 recipe](gpu-benchmark-recipes.md) |
 | 是否能使用模型 GPU | 有独立 GPU 优先与显式共享路径，需遵守共享配置和模型余量边界 | [vLLM 共享第 10 节](vllm-env-opportunistic-sharing.md#10-常驻共享kv-上限与已睡眠窗口) |
+| RE-Bench 训练任务是否接入原生 Env | 已有任务、独立 verifier、裁判请求桥接和 PSRL 接线。正式偏好训练评分仍需 Replicate 凭据，不等于自动卸载已完成 | [RE-Bench recipe](re-bench-recipe.md) |
 | 失败是否等于没有恢复能力 | 已有重试、补采与监督，不等于原请求能自动迁移到另一 worker | [重试与重派发](worker-retry-and-redispatch.md) |
+| MPS 控制通道收尾错误是否已修复 | 已按服务串行管理连接，原失败训练组定向复测通过，长期稳定性未验收 | [故障定位与修复](../experiments/mps-training-comparison.md#6-控制通道故障定位与修复) |
 | 功能通过是否代表训练更快 | 不能，性能结论需匹配版本、工作量和计时边界 | [实验索引](../experiments/README.md) |
 
 ## 5. 跟着图读源码
@@ -108,8 +110,8 @@ GiB 是显存容量单位，1 GiB 等于 1024 MiB。unit 配额是调度容量�
 1. **1 → 2**：读 `run_harbor_episode` 的资源申请，输入任务需求，输出租约或准入失败。再读 `EnvUnitLedger.try_admit`，看 unit 和预算怎样影响获准结果。
 2. **2 → 3**：读 runner 的 `gpu_execution` 绑定及两种提供者。租约的模式和身份传入环境，容器创建后才能提供实际容器标识。
 3. **3 → 4**：读 `ManagedGpuExecution._init_gpu_execution`、`start_gpu_job`，每次提交生成独立作业记录，调用方可以继续交互或等待。
-4. **4 的分支**：direct 读 `GpuExecutionBackend.execute` 与 `EpisodeGpuReservation` / `CommandGpuReservation`。MPS 读 `_execute_mps_job`、`EnvRouter.submit_mps_job`，再到 [MpsDomain.admit](../../../psrl/workers/env_service/parallel_gpu.py#L219)。MPS 是远程调用与轮询状态链，不经过 direct 的串行执行锁。
-5. **4 → 5 的并发点**：direct 输出就绪与物理归还不是一个瞬间。后台归还可以与调用方规划重叠，下一次执行仍等待旧归还完成。MPS 每个作业独立跟踪和回收，详情见 [MpsDomain.cleanup](../../../psrl/workers/env_service/parallel_gpu.py#L353)。
+4. **4 的分支**：direct 读 `GpuExecutionBackend.execute` 与 `EpisodeGpuReservation` / `CommandGpuReservation`。MPS 读 `_execute_mps_job`、`EnvRouter.submit_mps_job`，再到 [MpsDomain.admit](../../../psrl/workers/env_service/parallel_gpu.py#L208)。MPS 是远程调用与轮询状态链，不经过 direct 的串行执行锁。
+5. **4 → 5 的并发点**：direct 输出就绪与物理归还不是一个瞬间。后台归还可以与调用方规划重叠，下一次执行仍等待旧归还完成。MPS 每个作业独立跟踪和回收，详情见 [MpsDomain.cleanup](../../../psrl/workers/env_service/parallel_gpu.py#L342)。
 6. **6**：读原生 `stop` 及 runner 的 `finally`，会话结束要处理全部所属作业、容器和租约。单条命令完成不能代替这一步，清理失败也不能伪装成物理资源已经空闲。
 
 ## 6. 可运行例子与验证边界
@@ -124,7 +126,7 @@ PYTHONPATH=. python docs/env-worker-deep-dive/env-service-verification/scripts/e
 
 预期观察：24 GiB 配额只接纳第一项任务，96 GiB 配额在没有可信归属时接纳前三项，提供可信归属后四项均获准。三项任务的保守占用为 102 GiB，可信归属下为 60 GiB。释放后新的申请可以获准，重复声明同一设备的两个 unit 会被拒绝。这些观察用于理解准入，不能作为本次 GPU 性能结果。
 
-本次已实际运行上述 CPU 脚本，断言全部通过，输出与上述数字及准入顺序一致。没有运行 GPU 任务。
+本次已实际运行上述 CPU 脚本，断言全部通过，输出与上述数字及准入顺序一致。该教学脚本不运行 GPU 任务。
 
 ## 7. 接下来按问题阅读
 

@@ -35,7 +35,7 @@
       │ 同一套作业身份、状态、观察超时与取消
       ↓
 [U3] 两种容器提供者 → ManagedGpuExecution → GpuExecutionBackend
-      │ 同容器串行、总准入期限、执行期限、结果与清理
+      │ direct 同容器串行、总准入期限、执行期限、结果与清理
       ├─ [U4a] EpisodeGpuReservation：使用会话已获准的预算
       └─ [U4b] CommandGpuReservation：向 Router 申请命令预算和设备权限
       ↓
@@ -184,7 +184,7 @@ CPU 回归入口包括 [test_gpu_execution.py](../../../tests/env_service/test_g
 - 静态模式仍来自 unit 配置，没有任务 TOML 模式字段、自动选择、运行时切换或常驻状态 offload／恢复策略。
 - 本次统一执行后端及标准 Science 工具接入，没有全面统一所有任务初始化、独立 GPU verifier 或旧 EnvWorker 后端。
 - episode 的普通工具仍可使用会话设备权限，逐作业归属遥测目前没有补齐。不能用缺失遥测表示 GPU 消耗为零。
-- direct 下同容器受管理 GPU 作业仍串行，MPS 下可按容量并行。原方案单列 [ENV-GPU-SAME-CONTAINER TODO](gpu-jobs-and-task-telemetry.md#7-尚未完成的目标)。
+- direct 下同容器受管理 GPU 作业仍串行，MPS 下可按容量并行。同容器并发的实现与边界见 [MPS 后端](mps-parallel-execution.md)，已不再是整体未实施的 TODO。
 - 预算仍取自租约，逐执行不同显存需求和混合持有范围账本尚未实现。外部占用与未兑现承诺的合成不属于本次执行层抽取，但当前已由 [accounted_gpu_memory_mb](../../../psrl/workers/env_service/gpu_memory.py#L9) 修复为实测占用加未兑现预约，不能继续列为当前未修复项。
 - 模型同卡借还仍沿原专门协议，本次公共作业后端明确拒绝与该绑定任意组合。容器暂停或观察超时均不意味着物理释放。
 - 本次验证只说明真实任务可以通过两种策略的共同执行入口完成，不能据此声称高压力收益、动态卸载有效或新任务全部零适配接入。
