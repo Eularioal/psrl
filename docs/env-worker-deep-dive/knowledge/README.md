@@ -1,53 +1,91 @@
-# EnvWorker 知识与实现
+# Env 环境执行文档导航
 
-> **核心结论**：先读当前流程总览，再按问题查具体机制。早期实现讲解单列在后半部分，其中的「当前」「已实现」以文内版本为准。各篇保留的实验章节是配套证据，集中查结果请转到[实验索引](../experiments/README.md)。
+> **核心结论**：想了解“目前设计是什么”，直接读[当前设计](current-design.md)。本文是分类导航，专题文档用于查细节，提案与历史文章用于理解演进，不再把它们当作并列的首读入口。
 
 ## 目录
 
-- [流程与实现专题](#流程与实现专题)
-- [基础概念与接入](#基础概念与接入)
-- [早期实现与版本讲解](#早期实现与版本讲解)
+- [先读哪一篇](#先读哪一篇)
+- [当前机制详解](#当前机制详解)
+- [任务接入与验证](#任务接入与验证)
+- [基础知识](#基础知识)
+- [设计提案与阶段讨论](#设计提案与阶段讨论)
+- [历史实现](#历史实现)
+- [文档维护规则](#文档维护规则)
 
-## 流程与实现专题
+## 先读哪一篇
 
-| 文档 | 阅读用途与边界 |
+**默认阅读路径：[当前设计](current-design.md) → [统一执行层的当前结构](unified-gpu-execution.md#10-当前结构与前两阶段的对照) → 按问题选择下表专题。** 如果只想建立全局认识，第一篇即可。
+
+| 你的问题 | 直接阅读 | 读完应能回答 |
+|---|---|---|
+| 现在整体是什么设计 | [当前设计](current-design.md) | 谁管理任务、谁准入、谁创建容器、谁执行和回收 |
+| 为什么我的任务排队 | [显存准入](gpu-memory-admission.md) | unit 配额、实测占用和未兑现预约如何计算 |
+| 同一个容器能否跑多个 GPU 作业 | [MPS 后端](mps-parallel-execution.md) | direct 与 MPS 的差异、并行条件和取消边界 |
+| 我要接一个新任务 | [benchmark 接入 recipe](gpu-benchmark-recipes.md) | 如何准备资产、接入环境、选择持有范围并验证 |
+| 现在到底测出了什么效果 | [实验索引](../experiments/README.md) | 哪些是功能、性能、训练验证，各自在什么条件下成立 |
+
+例如，想确认“同容器并发是不是还没做”，先看[当前设计的能力边界](current-design.md#4-已实现与尚未完成的边界)，再读 MPS 专题。不要从旧总览中一句“暂不实施”判断当前全部后端。
+
+## 当前机制详解
+
+这些文章按机制查阅。部分正文包含阶段实验和提案，表中指出应优先读的位置与范围，当前总体结论以[首读文档](current-design.md)为入口。
+
+| 专题 | 负责解释什么 | 阅读边界 |
+|---|---|---|
+| [统一 GPU 执行](unified-gpu-execution.md#10-当前结构与前两阶段的对照) | 容器提供者与公共作业执行层 | 先读第 10 节，前面阶段记录不代表所有后续能力 |
+| [Harbor 与 EnvWorker 后端](native-harbor-backend.md) | 容器生命周期、命令与文件接口 | GPU 当前结构见统一执行层，正文 CPU 原型限制有版本范围 |
+| [命令阶段配额](command-gpu-reservations.md) | 容器保留、逐命令借还、异步归还 | 第 9 节跨节点调度是提案 |
+| [显存准入](gpu-memory-admission.md) | 实测、可信归属与未兑现预约 | 区分 unit 总容量和动态余量 |
+| [MPS 并行执行](mps-parallel-execution.md) | 同容器及跨容器作业准入、并行和独立取消 | 专用环境 GPU，不等于 vLLM 同卡 MPS 已接入 |
+| [GPU 作业与遥测](gpu-jobs-and-task-telemetry.md) | 作业身份、状态、归属与观测 | 含早期同容器提案，已落地后端查 MPS 专题 |
+| [GPU 准入、归属与恢复](gpu-admission-attribution-ebpf-identity.md) | 内核身份、资源预算、节点健康及协程清理 | 深入机制阅读，不是全局入门 |
+| [vLLM 与环境共享](vllm-env-opportunistic-sharing.md#10-常驻共享kv-上限与已睡眠窗口) | 独立 GPU 优先、显式共享与睡眠窗口 | 第 10 节查共享协议，MPS 探索须与环境专用后端区分 |
+| [Docker 借用 rollout GPU](rollout-gpu-lending.md#16-当前交接能力与-procfs-报错的关系) | 睡眠借卡、交接和确认归还 | 旧互斥借卡与显式 command 共享是不同分支 |
+| [重试与重派发](worker-retry-and-redispatch.md) | 重试、整组补采、监督和清理 | 已有恢复不等于原请求自动跨 worker 迁移 |
+
+## 任务接入与验证
+
+| 文档 | 阅读用途 |
 |---|---|
-| [EnvRouter 当前流程与优化总览](env-router-current-flow.md) | 首读入口。串联任务放置、命令借还、预热和清理，区分现有流程与通用接入提案。 |
-| [Worker 重试、整组补采与重派发](worker-retry-and-redispatch.md) | 区分已有恢复和同请求跨 worker 转移，解释执行监督、熔断修复与真实进程死亡实验。 |
-| [EnvWorker 与 Harbor 共用容器后端](native-harbor-backend.md) | 容器生命周期复用、两种 shell 语义及真实 Harbor oracle 验证，明确 CPU 原型与 science GPU 路径的边界。 |
-| [GPU 统一执行后端](unified-gpu-execution.md) | episode 与 command 的提交、等待、取消和收尾，附组件验证及原生 science 验收边界。 |
-| [MPS 并行执行后端](mps-parallel-execution.md) | 同容器与跨容器作业并行、按显存排队、独立取消回收，含配置与真实 Docker 验证。 |
-| [GPU 作业入口与任务遥测](gpu-jobs-and-task-telemetry.md) | 作业状态、资源归属和部署条件。同容器设计提案与 MPS 实现边界分别说明。 |
-| [不用 procfs 标识进程](process-identity-without-procfs.md) | procfs 与 eBPF 的比较、PID 分层设计原因、MPS 控制编号与 GPU 归属边界，附教学模拟。 |
-| [GPU 命令动态放置](dynamic-command-placement.md) | 固定 unit 排队的局限、PD 分离启发、同节点换卡与两层租约提案，附成本和公平性分析及 CPU 教学模拟。 |
-| [命令阶段配额](command-gpu-reservations.md) | 保留容器状态、归还 GPU 预算、后台归还与规划重叠，附实测和跨节点调度提案。 |
-| [GPU 显存准入与未兑现预约](gpu-memory-admission.md) | 实测占用与逐任务预约余量如何共同参与准入，附故障修复和验证边界。 |
-| [Docker 借用 rollout GPU](rollout-gpu-lending.md) | vLLM 睡眠、Docker 借卡与确认归还，区分当前实现、早期设计和配套实验。 |
-| [vLLM 与环境同卡共享策略](vllm-env-opportunistic-sharing.md) | 独立 GPU 优先、常驻共享与已睡眠窗口，包含 Docker MPS 接入和定向取消实测，解释 KV 余量与计算调度，区分功能共存和性能收益。 |
-| [CUDA 上下文开销与计算竞争](cuda-context-and-compute-contention.md) | 零基础展开 CUDA 上下文、SM、stream、MPS 四个概念；**§4.1-4.3** 把"同上下文并发 vs 跨上下文时间片"拆成层1/层2讲清楚，并纠正 MPS 是"从源头上只建一个 context 共用"而非"事后合并两个已有 context"的常见误读；`accounted_gpu_memory_mb`/`_effective_gpu_mb` 怎么用实测值兜底上下文开销；**§3.1** 纠正 `model_headroom_mb * len(unit.gpu_indices)` 容易被误读成"一张卡挂了几个 GPU"的问题，讲清楚 `EnvUnit` 可跨多张卡（张量并行副本）。 |
-| [CPU 与 GPU 多任务并行架构设计对比](cpu-gpu-parallelism-architecture-comparison.md) | 跳出 PSRL 具体代码，讲清楚 CPU 核心"按进程独立分配"和 GPU SM"按 context 整体轮转"这组调度粒度差异分别从哪来——CPU 面对少量异构任务、GPU 面对海量同构任务的设计取向差异，上下文切换成本为什么天生不对等；延伸到 MPS（软件代理，没改硬件调度粒度）和 MIG（硬件真分区，向 CPU 核心模型靠拢但要牺牲弹性共享）分别补的是哪一层。 |
-| [GPU 准入/归属/恢复新设计：eBPF 身份识别与两个新协程模式](gpu-admission-attribution-ebpf-identity.md) | 零基础展开 eBPF/BTF/raw_tracepoint/libbpf FFI/cgroup v1 devices 控制器桥接技巧；`accounted_gpu_memory_mb` 显存会计公式、`ContainerBudget` 容器预算、`NodeHealth` 熔断恢复状态机逐一手算；`resource_telemetry.py`/`routing_pause.py` 两个新协程清理模式（有限并发+截止时间收尾、多持有者引用计数+取消安全清理）；跟着图读 `router.py`/`bpf_identity.py`/`bpf_identity.bpf.c` 等源码行号；配套可运行脚本复刻全部手算结果。 |
+| [GPU benchmark 接入 recipe](gpu-benchmark-recipes.md) | 实际任务资产、准备、环境调用和 PSRL 接口，接入首选 |
+| [GPU workload 调研](gpu-workload-benchmark-survey.md) | 比较任务候选，调研建议不等于全部已接入 |
+| [InferenceBench 评分](inferencebench-scoring.md) | 官方性能奖励、质量门槛与本地功能检查分数的区别 |
+| [EnvWorker 接入与 GPU 验证](onboarding-and-gpu-validation.md) | EnvWorker 环境类、AgentLoop 和分层验证，不替代当前 Router 接口 |
+| [benchmark 阅读入口](../experiments/gpu-benchmarks/README.md) | 按任务查输入、目标、评分、证据与模式适用性 |
 
-## 基础概念与接入
+## 基础知识
 
-[GPU benchmark 接入 recipe](gpu-benchmark-recipes.md)：四类 GPU workload 的官方资产下载、准备器、EnvRouter 运行、PSRL 会话与奖励接口，配套实机验收记录。
-
-| 文档 | 阅读用途与边界 |
+| 文档 | 适合补什么知识 |
 |---|---|
-| [GPU workload 与 benchmark 接入调研](gpu-workload-benchmark-survey.md) | GPU kernel、容器训练、自动研究与 AI4Infra 候选比较，区分已有 recipe、接入提案和真实 GPU 验证。 |
-| [EnvWorker 接入与 GPU 验证方法](onboarding-and-gpu-validation.md) | EnvWorker 路径的配置、环境类与 AgentLoop 接入，以及分层验证方法。不能直接替代 EnvRouter 当前接口说明。 |
-| [Gate B 新手讲解](gate-b-beginner-guide.md) | 学习会话绑定、遥测轮询和模型回复节流，包含教学模拟。讲解的是旧 Gate B 路径。 |
-| [从 Gate B 学 HTTP](http-basics-for-gate-b.md) | 从一次请求理解端口、URL、POST、连接和响应，以旧 Gate B 接口为例。 |
+| [CUDA 上下文与计算竞争](cuda-context-and-compute-contention.md) | 上下文、流、计算资源与显存开销，硬件讨论须按文内条件理解 |
+| [CPU 与 GPU 并行架构](cpu-gpu-parallelism-architecture-comparison.md) | 调度粒度和 MPS、MIG 的动机，不作为部署能力清单 |
+| [不用 procfs 标识进程](process-identity-without-procfs.md) | 进程身份、PID 视图与 eBPF，先有归属问题再深入 |
+| [从 Gate B 学 HTTP](http-basics-for-gate-b.md) | 端口、请求、连接和响应，使用的是旧 Gate B 教学场景 |
+| [Gate B 新手讲解](gate-b-beginner-guide.md) | 旧版会话绑定和回复节流，不是当前资源准入总览 |
 
-## 早期实现与版本讲解
+## 设计提案与阶段讨论
 
-以下文档适合追溯设计和学习源码，不宜用文中的历史「现状」替代[当前流程总览](env-router-current-flow.md)。
-
-| 文档 | 版本或主题边界 |
+| 文档 | 状态与用途 |
 |---|---|
-| [Env Service 实现讲解](env-service-implementation.md) | 以 2026-10-12 改动为背景解释 unit、租约、overlay 和节点策略。显存准入后续变化见[专题](gpu-memory-admission.md)。 |
-| [EnvWorker 账本与回收缺口](implementation-and-gaps.md) | 早期实现分析及 AIRS-Bench 修复前审查。修复结果见[实验报告](../airs-bench-audit/fixes-and-results.md)。 |
-| [提交 72ca50c 的 Gate A/B 讲解](commit-72ca50c-gate-ab-walkthrough.md) | 限定到该提交的实现，不代表后来 EnvRouter 的完整能力。 |
-| [SciAccel GPU Gate 接入与部署](sciaccel-gpu-gate.md) | 早期整卡锁、回复节流、资源池关系与部署验证，也包含文件锁基础。 |
+| [GPU 命令动态放置](dynamic-command-placement.md) | 提案：会话和执行租约分离、同节点换卡及远程执行 |
+| [EnvRouter 流程与通用接入设计讨论](env-router-current-flow.md) | 混合阶段记录：第 10 至 13 节展开通用接入、持有范围和恢复成本。文件名保留，但不再作为当前现状入口 |
 
-[返回专题入口](../README.md) · [查看实验与验证](../experiments/README.md)
+其他提案保留在对应机制专题的明确章节中，例如命令配额第 9 节的跨节点调度。不要把一篇文章的“已实现”标签扩展到它包含的所有提案。
+
+## 历史实现
+
+| 文档 | 固定阅读范围 |
+|---|---|
+| [Env Service 初期实现](env-service-implementation.md) | 2026-10-12 的 unit、租约、节点策略和测试状态 |
+| [EnvWorker 账本与回收缺口](implementation-and-gaps.md) | 早期实现分析和 AIRS-Bench 修复前审查，修复结果查对应报告 |
+| [提交 72ca50c 的 Gate A/B](commit-72ca50c-gate-ab-walkthrough.md) | 指定提交的代码讲解，“当时没有”不等于当前没有 |
+| [SciAccel GPU Gate](sciaccel-gpu-gate.md) | 早期整卡锁、回复节流与部署记录 |
+
+## 文档维护规则
+
+1. 当前结构、能力和默认行为变化，先更新[当前设计](current-design.md)，不要只在旧长文末尾追加进度。
+2. 每个机制专题说明自己的适用路径。提案用“提案”标记，历史结果说明版本，不以日期较新自动覆盖不同配置分支。
+3. 实验报告放在[实验目录](../experiments/README.md)，当前设计只链接证据及说明验证边界。
+4. 新文档登记到对应分类。保持现有文件路径稳定，分类通过本索引表达，避免改名造成外部阅读链接失效。
+
+[返回专题入口](../README.md) · [返回总索引](../../README.md)

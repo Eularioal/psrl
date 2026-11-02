@@ -48,13 +48,15 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 
 ### 知识与实现
 
-- [GPU benchmark 接入 recipe](env-worker-deep-dive/knowledge/gpu-benchmark-recipes.md)：四类 benchmark 的官方资产下载、任务准备、Env 强制准入、PSRL 训练入口与评分边界。
-- [四类 GPU benchmark 接入验证](env-worker-deep-dive/experiments/gpu-benchmarks/FINDINGS.md)：KernelBench 与 autoresearch 真实 GPU 任务，原生 Env 的 episode 持卡、超时修复及回收，以及其他 benchmark 的阻塞项。
+- [GPU benchmark README 导览](env-worker-deep-dive/experiments/gpu-benchmarks/README.md)：现有任务与图中六项 high GPU 候选的目标、评分和 command 适用性，区分常驻服务、后训练与外部裁判等待。
+- [InferenceBench 评分与 ON/OFF 边界](env-worker-deep-dive/knowledge/inferencebench-scoring.md)：延迟和吞吐公式、相对质量门槛、PSRL 裁判检查，以及常驻功能实验与卸载恢复的区别，配套 CPU 演示。
+- [GPU benchmark 接入 recipe](env-worker-deep-dive/knowledge/gpu-benchmark-recipes.md)：官方资产、Env 与 PSRL 接入，以及 command、episode、常驻服务卸载与恢复的边界。
+- [四类 GPU benchmark 接入验证](env-worker-deep-dive/experiments/gpu-benchmarks/FINDINGS.md)：KernelBench、autoresearch 真实任务与 InferenceBench 常驻模型 ON/OFF 的显存、排队、耗时和回收验证，含 episode 修复后的整卡压力与 OOM 对照。
 
-[知识分类索引](env-worker-deep-dive/knowledge/README.md)区分流程专题、基础接入与早期版本讲解。优先阅读当前流程总览，旧版文中的「当前」以原文版本为准。
+**了解现状先读[当前设计](env-worker-deep-dive/knowledge/current-design.md)**：结构图、模式区别、源码路径、能力与验证边界。[知识分类索引](env-worker-deep-dive/knowledge/README.md)按机制、接入、基础知识、提案和历史实现组织阅读。
 
-- [GPU workload 与 benchmark 接入调研](env-worker-deep-dive/knowledge/gpu-workload-benchmark-survey.md)：比较容器训练、GPU kernel、自动研究和 AI 基础设施任务，给出首批接入顺序、源码依据与验证边界。
-- [EnvRouter 当前流程与优化总览](env-worker-deep-dive/knowledge/env-router-current-flow.md)：串联任务放置、命令借还、预热与清理，梳理独立 rollout 与同容器作业关系；解释 episode／command 的适用边界，并提供通用 GPU 任务接入提案、状态释放恢复成本分析及 CPU 教学模拟。
+- [GPU workload 与 benchmark 接入调研](env-worker-deep-dive/knowledge/gpu-workload-benchmark-survey.md)：比较容器训练、GPU kernel、自动研究和 AI 基础设施任务，补充图中六项 high GPU、PostTrainBench 选题与 RE-Bench 真实驻留等待代码。
+- [EnvRouter 流程与通用接入设计讨论](env-worker-deep-dive/knowledge/env-router-current-flow.md)：阶段流程与设计理由，包含通用接入提案、恢复成本和教学模拟，不作为当前能力首读入口。
 - [GPU 命令动态放置](env-worker-deep-dive/knowledge/dynamic-command-placement.md)：分析命令归还后的固定 unit 排队，提出会话与执行租约分离、同节点动态选卡及公平性约束，附 PD 分离对照和 CPU 教学模拟。
 - [Worker 重试、整组补采与重派发](env-worker-deep-dive/knowledge/worker-retry-and-redispatch.md)：说明框架已有的两层恢复与同请求转移的区别，记录执行监督、熔断和等待竞态修复，以及真实 Ray/Docker 故障验证。
 - [MPS 并行执行后端](env-worker-deep-dive/knowledge/mps-parallel-execution.md)：同容器及跨容器作业的预算准入、设备授权、MPS 定向取消、物理回收与真实 Docker 验证。
@@ -66,7 +68,7 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 - [原生后端修复与 science 短验证](env-worker-deep-dive/experiments/native-backend-fixes-and-science.md)：生命周期与整次任务准入修复，固定 baseline 的真实 LAPS oracle 对照，区分任务耗时改善、服务启动成本和未验证的 GPU 竞争。
 - [EnvWorker 与 Harbor 共用容器后端](env-worker-deep-dive/knowledge/native-harbor-backend.md)：保留 Harbor 任务层、复用 EnvWorker 的容器管理，解释持久与独立命令语义，附 CPU 回归和真实 Docker oracle 验证及 GPU/远程调度边界。
 - [GPU 统一执行后端](env-worker-deep-dive/knowledge/unified-gpu-execution.md)：episode 与 command 共用作业执行、等待和取消，原生与 Compose 提供者进一步共用托管作业实现并通过真实 CUDA 检查，说明 EnvRouter 到容器提供者的完整调用链、与固定 baseline 的结构对照、模式配置、Docker 与 vLLM 的资源关系及验证边界。
-- [GPU 显存准入与未兑现预约](env-worker-deep-dive/knowledge/gpu-memory-admission.md)：用实测占用加逐任务预约余量替代总量 max，说明可信归属、保守准入、OOM 修复与短验证。
+- [GPU 显存准入与未兑现预约](env-worker-deep-dive/knowledge/gpu-memory-admission.md)：区分 unit 总容量和动态余量，解释多任务共享、可信归属抵扣、episode 记账修复与整卡真实压力对照。
 - [Env Service 初期实现讲解](env-worker-deep-dive/knowledge/env-service-implementation.md)：租约、unit、overlay 与节点策略，按 2026-10-12 版本阅读。
 - [EnvWorker 接入与 GPU 验证方法](env-worker-deep-dive/knowledge/onboarding-and-gpu-validation.md)：环境类、AgentLoop 接入及分层验证方法。
 - [Gate B 新手讲解](env-worker-deep-dive/knowledge/gate-b-beginner-guide.md)：旧版会话绑定、遥测轮询与回复节流。

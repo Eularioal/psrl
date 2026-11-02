@@ -1,8 +1,8 @@
 # EnvWorker 与 Harbor 共用容器后端：实现、边界与真实验证
 
-> **核心结论**：EnvWorker 已经直接管理 Docker，因此自主容器管理不需要从零重写。本次新增 `EnvWorkerEnvironment`，让 Harbor 保留任务编排、标准答案执行、评分与产物收集，由 EnvWorker 实现容器生命周期、命令和文件传输。预构建 CPU 单容器的完整 Harbor oracle 已通过真实 Docker 验证。
+> **核心结论**：`EnvWorkerEnvironment` 让 Harbor 保留任务编排、评分与产物收集，由 EnvWorker 实现容器生命周期、命令和文件传输。当前原生与 Compose 提供者已共用托管 GPU 作业执行层。整体结构先读[当前设计](current-design.md)，本文展开适配契约与阶段验证。
 >
-> 统一的是执行实现，不是所有资源账本。此适配器目前在调用进程内创建 EnvWorker，没有接入共享 Ray worker 池或 science 的 GPU 租约。需要 GPU、Compose 构建、多服务或复杂网络策略的任务会被拒绝，不能替换现有 science 默认路径。
+> **正文版本边界**：早期 CPU 原型未接 GPU 租约且拒绝 GPU 任务，这项限制已被下述 GPU 接入更新取代。当前仍保留单容器与 Compose 两种创建方式，不把统一 GPU 执行层解释为构建、网络和共享 Ray worker 池也全部统一。
 
 > **当前修复状态**：准备阶段对外拒绝命令、清理失败保留待回收状态已修复。CPU 后端已接 science runner 的整次任务准入，并通过真实 LAPS oracle 与固定 baseline 对照。第 7 节保留修复前复现，最新结果与未完成项见[修复与 science 验证](../experiments/native-backend-fixes-and-science.md)。
 

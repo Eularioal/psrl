@@ -1,0 +1,362 @@
+{
+  "off": {
+    "head": "0eeead861ffafed6bf31c962d259fd847775dcf9",
+    "logical_episodes": 7,
+    "attempts": 8,
+    "oom_attempts": 1,
+    "completed_requests": 14,
+    "resident_idle_s": 30.0,
+    "burst_submitted_s": 19.175015211105347,
+    "max_active_leases": 0,
+    "ownership_credit_peak_mb": 0,
+    "attribution_error_samples": 0,
+    "pool_gpu_mb": 97871,
+    "request_gpu_mb": 20480,
+    "runner_sha256": "223c67cd3511fecba5735a5db0fdfca13d9a2b892733712e18539edce766a89d",
+    "patch_sha256": "a58fb2911e42225390f82ff9df17d321e3a13ae814f53ee945e2cb40099e16a5",
+    "work_s": 158.05247569084167,
+    "initialization_s": 0.2724137306213379,
+    "final_cleanup_s": 0.15283703804016113,
+    "total_s": 158.47772645950317,
+    "requests": [
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.7392089366912842
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.7978072166442871
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.8382627964019775
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.8653767108917236
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 1.2194411754608154
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 1.5580010414123535
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 1.580437421798706
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.3191642761230469
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.323345422744751
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.4044647216796875
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.4052286148071289
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.5822732448577881
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.5850565433502197
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.5896260738372803
+      }
+    ],
+    "episodes": [
+      {
+        "started_s": 5.8660736083984375,
+        "ready_s": 18.37742280960083,
+        "idle_start_s": 20.277347326278687,
+        "idle_end_s": 50.64888668060303,
+        "finished_s": 51.54426121711731,
+        "idle_gpu_min_mb": 28866.625,
+        "idle_gpu_max_mb": 86594.875
+      },
+      {
+        "started_s": 6.071723461151123,
+        "ready_s": 18.597840309143066,
+        "idle_start_s": 20.28337860107422,
+        "idle_end_s": 50.525543451309204,
+        "finished_s": 51.53724813461304,
+        "idle_gpu_min_mb": 28866.625,
+        "idle_gpu_max_mb": 86594.875
+      },
+      {
+        "started_s": 24.74708342552185,
+        "ready_s": 40.570374965667725,
+        "idle_start_s": 42.47388434410095,
+        "idle_end_s": 72.65451550483704,
+        "finished_s": 73.89510989189148,
+        "idle_gpu_min_mb": 57731.75,
+        "idle_gpu_max_mb": 86594.875
+      },
+      {
+        "started_s": 24.94469165802002,
+        "ready_s": 40.55966138839722,
+        "idle_start_s": 42.40178346633911,
+        "idle_end_s": 72.61429762840271,
+        "finished_s": 73.9026951789856,
+        "idle_gpu_min_mb": 57731.75,
+        "idle_gpu_max_mb": 86594.875
+      },
+      {
+        "started_s": 25.106192350387573,
+        "ready_s": 41.65414810180664,
+        "idle_start_s": 42.78082346916199,
+        "idle_end_s": 73.0440731048584,
+        "finished_s": 74.21331834793091,
+        "idle_gpu_min_mb": 57731.75,
+        "idle_gpu_max_mb": 86594.875
+      },
+      {
+        "started_s": 25.276221990585327,
+        "ready_s": 40.901994943618774,
+        "idle_start_s": 42.387287616729736,
+        "idle_end_s": 72.624755859375,
+        "finished_s": 73.91051363945007,
+        "idle_gpu_min_mb": 57731.75,
+        "idle_gpu_max_mb": 86594.875
+      },
+      {
+        "started_s": 98.50393724441528,
+        "ready_s": 110.07944655418396,
+        "idle_start_s": 111.13393020629883,
+        "idle_end_s": 141.39298105239868,
+        "finished_s": 142.2207169532776,
+        "idle_gpu_min_mb": 14435.0625,
+        "idle_gpu_max_mb": 14435.0625
+      }
+    ],
+    "gpu_peak_mb": 86594.875,
+    "max_gpu_processes": 7,
+    "waiting_samples": 0,
+    "telemetry_error_count": 0,
+    "container_resource_error_count": 0,
+    "containers_remaining": 0,
+    "gpu_processes_remaining": 0,
+    "gpu_after_mb": 0.1875,
+    "leases_after": null
+  },
+  "on": {
+    "head": "8d1fc65230d7bd4c78305e140c41ac8b5ea14fb0",
+    "logical_episodes": 7,
+    "attempts": 7,
+    "oom_attempts": 0,
+    "completed_requests": 14,
+    "resident_idle_s": 30.0,
+    "burst_submitted_s": 28.57066798210144,
+    "max_active_leases": 4,
+    "ownership_credit_peak_mb": 57704.0,
+    "attribution_error_samples": 0,
+    "pool_gpu_mb": 97871,
+    "request_gpu_mb": 20480,
+    "runner_sha256": "282e1f022f95522c30cad441929037bf4b12054d2472e1cf62cf92866382b586",
+    "patch_sha256": "9ed1e9c9423694c25fdd7393799296af0f9353598a7e4d8f213b88848e1a72cc",
+    "work_s": 129.79089736938477,
+    "initialization_s": 9.93455171585083,
+    "final_cleanup_s": 2.002113103866577,
+    "total_s": 141.72756218910217,
+    "requests": [
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.7582435607910156
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.7681825160980225
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.821972131729126
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.839756965637207
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.923187255859375
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 1.1764602661132812
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 1.1772894859313965
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.3166313171386719
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.3177928924560547
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.31794238090515137
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.3194088935852051
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.32051897048950195
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.4077596664428711
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.40886378288269043
+      }
+    ],
+    "episodes": [
+      {
+        "started_s": 15.07880425453186,
+        "ready_s": 28.41997528076172,
+        "idle_start_s": 29.75806188583374,
+        "idle_end_s": 59.86625361442566,
+        "finished_s": 60.561811447143555,
+        "idle_gpu_min_mb": 28866.625,
+        "idle_gpu_max_mb": 57729.6875
+      },
+      {
+        "started_s": 15.104743242263794,
+        "ready_s": 28.41183567047119,
+        "idle_start_s": 29.762684106826782,
+        "idle_end_s": 59.87322974205017,
+        "finished_s": 60.547205448150635,
+        "idle_gpu_min_mb": 28866.625,
+        "idle_gpu_max_mb": 57729.6875
+      },
+      {
+        "started_s": 30.213497400283813,
+        "ready_s": 42.52828288078308,
+        "idle_start_s": 43.52521014213562,
+        "idle_end_s": 73.62048196792603,
+        "finished_s": 74.2107093334198,
+        "idle_gpu_min_mb": 28866.5625,
+        "idle_gpu_max_mb": 57729.6875
+      },
+      {
+        "started_s": 31.221340656280518,
+        "ready_s": 43.53129458427429,
+        "idle_start_s": 44.601882457733154,
+        "idle_end_s": 74.69814944267273,
+        "finished_s": 75.28605318069458,
+        "idle_gpu_min_mb": 28866.5625,
+        "idle_gpu_max_mb": 57729.6875
+      },
+      {
+        "started_s": 68.7910828590393,
+        "ready_s": 81.10495710372925,
+        "idle_start_s": 82.03610420227051,
+        "idle_end_s": 112.13668084144592,
+        "finished_s": 112.73034477233887,
+        "idle_gpu_min_mb": 28584.5625,
+        "idle_gpu_max_mb": 43298.125
+      },
+      {
+        "started_s": 72.35852408409119,
+        "ready_s": 83.84779477119446,
+        "idle_start_s": 84.85780239105225,
+        "idle_end_s": 114.96289134025574,
+        "finished_s": 115.6110405921936,
+        "idle_gpu_min_mb": 28866.5625,
+        "idle_gpu_max_mb": 43298.125
+      },
+      {
+        "started_s": 79.81410527229309,
+        "ready_s": 91.23733067512512,
+        "idle_start_s": 92.23004150390625,
+        "idle_end_s": 122.42873215675354,
+        "finished_s": 125.5652642250061,
+        "idle_gpu_min_mb": 14435.0,
+        "idle_gpu_max_mb": 43298.125
+      }
+    ],
+    "gpu_peak_mb": 57729.6875,
+    "max_gpu_processes": 4,
+    "waiting_samples": 44,
+    "telemetry_error_count": 1,
+    "container_resource_error_count": 17,
+    "containers_remaining": 0,
+    "gpu_processes_remaining": 0,
+    "gpu_after_mb": 0.1875,
+    "leases_after": 0
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "off": {
+    "head": "0eeead861ffafed6bf31c962d259fd847775dcf9",
+    "runner_sha256": "223c67cd3511fecba5735a5db0fdfca13d9a2b892733712e18539edce766a89d",
+    "patch_sha256": "a58fb2911e42225390f82ff9df17d321e3a13ae814f53ee945e2cb40099e16a5",
+    "work_s": 46.29515838623047,
+    "initialization_s": 0.3511490821838379,
+    "final_cleanup_s": 0.41238927841186523,
+    "total_s": 47.05869674682617,
+    "requests": [
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.7305395603179932
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.7418718338012695
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.32259416580200195
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.32538509368896484
+      }
+    ],
+    "episodes": [
+      {
+        "started_s": 6.105741500854492,
+        "ready_s": 19.57994318008423,
+        "idle_start_s": 20.768798351287842,
+        "idle_end_s": 29.21300768852234,
+        "finished_s": 30.385632514953613,
+        "idle_gpu_min_mb": 28866.625,
+        "idle_gpu_max_mb": 28866.625
+      },
+      {
+        "started_s": 6.24923849105835,
+        "ready_s": 18.819761276245117,
+        "idle_start_s": 19.87247395515442,
+        "idle_end_s": 28.10828423500061,
+        "finished_s": 29.121763944625854,
+        "idle_gpu_min_mb": 28866.625,
+        "idle_gpu_max_mb": 28866.625
+      }
+    ],
+    "gpu_peak_mb": 28866.625,
+    "max_gpu_processes": 2,
+    "waiting_samples": 0,
+    "telemetry_error_count": 0,
+    "container_resource_error_count": 0,
+    "containers_remaining": 0,
+    "gpu_processes_remaining": 0,
+    "gpu_after_mb": 0.1875,
+    "leases_after": null
+  },
+  "on": {
+    "head": "8d1fc65230d7bd4c78305e140c41ac8b5ea14fb0",
+    "runner_sha256": "282e1f022f95522c30cad441929037bf4b12054d2472e1cf62cf92866382b586",
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "work_s": 76.35622119903564,
+    "initialization_s": 17.569576740264893,
+    "final_cleanup_s": 2.7433876991271973,
+    "total_s": 96.66918563842773,
+    "requests": [
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.7303211688995361
+      },
+      {
+        "sample_id": "11920",
+        "text": "I) 5.03 hp, 24 lb. ft",
+        "completion_tokens": 16,
+        "latency_s": 0.7724685668945312
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.3174159526824951
+      },
+      {
+        "sample_id": "9555",
+        "text": "To solve this problem, we can use the kinematic equations for horizontal and",
+        "completion_tokens": 16,
+        "latency_s": 0.3186802864074707
+      }
+    ],
+    "episodes": [
+      {
+        "started_s": 22.436384439468384,
+        "ready_s": 33.72324872016907,
+        "idle_start_s": 34.641547441482544,
+        "idle_end_s": 42.73995661735535,
+        "finished_s": 43.38605713844299,
+        "idle_gpu_min_mb": 14435.0625,
+        "idle_gpu_max_mb": 14435.0625
+      },
+      {
+        "started_s": 50.6736273765564,
+        "ready_s": 62.035327434539795,
+        "idle_start_s": 62.969680070877075,
+        "idle_end_s": 71.16249942779541,
+        "finished_s": 71.797780752182,
+        "idle_gpu_min_mb": 14435.0625,
+        "idle_gpu_max_mb": 14435.0625
+      }
+    ],
+    "gpu_peak_mb": 14435.0625,
+    "max_gpu_processes": 1,
+    "waiting_samples": 26,
+    "telemetry_error_count": 1,
+    "container_resource_error_count": 19,
+    "containers_remaining": 0,
+    "gpu_processes_remaining": 0,
+    "gpu_after_mb": 3.5,
+    "leases_after": 0
+  }
+}

@@ -1,14 +1,15 @@
 # GPU 环境工作负载调研与 benchmark 接入顺序
 
-> **核心结论**：优先补齐 KernelBench 的短时 GPU 评测、MLE-bench 的容器内训练、InferenceBench 的常驻推理服务。autoresearch 可作为有界研究迭代负载，PostTrainBench、RE-Bench 和 InfraDev 作为后续扩展。已有 AIRS recipe 不等于已有 GPU 环境验证，默认脚本仍设置环境 GPU 槽位为零。
+> **核心结论**：已有四类 recipe 的实测状态看 [导览](../experiments/gpu-benchmarks/README.md)。继续补充图中 high GPU 任务，优先选择 PostTrainBench 的 Qwen3-1.7B × GSM8K。要研究训练状态跨外部反馈等待期间驻留，RE-Bench 的聊天模型强化学习任务更有针对性。高 GPU 计算需求本身不说明必须使用 episode。
 >
-> 本文是截至 2026-10-29 的公开资料调研与本地源码核对。接入顺序、资源分类和验收预算是设计建议，不是已接入或实测结果。未运行外部 benchmark，未下载模型、数据或启动集群实验。
+> 初始调研日期为 2026-10-29，图中六项 high GPU 的专项核对日期为 2026-11-02。本文中的选型和适配建议不是新 benchmark 已接入的证明。此次补充仅查官方资料和代码，没有下载新增候选的模型、数据或启动 GPU 实验。
 
 ## 目录
 
 - [目标与全局流程](#目标与全局流程)
 - [比较维度](#比较维度)
 - [候选对照表](#候选对照表)
+- [图片中六项 high GPU 的具体选题](#图片中六项-high-gpu-的具体选题)
 - [首批接入建议](#首批接入建议)
 - [具体例子与评分干扰](#具体例子与评分干扰)
 - [本地实现与源码阅读路径](#本地实现与源码阅读路径)
@@ -19,7 +20,7 @@
 
 这里的 workload 指实际交给计算资源执行的一段工作。我们关心 agent 在环境中启动的训练、计算核和模型服务。驱动 agent 思考的大语言模型也需要算力，但它属于 PSRL 的策略模型训推资源，需要另记。
 
-下图是接入目标图。实线主流程可映射到本地 science 路径，候选 benchmark 分支尚未实现。
+下图是接入目标图。实线主流程可映射到本地 science 路径，候选分支的实际覆盖以各 recipe 为准，PostTrainBench 与 RE-Bench 仍是提案。
 
 ```text
 [1] benchmark 任务与资源需求
@@ -45,12 +46,12 @@
 
 | 编号或箭头 | 职责 | 对应函数及源码 |
 |---|---|---|
-| 1 → 2 | science 任务转换资源需求并申请租约 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L368) |
+| 1 → 2 | science 任务转换资源需求并申请租约 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L372) |
 | 2 | 向路由器申请资源 | [EnvServiceClient.acquire](../../../psrl/workers/env_service/client.py#L159) |
-| 3 → 4 | 创建并运行 Harbor job，由 Harbor 内部执行 agent 与 verifier | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L537) |
-| 4 | 提取奖励，按条件处理 GPU 作业报告 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L575) |
-| 5 | finally 清理容器，随后归还资源 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L597)、[EnvLeaseHandle.release](../../../psrl/workers/env_service/client.py#L69) |
-| 候选分支 | 训练、kernel、服务的专属任务适配 | 本次调研提案，没有新增本地实现 |
+| 3 → 4 | 创建并运行 Harbor job，由 Harbor 内部执行 agent 与 verifier | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L545) |
+| 4 | 提取奖励，按条件处理 GPU 作业报告 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L569) |
+| 5 | finally 清理容器，随后归还资源 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L605)、[EnvLeaseHandle.release](../../../psrl/workers/env_service/client.py#L69) |
+| 候选分支 | 训练、kernel、服务的专属任务适配 | [已有 recipe 与边界](gpu-benchmark-recipes.md)，新增候选仍需适配 |
 
 租约表示某个任务获准使用一份资源预算，不自动保证显存硬隔离。verifier 是负责重新检查结果的评分程序，不能直接相信 agent 打印出来的分数。一个 episode 是一次从任务开始到评分和清理结束的完整尝试。若这些源码有理解上的问题，可以随时沿图中编号追问。
 
@@ -92,6 +93,51 @@ GPU 形态是根据任务机制作的接入判断，不是本地测得的资源�
 
 这张表关注可运行环境，故没有把图片中所有论文复现或科学问答 benchmark 一并列为 GPU 候选。是否使用研究论文数据，与是否实际启动 GPU 任务是两回事。
 
+## 图片中六项 high GPU 的具体选题
+
+图片的 high GPU 是计算需求类别，不是实测显存、GPU 利用率或跨命令驻留保证。下面按官方任务定义选择，不把套件中所有题都当成 GPU 任务。command 判断是对进程与状态边界的分析，不是官方发布的 Env 模式兼容声明。
+
+| 图中项目与官方来源 | 真正要做的任务 | GPU 形态与 command 判断 | 当前建议 |
+|---|---|---|---|
+| [AIRS-Bench](https://github.com/facebookresearch/airs-bench) | 20 个来自论文的研究任务，自行提出方法、训练、评估 | 按具体题选择 GPU 训练。训练进程保存结果并退出，可作为 command | 已有 recipe，继续逐题核验，不能只凭入口存在认定默认脚本已执行 GPU |
+| [Automated LLM Speedrunning](https://github.com/facebookresearch/llm-speedrunner/blob/main/config/task/nanogpt_speedrun/default_config.yaml) | 修改 GPT-2 训练代码，在验证损失不高于 3.28 的条件下缩短训练时间 | 官方配置固定 8 张 H100，使用 8 进程 `torchrun`。完整训练作业可是一条 command | 多卡资源重，优先级低于单卡后训练。不把缩成单 H20 的结果称作原版成绩 |
+| [MLE-bench](https://github.com/openai/mle-bench) | 75 个 Kaggle 竞赛，做特征、训练、预测和提交 | 选择 GPU 图像或语言模型方案。训练和预测可以分别作为 command | 保留现有接入，按用户安排暂缓 Kaggle 权限和数据 |
+| [MLGym-Bench](https://github.com/facebookresearch/MLGym/blob/main/configs/tasks/languageModelingFineWeb.yaml) | 例如 `languageModelingFineWeb`，训练 GPT-2 风格模型做下一个 token 预测 | 官方要求保存 `model.pt` 与 `model_config.pt`，天然有落盘边界。单次训练超时 2400 秒，不等于必须跨命令保留模型 | 可作为较直接的持续训练候选，套件的博弈题不都需要 GPU |
+| [RE-Bench](https://github.com/METR/RE-Bench/blob/main/ai_rd_nanogpt_chat_rl/ai_rd_nanogpt_chat_rl.py) | 例如用强化学习把 GPT-2 XL 训练成聊天模型，按外部模型偏好训练 | GPU 生成、外部裁判等待、GPU 更新交替。官方起始代码在等待时保留 CUDA 模型 | 最贴近“自然等待期间仍保留训练状态”，但需 Replicate 裁判访问，仓库已归档 |
+| [PostTrainBench](https://github.com/aisa-group/PostTrainBench/blob/main/src/harbor_adapter/README.md) | 对基础语言模型后训练，提高数学、知识或代码等目标能力 | 官方单 H100、默认 10 小时，训练后交付最终模型。完整训练或评估可作为 command | 优先新增 Qwen3-1.7B × GSM8K，已存在官方 Harbor 适配，但尚未接到本地 Env |
+
+**PostTrainBench 为什么值得先选。** 后训练是在已有基础模型上继续优化参数，使其更擅长指定任务。选 Qwen3-1.7B-Base 与 GSM8K，输入是基础权重及数学任务要求，agent 设计数据和训练方法，在 GPU 上训练，交付 `final_model/`，再由验收器检查数学答题表现。这比固定推理请求多出了真实训练和模型交付。这里的示例任务不是本次已经跑通的实验。
+
+当前官方 Harbor 文档标注 v1.2，支持 4 个基础模型与 6 个评测目标，共 24 种组合，不能继续照搬图片中的 5 个目标。目标包括 AIME2025、ArenaHardWriting、GPQA、GSM8K、HealthBench、HumanEval。官方设置的 10 小时是 agent 预算，独立 verifier 还会额外占时间，不能把它当作整次运行的严格总上限。原版 Harbor 运行依赖 Modal、HF 下载身份及裁判 API。迁移到本地 Env 时，需替换容器执行和模型交付存储，保留可信评分。单 H20 上的镜像、CUDA 和显存可用性本次尚未验证，官方 H100 设置也不是 H20 必然不兼容的证明。
+
+**RE-Bench 的驻留证据更具体。** 下面是已查阅的上游起始代码流程，不是本地已接入流程，也不是虚构的 CPU 等待：
+
+```text
+[R1] GPT-2 XL 放到 CUDA，建立 Adam 优化器
+    ↓
+[R2] GPU 为每道提示生成两份回答
+    ↓
+[R3] await 外部裁判比较回答，模型仍由当前进程持有
+    ↓
+[R4] 根据偏好选回答，GPU 反向传播并更新参数
+    └→ 下一轮 R2，最终保存模型
+```
+
+图例：此图是外部实现，未复制进本地仓库，因此给官方源码位置。
+
+| 编号 | 官方函数与状态 |
+|---|---|
+| R1 | [rl_finetune.main:49](https://github.com/METR/RE-Bench/blob/main/ai_rd_nanogpt_chat_rl/assets/solution/rl_finetune.py#L49)，`model.to(device)` 和 Adam 实例在循环外创建 |
+| R2 | [main:74](https://github.com/METR/RE-Bench/blob/main/ai_rd_nanogpt_chat_rl/assets/solution/rl_finetune.py#L74)，模型生成两组候选回答 |
+| R3 | [main:90](https://github.com/METR/RE-Bench/blob/main/ai_rd_nanogpt_chat_rl/assets/solution/rl_finetune.py#L90)，等待 `evaluate` 返回偏好，没有先把模型移出 GPU |
+| R4 | [main:119](https://github.com/METR/RE-Bench/blob/main/ai_rd_nanogpt_chat_rl/assets/solution/rl_finetune.py#L119)，计算 loss、backward、optimizer step，循环后保存模型 |
+
+跟着图读源码：R1 建立跨迭代状态，R2 将提示变为文本，R3 通过异步 API 取得偏好，R4 用这些偏好更新同一模型，随后重复。这是外部异步等待，不是本地 GPU 在等待期间一定释放。Adam 优化器保存参数更新所需的历史统计，第一次更新后这些状态也会占资源。只保存模型权重不能完整恢复同一训练轨迹，还要考虑优化器、缩放器和随机数状态。以上源码若有不清楚的地方，可以随时追问。
+
+**它仍能包成一条长 command。** 但这样 R3 的等待仍占预约。若想在每次 R3 把 GPU 真正借走，就要适配卸载和恢复，并满足 Env 的实际回收要求。仅在 Python 中 `await` 不会搬走模型。此任务为研究这种机制提供了自然切入点，不等于官方禁止 command，也不等于当前 Env 已自动实现状态迁移。无需 GPU 的相近生命周期演示见 [导览脚本](../env-service-verification/scripts/explain_resident_command_lifetime.py)，它只模拟客户端结束而服务仍在，不模拟 RL 算法或优化器恢复。
+
+后续接入应沿本文全局图，把 task、agent、独立 verifier 与最终清理都纳入同一套 Env 资源管理。对照保持相同真实数据和工作量，分别记录常驻准入与状态卸载恢复的成本，不能以换 benchmark 本身作为 ON 必然更快的保证。
+
 ## 首批接入建议
 
 四项 recipe 的实际入口和运行条件见 [GPU benchmark 接入 recipe](gpu-benchmark-recipes.md)，实机状态以该文链接的验收记录为准。下面保留调研时的选型建议。
@@ -123,7 +169,7 @@ GPU 形态是根据任务机制作的接入判断，不是本地测得的资源�
 
 本次核对的是带有未提交修改的主开发目录，而不是一个干净的已发布版本。
 
-- science 的 [runner.py](../../../examples/sciaccel_rl/runner.py#L273) 已有 `needs_gpu`、资源租约和 GPU 作业报告路径。其 [README](../../../examples/sciaccel_rl/README.md) 也提示 ScienceInfra 为后续开发入口。任务是否实际执行 GPU 仍需逐题证明。
+- science 的 [runner.py](../../../examples/sciaccel_rl/runner.py#L275) 已有 `needs_gpu`、资源租约和 GPU 作业报告路径。其 [README](../../../examples/sciaccel_rl/README.md) 也提示 ScienceInfra 为后续开发入口。任务是否实际执行 GPU 仍需逐题证明。
 - AIRS 的 [run_mlgym_agent](../../../examples/airs_bench/runner.py#L123) 复用 MLGym，其 [启动脚本](../../../examples/airs_bench/run_qwen3-4b.sh#L193) 明确设置 `gpu_slots_per_worker=0`。因此本次只能确认已有 recipe，不能确认默认 AIRS 已提供环境 GPU 训练。
 - 这篇文档补充的是候选选择，公共调度机制继续以 [当前流程总览](env-router-current-flow.md) 和 [统一 GPU 执行后端](unified-gpu-execution.md) 为入口，避免重复维护架构说明。
 
@@ -131,11 +177,11 @@ GPU 形态是根据任务机制作的接入判断，不是本地测得的资源�
 
 | 步骤 → 图中编号 | 文件、函数 | 输入输出或状态 |
 |---|---|---|
-| 申请 → 1、2 | [runner.py:368](../../../examples/sciaccel_rl/runner.py#L368)，`run_harbor_episode` | 任务路径和需求转换为租约，可能异步等待 |
+| 申请 → 1、2 | [runner.py:372](../../../examples/sciaccel_rl/runner.py#L372)，`run_harbor_episode` | 任务路径和需求转换为租约，可能异步等待 |
 | 维持租约 → 2 | [client.py:50](../../../psrl/workers/env_service/client.py#L50)，`start_heartbeat` | 后台心跳与任务并发，不是任务执行完才调用 |
-| 执行 → 3、4 | [runner.py:537](../../../examples/sciaccel_rl/runner.py#L537)，`Job.create`、`job.run` 调用点 | Harbor 执行任务并返回结果，内部 agent/verifier 顺序由 Harbor 管理 |
-| 评分处理 → 4 | [runner.py:575](../../../examples/sciaccel_rl/runner.py#L575)，`run_harbor_episode` | command 模式读取 GPU 报告，LAPS 条件分支检查活动证据 |
-| 清理 → 5 | [runner.py:597](../../../examples/sciaccel_rl/runner.py#L597)，`run_harbor_episode` 的 finally | 正常、异常、取消均进入收尾，再调用 lease release |
+| 执行 → 3、4 | [runner.py:545](../../../examples/sciaccel_rl/runner.py#L545)，`Job.create`、`job.run` 调用点 | Harbor 执行任务并返回结果，内部 agent/verifier 顺序由 Harbor 管理 |
+| 评分处理 → 4 | [runner.py:583](../../../examples/sciaccel_rl/runner.py#L583)，`run_harbor_episode` | command 模式读取 GPU 报告，LAPS 条件分支检查活动证据 |
+| 清理 → 5 | [runner.py:605](../../../examples/sciaccel_rl/runner.py#L605)，`run_harbor_episode` 的 finally | 正常、异常、取消均进入收尾，再调用 lease release |
 
 ## 可运行的教学模拟
 

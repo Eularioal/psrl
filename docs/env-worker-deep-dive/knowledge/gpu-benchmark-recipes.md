@@ -1,8 +1,8 @@
 # GPU benchmark 的 Env 与 PSRL recipe
 
-> **核心结论**：四个 recipe 共用 `GpuBenchmarkAgentLoop`，强制通过 EnvRouter 准入与 ManagedDockerEnvironment 执行，支持整次 episode 持有 GPU。准备器生成 Harbor 任务与 PSRL Parquet。真实运行结果单独记录，存在 recipe 不代表四个 benchmark 都已实机通过。
+> **核心结论**：四个 recipe 共用 `GpuBenchmarkAgentLoop`，强制通过 EnvRouter 准入，支持 Docker 与原生 Env 后端的 episode GPU 持有。准备器生成 Harbor 任务与 PSRL Parquet。长训练可以包装为一条 command，跨请求常驻模型才更直接体现持续持有的必要性。InferenceBench 另有固定真实请求的资源调度实验入口，不能与官方榜单评分混淆。
 
-验证结果见 [四类 GPU benchmark 接入验证](../experiments/gpu-benchmarks/FINDINGS.md)。
+先读 [README 导览](../experiments/gpu-benchmarks/README.md) 了解任务目标、具体例子与 command 适用性。验证结果见 [四类 GPU benchmark 接入验证](../experiments/gpu-benchmarks/FINDINGS.md)。官方性能分、质量门槛与本地功能分的区别见 [InferenceBench 评分说明](inferencebench-scoring.md)。
 
 ## 目录
 
@@ -12,6 +12,7 @@
 - [Kaggle 下载权限配置](#kaggle-下载权限配置)
 - [准备任务](#准备任务)
 - [episode 级任务与原生 Env 验证](#episode-级任务与原生-env-验证)
+- [command 与常驻推理服务](#command-与常驻推理服务)
 - [真实环境验证](#真实环境验证)
 - [接入训练](#接入训练)
 - [评分与数据隔离](#评分与数据隔离)
@@ -78,7 +79,7 @@ timeout 1800 python "$BENCH_REPO/containers/download_hf_cache/download_resources
 
 ## H20 与框架内资源调度对照
 
-本节针对框架内资源调度实验。已有正式 recipe 与后续实验设计必须分开：当前 InferenceBench recipe 导入官方任务，保留官方评分条件。下述固定负载对照是调整方向，尚未实现或验证，不能把已有下载成功称为 H20 推理任务通过。
+本节针对框架内资源调度实验。正式 recipe 导入官方任务，保留官方评分条件。另一个入口 [resident_ab.py](../../../examples/inference_bench/resident_ab.py) 使用官方服务、模型和真实请求，专门比较资源准入。它不产生官方质量或 judge 分数，实机结果见 [FINDINGS](../experiments/gpu-benchmarks/FINDINGS.md#inferencebench-常驻服务-onoff-results)。
 
 两个未通过的 benchmark 都停在准备阶段。MLE-bench 缺少 Kaggle 账户凭据。InferenceBench 的官方任务生成器因缺质量和速度基线而退出，后续还要求 judge 凭据及 H100。此前将这些条件概括为 H20 无法继续的阻塞过于宽泛，它们不是框架调度实验全部必需的条件。
 
@@ -89,7 +90,7 @@ timeout 1800 python "$BENCH_REPO/containers/download_hf_cache/download_resources
 | 官方 judge | 检查 agent 自由修改方案的合规性等 | 固定受控代码的资源调度实验可不使用 LLM 裁判，结果单独标为框架 workload，不能输出伪造的官方 judge_pass |
 | 框架 baseline | 衡量 EnvRouter 等资源管理机制的影响 | 必须保留相同工作量、到达顺序、资源和计时边界的对照 |
 
-H20 可以作为本地实验硬件。当前证据没有证明其存在不可运行 InferenceBench 的硬件障碍，官方模板中的 `H100!` 属于配置约束。仍需实际确认官方容器内服务启动、CUDA 算子、上下文及 KV cache 显存需求。其他 benchmark 已在 H20 成功，不等于该推理服务已经验证。
+H20 可以作为本地实验硬件，官方模板中的 `H100!` 属于配置约束。固定服务实验已在 H20 执行官方 Transformers 服务和真实 Mistral 请求，但采用本地预构建镜像及较短请求，不代表官方镜像、长上下文场景与完整评分都已验证。
 
 当前实现的相关位置：
 
@@ -97,7 +98,7 @@ H20 可以作为本地实验硬件。当前证据没有证明其存在不可运�
 - [reward.py:12](../../../examples/gpu_benchmarks/reward.py#L12) 要求官方完整性与质量门槛。固定负载实验不能沿用这个入口，再把缺失的裁判字段补成成功。
 - 官方 checkout 的 `src/harbor_adapter/adapter.py` 中 `baselines()` 实际检查质量和速度文件，缺失即拒绝生成任务。上游源码不随 PSRL 仓库分发，版本见本文的 upstream.json 链接。
 
-可以随时针对这些源码继续追问。下一步实验设计应保留已下载的 Mistral 权重和场景负载，在 H20 上固定服务代码、数据、精度及请求序列，比较任务完成量、总耗时、排队时间、失败/OOM 数和物理回收。原场景 A 含 128 个请求、名义输入 8192 token、输出上限 1024 token，存在长度浮动配置。若采用更小验证子集，必须标注，且对照两组保持一致。
+可以随时针对这些源码继续追问。实验应固定模型、服务代码、数据、精度及请求序列，比较任务完成量、总耗时、排队、失败/OOM 和物理回收。官方场景 A 含 128 个请求、名义输入 8192 token、输出上限 1024 token，存在长度浮动配置。本次常驻服务采用另一组有界的真实 MMLU-Pro 请求，不能标成完整场景 A。
 
 单个空闲 GPU 上的一次请求只能证明执行链路，不能证明跨 worker 资源账本的价值。教学假设：一张可用 24 GiB 的 GPU，两个不同 worker 同时提交各需 16 GiB、运行 60 秒的任务。若没有跨 worker 准入，它们可能同时运行并导致 OOM。有容量账本时第一项占用 16 GiB，剩余 8 GiB，第二项等待第一项归还。最终可能用约 120 秒完成两个任务。收益可以是减少失败，不必表现为单任务更快。这些数字是教学假设，不是实测。
 
@@ -205,7 +206,7 @@ Episode 是一次完整任务执行。`gpu_reservation: episode` 表示 GPU 预�
 
 | 工作负载 | 持卡特点 |
 |---|---|
-| InferenceBench 常驻推理服务 | 模型和 KV cache 可能跨多次请求、命令驻留，是典型的跨命令保留场景。该原生后端场景尚未验证 |
+| InferenceBench 常驻推理服务 | 模型权重跨多次请求、命令驻留。KV cache 是否跨请求保留取决于服务实现，不能一概而论 |
 | autoresearch | 一次训练及评估需要连续保留模型、优化器和 CUDA 上下文，适合验证长时间持卡。准备代码阶段未必必须保留 GPU |
 | MLE-bench | 训练期间连续持卡，但数据处理、训练、提交之间是否释放取决于任务实现。当前暂缓接入数据 |
 | KernelBench | 单次编译和测量通常较短，可以按命令安排。当前 recipe 仍统一使用 episode 策略 |
@@ -238,6 +239,106 @@ python -m examples.gpu_benchmarks.run \
 [run.py](../../../examples/gpu_benchmarks/run.py) 每 5 秒采样账本及 NVML，写入 `samples.jsonl`，最终记录 `evidence.json`。采样用于观察持卡区间，不能证明采样间隙内不存在瞬时变化。遥测错误单独记录，不补零。运行结束要同时检查任务评分、活动租约、本次容器、GPU 进程和显存，不只看退出码。
 
 PSRL agent 配置中的 `harbor.environment_backend` 同样支持 `env_worker`，仍要求显式 episode unit 和启用 EnvRouter。此验证使用 oracle 与真实 runner，未调用语言模型 agent，不能据此声称完整 PSRL 策略训练已通过。
+
+## command 与常驻推理服务
+
+先区分“能用一条命令启动”和“每次请求结束可以归还 GPU”。前者几乎总能做到，后者取决于命令结束后是否仍存在 GPU 状态。autoresearch 的整个训练脚本可以是一条长 GPU command，因此长达数分钟不能证明它只能使用 episode。当前通用 recipe 限制 episode，是接入器尚未把 verifier 等所有 GPU 操作改成显式 command，并非 benchmark 的物理限制。
+
+常驻推理的实际路径如下。箭头表示调用或生命周期，两个请求通过独立环境命令发出。
+
+```text
+[1] 同时提交两个 episode
+       |
+       +-- OFF: 固定旧 runner，静态 GPU 映射，保留原有 episode 并发保护
+       |
+       +-- ON: [2] EnvRouter 申请整段预算，额度不足的 episode 等待
+                         |
+                    [3] 原生 EnvWorker 创建 GPU 容器
+                         |
+                    [4] 启动官方推理服务，加载模型一次
+                         |
+                    [5] 请求 1 -> CPU 等待 8 秒 -> 请求 2
+                         |        服务权重仍在 GPU
+                    [6] 停服务 -> verifier 校验 -> 删容器 -> 归还租约
+                         |
+                    等待的另一个 episode 得到预算
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 编号或箭头 | 职责 | 函数与源码 |
+|---|---|---|
+| 1 | 提交固定任务，可配置 warm 阶段和 OOM 重试，OFF 校验提交 | [resident_ab.run](../../../examples/inference_bench/resident_ab.py#L82)、[episode](../../../examples/inference_bench/resident_ab.py#L194) |
+| 2 | 在创建环境前申请资源，附带 GPU 预算 | [EnvServiceClient.acquire](../../../psrl/workers/env_service/client.py#L159)、[run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L275) |
+| 3 | 创建原生容器并应用租约设备映射 | [EnvWorkerEnvironment.start](../../../psrl/workers/env_worker/harbor.py#L146) |
+| 4、5 | 服务在后台持续运行，多个命令访问同一服务 | [ResidentInferenceAgent.run](../../../examples/inference_bench/resident_agent.py#L10)、[resident_client.main](../../../examples/inference_bench/resident_client.py#L11) |
+| 6 | 停服务、检查结果、清理容器和租约 | [agent finally](../../../examples/inference_bench/resident_agent.py#L45)、[prepare 的 verifier](../../../examples/inference_bench/resident_ab.py#L48)、[EnvWorkerEnvironment.stop](../../../psrl/workers/env_worker/harbor.py#L182)、[EnvLeaseHandle.release](../../../psrl/workers/env_service/client.py#L69) |
+
+跟着图读源码：先从 `resident_ab.run` 的 asyncio 任务和 warm 阶段看请求如何并发进入 runner，再沿 ON 的 `client.acquire` 看等待发生在容器启动之前。准入后进入 `EnvWorkerEnvironment.start`，再由固定 agent 启动服务。agent 等待 readiness 后依次发送两次 HTTP 请求，中间的 `sleep 8` 是另一条 CPU 命令。最后 agent 发 SIGTERM，Harbor 执行 verifier，runner 清理环境并释放租约。采样协程与任务并发运行，不能把采样顺序误读成任务的串行调用顺序。上述源码如有理解上的问题，可以随时沿图中某一步继续追问。
+
+**具体例子。** 给一个任务池分配 24 GiB 显存预算，每个服务声明 20 GiB，同时提交 A、B 两个 episode。ON 先接纳其中一个，因为 `20 + 20 > 24`，另一个等待。A 在两个请求间没有计算，也仍持有模型权重，所以它的 20 GiB 账本额度不能提前归零。A 的容器清理完成后，B 才能获得预算。这里的 24 GiB 是部署分给任务池的预算，不是 H20 的物理显存，也不是 CUDA 显存硬上限。声明量与实际峰值应分别观测，不能混用。
+
+把这个服务改成 command 模式有三种不同含义：
+
+| 做法 | 能否在两次请求之间归还 |
+|---|---|
+| 启动服务、全部请求、停止服务包装在一个长 GPU job 中 | 不能在中间归还，但可以作为一条 command 执行，状态持有区间几乎等于整个服务生命周期 |
+| 后台服务继续常驻，每条 HTTP 请求单独算 GPU command | 不能直接成立，HTTP 客户端退出没有释放后台服务的模型及 GPU 句柄 |
+| 每轮结束后卸载 GPU worker，下轮重建并加载模型，或实现完整可恢复卸载协议 | 可以设计成细粒度借还，但引入状态保存、搬运和重新初始化成本，当前官方服务未实现这种接口 |
+
+Offload 指把状态移到 CPU 内存或其他存储，reload 指下一次使用时恢复到 GPU。对于只读推理，权重可从已有模型文件重新加载，不一定要先保存一份新权重。若要恢复训练，则还需保存优化器状态等。KV cache 是保存已计算注意力键和值的缓存，本次官方 Transformers 服务没有验证跨请求复用 KV cache，不能把持续显存都称为 KV cache。
+
+**当前 Env 的实际限制比“显存变少”更严格。** [CommandGpuReservation.wait_return](../../../psrl/workers/env_service/gpu_execution.py#L67) 要等待 Router 确认归还。[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L207) 撤销新的设备访问后，仍检查已有 GPU 设备句柄和 CUDA 进程。CUDA 上下文是进程与 GPU 驱动维持的执行状态，权重移到 CPU 并调用 `torch.cuda.empty_cache()` 不等于这个状态和设备句柄也消失。仅这样改服务，不能保证符合当前归还协议。保守的适配方法是退出拥有 GPU 的工作进程，下次新建进程加载模型。归还失败会保留隔离状态，而不是把仍占用的容量宣布可用，见 [GpuCommandScheduler._return](../../../psrl/workers/env_service/command_gpu.py#L215)。
+
+**运行入口。** [resident_image.py](../../../examples/inference_bench/resident_image.py) 打包官方服务、HF 模型快照和官方 seed 21 的前两条 MMLU-Pro 样本。`BASE_IMAGE` 必须已经包含可运行的 Python 3.10、Torch 及其基础依赖，`TASK_PYTHON` 指向对应版本的宿主解释器。先设置各路径变量为自己的绝对路径，再在 PSRL 根目录执行：
+
+```bash
+mkdir -p "$BUILD_CONTEXT"
+uv pip install --python "$TASK_PYTHON" --no-deps \
+  --target "$BUILD_CONTEXT/python-extra" -r examples/inference_bench/resident-requirements.txt
+python examples/inference_bench/resident_image.py \
+  --upstream "$BENCH_REPO" --model-snapshot "$MODEL_SNAPSHOT" \
+  --context "$BUILD_CONTEXT" --base-image "$BASE_IMAGE"
+timeout 420 docker build --network none -t "$TASK_IMAGE" "$BUILD_CONTEXT"
+python examples/inference_bench/resident_ab.py --prepare --root "$RESULT_DIR" \
+  --node-ip "$ENV_NODE_IP" --gpu "$GPU_INDEX" --image "$TASK_IMAGE"
+```
+
+启动前按集群运行指南验证同一镜像内 CUDA 可执行。`--prepare` 生成固定任务与 OFF 静态 GPU 映射，不会运行请求。OFF 使用指定 baseline 的隔离 checkout，保留其原有静态分配和进程内并发保护。现有必要运行补丁包括传递 `override_gpus`、取消节点级镜像清理，必须保留并披露。运行阶段将脚本目录加入导入路径，避免从当前目录误导入 ON 的源码：
+
+```bash
+REPO="$PWD"
+cd /tmp
+PYTHONPATH="$BASELINE_REPO:$VERIFICATION_DEPS:$REPO/examples/inference_bench" \
+  timeout 1000 python "$REPO/examples/inference_bench/resident_ab.py" \
+  --root "$RESULT_DIR" --node-ip "$ENV_NODE_IP" --gpu "$GPU_INDEX" --mode off
+PYTHONPATH="$REPO:$VERIFICATION_DEPS:$REPO/examples/inference_bench" \
+  timeout 1000 python "$REPO/examples/inference_bench/resident_ab.py" \
+  --root "$RESULT_DIR" --node-ip "$ENV_NODE_IP" --gpu "$GPU_INDEX" --mode on
+```
+
+两组之间必须确认前组物理清理通过。脚本默认每组两个 episode、没有重试，可显式配置任务数和最多两次尝试，组内上限 900 秒，结果保存源码来源、账本、GPU 采样与清理状态。每个 episode 使用固定服务完成两条真实请求，输出上限改为 16 token，上下文上限 2048，精度 BF16。这是有界框架实验，不是官方完整评测，也没有语言模型 agent 或 PSRL 策略优化器。reward=1 只表示两次请求及服务复用的功能校验成功，不代表答题全对。
+
+默认 unit 预算读取所选空闲 GPU 的现场总容量。只有要复现 24 GiB 小配额排队验证时，才给两组运行命令显式增加 `--pool-gpu-mb 24576`，其结果不作为等资源性能结论。旧压力数据使用 `resident_analyze.py --expect-serialized` 审计，普通容量对照不要求 ON 串行。总容量与实时余量见 [unit 容量说明](gpu-memory-admission.md#8-unit-总容量动态余量与装箱气泡)，新 episode 可信抵扣路径见 [记账修复](gpu-memory-admission.md#9-episode-归属记账修复)。
+
+
+**整卡高压力协议。** 使用新目录，在上面的 `--prepare` 和两组运行命令中都增加同一组选项：
+
+```bash
+--episodes 7 --warm-episodes 2 --resident-idle-s 30 --attempts 2 \
+--gpu-identity-backend ebpf
+```
+
+这组参数先启动两个模型服务，两者 readiness 通过后同时提交其余五项。每项完成两道固定题，中间保持服务驻留 30 秒。并发槽均设为 7，ON 的 unit 容量取现场整卡容量，每项预约 20 GiB，不传低配池参数。仅当首轮失败原因明确包含 CUDA OOM 时，在首轮全部结束后最多重试一次，其他故障不自动重试。ON/OFF 使用完全相同的到达和重试规则。eBPF 是可选的宿主身份核验后端，使用前必须通过节点支持检查，不能在不支持的平台上照抄。
+
+两组物理清理后进行纯 CPU 审计：
+
+```bash
+python examples/inference_bench/resident_analyze.py \
+  --root "$RESULT_DIR" --output "$AUDIT_OUTPUT" --prefix episode-pressure --expect-pressure
+```
+
+该审计要求每组最终完成 7 项、14 次成功请求，保留 OOM 次数，比较逐样本文本与 token 数，还检查等待、归属抵扣和物理回收。它不会用失败尝试的部分请求充当额外完成量。计时区分驱动初始化、任务及最终清理，环境激活和模块导入发生在驱动计时开始前，不能把这些时间隐藏地归为账本开销。具体一次实测与边界见 [压力实验记录](../experiments/gpu-benchmarks/FINDINGS.md#episode-记账修复后的整卡压力对照)。
 
 ## 真实环境验证
 

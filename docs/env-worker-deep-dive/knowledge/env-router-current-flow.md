@@ -1,14 +1,8 @@
-# EnvRouter 当前流程、固定基线差异与验证边界
+# EnvRouter 流程与通用接入设计讨论
 
-> **核心结论**：当前 EnvRouter 将容器生命周期的 CPU／内存预算与 GPU 命令阶段预算分开。显存够用时，不同容器、不同租约的命令可以并行，不够时排队；同一容器当前仍只执行一条 GPU 命令。命令结束后经实际执行节点确认归还，预算可用于其他容器，而原容器继续 CPU／模型交互。直接 Docker 查询和 NVML 连接复用降低重复控制开销，节点异步预热减少首次服务启动的关键路径等待。
+> **核心结论**：本文用于追溯命令阶段配额、通用接入和持有范围的设计讨论，混有不同阶段实现与提案。了解现在的完整设计请先读[当前设计](current-design.md)，再按本文目录查设计理由。
 >
-> 固定 OFF 基线为 `0eeead861ffafed6bf31c962d259fd847775dcf9`。旧 `rollout_replica_rank` 互斥借卡仍不能任意组合 command，新 `shared_rollout_replica_rank` 已支持显式 command 共享，见[常驻共享与已睡眠窗口](vllm-env-opportunistic-sharing.md#10-常驻共享kv-上限与已睡眠窗口)。下文旧借卡分支的限制仅指前者。性能与版本边界见[设计与收益简版](../experiments/env-design-and-results-brief.md)，不把合成 CUDA 小实验写成真实训练收益。
-
-> **与同容器并发提案的关系**：command GPU 已支持显式命令间隙归还，以及归还检查与模型规划重叠；新方案扩展的是同一租约内多个 GPU 作业的独立记账、同时执行和独立回收，不是重新实现此前的异步。详见第 7 节。
-
-> **通用接入进展**：已完成[统一执行后端第一阶段](unified-gpu-execution.md)，episode 与 command 共用受管理作业接口和执行生命周期。完整通用接入仍按下文设计推进，保留完整会话与独立执行阶段两种 GPU 持有范围。常驻 GPU 状态不能因等待模型而自动交还。第 10 至 13 节给出当前限制、改造接口、释放恢复成本和 CPU 教学模拟。同容器多作业并发已单列 TODO，暂不实施，也不阻塞跨容器多 rollout 的通用接入。
-
-> **容器后端进展，2026-10-28**：[EnvWorkerEnvironment](native-harbor-backend.md)已经让 Harbor 复用 EnvWorker 的容器生命周期、独立命令与文件传输，CPU 单容器标准答案及评分通过。它仍未接入 GPU 租约、远程 worker 池或统一两套账本，science 默认执行路径保持原状。共享 GPU 的延迟归还回调也已增加隔离状态检查，避免超时清理后误报成功，不能将其 CPU 回归写成新的 GPU 吞吐结果。
+> **阅读边界**：正文“同容器串行”“同容器并发暂不实施”对应 direct 路径或当时阶段，显式 [MPS 后端](mps-parallel-execution.md)已支持同容器并发。原生 Harbor 适配器的 CPU 原型限制也不代表当前 GPU 能力，见[统一执行层第 9 节](unified-gpu-execution.md#9-两种容器创建方式共用托管执行层)。第 10 至 13 节的完整通用接入设计不可整体当成已经完成。
 
 ## 目录
 

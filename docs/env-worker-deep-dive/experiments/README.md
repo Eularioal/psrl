@@ -32,7 +32,9 @@
 
 ## 故障与接入验证
 
-[四类 GPU benchmark 接入验证](gpu-benchmarks/FINDINGS.md)：KernelBench 与 autoresearch 真实 H20 执行、原生 Env 的 episode 长任务与超时修复，以及官方资产准备与未验证项。
+[GPU benchmark 任务导览](gpu-benchmarks/README.md)：先选任务目标，再判断 command 边界，常驻服务推荐 episode。
+
+[四类 GPU benchmark 接入验证](gpu-benchmarks/FINDINGS.md)：KernelBench、autoresearch 真实 H20 执行，原生 Env 的长任务与常驻 Mistral 服务 ON/OFF，含 episode 记账修复后的整卡 OOM 压力对照，以及官方完整评分的未验证项。
 
 | 报告 | 验证对象与边界 |
 |---|---|

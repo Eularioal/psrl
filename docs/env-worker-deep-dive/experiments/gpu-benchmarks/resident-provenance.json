@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-02",
+  "image": "sha256:ada73954a6bdd58f1b3136db2fd818d35e71970b1fabc7ea036d917313d799a2",
+  "upstream_revision": "108ec747fab0bd92fd9de501f62157d074c50ed5",
+  "server_sha256": "b64f81aeaa3eecfe33eeef5b87762b5139b6042deba51ace4bdea106ad3d87e6",
+  "samples_sha256": "87e914da11602f0801c687965a07a9e5f1f4c49f4aa4627faa1de296d0a81a8b",
+  "model_revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+  "source_sha256": {
+    "examples/inference_bench/resident-requirements.txt": "cf905177e07e0b6dc65324979e37be7613a262e322e3c22df8ccc8b195337487",
+    "examples/inference_bench/resident_ab.py": "8882f64fef3a06a02675b7e3118e6b6cb098b9db279797e299eb840ba76c650e",
+    "examples/inference_bench/resident_agent.py": "87b98f1aeaa7db5942b1837f53c301e29934acda7c18f48f4b4dc294fe7715b3",
+    "examples/inference_bench/resident_analyze.py": "878e0c2e4e2e563c02e653750f63631eddb3492090c9702f68e0bc320f94c416",
+    "examples/inference_bench/resident_client.py": "93b1edcc6a439c69e319eb602b79628bede12c09f79b21eacf81b2cc2d22a200",
+    "examples/inference_bench/resident_image.py": "4b62dc26e2ffc13596d7bb65cbcb329f87bc64bcb12a8fadf978842bebc898c9"
+  },
+  "runtime": {
+    "python": "3.10.20",
+    "torch": "2.9.1+cu128",
+    "transformers": "5.2.0",
+    "accelerate": "1.12.0",
+    "aiohttp": "3.13.3"
+  },
+  "pool_gpu_mb": 24576,
+  "episode_gpu_mb": 20480,
+  "max_containers": 2,
+  "baseline_episode_semaphore": 2,
+  "official_scoring": false,
+  "off_backend": "docker",
+  "on_backend": "env_worker",
+  "physical_final_owned_containers": 0
+}

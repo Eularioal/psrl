@@ -1,6 +1,6 @@
 # 四类 GPU benchmark 接入验证
 
-> **核心结论**：KernelBench 和 autoresearch 已通过真实 H20、PSRL Harbor runner、EnvRouter 和独立 verifier 的执行与清理。autoresearch 使用官方数据和原始训练脚本，完成真实训练及评估。MLE-bench 被 Kaggle 凭据阻塞，InferenceBench 仍缺真实质量及速度基线、裁判凭据和匹配的 GPU。没有执行语言模型 agent rollout 或 PSRL 策略优化器更新。
+> **核心结论**：KernelBench、autoresearch 已通过真实 GPU 执行与回收。InferenceBench 固定常驻服务已完成两类 H20 ON/OFF 对照：早期 24 GiB 人工配额只验证排队且更慢；episode 记账修复后采用整卡容量与 7 项真实任务，OFF 一次 OOM，ON 无 OOM，完成相同工作量的任务阶段耗时下降 17.9%。其官方完整评分仍未通过，MLE-bench 暂缓 Kaggle 接入。没有执行语言模型 agent rollout 或 PSRL 策略优化器更新。
 
 ## 目录
 
@@ -9,6 +9,10 @@
 - [官方资产准备](#官方资产准备)
 - [autoresearch 真实任务](#autoresearch-真实任务)
 - [原生 Env 的 episode 长任务验证](#原生-env-的-episode-长任务验证)
+- [InferenceBench 常驻服务 ON/OFF Results](#inferencebench-常驻服务-onoff-results)
+- [为什么本次 ON 更慢且 GPU 进程更少](#为什么本次-on-更慢且-gpu-进程更少)
+- [episode 记账修复后的整卡压力对照](#episode-记账修复后的整卡压力对照)
+- [评分教学脚本验证](#评分教学脚本验证)
 - [修复与验证边界](#修复与验证边界)
 - [复现入口](#复现入口)
 
@@ -18,7 +22,7 @@
 |---|---|---|
 | KernelBench | 上游题目、Triton 提交、独立 GPU evaluator、PSRL 数据和奖励 | 真实 GPU 执行通过 |
 | MLE-bench | 官方 public/private 数据映射、独立 registry/grader、above_median 奖励 | 官方 SDK 认证失败，缺凭据，未取得正式竞赛数据 |
-| InferenceBench | 导入官方生成的 Harbor 任务，Docker 本地 handoff，保留质量和 judge 门槛 | 数据集及请求样本已准备，官方任务生成器因缺基线拒绝生成 |
+| InferenceBench | 官方完整 recipe 与固定常驻服务实验入口分开 | 完整任务生成缺官方基线，固定 Mistral 服务与真实样本 ON/OFF 已通过 |
 | autoresearch | 固定 prepare.py、缓存挂载、独立训练重放、捕获官方评估调用 | 官方资产准备完成，原始训练脚本在 GPU 上真实通过 |
 
 四项均要求 EnvRouter，不能关闭 Env 后回退裸 Docker。资源策略暂限 episode。公共代码复用 science 的会话与 runner，并新增强制准入路径，避免已有全局 science client 缓存影响新 recipe。
@@ -99,7 +103,7 @@ oracle 只把原始脚本交给独立 verifier。实际训练与评估发生在 
 1. 首次镜像产物漏掉虚拟环境 Python 和 kernel 缓存的符号链接，验证脚本未能启动，未执行 GPU 训练。改为显式 tar 构建上下文后，镜像内解释器、Torch 导入及离线 kernel 缓存检查通过。
 2. 随后的真实训练在底层命令执行约 300 秒时提前中断，整个启动器历时约 332 秒。Harbor 报出的 900 秒是它的外层配置，不是实际耗尽的时限。其 verifier 调用 `environment.exec()` 时未传单条命令超时，原生适配器把 `None` 交给 EnvWorker，触发了后者的默认 300 秒限制。这是长任务实际暴露的接口语义问题。
 
-修复位于 [EnvWorkerEnvironment._execute_command](../../../../psrl/workers/env_worker/harbor.py#L260)：未指定命令超时时不附加 EnvWorker 默认期限，由 Harbor 外层截止时间控制。显式传入的命令超时仍原样执行，外层取消仍触发所属容器清理。没有提高 task.toml 的 900 秒限制。持续 shell 接口的默认期限不受此修复影响。
+修复位于 [EnvWorkerEnvironment._execute_command](../../../../psrl/workers/env_worker/harbor.py#L266)：未指定命令超时时不附加 EnvWorker 默认期限，由 Harbor 外层截止时间控制。显式传入的命令超时仍原样执行，外层取消仍触发所属容器清理。没有提高 task.toml 的 900 秒限制。持续 shell 接口的默认期限不受此修复影响。
 
 对应 CPU 回归见 [test_harbor_deadline_does_not_inherit_worker_default](../../../../tests/env_worker/test_harbor_backend.py)。测试把默认期限缩为 0.001 秒，让本地进程运行 0.05 秒，检查省略命令期限时能成功，并检查显式 0.005 秒期限及外层取消仍能终止、清理。它是故障机制缩时复现，不冒充 GPU 测试。
 
@@ -129,6 +133,198 @@ python -m pytest tests/env_worker/test_harbor_backend.py \
 启动约 17 秒时发生一次账本遥测请求超时，该条按缺失记录，没有补零，也没有当作训练失败。采样频率约每 5 秒一次，上述区间不是精确的 CUDA 活动起止计时，不能证明采样间隙中的每个瞬间。
 
 这证明当前原生 Env 可以在 episode 策略下执行真实长时间训练、评分并回收资源。它不表示 GPU 每秒都满负载，不证明整卡独占、常驻推理服务跨多轮保留、模型训推共存或 EnvRouter 的性能优势。本次没有启动 PSRL 策略模型训练。
+
+## InferenceBench 常驻服务 ON/OFF Results
+
+本次日期为 2026-11-02，验收目标是检查真实模型在多条命令之间驻留，以及 episode 预算是否使超额请求等待、在物理清理后接续运行。先验证 H20、Docker daemon、设备 UUID 与 minor 映射、同一容器内 CUDA 运算和依赖来源。只使用一张现场空闲 H20，没有启动训练或占用其他 GPU。
+
+**负载与边界。** 使用官方 `transformers_openai_server.py`，文件保持原样。模型为官方 `mistralai/Mistral-7B-Instruct-v0.3` 快照 `c170c708c41dac9275d15a8fff4eca08d52bab71`，读取此前已按官方 LFS 哈希核验的三个 HF 权重分片。请求取官方 MMLU-Pro seed 21 缓存中的前两条，sample_id 为 `11920` 与 `9555`。每组同时提交两个 episode，每个 episode 启动独立服务，依次执行请求 1、CPU 等待 8 秒、请求 2，再停止服务。
+
+两组都固定 BF16、上下文上限 2048、温度 0、输出上限 16 token。总计每组 4 次请求、64 个输出 token，全部文本逐样本一致。第二题输出被 16 token 上限截断为解题开头，不能据此宣称答题准确率或质量通过。reward=1 是固定功能 verifier 的完成标志，不是 InferenceBench 官方奖励。
+
+镜像使用本地已有 Torch 2.9.1+cu128 基础运行时，增加官方 Torch server 配方中对应的 Transformers 5.2.0、Accelerate 1.12.0、aiohttp 3.13.3 等依赖。没有构建完整官方 Torch 2.10.0 容器，因此结果只代表这个固定本地运行时。依赖探针先暴露缺少 `async_timeout`，补齐后导入和容器 CUDA 预检通过，GPU 对照每组仅运行一次。
+
+**两组配置。** OFF 使用指定提交 `0eeead861ffafed6bf31c962d259fd847775dcf9` 的已有隔离 checkout，沿用静态 GPU Compose 映射，保留进程内 episode 信号量，并发上限设置为 2。沿用的必要补丁包括正确传递 `override_gpus` 和禁止节点级 dangling-image 清理，另有不改变本实验调度的 Ray 地址与 HTTP 事件循环补丁。完整补丁与已记录的 [baseline.patch](../../env-service-verification/results/router-baseline-control-20261020/baseline.patch) 相同，本次哈希另见结果 JSON。
+
+ON 从主目录提交 `8d1fc65230d7bd4c78305e140c41ac8b5ea14fb0` 加本次新增实验脚本启动，核心 runner 无未提交补丁。实际 Harbor 配置为 `EnvWorkerEnvironment`、`mode=episode`，经过生产 `run_harbor_episode` 和 EnvRouter。每个服务申报 20480 MiB，池分配 24576 MiB。主机 CPU、主存和容器槽均能同时容纳两个任务，只有 GPU 预算使第二个等待。H20 实际总容量为 97871 MiB，池预算不是物理容量或硬限制。OFF 没有这个容量账本，两个服务在物理卡上仍能运行，没有人为制造 OOM。
+
+| 观测项 | OFF 固定 baseline | ON 原生 Env episode |
+|---|---:|---:|
+| 完成 episode / 真实请求 | 2 / 4 | 2 / 4 |
+| 每组输出 token | 64 | 64 |
+| GPU 计算进程峰值 | 2 | 1 |
+| NVML 采样显存峰值 | 28866.625 MiB，约 28.19 GiB | 14435.0625 MiB，约 14.10 GiB |
+| 请求间 CPU 等待期间的整卡显存 | 两服务并存，28866.625 MiB | 单服务，14435.0625 MiB |
+| 任务阶段总时长 | 46.295 秒 | 76.356 秒 |
+| 驱动初始化 | 0.351 秒 | 17.570 秒，含私有 Ray |
+| 最终清理阶段 | 0.412 秒 | 2.743 秒 |
+| 驱动总计时 | 47.059 秒 | 96.669 秒 |
+| 等待证据 | 无容量账本 | 26 条采样出现 1 个等待者，同时只有 1 条活动租约 |
+| 最终本次容器 / GPU 进程 | 0 / 0 | 0 / 0 |
+| 结束 GPU 残余 | 0.1875 MiB | 3.5 MiB，后续设备查询取整为 0 MiB |
+| 最终活动租约 / 声明 GPU 预算 | 不适用 | 0 / 0 |
+
+任务阶段从两条任务提交前计时，到两次 runner 返回后结束，包含各自环境准备、agent、verifier 和 episode 清理。初始化与最后清理单列，镜像构建和 Python 导入不在这张计时表中。服务从启动到 readiness，OFF 为约 12.6 到 13.5 秒，ON 为约 11.3 到 11.4 秒。这不是独立测量的 reload 成本。
+
+**可以得出的结论。** 常驻服务在请求间持续占用显存，CPU 命令结束不能释放它。ON 将两个服务串行准入，把采样显存峰值控制在池预算以内，等待者在前一个释放后完成真实请求。OFF 同时运行两个服务，其总占用超过给 ON 设置的池预算，但未超过物理显存。ON 的任务阶段更慢，说明预算约束会以等待时间换取受控并发。这不是无条件的吞吐提升，也没有验证 OOM 减少、训推同卡共享或跨 driver 的全局协调。
+
+OFF 是旧 Docker 后端，ON 是当前原生 Env 后端，两组版本、初始化及清理实现不同。因此这是一组完整接入路径的固定 baseline 对照，不能把耗时差全部称为“打开一个账本开关的纯开销”。本次不额外启动相同版本的 OFF 消融，也不扩大工作量来追求速度优势。
+
+**遥测边界。** OFF 有 41 条采样，ON 有 62 条。ON 一次 Router 采样超时按缺失保留，还有 19 条容器 CPU/主存资源读取错误或缓存错误字段，其中包含销毁后的 Docker memory sample missing。GPU 记录与请求结果单独存在，没有补零或把监控缺失当成任务失败。最终账本的缓存容器计数仍为 1，缓存年龄约 2.7 秒，不能用它证明资源未回收或已回收。物理清理结论来自按本次 actor 标签的 Docker 查询为空、GPU 计算进程为空及显存回落，随后独立查询再次确认。
+
+证据与复现：
+
+- [resident-comparison.json](resident-comparison.json)：计时、响应、空闲期间显存、源码版本与清理汇总。
+- [resident-samples.json](resident-samples.json)：去除节点地址、UUID 与 PID 的相对时间序列，保留遥测缺失。
+- [resident-provenance.json](resident-provenance.json)：实际镜像、上游与脚本哈希。
+- [resident_ab.py](../../../../examples/inference_bench/resident_ab.py)、[resident_agent.py](../../../../examples/inference_bench/resident_agent.py)、[resident_client.py](../../../../examples/inference_bench/resident_client.py)：有界对照、跨命令常驻服务与真实 HTTP 请求。
+- [准备与运行步骤](../../knowledge/gpu-benchmark-recipes.md#command-与常驻推理服务)：镜像、固定 baseline 与源代码阅读路径。
+
+可运行的 CPU 复核如下，`RESULT_DIR` 指向含 `off/`、`on/` 的原始结果目录。它只读取已完成实验，不重新启动 GPU：
+
+```bash
+python examples/inference_bench/resident_analyze.py \
+  --root "$RESULT_DIR" --output "$AUDIT_OUTPUT" --expect-serialized
+```
+
+该脚本已实际通过：检查每组完成 2 个 episode、4 次请求，逐样本输出一致，ON 出现等待且结束租约为零，两组物理清理完成。关于 command 与 offload 的结论来自现有归还协议和服务生命周期源码，本次没有执行服务 offload/reload，也没有测量其代价。
+
+新增脚本的 Ruff、格式、语法编译与 prose 检查通过，本次四篇文档共 139 个本地链接路径和源码行号范围检查通过。全仓 pre-commit 已在隔离副本执行，仍因其他文件的既有行长、格式和注释规则失败，未把自动修改回写主目录。本次没有修改 Env 核心代码，新增脚本、证据和文档保留在主目录未提交，也未推送。baseline 复用既有固定 checkout，未修改或删除其中内容。
+
+## 为什么本次 ON 更慢且 GPU 进程更少
+
+**原因首先是实验配置。** 为触发准入等待，实验主动把 ON 的池预算设为 24 GiB，每个任务申报 20 GiB。OFF 则沿用原有最多两个 episode 的并发保护，没有对应显存池限制。这组实验验证了预算约束下的排队与回收，没有控制一致的有效可用 GPU 预算，不能回答“资源充足时打开 Env 是否提高性能”。把它作为一般性能 ON/OFF 对比是不充分的，应明确承认这项设计局限。
+
+```text
+[1] 同时到达两个任务，每个申报 20 GiB，容器槽上限均为 2
+       |
+       +-- ON: 池预算 24 GiB -> [2] 第一项准入，剩余约 4 GiB
+       |                              |
+       |                         第二项需要 20 GiB -> 等待
+       |                              |
+       |                         [3] 第一项清理释放 -> 第二项准入
+       |
+       +-- OFF: 两个并发槽都有空位 -> 两个容器都映射同一物理 GPU
+                                      |
+                                 两个模型进程同时驻留
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 编号或分支 | 职责与源码 |
+|---|---|
+| 1 | [resident_ab 的预算参数](../../../../examples/inference_bench/resident_ab.py#L295)、[创建池时的槽上限，旧运行取 2](../../../../examples/inference_bench/resident_ab.py#L153)、[并发提交](../../../../examples/inference_bench/resident_ab.py#L216) |
+| 2 | [EnvUnitLedger._gpu_fits_now](../../../../psrl/workers/env_service/ledger.py#L530) 将已有记账占用与新请求相加，超出池预算就拒绝立即准入 |
+| 3 | [生产 runner](../../../../examples/sciaccel_rl/runner.py#L275) 执行到清理，再归还会话租约，完整阅读路径见 [recipe 流程图](../../knowledge/gpu-benchmark-recipes.md#command-与常驻推理服务) |
+| OFF | [固定 baseline 的运行补丁](../../env-service-verification/results/router-baseline-control-20261020/baseline.patch) 保留静态映射，本次 [驱动配置](../../../../examples/inference_bench/resident_ab.py#L187) 将原有 episode 并发上限设为 2 |
+
+跟着图读源码时，先看驱动传入的池预算和每任务需求，再看 ledger 的容量判断，最后看 runner 的清理与租约释放。两个 episode 由异步任务并发提交，但提交并发不等于 GPU 准入并发。各节点的详细启动到回收步骤已在 recipe 中串联，读者可以随时针对具体函数追问。
+
+**为什么 OFF 有两个 GPU 进程。** 两个 episode 各有一个容器和一份模型服务，它们可以同时使用同一张 GPU。实测每份服务约 14.1 GiB，两份合计约 28.2 GiB，这张卡物理容量约 95.6 GiB，装得下，且未观测到 OOM。两个进程不等于两张卡，也不证明 GPU 算力同时满负荷。ON 只有一个进程，是池预算阻止另一个任务启动，并非 episode 策略天然要求整卡独占。其容器槽上限同样是 2。
+
+**为什么等待期间仍不能接纳第二项。** 8 秒 CPU 等待不代表模型被卸载。第一项服务权重仍在 GPU，episode 声明预算也持续有效，因此账本不能因为没有新推理请求就把它的 20 GiB 归零。20 GiB 申报本身比本轮约 14.1 GiB 的实测峰值保守，但即便按这次实测值算，两份模型也超过人为设置的 24 GiB 池预算。
+
+下表来自已保存的真实 agent 时间戳，时间零点是各组任务阶段开始，区间包括服务启动、请求及中间等待，不含该 agent 之后的 verifier 和环境清理：
+
+| 时间区间 | OFF | ON |
+|---|---|---|
+| 第一个开始执行的 agent | 6.1 到 30.4 秒 | 22.4 到 43.4 秒 |
+| 第二个开始执行的 agent | 6.2 到 29.1 秒，与第一个重叠 | 50.7 到 71.8 秒，前一个结束后执行 |
+| 全部任务与 episode 清理完成 | 46.3 秒 | 76.4 秒 |
+
+OFF 重叠了两个模型的加载、等待和请求。ON 串行执行，还存在更长的首任务准备区间与两次 agent 之间的环境清理、启动间隔。已有时间戳能确认这些区间，不能把区间内所有开销精确归到某个组件。单次真实请求耗时则接近：第一题 OFF 为 0.731 到 0.742 秒，ON 为 0.730 到 0.772 秒，第二题 OFF 为 0.323 到 0.325 秒，ON 为 0.317 到 0.319 秒。没有证据显示本次主要问题是模型推理本身变慢。
+
+17.6 秒 ON 驱动初始化包含私有 Ray，它在 76.4 秒任务阶段之外。只有比较完整驱动耗时时才把它计入，即 OFF 47.1 秒、ON 96.7 秒。不能用这 17.6 秒解释 76.4 与 46.3 秒之间的全部差值，也不能把全部差值归为纯 Router 开销，因为两组还有版本与容器后端差异。
+
+**合适的后续性能对照条件。** 在同样一张现场空闲卡上，ON 按实际允许使用的容量配置池，保留合理余量，让两个 20 GiB 请求都能准入。OFF 继续使用指定提交并保持相同任务与并发上限，再比较初始化、任务和清理。资源充足时，合理预期是 ON 不因人为低配预算额外串行，是否更快需重新测量。真正资源紧张的实验另列，用实际冲突验证失败率和完成量。这里是设计纠正，未重新执行 GPU 实验，也不能预告修正后一定加速。
+
+可运行复核仍使用前节 [resident_analyze.py](../../../../examples/inference_bench/resident_analyze.py)，只读取两组实际日志，不启动 GPU。原始配置和结果保持原样，不能通过修改旧 JSON 将这次排队验证改称等资源性能实验。
+
+启动器默认值现已纠正为所选 GPU 的现场总容量，小配额需要显式传 `--pool-gpu-mb 24576`。原始运行脚本已按哈希保存到本地结果目录的 `executed-source/`，原 JSON 与 provenance 不变。本轮只完成默认容量、显式配额与非法容量的 CPU 检查，以及旧压力结果的重新审计，没有重新运行 GPU 对照。当前 unit 模型与保守记账的进一步边界见 [显存准入说明](../../knowledge/gpu-memory-admission.md#8-unit-总容量动态余量与装箱气泡)。
+
+## episode 记账修复后的整卡压力对照
+
+本节为 2026-11-02 重新执行的一组真实对照，旧 24 GiB 数据保持原样。目标是验证 episode 可信归属记账生效，以及真实模型竞争显存时 ON 能否减少 OOM 和重试，不以跑出速度优势作为重试条件。只执行了预先设计的一组 OFF 和一组 ON，没有在结果明确后继续增加任务或重复挑选结果。
+
+**相同条件与到达规则。** 两组使用同一张现场空闲 H20，NVML 报告总容量 97871 MiB，约 95.6 GiB。ON 一个 unit 覆盖整卡，每个 episode 预约 20480 MiB，容器槽和 OFF 原有进程内 episode 信号量上限都设为 7。先启动两个 Mistral 服务，均通过 readiness 后同时提交其余五项。每项执行两条官方 seed 21 MMLU-Pro 请求，中间用独立 CPU 命令等待 30 秒，模型保持驻留。精度 BF16、上下文 2048、每请求最多 16 token，模型、服务、镜像及样本两组相同。
+
+```text
+[1] 同一任务队列：2 项服务 ready → 再到达 5 项，每项跨命令驻留
+        ├─ OFF：固定 baseline，7 个 episode 槽 → 模型直接竞争整卡
+        │      首轮 6 成功 + 1 OOM → 首轮结束后重试该项一次
+        └─ ON：[2] EnvRouter 刷新可信 episode 归属 → 单卡预算判断
+               同时最多 4 条 lease → 其余等待 → 清理归还后继续
+[3] 两组均完成 7 项、14 次请求 → 检查输出一致与 GPU/容器实际回收
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 编号 | 源码与职责 |
+|---|---|
+| 1 | [resident_ab.run](../../../../examples/inference_bench/resident_ab.py#L82)、[提交与重试](../../../../examples/inference_bench/resident_ab.py#L214) 实现相同到达门槛和最多两次尝试 |
+| 1 的驻留 | [ResidentInferenceAgent.run](../../../../examples/inference_bench/resident_agent.py#L10) 启动后台模型、两次请求、等待及退出；[client.main](../../../../examples/inference_bench/resident_client.py#L11) 使用真实样本并在启动 OOM 时快速报告 |
+| 2 | [Router._check_node](../../../../psrl/workers/env_service/router.py#L515)、[EpisodeMemory](../../../../psrl/workers/env_service/episode_memory.py#L38)、[账本公式](../../../../psrl/workers/env_service/ledger.py#L432) 传递并消费可信归属，详细调用顺序见 [记账修复图解](../../knowledge/gpu-memory-admission.md#9-episode-归属记账修复) |
+| 3 | [resident_analyze.analyze](../../../../examples/inference_bench/resident_analyze.py#L13) 读取成功与失败尝试、请求、采样与物理清理结果，不启动 GPU |
+
+跟着图读源码：先看 1 中 `episode` 的 session 标识与结果记录，再看 readiness 门槛和 burst 提交。OFF 调用固定 checkout 的 runner，ON 经 EnvServiceClient 申请 lease 后才进入原生 EnvWorker。2 的观测和其他任务执行并发进行，不能把采样协程解释成顺序任务。最后看 agent 的 `finally` 停服务、runner 清理和驱动的逐 actor 容器核验。源码如果有不清楚的地方，可以继续按图追问。
+
+重试规则在运行前固定：仅确认 CUDA OOM 的失败项可以在首轮全部结束后重试一次，两组一致，其他故障不自动重试。组内任务预算 900 秒，外层 driver 1000 秒，每条 agent 最多 400 秒。没有使用外部显存占位进程，也没有降低 ON 池容量。
+
+| 指标 | OFF，固定 baseline | ON，修复后的 Env |
+|---|---:|---:|
+| 首轮完成 | 6/7 | 7/7 |
+| CUDA OOM 次数 | 1 | 0 |
+| 总尝试数 | 8 | 7 |
+| 最终完成 / 成功请求 | 7 / 14 | 7 / 14 |
+| GPU 计算进程采样峰值 | 7 | 4 |
+| GPU 显存采样峰值 | 84.57 GiB | 56.38 GiB |
+| 活动 lease 峰值 | 未启用账本 | 4 |
+| 有等待者的采样数 | 未启用账本 | 44 |
+| 驱动初始化 | 0.27 秒 | 9.93 秒 |
+| 任务阶段，含 OOM 重试和各 episode 清理 | 158.05 秒 | 129.79 秒 |
+| 最终驱动清理 | 0.15 秒 | 2.00 秒 |
+| 驱动总耗时 | 158.48 秒 | 141.73 秒 |
+| 最终本次容器 / GPU 计算进程 | 0 / 0 | 0 / 0 |
+| 最终 NVML v2 显存占用 | 0.1875 MiB | 0.1875 MiB |
+
+**真实 OOM 原因。** 失败发生在第七个服务加载权重时。错误明确报告要分配 13.50 GiB，当时只有 11.23 GiB 空闲，已有六个模型进程各占约 13.81 到 14.09 GiB。第七个 GPU 进程只建立了约 316 MiB 上下文，未成功加载模型。因此“峰值有七个进程”不等于七份模型全部加载成功，显存采样峰值也无需达到卡容量才会发生一次大分配失败。这是实测容量不足，不需要猜测为碎片化。
+
+**记账修复确实被使用。** 一条 ON 样本中有四条活动 lease、三个等待者，声明量 81920 MiB，整卡实测 57165.6875 MiB，核实归属 57140 MiB，账本有效占用 81945.6875 MiB。计算为 `57165.6875 + 81920 − 57140 = 81945.6875`，约 80.03 GiB。这里各任务实用量均低于其预约，才可以这样简写。旧的无抵扣算法会把这同一状态算成约 135.83 GiB。整个 ON 运行的可信归属采样峰值为 57704 MiB，已取得快照中没有归属错误。不是仅靠静态槽上限限制到四项，槽上限本身是七。
+
+**ON 的本次价值与剩余气泡。** 同样完成 7 项任务，ON 避免了一次失败加载及重试，任务阶段缩短 17.9%，驱动总耗时缩短 10.6%。ON 显存峰值更低，意味着它遵守了各项 20 GiB 的承诺，并不表示已将物理显存利用率最大化。四项预约合计 80 GiB，再加一项是 100 GiB，超过这张卡，所以最多四项符合当前申报。每项实际约 14.1 GiB 与申报 20 GiB 之间的余量是仍有效的增长承诺，不能再当作“重复记账”直接删除。若要进一步装箱，需要有依据地校准任务峰值或设计可撤销预算，本次没有顺带改变这项资源语义。
+
+**计时和因果边界。** 工作时间从首批 episode 提交前到全部逻辑任务返回，包含 readiness、等待、失败尝试和 episode 清理。ON 私有 Ray 初始化另计。shell 环境激活、Python 模块导入、镜像构建在驱动计时之外，其中 OFF 环境激活曾较慢。到达规则相同，但 readiness 的绝对时刻不同，所以剩余五项相对本组工作开始的提交时间为 OFF 19.18 秒、ON 28.57 秒。
+
+OFF 实际提交为 `0eeead861ffafed6bf31c962d259fd847775dcf9`，ON 为 `8d1fc65230d7bd4c78305e140c41ac8b5ea14fb0` 加主目录未提交的记账补丁。OFF 复用先前隔离 checkout 的必要运行补丁，涉及 `override_gpus` 传递、取消全局 dangling-image prune、HTTP loop 归属与 Ray 地址，保留原资源调度语义，无整卡锁。OFF 是旧 Docker 后端，ON 是当前原生 EnvWorker，因此是固定 baseline 的完整路径对照，不能将全部速度差归为单个记账函数，也没有隔离“当前修复前 vs 当前修复后”两版本 GPU 吞吐。CPU 回归分别验证了无归属和可信归属的账本准入结果。
+
+**遥测与验证边界。** ON 一次账本采样超时保留为缺失，17 条容器 CPU/主存资源错误或缓存错误单列，没有补零；这些不是 GPU 归属错误。结束时 lease 归零，驱动逐 actor 查询与后续独立 Docker 查询均无所属容器，GPU 进程为空。没有仅依据账本或缓存容器计数声称清理完成。两组成功请求的逐样本文本和 token 数完全相同。本次验证了真实模型任务、Env、生产 runner 与资源回收，没有启动 PSRL 策略优化器，也没有做 InferenceBench 官方质量评分。
+
+**代码与回归。** 新增 `EpisodeMemory`，连接 node → router → ledger，补齐逐设备抵扣和可观测字段。首批定向 86 项通过。一次较大 Env 回归为 341 通过、5 失败：两项是误用共享 veRL 路径，另两项是既有子进程 3 秒/10 秒启动时限超时，一项是在测试运行期间新增逐设备检查而进程仍载有旧模块。固定 `.verification-deps` 并冻结源码后，包含这五项和归属测试的定向 25 项全部通过；随后新增节点归属缺失/空租约回收检查，episode 文件的 9 项全部通过。原失败日志保留，未声称全仓一次全绿。新增代码 Ruff、格式和 prose 检查通过，全仓 pre-commit 在独立快照执行，仍有本次范围外的既有格式/注释问题，未回写其自动修改。
+
+证据： [comparison](episode-pressure-comparison.json)、[samples](episode-pressure-samples.json)、[provenance](episode-pressure-provenance.json)。原始日志在本地 `benchmark-runs/episode-accounting-20261102/`，包含 ON/OFF 实际源码 diff、执行源码副本、失败日志、Docker/CUDA 预检和物理清理查询。provenance 区分 GPU 运行时脚本哈希与事后新增压力断言的 CPU 审计脚本哈希。
+
+```bash
+python examples/inference_bench/resident_analyze.py \
+  --root "$RESULT_DIR" --output "$AUDIT_OUTPUT" \
+  --prefix episode-pressure --expect-pressure
+```
+
+这个命令已经实际通过。它只复核已保存结果，要求相同工作量和预算、OFF 存在 OOM、ON 无 OOM、有可信抵扣和等待，并核验逐样本输出与清理。知识解释和不需要 GPU 的教学脚本见 [episode 记账说明](../../knowledge/gpu-memory-admission.md#9-episode-归属记账修复)。所有改动当前保留在主目录，未提交、未推送、未合并。
+
+## 评分教学脚本验证
+
+2026-11-02 运行 [评分演示脚本](../../env-service-verification/scripts/explain_inferencebench_score.py)，只使用 CPU 与标准库。性能和质量输入是明确标注的教学数字，PSRL 奖励门槛调用真实 [compute_score](../../../../examples/gpu_benchmarks/reward.py#L6)。
+
+| 教学输入 | 模拟官方奖励 | 真实 PSRL 函数输出 |
+|---|---:|---:|
+| 参考答对 400/500，TTFT 0.4 秒 | 2.5 | 2.5 |
+| 候选答对 390/500，TTFT 0.2 秒 | 5 | 5 |
+| 候选答对 360/500，质量比例 0.9 | 0 | 0 |
+| 候选质量达标且原始分为 5，但污染标记为 1 | 5 | 0 |
+
+C 场景教学吞吐为 8、27、64 请求/秒，输出几何平均 24。脚本 Ruff 与格式检查通过。这只验证手算例子和本地奖励检查的连接，没有启动 GPU 服务、运行官方质量题集或调用裁判。详细定义见 [评分说明](../../knowledge/inferencebench-scoring.md)。PostTrainBench 和 RE-Bench 此次仅完成官方资料和代码调研，不能据此宣称已通过 Env 实机验证。
+
+本次文档检查覆盖 279 个本地链接及 79 个源码行引用，路径和行号范围通过，相关评分函数与调用位置已人工核对。全仓 `pre-commit run --all-files` 在隔离快照执行，因 `docs/conf.py`、其他实验脚本及已有注释规范等问题失败。快照中的自动格式修改没有回写主目录。此结果不影响上述 CPU 演示结论，也不代表全仓检查通过。
 
 ## 修复与验证边界
 

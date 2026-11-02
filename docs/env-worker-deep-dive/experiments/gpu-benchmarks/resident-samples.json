@@ -1,0 +1,1071 @@
+{
+  "off": [
+    {
+      "elapsed_s": 0.0013976097106933594,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 2.328556776046753,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 3.4166040420532227,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 4.5101892948150635,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 5.604714393615723,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 6.752314567565918,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 7.829273700714111,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 8.908049583435059,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 10.002583026885986,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 11.098848581314087,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 12.194326877593994,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 13.269091606140137,
+      "gpu_used_mb": 46.125,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 14.4083890914917,
+      "gpu_used_mb": 28302.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 15.49397349357605,
+      "gpu_used_mb": 28302.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 16.61759638786316,
+      "gpu_used_mb": 28302.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 17.70822501182556,
+      "gpu_used_mb": 28302.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 18.79270625114441,
+      "gpu_used_mb": 28302.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 19.86372447013855,
+      "gpu_used_mb": 28584.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 20.962214469909668,
+      "gpu_used_mb": 28866.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 22.049351692199707,
+      "gpu_used_mb": 28866.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 23.138951539993286,
+      "gpu_used_mb": 28866.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 24.227087020874023,
+      "gpu_used_mb": 28866.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 25.315734148025513,
+      "gpu_used_mb": 28866.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 26.42942786216736,
+      "gpu_used_mb": 28866.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 27.541524171829224,
+      "gpu_used_mb": 28866.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 28.624155282974243,
+      "gpu_used_mb": 28866.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 29.71035146713257,
+      "gpu_used_mb": 28866.625,
+      "gpu_process_count": 2
+    },
+    {
+      "elapsed_s": 30.800602674484253,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1
+    },
+    {
+      "elapsed_s": 31.888479948043823,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 32.9584846496582,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 34.04590678215027,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 35.1447172164917,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 36.27452874183655,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 37.36141657829285,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 38.55301761627197,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 39.64672780036926,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 40.74329876899719,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 41.830952167510986,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 42.921704053878784,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 44.03719210624695,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    },
+    {
+      "elapsed_s": 45.198171615600586,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0
+    }
+  ],
+  "on": [
+    {
+      "elapsed_s": 0.0011065006256103516,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": null,
+        "resource_sample_age_s": null,
+        "resource_error": "No physical resource sample received."
+      }
+    },
+    {
+      "elapsed_s": 1.2300379276275635,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "telemetry_error": "TimeoutError()"
+    },
+    {
+      "elapsed_s": 7.407390356063843,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": null,
+        "resource_sample_age_s": null,
+        "resource_error": "No physical resource sample received."
+      }
+    },
+    {
+      "elapsed_s": 9.546177625656128,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": null,
+        "resource_sample_age_s": null,
+        "resource_error": "No physical resource sample received."
+      }
+    },
+    {
+      "elapsed_s": 10.642696619033813,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": null,
+        "resource_sample_age_s": null,
+        "resource_error": "No physical resource sample received."
+      }
+    },
+    {
+      "elapsed_s": 11.741738319396973,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": null,
+        "resource_sample_age_s": null,
+        "resource_error": "No physical resource sample received."
+      }
+    },
+    {
+      "elapsed_s": 12.826162099838257,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": null,
+        "resource_sample_age_s": null,
+        "resource_error": "No physical resource sample received."
+      }
+    },
+    {
+      "elapsed_s": 13.923980474472046,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": null,
+        "resource_sample_age_s": null,
+        "resource_error": "No physical resource sample received."
+      }
+    },
+    {
+      "elapsed_s": 15.071123600006104,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": null,
+        "resource_sample_age_s": null,
+        "resource_error": "No physical resource sample received."
+      }
+    },
+    {
+      "elapsed_s": 16.193765878677368,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": null,
+        "resource_sample_age_s": null,
+        "resource_error": "No physical resource sample received."
+      }
+    },
+    {
+      "elapsed_s": 17.377708673477173,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": null,
+        "resource_sample_age_s": null,
+        "resource_error": "TimeoutError: "
+      }
+    },
+    {
+      "elapsed_s": 18.669947147369385,
+      "gpu_used_mb": 3.5,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": null,
+        "resource_sample_age_s": null,
+        "resource_error": "TimeoutError: "
+      }
+    },
+    {
+      "elapsed_s": 20.269346714019775,
+      "gpu_used_mb": 3.5,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 0,
+        "resource_sample_age_s": 0.42746010422706604,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 22.98125147819519,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 0,
+        "resource_sample_age_s": 1.5209800973534584,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 24.074753284454346,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 0,
+        "resource_sample_age_s": 2.611696546897292,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 25.165815591812134,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 0,
+        "resource_sample_age_s": 3.7388097643852234,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 26.29279851913452,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 0,
+        "resource_sample_age_s": 4.869221659377217,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 27.423569679260254,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 0,
+        "resource_sample_age_s": 5.990400671958923,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 28.544488191604614,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 1.0778204575181007,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 29.639791011810303,
+      "gpu_used_mb": 14153.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 2.1538878213614225,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 30.715940952301025,
+      "gpu_used_mb": 14153.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 3.2294523660093546,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 31.79215717315674,
+      "gpu_used_mb": 14153.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 4.323755543678999,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 32.88576006889343,
+      "gpu_used_mb": 14153.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 5.409150181338191,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 33.97172498703003,
+      "gpu_used_mb": 14207.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 0.47212532348930836,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 35.04865574836731,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 1.5882938336580992,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 36.165207862854004,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 2.6920929197221994,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 37.26884460449219,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 3.7853141017258167,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 38.3638117313385,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 4.871817704290152,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 39.44866323471069,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 5.943661069497466,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 40.520761013031006,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 1.0063040535897017,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 41.593427419662476,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 2.084486596286297,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 42.67163062095642,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 3.1703094951808453,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 43.757079124450684,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 4.248399365693331,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 44.83522319793701,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 0.1250518187880516,
+        "resource_error": "Docker memory sample is missing."
+      }
+    },
+    {
+      "elapsed_s": 45.98972940444946,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 1.2309930641204119,
+        "resource_error": "Docker memory sample is missing."
+      }
+    },
+    {
+      "elapsed_s": 47.094014167785645,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 2.3123307451605797,
+        "resource_error": "Docker memory sample is missing."
+      }
+    },
+    {
+      "elapsed_s": 48.17608165740967,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 3.4192687906324863,
+        "resource_error": "Docker memory sample is missing."
+      }
+    },
+    {
+      "elapsed_s": 49.28135704994202,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 0,
+        "sessions_waiting": 1,
+        "declared_gpu_memory_mb": 0,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 4.610479479655623,
+        "resource_error": "Docker memory sample is missing."
+      }
+    },
+    {
+      "elapsed_s": 50.473554372787476,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 0,
+        "resource_sample_age_s": 0.68939851783216,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 51.566993713378906,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 0,
+        "resource_sample_age_s": 1.787921106442809,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 52.65354013442993,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 0,
+        "resource_sample_age_s": 3.029771573841572,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 53.89582061767578,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 0,
+        "resource_sample_age_s": 4.123979514464736,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 54.990010499954224,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 0,
+        "resource_sample_age_s": 5.254814626649022,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 56.12141156196594,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 0.3990405201911926,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 57.27617645263672,
+      "gpu_used_mb": 3.5,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 1.4842080883681774,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 58.36130332946777,
+      "gpu_used_mb": 14153.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 2.565857293084264,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 59.44290113449097,
+      "gpu_used_mb": 14153.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 3.644076779484749,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 60.52112603187561,
+      "gpu_used_mb": 14153.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 4.729612644761801,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 61.6075074672699,
+      "gpu_used_mb": 14153.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 5.8064476158469915,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 62.68332648277283,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 0.876771779730916,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 63.76378846168518,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 1.9816003665328026,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 64.86863327026367,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 3.1157343853265047,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 66.00257158279419,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 4.2001361679285765,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 67.087726354599,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 5.2868633680045605,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 68.17372727394104,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 0.3584903981536627,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 69.25695872306824,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 1.4383799117058516,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 70.33803272247314,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 2.5306843891739845,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 71.42879843711853,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 3.6226044166833162,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 72.52119612693787,
+      "gpu_used_mb": 14435.0625,
+      "gpu_process_count": 1,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 4.705824688076973,
+        "resource_error": ""
+      }
+    },
+    {
+      "elapsed_s": 73.60426187515259,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 0.02569410391151905,
+        "resource_error": "Docker memory sample is missing."
+      }
+    },
+    {
+      "elapsed_s": 74.6957459449768,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 1.104883812367916,
+        "resource_error": "Docker memory sample is missing."
+      }
+    },
+    {
+      "elapsed_s": 75.77545881271362,
+      "gpu_used_mb": 0.1875,
+      "gpu_process_count": 0,
+      "ledger": {
+        "leases_active": 1,
+        "sessions_waiting": 0,
+        "declared_gpu_memory_mb": 20480,
+        "gpu_memory_mb": 24576,
+        "containers_running": 1,
+        "resource_sample_age_s": 2.268364768475294,
+        "resource_error": "Docker memory sample is missing."
+      }
+    }
+  ]
+}
