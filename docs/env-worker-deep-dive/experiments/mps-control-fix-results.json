@@ -1,0 +1,80 @@
+{
+  "scope": "MPS control connection regression, not a new performance comparison",
+  "control_before": {
+    "serial_requests": 8,
+    "serial_failures": 0,
+    "concurrent_requests": 32,
+    "concurrent_failures": 15
+  },
+  "control_after": {
+    "serial_requests": 8,
+    "serial_failures": 0,
+    "concurrent_requests": 32,
+    "concurrent_failures": 0
+  },
+  "bypassed_channel_diagnostic": {
+    "traced_requests": 16,
+    "failures": 8,
+    "syscall_evidence": "recvmsg returned 0, followed by sendmsg EPIPE and Cannot send command to MPS control daemon process"
+  },
+  "training_regression": {
+    "passed": true,
+    "training_span_s": 20.159141778945923,
+    "jobs": [
+      {
+        "state": "completed",
+        "exit_code": 0,
+        "reservation": {
+          "reservation_mode": "episode",
+          "job_capacity_released": true,
+          "job_released_at": 1793610947.1193583,
+          "capacity_released": false,
+          "released_at": null
+        }
+      },
+      {
+        "state": "completed",
+        "exit_code": 0,
+        "reservation": {
+          "reservation_mode": "episode",
+          "job_capacity_released": true,
+          "job_released_at": 1793610947.025104,
+          "capacity_released": false,
+          "released_at": null
+        }
+      }
+    ],
+    "measured_steps": [
+      10,
+      10
+    ],
+    "profile_steps": [
+      2,
+      2
+    ],
+    "profile_errors": [
+      null,
+      null
+    ],
+    "cleanup_errors": [],
+    "remaining_containers": false,
+    "after_gpu_used_mb": 0.1875,
+    "after_gpu_pids": []
+  },
+  "cpu_regressions": {
+    "passed": 25,
+    "files": [
+      "tests/env_service/test_mps.py",
+      "tests/env_service/test_parallel_gpu.py"
+    ]
+  },
+  "provenance": {
+    "git_head": "affe7c2a39e40c3198423c1170614a54f34573c1",
+    "uncommitted_source_sha256": {
+      "psrl/workers/env_service/mps.py": "8a9612a078cac03167a3002c6729eee5e49d37fc16660ba357d4ffb09bf5d948",
+      "psrl/workers/env_service/parallel_gpu.py": "fc3a496a518c8e9f0c286da23590af927a6060063b93e7b4328663dab53d621f",
+      "mps_training_compare.py": "77ee8165844a42c8a5d35302f83f70c3e98fb2bf36ff0550ce6634fbe4163225",
+      "mps_train_workload.py": "96d440c96cb5bd936dd25efb9f9e16f542e537b3c73796ad002f76b1ac3e058e"
+    }
+  }
+}

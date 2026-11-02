@@ -11,7 +11,7 @@ from pathlib import Path
 
 from psrl.workers.env_service.gpu_memory import accounted_gpu_memory_mb
 from psrl.workers.env_service.job_fence import JobFence, container_pid
-from psrl.workers.env_service.mps import MpsClientController, parse_clients
+from psrl.workers.env_service.mps import MpsClientController, MpsControlChannel, parse_clients
 from psrl.workers.env_service.overlay import CONTROL_DEVICES, read_kernel_driver_version, resolve_driver_libs
 from psrl.workers.env_service.task_telemetry import TaskGpuTelemetry, read_command_memory
 
@@ -39,19 +39,8 @@ class MpsDomain:
         self.lock = asyncio.Lock()
         self.started = False
         self.error = None
+        self.control = MpsControlChannel(self.daemon)
         self.controller = MpsClientController(self.control)
-
-    def control(self, text):
-        result = subprocess.run(
-            ["docker", "exec", "-i", self.daemon, "nvidia-cuda-mps-control"],
-            input=text + "\n",
-            capture_output=True,
-            text=True,
-            timeout=10,
-        )
-        if result.returncode:
-            raise RuntimeError(f"MPS control failed: {result.stderr!r}.")
-        return result.stdout.strip()
 
     async def register(self, lease):
         async with self.lock:
@@ -429,7 +418,7 @@ class MpsDomain:
         if self.started:
             try:
                 await asyncio.to_thread(self.control, "quit")
-            except (RuntimeError, subprocess.TimeoutExpired):
+            except (RuntimeError, TimeoutError):
                 pass
             result = await asyncio.to_thread(
                 subprocess.run, ["docker", "rm", "-f", self.daemon], capture_output=True, text=True, timeout=10

@@ -1,7 +1,50 @@
 """Validate MPS client identities before cooperative managed cancellation."""
 
+import math
+import subprocess
+import threading
+import time
 from dataclasses import dataclass
 from pathlib import Path
+
+
+class MpsControlChannel:
+    """Serialize administrative connections to one daemon without blocking CUDA work."""
+
+    def __init__(self, container: str, timeout_s: float = 10):
+        if not math.isfinite(timeout_s) or timeout_s <= 0:
+            raise ValueError("MPS control timeout must be finite and positive.")
+        self.container = container
+        self.timeout_s = timeout_s
+        self._lock = threading.Lock()
+
+    def __call__(self, command: str) -> str:
+        deadline = time.monotonic() + self.timeout_s
+        if not self._lock.acquire(timeout=self.timeout_s):
+            raise TimeoutError(f"MPS control queue deadline expired for {command!r} on {self.container!r}.")
+        try:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise TimeoutError(f"MPS control deadline expired for {command!r} on {self.container!r}.")
+            result = subprocess.run(
+                ["docker", "exec", "-i", self.container, "nvidia-cuda-mps-control"],
+                input=command + "\n",
+                capture_output=True,
+                text=True,
+                timeout=remaining,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise TimeoutError(
+                f"MPS control execution deadline expired for {command!r} on {self.container!r}."
+            ) from exc
+        finally:
+            self._lock.release()
+        if result.returncode:
+            raise RuntimeError(
+                f"MPS control {command!r} failed on {self.container!r} with exit code {result.returncode!r}. "
+                f"stdout={result.stdout!r}, stderr={result.stderr!r}."
+            )
+        return result.stdout.strip()
 
 
 @dataclass(frozen=True)
