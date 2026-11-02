@@ -1,8 +1,6 @@
 """Attach lease resources and ownership labels to every Harbor environment."""
 
 import asyncio
-import json
-import shlex
 import tempfile
 import threading
 import uuid
@@ -11,10 +9,8 @@ from pathlib import Path
 import yaml
 from harbor.environments.docker.docker import DockerEnvironment
 
-from psrl.workers.env_service import gpu_job_process
 from psrl.workers.env_service.container_budget import ContainerBudget
-from psrl.workers.env_service.gpu_execution import GpuExecutionBackend, reservation_policy
-from psrl.workers.env_service.gpu_jobs import GpuJob, GpuJobManager
+from psrl.workers.env_service.managed_execution import ManagedGpuExecution
 from psrl.workers.env_service.overlay import command_security_options
 
 _KERNEL_PROBE_LOCK = threading.Lock()
@@ -26,7 +22,7 @@ def _warm_kernel_probe():
         DockerEnvironment._egress_control_kernel_support()
 
 
-class ManagedDockerEnvironment(DockerEnvironment):
+class ManagedDockerEnvironment(ManagedGpuExecution, DockerEnvironment):
     """Keep ownership metadata when Harbor creates a separate verifier environment."""
 
     @staticmethod
@@ -59,14 +55,7 @@ class ManagedDockerEnvironment(DockerEnvironment):
         binding = gpu_execution or ({**gpu_commands, "mode": "command"} if gpu_commands else None)
         if binding and gpu_lending:
             raise ValueError("Managed GPU jobs require dedicated environment GPUs.")
-        self._gpu_execution = binding
-        self._execution_backend = GpuExecutionBackend(reservation_policy(binding)) if binding else None
-        self._gpu_commands = binding if binding and binding["mode"] == "command" else None
-        self._gpu_command_lock = asyncio.Lock()
-        self._pending_gpu_return = None
-        self.last_gpu_command = None
-        self._gpu_jobs = GpuJobManager(self._execute_gpu_job)
-        self._prepared_commands = set()
+        self._init_gpu_execution(binding)
         self._lease_overlay = lease_overlay or {}
         self._container_budget = ContainerBudget(**container_budget) if container_budget is not None else None
         self._actor_id = actor_id
@@ -74,183 +63,22 @@ class ManagedDockerEnvironment(DockerEnvironment):
         self._ownership_path = Path(self._ownership_dir.name) / "ownership.yaml"
         super().__init__(*args, **kwargs)
 
-    def _backend(self):
-        """Adapt the legacy command binding while keeping one executor per environment."""
-        backend = getattr(self, "_execution_backend", None)
-        if backend is None:
-            binding = getattr(self, "_gpu_execution", None)
-            legacy = getattr(self, "_gpu_commands", None)
-            if binding is None and legacy:
-                binding = {**legacy, "mode": "command"}
-            if binding:
-                backend = self._execution_backend = GpuExecutionBackend(reservation_policy(binding))
-        return backend
+    async def _exec_unreserved(self, command, **kwargs):
+        return await super().exec(command, **kwargs)
 
-    async def wait_for_gpu_return(self):
-        """Settle managed execution without releasing an episode's session reservation."""
-        backend = self._backend()
-        if backend:
-            await backend.wait_return()
-
-    async def exec_gpu(
-        self,
-        command,
-        *,
-        timeout_sec=300,
-        wait_timeout_sec=300,
-        overlap_return=False,
-        _job=None,
-        _cancel_process=None,
-        **kwargs,
-    ):
-        """Execute through a common backend with either session or command GPU ownership."""
-        backend = self._backend()
-        if backend is None:
-            return await super().exec(command, timeout_sec=timeout_sec, **kwargs)
-
-        async def container_id():
-            result = await self._run_docker_compose_command(["ps", "-q", "main"], timeout_sec=10)
-            identifiers = (result.stdout or "").split()
-            if len(identifiers) != 1:
-                raise RuntimeError("GPU execution needs exactly one running main container.")
-            return identifiers[0]
-
-        async def run():
-            if _job:
-                return await self._run_gpu_process(_job, **kwargs)
-            if backend.policy.mode == "episode" and _cancel_process is None:
-                # Direct episode calls also need an owned process group for timeout cleanup.
-                transient = GpuJob(
-                    uuid.uuid4().hex,
-                    command,
-                    "",
-                    timeout_sec,
-                    wait_timeout_sec,
-                    kwargs.get("cwd"),
-                    dict(kwargs.get("env") or {}),
-                )
-                return await self._run_gpu_process(transient, **kwargs)
-            return await super(ManagedDockerEnvironment, self).exec(command, timeout_sec=timeout_sec, **kwargs)
-
-        try:
-            return await backend.execute(
-                run,
-                container_id,
-                timeout_sec=timeout_sec,
-                wait_timeout_sec=wait_timeout_sec,
-                overlap_return=overlap_return,
-                job=_job,
-                cancel=_cancel_process,
-            )
-        finally:
-            self.last_gpu_command = backend.last_record
-
-    async def exec_gpu_prepared(self, module_path, payload, **kwargs):
-        """Prepare a cooperative Python program before reserving GPU execution."""
-        from psrl.workers.env_service.prepared_gpu import execute_prepared
-
-        task = asyncio.current_task()
-        self._prepared_commands.add(task)
-        try:
-            return await execute_prepared(self, module_path, payload, **kwargs)
-        finally:
-            self._prepared_commands.discard(task)
-
-    def start_gpu_job(self, command, **kwargs):
-        """Queue a bounded GPU job without waiting for capacity or command completion."""
-        if self._backend() is None:
-            raise RuntimeError("GPU jobs require a managed GPU reservation lease.")
-        return self._gpu_jobs.start(command, **kwargs)
-
-    def gpu_job_status(self, job_id):
-        return self._gpu_jobs.status(job_id)
-
-    async def wait_gpu_job(self, job_id, **kwargs):
-        return await self._gpu_jobs.wait(job_id, **kwargs)
-
-    async def cancel_gpu_job(self, job_id):
-        return await self._gpu_jobs.cancel(job_id)
-
-    async def gpu_job_telemetry(self, job_id):
-        """Expose only this job's host attributed process metrics to its caller."""
-        import ray
-
-        status = self._gpu_jobs.status(job_id)
-        backend = self._backend()
-        if backend.policy.mode == "episode":
-            status["telemetry"] = {"available": False, "reason": "Per-job host attribution requires command mode."}
-            return status
-        router = ray.get_actor(backend.policy.router_name)
-        status["telemetry"] = await router.gpu_job_telemetry.remote(self._gpu_commands["lease_id"], job_id)
-        return status
-
-    async def finish_gpu_jobs(self):
-        """Join bounded jobs and surface failures before dependent verification begins."""
-        for job in self._gpu_jobs.jobs.values():
-            await asyncio.shield(asyncio.gather(job.task, return_exceptions=True))
-            if job.error:
-                raise RuntimeError(job.error)
-
-    async def _execute_gpu_job(self, job):
-        await self.exec_gpu(
-            job.command,
-            timeout_sec=job.timeout_sec,
-            wait_timeout_sec=job.wait_timeout_sec,
-            overlap_return=True,
-            _job=job,
-            cwd=job.cwd,
-            env=job.env,
-        )
-        returning = asyncio.create_task(self.wait_for_gpu_return())
-        try:
-            await asyncio.shield(returning)
-        except asyncio.CancelledError:
-            await returning
-            raise
-
-    async def _run_gpu_process(self, job, **kwargs):
-        source = Path(gpu_job_process.__file__).read_text()
-        prefix = ["python3", "-c", source]
-        options = json.dumps({"cwd": job.cwd, "env": job.env})
-        execution = asyncio.create_task(
-            super().exec(
-                shlex.join([*prefix, "run", job.job_id, job.command, options]),
-                timeout_sec=job.timeout_sec + 15,
-                **kwargs,
-            )
-        )
-        try:
-            return await asyncio.shield(execution)
-        except BaseException:
-
-            async def terminate():
-                await super(ManagedDockerEnvironment, self).exec(
-                    shlex.join([*prefix, "cancel", job.job_id]), timeout_sec=5
-                )
-                await asyncio.wait_for(asyncio.shield(execution), timeout=5)
-
-            cleanup = asyncio.create_task(terminate())
-            try:
-                await asyncio.shield(cleanup)
-            finally:
-                if not execution.done():
-                    execution.cancel()
-                await asyncio.gather(execution, return_exceptions=True)
-            raise
+    async def _gpu_container_id(self):
+        result = await self._run_docker_compose_command(["ps", "-q", "main"], timeout_sec=10)
+        identifiers = (result.stdout or "").split()
+        if len(identifiers) != 1:
+            raise RuntimeError("GPU execution needs exactly one running main container.")
+        return identifiers[0]
 
     async def stop(self, delete: bool):
-        """Join pending return and still destroy the environment when verification fails."""
         try:
-            pending = tuple(getattr(self, "_prepared_commands", ()))
-            for task in pending:
-                task.cancel()
-            await asyncio.gather(*pending, return_exceptions=True)
-            try:
-                if getattr(self, "_gpu_jobs", None):
-                    await self._gpu_jobs.close()
-            finally:
-                await self.wait_for_gpu_return()
+            await self._close_gpu_execution()
         finally:
+            if getattr(self, "_mps", None):
+                await self._confirm_mps_return()
             await super().stop(delete=delete)
 
     async def start(self, force_build: bool):
@@ -295,8 +123,10 @@ class ManagedDockerEnvironment(DockerEnvironment):
         if budget is not None:
             for name, limits in budget.service_limits(services).items():
                 overlay[name].update(limits)
-        if self._gpu_commands:
+        if self._gpu_commands or getattr(self, "_mps", None):
             overlay["main"].update(command_security_options())
+            if getattr(self, "_mps", None):
+                overlay["main"]["cap_drop"] = ["ALL"]
         overlay["main"]["labels"] = labels
         self._ownership_path.write_text(yaml.safe_dump({"services": overlay}))
         return [*paths, self._ownership_path]

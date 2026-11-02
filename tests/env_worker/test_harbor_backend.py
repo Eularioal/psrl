@@ -113,6 +113,34 @@ async def test_scoped_env_cwd_user_and_exit_code_cross_the_adapter(tmp_path):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("deadline", [None, 0.005])
+async def test_harbor_deadline_does_not_inherit_worker_default(tmp_path, monkeypatch, deadline):
+    env = environment(tmp_path)
+    env._started = True
+    env._worker.exec_default_timeout_s = 0.001
+    env._worker._container_names[env._sandbox_id] = "owned-container"
+    cleanup = env._worker.destroy_sandbox = AsyncMock()
+
+    async def local_process(argv, timeout_s, **kwargs):
+        return await run_process([sys.executable, "-c", "import time; time.sleep(0.05)"], timeout_s)
+
+    monkeypatch.setattr("psrl.workers.env_worker.worker.run_process", local_process)
+    if deadline is None:
+        async with asyncio.timeout(2):
+            result = await env.exec("long verifier")
+        assert result.return_code == 0, "The verifier must outlive the worker's unrelated default."
+        cleanup.assert_not_awaited()
+        with pytest.raises(TimeoutError):
+            async with asyncio.timeout(0.005):
+                await env.exec("cancelled verifier")
+        cleanup.assert_awaited_once()
+    else:
+        with pytest.raises(TimeoutError):
+            await env.exec("bounded command", timeout_sec=deadline)
+        cleanup.assert_awaited_once()
+
+
+@pytest.mark.asyncio
 async def test_partial_start_failure_is_cleaned_and_cannot_restart(tmp_path):
     env = environment(tmp_path)
     cleanup = AsyncMock()
@@ -300,3 +328,39 @@ def test_admitted_container_cannot_exceed_budget(tmp_path):
     )
     with pytest.raises(ValueError, match="exceed"):
         env._spec()
+
+
+@pytest.mark.parametrize("defect", ["owner", "permission", "service"])
+def test_native_gpu_rejects_unowned_or_unfenced_devices(tmp_path, defect):
+    binding = {"router_name": "router", "lease_id": "lease", "mode": "command"}
+    main = {"labels": ["psrl.env_lease=lease"], "devices": ["/dev/nvidia7:/dev/nvidia7:m"]}
+    overlay = {"services": {"main": main}}
+    if defect == "owner":
+        main["labels"] = ["psrl.env_lease=other"]
+    elif defect == "permission":
+        main["devices"] = ["/dev/nvidia7:/dev/nvidia7:rwm"]
+    else:
+        overlay["services"]["sidecar"] = {}
+    with pytest.raises(ValueError):
+        environment(tmp_path, gpu_execution=binding, lease_overlay=overlay)
+
+
+def test_native_gpu_preserves_physical_device_mapping(tmp_path):
+    env = environment(
+        tmp_path,
+        gpu_execution={"router_name": "router", "lease_id": "lease", "mode": "command"},
+        lease_overlay={
+            "services": {
+                "main": {
+                    "labels": ["psrl.env_lease=lease", "psrl.env_unit=unit"],
+                    "devices": ["/dev/nvidia7:/dev/nvidia7:m"],
+                    "volumes": ["/driver/library:/usr/lib64/libcuda.so.1:ro"],
+                    "environment": ["LD_LIBRARY_PATH=/usr/lib64"],
+                }
+            }
+        },
+    )
+    spec = env._spec()
+    assert spec.gpus == 0, "Leased devices must not consume a second local GPU allocation."
+    assert spec.devices == ("/dev/nvidia7:/dev/nvidia7:m",), "Physical minor mapping must remain exact."
+    assert spec.env["LD_LIBRARY_PATH"] == "/usr/lib64", "The driver library location must reach the container."

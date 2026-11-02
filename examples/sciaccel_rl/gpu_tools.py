@@ -4,7 +4,8 @@ import json
 
 GPU_JOB_INSTRUCTIONS = """
 Submit bounded foreground GPU work through the managed GPU job tool.
-In command mode ordinary terminal commands have no GPU grant. In episode mode the session
+With the MPS backend, ordinary terminal commands have no GPU grant in either mode.
+With the direct backend, command mode denies ordinary GPU commands. In episode mode the session
 retains its GPU reservation after a job completes. Job completion does not release that reservation.
 In a command's keystrokes, send one standalone line beginning with psrl-gpu and a JSON object.
 Examples:
@@ -13,6 +14,9 @@ psrl-gpu {"op":"status","job_id":"the returned id"}
 psrl-gpu {"op":"wait","job_id":"the returned id","timeout_sec":1,"released":false}
 psrl-gpu {"op":"cancel","job_id":"the returned id"}
 psrl-gpu {"op":"telemetry","job_id":"the returned id"}
+With MPS, start can include gpu_memory_mb (a positive MiB budget no larger than the session demand).
+Several independent jobs may overlap if their summed budgets fit. Without it, each job requests
+the full session demand. Direct execution does not accept per-job memory budgets.
 Start returns immediately. Continue independent CPU editing or planning while it runs or queues.
 Wait only observes and never cancels on observation timeout. Output readiness can precede GPU return.
 Each job runs in a separate bash shell. Pass cwd and env explicitly. Files are shared with

@@ -191,6 +191,7 @@ class EnvUnitLedger:
                 gpu_lending=unit.rollout_replica_rank is not None and demand.needs_gpu,
                 gpu_reservation=unit.gpu_reservation,
                 gpu_active=unit.gpu_reservation == "episode",
+                gpu_execution_backend=unit.gpu_execution_backend,
             )
             self._leases[lease.lease_id] = lease
             self._by_session[session_id] = lease.lease_id
@@ -288,9 +289,9 @@ class EnvUnitLedger:
                     node_ip=unit.node_ip,
                     leases_active=len(leases),
                     max_containers=unit.max_containers,
-                    cpu_used=sum(lease.demand.cpu for lease in leases),
+                    cpu_used=sum(lease.demand.cpu for lease in leases) + unit.execution_cpu_overhead,
                     cpu_quota=unit.cpu_quota,
-                    memory_used_mb=sum(lease.demand.memory_mb for lease in leases),
+                    memory_used_mb=sum(lease.demand.memory_mb for lease in leases) + unit.execution_memory_overhead_mb,
                     memory_mb=unit.memory_mb,
                     declared_gpu_memory_mb=self._declared_gpu_mb(unit),
                     measured_gpu_memory_mb=self._measured_gpu_mb(unit, now),
@@ -328,8 +329,10 @@ class EnvUnitLedger:
                 UnitCapacity(
                     unit=unit,
                     containers_free=unit.max_containers - len(leases),
-                    cpu_free=unit.cpu_quota - sum(lease.demand.cpu for lease in leases),
-                    memory_free_mb=unit.memory_mb - sum(lease.demand.memory_mb for lease in leases),
+                    cpu_free=unit.cpu_quota - unit.execution_cpu_overhead - sum(lease.demand.cpu for lease in leases),
+                    memory_free_mb=unit.memory_mb
+                    - unit.execution_memory_overhead_mb
+                    - sum(lease.demand.memory_mb for lease in leases),
                     gpu_free_mb=tuple(
                         budget - used
                         for budget, used in zip(
@@ -427,7 +430,10 @@ class EnvUnitLedger:
 
     def _could_ever_fit(self, unit: EnvUnit, demand: EnvDemand) -> bool:
         """Whether the demand fits an empty unit. If not, waiting would be forever."""
-        if demand.cpu > unit.cpu_quota + _EPS or demand.memory_mb > unit.memory_mb:
+        if (
+            demand.cpu + unit.execution_cpu_overhead > unit.cpu_quota + _EPS
+            or demand.memory_mb + unit.execution_memory_overhead_mb > unit.memory_mb
+        ):
             return False
         if demand.needs_gpu:
             per_device = demand.device_memory(unit)
@@ -462,9 +468,15 @@ class EnvUnitLedger:
         leases = self._unit_leases(unit.unit_id)
         if len(leases) + 1 > unit.max_containers:
             return False
-        if sum(lease.demand.cpu for lease in leases) + demand.cpu > unit.cpu_quota + _EPS:
+        if (
+            sum(lease.demand.cpu for lease in leases) + demand.cpu + unit.execution_cpu_overhead
+            > unit.cpu_quota + _EPS
+        ):
             return False
-        if sum(lease.demand.memory_mb for lease in leases) + demand.memory_mb > unit.memory_mb:
+        if (
+            sum(lease.demand.memory_mb for lease in leases) + demand.memory_mb + unit.execution_memory_overhead_mb
+            > unit.memory_mb
+        ):
             return False
         if unit.gpu_reservation == "command":
             return self._could_ever_fit(unit, demand)
@@ -495,8 +507,9 @@ class EnvUnitLedger:
         leases = self._unit_leases(unit.unit_id)
         ratios = [
             (len(leases) + 1) / unit.max_containers,
-            (sum(lease.demand.cpu for lease in leases) + demand.cpu) / unit.cpu_quota,
-            (sum(lease.demand.memory_mb for lease in leases) + demand.memory_mb) / unit.memory_mb,
+            (sum(lease.demand.cpu for lease in leases) + demand.cpu + unit.execution_cpu_overhead) / unit.cpu_quota,
+            (sum(lease.demand.memory_mb for lease in leases) + demand.memory_mb + unit.execution_memory_overhead_mb)
+            / unit.memory_mb,
         ]
         if demand.needs_gpu and unit.gpu_memory_mb > 0 and unit.gpu_reservation == "episode":
             ratios.append((self._effective_gpu_mb(unit, now) + demand.gpu_memory_mb) / unit.gpu_memory_mb)

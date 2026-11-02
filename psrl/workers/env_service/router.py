@@ -241,6 +241,10 @@ class EnvRouterCore:
     async def release(self, lease_id: str) -> bool:
         self._ensure_reaper()
         lease = self._ledger._leases.get(lease_id)
+        if lease is not None and lease.gpu_execution_backend == "mps":
+            lease.gpu_closing = True
+            node = await self._gpu_command_node(lease.node_ip)
+            await node.release_mps_lease.remote(lease.unit_id, lease_id)
         if lease is not None and lease.gpu_lending:
             await self.finish_gpu_lease(lease_id, lease.unit_id)
         if lease is not None and lease.gpu_reservation == "command":
@@ -252,14 +256,72 @@ class EnvRouterCore:
     async def _gpu_command_node(self, node_ip):
         raise RuntimeError("GPU command reservations require an attached node service.")
 
+    async def submit_mps_job(
+        self,
+        lease_id,
+        container_id,
+        job_id,
+        command,
+        memory_mb,
+        timeout_sec,
+        wait_timeout_sec,
+        cwd=None,
+        env=None,
+        tag="",
+    ):
+        lease = self._ledger._leases.get(lease_id)
+        if lease is None or lease.gpu_closing or lease.gpu_execution_backend != "mps":
+            raise RuntimeError("MPS execution requires a live MPS lease.")
+        node = await self._gpu_command_node(lease.node_ip)
+        return await node.submit_mps_job.remote(
+            lease.unit_id,
+            lease_id,
+            container_id,
+            job_id,
+            command,
+            memory_mb,
+            timeout_sec,
+            wait_timeout_sec,
+            cwd,
+            env or {},
+            tag,
+        )
+
+    async def drain_mps_lease(self, lease_id):
+        lease = self._ledger._leases[lease_id]
+        if lease.gpu_execution_backend != "mps":
+            raise RuntimeError("MPS drain requires an MPS lease.")
+        lease.gpu_closing = True
+        node = await self._gpu_command_node(lease.node_ip)
+        await node.drain_mps_lease.remote(lease.unit_id, lease_id)
+
+    async def mps_job_status(self, lease_id, job_id):
+        lease = self._ledger._leases[lease_id]
+        node = await self._gpu_command_node(lease.node_ip)
+        return await node.mps_job_status.remote(lease.unit_id, lease_id, job_id)
+
+    async def cancel_mps_job(self, lease_id, job_id):
+        lease = self._ledger._leases[lease_id]
+        node = await self._gpu_command_node(lease.node_ip)
+        return await node.cancel_mps_job.remote(lease.unit_id, lease_id, job_id)
+
     async def acquire_gpu_command(self, lease_id, container_id, request_id, tag=""):
         self._ensure_reaper()
+        if self._ledger._leases[lease_id].gpu_execution_backend == "mps":
+            raise RuntimeError("MPS leases require job-level admission.")
         return await self._gpu_commands.acquire(lease_id, container_id, request_id, tag)
 
     async def gpu_job_reports(self, lease_id):
+        lease = self._ledger._leases[lease_id]
+        if lease.gpu_execution_backend == "mps":
+            node = await self._gpu_command_node(lease.node_ip)
+            return await node.mps_job_reports.remote(lease.unit_id, lease_id)
         return self._gpu_commands.reports(lease_id)
 
     async def gpu_job_telemetry(self, lease_id, request_id):
+        lease = self._ledger._leases[lease_id]
+        if lease.gpu_execution_backend == "mps":
+            return (await self.mps_job_status(lease_id, request_id))["telemetry"]
         return await self._gpu_commands.telemetry(lease_id, request_id)
 
     async def require_gpu_attribution(self, lease_id):
@@ -279,6 +341,12 @@ class EnvRouterCore:
         return self._gpu_commands.return_status(lease_id, request_id, epoch)
 
     async def wait_gpu_command_returns(self, lease_id):
+        lease = self._ledger._leases[lease_id]
+        if lease.gpu_execution_backend == "mps":
+            reports = await self.gpu_job_reports(lease_id)
+            if any(r["state"] not in ("completed", "cancelled", "failed") for r in reports):
+                raise RuntimeError("MPS jobs have not returned all capacity.")
+            return
         await self._gpu_commands.wait_returns(lease_id)
 
     async def cancel_gpu_command(self, lease_id, request_id):
@@ -306,6 +374,24 @@ class EnvRouterCore:
         for snapshot in self._ledger.snapshot():
             sample, age, error = self._resource_state(snapshot.node_ip)
             measured = sample.get("units", {}).get(snapshot.unit_id, {})
+            unit = self._ledger._units[snapshot.unit_id]
+            if unit.gpu_execution_backend == "mps":
+                try:
+                    node = await self._gpu_command_node(unit.node_ip)
+                    mps = await asyncio.wait_for(node.mps_snapshot.remote(unit.unit_id), timeout=5)
+                    snapshot = replace(
+                        snapshot,
+                        gpu_commands_active=mps["active"],
+                        gpu_commands_waiting=mps["waiting"],
+                        declared_gpu_memory_mb=(
+                            mps["reserved_mb"]
+                            if unit.gpu_reservation == "command"
+                            else snapshot.declared_gpu_memory_mb
+                        ),
+                    )
+                    error = error or mps["error"]
+                except Exception as exc:
+                    error = f"MPS job telemetry unavailable: {exc}"
             snapshots.append(
                 replace(
                     snapshot,
@@ -574,6 +660,17 @@ try:
             if urls:
                 admission = self._ledger.try_admit(session_id, demand, node_ip, reap=False, available_node_ips=urls)
                 if admission.lease is not None:
+                    if admission.lease.gpu_execution_backend == "mps":
+                        lease = self._ledger._leases[admission.lease.lease_id]
+                        service = await self._gpu_command_node(lease.node_ip)
+                        try:
+                            lease.mps_pipe, lease.mps_ipc = await service.register_mps_lease.remote(
+                                self._ledger._units[lease.unit_id], lease
+                            )
+                        except Exception:
+                            self._ledger.retire(lease.lease_id)
+                            raise
+                        admission = replace(admission, lease=replace(lease))
                     return replace(
                         admission, lease=replace(admission.lease, node_service_url=urls[admission.lease.node_ip])
                     )

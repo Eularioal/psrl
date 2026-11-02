@@ -516,6 +516,7 @@ def test_native_backend_uses_episode_budget_without_compose(tmp_path):
 
     lease = SimpleNamespace(
         lease_id="native-lease",
+        gpu_lending=False,
         unit_id="cpu",
         gpu_indices=(),
         demand=SimpleNamespace(container_budget=ContainerBudget(2, 512, 0, 2)),

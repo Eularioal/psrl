@@ -74,6 +74,8 @@ class SandboxSpec:
     user: str | None = None
     pids_limit: int | None = None
     tmpfs: tuple[str, ...] = ()
+    devices: tuple[str, ...] = ()
+    ipc: str = "private"
 
 
 @dataclass
@@ -205,6 +207,13 @@ def build_docker_run_argv(
     for key in sorted(spec.labels):
         argv.extend(["--label", f"{key}={spec.labels[key]}"])
 
+    if spec.ipc not in ("private", "host") and not spec.ipc.startswith("container:psrl-mps-"):
+        raise ValueError("Unsupported sandbox IPC mode.")
+    argv.extend(["--ipc", spec.ipc])
+    if spec.devices and spec.gpus:
+        raise ValueError("Explicit leased devices cannot also allocate local GPU slots.")
+    for device in spec.devices:
+        argv.extend(["--device", device])
     argv.extend(build_gpu_argv(gpu_device_indices, driver_libs, nvidia_smi_path))
     argv.extend([spec.image, "/bin/bash", "-l"])
     return argv

@@ -10,23 +10,48 @@ from harbor.environments.base import BaseEnvironment, ExecResult
 from harbor.environments.capabilities import EnvironmentCapabilities, EnvironmentResourceCapabilities
 from harbor.models.trial.config import ResourceMode
 
+from psrl.workers.env_service.managed_execution import ManagedGpuExecution
 from psrl.workers.env_worker.sandbox import ExecResult as ShellExecResult
 from psrl.workers.env_worker.sandbox import SandboxSpec
 from psrl.workers.env_worker.worker import EnvWorker
 
 
-class EnvWorkerEnvironment(BaseEnvironment):
+class EnvWorkerEnvironment(ManagedGpuExecution, BaseEnvironment):
     """Run prebuilt CPU task images through EnvWorker with explicit capability boundaries."""
 
-    def __init__(self, *args, actor_id="", lease_labels=None, container_budget=None, **kwargs):
+    def __init__(
+        self,
+        *args,
+        actor_id="",
+        lease_labels=None,
+        container_budget=None,
+        lease_overlay=None,
+        gpu_execution=None,
+        gpu_commands=None,
+        **kwargs,
+    ):
         unsupported = {
-            "lease_overlay",
-            "gpu_execution",
-            "gpu_commands",
             "gpu_lending",
         } & kwargs.keys()
         if unsupported:
             raise ValueError(f"EnvWorker Harbor adapter does not yet implement bindings {sorted(unsupported)!r}.")
+        if gpu_commands and gpu_execution != {**gpu_commands, "mode": "command"}:
+            raise ValueError("Native GPU command bindings must match the execution policy.")
+        self._init_gpu_execution(gpu_execution)
+        self._lease_overlay = lease_overlay or {}
+        if set(self._lease_overlay.get("services", {})) - {"main"}:
+            raise ValueError("Native lifecycle accepts exactly one main service.")
+        if gpu_execution and not self._lease_overlay.get("services", {}).get("main", {}).get("devices"):
+            raise ValueError("Native GPU execution requires leased device mappings.")
+        if self._lease_overlay.get("services", {}).get("main", {}).get("devices") and not gpu_execution:
+            raise ValueError("Leased GPU devices require a managed execution policy.")
+        if gpu_execution:
+            main = self._lease_overlay["services"]["main"]
+            labels = dict(item.split("=", 1) for item in main.get("labels", []))
+            if labels.get("psrl.env_lease") != gpu_execution["lease_id"]:
+                raise ValueError("GPU execution and device mapping must have the same lease owner.")
+            if gpu_execution["mode"] == "command" and any(not d.endswith(":m") for d in main["devices"]):
+                raise ValueError("Command GPU mappings must start without read or write permission.")
         self._worker = EnvWorker(0, 1, 0, 300)
         self._sandbox_id = f"harbor-{uuid.uuid4().hex}"
         self._actor_id = actor_id
@@ -89,7 +114,20 @@ class EnvWorkerEnvironment(BaseEnvironment):
             if cpu is None or memory is None or cpu > budget.main_cpu or memory > budget.main_memory_mb:
                 raise ValueError("Environment limits exceed the admitted main-container budget.")
         labels = {"psrl.harbor_session": self.session_id}
+        main = self._lease_overlay.get("services", {}).get("main", {})
+        if set(main) - {"labels", "devices", "volumes", "environment", "ipc", "cap_drop", "security_opt"}:
+            raise ValueError("Unsupported native lease resource fields.")
+        if set(main.get("cap_drop", [])) - {"ALL", "SYS_ADMIN", "MKNOD"}:
+            raise ValueError("Unsupported native capability policy.")
+        if set(main.get("security_opt", [])) - {"no-new-privileges:true"}:
+            raise ValueError("Unsupported native security policy.")
+        labels.update(dict(item.split("=", 1) for item in main.get("labels", [])))
         labels.update(self._lease_labels)
+        for volume in main.get("volumes", []):
+            host, target, mode = volume.rsplit(":", 2)
+            mounts.append((host, target, mode))
+        startup_env = self._startup_env()
+        startup_env.update(dict(item.split("=", 1) for item in main.get("environment", [])))
         if self._actor_id:
             labels["psrl.actor_id"] = self._actor_id
         return SandboxSpec(
@@ -97,7 +135,9 @@ class EnvWorkerEnvironment(BaseEnvironment):
             cpus=cpu,
             memory=f"{memory}m" if memory is not None else None,
             mounts=tuple(mounts),
-            env=self._startup_env(),
+            env=startup_env,
+            devices=tuple(main.get("devices", ())),
+            ipc=main.get("ipc", "private"),
             network="none",
             labels=labels,
             startup_timeout_s=30,
@@ -145,7 +185,27 @@ class EnvWorkerEnvironment(BaseEnvironment):
             raise ValueError("EnvWorker Harbor adapter requires delete=True for confirmed cleanup.")
         async with self._lifecycle_lock:
             self._invalidate()
-            await self._cleanup()
+            try:
+                await self._close_gpu_execution()
+            finally:
+                if getattr(self, "_mps", None):
+                    await self._confirm_mps_return()
+                self._invalidate()
+                await self._cleanup()
+
+    async def _exec_unreserved(self, command, **kwargs):
+        return await self._execute_command(command, **kwargs)
+
+    def _require_gpu_execution(self):
+        super()._require_gpu_execution()
+        self._require_running()
+
+    async def _gpu_container_id(self):
+        from psrl.workers.env_service.docker_api import inspect_container
+
+        self._require_running()
+        info = await inspect_container(self._worker.container_name(self._sandbox_id))
+        return info["Id"]
 
     async def _cleanup(self):
         """Keep admission ownership until physical deletion has been acknowledged."""
@@ -201,11 +261,15 @@ class EnvWorkerEnvironment(BaseEnvironment):
 
     async def exec(self, command, cwd=None, env=None, timeout_sec=None, user=None):
         self._require_running()
+        return await self._execute_command(command, cwd=cwd, env=env, timeout_sec=timeout_sec, user=user)
+
+    async def _execute_command(self, command, cwd=None, env=None, timeout_sec=None, user=None):
         try:
+            # Harbor owns the outer deadline when no command deadline is supplied.
             result = await self._worker.exec_process(
                 self._sandbox_id,
                 command,
-                timeout_s=timeout_sec,
+                timeout_s=float("inf") if timeout_sec is None else timeout_sec,
                 cwd=cwd or self.task_env_config.workdir,
                 env=self._merge_env(env),
                 user=self._resolve_user(user),

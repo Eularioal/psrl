@@ -129,15 +129,6 @@ async def _apply_env_lease(
         DriverLibraryError: When a GPU lease cannot find driver libraries matching the kernel.
     """
 
-    if env_kwargs.get("import_path") == "psrl.workers.env_worker.harbor:EnvWorkerEnvironment":
-        if lease.gpu_indices:
-            raise ValueError("The native Harbor backend does not yet implement GPU lease execution.")
-        env_kwargs.setdefault("kwargs", {}).update(
-            lease_labels={"psrl.env_lease": lease.lease_id, "psrl.env_unit": lease.unit_id},
-            container_budget=asdict(lease.demand.container_budget),
-        )
-        return None
-
     def prepare_overlay():
         driver_libs = None
         if lease.gpu_indices:
@@ -151,6 +142,17 @@ async def _apply_env_lease(
         return build_lease_overlay(lease, driver_libs)
 
     overlay = await asyncio.to_thread(prepare_overlay)
+    if env_kwargs.get("import_path") == "psrl.workers.env_worker.harbor:EnvWorkerEnvironment":
+        if lease.gpu_lending:
+            raise ValueError("The native backend does not implement model sleep ownership.")
+        env_kwargs.setdefault("kwargs", {}).update(
+            lease_overlay=overlay,
+            lease_labels={"psrl.env_lease": lease.lease_id, "psrl.env_unit": lease.unit_id},
+            container_budget=asdict(lease.demand.container_budget),
+        )
+        if lease.gpu_indices:
+            env_kwargs["override_gpus"] = 0
+        return None
     # Keep file creation and cleanup registration together if the caller is cancelled.
     overlay_path = write_overlay(overlay)
     extra_compose_paths.append(overlay_path)
@@ -419,8 +421,14 @@ async def run_harbor_episode(
                 env_kwargs.setdefault("kwargs", {})["gpu_execution"] = {
                     **binding,
                     "mode": lease_handle.lease.gpu_reservation,
+                    "backend": lease_handle.lease.gpu_execution_backend,
+                    "gpu_memory_mb": lease_handle.lease.demand.gpu_memory_mb,
                 }
-                if lease_handle.lease.gpu_reservation == "command":
+                if (
+                    lease_handle.lease.gpu_reservation == "command"
+                    and lease_handle.lease.gpu_execution_backend == "direct"
+                ):
+                    env_kwargs["kwargs"]["gpu_execution"] = {**binding, "mode": "command"}
                     env_kwargs["kwargs"]["gpu_commands"] = binding
             try:
                 if lease_handle.lease.gpu_reservation == "command" and is_laps_cuda(task_path):
@@ -595,6 +603,8 @@ async def run_harbor_episode(
             exception_type=exception_type,
         )
     finally:
+        if lease_handle is not None and lease_handle.lease.gpu_execution_backend == "mps":
+            await env_client.router.drain_mps_lease.remote(lease_handle.lease.lease_id)
         # Runs in a thread because `docker rm -f` on a wedged container can block for
         # tens of seconds, and this sits on the shared Harbor event loop.
         removed = await _in_cleanup_pool(force_remove_compose_project, job_name)

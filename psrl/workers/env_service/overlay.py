@@ -10,6 +10,7 @@ Filesystem probes and GPU inventory can be injected for tests without a GPU.
 
 from __future__ import annotations
 
+import copy
 import logging
 import os
 import re
@@ -127,7 +128,7 @@ def resolve_driver_libs(
     if ptx is None:
         missing.append("libnvidia-ptxjitcompiler")
         psrl_logger.warning(
-            "libnvidia-ptxjitcompiler.so.%s not found under %s; PTX JIT will fail inside containers.",
+            "libnvidia-ptxjitcompiler.so.%s not found under %s. PTX JIT will fail inside containers.",
             version,
             list(lib_dirs),
         )
@@ -180,7 +181,7 @@ def build_lease_overlay(
         inventory = read_gpu_devices() if gpu_devices is None else gpu_devices
         devices = [f"{inventory[i].path}:{inventory[i].path}" for i in lease.gpu_indices]
         devices += [f"{d}:{d}" for d in CONTROL_DEVICES if device_exists(d)]
-        if lease.gpu_reservation == "command":
+        if lease.gpu_reservation == "command" or lease.gpu_execution_backend == "mps":
             devices = [f"{device}:m" for device in devices]
         volumes: list[str] = []
         if device_exists(nvidia_smi_path):
@@ -189,6 +190,13 @@ def build_lease_overlay(
         main["devices"] = devices
         main["volumes"] = volumes
         main["environment"] = [f"LD_LIBRARY_PATH={_CONTAINER_LD_LIBRARY_PATH}"]
+        if lease.gpu_execution_backend == "mps":
+            if not lease.mps_pipe:
+                raise ValueError("MPS lease has no prepared service endpoint.")
+            main["volumes"].append(f"{lease.mps_pipe}:{lease.mps_pipe}:rw")
+            main["ipc"] = lease.mps_ipc
+            main.update(command_security_options())
+            main["cap_drop"] = ["ALL"]
     return {"services": {"main": main}}
 
 
@@ -205,6 +213,10 @@ def write_overlay(overlay: dict) -> Path:
     `tempfile.mktemp`, which only invents a name and leaves a race. The caller deletes it
     once the episode's containers are gone.
     """
+    overlay = copy.deepcopy(overlay)
+    # Compose appends these lists. The managed provider applies them once in its final override.
+    for field in ("security_opt", "cap_drop"):
+        overlay.get("services", {}).get("main", {}).pop(field, None)
     with tempfile.NamedTemporaryFile(
         mode="w", suffix=".yaml", prefix="env-service-lease-", delete=False, encoding="utf-8"
     ) as handle:

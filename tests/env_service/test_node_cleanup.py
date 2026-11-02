@@ -8,7 +8,9 @@ from psrl.workers.env_service import node
 
 
 def test_cleanup_retains_lease_until_docker_confirms_removal(monkeypatch):
-    lease = SimpleNamespace(lease_id="expired-lease", gpu_lending=False, gpu_reservation="episode")
+    lease = SimpleNamespace(
+        lease_id="expired-lease", gpu_lending=False, gpu_reservation="episode", gpu_execution_backend="direct"
+    )
     router = SimpleNamespace(
         pending_reaped=SimpleNamespace(remote=AsyncMock(return_value=[lease])),
         acknowledge_reaped=SimpleNamespace(remote=AsyncMock()),
@@ -37,7 +39,9 @@ def test_cleanup_retains_lease_until_docker_confirms_removal(monkeypatch):
 
 
 def test_lost_acknowledgement_is_redelivered_to_a_new_node(monkeypatch):
-    lease = SimpleNamespace(lease_id="expired", gpu_lending=False, gpu_reservation="episode")
+    lease = SimpleNamespace(
+        lease_id="expired", gpu_lending=False, gpu_reservation="episode", gpu_execution_backend="direct"
+    )
     router = SimpleNamespace(
         pending_reaped=SimpleNamespace(remote=AsyncMock(return_value=[lease])),
         acknowledge_reaped=SimpleNamespace(remote=AsyncMock(side_effect=[TimeoutError("Lost reply"), None])),

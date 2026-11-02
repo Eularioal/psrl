@@ -52,8 +52,30 @@ class EnvUnit:
     gpu_memory_per_device_mb: tuple[int, ...] = ()
     shared_rollout_replica_rank: int | None = None
     model_headroom_mb: int = 0
+    gpu_execution_backend: str = "direct"
+    mps_thread_percentage: int = 100
+    mps_image: str = ""
+
+    @property
+    def execution_cpu_overhead(self):
+        return 1 if self.gpu_execution_backend == "mps" else 0
+
+    @property
+    def execution_memory_overhead_mb(self):
+        return 512 if self.gpu_execution_backend == "mps" else 0
 
     def __post_init__(self) -> None:
+        if self.gpu_execution_backend not in ("direct", "mps"):
+            raise ValueError("Unknown GPU execution backend.")
+        if not 1 <= self.mps_thread_percentage <= 100:
+            raise ValueError("MPS thread percentage must be between 1 and 100.")
+        if self.gpu_execution_backend == "mps" and (
+            not self.mps_image
+            or len(self.gpu_indices) != 1
+            or self.rollout_replica_rank is not None
+            or self.shared_rollout_replica_rank is not None
+        ):
+            raise ValueError("MPS requires one dedicated environment GPU per unit.")
         if self.gpu_indices and not self.gpu_memory_per_device_mb:
             if len(self.gpu_indices) != 1:
                 raise ValueError("Multi-device units require explicit gpu_memory_per_device_mb budgets.")
@@ -85,6 +107,10 @@ class EnvUnit:
             raise ValueError("EnvUnit.unit_id must be non-empty.")
         if not self.node_ip:
             raise ValueError(f"EnvUnit {self.unit_id!r}: node_ip must be non-empty.")
+        if self.gpu_execution_backend == "mps" and (
+            self.cpu_quota <= self.execution_cpu_overhead or self.memory_mb <= self.execution_memory_overhead_mb
+        ):
+            raise ValueError("MPS unit must include service overhead plus container capacity.")
         if self.cpu_quota <= 0:
             raise ValueError(f"EnvUnit {self.unit_id!r}: cpu_quota must be > 0, got {self.cpu_quota}.")
         if self.memory_mb <= 0:
@@ -124,6 +150,9 @@ class EnvUnit:
             ),
             model_headroom_mb=int(raw.get("model_headroom_mb", 0)),
             gpu_reservation=str(raw.get("gpu_reservation", "episode")),
+            gpu_execution_backend=str(raw.get("gpu_execution_backend", "direct")),
+            mps_thread_percentage=int(raw.get("mps_thread_percentage", 100)),
+            mps_image=str(raw.get("mps_image", "")),
             gpu_memory_per_device_mb=tuple(int(m) for m in raw.get("gpu_memory_per_device_mb", ())),
         )
 
@@ -228,6 +257,9 @@ class EnvLease:
     gpu_reservation: str = "episode"
     gpu_active: bool = True
     gpu_closing: bool = False
+    gpu_execution_backend: str = "direct"
+    mps_pipe: str = ""
+    mps_ipc: str = ""
 
 
 @dataclass(frozen=True)

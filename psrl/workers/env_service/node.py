@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import subprocess
 import uuid
 
 from aiohttp import web
@@ -29,6 +30,73 @@ class EnvNodeService(GpuCommandNodeMixin, GpuLendingNodeMixin):
         self._runner = None
         self._reaper = None
         self._url = None
+        self._mps_domains = {}
+        self._mps_lock = asyncio.Lock()
+
+    async def register_mps_lease(self, unit, lease):
+        from psrl.workers.env_service.parallel_gpu import MpsDomain
+
+        async with self._mps_lock:
+            if unit.unit_id not in self._mps_domains:
+                self._mps_domains[unit.unit_id] = MpsDomain(self, unit)
+            domain = self._mps_domains[unit.unit_id]
+            try:
+                return await domain.register(lease)
+            except BaseException:
+                if not domain.leases:
+                    await domain.close()
+                    del self._mps_domains[unit.unit_id]
+                raise
+
+    async def mps_snapshot(self, unit_id):
+        domain = self._mps_domains.get(unit_id)
+        if domain is None:
+            return {"active": 0, "waiting": 0, "reserved_mb": 0, "error": ""}
+        active = [r for r in domain.jobs.values() if r["state"] in ("starting", "running", "returning", "quarantined")]
+        return {
+            "active": len(active),
+            "waiting": sum(r["state"] == "queued" for r in domain.jobs.values()),
+            "reserved_mb": sum(r["memory_mb"] for r in active),
+            "error": domain.error or "",
+        }
+
+    async def submit_mps_job(self, unit_id, *args):
+        return self._mps_domains[unit_id].submit(*args)
+
+    async def mps_job_status(self, unit_id, lease_id, job_id):
+        return self._mps_domains[unit_id].status(lease_id, job_id)
+
+    async def mps_job_reports(self, unit_id, lease_id):
+        return self._mps_domains[unit_id].reports(lease_id)
+
+    async def cancel_mps_job(self, unit_id, lease_id, job_id):
+        return await self._mps_domains[unit_id].cancel(lease_id, job_id)
+
+    async def drain_mps_lease(self, unit_id, lease_id):
+        domain = self._mps_domains.get(unit_id)
+        if domain:
+            await domain.drain(lease_id)
+        else:
+            await self.release_mps_lease(unit_id, lease_id)
+
+    async def release_mps_lease(self, unit_id, lease_id):
+        async with self._mps_lock:
+            domain = self._mps_domains.get(unit_id)
+            if domain:
+                await domain.release(lease_id)
+                if not domain.leases:
+                    del self._mps_domains[unit_id]
+            else:
+                existing = await asyncio.to_thread(
+                    subprocess.run,
+                    ["docker", "ps", "-aq", "--filter", f"label=psrl.env_mps_unit={unit_id}"],
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
+                    check=True,
+                )
+                if existing.stdout.strip():
+                    raise RuntimeError("MPS ownership was lost. Preserve containers until operator recovery.")
 
     async def ready(self) -> str:
         """Start telemetry and cleanup before admitting containers on this node."""
@@ -62,6 +130,9 @@ class EnvNodeService(GpuCommandNodeMixin, GpuLendingNodeMixin):
 
     async def close(self):
         """Stop background work before releasing this service's driver connection."""
+        for unit_id, domain in list(self._mps_domains.items()):
+            for lease_id in list(domain.leases):
+                await self.release_mps_lease(unit_id, lease_id)
         if self._reaper is not None:
             self._reaper.cancel()
             await asyncio.gather(self._reaper, return_exceptions=True)
@@ -88,6 +159,9 @@ class EnvNodeService(GpuCommandNodeMixin, GpuLendingNodeMixin):
             self._pending.update((lease.lease_id, lease) for lease in expired)
             for lease_id in tuple(self._pending):
                 try:
+                    lease = self._pending[lease_id]
+                    if lease.gpu_execution_backend == "mps":
+                        await self.release_mps_lease(lease.unit_id, lease_id)
                     await asyncio.get_running_loop().run_in_executor(
                         CLEANUP_EXECUTOR, force_remove_containers_by_label, LEASE_LABEL, lease_id
                     )

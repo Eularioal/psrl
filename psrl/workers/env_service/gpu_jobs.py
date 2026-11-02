@@ -26,6 +26,7 @@ class GpuJob:
     output_ready: asyncio.Event = field(default_factory=asyncio.Event)
     task: asyncio.Task | None = None
     queued_mono: float = field(default_factory=time.monotonic)
+    gpu_memory_mb: int | None = None
 
     def transition(self, state):
         self.state = state
@@ -50,14 +51,14 @@ class GpuJob:
 class GpuJobManager:
     """Own jobs through physical return using an executor supplied by the backend."""
 
-    def __init__(self, execute, *, max_jobs=128):
+    def __init__(self, execute, *, max_jobs=128, concurrency=1):
         self.execute = execute
         self.max_jobs = max_jobs
         self.jobs = {}
-        self.lock = asyncio.Lock()
+        self.lock = asyncio.Semaphore(concurrency)
         self.closed = False
 
-    def start(self, command, *, tag="", timeout_sec=300, wait_timeout_sec=300, cwd=None, env=None):
+    def start(self, command, *, tag="", timeout_sec=300, wait_timeout_sec=300, cwd=None, env=None, gpu_memory_mb=None):
         if self.closed or len(self.jobs) >= self.max_jobs:
             raise RuntimeError("GPU job owner is closed or its episode job limit was reached.")
         if not isinstance(command, str) or not command.strip() or len(command) > 65536:
@@ -73,6 +74,9 @@ class GpuJobManager:
         ):
             raise ValueError("GPU job environment must map strings to strings.")
         job = GpuJob(uuid.uuid4().hex, command, tag, timeout_sec, wait_timeout_sec, cwd, dict(env or {}))
+        if gpu_memory_mb is not None and (not isinstance(gpu_memory_mb, int) or gpu_memory_mb <= 0):
+            raise ValueError("GPU job memory must be a positive integer.")
+        job.gpu_memory_mb = gpu_memory_mb
         job.transition("queued")
         self.jobs[job.job_id] = job
         job.task = asyncio.create_task(self._run(job))
@@ -80,7 +84,7 @@ class GpuJobManager:
 
     async def _run(self, job):
         try:
-            # Same-container GPU jobs serialize, while unrelated CPU and model work can progress.
+            # Direct jobs serialize. MPS delegates capacity admission to the node service.
             async with asyncio.timeout(job.wait_timeout_sec):
                 await self.lock.acquire()
             try:

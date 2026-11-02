@@ -100,7 +100,16 @@ class GpuExecutionBackend:
             await self._wait_return()
 
     async def execute(
-        self, run, container_id, *, timeout_sec, wait_timeout_sec, overlap_return=False, job=None, cancel=None
+        self,
+        run,
+        container_id,
+        *,
+        timeout_sec,
+        wait_timeout_sec,
+        overlap_return=False,
+        job=None,
+        cancel=None,
+        before_cancel=None,
     ):
         if not all(math.isfinite(t) and t > 0 for t in (timeout_sec, wait_timeout_sec)):
             raise ValueError("GPU execution and queue timeouts must be positive and finite.")
@@ -140,11 +149,11 @@ class GpuExecutionBackend:
             except BaseException:
                 # Stop owned processes before the reservation policy can return capacity.
                 async def cleanup():
-                    try:
-                        if cancel:
-                            await cancel()
-                    finally:
-                        await self.policy.cancel(record)
+                    if before_cancel:
+                        await before_cancel()
+                    if cancel:
+                        await cancel()
+                    await self.policy.cancel(record)
 
                 cleaning = asyncio.create_task(cleanup())
                 try:
