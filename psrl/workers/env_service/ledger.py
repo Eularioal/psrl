@@ -98,6 +98,8 @@ class EnvUnitLedger:
         self._by_session: dict[str, str] = {}
         # node_ip -> (reported_at, {device_index: used_mb})
         self._measured: dict[str, tuple[float, dict[int, float]]] = {}
+        self._episode_owned: dict[str, dict[str, dict[int, float]]] = {}
+        self._attribution_errors: dict[str, dict[str, str]] = {}
         # node_ip -> leases reclaimed by TTL, awaiting node-local container cleanup
         self._reaped: dict[str, list[EnvLease]] = {}
         # session_id -> last time it asked and had to wait
@@ -272,9 +274,24 @@ class EnvUnitLedger:
 
     # ------------------------------------------------------------------ telemetry
 
-    def report_measurement(self, node_ip: str, used_mb_by_index: Mapping[int, float]) -> None:
-        """Record per-device memory in use on a node, as read by the node's own `nvidia-smi`."""
-        self._measured[node_ip] = (self._clock(), {int(i): float(v) for i, v in used_mb_by_index.items()})
+    def report_measurement(self, node_ip, used_mb_by_index, *, owned_mb_by_device=None, attribution_errors=None):
+        """Replace a coherent device observation and its current episode ownership credits."""
+        measured = {int(i): float(v) for i, v in used_mb_by_index.items()}
+        owned = {}
+        for lease_id, values in (owned_mb_by_device or {}).items():
+            lease = self._leases.get(lease_id)
+            if lease is None or lease.node_ip != node_ip or lease.gpu_reservation != "episode" or lease.gpu_lending:
+                continue
+            credits = {int(i): float(v) for i, v in values.items()}
+            if not credits.keys() <= set(lease.gpu_indices) & measured.keys():
+                raise ValueError("Episode ownership must refer to its leased and observed devices.")
+            owned[lease_id] = credits
+        for index, amount in measured.items():
+            credits = {lease_id: values[index] for lease_id, values in owned.items() if index in values}
+            accounted_gpu_memory_mb(amount, dict.fromkeys(credits, 0.0), credits)
+        self._measured[node_ip] = (self._clock(), measured)
+        self._episode_owned[node_ip] = owned
+        self._attribution_errors[node_ip] = dict(attribution_errors or {})
 
     def snapshot(self) -> list[UnitSnapshot]:
         """Per-unit observable state, the env counterpart of `EngineStats`."""
@@ -296,6 +313,9 @@ class EnvUnitLedger:
                     declared_gpu_memory_mb=self._declared_gpu_mb(unit),
                     measured_gpu_memory_mb=self._measured_gpu_mb(unit, now),
                     gpu_memory_mb=unit.gpu_memory_mb,
+                    accounted_gpu_memory_mb=self._effective_gpu_mb(unit, now),
+                    owned_gpu_memory_mb=sum(self._episode_credits(unit, now).values()),
+                    gpu_attribution_errors=dict(self._attribution_errors.get(unit.node_ip, {})),
                     sessions=tuple(lease.session_id for lease in leases),
                     sessions_waiting=waiting,
                     gpu_commands_active=sum(
@@ -424,9 +444,29 @@ class EnvUnitLedger:
             for lease in self._unit_leases(unit.unit_id)
             if lease.demand.needs_gpu and lease.gpu_active
         }
+        if owned_mb is None:
+            owned_mb = self._episode_credits(unit, now)
         return accounted_gpu_memory_mb(
             measured or 0.0, reservations, owned_mb if measured is not None else None
         ) + unit.model_headroom_mb * len(unit.gpu_indices)
+
+    def _episode_credits(self, unit, now, index=None):
+        """Only live episode leases may use credits paired with a fresh device observation."""
+        if self._measured_gpu_mb(unit, now) is None:
+            return {}
+        owned = self._episode_owned.get(unit.node_ip, {})
+        return {
+            lease.lease_id: (
+                sum(owned.get(lease.lease_id, {}).get(i, 0.0) for i in unit.gpu_indices)
+                if index is None
+                else owned.get(lease.lease_id, {}).get(index, 0.0)
+            )
+            for lease in self._unit_leases(unit.unit_id)
+            if lease.demand.needs_gpu
+            and lease.gpu_active
+            and lease.gpu_reservation == "episode"
+            and not lease.gpu_lending
+        }
 
     def _could_ever_fit(self, unit: EnvUnit, demand: EnvDemand) -> bool:
         """Whether the demand fits an empty unit. If not, waiting would be forever."""
@@ -450,13 +490,18 @@ class EnvUnitLedger:
         reading = self._measured.get(unit.node_ip)
         if unit.rollout_replica_rank is None and reading and now - reading[0] <= self._measurement_ttl_s:
             measured = reading[1]
-        reservations = [
-            lease.demand.device_memory(unit)
+        reservations = {
+            lease.lease_id: lease.demand.device_memory(unit)
             for lease in self._unit_leases(unit.unit_id)
             if lease.demand.needs_gpu and lease.gpu_active
-        ]
+        }
         return tuple(
-            measured.get(index, 0.0) + sum(values[position] for values in reservations) + unit.model_headroom_mb
+            accounted_gpu_memory_mb(
+                measured.get(index, 0.0),
+                {lease_id: values[position] for lease_id, values in reservations.items()},
+                self._episode_credits(unit, now, index),
+            )
+            + unit.model_headroom_mb
             for position, index in enumerate(unit.gpu_indices)
         )
 

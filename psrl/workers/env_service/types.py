@@ -346,3 +346,6 @@ class UnitSnapshot:
     node_cpu_count: int | None = None
     resource_sample_age_s: float | None = None
     resource_error: str = "No physical resource sample received."
+    accounted_gpu_memory_mb: float | None = None
+    owned_gpu_memory_mb: float = 0.0
+    gpu_attribution_errors: dict[str, str] = field(default_factory=dict)

@@ -525,7 +525,21 @@ try:
                     readings = await service.prepare.remote(indices)
                     self._validate_device_budgets(units, readings)
                     if readings:
-                        self._ledger.report_measurement(node_ip, {i: r["used_mb"] for i, r in readings.items()})
+                        leases = [
+                            (lease.lease_id, lease.unit_id, lease.gpu_indices)
+                            for lease in self._ledger._leases.values()
+                            if lease.node_ip == node_ip
+                            and lease.gpu_indices
+                            and lease.gpu_reservation == "episode"
+                            and not lease.gpu_lending
+                        ]
+                        memory = await service.episode_gpu_memory_snapshot.remote(indices, leases)
+                        self._ledger.report_measurement(
+                            node_ip,
+                            {i: r["used_mb"] for i, r in memory["devices"].items()},
+                            owned_mb_by_device=memory["owned_mb_by_device"],
+                            attribution_errors=memory["attribution_errors"],
+                        )
                     pending = await service.cleanup.remote()
                     state.success(time.monotonic(), bool(pending))
             except Exception as exc:

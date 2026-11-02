@@ -165,3 +165,12 @@ def test_admission_rejects_ambiguous_container_ownership():
     task = SimpleNamespace(indices=(0,), check_identity_support=lambda: None, _owners=lambda pids: {42: (123, 0)})
     with pytest.raises(RuntimeError, match="overlaps"):
         read_command_memory(memory_probe(), {"a": task, "b": task}, (0,))
+
+
+def test_per_device_ownership_omits_devices_outside_the_lease():
+    task = SimpleNamespace(indices=(0,), check_identity_support=lambda: None, _owners=lambda pids: {42: (123, 0)})
+    readings = memory_probe().read_gpu_snapshot((0,))
+    readings[1] = {"uuid": "other", "used_mb": 0, "pids": [], "memory_mb_by_pid": {}}
+    probe = SimpleNamespace(read_gpu_snapshot=lambda indices: readings)
+    result = read_command_memory(probe, {"ours": task}, (0, 1))
+    assert result["owned_mb_by_device"] == {"ours": {0: 14}}, "Another unit's device is outside this lease."

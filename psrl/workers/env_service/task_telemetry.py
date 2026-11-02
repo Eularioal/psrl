@@ -48,6 +48,7 @@ def read_command_memory(probe, tasks, indices):
         claimed.update(stable)
         owners[lease_id] = stable
     credits = {lease_id: 0.0 for lease_id in owners}
+    per_device = {lease_id: {} for lease_id in owners}
     for index, reading in readings.items():
         if reading["uuid"] != initial[index]["uuid"]:
             raise RuntimeError("GPU identity changed during memory attribution.")
@@ -64,7 +65,9 @@ def read_command_memory(probe, tasks, indices):
             continue
         for lease_id, amount in amounts.items():
             credits[lease_id] += amount
-    return {"devices": readings, "owned_mb": credits, "attribution_errors": errors}
+            if index in eligible[lease_id].indices:
+                per_device[lease_id][index] = amount
+    return {"devices": readings, "owned_mb": credits, "owned_mb_by_device": per_device, "attribution_errors": errors}
 
 
 class TaskGpuTelemetry:

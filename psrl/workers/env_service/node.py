@@ -128,8 +128,36 @@ class EnvNodeService(GpuCommandNodeMixin, GpuLendingNodeMixin):
         """Serve observability independently of lease cleanup and device authorization."""
         return await read_node_resources(unit_ids, timeout_s=timeout_s)
 
+    async def episode_gpu_memory_snapshot(self, indices, leases):
+        """Keep unknown ownership charged while returning coherent episode memory credits."""
+        from psrl.workers.env_service.episode_memory import EpisodeMemory
+
+        if not leases:
+            if hasattr(self, "_episode_memory"):
+                await self._episode_memory.close()
+            return {
+                "devices": await self.gpu_lending_snapshot(indices),
+                "owned_mb_by_device": {},
+                "attribution_errors": {},
+            }
+        try:
+            identity = await self._gpu_identity()
+            await asyncio.to_thread(identity.check_support)
+        except (OSError, RuntimeError) as exc:
+            return {
+                "devices": await self.gpu_lending_snapshot(indices),
+                "owned_mb_by_device": {},
+                "attribution_errors": {"identity": str(exc)},
+            }
+        if not hasattr(self, "_episode_memory"):
+            self._episode_memory = EpisodeMemory(self._gpu_probe(), identity)
+        async with asyncio.timeout(10):
+            return await self._episode_memory.snapshot(indices, leases)
+
     async def close(self):
         """Stop background work before releasing this service's driver connection."""
+        if hasattr(self, "_episode_memory"):
+            await self._episode_memory.close()
         for unit_id, domain in list(self._mps_domains.items()):
             for lease_id in list(domain.leases):
                 await self.release_mps_lease(unit_id, lease_id)
