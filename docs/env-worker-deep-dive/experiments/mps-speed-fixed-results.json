@@ -1,0 +1,115 @@
+{
+  "provenance": {
+    "commit": "96acfcc66e807a5cdea56422e5ec91d0807bf1d4",
+    "scope": "Fresh plain then MPS pair, same two autoresearch workloads, 10 timed steps each, no profiler, no injected memory pressure."
+  },
+  "arms": {
+    "plain": {
+      "provenance": {
+        "image": "sha256:bef18de9837519ec14fb84d8abc89772bbd0b66c63a0c413f5c39c9f8e3cd9f0",
+        "workload_sha256": "2954175f4ac42ad65164aef40910ef953789abcd05a5cc886ac9ba5a00814414"
+      },
+      "scope": "Fixed autoresearch updates, not native LAPS or historical OFF.",
+      "arms": [
+        {
+          "mode": "plain",
+          "iteration": 0,
+          "passed": true,
+          "training_span_s": 22.49884605407715,
+          "training_seconds": [
+            22.49884605407715,
+            22.491973638534546
+          ],
+          "container_setup_s": 17.706636905670166,
+          "prepare_s": 90.12428832054138,
+          "wall_seconds": 133.1502184867859,
+          "peak_device_used_mb": 50310.625,
+          "missing_samples": 0,
+          "loss_after_10": [
+            5.840813636779785,
+            5.840777397155762
+          ],
+          "measured_steps": [
+            10,
+            10
+          ],
+          "profile_errors": [
+            null,
+            null
+          ],
+          "mps_clients_verified": false,
+          "job_states": [
+            "completed",
+            "completed"
+          ],
+          "job_errors": [
+            null,
+            null
+          ],
+          "physical_resources_empty": true,
+          "cleanup_verified": true
+        }
+      ],
+      "medians_of_complete_arms": {
+        "plain": 22.49884605407715
+      },
+      "failures": []
+    },
+    "mps": {
+      "provenance": {
+        "image": "sha256:bef18de9837519ec14fb84d8abc89772bbd0b66c63a0c413f5c39c9f8e3cd9f0",
+        "workload_sha256": "2954175f4ac42ad65164aef40910ef953789abcd05a5cc886ac9ba5a00814414"
+      },
+      "scope": "Fixed autoresearch updates, not native LAPS or historical OFF.",
+      "arms": [
+        {
+          "mode": "mps",
+          "iteration": 0,
+          "passed": true,
+          "training_span_s": 20.15985107421875,
+          "training_seconds": [
+            20.157855987548828,
+            20.158972024917603
+          ],
+          "container_setup_s": 19.79892373085022,
+          "prepare_s": 92.58976554870605,
+          "wall_seconds": 136.0099437236786,
+          "peak_device_used_mb": 50364.0,
+          "missing_samples": 0,
+          "loss_after_10": [
+            5.840813636779785,
+            5.840756416320801
+          ],
+          "measured_steps": [
+            10,
+            10
+          ],
+          "profile_errors": [
+            null,
+            null
+          ],
+          "mps_clients_verified": true,
+          "job_states": [
+            "completed",
+            "completed"
+          ],
+          "job_errors": [
+            null,
+            null
+          ],
+          "physical_resources_empty": true,
+          "cleanup_verified": true
+        }
+      ],
+      "medians_of_complete_arms": {
+        "mps": 20.15985107421875
+      },
+      "failures": []
+    }
+  },
+  "comparison": {
+    "training_time_reduction": 0.10396066421524475,
+    "training_throughput_ratio": 1.1160224334618027,
+    "wall_time_change": 0.02147743555656656
+  }
+}
