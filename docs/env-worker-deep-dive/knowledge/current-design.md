@@ -98,7 +98,7 @@ GiB 是显存容量单位，1 GiB 等于 1024 MiB。unit 配额是调度容量�
 | 下一条命令能否自动换卡或跨节点迁移 | 租约仍绑定 unit，两层租约和动态放置是提案 | [动态放置提案](dynamic-command-placement.md) |
 | 等待模型时能否自动卸载任意 GPU 状态 | 未完成通用自动卸载与恢复，常驻模型需显式管理生命周期 | [接入 recipe](gpu-benchmark-recipes.md) |
 | 是否能使用模型 GPU | 有独立 GPU 优先与显式共享路径，需遵守共享配置和模型余量边界 | [vLLM 共享第 10 节](vllm-env-opportunistic-sharing.md#10-常驻共享kv-上限与已睡眠窗口) |
-| RE-Bench 训练任务是否接入原生 Env | 已有任务、独立 verifier、裁判请求桥接和 PSRL 接线。正式偏好训练评分仍需 Replicate 凭据，不等于自动卸载已完成 | [RE-Bench recipe](re-bench-recipe.md) |
+| RE-Bench 训练任务是否接入原生 Env | 已有任务、独立 verifier、裁判请求桥接和 PSRL 接线。正式偏好训练评分仍需 Replicate 凭据。训练命令内部等待不会触发 command 归还，也不表示任务只能使用 episode，自动卸载仍未实现 | [RE-Bench recipe](re-bench-recipe.md) |
 | 失败是否等于没有恢复能力 | 已有重试、补采与监督，不等于原请求能自动迁移到另一 worker | [重试与重派发](worker-retry-and-redispatch.md) |
 | MPS 控制通道收尾错误是否已修复 | 已按服务串行管理连接，原失败训练组定向复测通过，长期稳定性未验收 | [故障定位与修复](../experiments/mps-training-comparison.md#6-控制通道故障定位与修复) |
 | 功能通过是否代表训练更快 | 不能，性能结论需匹配版本、工作量和计时边界 | [实验索引](../experiments/README.md) |

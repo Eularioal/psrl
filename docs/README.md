@@ -52,7 +52,7 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 - [GPU benchmark README 导览](env-worker-deep-dive/experiments/gpu-benchmarks/README.md)：现有任务与图中六项 high GPU 候选的目标、评分和 command 适用性，区分常驻服务、后训练与外部裁判等待。
 - [InferenceBench 评分与 ON/OFF 边界](env-worker-deep-dive/knowledge/inferencebench-scoring.md)：延迟和吞吐公式、相对质量门槛、PSRL 裁判检查，以及常驻功能实验与卸载恢复的区别，配套 CPU 演示。
 - [GPU benchmark 接入 recipe](env-worker-deep-dive/knowledge/gpu-benchmark-recipes.md)：官方资产、Env 与 PSRL 接入，以及 command、episode、常驻服务卸载与恢复的边界。
-- [RE-Bench 原生 Env 与 PSRL 接入](env-worker-deep-dive/knowledge/re-bench-recipe.md)：GPT-2 XL 聊天训练、真实 Alpaca 划分、宿主裁判请求桥接、独立评分和无裁判 CUDA smoke 的边界。
+- [RE-Bench 原生 Env 与 PSRL 接入](env-worker-deep-dive/knowledge/re-bench-recipe.md)：GPT-2 XL 聊天训练、真实 Alpaca 划分、宿主裁判请求桥接、独立评分、command/episode 边界，以及卸载成本教学与相关研究。
 - [GPU benchmark 接入验证](env-worker-deep-dive/experiments/gpu-benchmarks/FINDINGS.md)：KernelBench、autoresearch、RE-Bench 真实资产 CUDA 验证与 InferenceBench 常驻 ON/OFF，分别记录完整评分缺口和资源回收。
 
 **了解现状先读[当前设计](env-worker-deep-dive/knowledge/current-design.md)**：结构图、模式区别、源码路径、能力与验证边界。[知识分类索引](env-worker-deep-dive/knowledge/README.md)按机制、接入、基础知识、提案和历史实现组织阅读。
