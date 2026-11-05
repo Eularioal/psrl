@@ -50,7 +50,7 @@ def main():
         shutil.copyfile(upstream / name, reference / name)
     package = context / "rebench"
     package.mkdir()
-    for name in ("replicate.py", "strict_evaluation.py", "smoke.py", "verify.py"):
+    for name in ("replicate.py", "strict_evaluation.py", "smoke.py", "feedback_smoke.py", "verify.py"):
         shutil.copyfile(Path(__file__).with_name(name), package / name)
     for name in ("evaluation.py", "score.py", "padding_text.txt"):
         target = "evaluation_official.py" if name == "evaluation.py" else name

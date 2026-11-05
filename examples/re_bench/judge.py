@@ -26,7 +26,7 @@ def validate_request(payload):
     return inputs
 
 
-def validate_ranking(output):
+def validate_ranking(output, *, normalize_local=False):
     try:
         ranking = json.loads(output)
     except json.JSONDecodeError:
@@ -34,6 +34,10 @@ def validate_ranking(output):
         if match is None:
             raise ValueError("Judge did not return a ranking.") from None
         ranking = json.loads(match.group())
+    if normalize_local and isinstance(ranking, list):
+        for item in ranking:
+            if isinstance(item, dict) and item.get("rank") in ("1", "2"):
+                item["rank"] = int(item["rank"])
     if (
         not isinstance(ranking, list)
         or len(ranking) != 2
@@ -42,7 +46,7 @@ def validate_ranking(output):
         or {item.get("rank") for item in ranking} != {1, 2}
     ):
         raise ValueError("Judge returned an invalid ranking.")
-    return output
+    return json.dumps(ranking) if normalize_local else output
 
 
 def call_judge(inputs, token, timeout):
@@ -80,10 +84,54 @@ def call_judge(inputs, token, timeout):
     return validate_ranking(output)
 
 
-def serve(root, token, max_calls, timeout, workers, stop):
+def call_local_judge(inputs, base_url, model, timeout):
+    """Run the same pairwise prompt through a dedicated Qwen chat endpoint."""
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": inputs["system_prompt"]},
+            {"role": "user", "content": inputs["prompt"]},
+        ],
+        "temperature": inputs["temperature"],
+        "max_tokens": inputs["max_tokens"],
+        "chat_template_kwargs": {"enable_thinking": False},
+    }
+    req = urllib.request.Request(
+        base_url.rstrip("/") + "/chat/completions",
+        data=json.dumps(payload).encode(),
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as response:
+        result = json.load(response)
+    if result.get("model") != model:
+        raise ValueError("Local judge returned a different model identity.")
+    choice = result["choices"][0]
+    if choice.get("finish_reason") != "stop":
+        raise ValueError("Local judge response did not finish normally.")
+    return validate_ranking(choice["message"]["content"], normalize_local=True)
+
+
+def check_local_endpoints(urls, model):
+    """Check dedicated endpoints before admitting the task to a GPU."""
+    from urllib.parse import urlsplit
+
+    if not urls or not model:
+        raise ValueError("Local judging requires endpoints and a model identity.")
+    for url in urls:
+        parsed = urlsplit(url)
+        if parsed.scheme not in ("http", "https") or not parsed.netloc or parsed.query or parsed.fragment:
+            raise ValueError("Use a complete local judge base URL without a query or fragment.")
+        with urllib.request.urlopen(url.rstrip("/") + "/models", timeout=10) as response:
+            models = json.load(response)
+        if model not in {item["id"] for item in models["data"]}:
+            raise ValueError("Requested local judge model is not served by this endpoint.")
+
+
+def serve(root, token, max_calls, timeout, workers, stop, *, local_urls=(), local_model=None):
     root = root.resolve()
     seen = set()
     pending = {}
+    request_started = {}
     counters = {"submitted": 0, "succeeded": 0, "failed": 0}
 
     def respond(path, result):
@@ -110,6 +158,18 @@ def serve(root, token, max_calls, timeout, workers, stop):
                     result = {"error": type(exc).__name__ + ": " + str(exc)}
                     counters["failed"] += 1
                 respond(path, result)
+                with (root / "judge-events.jsonl").open("a") as stream:
+                    stream.write(
+                        json.dumps(
+                            {
+                                "request": str(path.relative_to(root)),
+                                "elapsed_s": time.monotonic() - request_started.pop(path),
+                                "success": "output" in result,
+                                "model": local_model or MODEL,
+                            }
+                        )
+                        + "\n"
+                    )
             if not stop.is_set():
                 for path in root.glob("**/rebench-judge/requests/*.json"):
                     if path in seen or len(pending) >= workers:
@@ -126,7 +186,13 @@ def serve(root, token, max_calls, timeout, workers, stop):
                         if counters["submitted"] >= max_calls:
                             raise RuntimeError("The run exhausted its judge request budget.")
                         counters["submitted"] += 1
-                        pending[pool.submit(call_judge, inputs, token, timeout)] = path
+                        if local_urls:
+                            url = local_urls[(counters["submitted"] - 1) % len(local_urls)]
+                            future = pool.submit(call_local_judge, inputs, url, local_model, timeout)
+                        else:
+                            future = pool.submit(call_judge, inputs, token, timeout)
+                        request_started[path] = time.monotonic()
+                        pending[future] = path
                     except Exception as exc:
                         counters["failed"] += 1
                         respond(path, {"error": str(exc)})
@@ -139,13 +205,17 @@ def main():
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--jobs-dir", type=Path, required=True)
+    parser.add_argument("--local-urls", nargs="+", default=[])
+    parser.add_argument("--local-model")
     parser.add_argument("--duration", type=float, default=3600)
     parser.add_argument("--max-calls", type=int, default=2048)
     parser.add_argument("--request-timeout", type=float, default=120)
     parser.add_argument("--workers", type=int, default=20)
     args = parser.parse_args()
     token = os.environ.get("REPLICATE_API_TOKEN")
-    if not token:
+    if args.local_urls:
+        check_local_endpoints(args.local_urls, args.local_model)
+    elif not token:
         parser.error("Configure REPLICATE_API_TOKEN in the host environment.")
     if min(args.duration, args.max_calls, args.request_timeout, args.workers) <= 0:
         parser.error("All budgets must be positive.")
@@ -153,7 +223,20 @@ def main():
     timer = threading.Timer(args.duration, stop.set)
     timer.start()
     try:
-        print(json.dumps(serve(args.jobs_dir, token, args.max_calls, args.request_timeout, args.workers, stop)))
+        print(
+            json.dumps(
+                serve(
+                    args.jobs_dir,
+                    token,
+                    args.max_calls,
+                    args.request_timeout,
+                    args.workers,
+                    stop,
+                    local_urls=args.local_urls,
+                    local_model=args.local_model,
+                )
+            )
+        )
     finally:
         stop.set()
         timer.cancel()

@@ -11,6 +11,10 @@ def compute_score(data_source, solution_str, ground_truth, extra_info, **kwargs)
         raise ValueError("Benchmark reward must be finite.")
     if data_source == "re_bench" and (metrics.get("official_evaluation") != 1 or metrics.get("judge_valid") != 1):
         score = 0.0
+    if data_source == "re_bench_local" and (
+        metrics.get("local_evaluation") != 1 or metrics.get("judge_valid") != 1 or metrics.get("eval_valid") != 1
+    ):
+        score = 0.0
     if data_source == "re_bench_smoke":
         score = 0.0
     if data_source == "inference_bench" and (

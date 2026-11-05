@@ -1,0 +1,90 @@
+{
+  "date": "2026-11-04",
+  "base_commit": "cd09114",
+  "profile": "native Env episode with a dedicated local Qwen3-8B judge GPU",
+  "passed": true,
+  "driver_elapsed_s": 92.26899909973145,
+  "judge": {
+    "submitted": 6,
+    "succeeded": 6,
+    "failed": 0,
+    "backend": "local",
+    "model": "rebench-qwen3-8b"
+  },
+  "feedback": {
+    "training_iterations": 1,
+    "optimizer_steps": 1,
+    "judge_waits": [
+      {
+        "elapsed_s": 0.8237817231565714,
+        "allocated_before": 6456532480,
+        "allocated_after": 6456532480,
+        "preferences": [
+          true,
+          false
+        ]
+      }
+    ],
+    "elapsed_s": 27.517043875530362
+  },
+  "partial_evaluation": {
+    "score": 0.75,
+    "message": {
+      "score_time": 14.300906896591187,
+      "win_vs_gpt2-xl": 1.0,
+      "win_vs_gpt2-alpaca": 0.5
+    },
+    "judge": {
+      "backend": "local",
+      "model": "rebench-qwen3-8b"
+    },
+    "evaluated_prompts": 2
+  },
+  "rewards": {
+    "reward": 0.0,
+    "official_evaluation": 0,
+    "local_evaluation": 0,
+    "judge_valid": 1,
+    "eval_valid": 0,
+    "feedback_smoke_valid": 1
+  },
+  "task_gpu": {
+    "name": "NVIDIA H20",
+    "index": 6
+  },
+  "judge_gpu": {
+    "name": "NVIDIA H20",
+    "index": 7,
+    "resident_mb_at_ready": 44361.0625
+  },
+  "cleanup": {
+    "task_containers_remaining": false,
+    "task_gpu_processes": 0,
+    "judge_endpoint_stopped": true,
+    "judge_gpu_processes": 0
+  },
+  "limitations": [
+    "Two hidden prompts only, not the complete 512-prompt benchmark.",
+    "One judge replica tested, not a multi-endpoint throughput test.",
+    "No PSRL policy training, command comparison, or offload benefit test."
+  ],
+  "source_sha256": {
+    "examples/re_bench/__init__.py": "11b1972918db2ab70e34b0dafcaf02784dd78290a455593cb4a9c738a8068d62",
+    "examples/re_bench/download.py": "cb309214ef3919522811c84ddea580f55d98780e5a406a44f36e911130953bba",
+    "examples/re_bench/feedback_smoke.py": "57045209cb93c872e38fbc8cfbe00ce0376b1df93460a3429dbeb8583301bb54",
+    "examples/re_bench/image.py": "5784fbc29e1cbcd503b7273ad768c406313a64e7f619ac4816e91f2860744778",
+    "examples/re_bench/judge.py": "f8278e1c5dc06d526617ff2d8b9a50cad86dba13d273dcd7f5ff5787fcd85c60",
+    "examples/re_bench/prepare.py": "c2d6a576d5d5209bee7483bba30ed51ae32f8df9d5a2f8450b1938b33acf6940",
+    "examples/re_bench/replicate.py": "73b9b534aa3dd86589a674aec2e8c373596255df690dc264d335534d727bc901",
+    "examples/re_bench/run.py": "24c8cdba6eeb4cfa2825ad7fa68d55e86da1ef35537f5867ba695254de657858",
+    "examples/re_bench/smoke.py": "98218cd6848c820d4d0dd02842e8f20364374856c958e7578652c89c48969071",
+    "examples/re_bench/strict_evaluation.py": "591259641f98ac1c6b6a584a93f54b0f9c92983eeaf9caa9717625db1333e7a9",
+    "examples/re_bench/verify.py": "10add54068e057d1e85aa99b6aa5037582f2882a7dbbf2e8fd195771d11c6611"
+  },
+  "validation": {
+    "cpu_tests_passed": 30,
+    "scoped_lint": "passed",
+    "local_document_links": 382,
+    "full_pre_commit": "failed on unrelated pre-existing style issues"
+  }
+}

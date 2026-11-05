@@ -8,6 +8,10 @@ from examples.gpu_benchmarks.prepare import provenance, write_dataset
 
 
 def prepare(args):
+    local_model = args.local_judge_model
+    feedback_smoke = args.feedback_smoke
+    if feedback_smoke and (not local_model or args.smoke):
+        raise ValueError("Feedback smoke requires a local judge and cannot use CUDA-only smoke.")
     record = provenance(args.repo)
     assets = json.loads((args.assets / "assets.json").read_text())
     if assets["heldout_prompts"] != 512 or assets["model"] != "gpt2-xl":
@@ -40,13 +44,16 @@ def prepare(args):
             "It tests generation and one prompt-language-modeling optimizer step, without a preference judge. "
             "This is an integration check, not the official RL task or a benchmark score."
         )
+    if local_model:
+        instruction = instruction.replace("official Llama-3-8B judge", f"local {local_model} judge")
     (out / "instruction.md").write_text(instruction + "\n")
-    mode = "smoke" if args.smoke else "official-evaluation"
+    mode = "smoke" if args.smoke else ("feedback-smoke" if feedback_smoke else "official-evaluation")
     record.update(
         benchmark="re_bench",
         task="ai_rd_nanogpt_chat_rl/main",
         assets=assets,
         mode=mode,
+        judge={"backend": "local" if local_model else "replicate", "model": local_model},
         environment_backend="env_worker",
         resource_profile="Single GPU adaptation. Upstream declares two H100 GPUs.",
         scoring="Final submission only. Official mean win-rate formula.",
@@ -56,6 +63,8 @@ def prepare(args):
     (out / "tests/test.sh").write_text("#!/bin/bash\nset -euo pipefail\npython /opt/rebench/verify.py\n")
     (out / "tests/test.sh").chmod(0o755)
     command = "python /opt/rebench/smoke.py" if args.smoke else "cd /home/agent/solution && python rl_finetune.py"
+    if feedback_smoke:
+        command = "python /opt/rebench/feedback_smoke.py"
     (out / "solution/solve.sh").write_text(
         "#!/bin/bash\nset -euo pipefail\n"
         f"bash -c {json.dumps(command)}\n"
@@ -70,11 +79,14 @@ def prepare(args):
         f"timeout_sec = {args.timeout}\n[verifier]\ntimeout_sec = {args.timeout}\n"
         'environment_mode = "separate"\n[verifier.env]\n'
         f"REBENCH_MODE = {json.dumps(mode)}\nREBENCH_EVAL_TIMEOUT = {json.dumps(str(args.timeout))}\n"
+        f"REBENCH_JUDGE_BACKEND = {json.dumps('local' if local_model else 'replicate')}\n"
+        f"REBENCH_JUDGE_MODEL = {json.dumps(local_model or 'meta/meta-llama-3-8b-instruct')}\n"
         "[verifier.environment]\n"
         f"docker_image = {json.dumps(verifier_image)}\ncpus = 4\nmemory_mb = 65536\n"
         f'gpus = {0 if args.smoke else 1}\nnetwork_mode = "no-network"\n'
     )
-    write_dataset(out, "re_bench_smoke" if args.smoke else "re_bench", args.gpu_memory_mb)
+    source = "re_bench_smoke" if args.smoke or feedback_smoke else ("re_bench_local" if local_model else "re_bench")
+    write_dataset(out, source, args.gpu_memory_mb)
     return out
 
 
@@ -87,6 +99,8 @@ def main():
     parser.add_argument("--verifier-image", required=True)
     parser.add_argument("--timeout", type=int, default=900)
     parser.add_argument("--gpu-memory-mb", type=int, default=49152)
+    parser.add_argument("--local-judge-model")
+    parser.add_argument("--feedback-smoke", action="store_true")
     parser.add_argument("--smoke", action="store_true")
     print(prepare(parser.parse_args()))
 

@@ -1,6 +1,6 @@
 # RE-Bench 聊天模型训练的原生 Env 与 PSRL 接入
 
-> **核心结论**：`examples/re_bench/` 接入 `ai_rd_nanogpt_chat_rl/main`，使用真实 GPT-2 XL 和官方 Alpaca 划分，复用 EnvRouter、原生 EnvWorker、Harbor 和 PSRL 会话奖励链。模型在生成、裁判反馈、训练之间可持续驻留。正式评分需要宿主侧 `REPLICATE_API_TOKEN`，缺失时在启动 GPU 前拒绝正式任务。无凭据的 CUDA smoke 是单独的验证模式，永远不产生训练奖励。
+> **核心结论**：`examples/re_bench/` 接入 `ai_rd_nanogpt_chat_rl/main`，使用真实 GPT-2 XL 和官方 Alpaca 划分，复用 EnvRouter、原生 EnvWorker、Harbor 和 PSRL 会话奖励链。模型在生成、裁判反馈、训练之间可持续驻留。当前 Replicate 适配的正式评分需要宿主侧 `REPLICATE_API_TOKEN`，缺失时在启动 GPU 前拒绝正式任务。已支持独立卡上的本地 Qwen 裁判及多端点分发，不需要 Replicate 凭据。无凭据的 CUDA smoke 是单独的验证模式，永远不产生训练奖励。
 >
 > 核对范围为 2026-11-02，PSRL 基准提交 `affe7c2` 加本次未提交接入代码。RE-Bench 固定为 `a0cc6d4a91b20f84ebef505d5c72358f88b3b389`。这是本地适配，不等于原版两张 H100、完整研究时长和中间评分协议的复现。实机结果与未验证项见 [FINDINGS](../experiments/gpu-benchmarks/FINDINGS.md#re-bench-原生接入验证)。
 
@@ -16,6 +16,8 @@
 - [卸载成本与一个可运行例子](#卸载成本与一个可运行例子)
 - [已有研究与工程机制](#已有研究与工程机制)
 - [对 Env 的研究价值与验证边界](#对-env-的研究价值与验证边界)
+- [本地裁判与 command 空窗的权衡](#本地裁判与-command-空窗的权衡)
+- [部署独立 Qwen 裁判并运行](#部署独立-qwen-裁判并运行)
 
 ## 任务和执行路径
 
@@ -42,8 +44,8 @@ agent 要把 GPT-2 XL 训练成更好的聊天模型。可用数据只有提示�
 | 1 | [prepare](../../../examples/re_bench/prepare.py#L10) 生成无 Compose 的原生任务，调用公共 `write_dataset` |
 | 2 | [run](../../../examples/re_bench/run.py#L13) 管理单次验证与裁判生命周期，PSRL 使用 [GpuBenchmarkAgentLoop](../../../examples/gpu_benchmarks/agent_loop.py#L14) |
 | 3 | 起始训练代码来自固定上游，执行器使用当前 [原生 EnvWorker](../../../psrl/workers/env_worker/harbor.py#L146) |
-| 3 ↔ 4 | [async_run](../../../examples/re_bench/replicate.py#L14) 通过挂载的 artifacts 交换请求与响应，[serve](../../../examples/re_bench/judge.py#L83) 限制并发、调用数和超时 |
-| 4 | [call_judge](../../../examples/re_bench/judge.py#L48) 只调用固定官方模型，凭据不进入镜像或任务配置 |
+| 3 ↔ 4 | [async_run](../../../examples/re_bench/replicate.py#L14) 通过挂载的 artifacts 交换请求与响应，[serve](../../../examples/re_bench/judge.py#L130) 限制并发、调用数和超时 |
+| 4 | [call_judge](../../../examples/re_bench/judge.py#L52) 只调用固定官方模型，凭据不进入镜像或任务配置 |
 | 5、6 | [verify.main](../../../examples/re_bench/verify.py#L12) 调用原始评分函数，[compute_score](../../../examples/gpu_benchmarks/reward.py#L6) 拒绝无效评分与 smoke 奖励 |
 
 跟着图读源码：先看 1 的任务资源和数据标识，再看 2 如何复用公共 runner。3 中 GPU 训练进程与 4 的宿主线程同时存在，文件请求不代表进程退出或显存归还。5 使用另一套镜像，只有它含隐藏提示及参考回答。6 的奖励传给现有 PSRL 会话，容器清理仍由公共 runner 的 `finally` 负责。若这些代码有不清楚的地方，可以随时按编号追问。
@@ -90,7 +92,7 @@ python -m examples.re_bench.run --task "$TASK_DIR" --output "$RUN_DIR" \
   --node-ip "$NODE_IP" --gpu "$GPU_INDEX" --gpu-memory-mb 49152 --timeout 2400
 ```
 
-正式模式先检查宿主环境的 `REPLICATE_API_TOKEN`，不将凭据写进任务、镜像或 Parquet。裁判只能使用指定模型和原版采样参数，默认最多 2048 次请求、20 路并发、单次 120 秒。不使用其他免费模型伪装官方裁判，也不将网络失败填成合法评分。这里默认 oracle 执行官方起始训练脚本，验证链路时可用，不能当作语言模型 agent 已学会优化方案。
+Replicate 模式先检查宿主环境的 `REPLICATE_API_TOKEN`，不将凭据写进任务、镜像或 Parquet。裁判只能使用指定模型和原版采样参数，默认最多 2048 次请求、20 路并发、单次 120 秒。不使用其他免费模型伪装官方裁判，也不将网络失败填成合法评分。这里默认 oracle 执行官方起始训练脚本，验证链路时可用，不能当作语言模型 agent 已学会优化方案。
 
 没有裁判凭据时，给准备命令增加 `--smoke`，使用另一组全新 `TASK_DIR` 和 `RUN_DIR`。smoke 用真实模型与两条公开提示生成文本，再对公开提示 token 做一次语言模型 CUDA 更新。它不生成假偏好，不执行完整 RL 反馈，不保存官方 benchmark 成绩。`smoke_valid=1` 只标记功能检查，`reward` 固定为 0。
 
@@ -129,7 +131,7 @@ PYTHONPATH=. python -m pytest tests/examples/gpu_benchmarks/test_re_bench.py \
   tests/examples/gpu_benchmarks/test_recipes.py -q
 ```
 
-真实验证只要求单次任务执行、独立 verifier、Env 记账和物理清理的必要证据。数据和模型下载不占 GPU，正式模式缺凭据时在 GPU 启动前停止。smoke 完成后不增加训练步数追求效果，也不据此声称已验证外部裁判等待时的 GPU 借还收益。失败日志和资源清理结果见 [接入验证记录](../experiments/gpu-benchmarks/FINDINGS.md#re-bench-原生接入验证)。
+真实验证只要求单次任务执行、独立 verifier、Env 记账和物理清理的必要证据。数据和模型下载不占 GPU，Replicate 模式缺凭据时在 GPU 启动前停止，本地模式先检查服务与模型身份。smoke 完成后不增加训练步数追求效果，也不据此声称已验证外部裁判等待时的 GPU 借还收益。失败日志和资源清理结果见 [接入验证记录](../experiments/gpu-benchmarks/FINDINGS.md#re-bench-原生接入验证)。
 
 ## API token 与命令边界
 
@@ -143,7 +145,7 @@ PYTHONPATH=. python -m pytest tests/examples/gpu_benchmarks/test_re_bench.py \
 
 | 步骤与图中编号 | 输入、状态变化与源码 |
 |---|---|
-| 入口 2 | [run:22](../../../examples/re_bench/run.py#L22) 检查宿主凭据，缺失时正式模式在 GPU 启动前退出 |
+| 入口 2 | [run:22](../../../examples/re_bench/run.py#L22) 检查宿主凭据，Replicate 凭据缺失或本地服务检查失败时，在 GPU 启动前退出 |
 | 训练 3 | 固定上游 [main:51](https://github.com/METR/RE-Bench/blob/a0cc6d4a91b20f84ebef505d5c72358f88b3b389/ai_rd_nanogpt_chat_rl/assets/solution/rl_finetune.py#L51) 初始化 CUDA 模型和 Adam，在同一 Python 进程循环生成、等待、训练 |
 | 并发 3 ↔ 4 | [async_run:23](../../../examples/re_bench/replicate.py#L23) 写文件并异步等待宿主结果，等待不是退出进程，也不是卸载模型 |
 | 资源 2 | [EpisodeGpuReservation:9](../../../psrl/workers/env_service/gpu_execution.py#L9) 命令结束不归还会话预算，[CommandGpuReservation:34](../../../psrl/workers/env_service/gpu_execution.py#L34) 每次调用申请，在结束后请求物理归还确认 |
@@ -215,4 +217,120 @@ KV cache 是推理时缓存历史 token 的注意力键值，丢弃后可能需�
 
 值得比较的策略是常驻、每次等待卸载、阈值决策，以及在条件允许时只清临时缓存或部分卸载。指标应包括全部任务完成时间、单任务尾部延迟、有效 GPU 工作量、搬运量、CPU 内存、失败与恢复正确性，而非只看显存读数降低。若做 EnvRouter ON/OFF，还须沿用用户指定的固定提交 baseline，不能拿当前关闭开关替代。
 
-当前已验证的是原生 Env 的真实模型 CUDA smoke，完整外部偏好训练仍待凭据，因此尚无该任务的真实等待分布或 offload 收益证据。本次仅运行上述 CPU 教学模拟，没有追加 GPU 实验。研究优先级建议先测真实阶段时间和可释放状态，再决定是否需要协作式安全点或透明进程检查点，不能为了显示优势人工延长裁判等待并当作真实结果。
+原始 CUDA smoke 与本地 Qwen 反馈验证分别记录在 FINDINGS。本地反馈已能绕过 Replicate 凭据，完整 512 条评分和 offload 收益仍未验证。一次等待观测不等于等待分布。研究优先级建议先测真实阶段时间和可释放状态，再决定是否需要协作式安全点或透明进程检查点，不能为了显示优势人工延长裁判等待并当作真实结果。
+
+## 本地裁判与 command 空窗的权衡
+
+本节于 2026-11-04 对照 `cd09114` 的裁判与 direct command 源码核对。本地裁判实现与有界实机验证已补充到下节，其余调度选择仍是分析。工作区同期其他文档改动保持原样。
+
+**可以本地运行裁判，不必从任务机制上依赖 Replicate。** Llama 是模型，Replicate 是当前使用的托管服务。Meta 的 [Llama-3-8B-Instruct 模型卡](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct)提供本地运行方式，首次获取该权重需要相应访问授权。本地已有合法可用权重后，推理不需要 Replicate token。也可以用其他本地指令模型作为裁判，但应将它标识为不同评测配置，因为偏好反馈和任务训练轨迹都会改变。
+
+对框架内部调度研究，可以固定本地裁判、提示模板、参数、参考回答和数据划分，在两组实验中一致使用，无需以复现云服务成绩为目标。相同模型名也不保证与托管服务逐条一致，还受权重版本、精度、模板及推理实现影响。比较时记录模型 revision、精度、输出排序规则、解析失败率和裁判延迟。若希望固定真实工作量，可记录真实裁判结果并做配对回放，但回放不能声称测量了在线裁判排队。
+
+这里有两条路径，不应混写为已经实现：
+
+```text
+现有裁判路径
+[J1] 官方评价提示与两份回答
+  → [J2] 容器文件请求 → 宿主 judge.call_judge → Replicate
+  → JSON 排名 → 原评价函数解释偏好 → 继续训练/最终评分
+已接入的本地替换
+[J1] 相同评价输入
+  → [J2] 相同文件请求 → 宿主本地推理适配器 → 独立本地裁判服务
+  → 同样的排名校验 → 偏好结果，并记录 local 裁判来源
+
+当前 direct command 资源流程
+[G1] A 的 GPU 命令结束 → 输出可用，A 开始规划/CPU 工具等待
+  → [G2] 节点撤权，确认无所属 GPU 句柄/计算进程 → 账本归还
+  → [G3] 排队 B 获准 → 授权 → 启动与计算 → 物理归还
+[G4] A 下一条命令准备完成 → 同一 unit 重新排队 → 获准运行
+  → [G5] 最终会话结束，清理容器与租约
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 节点 | 实际函数和边界 |
+|---|---|
+| J1 | 固定上游 [EvaluatorConfig](../../../../benchmark-sources/RE-Bench/ai_rd_nanogpt_chat_rl/assets/evaluation.py#L21) 定义模板，`_evaluate_prompt` 解析排名，`evaluate` 随机交换回答顺序 |
+| J2 | [call_judge](../../../examples/re_bench/judge.py#L52) 保留 Replicate 分支，新增 `call_local_judge` 本地服务适配器。[run:22](../../../examples/re_bench/run.py#L22) 按裁判配置检查 token 或本地服务 |
+| J2 结果 | [validate_ranking](../../../examples/re_bench/judge.py#L29) 校验输出，[verify.main](../../../examples/re_bench/verify.py#L12) 将完整本地评分与原服务评分分别标记，小样本验证不产生训练奖励 |
+| G1 | [GpuExecutionBackend.execute](../../../psrl/workers/env_service/gpu_execution.py#L102) 记录命令完成与归还阶段 |
+| G2 | [CommandGpuReservation.finish](../../../psrl/workers/env_service/gpu_execution.py#L54) 支持 `overlap_return`，[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L207) 检查实际归还 |
+| G3、G4 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L58) 以 lease.unit_id 排队，按 FIFO 和预算准入，不根据未来空窗预测选作业 |
+| G5 | [EnvRouterCore.release](../../../psrl/workers/env_service/router.py#L241) 处理会话释放 |
+
+跟着图读源码：J1 在任务进程中构造输入，J2 的宿主桥接与任务异步并行，结果返回后恢复训练。G1 输出可用与 G2 物理归还是不同事件，只有显式启用异步归还时，调用方的规划才可以提前与归还检查重叠。G3 仍必须等到实际预算可用。G4 的准备时间不保证晚于 G3 完成，若不足以共存，A 会排队。G5 是最终清理，不能在 G1 就认为会话被销毁。这些代码可以按节点继续追问。
+
+本地裁判优先部署在另一张独立 GPU，避免把“外部等待”误当成本机无成本。训练 A 若持有整份所需预算，同时等待必须获得同一份预算的裁判 J，J 又只能等 A 释放，就形成循环等待。即使显存足够同时驻留，也要统计裁判计算争用。另卡裁判的设备、利用率和 GPU 时间也应纳入总资源报告，两组配置保持相同。
+
+**command 模式完全可以研究 agent 工具等待。** 这里指 A 的命令已结束，A 在生成下一条操作、处理 CPU 数据或等待不占该 GPU 的工具，其间 B 使用已归还的资源。单条长命令内部的 `await evaluate` 仍不可见，RE-Bench 当前公共 recipe 也没有因此变成已验证 command 模式。command 的基础收益是释放任务间空窗，episode 内卸载则要额外解决存活状态搬运。
+
+**判断收益不能只看交接开销 H 是否大于 B 的计算时间 C。** 一个简单模型是：A 从当前到下一次需要 GPU 的时间为 W，B 进入运行前的交接及启动成本为 H入，B 运行 C，结束后的交接成本为 H出。假设同卡无法并行、B 不可抢占，双方共有的 A 启动成本从比较中去掉，若
+
+`H入 + C + H出 <= W`
+
+则 B 能完整塞进空窗而不推迟 A。否则 A 的额外等待在此模型中为 `max(0, H入 + C + H出 - W)`。这是时间线的简化条件，不是全系统吞吐最优策略。真正的等待应从决策时刻计算剩余值，不能使用已经消耗的整段等待。
+
+| 教学假设 | W | H入 | C | H出 | B 完成 | A 额外等待 | 结论 |
+|---|---|---|---|---|---|---|---|
+| 开销大于短任务 | 20 秒 | 2 秒 | 1 秒 | 1 秒 | 3 秒 | 0 | H=3 大于 C=1，仍能利用空窗提前完成 B |
+| 开销很小但任务太长 | 1 秒 | 0.05 秒 | 10 秒 | 0.05 秒 | 10.05 秒 | 9.1 秒 | H 远小于 C，仍可能严重拖慢 A |
+| 高频微小任务 | 0.2 秒 | 0.5 秒 | 0.2 秒 | 0.5 秒 | 0.7 秒 | 1 秒 | 不宜把每个很小的计算都作为一次重交接 |
+
+所有数字是教学假设。第二行不自动说明系统吞吐下降，它说明 A 的延迟变差，是否接受要取决于公平性、优先级与全体完成时间目标。第一行也不意味着开销值得忽略，它只是证明 H>C 不是否决条件。
+
+开销应拆成远程调用、准入排队、遥测与撤权确认、进程/CUDA 初始化、数据或模型加载。普通 command 完成后进程已经退出时，归还通常是验证与设备控制，不应把它叫作把活模型 offload。若两种策略都要重启相同的命令，就不能把共同的模型加载时间全部归咎于 command 调度。能与规划重叠的部分只计关键路径，不能将所有阶段简单相加。
+
+当前已有命令输出、请求、准入及归还等时间记录，但它们不是精确 GPU kernel 计时，不能直接将差值称为纯 GPU 计算时间。应配合任务自身阶段打点，先找开销主因。普通 direct command 目前也不是全局跨卡调度，队列仍绑定会话 unit，相关限制见 [动态放置分析](dynamic-command-placement.md)。
+
+运行以下标准库教学脚本可复现上表，无 GPU、网络或模型依赖：
+
+```bash
+python docs/env-worker-deep-dive/env-service-verification/scripts/command_gap_cost_demo.py
+```
+
+本次运行三组结果的 A 额外等待分别为 0、9.1、1 秒，与上表一致。脚本只计算时间线，不执行真实准入或归还，不能证明 Env 的实际耗时。建议先研究 command 的已有边界，测量自然工具等待分布、交接成本和 A/B 完成时间，再决定是否增加预测、短任务优先或有界成批执行。成批执行会减少交接次数，也会延迟其他任务进入，必须同时报告这一代价。RE-Bench 已支持本地裁判，episode 内自动卸载仍未实现。
+
+本节新增脚本的 Ruff 与格式检查通过，相关文档 215 个本地链接及锚点检查通过。全仓 pre-commit 在临时快照中运行，仍因范围外的既有格式和注释问题失败，未回写其自动修改。
+
+## 部署独立 Qwen 裁判并运行
+
+2026-11-05 交付核对，基于 `cd09114` 加本次未提交代码。实机执行发生于 2026-11-04，结果见 [本地裁判验证](../experiments/gpu-benchmarks/FINDINGS.md#re-bench-本地-qwen-裁判验证)。这是独立裁判卡加环境任务卡的配置，没有修改 Env 调度策略。
+
+先激活执行节点的既有 vLLM 环境。设置 `JUDGE_MODEL_PATH` 为本地 Qwen 权重目录，`JUDGE_GPU_UUIDS` 为现场核实的独立空闲 GPU UUID，`JUDGE_SERVED_MODEL` 为服务模型名。该名称必须与任务配置一致。启动命令如下：
+
+```bash
+export JUDGE_MODEL_PATH JUDGE_GPU_UUIDS JUDGE_SERVED_MODEL
+bash examples/re_bench/serve_judge.sh
+```
+
+启动器通过实际 CUDA 查询将 UUID 映射到设备序号，避免部分 vLLM 版本不接受 UUID 字符串。默认单卡、BF16、8192 上下文、8 路最大序列、eager 执行和 45% 显存预算。`JUDGE_TP` 可配置张量并行卡数，即共同承载一个模型的 GPU 数量，但本次只验证单卡。进程默认最长 1800 秒，使用 `JUDGE_LIFETIME_S` 设置明确实验预算。默认监听本机 `127.0.0.1:18764`，跨节点服务需显式设置 `JUDGE_HOST` 并使用受控网络。
+
+可在其他独立 GPU 启动相同模型名的副本，分别设置 `JUDGE_PORT`，给运行器的 `--local-urls` 传多个 `/v1` 地址。桥接器按请求轮转分发，并全局限制 workers 与请求总数，不做失败自动重试。端点均须提供相同模型，多个端点真实并发本次未验证。任务 GPU 与裁判 GPU 必须使用不相交的集合，不能将裁判预算隐藏在环境空闲资源里。
+
+沿用前文定义的资产、镜像及输出变量，额外设置 `JUDGE_BASE_URL` 为当前服务地址。新镜像必须通过本次版本的 `image.py` 构建，包含 `feedback_smoke.py` 和新的 verifier，不能直接使用旧镜像。
+
+```bash
+python -m examples.re_bench.prepare --repo "$BENCH_REPO" --assets "$ASSET_ROOT" \
+  --output "$TASK_DIR" --image "$TASK_IMAGE" --verifier-image "$VERIFIER_IMAGE" \
+  --local-judge-model "$JUDGE_SERVED_MODEL" --feedback-smoke --timeout 300
+python -m examples.re_bench.run --task "$TASK_DIR" --output "$RUN_DIR" \
+  --node-ip "$NODE_IP" --gpu "$GPU_INDEX" --gpu-memory-mb 49152 --timeout 660 \
+  --local-urls "$JUDGE_BASE_URL" --judge-max-calls 8 --judge-workers 2 --judge-timeout 60
+```
+
+`--feedback-smoke` 执行官方起始程序的一轮小样本训练：两条真实公开提示，每条生成两份候选，调用真实 Qwen 偏好，再执行更新与模型保存。独立 verifier 用原始 `evaluate_model` 对两条隐藏提示、两份参考回答评分。它是链路验证，`data_source=re_bench_smoke`，reward 固定 0。原版训练步数、采样数、batch 和生成长度被显式缩小，不能当作完整原版任务结果。
+
+去掉 `--feedback-smoke` 就生成完整本地裁判任务，数据标识为 `re_bench_local`，默认保留起始训练程序与 512 条隐藏评估。只有 `local_evaluation=1`、`judge_valid=1`、`eval_valid=1` 才把本地成绩交给 PSRL。`re_bench` 仍代表原 Replicate 裁判配置，两者不会静默混合。完整本地模式本次尚未实测。
+
+PSRL 训练继续使用原 `train.sh re_bench` 与专属 `REBENCH_JOBS_DIR`，独立终端的桥接命令增加本地参数：
+
+```bash
+python -m examples.re_bench.judge --jobs-dir "$REBENCH_JOBS_DIR" \
+  --local-urls "$JUDGE_BASE_URL" --local-model "$JUDGE_SERVED_MODEL" \
+  --duration 1800 --max-calls 2048
+```
+
+本地请求使用相同评价文本、温度 0、输出上限 100 token，并显式关闭 Qwen thinking。若返回的是字符串排名 `"1"`、`"2"`，本地适配将其转换为整数后严格验证两个模型和排名，保持原始偏好。重复排名、缺失模型、截断或服务失败仍报错，不填造合法反馈。桥接器保存 `judge-events.jsonl` 的请求耗时、成功状态和模型名，以及 `judge.json` 的总计。本次服务使用模型自身 generation_config 的其余默认值，应在配对实验中固定一致。
+
+当前有界验证只证明本地模型、隔离请求传输、真实偏好更新、独立评分和清理接通，没有运行 PSRL 策略训练或 command ON/OFF。下一步研究问题与否证条件见 [command 调度研究](command-scheduling-research.md)。

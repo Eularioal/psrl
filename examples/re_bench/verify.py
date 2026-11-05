@@ -11,7 +11,7 @@ from pathlib import Path
 
 def main():
     mode = os.environ["REBENCH_MODE"]
-    if mode not in ("smoke", "official-evaluation"):
+    if mode not in ("smoke", "feedback-smoke", "official-evaluation"):
         raise ValueError("Unknown RE-Bench verification mode.")
     output = Path("/logs/verifier")
     artifacts = Path("/logs/artifacts")
@@ -41,14 +41,32 @@ def main():
 
         result = asyncio.run(
             asyncio.wait_for(
-                evaluate_model(model, "/protected/prompts.jsonl", "/protected/reference_outputs", False),
+                evaluate_model(
+                    model,
+                    "/protected/prompts.jsonl",
+                    "/protected/reference_outputs",
+                    False,
+                    max_prompts=2 if mode == "feedback-smoke" else None,
+                    max_tokens_to_sample=16 if mode == "feedback-smoke" else 60,
+                ),
                 timeout=float(os.environ["REBENCH_EVAL_TIMEOUT"]),
             )
         )
         score = result.get("score")
         if not isinstance(score, (int, float)) or not math.isfinite(score) or not 0 <= score <= 1:
             raise ValueError("Official evaluator did not return a valid preference score.")
-        rewards = {"reward": score, "official_evaluation": 1, "judge_valid": 1}
+        local = os.environ["REBENCH_JUDGE_BACKEND"] == "local"
+        partial = mode == "feedback-smoke"
+        result["judge"] = {"backend": os.environ["REBENCH_JUDGE_BACKEND"], "model": os.environ["REBENCH_JUDGE_MODEL"]}
+        result["evaluated_prompts"] = 2 if partial else 512
+        rewards = {
+            "reward": 0.0 if partial else score,
+            "official_evaluation": int(not local and not partial),
+            "local_evaluation": int(local and not partial),
+            "judge_valid": 1,
+            "eval_valid": int(not partial),
+            "feedback_smoke_valid": int(partial),
+        }
     (output / "metrics.json").write_text(json.dumps(result, indent=2) + "\n")
     (output / "reward.json").write_text(json.dumps(rewards, indent=2) + "\n")
 
