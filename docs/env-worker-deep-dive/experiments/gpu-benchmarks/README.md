@@ -1,6 +1,6 @@
 # GPU benchmark 导览：任务目标与 command 适用性
 
-> **核心结论**：写 GPU kernel 选 KernelBench，做机器学习竞赛选 MLE-bench，做自动训练实验选 autoresearch，优化推理服务选 InferenceBench。研究训练状态跨外部反馈等待驻留，新增 **RE-Bench 聊天模型训练接入**。已有 InferenceBench 常驻实验可验证跨命令持有。现有 recipe 要求 episode，这个接入限制不等于任务天然不能使用 command。RE-Bench 的真实资产验证与正式裁判评分需分别看待。
+> **核心结论**：写 GPU kernel 选 KernelBench，做机器学习竞赛选 MLE-bench，做自动训练实验选 autoresearch，优化推理服务选 InferenceBench。研究训练状态跨外部反馈等待驻留，新增 **RE-Bench 聊天模型训练接入**。已有 InferenceBench 常驻实验可验证跨命令持有。默认 recipe 使用 episode，KernelBench 有显式 direct command verifier 入口，这个接入限制不等于任务天然不能使用 command。RE-Bench 的真实资产验证与正式裁判评分需分别看待。
 
 ## 目录
 
@@ -45,7 +45,7 @@
 | RE-Bench | 可选训练与外部裁判交替的任务。整次训练可作为 command，但中间归还需实现状态卸载恢复 |
 | PostTrainBench | 优先补充单卡后训练。完整训练后保存模型、退出，再评估，是自然的 command 边界 |
 
-表中选型不能代替逐项接入与评分验证，RE-Bench 的完整偏好链仍需要 Replicate 凭据。high GPU 也不表示持续满显存，官方链接和具体选题见 [六项专项调研](../../knowledge/gpu-workload-benchmark-survey.md#图片中六项-high-gpu-的具体选题)。
+表中选型不能代替逐项接入与评分验证，RE-Bench 已有本地 Qwen 裁判链路，完整 512 条评分仍未验收。high GPU 也不表示持续满显存，官方链接和具体选题见 [六项专项调研](../../knowledge/gpu-workload-benchmark-survey.md#图片中六项-high-gpu-的具体选题)。
 
 **看 InferenceBench 分数前先分清来源**：官方在质量达标后按延迟或吞吐评分，本地 PSRL 还检查裁判标记。常驻实验中的 `reward=1` 只是请求与服务复用检查。公式、手算例子及 CPU 演示见 [InferenceBench 评分说明](../../knowledge/inferencebench-scoring.md)。
 
@@ -114,11 +114,11 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_reside
 
 | 入口 | 当前可用范围与下一步 |
 |---|---|
-| [KernelBench 接入](../../../../examples/kernel_bench/) | 已有真实 kernel 编译、正确性与性能评估。优先用于未来 command 适配 |
+| [KernelBench 接入](../../../../examples/kernel_bench/) | 已有真实 kernel 编译、正确性与性能评估。已新增独立 verifier 的 command 适配，同节点动态选卡仍待实现，见[必要性评估](../../knowledge/dynamic-command-placement.md#9-已接入-benchmark-的必要性评估) |
 | [MLE-bench 接入](../../../../examples/mle_bench/) | 已有任务和评分适配，官方数据下载待 Kaggle 认证。暂不以它作为马上可运行的 GPU 对照 |
 | [autoresearch 接入](../../../../examples/autoresearch/) | 已有真实任务内训练与验证。适合研究较长 GPU 作业，不适合仅凭运行时长证明 episode 必要性 |
 | [InferenceBench 接入](../../../../examples/inference_bench/) | 常驻服务框架 workload 已真实验证。官方完整优化与评分尚需对应基线、judge 及资源配置 |
-| [RE-Bench 接入](../../knowledge/re-bench-recipe.md) | 原生 Env、独立 verifier、PSRL 数据与奖励入口已接线。smoke 和正式评分分离，正式偏好训练需宿主裁判凭据 |
+| [RE-Bench 接入](../../knowledge/re-bench-recipe.md) | 原生 Env、独立 verifier、PSRL 数据与奖励入口已接线。smoke 和正式评分分离，支持独立卡本地 Qwen，原 Replicate 分支仍需宿主凭据 |
 | [准备、下载与运行 recipe](../../knowledge/gpu-benchmark-recipes.md) | 具体命令、依赖、数据隔离与 Env/PSRL 接线，避免在本导览重复维护启动步骤 |
 | [记账与归属机制](../../knowledge/gpu-memory-admission.md#9-episode-归属记账修复) | 解释模型驻留时如何抵扣已兑现预约，以及何时仍需等待 |
 | [Results 与验证边界](FINDINGS.md) | 查看实际工作量、ON/OFF 条件、失败、耗时和清理，不将功能验收分数当作官方成绩 |

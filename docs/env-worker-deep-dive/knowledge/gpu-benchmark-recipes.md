@@ -1,6 +1,6 @@
 # GPU benchmark 的 Env 与 PSRL recipe
 
-> **核心结论**：GPU recipe 共用 `GpuBenchmarkAgentLoop`，强制通过 EnvRouter 准入，支持 Docker 与原生 Env 后端的 episode GPU 持有。准备器生成 Harbor 任务与 PSRL Parquet。长训练可以包装为一条 command，跨请求常驻模型才更直接体现持续持有的必要性。InferenceBench 另有固定真实请求实验，RE-Bench 另有真实资产 CUDA smoke，两者都不能与官方评分混淆。
+> **核心结论**：GPU recipe 共用 `GpuBenchmarkAgentLoop`，强制通过 EnvRouter 准入，默认支持 Docker 与原生 Env 后端的 episode GPU 持有，KernelBench 另有显式 direct command verifier 入口，见末节。准备器生成 Harbor 任务与 PSRL Parquet。长训练可以包装为一条 command，跨请求常驻模型才更直接体现持续持有的必要性。InferenceBench 另有固定真实请求实验，RE-Bench 另有真实资产 CUDA smoke，两者都不能与官方评分混淆。
 
 先读 [README 导览](../experiments/gpu-benchmarks/README.md) 了解任务目标、具体例子与 command 适用性。验证结果见 [GPU benchmark 接入验证](../experiments/gpu-benchmarks/FINDINGS.md)。官方性能分、质量门槛与本地功能分的区别见 [InferenceBench 评分说明](inferencebench-scoring.md)。
 
@@ -8,6 +8,7 @@
 
 ## 目录
 
+- [KernelBench command 与性能测量](#kernelbench-command-与性能测量)
 - [入口与边界](#入口与边界)
 - [下载官方资产](#下载官方资产)
 - [H20 与框架内资源调度对照](#h20-与框架内资源调度对照)
@@ -33,7 +34,7 @@
 | 环境验证 | [run.py](../../../examples/gpu_benchmarks/run.py) | 私有 Ray、EnvRouter、任务执行、清理证据 |
 | 奖励 | [reward.py](../../../examples/gpu_benchmarks/reward.py) | 读取 verifier 指标，拒绝非有限奖励，检查 InferenceBench 完整性门槛 |
 
-当前只支持显式 `episode` GPU unit。服务和独立 verifier 可能跨命令使用 GPU，因此这版不开放 command 模式，不宣称阶段借还已经覆盖全部任务。这里的 Docker 后端由 EnvRouter 管理，并非绕过 Env 的裸 Docker。运行入口支持显式选择 `docker` 或 `env_worker`。原生 `EnvWorkerEnvironment` 要求预构建镜像，不解析任务 Compose 文件。两种路径均使用 EnvRouter 准入。
+默认使用显式 `episode` GPU unit。KernelBench 可选择末节说明的 direct command 入口，其独立 verifier 已接入受管 GPU 执行。其他 recipe 尚未开放 command，不宣称阶段借还已经覆盖全部任务。这里的 Docker 后端由 EnvRouter 管理，并非绕过 Env 的裸 Docker。运行入口支持显式选择 `docker` 或 `env_worker`。原生 `EnvWorkerEnvironment` 要求预构建镜像，不解析任务 Compose 文件。两种路径均使用 EnvRouter 准入。
 
 上游核验版本见 [upstream.json](../../../examples/gpu_benchmarks/upstream.json)。准备时要求干净 checkout 并记录实际 commit。依赖装入独立镜像或任务专属环境，不修改共享 conda 安装。
 
@@ -212,7 +213,7 @@ Episode 是一次完整任务执行。`gpu_reservation: episode` 表示 GPU 预�
 | InferenceBench 常驻推理服务 | 模型权重跨多次请求、命令驻留。KV cache 是否跨请求保留取决于服务实现，不能一概而论 |
 | autoresearch | 一次训练及评估需要连续保留模型、优化器和 CUDA 上下文，适合验证长时间持卡。准备代码阶段未必必须保留 GPU |
 | MLE-bench | 训练期间连续持卡，但数据处理、训练、提交之间是否释放取决于任务实现。当前暂缓接入数据 |
-| KernelBench | 单次编译和测量通常较短，可以按命令安排。当前 recipe 仍统一使用 episode 策略 |
+| KernelBench | 单次编译和测量通常较短，可以按命令安排。默认 episode，可显式选择本篇 KernelBench command 入口 |
 
 原生 Env 验证优先选择已有官方数据的 autoresearch。验证目标是原生容器启动、真实训练、官方评分、租约保留和物理归还，不以策略模型训练或资源管理性能提升为验收条件。
 
@@ -245,7 +246,7 @@ PSRL agent 配置中的 `harbor.environment_backend` 同样支持 `env_worker`�
 
 ## command 与常驻推理服务
 
-先区分“能用一条命令启动”和“每次请求结束可以归还 GPU”。前者几乎总能做到，后者取决于命令结束后是否仍存在 GPU 状态。autoresearch 的整个训练脚本可以是一条长 GPU command，因此长达数分钟不能证明它只能使用 episode。当前通用 recipe 限制 episode，是接入器尚未把 verifier 等所有 GPU 操作改成显式 command，并非 benchmark 的物理限制。
+先区分“能用一条命令启动”和“每次请求结束可以归还 GPU”。前者几乎总能做到，后者取决于命令结束后是否仍存在 GPU 状态。autoresearch 的整个训练脚本可以是一条长 GPU command，因此长达数分钟不能证明它只能使用 episode。除显式 KernelBench command 配置外，公共 recipe 仍限制 episode，这是接入边界而非任务的物理限制。 动态放置不能通过只删除 episode 校验来启用。KernelBench 已接入受管 verifier，动态换卡收益仍需另做对照，见[按 benchmark 的必要性评估](dynamic-command-placement.md#9-已接入-benchmark-的必要性评估)。
 
 常驻推理的实际路径如下。箭头表示调用或生命周期，两个请求通过独立环境命令发出。
 
@@ -385,3 +386,70 @@ MLE 使用官方 registry 和 `grade_csv`，训练奖励为 `above_median`，同
 InferenceBench 保留上游 reward，PSRL 侧要求质量、有效性和 judge 通过，并拒绝污染或禁用行为标记。缺 judge 输出不能只凭速度训练。
 
 autoresearch 将提交脚本放到新 verifier，使用固定 `prepare.py` 重放并捕获上游真实评估调用，忽略 agent 打印的分数。奖励映射为 `1/(1+val_bpb)`。此类候选代码与评估在解释器内交互，沿用上游代码执行的信任边界，不声称已完成对恶意 Python 的防篡改安全审计。
+
+## KernelBench command 与性能测量
+
+**局部核对范围**：2026-11-04，`cd09114` 加本次未提交代码。KernelBench 新增显式 direct command 入口，独立 verifier 也经过 GPU 准入和归还。其他 benchmark 保留默认 episode。实现存在不代表远端已合并、集群默认部署或动态换卡已完成。
+
+```text
+[K1] command CLI / AgentLoop 配置
+  ↓ 独立单卡、direct、max_containers=1
+[K2] science runner → EnvRouter 租约 → 受限设备容器
+  ├→ Agent 的 psrl-gpu 命令使用已有受管执行接口
+  └→ [K3] Harbor 独立 KernelCommandVerifier
+           ↓ 文件操作委托原环境
+         [K4] verifier shell 调用 → exec_gpu → Router 准入、设备授权
+           ↓ 原 KernelBench evaluator 执行，确认物理归还
+         [K5] Harbor 解析奖励、收集日志 → 清理容器及会话租约
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 编号 | 实现与职责 |
+|---|---|
+| K1 | [command 配置](../../../examples/kernel_bench/command_agent_config.yaml)、[validate_units](../../../examples/kernel_bench/verifier.py#L8) 限定独立单卡、direct、单会话，拒绝模型共享与 MPS |
+| K2 | [run](../../../examples/gpu_benchmarks/run.py#L33) 选择持有方式与 verifier 插件，science runner 把 HarborConfig.verifier_import_path 交给 JobConfig |
+| K3 | [KernelCommandVerifier](../../../examples/kernel_bench/verifier.py#L43) 使用 Harbor 正式插件入口，保留原日志和评分解析 |
+| K4 | [ManagedVerifierEnvironment.exec](../../../examples/kernel_bench/verifier.py#L35) 把 shell 调用交给 exec_gpu，并使用 overlap_return=False 等待归还 |
+| K5 | [evaluate](../../../examples/gpu_benchmarks/evaluate.py#L10) 返回正确性与速度指标，原 Harbor 逻辑解析奖励，runner 收尾 |
+
+这些代码如果有理解上的问题，可以随时追问。
+
+**跟着图读源码**：K1 显式选择 command 并检查资源条件，K2 获得租约后才创建容器。K3 仅包装独立评分环境，上传下载等文件操作继续委托原实现，K4 的命令执行必须获准并完成物理归还才返回。退出码沿用 Harbor 的处理语义，不把 chmod 等准备命令改成新的评分规则。K5 保留原 evaluator 的正确性、速度测量和奖励解析。取消与超时由现有 GPU 执行器和 Harbor 外层期限共同处理。
+
+插件要求 separate verifier，以及其预置或只读挂载的 `/tests`。当前 Harbor 自定义 verifier 工厂没有透传默认 verifier 的 skip_tests_upload 参数，因此插件明确跳过重复上传。此接口不用于共享 Agent 环境、需要动态上传测试的 verifier。
+
+在前文已准备 TASK_DIR、RESULT_DIR、ENV_NODE_IP、GPU_INDEX 后，从仓库根目录运行有界 oracle 验证：
+
+```bash
+python -m examples.gpu_benchmarks.run --task "$TASK_DIR" --output "$RESULT_DIR" \
+  --node-ip "$ENV_NODE_IP" --gpu "$GPU_INDEX" --gpu-reservation command --timeout 360
+```
+
+模型 Agent 的 PSRL 接线使用：
+
+```bash
+GPU_RESERVATION=command bash examples/gpu_benchmarks/train.sh kernel_bench
+```
+
+后者仍需前文的模型、TRAIN_FILES、VAL_FILES、输出与 Env units 配置。所有 unit 应显式配置 command、direct、一张独立环境 GPU 和 max_containers=1，不允许模型借卡或共享绑定。默认配置保留 episode。首版限制单会话，避免同一 Router 内该 unit 上其他会话干扰测速。会话名额仍被占用，因此目前不能让该 unit 的多个 KernelBench 会话交替填补空档；此次先完成准入与归还链路，尚未实现多会话之间独立的性能测量锁，也没有动态换卡。
+
+**显存够用不等于适合测速。** SM 是流式多处理器，负责执行 GPU 线程块。其他进程不仅可能竞争 SM，也可能争用显存带宽、缓存与功耗预算。少量显存的任务也能占满计算资源，相同显存占用既不是公平测速的必要条件，也不是充分条件。
+
+GPU utilization 主要反映采样区间内设备是否忙于执行工作，不等于剩余 SM 百分比。低利用率快照不能保证整个评测期间都没有竞争，不能用 `耗时 / (1 - 利用率)` 简单校正。还应控制 GPU 型号、运行栈、输入与精度、预热、频率、温度和功耗条件。[NVIDIA CUDA 性能指南](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html)
+
+教学假设：参考程序 10 ms，候选 5 ms，speedup=2。如果只有候选测量时受干扰变成 15 ms，speedup 变成约 0.667。同样的代码会被误判为变慢。即使参考与候选都受干扰，也不保证同比例变慢，二者可能分别受计算和带宽限制。
+
+```bash
+python -c 'print("clean:", 10/5); print("contended:", 10/15)'
+```
+
+该 CPU 算术演示不模拟 GPU 调度。当前本地 evaluator 的 reward 是 correctness，speedup 单独记录。竞争直接污染速度指标及 Agent 的优化判断，不能说本地奖励已经按速度计算。官方性能分析还包括正确性与速度阈值指标，见[KernelBench 评测说明](https://github.com/ScalingIntelligence/KernelBench/blob/main/EVAL.md)。
+
+**保护边界**：单会话只限制同一 Router 管理的资源，不构成平台级独占。外部进程、其他 Router 仍可能进入。正式测速应使用实际独占环境 GPU，记录设备身份和运行栈，预热并重复测量。发现外部竞争应标记性能结果受污染，在有限预算内重测或报告无有效性能分，不将污染自动当作模型失败。此次没有实现集群独占、自动污染检测或频率控制。
+
+以下 CPU 回归用测试替身验证 K3→K4 的委托、准入调用参数、归还等待选项和取消传播，并验证真实 Harbor 插件工厂的构造契约。它不证明实际设备隔离或 GPU 性能。预期专项 10 项通过；真实实验与失败记录见[本轮 Results](../experiments/gpu-benchmarks/FINDINGS.md#kernelbench-command-接入验证)。
+
+```bash
+python -m pytest tests/examples/gpu_benchmarks/test_kernel_command.py -q
+```

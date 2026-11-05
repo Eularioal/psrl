@@ -51,15 +51,16 @@ PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO �
 - [环境执行与 GPU 调度：五篇近期顶会论文](env-worker-deep-dive/knowledge/recent-top-conference-papers.md)：OSDI 2026 的 RollArt、DynaRL、Murakkab、Prism、Weave，解释研究关联、可借鉴机制与差异边界。
 - [GPU benchmark README 导览](env-worker-deep-dive/experiments/gpu-benchmarks/README.md)：现有任务与图中六项 high GPU 候选的目标、评分和 command 适用性，区分常驻服务、后训练与外部裁判等待。
 - [InferenceBench 评分与 ON/OFF 边界](env-worker-deep-dive/knowledge/inferencebench-scoring.md)：延迟和吞吐公式、相对质量门槛、PSRL 裁判检查，以及常驻功能实验与卸载恢复的区别，配套 CPU 演示。
-- [GPU benchmark 接入 recipe](env-worker-deep-dive/knowledge/gpu-benchmark-recipes.md)：官方资产、Env 与 PSRL 接入，以及 command、episode、常驻服务卸载与恢复的边界。
-- [RE-Bench 原生 Env 与 PSRL 接入](env-worker-deep-dive/knowledge/re-bench-recipe.md)：GPT-2 XL 聊天训练、真实 Alpaca 划分、宿主裁判请求桥接、独立评分、command/episode 边界，以及卸载成本教学与相关研究。
+- [GPU benchmark 接入 recipe](env-worker-deep-dive/knowledge/gpu-benchmark-recipes.md)：官方资产、Env 与 PSRL 接入，KernelBench command verifier 与测速隔离，以及常驻服务卸载恢复边界。
+- [command 调度研究](env-worker-deep-dive/knowledge/command-scheduling-research.md)：以固定 rollout 组完成时间为目标，核查 KREX 等近邻，提出反馈保真约束下的测量预算与调度方法及否证实验。
+- [RE-Bench 原生 Env 与 PSRL 接入](env-worker-deep-dive/knowledge/re-bench-recipe.md)：GPT-2 XL 聊天训练、真实 Alpaca 划分、宿主裁判请求桥接、独立评分、command/episode 边界，以及卸载成本、本地裁判和 command 空窗权衡。
 - [GPU benchmark 接入验证](env-worker-deep-dive/experiments/gpu-benchmarks/FINDINGS.md)：KernelBench、autoresearch、RE-Bench 真实资产 CUDA 验证与 InferenceBench 常驻 ON/OFF，分别记录完整评分缺口和资源回收。
 
 **了解现状先读[当前设计](env-worker-deep-dive/knowledge/current-design.md)**：结构图、模式区别、源码路径、能力与验证边界。[知识分类索引](env-worker-deep-dive/knowledge/README.md)按机制、接入、基础知识、提案和历史实现组织阅读。
 
 - [GPU workload 与 benchmark 接入调研](env-worker-deep-dive/knowledge/gpu-workload-benchmark-survey.md)：比较容器训练、GPU kernel、自动研究和 AI 基础设施任务，补充图中六项 high GPU、PostTrainBench 选题与 RE-Bench 真实驻留等待代码。
 - [EnvRouter 流程与通用接入设计讨论](env-worker-deep-dive/knowledge/env-router-current-flow.md)：阶段流程与设计理由，包含通用接入提案、恢复成本和教学模拟，不作为当前能力首读入口。
-- [GPU 命令动态放置](env-worker-deep-dive/knowledge/dynamic-command-placement.md)：分析命令归还后的固定 unit 排队，提出会话与执行租约分离、同节点动态选卡及公平性约束，附 PD 分离对照和 CPU 教学模拟。
+- [GPU 命令动态放置](env-worker-deep-dive/knowledge/dynamic-command-placement.md)：分析命令归还后的固定 unit 排队，提出会话与执行租约分离、同节点动态选卡及公平性约束，附 PD 分离对照、现有 benchmark 的收益优先级及 CPU 教学模拟。
 - [Worker 重试、整组补采与重派发](env-worker-deep-dive/knowledge/worker-retry-and-redispatch.md)：说明框架已有的两层恢复与同请求转移的区别，记录执行监督、熔断和等待竞态修复，以及真实 Ray/Docker 故障验证。
 - [MPS 并行执行后端](env-worker-deep-dive/knowledge/mps-parallel-execution.md)：同容器及跨容器作业的预算准入、设备授权、MPS 定向取消、物理回收与真实 Docker 验证。
 - [MPS 真实 GPU 训练并发对照](env-worker-deep-dive/experiments/mps-training-comparison.md)：相同 autoresearch 工作量下比较串行、普通多进程和 MPS，区分训练计时、内核时间线和功能验收，包含控制通道并发故障的定位与修复。

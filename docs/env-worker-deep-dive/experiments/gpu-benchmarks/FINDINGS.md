@@ -2,10 +2,11 @@
 
 > **核心结论**：KernelBench、autoresearch 已通过真实 GPU 执行与回收。InferenceBench 固定常驻服务已完成两类 H20 ON/OFF 对照：早期 24 GiB 人工配额只验证排队且更慢；episode 记账修复后采用整卡容量与 7 项真实任务，OFF 一次 OOM，ON 无 OOM，完成相同工作量的任务阶段耗时下降 17.9%。其官方完整评分仍未通过，MLE-bench 暂缓 Kaggle 接入。没有执行语言模型 agent rollout 或 PSRL 策略优化器更新。
 
-> RE-Bench 聊天训练已有原生 Env/PSRL 接入，真实 GPT-2 XL、Alpaca 提示、生成和一次 CUDA 更新已通过。正式偏好训练及隐藏集评分缺 Replicate 凭据，smoke 的 `reward=0`，不冒充正式成绩。
+> RE-Bench 聊天训练已有原生 Env/PSRL 接入，真实 GPT-2 XL、Alpaca 提示、生成和一次 CUDA 更新已通过。原 Replicate 分支仍缺凭据，本地 Qwen 已完成小样本真实偏好训练与隐藏评分。两种 smoke 的 `reward=0`，不冒充完整成绩。
 
 ## 目录
 
+- [KernelBench command 接入验证](#kernelbench-command-接入验证)
 - [接入范围](#接入范围)
 - [KernelBench Results](#kernelbench-results)
 - [官方资产准备](#官方资产准备)
@@ -15,6 +16,7 @@
 - [为什么本次 ON 更慢且 GPU 进程更少](#为什么本次-on-更慢且-gpu-进程更少)
 - [episode 记账修复后的整卡压力对照](#episode-记账修复后的整卡压力对照)
 - [RE-Bench 原生接入验证](#re-bench-原生接入验证)
+- [RE-Bench 本地 Qwen 裁判验证](#re-bench-本地-qwen-裁判验证)
 - [评分教学脚本验证](#评分教学脚本验证)
 - [修复与验证边界](#修复与验证边界)
 - [复现入口](#复现入口)
@@ -27,9 +29,9 @@
 | MLE-bench | 官方 public/private 数据映射、独立 registry/grader、above_median 奖励 | 官方 SDK 认证失败，缺凭据，未取得正式竞赛数据 |
 | InferenceBench | 官方完整 recipe 与固定常驻服务实验入口分开 | 完整任务生成缺官方基线，固定 Mistral 服务与真实样本 ON/OFF 已通过 |
 | autoresearch | 固定 prepare.py、缓存挂载、独立训练重放、捕获官方评估调用 | 官方资产准备完成，原始训练脚本在 GPU 上真实通过 |
-| RE-Bench | 真实资产下载、原生任务、独立 verifier、宿主裁判传输、PSRL 奖励 | 单 H20 真实资产 CUDA smoke 通过，官方反馈和评分待凭据 |
+| RE-Bench | 真实资产下载、原生任务、独立 verifier、宿主裁判传输、PSRL 奖励 | 真实资产 CUDA smoke、本地 Qwen 偏好 smoke 通过，完整 512 条评分未验证 |
 
-这些 recipe 均要求 EnvRouter，不能关闭 Env 后回退裸 Docker。资源策略暂限 episode。公共代码复用 science 的会话与 runner，并新增强制准入路径，避免已有全局 science client 缓存影响新 recipe。RE-Bench 默认使用原生 EnvWorker。
+这些 recipe 均要求 EnvRouter，不能关闭 Env 后回退裸 Docker。默认资源策略为 episode，KernelBench 新增显式 direct command verifier，见本篇对应 Results。公共代码复用 science 的会话与 runner，并新增强制准入路径，避免已有全局 science client 缓存影响新 recipe。RE-Bench 默认使用原生 EnvWorker。
 
 ## KernelBench Results
 
@@ -380,3 +382,56 @@ PSRL 接入回归使用受控 session 数据检查 token 保留、奖励传递�
 操作命令和资产要求见 [GPU benchmark recipe](../../knowledge/gpu-benchmark-recipes.md)，真实环境验证入口为 [run.py](../../../../examples/gpu_benchmarks/run.py)，固定提交为 [matmul.py](../../../../examples/kernel_bench/solutions/matmul.py)。
 
 运行前现场检查资源和依赖，使用全新输出目录。任务预留、容器 CPU/主存和独立 verifier 都参与 Env 预算。GPU 声明量应覆盖同一 episode 的整个 GPU 容器集合。实验完成后不继续增加任务或启动训练来追求更高分。
+
+## KernelBench command 接入验证
+
+2026-11-04，基于 `cd09114` 加未提交 KernelBench verifier 插件与 runner 接线。使用独立 H20、Compose 提供者、固定官方 level1 矩阵乘法题，输入保持 4096 × 4096，oracle 复制既有 Triton 提交，独立 verifier 经过 direct command 准入。没有语言模型 rollout、PSRL 优化器训练、动态换卡或 OFF/ON 吞吐对照。
+
+首次运行在上传 tests 时失败，原因是 Harbor 自定义 verifier 工厂未透传 skip_tests_upload，尝试覆盖只读测试目录。适配器改为显式 separate、预置测试契约。第二次在只读测试文件的 chmod 上失败，原因是包装层增加了 Harbor 原流程没有的非零退出立即报错语义。最终保留原退出码与评分解析行为，仅统一 GPU 执行和归还。两次失败均未进入正式 GPU 评估，所属资源均已清理。最终修复后只补跑该组，不重跑历史 episode 对照。
+
+| 检查 | 本轮结果 |
+|---|---|
+| 编译与正确性 | compiled=true，correctness=true，3/3 |
+| 性能测量 | 10 次，候选 7.82 ms，参考 4.55 ms |
+| speedup | 约 0.582，候选更慢，不是调度加速比 |
+| 本地 reward | 1.0，当前 recipe 使用正确性奖励 |
+| command 记账 | 采样观测到活动 8192 MiB，以及会话仍存活但活动预算已归零 |
+| 任务异常 / 清理异常 | 均无 |
+| 本次所属容器 / GPU 计算进程 | 均为 0 |
+| 最终显存 | NVML 约 0.19 MiB，独立 nvidia-smi 核验显示 0 MiB |
+| CPU 回归 | 第一组 44 项通过，最终专项 10 项通过，存在重叠，不能相加 |
+
+原始证据位于工作区 `benchmark-runs/kernel-command-20261104/`，包含首次 result、retry、最终 final、启动日志和源码副本。测试任务复制历史 task，但 Compose 中 `/tests` 仍挂载历史评分文件，其原始 reward 字段沿用了误命名 runtime_us。上表依据 kernel_result.json 的 runtime 与 CUDA event 毫秒单位解释，未修改原始结果。当前仓库 evaluator 已使用 runtime_ms，此字段修正不触发额外 GPU 运行。
+
+本轮依赖来源已记录。veRL 与 transfer_queue 来自共享安装，任务未调用策略训练或张量往返链路，因此不把本次结果当作隔离 veRL 补丁或训练正确性验证。实验在后台用 setsid、nohup 和每次 480 秒外层期限运行，三次均结束，清理已独立核实。单卡无竞争验证只证明接入可用，没有量化 SM 竞争导致的测速偏差。原生提供者和模型 Agent 的 command 端到端路径未在本轮另跑。
+
+复现参数和源码图见 [KernelBench command 与性能测量](../../knowledge/gpu-benchmark-recipes.md#kernelbench-command-与性能测量)。正式测量仍需实际独占的环境 GPU，当前单会话约束不是平台级独占。
+
+本次全仓 pre-commit 在临时副本执行，未通过：例如 docs/conf.py 的既有行长、env_service/client.py 的 prose 规则及其他文件格式问题。此次新增和修改的运行代码未出现上述 hook 失败或被自动改写，临时副本修改未回写主目录。本次文档本地路径及源码行号有效性检查通过。
+
+
+## RE-Bench 本地 Qwen 裁判验证
+
+实机执行日期 2026-11-04，交付和清理复核 2026-11-05。源码为 `cd09114` 加本次未提交本地裁判修改，工作区同时存在独立的 KernelBench command 改动，未把它们归入本次实现。结果摘要见 [re-bench-local-qwen.json](re-bench-local-qwen.json)，复现入口见 [部署 recipe](../../knowledge/re-bench-recipe.md#部署独立-qwen-裁判并运行)。
+
+验收目标是独立本地裁判卡、真实反馈训练、独立 verifier 和物理清理接通。先做现场连接、Docker ping、NVML v2、CUDA 容器算子和依赖来源检查。任务使用一张 H20，Qwen3-8B 使用另一张 H20，模型 BF16，vLLM eager，最大上下文 8192，显存预算 45%。没有占用训练/推理中已有 GPU。
+
+裁判进程设 1200 秒寿命，任务每阶段 300 秒，运行器 660 秒，成功轮裁判最多 8 请求、2 并发、每请求 60 秒。训练只运行一轮，两条公开提示、每份候选最多 16 token，按原程序过滤后实际完成一次优化器更新。独立评分用原函数的 max_prompts=2、max_tokens_to_sample=16，对两份固定参考各比较一次，共四个评分请求。
+
+| 指标 | 结果 |
+|---|---|
+| 成功轮裁判请求 | 6 成功，0 失败，训练 2 次加评分 4 次 |
+| 真实训练 | 1 轮，1 次优化器更新，模型保存完成 |
+| 训练裁判等待 | 0.824 秒，等待前后 PyTorch allocated 均为 6,456,532,480 字节 |
+| 部分隐藏评分 | 2 条提示，对 GPT-2 XL 胜率 1.0，对 GPT-2 Alpaca 胜率 0.5，均值 0.75 |
+| 奖励 | reward=0，judge_valid=1，feedback_smoke_valid=1，eval_valid=0，非完整评分 |
+| 工作负载时间 | 训练内部 27.52 秒，评分内部 14.30 秒，driver 含初始化和清理 92.27 秒，不包含裁判冷启动 |
+| 物理清理 | 任务容器和任务 GPU 进程均为 0。裁判已退出，端点不再监听，现场两卡无计算进程，nvidia-smi 为 0 MiB |
+
+失败证据也保留：NVML v1 预检与现场工具不一致，改用项目既有 v2 查询。共享 vLLM 不接受 UUID 字符串、旧日志参数，启动器改为实际 CUDA UUID 映射及当前参数，没有修改共享依赖。第一轮反馈任务收到真实字符串排名，被整数校验拒绝，未执行更新且清理完成。单请求诊断确认返回内容后，本地分支严格转换 `"1"`、`"2"`，保持真实排名，定向复测通过。没有将无效反馈填成合法偏好。
+
+裁判停止时报告了一个 multiprocessing semaphore 资源追踪警告。随后现场检查没有残留 GPU 进程或本次容器，不将警告当作仍占 GPU，也不声称已审计全部 OS IPC 对象。
+
+这次短等待是一个真实观测，不是稳定分布，更不能证明值得 offload。0.75 是两条隐藏提示的局部结果，不具有完整 benchmark 成绩意义。未执行多裁判副本吞吐测试、完整 512 条评分、PSRL 策略训练、command ON/OFF 或自动卸载收益实验。结论齐备后停止 GPU 验证。
+
+本地裁判最终 CPU 回归 30 项通过，覆盖原有 recipe、本地 HTTP 协议、评分来源隔离、请求预算和排名格式。新增代码 Ruff、格式与 prose-style 检查通过，相关文档 382 个本地链接及锚点检查通过。全仓 pre-commit 在临时快照执行，仍因本次范围外的既有格式与注释问题失败，自动修复未回写工作区。

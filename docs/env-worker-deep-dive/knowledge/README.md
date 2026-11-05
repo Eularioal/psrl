@@ -49,7 +49,8 @@
 |---|---|
 | [五篇近期顶会论文](recent-top-conference-papers.md) | RollArt、DynaRL、Murakkab、Prism、Weave 与环境执行、GPU 调度课题的关系及阅读顺序 |
 | [GPU benchmark 接入 recipe](gpu-benchmark-recipes.md) | 实际任务资产、准备、环境调用和 PSRL 接口，接入首选 |
-| [RE-Bench 原生接入](re-bench-recipe.md) | 聊天模型训练、裁判凭据、command/episode 边界、卸载成本及相关研究 |
+| [command 调度研究](command-scheduling-research.md) | 整组完成时间、已有研究边界、反馈保真调度候选、实验与否证条件 |
+| [RE-Bench 原生接入](re-bench-recipe.md) | 聊天模型训练、裁判凭据、command/episode 边界、卸载成本、本地裁判与 command 空窗权衡 |
 | [GPU workload 调研](gpu-workload-benchmark-survey.md) | 比较任务候选，调研建议不等于全部已接入 |
 | [InferenceBench 评分](inferencebench-scoring.md) | 官方性能奖励、质量门槛与本地功能检查分数的区别 |
 | [EnvWorker 接入与 GPU 验证](onboarding-and-gpu-validation.md) | EnvWorker 环境类、AgentLoop 和分层验证，不替代当前 Router 接口 |
