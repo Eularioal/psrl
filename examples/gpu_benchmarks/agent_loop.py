@@ -21,7 +21,11 @@ class GpuBenchmarkAgentLoop(SciAccelAgentLoop):
         if self.runtime_config.harbor.environment_backend not in ("docker", "env_worker"):
             raise ValueError("GPU benchmarks require a managed container backend.")
         units = self.env_service_cfg.get("units", [])
-        if not units or any(unit.get("gpu_reservation", "episode") != "episode" for unit in units):
+        from examples.kernel_bench.verifier import VERIFIER_PATH, validate_units
+
+        if self.runtime_config.harbor.verifier_import_path == VERIFIER_PATH:
+            validate_units(units)
+        elif not units or any(unit.get("gpu_reservation", "episode") != "episode" for unit in units):
             raise ValueError("These benchmark verifiers require explicit episode GPU units.")
         self._benchmark_client = None
 

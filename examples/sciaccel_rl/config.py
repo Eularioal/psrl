@@ -22,6 +22,7 @@ class HarborConfig:
     environment_backend: str = "docker"
     jobs_dir: str = "/tmp/sciaccel_jobs"
     agent_name: str = "terminus-2"
+    verifier_import_path: str | None = None
     override_gpus: int | None = None
     gpu_compose_override: str = ""
     # Observation mode retains task scores without requiring host process attribution.

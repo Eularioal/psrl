@@ -526,6 +526,11 @@ async def run_harbor_episode(
                     },
                 )
             ],
+            **(
+                {"verifier": {"import_path": config.harbor.verifier_import_path}}
+                if config.harbor.verifier_import_path
+                else {}
+            ),
             n_attempts=1,
             n_concurrent_trials=1,
             # Harbor appends these to the on-disk instruction before the agent sees it.

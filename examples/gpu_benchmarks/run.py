@@ -45,9 +45,18 @@ async def run(args):
     tag = "bench-" + uuid.uuid4().hex[:10]
     config = tomllib.loads((args.task / "task.toml").read_text())
     demand = demand_from_task(str(args.task), gpu_memory_mb_override=args.gpu_memory_mb)
+    reservation = getattr(args, "gpu_reservation", "episode")
+    verifier_path = None
+    if reservation == "command":
+        spec = json.loads((args.task / "tests/spec.json").read_text())
+        if spec.get("benchmark") != "kernel_bench":
+            raise ValueError("Command verification is currently enabled only for KernelBench.")
+        from examples.kernel_bench.verifier import VERIFIER_PATH
+
+        verifier_path = VERIFIER_PATH
     record = {
         "tag": tag,
-        "mode": "episode",
+        "mode": reservation,
         "environment_backend": args.environment_backend,
         "agent": args.agent,
         "started": time.time(),
@@ -117,7 +126,7 @@ async def run(args):
                         "gpu_indices": [args.gpu],
                         "gpu_memory_mb": int(before["total_mb"]),
                         "max_containers": 1,
-                        "gpu_reservation": "episode",
+                        "gpu_reservation": reservation,
                     }
                 ],
             }
@@ -129,6 +138,7 @@ async def run(args):
             harbor=HarborConfig(
                 jobs_dir=str(args.output / "jobs"),
                 agent_name=args.agent,
+                verifier_import_path=verifier_path,
                 environment_backend=args.environment_backend,
             ),
             task_timeout_sec=config["agent"]["timeout_sec"],
@@ -198,6 +208,7 @@ def build_parser(description=__doc__):
     parser.add_argument("--gpu", type=int, required=True)
     parser.add_argument("--gpu-memory-mb", type=int, default=8192)
     parser.add_argument("--agent", default="oracle")
+    parser.add_argument("--gpu-reservation", choices=["episode", "command"], default="episode")
     parser.add_argument("--environment-backend", choices=["docker", "env_worker"], default="docker")
     parser.add_argument("--model-url", default="http://127.0.0.1:1/v1")
     parser.add_argument("--model", default="unused")
