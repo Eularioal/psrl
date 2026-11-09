@@ -1,0 +1,1488 @@
+{
+  "status": "passed",
+  "elapsed_s": 244.65478413924575,
+  "benchmark_task": "ss-sgl-cluster-gpu-fused-kernels",
+  "scope": "Unchanged 4 QKV F2P and 2 GDN P2P tests on an isolated complete module. Not a complete SWE-Serve score or EnvRouter migration experiment.",
+  "provenance": {
+    "psrl_head": "0326d46694bdc372560e535069d3db0f7f48bd4b",
+    "psrl_branch": "main",
+    "swe_serve_commit": "84d8fd92739a4a76ceddba56e5a70605921c4ad2",
+    "sglang_base_commit": "6ac30192fa2fb48ede99b29bac63c0448e8f964d",
+    "protocol": "Isolated full GDN module plus oracle patch, unchanged six upstream test nodes, fresh Docker process each command. Sparse namespace package omits SGLang package initialization. No EnvRouter or full official verifier.",
+    "files": {
+      "command_context_probe.py": "f4bcddc17da000e5f9a3ee6b11d9c6d3b5bbb5c59993bd14481c273dc30047f9",
+      "run_command_context_probe.py": "e5ed6e79afaedb62b4bb917ad95414a7ef9bb53711a82bbdf2a5dce2eb127a94",
+      "assets/gdn_fused_proj.base.py": "c4ef85167eb11065721e76dd5d63d6f346f309f84822578dd4a3874249acef89",
+      "assets/task/solution/changes.patch": "6f2a0d59c7f5f88f853b48abc308a9012435ee0ccf68987573ea2c344c4cd8c0",
+      "assets/task/tests/postmerge_tests/test/registered/kernels/test_gdn_fused_qkv_split.py": "b47f3d9227da7c0b16b7b96759910d029b9167c3ae57db47d9225293093535bf",
+      "assets/task/tests/postmerge_tests/test/registered/kernels/test_gdn_fused_proj_p2p.py": "b3e2cd4657ede1e0163dc85aef248ce71359c4f57e6f77b5a452ef5cb2bd4423"
+    }
+  },
+  "hardware": "2 H20 GPUs on one host, sequential execution",
+  "environment": {
+    "torch": "2.11.0+cu128",
+    "triton": "3.6.0",
+    "torch_cuda": "12.8",
+    "capability": [
+      9,
+      0
+    ]
+  },
+  "source_hashes": {
+    "base": "3e13605a0c90070a10e887b3e196ca4c55a8a8d92d8860a95d7f701ef55b8853",
+    "unrelated": "d53fd91e3348044d3ef20564573b15ec40dedb4a435e0199b2784e76c60d3ccc",
+    "kernel_edit": "5919245dac79d2eae61c8dd39bd9e99e204f79ffe869f8206cce211084046ef8"
+  },
+  "image_id": "sha256:3341a92392a9a69d712773e35d9f33837b4fb31b3a2c2382e4bf7bd2cf1eb4ed",
+  "driver_version": "535.247.01",
+  "remaining_owned_containers": [],
+  "final_selected_released": true,
+  "runs": [
+    {
+      "name": "a_cold_original",
+      "gpu": "gpu0",
+      "version": "base",
+      "cache": "a",
+      "passed": 6,
+      "exit_code": 0,
+      "cache_hits": 0,
+      "cache_misses": 6,
+      "new_cache_files": 51,
+      "docker_wall_s": 15.292222268879414,
+      "import_s": 9.325518280267715,
+      "cuda_init_s": 0.452295308932662,
+      "pytest_s": 3.805762419477105,
+      "compiler_events": [
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "fd8cd738af28aa85a1da91b1c504e7bec7a79b3986337d902c7047d3e80653af",
+          "times": {
+            "ir_initialization": 624970,
+            "lowering_stages": [
+              [
+                "ttir",
+                1717
+              ],
+              [
+                "ttgir",
+                5675
+              ],
+              [
+                "llir",
+                12936
+              ],
+              [
+                "ptx",
+                4311
+              ],
+              [
+                "cubin",
+                113271
+              ]
+            ],
+            "store_results": 386
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "e78dfd39b133ec52046c7bf70a166903d99c26f6891426d67532932a25b5b315",
+          "times": {
+            "ir_initialization": 7858,
+            "lowering_stages": [
+              [
+                "ttir",
+                1543
+              ],
+              [
+                "ttgir",
+                5437
+              ],
+              [
+                "llir",
+                6744
+              ],
+              [
+                "ptx",
+                2737
+              ],
+              [
+                "cubin",
+                37351
+              ]
+            ],
+            "store_results": 337
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "d2316e991e4183ee701c7c1708c3f6eff97f9dee18131c9493b7845eb9803204",
+          "times": {
+            "ir_initialization": 7118,
+            "lowering_stages": [
+              [
+                "ttir",
+                1406
+              ],
+              [
+                "ttgir",
+                5534
+              ],
+              [
+                "llir",
+                13398
+              ],
+              [
+                "ptx",
+                4949
+              ],
+              [
+                "cubin",
+                39668
+              ]
+            ],
+            "store_results": 333
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "0643283d71ce6cc40f03aa19c16bfc708e49245484b946a14f5352db96c03277",
+          "times": {
+            "ir_initialization": 7362,
+            "lowering_stages": [
+              [
+                "ttir",
+                1443
+              ],
+              [
+                "ttgir",
+                5396
+              ],
+              [
+                "llir",
+                6265
+              ],
+              [
+                "ptx",
+                2851
+              ],
+              [
+                "cubin",
+                36151
+              ]
+            ],
+            "store_results": 349
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_contiguous_kernel",
+          "cache_hit": false,
+          "hash": "3a58b432dd602a5b086a92b965eb2b617eb80e1f6fb4f9711155e64ddadb38db",
+          "times": {
+            "ir_initialization": 19768,
+            "lowering_stages": [
+              [
+                "ttir",
+                2597
+              ],
+              [
+                "ttgir",
+                8157
+              ],
+              [
+                "llir",
+                8955
+              ],
+              [
+                "ptx",
+                3677
+              ],
+              [
+                "cubin",
+                36275
+              ]
+            ],
+            "store_results": 316
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_kernel",
+          "cache_hit": false,
+          "hash": "1d695b3219b15dfae88f1b469db27edbc01f4e35fb44659ef85a5a92e84897b7",
+          "times": {
+            "ir_initialization": 69245,
+            "lowering_stages": [
+              [
+                "ttir",
+                2604
+              ],
+              [
+                "ttgir",
+                8199
+              ],
+              [
+                "llir",
+                8620
+              ],
+              [
+                "ptx",
+                3669
+              ],
+              [
+                "cubin",
+                38087
+              ]
+            ],
+            "store_results": 338
+          }
+        }
+      ],
+      "all_selected_released": true
+    },
+    {
+      "name": "a_warm_same",
+      "gpu": "gpu0",
+      "version": "base",
+      "cache": "a",
+      "passed": 6,
+      "exit_code": 0,
+      "cache_hits": 6,
+      "cache_misses": 0,
+      "new_cache_files": 0,
+      "docker_wall_s": 9.283113410696387,
+      "import_s": 5.944053430110216,
+      "cuda_init_s": 0.46687089279294014,
+      "pytest_s": 1.2159175388514996,
+      "compiler_events": [
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "fd8cd738af28aa85a1da91b1c504e7bec7a79b3986337d902c7047d3e80653af",
+          "times": {
+            "ir_initialization": 585787,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "e78dfd39b133ec52046c7bf70a166903d99c26f6891426d67532932a25b5b315",
+          "times": {
+            "ir_initialization": 811,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "d2316e991e4183ee701c7c1708c3f6eff97f9dee18131c9493b7845eb9803204",
+          "times": {
+            "ir_initialization": 674,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "0643283d71ce6cc40f03aa19c16bfc708e49245484b946a14f5352db96c03277",
+          "times": {
+            "ir_initialization": 635,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_contiguous_kernel",
+          "cache_hit": true,
+          "hash": "3a58b432dd602a5b086a92b965eb2b617eb80e1f6fb4f9711155e64ddadb38db",
+          "times": {
+            "ir_initialization": 3042,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_kernel",
+          "cache_hit": true,
+          "hash": "1d695b3219b15dfae88f1b469db27edbc01f4e35fb44659ef85a5a92e84897b7",
+          "times": {
+            "ir_initialization": 3117,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        }
+      ],
+      "all_selected_released": false
+    },
+    {
+      "name": "a_warm_other",
+      "gpu": "gpu1",
+      "version": "base",
+      "cache": "a",
+      "passed": 6,
+      "exit_code": 0,
+      "cache_hits": 6,
+      "cache_misses": 0,
+      "new_cache_files": 0,
+      "docker_wall_s": 10.191657030954957,
+      "import_s": 6.664781106635928,
+      "cuda_init_s": 0.442743469029665,
+      "pytest_s": 1.1378930937498808,
+      "compiler_events": [
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "fd8cd738af28aa85a1da91b1c504e7bec7a79b3986337d902c7047d3e80653af",
+          "times": {
+            "ir_initialization": 609372,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "e78dfd39b133ec52046c7bf70a166903d99c26f6891426d67532932a25b5b315",
+          "times": {
+            "ir_initialization": 838,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "d2316e991e4183ee701c7c1708c3f6eff97f9dee18131c9493b7845eb9803204",
+          "times": {
+            "ir_initialization": 703,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "0643283d71ce6cc40f03aa19c16bfc708e49245484b946a14f5352db96c03277",
+          "times": {
+            "ir_initialization": 662,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_contiguous_kernel",
+          "cache_hit": true,
+          "hash": "3a58b432dd602a5b086a92b965eb2b617eb80e1f6fb4f9711155e64ddadb38db",
+          "times": {
+            "ir_initialization": 3129,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_kernel",
+          "cache_hit": true,
+          "hash": "1d695b3219b15dfae88f1b469db27edbc01f4e35fb44659ef85a5a92e84897b7",
+          "times": {
+            "ir_initialization": 3136,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        }
+      ],
+      "all_selected_released": true
+    },
+    {
+      "name": "a_cold_other",
+      "gpu": "gpu1",
+      "version": "base",
+      "cache": "a_fresh",
+      "passed": 6,
+      "exit_code": 0,
+      "cache_hits": 0,
+      "cache_misses": 6,
+      "new_cache_files": 51,
+      "docker_wall_s": 14.994029028341174,
+      "import_s": 7.156175019219518,
+      "cuda_init_s": 0.46803065203130245,
+      "pytest_s": 5.5629274770617485,
+      "compiler_events": [
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "fd8cd738af28aa85a1da91b1c504e7bec7a79b3986337d902c7047d3e80653af",
+          "times": {
+            "ir_initialization": 620282,
+            "lowering_stages": [
+              [
+                "ttir",
+                1696
+              ],
+              [
+                "ttgir",
+                5632
+              ],
+              [
+                "llir",
+                12659
+              ],
+              [
+                "ptx",
+                4176
+              ],
+              [
+                "cubin",
+                83002
+              ]
+            ],
+            "store_results": 369
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "e78dfd39b133ec52046c7bf70a166903d99c26f6891426d67532932a25b5b315",
+          "times": {
+            "ir_initialization": 7734,
+            "lowering_stages": [
+              [
+                "ttir",
+                1519
+              ],
+              [
+                "ttgir",
+                5483
+              ],
+              [
+                "llir",
+                6690
+              ],
+              [
+                "ptx",
+                2665
+              ],
+              [
+                "cubin",
+                40516
+              ]
+            ],
+            "store_results": 348
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "d2316e991e4183ee701c7c1708c3f6eff97f9dee18131c9493b7845eb9803204",
+          "times": {
+            "ir_initialization": 7148,
+            "lowering_stages": [
+              [
+                "ttir",
+                1439
+              ],
+              [
+                "ttgir",
+                5565
+              ],
+              [
+                "llir",
+                13565
+              ],
+              [
+                "ptx",
+                4921
+              ],
+              [
+                "cubin",
+                37157
+              ]
+            ],
+            "store_results": 349
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "0643283d71ce6cc40f03aa19c16bfc708e49245484b946a14f5352db96c03277",
+          "times": {
+            "ir_initialization": 7229,
+            "lowering_stages": [
+              [
+                "ttir",
+                1446
+              ],
+              [
+                "ttgir",
+                5476
+              ],
+              [
+                "llir",
+                6391
+              ],
+              [
+                "ptx",
+                2819
+              ],
+              [
+                "cubin",
+                40877
+              ]
+            ],
+            "store_results": 330
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_contiguous_kernel",
+          "cache_hit": false,
+          "hash": "3a58b432dd602a5b086a92b965eb2b617eb80e1f6fb4f9711155e64ddadb38db",
+          "times": {
+            "ir_initialization": 19843,
+            "lowering_stages": [
+              [
+                "ttir",
+                2598
+              ],
+              [
+                "ttgir",
+                8295
+              ],
+              [
+                "llir",
+                9094
+              ],
+              [
+                "ptx",
+                3669
+              ],
+              [
+                "cubin",
+                134033
+              ]
+            ],
+            "store_results": 366
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_kernel",
+          "cache_hit": false,
+          "hash": "1d695b3219b15dfae88f1b469db27edbc01f4e35fb44659ef85a5a92e84897b7",
+          "times": {
+            "ir_initialization": 89077,
+            "lowering_stages": [
+              [
+                "ttir",
+                2609
+              ],
+              [
+                "ttgir",
+                8183
+              ],
+              [
+                "llir",
+                8732
+              ],
+              [
+                "ptx",
+                3687
+              ],
+              [
+                "cubin",
+                37599
+              ]
+            ],
+            "store_results": 321
+          }
+        }
+      ],
+      "all_selected_released": true
+    },
+    {
+      "name": "b_cold_original",
+      "gpu": "gpu1",
+      "version": "base",
+      "cache": "b",
+      "passed": 6,
+      "exit_code": 0,
+      "cache_hits": 0,
+      "cache_misses": 6,
+      "new_cache_files": 51,
+      "docker_wall_s": 32.73478950187564,
+      "import_s": 17.62477624975145,
+      "cuda_init_s": 0.43987071327865124,
+      "pytest_s": 12.52266427129507,
+      "compiler_events": [
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "fd8cd738af28aa85a1da91b1c504e7bec7a79b3986337d902c7047d3e80653af",
+          "times": {
+            "ir_initialization": 661172,
+            "lowering_stages": [
+              [
+                "ttir",
+                1765
+              ],
+              [
+                "ttgir",
+                5678
+              ],
+              [
+                "llir",
+                12879
+              ],
+              [
+                "ptx",
+                4300
+              ],
+              [
+                "cubin",
+                89830
+              ]
+            ],
+            "store_results": 374
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "e78dfd39b133ec52046c7bf70a166903d99c26f6891426d67532932a25b5b315",
+          "times": {
+            "ir_initialization": 7691,
+            "lowering_stages": [
+              [
+                "ttir",
+                1503
+              ],
+              [
+                "ttgir",
+                5456
+              ],
+              [
+                "llir",
+                6661
+              ],
+              [
+                "ptx",
+                2661
+              ],
+              [
+                "cubin",
+                50291
+              ]
+            ],
+            "store_results": 370
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "d2316e991e4183ee701c7c1708c3f6eff97f9dee18131c9493b7845eb9803204",
+          "times": {
+            "ir_initialization": 7151,
+            "lowering_stages": [
+              [
+                "ttir",
+                1477
+              ],
+              [
+                "ttgir",
+                5631
+              ],
+              [
+                "llir",
+                13578
+              ],
+              [
+                "ptx",
+                4965
+              ],
+              [
+                "cubin",
+                40192
+              ]
+            ],
+            "store_results": 344
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "0643283d71ce6cc40f03aa19c16bfc708e49245484b946a14f5352db96c03277",
+          "times": {
+            "ir_initialization": 7173,
+            "lowering_stages": [
+              [
+                "ttir",
+                1447
+              ],
+              [
+                "ttgir",
+                5476
+              ],
+              [
+                "llir",
+                6272
+              ],
+              [
+                "ptx",
+                2839
+              ],
+              [
+                "cubin",
+                37377
+              ]
+            ],
+            "store_results": 332
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_contiguous_kernel",
+          "cache_hit": false,
+          "hash": "3a58b432dd602a5b086a92b965eb2b617eb80e1f6fb4f9711155e64ddadb38db",
+          "times": {
+            "ir_initialization": 19570,
+            "lowering_stages": [
+              [
+                "ttir",
+                2561
+              ],
+              [
+                "ttgir",
+                8267
+              ],
+              [
+                "llir",
+                8981
+              ],
+              [
+                "ptx",
+                4008
+              ],
+              [
+                "cubin",
+                43555
+              ]
+            ],
+            "store_results": 320
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_kernel",
+          "cache_hit": false,
+          "hash": "1d695b3219b15dfae88f1b469db27edbc01f4e35fb44659ef85a5a92e84897b7",
+          "times": {
+            "ir_initialization": 67819,
+            "lowering_stages": [
+              [
+                "ttir",
+                2583
+              ],
+              [
+                "ttgir",
+                8212
+              ],
+              [
+                "llir",
+                8570
+              ],
+              [
+                "ptx",
+                3647
+              ],
+              [
+                "cubin",
+                39580
+              ]
+            ],
+            "store_results": 313
+          }
+        }
+      ],
+      "all_selected_released": true
+    },
+    {
+      "name": "b_warm_same",
+      "gpu": "gpu1",
+      "version": "base",
+      "cache": "b",
+      "passed": 6,
+      "exit_code": 0,
+      "cache_hits": 6,
+      "cache_misses": 0,
+      "new_cache_files": 0,
+      "docker_wall_s": 18.35128895007074,
+      "import_s": 14.54961435124278,
+      "cuda_init_s": 0.4221174754202366,
+      "pytest_s": 1.2360070794820786,
+      "compiler_events": [
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "fd8cd738af28aa85a1da91b1c504e7bec7a79b3986337d902c7047d3e80653af",
+          "times": {
+            "ir_initialization": 624814,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "e78dfd39b133ec52046c7bf70a166903d99c26f6891426d67532932a25b5b315",
+          "times": {
+            "ir_initialization": 824,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "d2316e991e4183ee701c7c1708c3f6eff97f9dee18131c9493b7845eb9803204",
+          "times": {
+            "ir_initialization": 686,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "0643283d71ce6cc40f03aa19c16bfc708e49245484b946a14f5352db96c03277",
+          "times": {
+            "ir_initialization": 639,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_contiguous_kernel",
+          "cache_hit": true,
+          "hash": "3a58b432dd602a5b086a92b965eb2b617eb80e1f6fb4f9711155e64ddadb38db",
+          "times": {
+            "ir_initialization": 3041,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_kernel",
+          "cache_hit": true,
+          "hash": "1d695b3219b15dfae88f1b469db27edbc01f4e35fb44659ef85a5a92e84897b7",
+          "times": {
+            "ir_initialization": 3102,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        }
+      ],
+      "all_selected_released": true
+    },
+    {
+      "name": "b_warm_other",
+      "gpu": "gpu0",
+      "version": "base",
+      "cache": "b",
+      "passed": 6,
+      "exit_code": 0,
+      "cache_hits": 6,
+      "cache_misses": 0,
+      "new_cache_files": 0,
+      "docker_wall_s": 27.609478317201138,
+      "import_s": 18.638377932831645,
+      "cuda_init_s": 0.43487667478621006,
+      "pytest_s": 5.588699825108051,
+      "compiler_events": [
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "fd8cd738af28aa85a1da91b1c504e7bec7a79b3986337d902c7047d3e80653af",
+          "times": {
+            "ir_initialization": 4453819,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "e78dfd39b133ec52046c7bf70a166903d99c26f6891426d67532932a25b5b315",
+          "times": {
+            "ir_initialization": 905,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "d2316e991e4183ee701c7c1708c3f6eff97f9dee18131c9493b7845eb9803204",
+          "times": {
+            "ir_initialization": 732,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "0643283d71ce6cc40f03aa19c16bfc708e49245484b946a14f5352db96c03277",
+          "times": {
+            "ir_initialization": 659,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_contiguous_kernel",
+          "cache_hit": true,
+          "hash": "3a58b432dd602a5b086a92b965eb2b617eb80e1f6fb4f9711155e64ddadb38db",
+          "times": {
+            "ir_initialization": 3125,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_kernel",
+          "cache_hit": true,
+          "hash": "1d695b3219b15dfae88f1b469db27edbc01f4e35fb44659ef85a5a92e84897b7",
+          "times": {
+            "ir_initialization": 3177,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        }
+      ],
+      "all_selected_released": true
+    },
+    {
+      "name": "b_cold_other",
+      "gpu": "gpu0",
+      "version": "base",
+      "cache": "b_fresh",
+      "passed": 6,
+      "exit_code": 0,
+      "cache_hits": 0,
+      "cache_misses": 6,
+      "new_cache_files": 51,
+      "docker_wall_s": 20.128032345324755,
+      "import_s": 12.458806551992893,
+      "cuda_init_s": 0.5007736478000879,
+      "pytest_s": 5.107784470543265,
+      "compiler_events": [
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "fd8cd738af28aa85a1da91b1c504e7bec7a79b3986337d902c7047d3e80653af",
+          "times": {
+            "ir_initialization": 831701,
+            "lowering_stages": [
+              [
+                "ttir",
+                1731
+              ],
+              [
+                "ttgir",
+                5720
+              ],
+              [
+                "llir",
+                12941
+              ],
+              [
+                "ptx",
+                4296
+              ],
+              [
+                "cubin",
+                82685
+              ]
+            ],
+            "store_results": 380
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "e78dfd39b133ec52046c7bf70a166903d99c26f6891426d67532932a25b5b315",
+          "times": {
+            "ir_initialization": 7860,
+            "lowering_stages": [
+              [
+                "ttir",
+                1502
+              ],
+              [
+                "ttgir",
+                5559
+              ],
+              [
+                "llir",
+                6712
+              ],
+              [
+                "ptx",
+                2698
+              ],
+              [
+                "cubin",
+                35467
+              ]
+            ],
+            "store_results": 354
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "d2316e991e4183ee701c7c1708c3f6eff97f9dee18131c9493b7845eb9803204",
+          "times": {
+            "ir_initialization": 7168,
+            "lowering_stages": [
+              [
+                "ttir",
+                1417
+              ],
+              [
+                "ttgir",
+                5698
+              ],
+              [
+                "llir",
+                13535
+              ],
+              [
+                "ptx",
+                4925
+              ],
+              [
+                "cubin",
+                37761
+              ]
+            ],
+            "store_results": 367
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "0643283d71ce6cc40f03aa19c16bfc708e49245484b946a14f5352db96c03277",
+          "times": {
+            "ir_initialization": 7194,
+            "lowering_stages": [
+              [
+                "ttir",
+                1435
+              ],
+              [
+                "ttgir",
+                5471
+              ],
+              [
+                "llir",
+                6332
+              ],
+              [
+                "ptx",
+                2834
+              ],
+              [
+                "cubin",
+                252260
+              ]
+            ],
+            "store_results": 385
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_contiguous_kernel",
+          "cache_hit": false,
+          "hash": "3a58b432dd602a5b086a92b965eb2b617eb80e1f6fb4f9711155e64ddadb38db",
+          "times": {
+            "ir_initialization": 19783,
+            "lowering_stages": [
+              [
+                "ttir",
+                2556
+              ],
+              [
+                "ttgir",
+                8299
+              ],
+              [
+                "llir",
+                9002
+              ],
+              [
+                "ptx",
+                3670
+              ],
+              [
+                "cubin",
+                38938
+              ]
+            ],
+            "store_results": 336
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_kernel",
+          "cache_hit": false,
+          "hash": "1d695b3219b15dfae88f1b469db27edbc01f4e35fb44659ef85a5a92e84897b7",
+          "times": {
+            "ir_initialization": 69385,
+            "lowering_stages": [
+              [
+                "ttir",
+                2609
+              ],
+              [
+                "ttgir",
+                8255
+              ],
+              [
+                "llir",
+                8630
+              ],
+              [
+                "ptx",
+                3674
+              ],
+              [
+                "cubin",
+                41559
+              ]
+            ],
+            "store_results": 330
+          }
+        }
+      ],
+      "all_selected_released": true
+    },
+    {
+      "name": "unrelated_edit",
+      "gpu": "gpu0",
+      "version": "unrelated",
+      "cache": "a",
+      "passed": 6,
+      "exit_code": 0,
+      "cache_hits": 6,
+      "cache_misses": 0,
+      "new_cache_files": 0,
+      "docker_wall_s": 13.901954835280776,
+      "import_s": 10.2061139754951,
+      "cuda_init_s": 0.44151656329631805,
+      "pytest_s": 1.3998737893998623,
+      "compiler_events": [
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "fd8cd738af28aa85a1da91b1c504e7bec7a79b3986337d902c7047d3e80653af",
+          "times": {
+            "ir_initialization": 710056,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "e78dfd39b133ec52046c7bf70a166903d99c26f6891426d67532932a25b5b315",
+          "times": {
+            "ir_initialization": 819,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "d2316e991e4183ee701c7c1708c3f6eff97f9dee18131c9493b7845eb9803204",
+          "times": {
+            "ir_initialization": 711,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "0643283d71ce6cc40f03aa19c16bfc708e49245484b946a14f5352db96c03277",
+          "times": {
+            "ir_initialization": 663,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_contiguous_kernel",
+          "cache_hit": true,
+          "hash": "3a58b432dd602a5b086a92b965eb2b617eb80e1f6fb4f9711155e64ddadb38db",
+          "times": {
+            "ir_initialization": 3072,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_kernel",
+          "cache_hit": true,
+          "hash": "1d695b3219b15dfae88f1b469db27edbc01f4e35fb44659ef85a5a92e84897b7",
+          "times": {
+            "ir_initialization": 3156,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        }
+      ],
+      "all_selected_released": true
+    },
+    {
+      "name": "kernel_edit",
+      "gpu": "gpu1",
+      "version": "kernel_edit",
+      "cache": "a",
+      "passed": 6,
+      "exit_code": 0,
+      "cache_hits": 2,
+      "cache_misses": 4,
+      "new_cache_files": 32,
+      "docker_wall_s": 17.945882419124246,
+      "import_s": 8.825127743184566,
+      "cuda_init_s": 0.9857587721198797,
+      "pytest_s": 5.527799604460597,
+      "compiler_events": [
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "f9fd00de9a1b9276686a670e795ce9cf1b8051aa9fd1f50e5af03cb94afc4a34",
+          "times": {
+            "ir_initialization": 647259,
+            "lowering_stages": [
+              [
+                "ttir",
+                1738
+              ],
+              [
+                "ttgir",
+                5706
+              ],
+              [
+                "llir",
+                12871
+              ],
+              [
+                "ptx",
+                4284
+              ],
+              [
+                "cubin",
+                81267
+              ]
+            ],
+            "store_results": 349
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "a089c4a3f7534af946566fd809e45755c8778a9171a621c29693da732d0db461",
+          "times": {
+            "ir_initialization": 7850,
+            "lowering_stages": [
+              [
+                "ttir",
+                1543
+              ],
+              [
+                "ttgir",
+                5519
+              ],
+              [
+                "llir",
+                6678
+              ],
+              [
+                "ptx",
+                2718
+              ],
+              [
+                "cubin",
+                233297
+              ]
+            ],
+            "store_results": 352
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "1f177bce4fcae2812d5611fd0272995778a8db59428fd5090333a8d1f28bf76a",
+          "times": {
+            "ir_initialization": 7483,
+            "lowering_stages": [
+              [
+                "ttir",
+                1501
+              ],
+              [
+                "ttgir",
+                5615
+              ],
+              [
+                "llir",
+                13558
+              ],
+              [
+                "ptx",
+                4952
+              ],
+              [
+                "cubin",
+                38496
+              ]
+            ],
+            "store_results": 377
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": false,
+          "hash": "bb7114271b94cd38fc3410dcecec5dfddb77b68d3f8072916a758acbd302191b",
+          "times": {
+            "ir_initialization": 8009,
+            "lowering_stages": [
+              [
+                "ttir",
+                1486
+              ],
+              [
+                "ttgir",
+                5433
+              ],
+              [
+                "llir",
+                6295
+              ],
+              [
+                "ptx",
+                2798
+              ],
+              [
+                "cubin",
+                37102
+              ]
+            ],
+            "store_results": 321
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_contiguous_kernel",
+          "cache_hit": true,
+          "hash": "3a58b432dd602a5b086a92b965eb2b617eb80e1f6fb4f9711155e64ddadb38db",
+          "times": {
+            "ir_initialization": 3035,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_kernel",
+          "cache_hit": true,
+          "hash": "1d695b3219b15dfae88f1b469db27edbc01f4e35fb44659ef85a5a92e84897b7",
+          "times": {
+            "ir_initialization": 6068,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        }
+      ],
+      "all_selected_released": true
+    },
+    {
+      "name": "kernel_edit_warm_other",
+      "gpu": "gpu0",
+      "version": "kernel_edit",
+      "cache": "a",
+      "passed": 6,
+      "exit_code": 0,
+      "cache_hits": 6,
+      "cache_misses": 0,
+      "new_cache_files": 0,
+      "docker_wall_s": 19.00030048377812,
+      "import_s": 14.905280325561762,
+      "cuda_init_s": 0.4753937218338251,
+      "pytest_s": 1.726973371580243,
+      "compiler_events": [
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "f9fd00de9a1b9276686a670e795ce9cf1b8051aa9fd1f50e5af03cb94afc4a34",
+          "times": {
+            "ir_initialization": 734856,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "a089c4a3f7534af946566fd809e45755c8778a9171a621c29693da732d0db461",
+          "times": {
+            "ir_initialization": 885,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "1f177bce4fcae2812d5611fd0272995778a8db59428fd5090333a8d1f28bf76a",
+          "times": {
+            "ir_initialization": 716,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkv_split_gdn_prefill_kernel",
+          "cache_hit": true,
+          "hash": "bb7114271b94cd38fc3410dcecec5dfddb77b68d3f8072916a758acbd302191b",
+          "times": {
+            "ir_initialization": 768,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_contiguous_kernel",
+          "cache_hit": true,
+          "hash": "3a58b432dd602a5b086a92b965eb2b617eb80e1f6fb4f9711155e64ddadb38db",
+          "times": {
+            "ir_initialization": 3171,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        },
+        {
+          "kernel": "fused_qkvzba_split_reshape_cat_kernel",
+          "cache_hit": true,
+          "hash": "1d695b3219b15dfae88f1b469db27edbc01f4e35fb44659ef85a5a92e84897b7",
+          "times": {
+            "ir_initialization": 3158,
+            "lowering_stages": [],
+            "store_results": 0
+          }
+        }
+      ],
+      "all_selected_released": true
+    }
+  ]
+}

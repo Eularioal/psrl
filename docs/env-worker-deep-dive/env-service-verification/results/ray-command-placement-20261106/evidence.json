@@ -1,0 +1,960 @@
+{
+  "scope": "Controlled correctness replay, not full training or historical OFF.",
+  "groups": {
+    "fixed-prepared-False": {
+      "n": 2,
+      "mean_batch_s": 37.947577357292175,
+      "mean_a_wall_s": 37.61889386177063,
+      "mean_a_held_s": 8.822246670722961
+    },
+    "pooled-prepared-False": {
+      "n": 2,
+      "mean_batch_s": 35.049675703048706,
+      "mean_a_wall_s": 25.873400568962097,
+      "mean_a_held_s": 13.286438226699829
+    },
+    "pooled-prepared-True": {
+      "n": 2,
+      "mean_batch_s": 32.42323887348175,
+      "mean_a_wall_s": 18.502830505371094,
+      "mean_a_held_s": 3.3169854879379272
+    }
+  },
+  "runs": [
+    {
+      "run": "0-fixed",
+      "mode": "fixed",
+      "prepared_a": false,
+      "status": "passed",
+      "batch_s": 38.44850277900696,
+      "elapsed_s": 85.19268703460693,
+      "commands": {
+        "a_warm": {
+          "wall_s": 12.421219825744629,
+          "queue_s": 0.026442766189575195,
+          "held_s": 12.393925189971924,
+          "start": 1793940388.9241884,
+          "admitted": 1793940388.9506311,
+          "finished": 1793940401.345349,
+          "released": 1793940401.3445563,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.964529851451516,
+          "cuda_init_s": 0.5573983937501907,
+          "pytest_s": 4.055750284343958,
+          "cache_hits": 0
+        },
+        "b_warm": {
+          "wall_s": 10.555723667144775,
+          "queue_s": 0.009784698486328125,
+          "held_s": 10.545046329498291,
+          "start": 1793940401.668043,
+          "admitted": 1793940401.6778276,
+          "finished": 1793940412.2237134,
+          "released": 1793940412.222874,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.6464936174452305,
+          "cuda_init_s": 0.4891396965831518,
+          "pytest_s": 2.896205563098192,
+          "cache_hits": 0
+        },
+        "c_warm": {
+          "wall_s": 15.798055648803711,
+          "queue_s": 0.010367870330810547,
+          "held_s": 15.786762952804565,
+          "start": 1793940412.5472362,
+          "admitted": 1793940412.557604,
+          "finished": 1793940428.3452399,
+          "released": 1793940428.344367,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 5.905444465577602,
+          "cuda_init_s": 0.8107115644961596,
+          "pytest_s": 5.8537710309028625,
+          "cache_hits": 0
+        },
+        "c_measured": {
+          "wall_s": 11.200725078582764,
+          "queue_s": 0.012333154678344727,
+          "held_s": 11.187633514404297,
+          "start": 1793940428.5609894,
+          "admitted": 1793940428.5733225,
+          "finished": 1793940439.7616696,
+          "released": 1793940439.760956,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 6.872642740607262,
+          "cuda_init_s": 0.777260908856988,
+          "pytest_s": 2.0359069146215916,
+          "cache_hits": 6
+        },
+        "b_measured": {
+          "wall_s": 29.49049949645996,
+          "queue_s": 0.01838994026184082,
+          "held_s": 29.471344709396362,
+          "start": 1793940428.3576689,
+          "admitted": 1793940428.3760588,
+          "finished": 1793940457.8481243,
+          "released": 1793940457.8474035,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 18,
+          "import_s": 18.834097346290946,
+          "cuda_init_s": 1.7438206691294909,
+          "pytest_s": 4.3030944634228945,
+          "cache_hits": 18
+        },
+        "a_measured": {
+          "wall_s": 38.07377290725708,
+          "queue_s": 29.16436791419983,
+          "held_s": 8.90860915184021,
+          "start": 1793940428.7218614,
+          "admitted": 1793940457.8862293,
+          "finished": 1793940466.7955825,
+          "released": 1793940466.7948384,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.7844997476786375,
+          "cuda_init_s": 0.4352763630449772,
+          "pytest_s": 1.1265456900000572,
+          "cache_hits": 6
+        }
+      },
+      "passed": 48,
+      "cleanup_errors": [],
+      "final_gpu": {
+        "0": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        },
+        "1": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        }
+      },
+      "host_before": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "host_after": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "queued_cancellation": {
+        "status": "wait"
+      }
+    },
+    {
+      "run": "0-pooled",
+      "mode": "pooled",
+      "prepared_a": false,
+      "status": "passed",
+      "batch_s": 36.56802034378052,
+      "elapsed_s": 118.46645307540894,
+      "commands": {
+        "a_warm": {
+          "wall_s": 21.09960961341858,
+          "queue_s": 0.010578393936157227,
+          "held_s": 21.087574243545532,
+          "start": 1793940500.2477021,
+          "admitted": 1793940500.2582805,
+          "finished": 1793940521.3472636,
+          "released": 1793940521.3458548,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 11.637128993868828,
+          "cuda_init_s": 1.5144407525658607,
+          "pytest_s": 6.345358733087778,
+          "cache_hits": 0
+        },
+        "b_warm": {
+          "wall_s": 18.740642547607422,
+          "queue_s": 0.010677576065063477,
+          "held_s": 18.729210138320923,
+          "start": 1793940522.179602,
+          "admitted": 1793940522.1902795,
+          "finished": 1793940540.9201927,
+          "released": 1793940540.9194896,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 11.332640308886766,
+          "cuda_init_s": 0.43302494660019875,
+          "pytest_s": 5.2252538204193115,
+          "cache_hits": 0
+        },
+        "c_warm": {
+          "wall_s": 19.531473398208618,
+          "queue_s": 0.011410236358642578,
+          "held_s": 19.519338846206665,
+          "start": 1793940541.2277222,
+          "admitted": 1793940541.2391324,
+          "finished": 1793940560.7591453,
+          "released": 1793940560.7584713,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 12.683640589937568,
+          "cuda_init_s": 0.5137136597186327,
+          "pytest_s": 4.722341513261199,
+          "cache_hits": 0
+        },
+        "c_measured": {
+          "wall_s": 15.036437273025513,
+          "queue_s": 0.009952783584594727,
+          "held_s": 15.02591848373413,
+          "start": 1793940560.9741166,
+          "admitted": 1793940560.9840693,
+          "finished": 1793940576.010512,
+          "released": 1793940576.0099878,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 9.873405776917934,
+          "cuda_init_s": 0.7480990942567587,
+          "pytest_s": 2.6389085110276937,
+          "cache_hits": 6
+        },
+        "a_measured": {
+          "wall_s": 26.80826735496521,
+          "queue_s": 14.805737257003784,
+          "held_s": 12.001781702041626,
+          "start": 1793940561.3135417,
+          "admitted": 1793940576.119279,
+          "finished": 1793940588.1217618,
+          "released": 1793940588.1210606,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 7.120247527956963,
+          "cuda_init_s": 0.7429467309266329,
+          "pytest_s": 2.2978176288306713,
+          "cache_hits": 6
+        },
+        "b_measured": {
+          "wall_s": 36.553670167922974,
+          "queue_s": 0.00701594352722168,
+          "held_s": 36.545905113220215,
+          "start": 1793940560.7707508,
+          "admitted": 1793940560.7777667,
+          "finished": 1793940597.32438,
+          "released": 1793940597.3236718,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 18,
+          "import_s": 22.994599932804704,
+          "cuda_init_s": 2.0216824151575565,
+          "pytest_s": 6.05267714895308,
+          "cache_hits": 18
+        }
+      },
+      "passed": 48,
+      "cleanup_errors": [],
+      "final_gpu": {
+        "0": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        },
+        "1": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        }
+      },
+      "host_before": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "host_after": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "queued_cancellation": {
+        "status": "wait"
+      }
+    },
+    {
+      "run": "1-fixed",
+      "mode": "fixed",
+      "prepared_a": false,
+      "status": "passed",
+      "batch_s": 37.44665193557739,
+      "elapsed_s": 83.45665884017944,
+      "commands": {
+        "a_warm": {
+          "wall_s": 10.201287508010864,
+          "queue_s": 0.011280059814453125,
+          "held_s": 10.18926477432251,
+          "start": 1793940696.4753463,
+          "admitted": 1793940696.4866264,
+          "finished": 1793940706.6765847,
+          "released": 1793940706.6758912,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.512358665466309,
+          "cuda_init_s": 0.420993210747838,
+          "pytest_s": 2.7790722344070673,
+          "cache_hits": 0
+        },
+        "b_warm": {
+          "wall_s": 10.356400489807129,
+          "queue_s": 0.010793447494506836,
+          "held_s": 10.344797134399414,
+          "start": 1793940706.9496002,
+          "admitted": 1793940706.9603937,
+          "finished": 1793940717.3059506,
+          "released": 1793940717.3051908,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.55189885571599,
+          "cuda_init_s": 0.4332051668316126,
+          "pytest_s": 2.828807257115841,
+          "cache_hits": 0
+        },
+        "c_warm": {
+          "wall_s": 16.099548816680908,
+          "queue_s": 0.010343551635742188,
+          "held_s": 16.08853769302368,
+          "start": 1793940717.5848875,
+          "admitted": 1793940717.595231,
+          "finished": 1793940733.684388,
+          "released": 1793940733.6837687,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 8.419033944606781,
+          "cuda_init_s": 3.3638974893838167,
+          "pytest_s": 2.798956634476781,
+          "cache_hits": 0
+        },
+        "c_measured": {
+          "wall_s": 10.435983657836914,
+          "queue_s": 0.019240617752075195,
+          "held_s": 10.415685892105103,
+          "start": 1793940733.8110015,
+          "admitted": 1793940733.8302422,
+          "finished": 1793940744.2465324,
+          "released": 1793940744.245928,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 6.058362007141113,
+          "cuda_init_s": 0.8226529397070408,
+          "pytest_s": 2.0688375998288393,
+          "cache_hits": 6
+        },
+        "b_measured": {
+          "wall_s": 28.686114072799683,
+          "queue_s": 0.007283926010131836,
+          "held_s": 28.67822289466858,
+          "start": 1793940733.697403,
+          "admitted": 1793940733.7046869,
+          "finished": 1793940762.3834748,
+          "released": 1793940762.3829098,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 18,
+          "import_s": 17.311163693666458,
+          "cuda_init_s": 2.612454652786255,
+          "pytest_s": 4.255516001954675,
+          "cache_hits": 18
+        },
+        "a_measured": {
+          "wall_s": 37.16401481628418,
+          "queue_s": 28.427489519119263,
+          "held_s": 8.735884189605713,
+          "start": 1793940733.9674926,
+          "admitted": 1793940762.394982,
+          "finished": 1793940771.1314607,
+          "released": 1793940771.1308663,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.673270870000124,
+          "cuda_init_s": 0.4241992365568876,
+          "pytest_s": 1.1291343253105879,
+          "cache_hits": 6
+        }
+      },
+      "passed": 48,
+      "cleanup_errors": [],
+      "final_gpu": {
+        "0": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        },
+        "1": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        }
+      },
+      "host_before": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "host_after": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "queued_cancellation": {
+        "status": "wait"
+      }
+    },
+    {
+      "run": "1-pooled",
+      "mode": "pooled",
+      "prepared_a": false,
+      "status": "passed",
+      "batch_s": 33.531331062316895,
+      "elapsed_s": 73.96817255020142,
+      "commands": {
+        "a_warm": {
+          "wall_s": 10.517472267150879,
+          "queue_s": 0.012420654296875,
+          "held_s": 10.504241704940796,
+          "start": 1793940615.0977294,
+          "admitted": 1793940615.11015,
+          "finished": 1793940625.615153,
+          "released": 1793940625.6143918,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.78439255617559,
+          "cuda_init_s": 0.4299550801515579,
+          "pytest_s": 2.802943143993616,
+          "cache_hits": 0
+        },
+        "b_warm": {
+          "wall_s": 10.610457181930542,
+          "queue_s": 0.010576009750366211,
+          "held_s": 10.599061012268066,
+          "start": 1793940625.8897843,
+          "admitted": 1793940625.9003603,
+          "finished": 1793940636.5001903,
+          "released": 1793940636.4994214,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.572900587692857,
+          "cuda_init_s": 0.5591126922518015,
+          "pytest_s": 2.8606228474527597,
+          "cache_hits": 0
+        },
+        "c_warm": {
+          "wall_s": 10.485706567764282,
+          "queue_s": 0.010277271270751953,
+          "held_s": 10.47469711303711,
+          "start": 1793940636.7739353,
+          "admitted": 1793940636.7842126,
+          "finished": 1793940647.2595928,
+          "released": 1793940647.2589097,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 5.716085106134415,
+          "cuda_init_s": 0.436058446764946,
+          "pytest_s": 2.797763828188181,
+          "cache_hits": 0
+        },
+        "c_measured": {
+          "wall_s": 10.485336780548096,
+          "queue_s": 0.02149796485900879,
+          "held_s": 10.463150978088379,
+          "start": 1793940647.374811,
+          "admitted": 1793940647.396309,
+          "finished": 1793940657.8601065,
+          "released": 1793940657.8594599,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 5.935949899256229,
+          "cuda_init_s": 0.7524894773960114,
+          "pytest_s": 2.2095678206533194,
+          "cache_hits": 6
+        },
+        "a_measured": {
+          "wall_s": 24.938533782958984,
+          "queue_s": 10.366746187210083,
+          "held_s": 14.571094751358032,
+          "start": 1793940647.5325055,
+          "admitted": 1793940657.8992517,
+          "finished": 1793940672.4709973,
+          "released": 1793940672.4703465,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 8.527980349957943,
+          "cuda_init_s": 2.224586782976985,
+          "pytest_s": 2.2247535586357117,
+          "cache_hits": 6
+        },
+        "b_measured": {
+          "wall_s": 33.518044233322144,
+          "queue_s": 0.007974386215209961,
+          "held_s": 33.50939130783081,
+          "start": 1793940647.2712314,
+          "admitted": 1793940647.2792058,
+          "finished": 1793940680.7892344,
+          "released": 1793940680.788597,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 18,
+          "import_s": 20.226253306493163,
+          "cuda_init_s": 3.424698317423463,
+          "pytest_s": 5.503515515476465,
+          "cache_hits": 18
+        }
+      },
+      "passed": 48,
+      "cleanup_errors": [],
+      "final_gpu": {
+        "0": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        },
+        "1": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        }
+      },
+      "host_before": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "host_after": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "queued_cancellation": {
+        "status": "wait"
+      }
+    },
+    {
+      "run": "0-pooled",
+      "mode": "pooled",
+      "prepared_a": true,
+      "status": "passed",
+      "batch_s": 29.434998750686646,
+      "elapsed_s": 71.97548842430115,
+      "commands": {
+        "a_warm": {
+          "wall_s": 10.539344072341919,
+          "queue_s": 0.015749454498291016,
+          "held_s": 10.522605180740356,
+          "start": 1793940850.9616866,
+          "admitted": 1793940850.977436,
+          "finished": 1793940861.5009465,
+          "released": 1793940861.5000412,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.734645962715149,
+          "cuda_init_s": 0.42816913686692715,
+          "pytest_s": 2.8663774505257607,
+          "cache_hits": 0
+        },
+        "b_warm": {
+          "wall_s": 10.599467992782593,
+          "queue_s": 0.012117624282836914,
+          "held_s": 10.58631443977356,
+          "start": 1793940861.7749534,
+          "admitted": 1793940861.787071,
+          "finished": 1793940872.374343,
+          "released": 1793940872.3733854,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.672286571934819,
+          "cuda_init_s": 0.572396919131279,
+          "pytest_s": 2.7991072088479996,
+          "cache_hits": 0
+        },
+        "c_warm": {
+          "wall_s": 10.684811353683472,
+          "queue_s": 0.011734724044799805,
+          "held_s": 10.672080755233765,
+          "start": 1793940872.65071,
+          "admitted": 1793940872.6624448,
+          "finished": 1793940883.3354514,
+          "released": 1793940883.3345256,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 5.685551330447197,
+          "cuda_init_s": 0.5392680894583464,
+          "pytest_s": 2.919793138280511,
+          "cache_hits": 0
+        },
+        "c_measured": {
+          "wall_s": 10.818053722381592,
+          "queue_s": 0.013726472854614258,
+          "held_s": 10.803345441818237,
+          "start": 1793940883.4975908,
+          "admitted": 1793940883.5113173,
+          "finished": 1793940894.3155823,
+          "released": 1793940894.3146627,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 6.124322431162,
+          "cuda_init_s": 0.9041441958397627,
+          "pytest_s": 2.1775762382894754,
+          "cache_hits": 6
+        },
+        "a_measured": {
+          "wall_s": 14.499256134033203,
+          "queue_s": 4.454800605773926,
+          "held_s": 3.2033743858337402,
+          "start": 1793940889.9785566,
+          "admitted": 1793940894.4333572,
+          "finished": 1793940898.2035098,
+          "released": 1793940897.6367316,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 4.9602240324020386e-06,
+          "cuda_init_s": 0.3315890859812498,
+          "pytest_s": 1.3029287699609995,
+          "cache_hits": 6
+        },
+        "b_measured": {
+          "wall_s": 29.424818515777588,
+          "queue_s": 0.008168697357177734,
+          "held_s": 29.415717601776123,
+          "start": 1793940883.3441396,
+          "admitted": 1793940883.3523083,
+          "finished": 1793940912.7689073,
+          "released": 1793940912.7680259,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 18,
+          "import_s": 17.59976883418858,
+          "cuda_init_s": 1.773601669818163,
+          "pytest_s": 4.374109664931893,
+          "cache_hits": 18
+        }
+      },
+      "passed": 48,
+      "cleanup_errors": [],
+      "final_gpu": {
+        "0": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        },
+        "1": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        }
+      },
+      "host_before": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "host_after": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "queued_cancellation": {
+        "status": "wait"
+      },
+      "preparation": {
+        "cpu_prepare_s": 5.3941545486450195,
+        "ready_wait_s": 4.779128313064575,
+        "maxrss_kb": 577092,
+        "cuda_initialized": false
+      }
+    },
+    {
+      "run": "1-pooled",
+      "mode": "pooled",
+      "prepared_a": true,
+      "status": "passed",
+      "batch_s": 35.411478996276855,
+      "elapsed_s": 75.35705852508545,
+      "commands": {
+        "a_warm": {
+          "wall_s": 10.691495656967163,
+          "queue_s": 0.013128519058227539,
+          "held_s": 10.677442073822021,
+          "start": 1793940926.0936203,
+          "admitted": 1793940926.1067488,
+          "finished": 1793940936.785043,
+          "released": 1793940936.784191,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.762438248842955,
+          "cuda_init_s": 0.5556641314178705,
+          "pytest_s": 2.8782467003911734,
+          "cache_hits": 0
+        },
+        "b_warm": {
+          "wall_s": 10.35056471824646,
+          "queue_s": 0.011696338653564453,
+          "held_s": 10.337897300720215,
+          "start": 1793940937.0595067,
+          "admitted": 1793940937.071203,
+          "finished": 1793940947.4099991,
+          "released": 1793940947.4091003,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "import_s": 5.657589191570878,
+          "cuda_init_s": 0.4354422949254513,
+          "pytest_s": 2.7852598689496517,
+          "cache_hits": 0
+        },
+        "c_warm": {
+          "wall_s": 10.25117540359497,
+          "queue_s": 0.01212763786315918,
+          "held_s": 10.238091468811035,
+          "start": 1793940947.68523,
+          "admitted": 1793940947.6973577,
+          "finished": 1793940957.9363356,
+          "released": 1793940957.9354491,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 5.572886740788817,
+          "cuda_init_s": 0.4264908768236637,
+          "pytest_s": 2.803526781499386,
+          "cache_hits": 0
+        },
+        "c_measured": {
+          "wall_s": 18.76100206375122,
+          "queue_s": 0.012382268905639648,
+          "held_s": 18.74758243560791,
+          "start": 1793940958.0968046,
+          "admitted": 1793940958.109187,
+          "finished": 1793940976.8577442,
+          "released": 1793940976.8567693,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 8.759840374812484,
+          "cuda_init_s": 6.136535331606865,
+          "pytest_s": 2.276285609230399,
+          "cache_hits": 6
+        },
+        "a_measured": {
+          "wall_s": 22.506404876708984,
+          "queue_s": 9.69855809211731,
+          "held_s": 3.4305965900421143,
+          "start": 1793940967.1956835,
+          "admitted": 1793940976.8942416,
+          "finished": 1793940980.7650707,
+          "released": 1793940980.3248382,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "import_s": 5.200505256652832e-06,
+          "cuda_init_s": 0.5591901764273643,
+          "pytest_s": 1.3072042930871248,
+          "cache_hits": 6
+        },
+        "b_measured": {
+          "wall_s": 35.39886713027954,
+          "queue_s": 0.007803201675415039,
+          "held_s": 35.39008092880249,
+          "start": 1793940957.9449277,
+          "admitted": 1793940957.952731,
+          "finished": 1793940993.34375,
+          "released": 1793940993.3428118,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 18,
+          "import_s": 20.069187795743346,
+          "cuda_init_s": 7.067803466692567,
+          "pytest_s": 4.404349183663726,
+          "cache_hits": 18
+        }
+      },
+      "passed": 48,
+      "cleanup_errors": [],
+      "final_gpu": {
+        "0": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        },
+        "1": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        }
+      },
+      "host_before": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "host_after": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2
+        },
+        {
+          "cpu_used": 2,
+          "memory_used_mb": 4096,
+          "leases_active": 1
+        }
+      ],
+      "queued_cancellation": {
+        "status": "wait"
+      },
+      "preparation": {
+        "cpu_prepare_s": 8.110424041748047,
+        "ready_wait_s": 10.083781003952026,
+        "maxrss_kb": 574628,
+        "cuda_initialized": false
+      }
+    }
+  ],
+  "provenance": {
+    "head": "0326d46694bdc372560e535069d3db0f7f48bd4b",
+    "uncommitted": true,
+    "transport": "Production RayEnvRouter and EnvNodeService actors",
+    "container": "Native EnvWorkerEnvironment",
+    "runner": "Direct environment API. No full Harbor episode runner or RL training.",
+    "hardware": "Two H20 GPUs on one host",
+    "order": [
+      "fixed",
+      "pooled",
+      "pooled",
+      "fixed",
+      "pooled-prepared",
+      "pooled-prepared"
+    ],
+    "baseline": "Same-version fixed command mechanism control. Historical OFF commit was not run."
+  }
+}

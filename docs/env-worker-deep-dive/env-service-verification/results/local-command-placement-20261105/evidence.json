@@ -1,0 +1,186 @@
+{
+  "provenance": {
+    "head": "0326d46694bdc372560e535069d3db0f7f48bd4b",
+    "scope": "Production EnvRouterCore and EnvNodeService, native EnvWorker containers and managed GPU execution. Direct method transport replaces Ray RPC. Fixed command is a mechanism control, not historical OFF baseline.",
+    "snapshot_sha256": {
+      "psrl/workers/env_service/overlay.py": "fc0b95608928d7cdda3168741b6f580031205318d904666e45d9c430bd02b2a9",
+      "psrl/workers/env_service/router.py": "76f51662f138ce439a0dede44d8c9a5c53ffc40d7a9a29da8cf1b79c581dd127",
+      "psrl/workers/env_service/task_telemetry.py": "5e428fe24b062bd2aa47c080a0948d0a826fc33aa9a9e3cadca62b362e650f05",
+      "psrl/workers/env_service/placement.py": "a633c001f74a193017d3b0159404fe68b73338ede40055052db003efc1aa2805",
+      "psrl/workers/env_service/gpu_memory.py": "6f39205d5fd379ca77ab431d6ad4397377a642cd1ed69710e500d72ee9e28d9e",
+      "psrl/workers/env_service/prepared_gpu.py": "2ec54bd792f31ef49f63ebcb6d63e92e981e3dc91678381ab98b54f22466884a",
+      "psrl/workers/env_service/probe.py": "7af269e57ed3f65d0d8d728ea702dfd4939791e236f91b684419815cc05116b2",
+      "psrl/workers/env_service/parallel_gpu.py": "fc3a496a518c8e9f0c286da23590af927a6060063b93e7b4328663dab53d621f",
+      "psrl/workers/env_service/managed_execution.py": "fc7c27af7e1fabb20ab557300429669124a61c8700bf4b77d9145a671a3a9a43",
+      "psrl/workers/env_service/types.py": "e474a7b36aca92910c593023266bed6e1bca28cdc80b11fe3cf99e4c39e7c6cf",
+      "psrl/workers/env_service/__init__.py": "5427eff689b6385a572ed4f9160aa8967f6c5f8c5d6d85bb6557ee31437ef384",
+      "psrl/workers/env_service/docker.py": "3777348a34cf6759f57a85d068643889f9d41722371b8ed0c55e235e3328d414",
+      "psrl/workers/env_service/job_fence.py": "6d658d30171c5178ce03e6d2fb1c2fd371766f619f3707637ba5500bd3d4a467",
+      "psrl/workers/env_service/docker_api.py": "ba3ffa7e915ccc4e9a2c51f5c8965a6d396c1a8cb64cee481bbdfd8f9973b1f2",
+      "psrl/workers/env_service/mps.py": "8a9612a078cac03167a3002c6729eee5e49d37fc16660ba357d4ffb09bf5d948",
+      "psrl/workers/env_service/process_identity.py": "29b8ce3d6b0993a341e0c53776b43e95f791d6d4014b1813882bbdaf598182a3",
+      "psrl/workers/env_service/config_check.py": "c569c137fa796b92bd369ac3dc396c042e201d53b5f92d2b5bf592f73497608a",
+      "psrl/workers/env_service/gpu_execution.py": "94f9ca5ecf8cb38fcacf3bb08b48ee0d5c305b34b861907382e86f024f080050",
+      "psrl/workers/env_service/client.py": "99f865b29bdffb936f6f9cf831b586de320a38025c98faa75f3cb159fa6eb6e9",
+      "psrl/workers/env_service/lending.py": "05781b0655e1e6bc1fd8816e6f357842d32df430163c624e0ea582e37d46ec62",
+      "psrl/workers/env_service/harbor_resources.py": "ddbcab62161fe304c679d707dee876748326bf7e606c934c84918996a487641f",
+      "psrl/workers/env_service/episode_memory.py": "b0eb6b52323f861506581299761d1c40ba70bfd93ccaa47f8c664886f6ed12e8",
+      "psrl/workers/env_service/bpf_layout.py": "5628277e3739b860b39c01d4c68f42de93d3b8a9fe3a19c583d71bfec097abea",
+      "psrl/workers/env_service/gpu_jobs.py": "253a585db647e086f9ae6365ff0338ac02fe62a53f2a00f9dd2b11972b22fef8",
+      "psrl/workers/env_service/container_budget.py": "e5133619edaf56224ac97d286c9f319dfc500b45b2ca120f6828414caebf8fa1",
+      "psrl/workers/env_service/node.py": "7e19c9fdfe4324932faece00c2d5aafd42d50fc3f136fc7ec26a49d92d0347d3",
+      "psrl/workers/env_service/ledger.py": "8736c67b5ae752b00f1966c036c531927e67b3c615dfed52931c85d5710eca7a",
+      "psrl/workers/env_service/lending_node.py": "193f747323c7437e95f12d54ee60025552b5f070d58efaaed2fbd998b033cff5",
+      "psrl/workers/env_service/command_gpu.py": "bcbd9d0e8001b620c047b47af64bcd19195fff0f6cc41d769e5ae45092308b2d",
+      "psrl/workers/env_service/command_gpu_node.py": "3ffad303f86d956bdccfd4d59aefce2762bb92f1b885d442a270c3e67028dcbf",
+      "psrl/workers/env_service/prepared_gpu_process.py": "faf9b530c02e1459a3e0d80a1b33f54f9e1eb6ae7d3346ee00f165746c922aaa",
+      "psrl/workers/env_service/resource_telemetry.py": "9cfe2b3aec7c3804dbef0b7d20905c07b84a2a6aa90fd9884090205d666f0aba",
+      "psrl/workers/env_service/gpu_job_process.py": "a2b49e342f6cb13b7440ad95217291d1524b2de1d876684f8dcdee457388aac9",
+      "psrl/workers/env_service/health.py": "35fcb149675762fb7108cae639fded239ef2b78034aa55785c45b5b1ca1c93f5",
+      "psrl/workers/env_service/bpf_identity.py": "2ab9f0d70a32f8fb955295ed05a5ea31e9c8f88e8a6d73efc0ae4775e9b3fa9c",
+      "psrl/workers/env_service/node_policy.py": "e203b0f506bc36f5f213784ba0f1f2a0a99e0f62a46c080d119ca0f266ebf706"
+    },
+    "script_sha256": "35530220370eb3ac44bfd7fe67ab5af16f70142de1403c5e9a1877d3df91cd07"
+  },
+  "hardware": "Two H20 GPUs on one host",
+  "runs": [
+    {
+      "mode": "fixed",
+      "status": "passed",
+      "elapsed_s": 36.220241624861956,
+      "cleanup_errors": [],
+      "fixed_wait": {
+        "status": "wait"
+      },
+      "holder_active_after_a": true,
+      "commands": [
+        {
+          "name": "a_first",
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cache_hits": 0,
+          "pytest_s": 3.448727337643504,
+          "capacity_released": true
+        },
+        {
+          "name": "a_second",
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cache_hits": 6,
+          "pytest_s": 1.2263843975961208,
+          "capacity_released": true
+        }
+      ],
+      "host_before": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2,
+          "declared_gpu_memory_mb": 0
+        },
+        {
+          "cpu_used": 0,
+          "memory_used_mb": 0,
+          "leases_active": 0,
+          "declared_gpu_memory_mb": 0
+        }
+      ],
+      "host_after": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2,
+          "declared_gpu_memory_mb": 0
+        },
+        {
+          "cpu_used": 0,
+          "memory_used_mb": 0,
+          "leases_active": 0,
+          "declared_gpu_memory_mb": 0
+        }
+      ],
+      "final_gpu": {
+        "0": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        },
+        "1": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        }
+      }
+    },
+    {
+      "mode": "pooled",
+      "status": "passed",
+      "elapsed_s": 30.982511030510068,
+      "cleanup_errors": [],
+      "fixed_wait": null,
+      "holder_active_after_a": true,
+      "commands": [
+        {
+          "name": "a_first",
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cache_hits": 0,
+          "pytest_s": 3.0384728852659464,
+          "capacity_released": true
+        },
+        {
+          "name": "a_second",
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cache_hits": 6,
+          "pytest_s": 1.3960430268198252,
+          "capacity_released": true
+        }
+      ],
+      "host_before": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2,
+          "declared_gpu_memory_mb": 0
+        },
+        {
+          "cpu_used": 0,
+          "memory_used_mb": 0,
+          "leases_active": 0,
+          "declared_gpu_memory_mb": 0
+        }
+      ],
+      "host_after": [
+        {
+          "cpu_used": 8,
+          "memory_used_mb": 12288,
+          "leases_active": 2,
+          "declared_gpu_memory_mb": 0
+        },
+        {
+          "cpu_used": 0,
+          "memory_used_mb": 0,
+          "leases_active": 0,
+          "declared_gpu_memory_mb": 0
+        }
+      ],
+      "final_gpu": {
+        "0": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        },
+        "1": {
+          "used_mb": 0.1875,
+          "process_count": 0
+        }
+      }
+    }
+  ]
+}
