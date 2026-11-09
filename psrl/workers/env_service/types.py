@@ -27,7 +27,8 @@ class EnvUnit:
     hosts. Explicit rollout sharing also reserves model headroom. Summed device
     memory must fit `gpu_memory_mb`. Episode reservations retain this budget until cleanup.
     Command reservations charge it only while a fenced GPU command is active. Host
-    resources remain reserved for the container lifetime in both modes.
+    resources remain reserved for the container lifetime in both modes. An explicit
+    command pool lets invocations use another unit's GPU on the same node.
 
     Attributes:
         unit_id (str): Stable, unique cluster-wide id.
@@ -38,6 +39,7 @@ class EnvUnit:
         max_containers (int): Configured ceiling on concurrent containers, not derived.
         gpu_memory_mb (int): Device memory budget across `gpu_indices`. Zero for CPU units.
         gpu_reservation (str): Charge GPU capacity for the episode or explicit commands.
+        command_gpu_pool (str): Local pool of compatible dedicated single GPUs. Empty fixes placement.
     """
 
     unit_id: str
@@ -55,6 +57,7 @@ class EnvUnit:
     gpu_execution_backend: str = "direct"
     mps_thread_percentage: int = 100
     mps_image: str = ""
+    command_gpu_pool: str = ""
 
     @property
     def execution_cpu_overhead(self):
@@ -65,6 +68,14 @@ class EnvUnit:
         return 512 if self.gpu_execution_backend == "mps" else 0
 
     def __post_init__(self) -> None:
+        if self.command_gpu_pool and (
+            self.gpu_reservation != "command"
+            or self.gpu_execution_backend != "direct"
+            or len(self.gpu_indices) != 1
+            or self.rollout_replica_rank is not None
+            or self.shared_rollout_replica_rank is not None
+        ):
+            raise ValueError("Command GPU pools require single dedicated GPUs with direct command execution.")
         if self.gpu_execution_backend not in ("direct", "mps"):
             raise ValueError("Unknown GPU execution backend.")
         if not 1 <= self.mps_thread_percentage <= 100:
@@ -153,6 +164,7 @@ class EnvUnit:
             gpu_execution_backend=str(raw.get("gpu_execution_backend", "direct")),
             mps_thread_percentage=int(raw.get("mps_thread_percentage", 100)),
             mps_image=str(raw.get("mps_image", "")),
+            command_gpu_pool=str(raw.get("command_gpu_pool", "")),
             gpu_memory_per_device_mb=tuple(int(m) for m in raw.get("gpu_memory_per_device_mb", ())),
         )
 
@@ -234,7 +246,9 @@ class EnvLease:
         session_id (str): The episode's session id.
         unit_id (str): The unit that hosts the episode.
         node_ip (str): The unit's node.
-        gpu_indices (tuple[int, ...]): Devices the containers get. Shared with other leases of the unit.
+        gpu_indices (tuple[int, ...]): Home devices, independent of the current command allocation.
+        gpu_candidate_unit_ids (tuple[str, ...]): Immutable allowed GPU units on the same node.
+        gpu_candidate_indices (tuple[int, ...]): Candidate mappings, initially denied by device fencing.
         demand (EnvDemand): What was charged.
         granted_at (float): Ledger clock when granted.
         last_seen (float): Ledger clock of the latest heartbeat. Drives TTL reclaim.
@@ -260,6 +274,8 @@ class EnvLease:
     gpu_execution_backend: str = "direct"
     mps_pipe: str = ""
     mps_ipc: str = ""
+    gpu_candidate_unit_ids: tuple[str, ...] = ()
+    gpu_candidate_indices: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)

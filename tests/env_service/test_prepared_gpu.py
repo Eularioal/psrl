@@ -54,6 +54,36 @@ class Environment:
 
 
 @pytest.mark.asyncio
+async def test_prepared_worker_receives_selected_device_at_activation(tmp_path):
+    class PlacedEnvironment(Environment):
+        async def exec_gpu(self, command, **kwargs):
+            return await super().exec_gpu("CUDA_VISIBLE_DEVICES=GPU-selected " + command, **kwargs)
+
+    program = tmp_path / "selection.py"
+    program.write_text(
+        "import os\n"
+        "def prepare(payload):\n"
+        "    before = os.environ.get('CUDA_VISIBLE_DEVICES')\n"
+        "    def run():\n"
+        "        assert os.environ['CUDA_VISIBLE_DEVICES'] == 'GPU-selected'\n"
+        "        print('selected-at-activation', flush=True)\n"
+        "    return run\n"
+    )
+    result = await execute_prepared(
+        PlacedEnvironment(),
+        str(program),
+        {},
+        python=sys.executable,
+        prepare_timeout_sec=5,
+        timeout_sec=5,
+        wait_timeout_sec=5,
+    )
+    assert result.return_code == 0 and "selected-at-activation" in result.stdout, (
+        "CPU preparation must receive the newly selected device before entering its GPU phase."
+    )
+
+
+@pytest.mark.asyncio
 async def test_cpu_preparation_overlaps_before_serial_gpu_execution(tmp_path):
     program = tmp_path / "program.py"
     program.write_text(

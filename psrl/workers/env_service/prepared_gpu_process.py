@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 import time
@@ -55,6 +56,9 @@ def worker(directory, module_path, payload, deadline):
             if time.monotonic() >= deadline or (directory / "cancel").exists():
                 raise TimeoutError("Prepared program expired before GPU activation.")
             time.sleep(0.05)
+        activation = json.loads((directory / "activate").read_text())
+        if "CUDA_VISIBLE_DEVICES" in activation:
+            os.environ["CUDA_VISIBLE_DEVICES"] = activation["CUDA_VISIBLE_DEVICES"]
         execute()
         code = 0
     except BaseException:
@@ -118,7 +122,9 @@ def activate(directory, timeout):
     record = json.loads((directory / "process.json").read_text())
     if not alive(record) or (directory / "cancel").exists():
         raise RuntimeError("Prepared process is no longer available.")
-    (directory / "activate").touch()
+    write_json(
+        directory / "activate", {key: os.environ[key] for key in ("CUDA_VISIBLE_DEVICES",) if key in os.environ}
+    )
     deadline = time.monotonic() + timeout
     while alive(record):
         if time.monotonic() >= deadline:

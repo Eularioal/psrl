@@ -86,8 +86,15 @@ class ManagedGpuExecution:
             return await self._exec_unreserved(command, timeout_sec=timeout_sec, **kwargs)
 
         async def run():
+            selected = (backend.last_record or {}).get("gpu_uuids")
+            options = dict(kwargs)
+            if selected:
+                options["env"] = {
+                    **(_job.env if _job else kwargs.get("env") or {}),
+                    "CUDA_VISIBLE_DEVICES": ",".join(selected),
+                }
             if _job:
-                return await self._run_gpu_process(_job, **kwargs)
+                return await self._run_gpu_process(_job, **options)
             if backend.policy.mode == "episode" and _cancel_process is None:
                 # Direct episode calls also need an owned process group for timeout cleanup.
                 transient = GpuJob(
@@ -100,7 +107,7 @@ class ManagedGpuExecution:
                     dict(kwargs.get("env") or {}),
                 )
                 return await self._run_gpu_process(transient, **kwargs)
-            return await self._exec_unreserved(command, timeout_sec=timeout_sec, **kwargs)
+            return await self._exec_unreserved(command, timeout_sec=timeout_sec, **options)
 
         try:
             return await backend.execute(
@@ -229,7 +236,7 @@ class ManagedGpuExecution:
     async def _run_gpu_process(self, job, **kwargs):
         source = Path(gpu_job_process.__file__).read_text()
         prefix = ["python3", "-c", source]
-        options = json.dumps({"cwd": job.cwd, "env": job.env})
+        options = json.dumps({"cwd": job.cwd, "env": kwargs.get("env", job.env)})
         execution = asyncio.create_task(
             self._exec_unreserved(
                 shlex.join([*prefix, "run", job.job_id, job.command, options]),

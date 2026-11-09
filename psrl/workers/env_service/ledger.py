@@ -104,7 +104,8 @@ class EnvUnitLedger:
         self._reaped: dict[str, list[EnvLease]] = {}
         # session_id -> last time it asked and had to wait
         self._waiting: dict[str, float] = {}
-        self._gpu_cleanup_pending: dict[str, str] = {}
+        self._gpu_cleanup_pending: dict[str, set[str]] = {}
+        self._gpu_allocations: dict[str, str] = {}
         self._gpu_command_waiters: dict[str, str] = {}
 
     # ------------------------------------------------------------------ admission
@@ -157,6 +158,8 @@ class EnvUnitLedger:
                 continue
             if node_ip is not None and unit.node_ip != node_ip:
                 continue
+            if unit.command_gpu_pool and demand.needs_gpu and self._rules.overlaps_train_rollout(unit):
+                continue
             tier = self._rules.tier(unit, demand)
             if tier is not None and self._demand_matches_kind(unit, demand):
                 eligible.append((tier, unit))
@@ -195,6 +198,10 @@ class EnvUnitLedger:
                 gpu_active=unit.gpu_reservation == "episode",
                 gpu_execution_backend=unit.gpu_execution_backend,
             )
+            if unit.command_gpu_pool and demand.needs_gpu:
+                candidates = self.command_candidates(unit, demand)
+                lease.gpu_candidate_unit_ids = tuple(u.unit_id for u in candidates)
+                lease.gpu_candidate_indices = tuple(sorted(i for u in candidates for i in u.gpu_indices))
             self._leases[lease.lease_id] = lease
             self._by_session[session_id] = lease.lease_id
             self._waiting.pop(session_id, None)
@@ -260,6 +267,7 @@ class EnvUnitLedger:
             return False
         if lease.gpu_reservation == "command":
             self.block_gpu_cleanup(lease.lease_id, lease.unit_id)
+            self.block_gpu_cleanup(lease.lease_id, self._gpu_allocations.get(lease_id, lease.unit_id))
         self.release(lease_id)
         self._reaped.setdefault(lease.node_ip, []).append(lease)
         return True
@@ -319,7 +327,9 @@ class EnvUnitLedger:
                     sessions=tuple(lease.session_id for lease in leases),
                     sessions_waiting=waiting,
                     gpu_commands_active=sum(
-                        lease.gpu_active for lease in leases if lease.gpu_reservation == "command"
+                        lease.gpu_active
+                        for lease in self._gpu_leases(unit.unit_id)
+                        if lease.gpu_reservation == "command"
                     ),
                     gpu_commands_waiting=sum(u == unit.unit_id for u in self._gpu_command_waiters.values()),
                 )
@@ -397,22 +407,46 @@ class EnvUnitLedger:
     def _unit_leases(self, unit_id: str) -> list[EnvLease]:
         return [lease for lease in self._leases.values() if lease.unit_id == unit_id]
 
+    def command_candidates(self, home, demand):
+        """Keep command execution on compatible, explicitly pooled dedicated devices on this node."""
+        return tuple(
+            unit
+            for unit in self._units.values()
+            if unit.node_ip == home.node_ip
+            and unit.command_gpu_pool == home.command_gpu_pool
+            and self._rules.tier(unit, demand) is not None
+            and not self._rules.overlaps_train_rollout(unit)
+            and len(demand.device_memory(unit)) == 1
+            and demand.gpu_memory_mb <= unit.gpu_memory_mb
+        )
+
+    def _gpu_leases(self, unit_id):
+        """GPU allocations have a separate location from immutable host session charges."""
+        return [
+            lease
+            for lease in self._leases.values()
+            if self._gpu_allocations.get(lease.lease_id, lease.unit_id) == unit_id
+        ]
+
     def _declared_gpu_mb(self, unit: EnvUnit) -> int:
         return sum(
             lease.demand.gpu_memory_mb
-            for lease in self._unit_leases(unit.unit_id)
+            for lease in self._gpu_leases(unit.unit_id)
             if lease.demand.needs_gpu and lease.gpu_active
         )
 
     def block_gpu_cleanup(self, lease_id: str, unit_id: str) -> None:
         """Keep expired or uncertain GPU access fenced until node cleanup acknowledges it."""
-        self._gpu_cleanup_pending[lease_id] = unit_id
+        self._gpu_cleanup_pending.setdefault(lease_id, set()).add(unit_id)
         self._blocked_units.add(unit_id)
 
     def confirm_gpu_cleanup(self, lease_id: str, unit_id: str) -> None:
         """Unblock only after every uncertain lease on this unit has been removed."""
-        self._gpu_cleanup_pending.pop(lease_id, None)
-        if unit_id not in self._gpu_cleanup_pending.values():
+        pending = self._gpu_cleanup_pending.get(lease_id, set())
+        pending.discard(unit_id)
+        if not pending:
+            self._gpu_cleanup_pending.pop(lease_id, None)
+        if not any(unit_id in units for units in self._gpu_cleanup_pending.values()):
             self._blocked_units.discard(unit_id)
 
     def _measured_gpu_mb(self, unit: EnvUnit, now: float) -> float | None:
@@ -441,7 +475,7 @@ class EnvUnitLedger:
         measured = self._measured_gpu_mb(unit, now)
         reservations = {
             lease.lease_id: lease.demand.gpu_memory_mb
-            for lease in self._unit_leases(unit.unit_id)
+            for lease in self._gpu_leases(unit.unit_id)
             if lease.demand.needs_gpu and lease.gpu_active
         }
         if owned_mb is None:
@@ -461,7 +495,7 @@ class EnvUnitLedger:
                 if index is None
                 else owned.get(lease.lease_id, {}).get(index, 0.0)
             )
-            for lease in self._unit_leases(unit.unit_id)
+            for lease in self._gpu_leases(unit.unit_id)
             if lease.demand.needs_gpu
             and lease.gpu_active
             and lease.gpu_reservation == "episode"
@@ -492,7 +526,7 @@ class EnvUnitLedger:
             measured = reading[1]
         reservations = {
             lease.lease_id: lease.demand.device_memory(unit)
-            for lease in self._unit_leases(unit.unit_id)
+            for lease in self._gpu_leases(unit.unit_id)
             if lease.demand.needs_gpu and lease.gpu_active
         }
         return tuple(

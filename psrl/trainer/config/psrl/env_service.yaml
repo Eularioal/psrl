@@ -88,8 +88,8 @@ deny_node_ips: []
 #     gpu_memory_mb: 0
 units: []
 
-# Use gpu_reservation: command for explicit exec_gpu calls on dedicated environment GPUs.
-# This requires writable cgroup v1 device controls and keeps host leases alive between commands.
+# Command execution needs writable cgroup v1 controls. Host charges remain on the home unit.
+# A named `command_gpu_pool` allows same-node direct single-GPU placement on dedicated devices only.
 
 # A unit with `rollout_replica_rank` borrows that complete replica between model calls.
 # Such units require `max_containers: 1` and exact, nonoverlapping GPU placement.

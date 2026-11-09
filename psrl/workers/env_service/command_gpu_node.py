@@ -15,7 +15,7 @@ from psrl.workers.env_service.task_telemetry import TaskGpuTelemetry, read_comma
 class DeviceCgroupFence:
     """Control a Docker container's device whitelist on a cgroup v1 host."""
 
-    def __init__(self, container, allowed_paths, root=Path("/sys/fs/cgroup/devices")):
+    def __init__(self, container, allowed_paths, root=Path("/sys/fs/cgroup/devices"), *, active_paths=None):
         config = container["HostConfig"]
         if config.get("Privileged") or config.get("DeviceRequests") or config.get("DeviceCgroupRules"):
             raise RuntimeError("GPU command containers must use explicit, restricted device mappings.")
@@ -23,6 +23,10 @@ class DeviceCgroupFence:
         if capabilities & {"ALL", "SYS_ADMIN", "BPF", "PERFMON"}:
             raise RuntimeError("GPU command containers cannot administer device cgroups or kernel tracing.")
         self.devices = []
+        self.active_devices = []
+        active_paths = set(allowed_paths if active_paths is None else active_paths)
+        if not active_paths.issubset(allowed_paths):
+            raise RuntimeError("Active GPU devices must belong to the declared candidate pool.")
         paths = {d["PathOnHost"] for d in config.get("Devices") or ()}
         if paths != set(allowed_paths):
             raise RuntimeError("Container GPU devices do not match its lease.")
@@ -33,6 +37,8 @@ class DeviceCgroupFence:
             if not stat.S_ISCHR(info.st_mode):
                 raise RuntimeError(f"GPU path {path!r} is not a character device.")
             self.devices.append((os.major(info.st_rdev), os.minor(info.st_rdev)))
+            if path in active_paths:
+                self.active_devices.append(self.devices[-1])
         pid = container["State"]["Pid"]
         memberships = Path(f"/proc/{pid}/cgroup").read_text().splitlines()
         relative = next(
@@ -62,9 +68,12 @@ class DeviceCgroupFence:
 
     def set_access(self, enabled):
         """Change only the GPU devices assigned to this container."""
-        operation = "devices.allow" if enabled else "devices.deny"
+        # Deny every candidate before enabling only this invocation's selected devices.
         for major, minor in self.devices:
-            (self.path / operation).write_text(f"c {major}:{minor} rwm\n")
+            (self.path / "devices.deny").write_text(f"c {major}:{minor} rwm\n")
+        if enabled:
+            for major, minor in self.active_devices:
+                (self.path / "devices.allow").write_text(f"c {major}:{minor} rwm\n")
         permissions = (self.path / "devices.list").read_text().splitlines()
         for major, minor in self.devices:
             readable = writable = False
@@ -74,7 +83,8 @@ class DeviceCgroupFence:
                 if kind in ("a", "c") and m in ("*", str(major)) and n in ("*", str(minor)):
                     readable |= "r" in rights
                     writable |= "w" in rights
-            if enabled and not (readable and writable) or not enabled and (readable or writable):
+            expected = enabled and (major, minor) in self.active_devices
+            if expected and not (readable and writable) or not expected and (readable or writable):
                 raise RuntimeError("GPU device permissions did not reach the requested state.")
 
     def processes(self):
@@ -178,7 +188,7 @@ class GpuCommandNodeMixin:
         telemetry = state.get("command_telemetry")
         return telemetry.summary() if telemetry else None
 
-    async def _command_container(self, lease_id, container_id, indices):
+    async def _command_container(self, lease_id, container_id, indices, candidate_indices=()):
         container = await inspect_container(container_id)
         if container["Config"].get("Labels", {}).get(LEASE_LABEL) != lease_id:
             raise RuntimeError("GPU command container does not belong to this lease.")
@@ -187,17 +197,33 @@ class GpuCommandNodeMixin:
         inventory = await asyncio.wait_for(asyncio.to_thread(self._gpu_probe().read_gpu_devices), timeout=10)
         paths = [inventory[i].path for i in indices]
         paths.extend(p for p in CONTROL_DEVICES if Path(p).exists())
+        if candidate_indices:
+            candidates = [inventory[i].path for i in candidate_indices]
+            candidates.extend(p for p in CONTROL_DEVICES if Path(p).exists())
+            return await asyncio.to_thread(DeviceCgroupFence, container, candidates, active_paths=paths)
         return await asyncio.to_thread(DeviceCgroupFence, container, paths)
 
-    async def grant_gpu_command(self, lease_id, container_id, indices, epoch):
+    async def grant_gpu_command(self, lease_id, container_id, indices, epoch, *, candidate_indices=()):
         state = self._gpu_lease_state(lease_id)
         async with state["lock"]:
             if state["retired"] or epoch <= state.get("command_epoch", 0):
                 raise RuntimeError("GPU command activation has a stale lease or epoch.")
+            if state.get("command_returned") is False:
+                raise RuntimeError("Previous GPU command has not physically returned.")
+            if candidate_indices and (len(indices) != 1 or not set(indices).issubset(candidate_indices)):
+                raise RuntimeError("Selected GPU is outside the single GPU command pool.")
+            if "command_candidates" in state and state["command_candidates"] != tuple(candidate_indices):
+                raise RuntimeError("GPU candidate mapping cannot change during a session.")
             state["command_epoch"] = epoch
             state["command_container"] = container_id
             state["command_returned"] = False
-            fence = await self._command_container(lease_id, container_id, indices)
+            state["command_indices"] = tuple(indices)
+            state["command_candidates"] = tuple(candidate_indices)
+            fence = await self._command_container(lease_id, container_id, indices, candidate_indices)
+            if candidate_indices:
+                await asyncio.to_thread(fence.set_access, False)
+                if await asyncio.to_thread(fence.gpu_handles, await asyncio.to_thread(fence.processes)):
+                    raise RuntimeError("GPU command cannot change devices with live GPU handles.")
             identity = await self._gpu_identity()
             telemetry = TaskGpuTelemetry(self._gpu_probe(), fence, indices, identity_backend=identity)
             state["command_telemetry"] = telemetry
@@ -210,7 +236,9 @@ class GpuCommandNodeMixin:
         async with state["lock"]:
             if state.get("command_epoch") != epoch or state.get("command_container") != container_id:
                 raise RuntimeError("GPU command return has a stale epoch or container.")
-            fence = await self._command_container(lease_id, container_id, indices)
+            if state.get("command_indices") != tuple(indices):
+                raise RuntimeError("GPU command return does not match its allocated devices.")
+            fence = await self._command_container(lease_id, container_id, indices, state["command_candidates"])
             await asyncio.to_thread(fence.set_access, False)
             telemetry = state.get("command_telemetry")
             report = await telemetry.stop() if telemetry else None

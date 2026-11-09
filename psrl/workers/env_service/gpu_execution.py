@@ -49,6 +49,13 @@ class CommandGpuReservation(EpisodeGpuReservation):
             )
             if admission["status"] == "granted":
                 record.update(epoch=admission["epoch"], admitted_at=time.time())
+                record.update(
+                    {
+                        key: admission[key]
+                        for key in ("unit_id", "node_ip", "gpu_indices", "gpu_uuids")
+                        if key in admission
+                    }
+                )
                 return
             await asyncio.sleep(0.1)
 

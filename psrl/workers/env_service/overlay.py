@@ -149,11 +149,9 @@ def build_lease_overlay(
     """
     Build the Compose override for one lease's `main` service.
 
-    The devices come from the lease, so each GPU episode mounts exactly its unit's cards
-    (B3) and a unit's containers all see the same cards, which is what "one card, several
-    containers" means at the Docker level. Every container is stamped with the lease and
-    unit as labels, because Harbor sets no labels on local containers (B6) and the lease
-    label is what lets TTL reclaim find an orphan.
+    Fixed leases map their unit's devices. Pooled command leases map their immutable
+    candidate set without read or write access. Invocation fencing selects the active
+    subset. Labels retain host ownership so cleanup can find the entire container set.
 
     Args:
         lease (EnvLease): The granted lease.
@@ -179,7 +177,9 @@ def build_lease_overlay(
         if driver_libs is None:
             raise ValueError("A GPU lease needs resolved driver libraries.")
         inventory = read_gpu_devices() if gpu_devices is None else gpu_devices
-        devices = [f"{inventory[i].path}:{inventory[i].path}" for i in lease.gpu_indices]
+        devices = [
+            f"{inventory[i].path}:{inventory[i].path}" for i in (lease.gpu_candidate_indices or lease.gpu_indices)
+        ]
         devices += [f"{d}:{d}" for d in CONTROL_DEVICES if device_exists(d)]
         if lease.gpu_reservation == "command" or lease.gpu_execution_backend == "mps":
             devices = [f"{device}:m" for device in devices]
