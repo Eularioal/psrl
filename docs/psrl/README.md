@@ -20,9 +20,9 @@
 | [PSRL 单机与多机启动故障复盘](psrl-run-guide/startup-incident-reviews.md) | 保留 IP、数据格式、环境变量覆盖及上下文长度问题的历史故障链、修复过程与验证边界。 |
 | [PSRL 共享环境与集群检查](psrl-run-guide/cluster-preflight.md) | 运行前核对源码与依赖来源、IP/Ray、临时路径、Docker、GPU 身份、数据和验证预算；2026-10-13 的证据只代表当时的条件。 |
 | [psrl-training-script-source-map.md](psrl-training-script-source-map.md) | 跑一次 `fsdp_qwen2.5_3b_laps.sh` 涉及的全部源码文件地图：启动脚本/Hydra 配置、Trainer 核心（`main_ppo.py`/`ray_trainer.py`）、Parameter Server（NIXL 权重同步）、Rollout Gateway/SMG/RolloutCoordinator、Agent Loop、FSDP2/Ulysses/GRPO/rollout correction（本仓库 vs 外部 `verl`）、reward.py/DAPO/数据集，逐文件标注角色与本仓库/外部归属 |
-| [psrl-agent-loop-harbor-tool-calling.md](psrl-agent-loop-harbor-tool-calling.md) | rollout 阶段模型怎么"调用工具"：Agent Loop 架构（`PSRL_AgentLoopWorker`/`SessionAgentLoop`/`SciAccelAgentLoop`）、第三方框架 Harbor（`Terminus2`，纯文本 JSON 协议驱动 Docker 容器里的真实终端）、TITO（Token-In-Token-Out）怎么在旁路记录 token 重建训练样本、`multi_thinking` 模板作用 |
+| [psrl-agent-loop-harbor-tool-calling.md](psrl-agent-loop-harbor-tool-calling.md) | rollout 阶段模型怎么"调用工具"：Agent Loop 架构（`PSRL_AgentLoopWorker`/`SessionAgentLoop`/`SciAccelAgentLoop`）、第三方框架 Harbor（文本 JSON 命令，区分普通终端与受管 `psrl-gpu` 分发）、TITO（Token-In-Token-Out）怎么在旁路记录 token 重建训练样本、`multi_thinking` 模板作用 |
 | [dapo-training-collapse-diagnosis.md](dapo-training-collapse-diagnosis.md) | 一次 DAPO+Qwen2.5-3B 训练在 step~115 发生熵崩溃→长度打满→reward 归零的不可逆连锁崩溃复盘，含完整时间线和各阶段指标特征 |
-| [psrl-env-service-envworker-design.md](psrl-env-service-envworker-design.md) | 从一道修代码题理解 EnvWorker：谁执行命令、谁分配资源、为什么两个进程各限 8 个任务仍会超载；用数字解释 unit、显存预算、两个 Gate 和容器清理，再区分 SMG、SessionRouter 与环境服务，以及现有实现和提案 |
+| [psrl-env-service-envworker-design.md](psrl-env-service-envworker-design.md) | 2026-09-21 设计提案与 09-22 源码对照，现状另读 [当前设计](../env-worker-deep-dive/knowledge/current-design.md)。从一道修代码题理解 EnvWorker：谁执行命令、谁分配资源、为什么两个进程各限 8 个任务仍会超载；用数字解释 unit、显存预算、两个 Gate 和容器清理，再区分 SMG、SessionRouter 与环境服务，以及现有实现和提案 |
 | [../sciaccel-grpo-oom-analysis.md](../sciaccel-grpo-oom-analysis.md) | SciAccel GRPO+Qwen3.5-4B 训练在第一步 backward 撞 OOM 的根因分析（多轮轨迹累积长度 + 过大的训练 token 预算），以及后续用 `TRAIN_SP` 4→8 + 压低 `max_response_length`/`max_model_len` 重跑 5 步验证修复有效的结果（全程无 OOM，显存稳定在 82GB/95GB；但验证集 `acc/mean@1=0.0`，暴露出独立的训练效果问题） |
 
 ## RL 算法与训练机制（PSRL 用到的算法知识）

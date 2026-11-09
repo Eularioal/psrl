@@ -2,11 +2,7 @@
 
 > **核心结论**：`EnvWorkerEnvironment` 让 Harbor 保留任务编排、评分与产物收集，由 EnvWorker 实现容器生命周期、命令和文件传输。当前原生与 Compose 提供者已共用托管 GPU 作业执行层。整体结构先读[当前设计](current-design.md)，本文展开适配契约与阶段验证。
 >
-> **正文版本边界**：早期 CPU 原型未接 GPU 租约且拒绝 GPU 任务，这项限制已被下述 GPU 接入更新取代。当前仍保留单容器与 Compose 两种创建方式，不把统一 GPU 执行层解释为构建、网络和共享 Ray worker 池也全部统一。
-
-> **当前修复状态**：准备阶段对外拒绝命令、清理失败保留待回收状态已修复。CPU 后端已接 science runner 的整次任务准入，并通过真实 LAPS oracle 与固定 baseline 对照。第 7 节保留修复前复现，最新结果与未完成项见[修复与 science 验证](../experiments/native-backend-fixes-and-science.md)。
-
-> **GPU 接入更新**：原生与 Compose 创建路径已共用 `ManagedGpuExecution`，原生 command GPU 准入、CUDA 执行、异步作业、取消和归还已通过实机检查。下面的 CPU 原型限制与修复记录按其版本阅读，最新能力和剩余差异见[统一执行层第 9 节](unified-gpu-execution.md#9-两种容器创建方式共用托管执行层)。
+> **能力边界**：受管 GPU 绑定已接入，普通 shell 失败清理与 MPS 逐作业取消是不同路径。原生提供者仍要求预构建单容器及受支持的网络配置，没有统一 Compose 构建、全部网络策略或远程 worker 池。第 5、7 节保留 CPU 验证及修复前证据，生命周期修复见[修复与 science 验证](../experiments/native-backend-fixes-and-science.md)，当前 GPU 接入见[统一执行层第 9 节](unified-gpu-execution.md#9-两种容器创建方式共用托管执行层)。
 
 > **长任务期限语义**：Harbor 未传单条命令期限时，原生执行不再附加 EnvWorker 的默认期限，由 Harbor 外层控制。显式期限和取消仍生效。真实 autoresearch episode 验证与问题复现见[长任务记录](../experiments/gpu-benchmarks/FINDINGS.md#原生-env-的-episode-长任务验证)。
 
@@ -59,9 +55,9 @@ Harbor 是任务运行框架，负责读任务定义，让 agent 操作环境，
 
 这些代码如果有理解上的问题，可以随时追问。
 
-这对应原提案所说的 **L2：替换 Harbor 环境实现**，见[原设计的接入深度说明](../../psrl/psrl-env-service-envworker-design.md#9-当前代码是什么样新方案准备怎样接入)。它沿用 Harbor 的环境插件入口，不修改共享安装的 Harbor 包。已有 [ManagedDockerEnvironment](../../../psrl/workers/env_service/docker.py#L29) 则是在 Harbor Docker 后端之上增加资源管理。
+这对应原提案所说的 **L2：替换 Harbor 环境实现**，见[原设计的接入深度说明](../../psrl/psrl-env-service-envworker-design.md#9-当前代码是什么样新方案准备怎样接入)。它沿用 Harbor 的环境插件入口，不修改共享安装的 Harbor 包。已有 [ManagedDockerEnvironment](../../../psrl/workers/env_service/docker.py#L25) 则是在 Harbor Docker 后端之上增加资源管理。
 
-当前 science runner 支持显式选择原生后端，并通过 [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L145) 注入会话预算与 GPU 设备映射。GPU 作业绑定由 [runner](../../../examples/sciaccel_rl/runner.py#L412) 传入公共执行层。此接入没有合并全部资源账本。每个新适配器目前持有一个本地 EnvWorker 实例，说明的是共用实现，不是多任务已经共用一个远程 actor。
+当前 science runner 支持显式选择原生后端，并通过 [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L100) 注入会话预算与 GPU 设备映射。GPU 作业绑定由 [runner](../../../examples/sciaccel_rl/runner.py#L412) 传入公共执行层。此接入没有合并全部资源账本。每个新适配器目前持有一个本地 EnvWorker 实例，说明的是共用实现，不是多任务已经共用一个远程 actor。
 
 ## 2. 具体难点：相同容器，不同执行语义
 

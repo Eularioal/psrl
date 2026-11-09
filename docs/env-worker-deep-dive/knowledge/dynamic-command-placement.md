@@ -1,8 +1,8 @@
 # GPU 命令动态放置：从固定 unit 到会话与执行分离
 
-> **核心结论**：用户提出的“上一条命令归还后，下一条命令能否避开原 unit 的拥堵”是当前结构值得优化的方向。普通 direct command 路径释放 GPU 活动预算，但不改变会话的 unit、节点或设备集合。建议保留 EnvRouter，分离长期会话资源与短期 GPU 执行租约，目标是同节点、无存活 GPU 状态的命令边界换卡。KernelBench 已新增独立 GPU verifier 的 command 接入，仍需采集排队证据，不能跳过前置条件直接扩大动态放置实现。
+> **核心结论**：显式设置相同 `command_gpu_pool` 的同节点单卡 unit，已支持下一条 direct command 重新选卡。EnvRouter 保留会话的主机 unit、容器和工作区，在独立 GPU 分配表中登记本次命令的目标 unit。CPU/主存仍只计一次，设备权限只开放本次选中的卡。未配置池时保持固定绑卡。
 >
-> 本文是设计分析，不是已完成的动态调度实现。2026-11-05 文献复核认为纯动态放置新颖性低，新增强基线教学探针，未修改生产 Router，见第 10 节。当前源码也有 MPS 并行路径，其作业仍进入租约指定的节点和 unit，不能把同卡并行等同于跨卡改派。本次只运行 CPU 教学模拟，不宣称真实 science 或训练提速。
+> **核对范围**：2026-11-06，主目录 `0326d466` 加未提交同机池实现。第 12 节保留直接调用的首次验证，第 14 节新增生产 Ray Router/节点 actor、真实 EnvWorker 容器和相同工作量对照，确认换卡及排队取消，并验证已有 CPU prepare 接口与换卡结合可用。仍未验证完整 Harbor episode runner、science 训练、跨节点迁移、MPS 改派或耗时预测。代码未提交、未推送，也未部署到共享服务。第 7、9、10 节保留各自模拟和调研边界。
 
 ## 目录
 
@@ -17,13 +17,17 @@
 - [9. 已接入 benchmark 的必要性评估](#9-已接入-benchmark-的必要性评估)
 
 - [10. 新颖性复核与下一步机制](#10-新颖性复核与下一步机制)
+- [11. 已实现的同机命令池与资源账本](#11-已实现的同机命令池与资源账本)
+- [12. Results：真实换卡验证与复现](#12-results真实换卡验证与复现)
+- [13. 验证边界与下一步验收](#13-验证边界与下一步验收)
+- [14. Results：真实 Ray 与相同工作量对照](#14-results真实-ray-与相同工作量对照)
 
 ## 1. 当前调用链与绑定位置
 
-下面先画当前 direct command 路径，再画提案。当前路径沿用已有[unit 共享与跨机器边界](env-router-current-flow.md#14-unit-如何共享及命令能否跨机器)和[容器提供者分层](unified-gpu-execution.md#10-当前结构与前两阶段的对照)。
+下面先画未配置池的固定 direct command 路径，再画已实现的同机池路径。当前路径沿用已有[unit 共享与跨机器边界](env-router-current-flow.md#14-unit-如何共享及命令能否跨机器)和[容器提供者分层](unified-gpu-execution.md#10-当前结构与前两阶段的对照)。
 
 ```text
-当前实现
+固定绑定配置
 [C1] 派发器选 AgentLoopWorker 所在节点
        ↓
 [C2] Client → EnvRouter / Ledger → EnvLease
@@ -41,8 +45,8 @@
        ↓
 [C6] 整个任务结束 → 清理所属环境 → 释放会话
 
-设计提案，尚未实现
-[P1] 会话租约：固定容器所在节点、文件、CPU/主存/名额
+显式同机池配置，已实现
+[P1] 会话租约：固定容器所在节点、文件、主机 unit 的 CPU/主存/名额
        ↓ 命令准备就绪并声明需求
 [P2] EnvRouter 命令调度：检查可执行候选 → 公平排队 → 动态选卡
        ├→ 本节点 GPU0 的短期执行租约
@@ -58,16 +62,16 @@
 | 编号 | 具体职责与函数 | 源码或实现状态 |
 |---|---|---|
 | C1 | 按资源形状、优先级、节点负载选择 worker | [EnvAwareDispatcher._assign_resources](../../../psrl/workers/env_service/placement.py#L188) |
-| C2 | 客户端限定当前节点申请，Ledger 创建绑定，EnvLease 保存字段 | [Client.acquire](../../../psrl/workers/env_service/client.py#L159)、[Ledger.try_admit](../../../psrl/workers/env_service/ledger.py#L110)、[EnvLease](../../../psrl/workers/env_service/types.py#L228) |
-| C3 | 根据租约设备生成容器映射 | [build_lease_overlay](../../../psrl/workers/env_service/overlay.py#L178) |
-| C4 | 请求的 unit 来自 lease，FIFO 队列只在该 unit 内比较 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L58)、[_grant](../../../psrl/workers/env_service/command_gpu.py#L106) |
-| C4 授权 | 校验容器身份、设备集合和授权代次，开放设备权限 | [DeviceCgroupFence](../../../psrl/workers/env_service/command_gpu_node.py#L15)、[grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L192) |
-| C5 | 物理撤权后才将 gpu_active 置为 false，不改 unit | [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L207)、[Scheduler._return](../../../psrl/workers/env_service/command_gpu.py#L215) |
+| C2 | 客户端限定当前节点申请，Ledger 创建绑定，EnvLease 保存字段 | [Client.acquire](../../../psrl/workers/env_service/client.py#L159)、[Ledger.try_admit](../../../psrl/workers/env_service/ledger.py#L113)、[EnvLease](../../../psrl/workers/env_service/types.py#L240) |
+| C3 | 根据租约设备生成容器映射 | [build_lease_overlay](../../../psrl/workers/env_service/overlay.py#L140) |
+| C4 | 请求的 unit 来自 lease，FIFO 队列只在该 unit 内比较 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L82)、[_grant](../../../psrl/workers/env_service/command_gpu.py#L143) |
+| C4 授权 | 校验容器身份、设备集合和授权代次，开放设备权限 | [DeviceCgroupFence](../../../psrl/workers/env_service/command_gpu_node.py#L15)、[grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L206) |
+| C5 | 物理撤权后才将 gpu_active 置为 false，不改 unit | [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L233)、[Scheduler._return](../../../psrl/workers/env_service/command_gpu.py#L259) |
 | C6 | 释放会话时由 Router 处理相应清理路径 | [EnvRouterCore.release](../../../psrl/workers/env_service/router.py#L241) |
-| P1 | 独立于 GPU unit 的主机会话租约 | 尚未实现，当前 EnvLease 同时保存主机和 GPU 绑定 |
-| P2 | 跨候选 unit 的命令放置和短期执行租约 | 尚未实现，当前 C4 按 lease.unit_id 定位 |
-| P3 | 针对本次设备子集的授权 | 尚未实现，当前 C3/C4 要求容器设备集合与租约一致 |
-| P4 | 独立执行身份、设备归还和会话保留 | 当前有撤权与归还机制，独立跨 unit 执行账本仍待实现 |
+| P1 | 主机归属不随命令迁移 | `EnvLease.unit_id` 保留主机归属，`gpu_candidate_unit_ids` 固定本节点候选，第 11 节说明当前数据结构 |
+| P2 | 同机池内按可用容量重新选卡 | `acquire` 使用池内 FIFO 和候选容量检查，`Ledger._gpu_allocations` 登记实际 GPU unit |
+| P3 | 针对本次设备子集的授权 | 校验容器映射等于候选全集，再只开放本次子集。`CUDA_VISIBLE_DEVICES` 使用授权 UUID |
+| P4 | 独立执行身份、设备归还和会话保留 | 按命令的实际目标撤权，成功后清除 GPU 分配，保留原主机会话租约 |
 
 这些代码如果有理解上的问题，可以随时追问。
 
@@ -83,7 +87,7 @@
 2. 新会话 B 获准，首先消耗 CPU、主存和会话名额。在 command 模式下，仅创建 B 不会占用活动 GPU 预算。
 3. B 的 GPU 命令随后获准运行，才会与 A 的下一条命令争用 GPU。若没有足够余量并行，A 需要等。
 
-实际上 B 的会话甚至可能在 A 尚未归还时就被准入，只要主机额度和名额足够、其 GPU 需求在这个 unit 上理论可满足。[Ledger._fits_now](../../../psrl/workers/env_service/ledger.py#L463) 对 command 会话不要求当前 GPU 立即可用。若 max_containers 已满或主机资源不足，新会话仍不能进入。因此不是“GPU 一释放就必然多收一个 session”。
+实际上 B 的会话甚至可能在 A 尚未归还时就被准入，只要主机额度和名额足够、其 GPU 需求在这个 unit 上理论可满足。[Ledger._fits_now](../../../psrl/workers/env_service/ledger.py#L542) 对 command 会话不要求当前 GPU 立即可用。若 max_containers 已满或主机资源不足，新会话仍不能进入。因此不是“GPU 一释放就必然多收一个 session”。
 
 还有两个不同问题。
 
@@ -92,7 +96,7 @@
 
 当前 direct 队列是按请求先后顺序尝试准入。已经等待的 A 命令不会仅因 B 是新会话就被 B 直接越过。问题在于 A 的下一条命令尚未提交时，调度器不能知道它马上会回来，B 可以合理地先开始。永久给老会话保留空闲 GPU 会损失其他任务的机会。
 
-“当前总是选择队列最短、压力最小的节点”也需要收紧。现有派发器主要检查能否容纳请求组、资源优先级及节点 CPU 负载。Ledger 优先选当前 GPU 需求可满足的候选，再看资源优先级及 CPU/主存/名额等占用比例，见 [_load](../../../psrl/workers/env_service/ledger.py#L500)。目前没有根据每条 GPU 命令剩余执行时间预测完成时刻的调度器。
+“当前总是选择队列最短、压力最小的节点”也需要收紧。现有派发器主要检查能否容纳请求组、资源优先级及节点 CPU 负载。Ledger 优先选当前 GPU 需求可满足的候选，再看资源优先级及 CPU/主存/名额等占用比例，见 [_load](../../../psrl/workers/env_service/ledger.py#L579)。目前没有根据每条 GPU 命令剩余执行时间预测完成时刻的调度器。
 
 ## 3. PD 分离能借鉴什么
 
@@ -115,9 +119,9 @@ Mooncake 进一步围绕 KV cache，即模型注意力机制保存的键和值�
 
 建议把“细粒度”分成物理资源粒度和调度时间粒度。
 
-**物理资源粒度。** 对普通单卡任务，单 GPU unit 比把多张卡固定打包更容易独立装入请求。目前已有单卡 unit 配置能力。把一张物理 GPU 重复声明为几个 unit 则不合适，会让同一物理容量面临重复承诺，现有配置校验也不允许这种重叠。未来可以有逻辑候选池包含多个设备，但设备应只有一份权威容量账本。多卡任务还需要同时取得满足拓扑与逐卡显存条件的完整设备组，不能把多张卡的显存简单相加当成单卡容量。
+**物理资源粒度。** 对普通单卡任务，单 GPU unit 比把多张卡固定打包更容易独立装入请求。目前已有单卡 unit 配置能力。把一张物理 GPU 重复声明为几个 unit 则不合适，会让同一物理容量面临重复承诺，现有配置校验也不允许这种重叠。当前显式同机候选池已包含多个单卡 unit，各物理设备仍只有一份权威容量账本。多卡任务还需要同时取得满足拓扑与逐卡显存条件的完整设备组，不能把多张卡的显存简单相加当成单卡容量。
 
-**调度时间粒度。** 真正需要改变的是从“会话创建时固定 GPU”变为“每次可独立执行的 GPU 命令选择设备”。建议保留 EnvRouter 这个协调者，拆出以下概念。名称是设计描述，不是已经存在的接口。
+**调度时间粒度。** 真正需要改变的是从“会话创建时固定 GPU”变为“每次可独立执行的 GPU 命令选择设备”。当前实现保留 EnvRouter 这个协调者，按以下概念分开记录。表中的名称是设计描述，实际使用 EnvLease、CommandRequest 和 Ledger._gpu_allocations，见第 11 节。
 
 | 对象 | 持有时间 | 记录内容 |
 |---|---|---|
@@ -131,22 +135,22 @@ CPU 和主存按容器实际所在节点记账，GPU 按实际执行设备记账
 
 ## 5. 同节点换卡为何也需要改造
 
-目前容器创建时，overlay 只映射原租约的 GPU。DeviceCgroupFence 还要求实际映射集合与租约集合一致，见第 1 节 C3/C4。cgroup 是 Linux 内核用于控制一组进程资源与设备访问的机制，当前代码依靠其设备访问规则阻止未获准的命令使用 GPU。
+固定绑定时，overlay 只映射原租约 GPU；启用池时，映射准入时确定的同节点候选全集，初始均无读写权限。DeviceCgroupFence 仍严格校验实际映射与声明相等，然后单独控制本次设备子集，见第 11 节。cgroup 是 Linux 内核用于控制一组进程资源与设备访问的机制，当前代码依靠其设备访问规则阻止未获准的命令使用 GPU。
 
 所以，简单修改 CUDA_VISIBLE_DEVICES 不够。它用于影响 CUDA 程序看到和选择哪些 GPU，不会凭空增加容器设备，也不替代内核访问权限。
 
-首期同节点方案可采用“候选设备可发现，但默认不能访问，执行时仅开放本次子集”。这需要明确的候选映射契约，以及与之匹配的设备白名单校验，不能直接删除当前集合相等检查。也可以在受控执行容器中运行命令并挂载会话工作目录，但该方案对终端状态和文件同步的要求更高。
+本次实现采用“候选设备可发现，但默认不能访问，执行时仅开放本次子集”，保留原容器和文件。没有用重建容器或复制工作目录完成换卡。
 
-允许换卡的首期条件应包括：
+当前允许换卡的条件包括：
 
 - 上一条 GPU 程序及其子进程已退出，所属 GPU 句柄和计算活动确认清空。
 - 下一条 GPU 程序从文件或明确输入启动，不依赖旧进程中的 CUDA 上下文和未保存张量。
 - 目标 GPU 的软件、硬件、镜像和权限能力兼容，逐卡显存预算满足。
 - 同一容器暂时只允许一个可重绑定执行，避免一条命令撤权时影响另一条命令。
 
-生产授权仍需由同一个 Router 在检查后原子承诺目标容量，防止两个并发请求都看到“这张卡空闲”。异步设备启用和回收期间保留相应承诺，启用失败且撤权未确认则隔离目标设备，不能直接尝试下一张卡并留下旧授权。
+生产授权由同一个 Router 在池锁内检查并承诺目标容量，防止两个并发请求都看到“这张卡空闲”。异步设备启用和回收期间保留相应承诺，启用失败且撤权未确认则隔离目标设备，不能直接尝试下一张卡并留下旧授权。
 
-MPS 域还有特定设备、服务进程和通信端点绑定，首期可显式固定在原域。将来扩展时以执行后端能力声明加入候选，不能宣称普通设备换绑自然覆盖 MPS。
+MPS 域还有特定设备、服务进程和通信端点绑定，当前配置校验明确禁止其加入命令池。将来扩展时以执行后端能力声明加入候选，不能宣称普通设备换绑自然覆盖 MPS。
 
 跨节点再增加工作目录同步、镜像可用性、临时文件、输出提交和取消确认问题。共享文件系统只解决部分文件可见性，不会迁移活进程和打开的连接。任务已经开始后，控制连接丢失也不能自动在另一节点重试任意命令，否则可能重复产生副作用。
 
@@ -154,7 +158,7 @@ MPS 域还有特定设备、服务进程和通信端点绑定，首期可显式�
 
 首先过滤不安全或不可执行的资源，然后再比较收益。用户指定的偏好继续生效：优先未被训推占用且可用的独立 GPU，包括同节点另一张卡。只有这些实际可执行候选紧张，才考虑显式获准共享的模型 GPU，而且必须保留模型显存与性能余量。尚未实现远端执行的空闲卡不能被当成当前命令可直接使用的候选。
 
-对合格候选 g，可以估计：
+当前实现使用池内 FIFO、已有准入容量和压力排序，容量同等时优先主机 unit 的卡；没有预估运行时长或主动等待热状态。以下是进一步策略研究的比较框架，尚未实现。对合格候选 g，可以估计：
 
 ```text
 预计完成延迟(g)
@@ -201,7 +205,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/dynamic_comman
 
 ## 8. 实施优先级与有界验收
 
-下面是动态放置本身的实施顺序。KernelBench 的固定卡 command verifier 已接入，其他公共 recipe 仍需补齐。动态放置实施前还必须完成第 9 节的收益证据检查，本文未实现跨 unit 换卡调度器。
+同机、无存活 GPU 状态的跨 unit 重新放置已完成，具体配置与实测见第 11、12 节。以下表格保留总体路线：第一阶段的主机/GPU 分账、FIFO、身份和子集授权已实现；逐候选拒绝原因时间线、预计完成时间策略、跨节点和状态恢复仍未完成。公共任务 recipe 的自动启用范围没有扩大。
 
 | 优先级 | 改造内容 | 解决的问题 |
 |---|---|---|
@@ -220,7 +224,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/dynamic_comman
 
 ## 9. 已接入 benchmark 的必要性评估
 
-**版本范围**：选型依据与历史实验来自 2026-11-03。本节调用图及 KernelBench 状态于 2026-11-04 按 `cd09114` 加未提交实现更新，详细验证边界见[recipe](gpu-benchmark-recipes.md#kernelbench-command-与性能测量)。动态选卡仍是提案。
+**版本范围**：选型依据与历史实验来自 2026-11-03。本节调用图及 KernelBench 状态于 2026-11-04 按 `cd09114` 加未提交实现更新，详细验证边界见[recipe](gpu-benchmark-recipes.md#kernelbench-command-与性能测量)。本节当时动态选卡仍是提案；当前同机实现与验证见第 11、12 节。
 
 **历史核对范围**：2026-11-03，主目录 HEAD `96acfcc`，包含工作区已有未提交文档。重新核对公共 recipe、任务准备器、评分器、常驻服务驱动和 RE-Bench 起始训练源码。这里不刷新前面各节全部源码定位，也不表示运行中集群已经部署同一版本。
 
@@ -239,7 +243,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/dynamic_comman
            ↓
 [B5] 评分与容器清理，释放会话资源
 
-动态选卡提案，尚未实现
+本节历史提案（当前同机池实现见第 11 节）
 [B3] 每轮独立评测就绪 → 单次执行准入 → 重新选择兼容 GPU
 [B4] verifier 也按新的设备租约执行 → 物理归还 → B5
 ```
@@ -286,6 +290,177 @@ autoresearch 按固定墙钟预算训练，GPU 算力差异或并发干扰可能
 
 2026-11-05 基于 `cd09114` 加工作区内容核对。完整文献矩阵、执行器提案和反例结果见[调度研究复核](command-scheduling-research.md#2026-11-05-新颖性复核与实现取舍)。CUDA Agent 已有 CPU 沙箱与专用独占 GPU 验证池，VenusRL 已有组完成优先级，TAO 已研究返回就绪与推理放置；仅从固定绑定改成动态选卡不足以证明创新。
 
-第 5 节两条工程路线中，首期更倾向显式、文件输入的独立 GPU 执行器，保留长寿命 CPU 会话。对于任意 shell 内的常驻 CUDA 状态仍拒绝迁移。这个取舍限于 KernelBench 等可重启工具，不把它推广为通用透明迁移。实现前应先确认真实轨迹中的可避免等待，以及与简单全局 FIFO 的差距。
+该阶段曾倾向显式、文件输入的独立 GPU 执行器，保留长寿命 CPU 会话。本次实现选择第 5 节的同容器候选设备池，先验证同机下一条命令换卡及文件缓存保留；没有创建远端执行器。对于任意 shell 内的常驻 CUDA 状态仍拒绝迁移。进一步研究仍需确认真实轨迹中的可避免等待，以及与简单全局 FIFO 的差距。
 
-本次新增并运行 [placement_baseline_probe.py](../env-service-verification/scripts/placement_baseline_probe.py)。教学轨迹便宜换卡时，固定绑定全组 25 秒，最早空闲卡和成本感知均为 22 秒；昂贵换卡时，三者分别为 25、28、25 秒。收益可以来自简单池化，不能据此声称新调度算法有效。生产动态执行租约、候选授权与真实 GPU 对照均未实现。
+该复核阶段新增并运行 [placement_baseline_probe.py](../env-service-verification/scripts/placement_baseline_probe.py)。教学轨迹便宜换卡时，固定绑定全组 25 秒，最早空闲卡和成本感知均为 22 秒；昂贵换卡时，三者分别为 25、28、25 秒。收益可以来自简单池化，不能据此声称新调度算法有效。该阶段没有生产实现，后续同机池工程验证见以下两节，不能将其视为新颖性证明。
+
+## 11. 已实现的同机命令池与资源账本
+
+**换卡后 CPU 和 GPU 仍在同一台机器上。** unit 是一组逻辑配额，不是一台机器，也不是固定绑在一起的 CPU 插槽与显卡。当前配置仍用 unit 声明主机和设备预算，但运行时的两种归属已经分开维护：会话长期占用主机资源，命令短期占用实际执行 GPU。两者都由同一个 EnvRouter 的 Ledger 管理，不是两个互相不知道状态的调度器。
+
+```text
+同一节点 N，容器 A 和工作区一直留在 N
+
+[1] EnvLease(A)：主机 unit=u0，CPU=4，主存=6144 MiB，候选={u0,u1}
+       │ 主机账本：一直计入 u0，不随 GPU 命令改变
+       ▼
+[2] EnvRouter.acquire：进入本节点的显式命令池 FIFO
+       │ 检查声明预算、实际占用、未兑现承诺和设备清理状态
+       ├─ u0 / GPU0 不满足准入 → 尝试 u1 / GPU1
+       ▼
+[3] GPU 分配表：A → u1；CommandRequest 保存请求身份与授权代次
+       │ 只在 u1 上计入 A 的 GPU 预算，主机不再扣一次
+       ▼
+[4] 节点设备控制：候选全集保持映射，只开放 GPU1 和控制设备
+       │ 将选中 UUID 传给受管执行器，启动新的 GPU 程序
+       ▼
+[5] 程序退出 → 撤销候选设备权限 → 确认无 GPU 句柄/计算进程
+       │ 清除 A → u1，保留 EnvLease(A) 和原容器
+       └─ 下一条命令回 [2]，整会话结束才释放 [1]
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 编号 | 负责内容 | 实际源码 |
+|---|---|---|
+| 1 | 固定主机归属、准入时确定候选集合 | [EnvLease](../../../psrl/workers/env_service/types.py#L240)、[try_admit](../../../psrl/workers/env_service/ledger.py#L113) |
+| 2 | 同机候选、池内 FIFO、准入与选择 | [command_candidates](../../../psrl/workers/env_service/ledger.py#L410)、[acquire](../../../psrl/workers/env_service/command_gpu.py#L82) |
+| 3 | `_gpu_allocations[lease_id] = unit_id`，GPU 记账按该表聚合 | [_grant](../../../psrl/workers/env_service/command_gpu.py#L143)、[_gpu_leases](../../../psrl/workers/env_service/ledger.py#L423) |
+| 4 | 候选映射核对、子集授权、UUID 注入 | [DeviceCgroupFence.set_access](../../../psrl/workers/env_service/command_gpu_node.py#L69)、[grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L206)、[exec_gpu](../../../psrl/workers/env_service/managed_execution.py#L53) |
+| 5 | 实际设备归还、记账释放、整会话清理 | [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L233)、[_return](../../../psrl/workers/env_service/command_gpu.py#L259)、[finish](../../../psrl/workers/env_service/command_gpu.py#L363) |
+
+跟着图读源码：步骤 1 由 runner 原有会话准入进入 Ledger，候选只包含同节点、同池、未被训推占用且容量兼容的单卡 unit。步骤 2 在池锁内尝试准入，步骤 3 先登记实际 GPU 承诺，再进行步骤 4 的异步设备授权。执行本身不持有池锁，因此不同 GPU 可并行工作。步骤 5 的物理检查在锁外，成功后持锁清除 GPU 分配；异步归还尚未完成时，同会话不能开始下一次 GPU 使用。最后 `finish` 删除整个所属容器集合，才解除清理屏障。源码有不清楚的地方可以继续追问。
+
+用与实机设置相同的预算解释记账，下面的“执行中”表是状态示意，不是某一瞬间的遥测采样：
+
+| 状态 | u0 的 CPU / 主存 / 容器 | u0 的 GPU 预约 | u1 的 CPU / 主存 / 容器 | u1 的 GPU 预约 |
+|---|---|---|---|---|
+| A、B 都已创建，暂不执行 GPU | 8 CPU / 12288 MiB / 2 | 0 | 0 / 0 / 0 | 0 |
+| B 用 GPU0，A 的下一条命令用 GPU1 | **不变** | B 的 3072 MiB | **仍为 0 / 0 / 0** | A 的 3072 MiB |
+| A 归还 GPU1，继续编辑 | **不变** | B 的 3072 MiB | **不变** | 0 |
+| A 整个 session 清理完成 | 4 CPU / 6144 MiB / 1 | B 的 3072 MiB | **不变** | 0 |
+
+u1 出现“没有本单位的会话容器，却有 GPU 命令”，是正确结果：容器物理上仍在同一个节点，只是 CPU 配额归属 u0。CPU 数量表示配额，不表示把线程钉到某几个物理核心。GPU 预约量也不是硬件显存分区，实际超额占用仍受既有准入与监控约束。
+
+最小配置是在同节点的两个兼容单卡 unit 上设置同一非空池名：
+
+```yaml
+units:
+  - unit_id: local-gpu0
+    node_ip: 192.168.1.40
+    cpu_quota: 8
+    memory_mb: 16384
+    max_containers: 2
+    gpu_indices: [0]
+    gpu_memory_mb: 4096
+    gpu_reservation: command
+    command_gpu_pool: env-local
+  - unit_id: local-gpu1
+    node_ip: 192.168.1.40
+    cpu_quota: 2
+    memory_mb: 4096
+    max_containers: 1
+    gpu_indices: [1]
+    gpu_memory_mb: 4096
+    gpu_reservation: command
+    command_gpu_pool: env-local
+```
+
+IP 是占位示例，应替换为现场节点身份；设备 index 必须重新核验 UUID 与 minor 映射。第二个 unit 的主机容量可以不足以容纳 A，但其 GPU 仍可承接 A 的命令，因为 A 的主机资源已经在 u0 支付。不同节点即使使用相同池名也不互相借用。配置者需保证池内设备与任务软件栈兼容，当前没有自动执行任意硬件兼容性分析。
+
+当前选择策略先按有效 GPU 占用比例排序，同等条件优先原主机 unit 的 GPU，再用新鲜遥测逐个尝试。尚未实现“预测原卡会等 2 秒、换卡要准备 10 秒，因此主动等原卡”的策略。FIFO 指先到的准备好命令先尝试，每个 session 最多一个等待或活动请求；执行上限和等待上限由原有接口控制，池内暂不做小任务回填。
+
+安全边界包括：
+
+- 仅支持 direct command、单卡独立环境 GPU，配置校验拒绝 MPS、多卡和模型共享池。固定模式与已有共享模式继续使用原路径。
+- `EnvLease.gpu_indices` 保留主机 unit 的原设备，`gpu_candidate_indices` 是完整映射；**实际执行位置应读 command 的 `unit_id/gpu_indices/gpu_uuids` 或 `_gpu_allocations`**，不能从会话字段推测。
+- 授权 UUID 覆盖命令传入的设备选择，真正隔离仍由 cgroup 设备权限完成。已有 CPU prepare 接口在激活时把该 UUID 传给准备进程，prepare 阶段不得初始化 CUDA 或缓存设备枚举结果。
+- 旧请求、旧授权代次以及错误设备的归还不能清除新授权。归还失败继续占 GPU 预算并隔离实际目标 unit。租约过期还保留主机 unit 与目标 GPU unit 的清理屏障，清理确认后逐一解除。
+- 同机换卡没有移动容器、内存页或文件，没有实现跨节点执行、存活 CUDA context 迁移或通用暂停恢复。
+
+## 12. Results：真实换卡验证与复现
+
+实验脚本为 [local_command_placement_probe.py](../env-service-verification/scripts/local_command_placement_probe.py)，结构化摘要为 [evidence.json](../env-service-verification/results/local-command-placement-20261105/evidence.json)。测试与调度使用生产 EnvRouterCore、Ledger、节点设备控制及原生 EnvWorker 容器接口，仅把 Ray 传输替换为同进程直接方法调用。没有模拟 GPU、显存查询或容器。
+
+任务沿用[跨命令上下文实验](non-timing-gpu-scheduling-scenarios.md#results跨命令上下文复用实测)的固定 SWE-Serve GDN 完整模块和 6 个未改正确性测试。两组各执行 A 的两次测试，共 24 个测试全部通过。独立 B 命令实际分配 64 MiB GPU 张量并等待有界释放信号，其 3072 MiB 声明预算使 GPU0 无法再容纳 A。两卡配置容量均为 4096 MiB，H20 物理容量更大，本实验验证的是受控准入场景，不是自然高显存负载或训练提速。
+
+| 组别 | A 第一次 | B 占用原卡期间 | A 第二次 | 第二次编译缓存 |
+|---|---|---|---|---|
+| 同版本固定 command | GPU0，6/6 通过 | A 的申请返回 wait，取消该探测请求 | B 结束后 GPU0，6/6 通过 | 6/6 命中 |
+| 同版本同机池 command | GPU0，6/6 通过 | A 自动取得 GPU1，B 仍在执行 | GPU1，6/6 通过 | 6/6 命中 |
+
+两组主机计费始终为 u0 上 8 CPU、12288 MiB、2 个容器，u1 为零。A 的工作文件保留。每组归还和清理成功，最终两卡无计算进程，结构化遥测各有 0.1875 MiB 残余读数，整数显示为 0 MiB，现场 Docker 检查无实验容器。固定组约 36.22 秒、池组约 30.98 秒仅用于记录预算消耗，**不能据此声称加速比例**：固定组对等待采用立即探测并取消，两个组的协调时序与导入冷暖也不同。
+
+这属于机制对照，固定组不是用户指定的历史 OFF baseline。未运行 `0eeead861ffafed6bf31c962d259fd847775dcf9`，未做 RL 训练或新颖性验证。新增 CPU 回归另覆盖并发准入、FIFO、错误归还设备、旧 epoch、换卡后的清理失败/过期、设备选择注入和 prepared 激活。
+
+Env Service 全套回归为 **366 passed**，使用工作区已有、修复 position_ids 拆包的隔离 veRL 依赖；默认共享依赖会使原有两项张量回归失败。本次 Python 改动的 Ruff 检查与格式检查通过。全仓库 pre-commit 在临时副本运行，仍被改动范围外的既有长行、格式与注释规范问题阻塞，不能标记为全仓静态检查通过。
+
+复现需先按运行指南预检节点，在该执行节点激活项目环境。`ASSETS` 为前述上下文实验产生的目录，内含固定版本模块、原始测试及 `command_context_probe.py`；`PYTHON_ENV` 为已有可挂载 Python 环境；`IMAGE` 为包含 gcc 且与环境兼容的已有镜像；`OUT` 为新输出目录。不要复用仍在运行或已有两组结果的目录。
+
+```bash
+nohup python docs/env-worker-deep-dive/env-service-verification/scripts/local_command_placement_probe.py \
+  --assets "$ASSETS" --python-env "$PYTHON_ENV" --image "$IMAGE" \
+  --output "$OUT" --gpus 0 1 > placement.log 2>&1 < /dev/null &
+```
+
+预期 `fixed/evidence.json` 和 `pooled/evidence.json` 都为 `passed`，分别记录固定等待和第二条命令换卡。单组外层预算 300 秒，GPU 命令最多 100 秒，持卡者还有独立 90 秒释放期限，任一错误保留日志并清理所属容器。该脚本在本次已通过后台执行验证，不需要保持交互连接。
+
+## 13. 验证边界与下一步验收
+
+本节保留 2026-11-06 补实验前的证据边界及验收计划，表中“尚未验证”针对第 12 节。当日后续已完成真实 Ray、等工作量和 prepared 对照，更新证据见第 14 节。完整 episode runner、端到端训练和算法创新仍未验证。第 11 节给出实际调用图、源码阅读顺序和资源记账例子，第 12 节提供首次后台复现脚本。
+
+| 层次 | 已有证据 | 不能据此声称 |
+|---|---|---|
+| 物理执行 | 两张同机 H20、真实 Docker、设备授权、真实 CUDA，A 第二条命令换到 GPU1，B 仍持有 GPU0 | 异构卡、跨节点、模型共存和所有容器提供者均已验证 |
+| 工作负载 | 同一个 SWE-Serve GDN 任务的 6 个正确性测试，每组执行两次，共 24 次测试执行 | 24 个不同任务、完整 benchmark 覆盖、Agent 多轮解题或训练收益 |
+| 容量竞争 | B 实际分配 64 MiB，声明 3072 MiB，在 4096 MiB 配置预算下阻塞 A | 真实满显存、OOM 防护、持续计算竞争或自然拥塞比例 |
+| 上下文 | 同一容器文件保留，同型 GPU 间第二次编译缓存 6/6 命中 | 显存张量、活 CUDA 进程、任意 Python 进程状态可跨命令恢复 |
+| 集成 | 使用生产 RouterCore、Ledger、节点和受管执行层 | Ray actor 通信、重启恢复、完整 science runner 链路均已验证 |
+| 安全与回归 | 366 项 Env Service 回归通过，包含换卡后的故障与过期测试，实机正常路径清理成功 | 366 项新增换卡测试，或全部故障都做过实机注入 |
+| 性能 | 观察到可避开的固定卡准入等待 | 36.22 与 30.98 秒之差就是调度收益，或具有统计稳定性 |
+
+**优先级 1：补真实通信的短链路。** 通过实际 Ray actor 和现有 runner 执行同一正确性任务的两条受管 GPU 命令，核对候选字段传递、实际设备选择、取消及清理。先做一次正常换卡，再做一次受控取消，不加入训练。建议总预算 10 分钟、两张卡，每条命令保持现有超时。出现基础设施阻塞便保留证据并退出，不自动延长。该阶段回答“真实入口能否使用此功能”。
+
+**优先级 2：做相同工作量的固定卡与同机池对照。** 让占卡者 B 执行固定工作量，不能根据 A 是否完成来提前释放，也不能在固定组取消 A 的等待而让池组完整执行。先用两张卡、三个会话、每会话两次独立正确性评测，保持相同任务、输入、准备状态和到达计划。最多三对短运行、总预算 15 分钟，记录从命令就绪到输出、到归还确认两种延迟，以及全部会话完成时间。拆分准备、排队、授权、GPU 执行与归还。先分别观察编排出的拥塞场景和采集到的真实任务到达间隔，不能混称自然收益。结论不足时报告样本有限，不追加长训练。
+
+该对照只衡量固定 command 与动态 command 的机制差异。若以后报告相对历史 OFF 的收益，仍需另列用户指定的 `0eeead861ffafed6bf31c962d259fd847775dcf9`，不能把同版本固定 command 改称历史 baseline。
+
+**优先级 3：根据测量选择研究方向。** 当前是池内先到先服务，加有效显存占用排序，同等条件偏好主机 unit 的 GPU，尚未预测原卡剩余等待或其他会话将要返回。简单池化应成为后续策略的强对照。如果它已消除大部分可避免等待，就没有依据继续叠加复杂换卡评分。
+
+例如，以下数字仅为教学假设，设两卡执行时间相同：原卡还要等 8 秒，原卡准备 1 秒，另一张卡立即可用且准备 2 秒，换卡可节省 7 秒。若原卡只等 1 秒，而换卡准备要 6 秒，留在原卡需 2 秒，换卡需 6 秒，留卡更好。本次同机磁盘缓存能够保留，不能预先假定换卡总有很大的冷启动代价。需要测出可重复的准备差异后，才值得实现成本预测。
+
+若准备差异很小，可进一步检查两个候选问题：多会话返回 GPU 的时间是否具有可预测性，准备阶段能否提前完成但不提前占卡。这两项仍是待验证假设。需要在固定正确性评分与相同工作量下，优于简单池化的全组完成时间，同时计入 CPU、主存和准备成本，才能形成调度研究的实证基础。本文没有据此宣称新颖性，也没有启动这些后续实验。
+
+## 14. Results：真实 Ray 与相同工作量对照
+
+**本次新增证据。** [ray_command_placement_probe.py](../env-service-verification/scripts/ray_command_placement_probe.py) 创建独立 Ray 实例，使用生产 `create_env_router`、RayEnvRouter 与 EnvNodeService actor，环境使用正常 CommandGpuReservation，通过真实 Ray 通信申请、归还和取消。driver 与 Ray worker 的 PSRL、veRL、TransferQueue 来源一致，PSRL 运行快照包含本地未提交同机池代码。容器入口仍为直接 EnvWorkerEnvironment API，未调用完整 Harbor episode runner，没有启动模型生成或训练。
+
+全局调用与归还步骤沿用第 11 节图，不再用 Remote/LocalRouter 替代传输。新增入口源码为 [create_env_router](../../../psrl/workers/env_service/router.py#L704)，真实节点创建见 [RayEnvRouter._create_node](../../../psrl/workers/env_service/router.py#L476)。实验中先通过租约创建容器，再并行提交不同会话命令，结束后依次执行容器 stop、租约 release、shutdown_nodes 和 ray.shutdown。物理 GPU/容器检查独立于 Ray 进程退出。
+
+**相同工作量。** A、B 在主机 unit0，C 在主机 unit1。三者先各执行一次原始 6 测试预热。计时阶段 B 在 GPU0 连续执行三次相同测试，C 在 GPU1 执行一次，观察到 B/C 均已进入获准执行后提交 A 的一次测试。两组 B 均执行完整固定工作量，不等待 A 的释放信号。两卡都占用期间，还通过真实 RPC 提交并取消 A 的一个等待请求，然后正常提交 A 的测试。测试计分、输入和缓存策略不变。
+
+固定 command 与同机池按 fixed、pooled、pooled、fixed 顺序运行，每种两次，外层预算 900 秒。后续 prepared 小对照两次，仅把 A 计时命令的库导入移至准入前，其余任务保持一致，外层预算 480 秒。它调用已有 [execute_prepared](../../../psrl/workers/env_service/prepared_gpu.py#L24) 与[实验适配器](../env-service-verification/scripts/prepared_correctness_probe.py)，没有新增生产调度策略。每组共 48 次测试执行，六组共 **288 次全部通过**，不是 288 个不同任务。各组 host 计费保持原归属，等待取消成功，归还与清理无错误。最终现场检查无实验容器，GPU 无计算进程且整数显存读数为 0 MiB，实验进程已退出。
+
+| 配置，每种两次 | 全部计时命令完成 / 秒 | A 从提交至归还完成 / 秒 | A 持有 GPU 预算 / 秒 |
+|---|---|---|---|
+| 固定 command | 38.45、37.45，均值 **37.95** | 38.07、37.16，均值 **37.62** | 8.91、8.74，均值 **8.82** |
+| 同机池 | 36.57、33.53，均值 **35.05** | 26.81、24.94，均值 **25.87** | 12.00、14.57，均值 **13.29** |
+| 同机池，A 提前 CPU 准备 | 29.43、35.41，均值 **32.42** | 14.50、22.51，均值 **18.50** | 3.20、3.43，均值 **3.32** |
+
+从两次均值看，同机池相对固定 command 的 A 延迟下降约 31.2%，全部计时命令完成时间下降约 7.6%。只看单会话会高估整组收益：池组最后完成者仍为 B。普通池组 B 的 Python 导入合计约 20.2 至 23.0 秒，占其获准到归还时间约 60% 至 63%。这不是纯 GPU 运算计时，也未通过 CPU/I/O 独立干预证明延长原因，不能把所有变化归因于 SM 竞争。
+
+prepared 对照中 A 在未初始化 CUDA 时完成导入，准备耗时为 5.39、8.11 秒，准备结束至激活等待为 4.78、10.08 秒，进程最大常驻主存约 561 至 564 MiB，随后在 GPU1 完成相同测试。A 的 GPU 预算持有均值比普通池组减少约 75%。这些数字证明准备可以与排队重叠，且减少 GPU 预算持有，**不证明新调度算法有效**。prepared 组在基础对照之后运行，没有交替随机化，整组均值差只能作为小样本观察，不能声称统计稳定的吞吐提升。增加准备并发还可能把瓶颈移到 CPU、I/O 或主存，当前没有测这种饱和压力。
+
+固定组和池组都只在两个 H20 上执行一个任务的原始正确性子集，B 的三次串行测试与提交时序是受控编排。未测自然 Agent 轨迹的拥塞频率、全 benchmark、完整 runner、正在运行命令的实机取消、actor 崩溃恢复或长期稳定性。它们是同版本机制对照，不是历史 OFF baseline `0eeead861ffafed6bf31c962d259fd847775dcf9`。正常路径的实机结果与上次 366 项 CPU 回归分别记录，本次没有把旧测试计数冒充新回归。
+
+结构化证据见 [evidence.json](../env-service-verification/results/ray-command-placement-20261106/evidence.json)。运行快照、启动日志、每条命令输出与失败证据保留在实验输出目录。下面脚本在实际执行节点激活环境、完成现场预检后使用，变量与第 12 节一致，新增 NODE_IP 为已核对的 Ray 节点地址。
+
+```bash
+nohup python docs/env-worker-deep-dive/env-service-verification/scripts/ray_command_placement_probe.py \
+  --assets "$ASSETS" --python-env "$PYTHON_ENV" --image "$IMAGE" \
+  --node-ip "$NODE_IP" --gpus 0 1 --output "$OUT" > ray-placement.log 2>&1 < /dev/null &
+```
+
+默认执行两对正常 command 对照，每组内部期限 240 秒。独立 prepared 实验使用新 OUT，并追加 `--prepared-a --modes pooled --repeats 2`。必须先确认前一实验的物理资源已释放，不同时跑两组造成额外干扰。第 13 节的“原卡等待与换卡准备成本”下一步研究计划据此收窄为[版本有效准备与资源联合调度](non-timing-gpu-scheduling-scenarios.md#研究切入版本有效的准备状态与资源联合调度)，这些机制已有强近邻工作，尚无论文创新结论。
+
+本轮新增三个实验/分析脚本的 Ruff、格式与 prose 检查通过，本次涉及文档的路径和锚点已校验。全仓 pre-commit 在隔离副本运行，仍因范围外的既有 Ruff 与 prose 问题失败。本轮没有修改生产调度代码，上一轮 366 项回归不重复运行。

@@ -1,15 +1,15 @@
-# EnvWorker 现状代码深读：账本结构、崩溃回收，以及提案里还没落地的部分
+# EnvWorker 历史实现与修复前审查：账本、回收和旧待办对照
 
 ## TL;DR
 
 - **修复后状态见 [2026-10-14 修复与对比实验](../airs-bench-audit/fixes-and-results.md)**。本文第 17 节保留修复前审查，相关链接改指向有 SHA-256 校验的 baseline 快照，不能再当成当前实现。
 - 2026-10-13 的 AIRS-Bench 审查见本文第 17 节：标签暴露、shell 超时串线、资源回收缺口成立，但“永久死锁”“排队异常无人处理”“只改三个方法已完成接入”需要修正。
-- 当前配置指向的 MLGym 源码可读，真实继承方法的最小重放确认初始化和超时中断都会因 `container_obj=None` 触发断言。
-- 第 13、15 节是较早的实现分析，其涉及新 Env Service、GPU 支持及其他配方的“当前”判断不能作为本次代码版本的结论。第 17 节明确区分当前静态证据、CPU 复现与尚未验证的集群行为。
+- 2026-10-13 审查所用 MLGym 源码可读，当时的最小重放确认初始化和超时中断因 `container_obj=None` 触发断言。这是修复前证据。
+- 第 13、15.1、15.2 节按历史快照阅读，第 17 节保留 2026-10-13 修复前证据。已失效的实施待办从第 15.3 节删除，改为与现有实现的对应表。了解项目现状先读 [当前设计](current-design.md)。
 
 > 本文是 [`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md)（EnvWorker 设计详细版）原第 13、15 节拆分出来的独立文档。章节编号沿用原文档编号（13、15），没有从 1 重新编号，方便和速查表、其他文档里已经写好的"详细版 §13.x/§15.x"引用对应。
 >
-> 读本文前建议先读完详细版的第 0-10 节（问题背景、角色分工、unit、流程、GPU 难点）；本文只讲"现在跑着的代码具体长什么样、和提案原文逐节对照之后还差什么"，不重复讲设计动机。
+> 追溯设计动机可读原设计讲解，核查故障则读本文保存的 baseline 快照与修复报告。下文旧章节中的“当前”“现在”仅指当时分析的版本，不是部署状态或现行能力说明。
 
 ## 目录
 
@@ -24,14 +24,7 @@
 - [15. 两份文档到底是什么关系：逐节对照，以及提案里没落地的部分现在该怎么看](#15-两份文档到底是什么关系逐节对照以及提案里没落地的部分现在该怎么看)
   - [15.1 逐节对照表：本文哪几节在讲 2026-09-21 提案的哪部分](#151-逐节对照表本文哪几节在讲-2026-09-21-提案的哪部分)
   - [15.2 哪几节不是在讲提案，而是在讲"现在真实跑着的代码"](#152-哪几节不是在讲提案而是在讲现在真实跑着的代码)
-  - [15.3 原文里确实还没落地的部分：为什么值得做，初步怎么做](#153-原文里确实还没落地的部分为什么值得做初步怎么做)
-    - [(1) Gate A 真正接到 Harbor 路径上，而不是只在旧 EnvWorker 里生效](#1-gate-a-真正接到-harbor-路径上而不是只在旧-envworker-里生效)
-    - [(2) Gate B：SessionRouter 出口的 GPU 轮次节流](#2-gate-bsessionrouter-出口的-gpu-轮次节流)
-    - [(3) 验证式的 borrow/return（RETURNING 状态）加真正接入调度的租约/心跳，取代现在"写了但没人调用"的空转超时](#3-验证式的-borrowreturnreturning-状态加真正接入调度的租约心跳取代现在写了但没人调用的空转超时)
-    - [(4) 周期性负载快照（measured_gpu_memory_mb、measured_util_by_pid）](#4-周期性负载快照measured_gpu_memory_mbmeasured_util_by_pid)
-    - [(5) 统一 Path A / Path B（Roadmap Phase 0）](#5-统一-path-a--path-broadmap-phase-0)
-    - [(6) 两个已知的 GPU 驱动库 bug（B1/B2），核实结果是：现在的代码里确实还没修](#6-两个已知的-gpu-驱动库-bugb1b2核实结果是现在的代码里确实还没修)
-    - [(7) 提升 retry_limit（B8）：成本最低，但也没做](#7-提升-retry_limitb8成本最低但也没做)
+  - [15.3 旧待办的现状映射](#153-旧待办的现状映射)
 - [延伸阅读](#延伸阅读)
 - [17. AIRS-Bench 接入批评核对与最小复现](#17-airs-bench-接入批评核对与最小复现)
 
@@ -39,7 +32,7 @@
 
 ## 13. 现状聚焦：为什么不能"用一次就释放"，拆分 EnvRouter/EnvWorker 能不能合并
 
-前面两节讲的是"怎么用现在的代码"。这一节回到一个更根本的问题：现在的资源账本具体长什么样、多轮工具调用为什么决定了资源必须按 episode（一次完整尝试，定义见第 1 节）而不是按单条命令释放、以及"拆两个组件"这件事本身是不是可以省掉。全部结论都对照当前真实跑的代码，不是提案推演。
+本节保留旧 EnvWorker 快照的计数器、容器生命周期与崩溃分析。旧路径将容器和槽位按 episode（一次完整尝试）持有，不等于所有资源都必须采用相同持有期。现有 command 模式允许保留容器与文件状态、逐命令归还 GPU 预算，见 [当前资源生命周期](current-design.md#3-资源如何计算与归还)。下面的旧代码链接指向修复前快照。
 
 ### 13.1 现状的账本长什么样：三个类各管一件事
 
@@ -225,85 +218,26 @@ Coordinator 侧：那个 worker 的 used_cpu/used_gpu 永远不会被减回去�
 - **第 11、12 节**（怎么把现有 EnvWorker 接入 PSRL、怎么写 GPU 集成测试，见 [`onboarding-and-gpu-validation.md`](onboarding-and-gpu-validation.md)）讲的是**现在就能跑的旧 EnvWorker**（Path A），这是原文认为"应该保留、要在外面套一层 Harbor"的那部分执行体，但原文并未给出这两节里的接入步骤代码或测试文件，这是本文基于现状代码自己补充的落地路径，超出了原文的范围。
 - **第 13 节**（本文件）主线是逐行核对现在跑着的 `coordinator.py`/`worker.py`，只有 13.4 和 13.7 两处明确拿现状去对照原文的分工道理和 lease 动机（见上表最后两行），其余小节（13.1-13.3、13.5-13.6）讲的是当前实现的真实行为，原文里没有对应段落。
 
-### 15.3 原文里确实还没落地的部分：为什么值得做，初步怎么做
+### 15.3 旧待办的现状映射
 
-下面每一项先说"现状缺什么"，再说"不做会在什么场景吃亏"，最后说"原文给出的初步实现路径"。判断"有没有落地"的依据是直接读当前 `psrl/psrl/workers/env_worker/` 源码，不是猜测。
+本节于 2026-11-05 对照本地 `0326d46` 更新。原先要求“再接入 Harbor 准入、心跳和统一后端”的实施步骤已失去现状指导价值，因此删除，避免继续作为开发清单。第 13 节和第 17 节的历史故障证据仍保留。
 
-#### (1) Gate A 真正接到 Harbor 路径上，而不是只在旧 EnvWorker 里生效
+| 旧待办 | 当前应怎样判断 | 源码与现状入口 |
+|---|---|---|
+| 在 Harbor 创建前接入预算准入 | 启用 Env Service 时，runner 已先获取租约，再创建环境。未启用时仍有独立路径 | [runner acquire](../../../examples/sciaccel_rl/runner.py#L369)、[当前设计](current-design.md) |
+| 接入租约与心跳 | `EnvLeaseHandle` 已有后台心跳和释放入口。存在心跳不等于所有故障均自动恢复 | [EnvLeaseHandle](../../../psrl/workers/env_service/client.py#L35) |
+| 统一两种创建方式 | 原生与 Compose 已共享 GPU 作业层，创建、网络和远程池仍有差异 | [统一执行层](unified-gpu-execution.md#10-当前结构与前两阶段的对照) |
+| 用进程内并发数代表整台节点预算 | 未启用 Env Service 才走 SciAccel 进程内计数器，启用后使用 Router 准入 | [准入分支](../../../examples/sciaccel_rl/agent_loop.py#L391) |
+| 提高重试次数即可解决失败恢复 | 重试、整组补采、重派发与物理清理是不同机制，应按故障类型和预算选择 | [重试与重派发](worker-retry-and-redispatch.md) |
+| 旧 GPU 驱动库故障仍存在于所有部署 | 这是特定版本和节点的故障记录，不能当成现有全部节点的结论 | [运行前检查](../../psrl/psrl-run-guide/cluster-preflight.md) |
 
-**现状（截至本节最初写下时）：** `coordinator.py` 的 `has_cpu_capacity`/`has_gpu_capacity` 加原子锁（[`coordinator.py:170-177`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L170)）其实已经实现了 Gate A 的核心思路——"检查预算、原子预留、再创建容器"。但它只服务于走旧 EnvWorker 的 MLGym/AIRS-Bench 配方；走 Harbor 的 SciAccel 路径（Path B）完全绕开了这套账本，直接调用 Harbor 的 `Job.create`。而原文第 7.4 节已经核实过：**Harbor 自己的 `n_concurrent_trials` 只是一个不区分 cpu/mem/gpu 的计数信号量**，8 个并发配额在 2 卡主机上会把 8 个 `gpus=1` 的任务全部放行。
-
-**更新（已部分落地，见 [`sciaccel-gpu-gate.md`](sciaccel-gpu-gate.md) §16.5）：** 上面说的是**数量预算**层面的问题（CPU/内存/GPU 总量核验），这部分目前仍未接入 `EnvWorkerCoordinator`，还是本节最初描述的状态，没有变化。但 §16 另外发现的**设备身份**层面问题（同时放行的多个 GPU episode 会拿到完全相同的 `/dev/nvidia0` 字符串，哪怕数量预算本身没超）已经用 §16.3 的"轻量方案"修复并部署：`GpuDeviceGate`（[`gpu_device_gate.py`](../../../psrl/utils/concurrency/gpu_device_gate.py)）接入了 [`runner.py`](../../../examples/sciaccel_rl/runner.py) 的 `run_harbor_episode`，两个问题不是同一件事，不要把"设备身份已修复"误读成"数量预算也已经接入"。
-
-**不做会怎样：** 这不是假设性风险——按第 5.3 节的实测，显存是相加且不可压缩的；如果 8 个任务真被 Harbor 同时放行，且这台机器显存装不下，会直接触发 OOM，而不是排队等待。
-
-**初步实现路径（原文第 9 节 Phase 1 加第 7.2 节）：** 在 SciAccel 的 agent loop 里、`Job.create` 之前，插入一次调用：用 `TaskConfig.model_validate_toml(task_toml.read_text())`（纯解析，不启动任何东西）读出这次任务声明的 `cpus/memory_mb/gpus`，拿去和 unit 的剩余预算做同一套"检查加原子预留"判断——这套判断逻辑不需要发明新机制，`coordinator.py` 里已经写好且能跑，缺的只是把 Harbor 路径接到同一个协调器上。原文特别注明这部分"规划阶段测试已经写过、12+12+9+2 个测试通过"，但这是原文自己的说法，本文没有独立验证过这些测试。
-
-#### (2) Gate B：SessionRouter 出口的 GPU 轮次节流
-
-**现状（最初写下本节时）：** 完全没有。当前 `SessionRouter` 的 `hang` 机制只挡"下一次模型请求"，不会在模型已经生成回复、agent 即将执行工具命令之前插入任何等待（第 8 节已说明）。
-
-**更新（已实现，见 [`sciaccel-gpu-gate.md`](sciaccel-gpu-gate.md) §16.5）：** 已按下面"初步实现路径"描述的思路落地，挂在 `session_chat_completions` 返回模型回复之前（[`session_router.py`](../../../psrl/workers/gen/session_router.py) 的 `_wait_for_gpu_idle`），只对被 `POST /control/gpu_bind` 显式绑定过 GPU 设备的 session 生效——`examples/sciaccel_rl/runner.py` 的 Gate A 在拿到设备后会调用这个端点。空闲判断用的是 `nvidia-smi --query-gpu=index,utilization.gpu,memory.used`（真实整卡计数器，不是逐进程的 `pmon`——这是本次实现和下面"初步实现路径"建议的一处差异，会在整卡有其它无关进程时把"空闲"判断得偏保守，即误判为"忙"而多等，但不会误判为"空闲"而少等，方向上是安全的），默认最长等待 600 秒（`PSRL_GATE_B_MAX_WAIT_SEC`），超时直接放行。
-
-**不做会怎样：** 直接对应第 5.4 节的实测结论——`nvidia-smi` 的 GPU 利用率读数是整卡计数器，不是按进程区分。如果同一张卡上有两个任务的 solver 真的同时在算，其中一个任务的评分会被另一个任务的 GPU 活动"污染"（把别人的计算误判成自己的）。这不是理论推演，是原文用两个各分配 8GB 的容器同时压 `/dev/nvidia0` 实测出来的现象（第 5.3 节）。
-
-**初步实现路径（原文第 6.3 节加第 6.5 节）：** 挂在 SessionRouter 返回模型回复之前的出口 hook，只对 GPU unit 生效；最多等待 `admission_timeout_s`（默认 600 秒，必须小于 agent 自己的 LLM 请求超时——SciAccel 现在是 900 秒，见 [`runner.py:250-252`](../../../examples/sciaccel_rl/runner.py#L250)），超时就直接放行而不是判失败，因为放行只是"多花一点吞吐"，判失败是"丢掉最多四小时的 episode"。判断"GPU 是否真的空闲"要用 `nvidia-smi pmon` 的逐进程占用，不能只看 session 状态是不是 `env`（否则会被 `nohup ./solver &` 这种正常的后台用法骗过去，见第 6 节）。
-
-#### (3) 验证式的 borrow/return（`RETURNING` 状态）加真正接入调度的租约/心跳，取代现在"写了但没人调用"的空转超时
-
-**现状：** 第 13.7 节已经核实过：`reap_idle_sandboxes()` 这个方法本身存在（[`worker.py:362-378`](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L362)），但整个代码库里没有任何地方定时调用它。释放/归还只有两种状态——"占用中"和"已释放"，中间没有原文第 6.2 节设计的 `RETURNING`（正在归还，需要核验空闲后才能标记 `FREE`）过渡状态，也没有心跳/租约续期机制去区分"任务还在正常算"和"调用方已经崩溃"。
-
-**不做会怎样：** 正是前面回答的那个缺口——一次 Ray 进程级崩溃会让容器和 coordinator 的账本一起卡死，没有任何自动机制能分辨这是真泄漏还是长 episode 正常运行，只能靠人工发现或整个训练任务重启。
-
-**初步实现路径（原文第 6.2 节加第 7 节的教学租约例子）：** 引入显式状态机 `FREE → LEASE_PENDING → ENV → RETURNING → FREE`，每一次状态转移都包在 `try/finally` 里释放（原文明确点名要避免复刻 `check_and_migrate` 那个没有 `finally`、导致抽干超时后全局路由停摆的 bug，即 B7）；调用方按固定间隔上报心跳续约租约，租约到期（而不是"7200 秒没用过"这种一刀切的空闲判断）才触发回收，并且回收 GPU 时要用 `nvidia-smi --query-compute-apps` 核验设备确实空了之后才把 unit 标记回 `FREE`，而不是发完 `docker rm` 命令就直接认为完事。
-
-#### (4) 周期性负载快照（`measured_gpu_memory_mb`、`measured_util_by_pid`）
-
-**现状：** `WorkerSlot` 只有 `used_cpu`/`used_gpu` 两个自己维护的整数计数器（[`coordinator.py:24-41`](../airs-bench-audit/baseline/psrl/workers/env_worker/coordinator.py#L24)），没有任何一处真正去问 `nvidia-smi` 实际显存/利用率是多少，也没有定期上报的通道。
-
-**不做会怎样：** 前面已经指出，默认 `least_loaded` 路由策略只看 `used_cpu`，连 `used_gpu` 都不看，更别提区分"申报 18 GiB"和"实测已经飙到 21 GiB"这种原文第 7 节强调的偏差。没有测量数据，调度只能盲选。
-
-**初步实现路径（原文第 6.6 节，仿照 rollout 侧 `EngineStats` 的模式）：** 每个 EnvWorker 定期跑 `docker ps --filter label=...` 和 `nvidia-smi --query-compute-apps` 拼成一份快照，通过一条**独立于 `create_sandbox`/`exec` 控制路径**的通道发布——这一点很关键，第 13.4 节已经论证过"亚毫秒级决策"和"可能挂起一小时的执行"不能塞进同一个并发池，采集遥测数据同理不能占用处理 `create_sandbox` 请求的那条路径。
-
-#### (5) 统一 Path A / Path B（Roadmap Phase 0）
-
-**现状：** 第 9 节已经说明，SciAccel（Path B）现在仍然自己维护一个**进程级**（不是节点级）`asyncio.Semaphore`（[`agent_loop.py:60-84`](../../../examples/sciaccel_rl/agent_loop.py#L60)），没有接入 `coordinator.py` 的任何账本。
-
-**不做会怎样：** 就是原文 B4 描述、且已经在启动脚本里写死变通方案的真实故障——同一节点上堆更多 worker 进程，会把这个节点的容器数按 worker 数成倍放大，原文引用的证据是 `examples/sciaccel_rl/fsdp_qwen35_4b.sh:105-114` 那段注释。
-
-**初步实现路径（原文第 9 节 Phase 0 四步）：** 把 SciAccel 的 Harbor 调用挪到一个 EnvWorker actor 背后（行为不变）；把进程级 `Semaphore` 换成节点级的 `SlotManager`（[`psrl/utils/concurrency/slot.py`](../../../psrl/utils/concurrency/slot.py)，本来就是现成的、mini SWE loop 已经在用的节点级原语，只是 SciAccel 没用）；给容器打上自己的标签（这一步在旧 EnvWorker 里其实**已经做了**——`SANDBOX_LABEL_KEY`/`ACTOR_LABEL_KEY`，见 [`worker.py:21-22,189-196`](../airs-bench-audit/baseline/psrl/workers/env_worker/worker.py#L21)，只是 Path B 没有）；确认 Harbor 的 terminus-2 episode 能像旧 shell 一样在多轮之间保留容器内状态之后，再删掉旧的 exec-shell 后端。
-
-#### (6) 两个已知的 GPU 驱动库 bug（B1/B2），核实结果是：现在的代码里确实还没修
-
-这一条不是"提案设想的风险"，是刚刚直接读 [`sandbox.py:20-23`](../airs-bench-audit/baseline/psrl/workers/env_worker/sandbox.py#L20) 核实到的、现在就存在的问题：
-
-```python
-DEFAULT_DRIVER_LIB_GLOBS: tuple[str, ...] = (
-    "/usr/lib64/libnvidia-ml.so.1",
-    "/usr/lib64/libcuda.so.1",   # B1：原文明确说"永远不要挂载这个符号链接"
-)
-# 缺 libnvidia-ptxjitcompiler.so.1，对应 B2
-```
-
-**不做会怎样：** 对应原文第 5.2 节的实测——那台测试机上 `libcuda.so.1` 指向的是和内核驱动版本不匹配的用户态库，直接调用会返回 `CUDA_ERROR_SYSTEM_DRIVER_MISMATCH`；但因为 `libnvidia-ml.so.1` 指向的版本是对的，`nvidia-smi` 在容器里跑起来完全正常，只有真正的 CUDA 初始化会失败——这是一种"看起来很健康、实际不能用"的隐蔽故障，原文强调它"排查起来会被引导到错误的方向"。
-
-**初步实现路径（原文第 5.2 节的 Fix 建议）：** 启动容器前先读宿主机的 `/proc/driver/nvidia/version`，用这个版本号去匹配挑选真正对应版本的库文件，挂载解析出来的那个具体路径，而不是无条件挂载 `.so.1` 符号链接；同时把 `libnvidia-ptxjitcompiler.so.1` 补进挂载列表，否则容器内 PTX JIT 编译会失败。
-
-#### (7) 提升 `retry_limit`（B8）：成本最低，但也没做
-
-**现状：** 已核实，`rollout.agent.retry_limit` 配置默认值是 `1`（[`psrl_rollout.yaml:154`](../../../psrl/trainer/config/rollout/psrl_rollout.yaml#L154)、[`rollout.py:84`](../../../psrl/workers/config/rollout.py#L84)），[`worker.py:389-427`](../../../psrl/workers/agent_loop/worker.py#L389) 里那段重试循环 `for retry_attempt in range(1, retry_limit + 1)` 在这个默认值下等价于只跑一次，重试分支实际是死代码。
-
-**不做会怎样：** 一次偶发的基础设施错误（比如第 10 节提到的节点 Docker daemon 卡死）会直接判这个 episode 失败，白白扔掉已经花费的时间，不会有任何重试机会。
-
-**初步实现路径：** 原文把这一条标为"应该在做任何重派发/迁移机制之前先评估"的最低成本改动——不需要写任何新代码，只是把配置默认值调高，观察 episode 成功率的变化。
-
-以上七项之外，原文还提到"跨训练任务的全局 unit 注册表"（`EnvUnitRegistry` 需要在多个训练任务之间共享，而不是像现在 `EnvWorkerCoordinator` 一样只在单次 `EnvWorkerManager.__init__` 里创建、生命周期绑定单个训练任务）——这一条本文没有单独展开，因为它依赖前六项先落地之后才有意义讨论。
+本表核对实现与阅读入口，没有重跑历史 AIRS 实验，也没有检查节点实时状态。原有方案中的其他调度目标不能因上表几项已落地就视为全部完成。
 
 ## 延伸阅读
 
-- 设计动机和角色分工：[`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md) 第 0-10 节。
+- 设计动机和角色分工：[`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md) 的问题背景与角色分工。
 - 怎么把现有 EnvWorker 接进 PSRL、怎么写 GPU 集成测试：[`onboarding-and-gpu-validation.md`](onboarding-and-gpu-validation.md)。
-- SciAccel 接 GPU Gate 的实测与部署（第 (1)(2) 条已落地的具体内容）：[`sciaccel-gpu-gate.md`](sciaccel-gpu-gate.md)。
+- SciAccel 接 GPU Gate 的早期实测与部署记录：[`sciaccel-gpu-gate.md`](sciaccel-gpu-gate.md)。
 
 ## 17. AIRS-Bench 接入批评核对与最小复现
 

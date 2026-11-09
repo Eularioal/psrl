@@ -137,7 +137,7 @@ CPU／主存／容器位置：A、B 仍各自保留，直到自己的任务结�
 
 ## 6. 当前限制与可复现实验
 
-已经实现的并非跨机器运行中容器迁移，也没有预测下一次 GPU 调用时间的调度器。任务启动前可以选择节点，活着的 Harbor 容器仍留在原节点，命令阶段在其所在 unit 排队。CPU／主存／容器数预算仍按会话保留，可能成为吞吐瓶颈。先入先出队列也没有抢占正在执行的 CUDA 命令。
+已经实现的并非跨机器运行中容器迁移，也没有预测下一次 GPU 调用时间的调度器。任务启动前可以选择节点，活着的 Harbor 容器仍留在原节点，命令阶段默认在原 unit 排队，显式同机 command_gpu_pool 可在池内重新选卡。CPU／主存／容器数预算仍按会话保留，可能成为吞吐瓶颈。先入先出队列也没有抢占正在执行的 CUDA 命令。
 
 vLLM 借用模式要求完整副本绑定、每个借用 unit 一个容器位置，并且不能配置 `gpu_reservation: command`。本次单卡对照只验证独立环境 GPU 的命令配额、归还、预热与失败补采，不验证模型 GPU 同卡借还。实际训练的奖励、loss、entropy 和收敛效果未在本次测量。
 
@@ -648,7 +648,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_gpu_susp
 
 ## 14. unit 如何共享及命令能否跨机器
 
-> **动态调度设计补充**：本节解释现有固定绑定。如何在下一条命令就绪时重新选 GPU、哪些 PD 分离原则可以借鉴、以及同节点换卡的权限与公平性约束，见[GPU 命令动态放置](dynamic-command-placement.md)。该方案尚未实现。
+> **局部核对范围**：2026-11-05，`0326d466` 加本次未提交代码。固定绑定仍是默认值，显式同机 command_gpu_pool 已支持下一条 direct 命令重新选卡。以下图区分两条分支；设备授权、分开记账与实机验证见[GPU 命令动态放置](dynamic-command-placement.md#11-已实现的同机命令池与资源账本)。跨节点执行仍未实现。
 
 **结论**：unit 是预先配置在一台节点上的资源池，session 获得的是该池中的一份 lease 租约，不是独占整个池。多个环境可以共享同一个 unit，但需满足数量、CPU、主存和 GPU 策略约束。跨节点放置与命令阶段排队是两层不同决策。
 
@@ -661,7 +661,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_gpu_susp
                  │      ├→ [U4] lease-a → 环境 a → 多轮命令
                  │      └→ [U4] lease-b → 环境 b → 多轮命令
                  │                         ↓
-                 │                  [U5] 在原 unit 内申请 GPU 阶段预算
+                 │                  [U5] 默认原 unit；显式池可选 A 上其他 GPU unit
                  │                         ↓
                  │                  [U6] 确认归还，最后清理会话
                  └→ 节点 B 的 worker → unit-B → 其他环境
@@ -673,10 +673,10 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_gpu_susp
 |---|---|---|
 | U1 | `EnvAwareDispatcher._assign_resources` 按节点容量和任务组需求选择 worker | [placement.py:188](../../../psrl/workers/env_service/placement.py#L188) |
 | U2 | `EnvServiceClient.acquire` 把执行 worker 的 node_ip 传给 Router | [client.py:159](../../../psrl/workers/env_service/client.py#L159) |
-| U3 | `EnvUnitLedger.try_admit` 过滤节点、选择 unit，按需求创建租约 | [ledger.py:106](../../../psrl/workers/env_service/ledger.py#L106) |
-| U4 | `EnvLease` 固定 unit_id、node_ip、gpu_indices，runner 应用设备与环境绑定 | [types.py:199](../../../psrl/workers/env_service/types.py#L199)、[runner.py:100](../../../examples/sciaccel_rl/runner.py#L100) |
-| U5 | `GpuCommandScheduler._grant` 从租约对应的 unit 和节点申请设备权限 | [command_gpu.py:106](../../../psrl/workers/env_service/command_gpu.py#L106) |
-| U6 | `release` 等待归还，Router 会话释放负责最终清理 | [command_gpu.py:244](../../../psrl/workers/env_service/command_gpu.py#L244)、[router.py:241](../../../psrl/workers/env_service/router.py#L241) |
+| U3 | `EnvUnitLedger.try_admit` 过滤节点、选择主机 unit，按需求创建租约 | [ledger.py:113](../../../psrl/workers/env_service/ledger.py#L113) |
+| U4 | `EnvLease` 固定主机 unit 和节点，候选字段记录允许的同机设备全集 | [types.py:240](../../../psrl/workers/env_service/types.py#L240)、[overlay.py:140](../../../psrl/workers/env_service/overlay.py#L140) |
+| U5 | `acquire` 选候选，`_grant` 登记实际 GPU unit 后申请该节点设备权限 | [command_gpu.py:82](../../../psrl/workers/env_service/command_gpu.py#L82)、[command_gpu.py:143](../../../psrl/workers/env_service/command_gpu.py#L143) |
+| U6 | `_return` 确认实际设备归还，Router 会话释放负责最终清理 | [command_gpu.py:259](../../../psrl/workers/env_service/command_gpu.py#L259)、[router.py:241](../../../psrl/workers/env_service/router.py#L241) |
 
 这些代码如果有理解上的问题，可以随时按编号追问。**跟着图读源码**：U1 先给任务组选 worker，U2 才提交受节点约束的会话申请，U3 返回租约，U4 建立环境，U5 在每次 GPU 命令时重复执行，U6 分别处理阶段归还与会话结束。不同环境可以并发，U1 的容量快照不是资源授权，最终仍需 U3/U5 检查。当前同题多条 rollout 通常按组派给同一个 worker，不是逐条命令在集群里重新选机器。
 
@@ -696,7 +696,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_gpu_susp
 
 **Router 究竟会不会分到不同机器？** 管理多个节点是支持的，但当前 science 路径通常先由派发器选 worker 所在节点，再由该 worker 的客户端限定本节点申请 unit。Router 的通用准入 API 在不指定节点时可以跨健康候选选择，这不等于 science 客户端会自动远程启动容器。必须同时有对应 worker、授权配置和执行能力。
 
-环境一旦取得租约，其节点、unit 和设备集合就固定下来。下一轮命令仍在同一容器里执行，GPU 满时等待原 unit，不会自动把命令搬到另一台空闲机器，甚至不会因为同节点另一张卡空闲就自动改绑。新会话可重新选择节点或 unit。活容器跨节点迁移、逐命令远程执行或运行中换卡，需要另行处理文件、进程状态和设备权限，目前不能视作已有能力。
+环境取得租约后，其节点、主机 unit、容器和主机预算固定。未配置池时 GPU 满了仍等原 unit；显式同机 command_gpu_pool 则允许下一条命令在同容器内使用另一候选 GPU，GPU 预算记在实际执行 unit，CPU/主存不再扣一次。新会话可重新选择节点或 unit。当前没有活容器跨节点迁移、逐命令远程执行或存活 CUDA 进程换卡；这些仍需要额外的状态交接协议。
 
 **可运行教学模拟。** 以下仅用 Python 标准功能演示账本承诺与阶段释放，不执行 Docker、遥测、FIFO 排队或真实派发。容量单位简写为 GiB，假设主机资源和名额足够、无外部占用、物理归还已经确认。
 

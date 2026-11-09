@@ -4,13 +4,29 @@
 
 ## 一句话结论
 
-在 sciaccel_rl 这类任务里，rollout 阶段模型确实会"调用工具"，但不是 OpenAI 风格的结构化 `tool_calls`，而是通过第三方 agent 框架 **Harbor**（独立 pip 包，非 psrl 自研代码），用**纯文本 JSON 协议**驱动一个跑在真实 Docker 容器里的终端（tmux session）；所谓"工具"本质上只有一个——一台真实终端，不是多个 function schema。psrl 自己不参与这套工具调用协议，只是通过自研的 **TITO（Token-In-Token-Out）** 机制在旁路逐轮记录模型真实吃进/吐出的 token，episode 结束后重建成标准 RL 训练样本。
+Science 的模型仍输出文本 JSON 命令。普通命令交给 Harbor 终端执行；启用受管理 GPU 作业后，本地 `TruncatingTerminus2` 会拦截 `psrl-gpu` 命令，分发到环境的提交、等待、状态、取消与遥测接口，再把 JSON 观察结果交回模型循环。PSRL 因此既参与 GPU 工具协议，也通过 TITO（Token-In-Token-Out，记录真实输入输出 token 的机制）收集训练轨迹，不能概括成“只旁路记录、不参与工具调用”。
+
+本次于 2026-11-05 对照 `0326d46` 核对本地工具分发与 worker 并发。旧训练日志和 Harbor 内部示例按各节版本阅读，未重新验证外部 Harbor 版本的每一处内部接口。
+
+## 目录
+
+- [整体架构](#整体架构)
+- [1. Agent Loop 整体机制](#1-agent-loop-整体机制)
+- [2. Harbor 是什么，和 psrl 是什么关系](#2-harbor-是什么和-psrl-是什么关系)
+- [3. sciaccel 这个具体 agent loop：注册了哪些"工具"，怎么执行](#3-sciaccel-这个具体-agent-loop注册了哪些工具怎么执行)
+- [4. 工具调用结果如何拼回多轮 prompt](#4-工具调用结果如何拼回多轮-prompt)
+- [5. TITO 与 "multi_thinking" 模板](#5-tito-与-multi_thinking-模板)
+- [6. 常见误解澄清：Docker 容器是"用来训练模型"的吗](#6-常见误解澄清docker-容器是用来训练模型的吗)
+- [7. 用一个修代码例子从零理解](#7-用一个修代码例子从零理解)
+- [8. gRPC 是什么，为什么还需要 SessionRouter](#8-grpc-是什么为什么还需要-sessionrouter)
+- [关键文件路径一览](#关键文件路径一览)
+- [延伸](#延伸)
 
 ## 整体架构
 
 ```
 PSRL 训练主流程 (Ray Trainer)
-  └─ N × PSRL_AgentLoopWorker (Ray actor, 每个跑一个 asyncio busy-loop)
+  └─ N × PSRL_AgentLoopWorker (异步 Ray actor，接收 add_agent_program 请求)
         └─ 每条 prompt → asyncio.create_task 并发跑一个 agent loop 实例
               (agent_name="sciaccel" → SciAccelAgentLoop, 由 sciaccel_agent_config.yaml 注册)
                  │
@@ -20,15 +36,15 @@ PSRL 训练主流程 (Ray Trainer)
                  │ 2. 把 session_api_url("/sessions/{id}/v1") 作为 api_base
                  │    交给 Harbor: run_harbor_episode() → harbor.job.Job.create/run
                  │        │
-                 │        ├─ 起 Docker Compose: agent 容器 + verifier 容器 (真实沙箱)
+                 │        ├─ 通过配置的 Compose 或原生 EnvWorker 提供者创建环境
                  │        ├─ TruncatingTerminus2 驱动循环，通过环境接口操作容器内终端
                  │        │     for episode in range(max_turns):
                  │        │        prompt(上轮终端输出/任务说明)
                  │        │           → LiteLLM chat.chat() → HTTP POST api_base/chat/completions
                  │        │                → SessionRouter（注入路由头）→ SMG → vLLM 推理
                  │        │           ← 模型输出 JSON {analysis,plan,commands,task_complete}
-                 │        │        解析 commands → tmux.send_keys() 真实执行 shell 命令（容器内）
-                 │        │        终端输出 → _limit_output_length(截断,4096B) → 作为下一轮 prompt 拼回
+                 │        │        解析 commands → 普通命令交 Harbor 终端；psrl-gpu 交受管 GPU 接口
+                 │        │        终端输出或 GPU JSON 观察 → 截断 → 作为下一轮 prompt 拼回
                  │        │        (task_complete 连续两次为 true，或到 max_turns/超时 → 结束)
                  │        └─ verifier 容器对任务结果打分 → reward dict
                  │
@@ -44,13 +60,25 @@ PSRL 训练主流程 (Ray Trainer)
                  └─ delete_session()，写入 TransferQueue，供训练侧消费
 ```
 
+图例：图里本次核验的分支对应源码。
+
+| 图中位置 | 职责与入口 |
+|---|---|
+| worker 并发入口 | [generate_trajectory](../../psrl/workers/agent_loop/worker.py#L262) 为每次请求创建 task，worker 可同时跟踪多个 task |
+| runner 绑定 | [run_harbor_episode](../../examples/sciaccel_rl/runner.py#L412) 根据 GPU 租约启用工具并注入执行模式 |
+| agent 工具执行 | [run 与 _execute_commands](../../examples/sciaccel_rl/agent.py#L94) 注入说明、分发命令、拼接观察 |
+| GPU 作业接口 | [dispatch_gpu_tool](../../examples/sciaccel_rl/gpu_tools.py#L32) 将 JSON 操作转换为环境方法调用 |
+| 收尾 | [agent.run](../../examples/sciaccel_rl/agent.py#L101) 汇合作业，[runner finally](../../examples/sciaccel_rl/runner.py#L610) 处理外层资源 |
+
+这些代码如果有理解上的问题，可以随时追问。跟着图读源码时先读 worker 提交，再读 runner 绑定，随后选择普通终端或 GPU 分发分支，最后读作业汇合与环境清理。多个 task 可以并发，不能把图中的一次轨迹流程当作整个 worker 的串行执行。
+
 ## 1. Agent Loop 整体机制
 
 **核心角色分工**（`psrl/workers/agent_loop/`）：
 
 | 类/模块 | 文件 | 作用 |
 |---|---|---|
-| `PSRL_AgentLoopWorker` | `psrl/workers/agent_loop/worker.py` | `@ray.remote` 类，日志里的 `AgentLoopWorker_I{worker_id}`。每个 worker 是一个 Ray actor，内部跑 asyncio busy-loop（`_launch_agent_loop`），从 `pending_program_queue` 取 prompt，并发起多个 agent loop 实例（互不阻塞）。`agent.num_workers=2` 就是控制起几个这样的 actor |
+| `PSRL_AgentLoopWorker` | [worker.py](../../psrl/workers/agent_loop/worker.py#L220) | 异步 Ray actor。`add_agent_program` 将 batch 拆成单请求，调用 `generate_trajectory` 创建多个 task，再用 `asyncio.gather` 等待完成。`agent_programs` 跟踪所属 task，停止时取消并等待清理。`agent.num_workers=2` 控制 actor 数量，不是轨迹并发上限 |
 | `PSRL_AgentLoopManager` | `psrl/workers/agent_loop/manager.py` | 管理 worker 集合 |
 | `AGENT_LOOP_REGISTRY` / `register()` | `psrl/workers/agent_loop/loops/utils.py` | 全局注册表，`agent_loop_config_path` 里每一项都注册进这里；`default_agent_loop` 决定默认用哪个 |
 | `AgentLoopBase` | `psrl/workers/agent_loop/loops/base_agent_loop.py` | 所有 agent loop 的抽象基类：`generate_sequence` 向 SMG `/generate` 端点发 token-native 请求，`compute_reward_score` 发给 reward worker 算分，`run_with_termination_handling` 统一处理超时/异常/trajectory dump |
@@ -60,12 +88,12 @@ PSRL 训练主流程 (Ray Trainer)
 **谁发 LLM 请求 / 谁执行工具 / 谁判断回合结束**（sciaccel_rl 场景）：
 
 - **发 LLM 请求**：不是 psrl 发的，是 Harbor 内部的 `Terminus2` agent（通过 LiteLLM，`model_name="openai/<model>"`, `api_base=<TITO session 的 v1 地址>`）自己跑 while 循环反复调用 chat completion。psrl 只是把 `session_api_url(session_id)` 塞给 Harbor 当 `api_base`，本质是把 SessionRouter 伪装成标准 OpenAI 端点。
-- **执行工具（终端命令）**：Harbor 自己在它启动的 Docker 容器里，通过 tmux session 真实执行 shell 命令，不是模拟。
+- **执行工具**：普通命令交给 Harbor 终端，受管 `psrl-gpu` 命令由本地子类分发到环境作业接口。
 - **判断回合结束**：Harbor 的 `Terminus2._run_agent_loop` 自己判断（`task_complete: true` 连续两次、或到 `max_turns`、或异常/超时）；psrl 侧还有一层外部约束——`max_turns`、`task_timeout_sec` 传给 Harbor 作硬上限，`SciAccelAgentLoop.run()` 还会判断 `num_tokens >= response_length` → `MAX_RESPONSE_LENGTH_EXCEEDED`，context 溢出时提前结束但保留已产生的部分轨迹用于训练（这就是 [`hf-config-context-window.md`](hf-config-context-window.md) 里那次训练卡死时日志出现的 `Episode hit context overflow, training partial trajectory` 的来源）。
 
 ## 2. Harbor 是什么，和 psrl 是什么关系
 
-Harbor 是一个**独立的第三方 Python 包**（`harbor==0.22.0`，装在 conda env `psrl_smg_new` 的 site-packages 里），不属于 psrl 代码库。它是一个"terminal-use agent benchmark/执行框架"，内部结构：
+Harbor 是一个**独立的第三方 Python 包**，不属于 psrl 代码库。下文的外部内部接口与行号来自原分析所用 `harbor==0.22.0`，不代表当前所有环境安装同一版本。它是一个"terminal-use agent benchmark/执行框架"，内部结构：
 
 - `harbor/agents/`：内置 `terminus_2`、`nop`、`oracle`、`dspy_rlm` 等 agent
 - `harbor/environments/{docker,daytona,singularity,vercel}`：真实沙箱/容器执行后端
@@ -77,7 +105,7 @@ Harbor 是一个**独立的第三方 Python 包**（`harbor==0.22.0`，装在 co
 1. `api_base` 指向 psrl 的 `SessionRouter`（让 Harbor 内部的模型请求打到 psrl 控制的网关，而不是真的 OpenAI）；
 2. 最终 `TaskConfig`/`verifier_result.rewards` 返回打分结果。
 
-工具调用结果如何喂回模型这一步完全由 Harbor 自己内部处理，psrl 侧完全不参与拼接过程，只是被动地通过 TITO 抓取 Harbor 发给 SessionRouter 的每一轮 chat completion 请求/响应里的 token。
+Harbor 驱动多轮消息循环，本地子类则参与受管 GPU 指令注入、分发和观察结果拼接。`_execute_commands` 将 GPU 接口返回值序列化成 JSON，与普通终端观察合并并截断，随后交回模型循环。TITO 记录这些交互对应的模型 token。
 
 ## 3. sciaccel 这个具体 agent loop：注册了哪些"工具"，怎么执行
 
@@ -87,16 +115,16 @@ Harbor 是一个**独立的第三方 Python 包**（`harbor==0.22.0`，装在 co
 - name: sciaccel
   _target_: examples.sciaccel_rl.agent_loop.SciAccelAgentLoop
   harbor:
-    agent_name: examples.sciaccel_rl.agent:TruncatingTerminus2   # 本地子类，覆盖截断长度
+    agent_name: examples.sciaccel_rl.agent:TruncatingTerminus2   # 本地子类，提供截断与受管 GPU 工具
     max_observation_bytes: 4096
     max_concurrent_episodes: 16
   task_timeout_sec: 2700.0
   verifier_timeout_sec: 900.0
 ```
 
-`agent.py::TruncatingTerminus2(Terminus2)` 是唯一的本地定制：把 Harbor 硬编码的 `_limit_output_length(output, max_bytes=10000)` 默认值改成可配置的 `max_observation_bytes`（这里配成 4096），另外把"prompt 超出上下文窗口"这类异常转成 `ContextWindowExhausted` 提前终止 episode（而不是无限重试）。这正是日志里 `"TruncatingTerminus2 capping observations at 4096 bytes (harbor default 10000)"` 这条 info 日志的出处（`examples/sciaccel_rl/agent.py:61-65`）。
+`agent.py::TruncatingTerminus2(Terminus2)` 的定制包括 GPU 作业工具、模型与环境阶段钩子、输出截断及异常处理。其中输出截断会把 Harbor 硬编码的 `_limit_output_length(output, max_bytes=10000)` 默认值改成可配置的 `max_observation_bytes`（这里配成 4096），另外把"prompt 超出上下文窗口"这类异常转成 `ContextWindowExhausted` 提前终止 episode（而不是无限重试）。这正是日志里 `"TruncatingTerminus2 capping observations at 4096 bytes (harbor default 10000)"` 这条 info 日志的出处（`examples/sciaccel_rl/agent.py:61-65`）。
 
-**"工具"本质上只有一个：一台真实的 Linux 终端（tmux + Docker 容器）**，不是多个 function/tool schema。模型每轮被要求输出这样的 JSON（模板见 `harbor/agents/terminus_2/templates/terminus-json-plain.txt`）：
+**命令有普通终端与受管 GPU 两条分支**，仍通过文本 JSON 驱动，不要求模型使用多个 function schema。模型每轮被要求输出这样的 JSON（模板见 `harbor/agents/terminus_2/templates/terminus-json-plain.txt`）：
 
 ```json
 {
@@ -107,7 +135,10 @@ Harbor 是一个**独立的第三方 Python 包**（`harbor==0.22.0`，装在 co
 }
 ```
 
-`TerminusJSONPlainParser` 把这段 JSON 解析成 `Command(keystrokes, duration_sec)` 列表，`Terminus2._execute_commands()` 通过 `TmuxSession.send_keys()` 真实发送到跑在 Docker 容器（docker-compose 启动）里的 tmux pane 中执行，再截获终端增量输出（真实执行，非模拟）。所以严格说这不是"注册了若干个 tool schema"，而是**一个隐式的、单一的"终端"能力**，通过纯文本协议驱动，执行环境是**真实的 Docker 容器沙箱**（每个 episode 一个独立 Compose project，结束后由 `psrl/utils/common/docker_utils.py` 强制清理容器/镜像）。
+解析器先得到命令列表。本地 [_execute_commands](../../examples/sciaccel_rl/agent.py#L104) 在 `gpu_jobs` 开启时将 `psrl-gpu` 前缀交给 [dispatch_gpu_tool](../../examples/sciaccel_rl/gpu_tools.py#L32)，其他命令交给 Harbor 的父类实现。GPU 结果可以是 job_id、状态或输出，不必来自 tmux。容器创建方式由配置决定，原生与 Compose 路径都使用公共 GPU 执行层。
+
+例如模型提交 `psrl-gpu {"op":"start","command":"python solve.py"}` 时，本地分发器调用 `environment.start_gpu_job` 并返回作业编号。模型下一轮用该编号查询或等待结果。提交返回不表示 GPU 已执行，也不表示预算已归还。只有启用相应绑定时这段文本才走受管分支，普通终端命令不会自动变为 GPU 作业。
+
 
 Harbor 出于兼容性/可分析性，会把解析出的命令**回填**成 `ToolCall(function_name="bash_command", arguments={"keystrokes","duration"})` 和 `ToolCall(function_name="mark_task_complete")` 写进它自己的 trajectory JSON 里（`harbor/agents/terminus_2/terminus_2.py:1430-1491`），但这只是**离线可分析格式（ATIF, Agent Trajectory Interchange Format）**，不是发给模型或模型输出的真实协议。
 
@@ -116,8 +147,8 @@ Harbor 出于兼容性/可分析性，会把解析出的命令**回填**成 `Too
 **不是 OpenAI 风格的 `tool_calls`/`tool` role 消息**，而是纯文本拼接进普通的 `user`/`assistant` 轮次：
 
 - Harbor 内部维护一个 `Chat`（`harbor/llms/chat.py`）对象，只有 `system / user / assistant` 三种角色。
-- 每一轮：`chat.chat(prompt)` 把当前 `prompt`（= 上一轮的"终端输出"字符串，或首轮的任务说明）作为一条 **user** 消息发给模型，模型回复整段 JSON 文本作为一条 **assistant** 消息。
-- 模型输出的 JSON 被解析、命令在容器里真实执行后，`Terminus2._execute_commands()` 拿到的终端增量输出会被 `_limit_output_length()` 截断，然后作为**下一轮的 `prompt`**（即下一条 **user** 消息的 `content`）原样拼回去（`terminus_2.py:1403-1424, 1540`）。也就是说"工具结果"就是普通对话里的下一条 user 文本，没有专门的 tool-role 消息、没有 `tool_call_id` 关联——那个 `ToolCall`/`tool_call_id` 只存在于离线 trajectory JSON 里，不进真正发给模型的 messages。
+- 每一轮：`chat.chat(prompt)` 把当前 `prompt`（上一轮的终端输出、GPU 接口 JSON 观察，或首轮任务说明）作为一条 **user** 消息发给模型，模型回复整段 JSON 文本作为一条 **assistant** 消息。
+- 普通终端分支取得增量输出，受管 GPU 分支取得提交或查询等接口的返回值。本地 [_execute_commands](../../examples/sciaccel_rl/agent.py#L104) 合并并截断观察文本，再交给 Harbor 作为下一轮 prompt。GPU 提交返回作业编号时，作业可以尚未完成，后续需要查询或等待。工具结果进入下一条 user 文本，离线 trajectory 的 `ToolCall` 记录不等于模型使用了 tool-role 协议。
 
 这也解释了 [`hf-config-context-window.md`](hf-config-context-window.md) 里分析过的"multi-turn 累积增长"问题的具体机制：每一轮的终端输出都是原样拼进下一轮 user 消息，轮数越多、命令输出越多，prompt 就滚得越大。
 
@@ -141,7 +172,7 @@ Harbor 出于兼容性/可分析性，会把解析出的命令**回填**成 `Too
 **不是**。容易产生这个误解，是因为 Harbor 确实会在 agent 调用工具（执行终端命令）时真实起一个 Docker 容器，但这个容器的作用和"训练模型"是两件完全不同的事：
 
 - **Docker 容器里跑的是什么**：容器里装的是**待修复的目标代码库**（比如 LAPS、MITgcm、Athena++ 这类科学计算代码），以及一个真实的 Linux 终端（tmux session）。模型输出的 shell 命令在这个容器里真实执行（`ls`、`cat`、改文件、跑编译、跑测试……），容器只是**沙箱化的执行环境**，让模型能安全地"动手"修 bug，而不会碰坏主机或搞坏别人的环境。修复完成后另一个 verifier 容器会重新编译、跑测试来打分，产出 reward。
-- **模型本身的训练在哪里发生**：完全在这些 Docker 容器**之外**——是 psrl 主进程通过 Ray 在 GPU 节点上用 FSDP2/Ulysses 做的常规梯度更新（见 [psrl-training-script-source-map.md](psrl-training-script-source-map.md)）。容器和 GPU 训练进程之间没有直接联系，容器不装权重、不跑反向传播，甚至不知道自己产生的数据将被用来训练。
+- **策略模型的训练在哪里发生**：由 PSRL 的训练 worker 在 GPU 节点上执行梯度更新（见 [psrl-training-script-source-map.md](psrl-training-script-source-map.md)），不是由做题容器负责。环境任务本身也可能加载模型或运行训练程序，例如 GPU benchmark 中的训练任务，因此不能笼统说“容器不装权重、不跑反向传播”。任务内计算与更新被训练策略是两种不同工作。
 - **两者是怎么连起来的**：Harbor 只知道把每一轮 LLM 请求发到一个看起来像 OpenAI 端点的 `api_base`。这个 `api_base` 实际上是 psrl 的 `SessionRouter`，它把请求转发给真正的 vLLM 推理引擎，同时 psrl 自研的 **TITO** 机制在旁路把每一轮的 token、logprob 都记录下来（见上面第 5 节）。episode 结束后，psrl 用这些记录 + verifier 打的分重建出标准的 `(prompt_ids, response_ids, reward)` 训练样本，喂给训练进程。**Harbor/Docker 只负责"生成轨迹和打分"，不参与、也不知道"训练"这一步。**
 
 一句话类比：Docker 容器相当于给模型的"考场"和"作业本"（在里面答题、改代码），而"打分+更新大脑"（算 reward、反向传播更新权重）完全是 psrl/Ray/GPU 侧另一套流程,和容器无关。
@@ -194,7 +225,7 @@ Expected: 5
 Actual: -1
 ```
 
-`TruncatingTerminus2` 是 PSRL 这边使用的 Terminus2 子类，主要添加终端输出长度限制和上下文溢出处理。它不是另一个语言模型。
+`TruncatingTerminus2` 是 PSRL 这边使用的 Terminus2 子类，添加输出长度限制、上下文溢出处理和受管 GPU 工具等功能。本例只走普通终端分支。它不是另一个语言模型。
 
 ### 7.3 第二轮：把真实结果交回模型，模型再决定下一步
 
@@ -279,7 +310,7 @@ SessionRouter 和 SMG 不是语言模型。它们负责会话、路由和记录�
 
 另一种实现会使用独立的 `tool_calls` 字段指定工具名和参数。两者都需要外部程序真正执行工具。这里应区分“HTTP 返回体本身是 JSON”和“模型的回复文本恰好也是 JSON”这两层。
 
-能读文件、改文件、编译、测试，是因为终端能启动各种程序。当前 SciAccel 配方的主要工具入口是一台终端，并不是每种 shell 命令都要单独注册一个工具 schema。这不代表 Harbor 所有 agent 都只有终端能力。
+能读文件、改文件、编译、测试，是因为终端能启动各种程序。当前 SciAccel 的普通命令走终端，启用受管 GPU 工具后的 `psrl-gpu` 命令由本地子类拦截分发。两者都从同一个文本命令列表进入，不需要为每种 shell 命令注册工具 schema。
 
 ### 7.8 谁来打分，分数又如何变成训练信号
 
@@ -339,7 +370,7 @@ PSRL 同时收集很多任务的样本，用 Ray 把 worker 分布到进程或�
 
 每个 worker 又可能同时管理多个 episodes：任务 A 等待模型回复时，可以处理任务 B 的终端输出。`asyncio` 让等待网络、子进程等 I/O 的任务交替推进，避免一个任务等待时整个 worker 停下来。它不会自动让 CPU 密集的 Python 代码获得多核并行。
 
-所以 `agent.num_workers=2` 表示两个 agent worker，既不等于只做两道题，也不等于两张推理 GPU。当前 SciAccel 的 episode semaphore 限制每个 worker 内的并发数，vLLM 实例数和 GPU 分配由另一组部署配置控制。
+所以 `agent.num_workers=2` 表示两个 agent worker，既不等于只做两道题，也不等于两张推理 GPU。[SciAccel 准入分支](../../examples/sciaccel_rl/agent_loop.py#L391)在未启用 Env Service 时使用进程内 episode semaphore（并发计数器），启用后改由 EnvRouter 的 unit 预算准入，不再叠加该计数器。vLLM 实例数和 GPU 分配由另一组部署配置控制。
 
 ### 7.12 建议的阅读顺序
 

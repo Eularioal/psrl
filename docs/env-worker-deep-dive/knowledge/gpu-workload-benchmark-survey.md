@@ -1,6 +1,6 @@
 # GPU 环境工作负载调研与 benchmark 接入顺序
 
-> **核心结论**：已有 recipe 的实测状态看 [导览](../experiments/gpu-benchmarks/README.md)。为研究训练状态跨外部反馈等待驻留，已新增 [RE-Bench 原生接入](re-bench-recipe.md)，已有独立卡本地 Qwen 反馈验证，完整评分仍待验收。PostTrainBench 的 Qwen3-1.7B × GSM8K 是后续训练候选。高 GPU 计算需求本身不说明必须使用 episode。
+> **核心结论**：当前有两条并行研究路线。非计时评分的调度优先看 [SWE-Serve 功能开发场景](non-timing-gpu-scheduling-scenarios.md)，性能反馈可靠性看 [AI4Infra benchmark 选择与 FlashInfer 验证](ai4infra-performance-benchmarks.md)，两者不互相替代。已有 recipe 的实测状态看 [导览](../experiments/gpu-benchmarks/README.md)。为研究训练状态跨外部反馈等待驻留，已新增 [RE-Bench 原生接入](re-bench-recipe.md)，已有独立卡本地 Qwen 反馈验证，完整评分仍待验收。PostTrainBench 的 Qwen3-1.7B × GSM8K 是后续训练候选。高 GPU 计算需求本身不说明必须使用 episode。
 >
 > 初始调研日期为 2026-10-29，图中六项 high GPU 的专项核对日期为 2026-11-02。候选表不是逐项已验证的证明，RE-Bench 的资产、接入和本次运行边界单列在 [recipe](re-bench-recipe.md) 与 [验证记录](../experiments/gpu-benchmarks/FINDINGS.md#re-bench-原生接入验证)。
 
@@ -15,6 +15,8 @@
 - [本地实现与源码阅读路径](#本地实现与源码阅读路径)
 - [可运行的教学模拟](#可运行的教学模拟)
 - [验收与未验证事项](#验收与未验证事项)
+
+- [非计时评分场景的当前优先级](#非计时评分场景的当前优先级)
 
 ## 目标与全局流程
 
@@ -216,3 +218,7 @@ PY
 资源紧张时首先选择满足要求的独立 GPU。若研究共享机制，单列共享实验与正式分数实验。多 GPU 任务需确认同时分配的设备集合、互联要求以及失败后整个进程组的清理，不能用单卡通过代替。
 
 本次尚未逐题审核许可证、下载权限、镜像可构建性、峰值显存、评分隔离漏洞和硬件兼容性。InfraDev 仅核验到论文，其他项目也仅核验公开入口和说明，没有声称其在本工作区可直接运行。执行任何真实实验前按 [集群检查指南](../../psrl/psrl-run-guide/cluster-preflight.md) 做现场预检。
+
+## 非计时评分场景的当前优先级
+
+2026-11-05 本 session 专注执行与调度策略，测速评分方向由其他 session 处理。首选 SWE-Serve 的 GPU correctness 子集，次选 ResearchEnvBench 的 GPU 环境验证，详见[场景与策略研究](non-timing-gpu-scheduling-scenarios.md)。本轮实际核查上游固定版本清单：41 个 GPU 任务中有 3 个 speedup，必须排除，38 个 correctness 仅是初筛候选。已抽查 embedding LoRA 与多条目评分任务的评分器和服务测试，这两项服务尚未执行。另在 fused-kernels 任务的 6 个原始正确性测试上完成 11 组真实 H20 运行，确认跨 command 同机换卡仍可复用编译缓存；不是完整 benchmark 通过或生产动态放置验证，详见 [Results](non-timing-gpu-scheduling-scenarios.md#results跨命令上下文复用实测)。

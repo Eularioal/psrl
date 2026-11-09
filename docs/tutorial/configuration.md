@@ -3,6 +3,15 @@
 PSRL uses [Hydra](https://hydra.cc/) with [OmegaConf](https://omegaconf.readthedocs.io/)
 for hierarchical, composable configuration management.
 
+## Contents
+
+- [Configuration System](#configuration-system)
+- [Top-Level Config](#top-level-config)
+- [veRL-Managed Configuration](#verl-managed-configuration)
+- [PSRL Config Reference](#psrl-config-reference)
+- [Overrides](#overrides)
+- [Example: Advanced 7B FSDP Config](#example-advanced-7b-fsdp-config)
+
 ## Configuration System
 
 All configuration lives under `psrl/trainer/config/`. Hydra composes a single merged
@@ -787,7 +796,10 @@ in multi-turn workloads.
 : Storage backend for offloaded KV blocks.
   - `cpu`: host memory (fast, limited by DRAM)
   - `disk`: filesystem-backed (large capacity, slower)
-  - `remote`: reserved for a remote KV server, not yet implemented
+  - `remote`: forwards a nonempty `remote_url` as `LMCACHE_REMOTE_URL` before
+    engine initialization. The shipped YAML still marks this backend TODO.
+    Configuration forwarding is implemented, but this does not establish
+    end-to-end remote service support. See [the verified boundary](../design/kv_cache.md#configuration).
 
   **Default:** `cpu`
 

@@ -1,8 +1,8 @@
 # docs 文档时效巡检
 
-> **核心结论**：存在已失效的现状描述，集中在原生 EnvWorker 的 GPU 接入、MPS 同容器并发、旧参数判断及阶段报告的阅读入口。本次直接修订相关正文和导航，保留历史实验条件。目录结构清晰和链接可打开，都不能保证架构描述仍然正确。
+> **核心结论**：两轮审计均发现失效描述，已在原文修正。2026-11-05 新处理 worker 并发、GPU 工具分发、准入分支、direct/MPS 边界和远程缓存配置转发，删除被实现取代的实施待办与重复进度段。历史实验条件保留。目录结构清晰和链接可打开，都不能保证架构描述仍然正确。
 >
-> **范围与版本**：2026-11-02 对主开发目录巡检，基准提交 `affe7c2`，保留开始前已有的文档及实验未提交改动。下面是静态扫描与重点源码核验记录，不代表全部文档已逐句验证，也不代表远端已合并或集群已部署。
+> **范围与版本**：第 1 至 5 节记录 2026-11-02、基准 `affe7c2` 的巡检，第 6 节记录 2026-11-05、基准 `0326d46` 的增量审计。两轮都保留开始前已有的文档及实验未提交改动。全目录静态扫描加重点源码核验，不代表全部文档逐句验证，也不代表远端合并或集群部署。
 
 ## 目录
 
@@ -11,6 +11,7 @@
 - [3. 抽查后仍成立的说明](#3-抽查后仍成立的说明)
 - [4. 尚未覆盖与待核实项](#4-尚未覆盖与待核实项)
 - [5. 检查结果与维护入口](#5-检查结果与维护入口)
+- [6. 2026-11-05 再审计与清理](#6-2026-11-05-再审计与清理)
 
 ## 1. 覆盖范围与判定方法
 
@@ -74,3 +75,29 @@
 - 本次仅修改文档。检查覆盖与未覆盖项按本报告记录，不以更换日期表示整库已经验证。
 
 Env 当前实现从[当前设计](../env-worker-deep-dive/knowledge/current-design.md)开始阅读，按[知识索引](../env-worker-deep-dive/knowledge/README.md)查机制。以后架构变化需同步现状入口和受影响正文，维护要求见仓库 [AGENTS.md](../../AGENTS.md)。
+
+## 6. 2026-11-05 再审计与清理
+
+**范围。** `rg --files docs -g '*.md'` 列出 120 篇可见 Markdown。检查项目设计、配置教程、示例和环境专题的时效信号与引用，重点读取 worker、Science runner、工具分发、统一 GPU 执行、原生提供者及 KV Cache 配置源码。对照 `affe7c2..0326d46` 的代码变化检查 MPS 控制通道、KernelBench command 和 RE-Bench 新接入的文档边界。开始前已有文档和实验脚本未提交改动，本次在其基础上修订，未修改生产代码，也未重写这些实验结果。
+
+**确认并处理的内容。**
+
+| 原描述 | 原位修订或删除 | 源码依据与边界 |
+|---|---|---|
+| 总架构称每个 worker 同时只处理一条轨迹 | [总架构](../design/architecture.md)改为每次调用接收一条请求，一个 worker 可跟踪多个并发 task | [generate_trajectory](../../psrl/workers/agent_loop/worker.py#L262)创建 task，[add_agent_program](../../psrl/workers/agent_loop/worker.py#L220)汇合批次任务。并发还受派发与准入限制 |
+| 工具调用说明引用已不存在的 worker 队列与函数 | [工具调用正文及图](../psrl/psrl-agent-loop-harbor-tool-calling.md)删除旧 busy-loop、`pending_program_queue` 和 `_launch_agent_loop` 描述 | 当前 worker 入口是 `add_agent_program`，不应以旧函数名引导读者查源码 |
+| PSRL 只有终端工具、完全不参与调用和观察拼接 | 同一文档的结论、流程图、角色表、命令解析和下一轮 prompt 说明均改为普通终端与受管 GPU 两条分支 | [agent._execute_commands](../../examples/sciaccel_rl/agent.py#L104)拦截 `psrl-gpu`，[dispatch_gpu_tool](../../examples/sciaccel_rl/gpu_tools.py#L32)调用环境接口，JSON 返回值参与观察拼接 |
+| Science 进程内计数器是所有模式的并发上限 | 改为未启用 Env Service 时使用进程内计数器，启用时通过 Router 准入 | [SciAccel 准入分支](../../examples/sciaccel_rl/agent_loop.py#L391)区分两条路径 |
+| 统一执行文档把串行与固定 lease 预算扩展成全部后端限制 | [统一执行层](../env-worker-deep-dive/knowledge/unified-gpu-execution.md)明确流程图与串行语义属于 direct，MPS 可以提交逐作业显存预算 | [初始化](../../psrl/workers/env_service/managed_execution.py#L17)区分并发数，[MPS 提交](../../psrl/workers/env_service/managed_execution.py#L187)读取作业 `gpu_memory_mb` |
+| 已完成接入仍夹杂 CPU-only、GPU 未接入的页首阶段进展 | 删除统一执行与[原生后端](../env-worker-deep-dive/knowledge/native-harbor-backend.md)被后续实现取代的进度段，保留实验章节的日期与原始结果 | 当前两种提供者共用 `ManagedGpuExecution`，不意味着构建、网络和远程池已全部统一 |
+| 旧缺口清单仍建议从零实现 Harbor 准入、心跳和后端统一 | 删除[旧实施待办](../env-worker-deep-dive/knowledge/implementation-and-gaps.md#153-旧待办的现状映射)，改为现有实现映射。文档标题、核心结论与索引明确历史属性，修复前 AIRS 证据保留 | [runner](../../examples/sciaccel_rl/runner.py#L369)已有准入，[EnvLeaseHandle](../../psrl/workers/env_service/client.py#L35)已有心跳。旧故障记录不能当成所有现有部署的状态 |
+| KV Cache remote 被笼统称为完全未实现 | 同步修正 [KV 设计](../design/kv_cache.md#configuration)和[配置手册](../tutorial/configuration.md#lmcache)：配置转发已存在，完整远程部署未在本次验证 | [to_env_vars](../../psrl/utils/kv_cache/config.py#L182)转发 URL，[apply_env_vars](../../psrl/utils/kv_cache/manager.py#L210)在 [vLLM 初始化](../../psrl/workers/gen/vllm_async_server.py#L235)前应用。YAML 仍标 TODO，不提升为端到端支持承诺 |
+| 现状入口仍说 MPS 修复未提交，收尾链接指向旧位置 | [当前设计](../env-worker-deep-dive/knowledge/current-design.md)更新局部核对范围，修正 runner 收尾定位，明确 CPU 演示为 11 月 2 日的既有结果 | [runner finally](../../examples/sciaccel_rl/runner.py#L610)，第 4 节各局部实验和研究仍保留其原日期与边界 |
+
+例如，读者想让一个 worker 同时处理两个请求。旧架构会让人误以为必须先增加 worker 数。源码实际把两个请求各自创建为 task，随后一起等待完成。如果两个任务都请求环境资源，它们仍需分别经过相应准入，不能从“可以创建两个 task”推导“GPU 上必定同时执行两个任务”。这是源码阅读示例，本次没有运行任务。
+
+**删除原则。** 本轮删除的是失效的实施建议、旧调用机制和重复进度段，没有整篇删除仍含独立机制说明或历史证据的文档。旧待办的细分目录项同步移除，仓库内未发现其他文档引用这些被删小节。总索引、PSRL 索引和环境知识索引同步说明历史范围及工具分发范围。
+
+**复核后保留。** `nixl_gpu` 的未实现限制、micro-batch `pre_step` 限制仍有源码拒绝分支，Env Service 默认关闭、Science 默认 Docker 仍与配置一致。固定日期的压力实验、AIRS 修复前 baseline 和尚未落地的动态放置提案按原条件保留。KernelBench command 属于显式接入的特例，不能概括成所有 benchmark 和 verifier 自动支持 command。
+
+**验证与未覆盖项。** 全目录本地链接目标与源码行号范围检查通过，本轮修改文档的章节锚点检查通过。新增和调整的关键源码定位已阅读其函数或分支，未以行号未越界替代语义核验。按仓库要求在独立临时副本执行 `pre-commit run --all-files`，Ruff、格式和 prose-style 检查因既有 Python 文件问题失败，例如 `docs/conf.py` 和历史实验脚本的行长。自动改写只发生在副本，未带回工作区。没有运行 Docker、GPU、训练或远程缓存服务，也没有核验外部 Harbor 当前安装版本的全部内部接口。这里的全目录检查不等于全部正文、外部 URL 和部署可用性均已验证。

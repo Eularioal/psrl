@@ -2,6 +2,12 @@
 
 PSRL decouples LLM post-training into two independent compute phases, **training** and **generation**: connected through a central Parameter Server. This architecture eliminates the synchronization barrier that limits throughput in tightly-coupled systems, enabling training and generation to progress concurrently at their own optimal pace.
 
+## Contents
+
+- [Module Overview](#module-overview)
+- [Training Iteration Sequence](#training-iteration-sequence)
+- [Deployment Topology](#deployment-topology)
+
 ```{figure} /_static/img/overview.svg
 :alt: PSRL System Architecture
 :width: 100%
@@ -32,7 +38,7 @@ Dispatches prompts from the training dataset to Agent Workers. Collects complete
 
 ### Agent Workers
 
-Each Agent Worker handles **one trajectory at a time**, running the agent loop to completion. Supports both single-turn generation (one prompt → one response) and multi-turn interaction (alternating LLM generation and tool execution). Agent Workers communicate with rollout instances through the Router.
+Each Agent Worker can track **multiple concurrent trajectory tasks**. Each `generate_trajectory` call accepts one request, creates an asynchronous task, and returns its handle. The single-request assertion limits one call, not the whole worker. See [generate_trajectory](../../psrl/workers/agent_loop/worker.py#L262). Actual concurrency also depends on dispatch, episode admission, and available resources. Supports both single-turn generation (one prompt → one response) and multi-turn interaction (alternating LLM generation and tool execution). Agent Workers communicate with rollout instances through the Router.
 
 ### Rollout Coordinator
 

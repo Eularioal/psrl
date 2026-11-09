@@ -1,5 +1,17 @@
 # KV Cache Management
 
+PSRL configures LMCache for KV offloading and explicit cross-instance transfer.
+Backend configuration plumbing and a validated deployment are separate capabilities.
+The remote configuration boundary below was checked against local commit `0326d46`
+on 2026-11-05. No remote service or GPU experiment was run.
+
+## Contents
+
+- [Motivation](#motivation)
+- [LMCache Integration](#lmcache-integration)
+- [Configuration](#configuration)
+- [P2P Cross-Instance Transfer](#p2p-cross-instance-transfer)
+
 ## Motivation
 
 In multi-turn agentic RL, each trajectory may accumulate **10,000+ tokens** across multiple turns. Each turn involves:
@@ -61,7 +73,7 @@ sequenceDiagram
 | `multi_version_kv` | bool | `True` | Tag entries with the model version so stale-weight KV is skipped instead of cleared |
 | `enable_async_loading` | bool | `False` | Overlap KV retrieval with prefill computation (known bug, keep disabled) |
 | `cache_policy` | str | `LRU` | Cache eviction: `LRU` or `FIFO` |
-| `backend` | str | `cpu` | Storage backend: `cpu` (default), `disk`, `remote` (not yet implemented) |
+| `backend` | str | `cpu` | `cpu`, `disk`, or `remote`. Remote URL forwarding exists, but end-to-end remote operation is not validated here and the shipped YAML still marks it TODO |
 
 ```yaml
 psrl:
@@ -76,6 +88,13 @@ psrl:
     cache_policy: LRU
     backend: cpu
 ```
+
+Remote configuration follows [LMCacheConfig.to_env_vars](../../psrl/utils/kv_cache/config.py#L182)
+→ [KVCacheManager.apply_env_vars](../../psrl/utils/kv_cache/manager.py#L210)
+→ [vLLM initialization](../../psrl/workers/gen/vllm_async_server.py#L235).
+For example, `enable: true`, `backend: remote`, and a nonempty `remote_url`
+produce `LMCACHE_REMOTE_URL` before engine initialization. This confirms
+configuration forwarding, not server connectivity or successful remote KV reuse.
 
 ### Key Considerations
 
