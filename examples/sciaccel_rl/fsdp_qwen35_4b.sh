@@ -69,7 +69,7 @@ reward_path=${REWARD_PATH:-${PSRL_PATH}/examples/sciaccel_rl/reward.py}
 train_batch_size=${TRAIN_BATCH_SIZE:-16}
 rollout_N=8
 # Keep prompts large enough for the longest task instruction.
-max_prompt_length=2048
+max_prompt_length=${MAX_PROMPT_LENGTH:-2048}
 # Long terminal output requires most of the context budget.
 max_response_length=${MAX_RESPONSE_LENGTH:-65536}
 # NOTE(lhy): Must equal the training budget, never exceed it. This reaches terminus-2

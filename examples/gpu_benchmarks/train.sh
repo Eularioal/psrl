@@ -1,10 +1,10 @@
 #!/bin/bash
 # Launch benchmark training through the shared PSRL Harbor training recipe.
 set -euo pipefail
-recipe=${1:?Pass kernel_bench, mle_bench, inference_bench, autoresearch, or re_bench}
+recipe=${1:?Pass kernel_bench, mle_bench, inference_bench, autoresearch, re_bench, or flashinfer_bench}
 shift
 case "$recipe" in
-  kernel_bench|mle_bench|inference_bench|autoresearch|re_bench) ;;
+  kernel_bench|mle_bench|inference_bench|autoresearch|re_bench|flashinfer_bench) ;;
   *) exit 2 ;;
 esac
 if [[ "$recipe" == re_bench ]]; then

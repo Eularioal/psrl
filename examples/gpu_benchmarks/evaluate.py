@@ -16,22 +16,32 @@ def evaluate(spec):
         candidate = artifacts / "submission.py"
         if not candidate.is_file():
             return {"reward": 0.0, "correctness": 0.0}
+        reference = Path(spec["reference"]).read_text()
+        bounded = spec.get("input_profile") == "bounded_module_dimensions"
+        if bounded:
+            from quick_check import bounded_source
+
+            reference, _ = bounded_source(reference)
         result = eval_kernel_against_ref(
-            Path(spec["reference"]).read_text(),
+            reference,
             candidate.read_text(),
-            num_correct_trials=3,
+            num_correct_trials=1 if bounded else 3,
             num_perf_trials=10,
-            measure_performance=True,
+            measure_performance=not bounded,
             device=torch.device("cuda:0"),
             backend=spec["backend"],
         )
-        (Path("/logs/verifier") / "kernel_result.json").write_text(result.model_dump_json(indent=2))
+        (Path("/logs/verifier") / "kernel_result.json").write_text(
+            json.dumps(result.model_dump(), indent=2, default=str)
+        )
         speedup = result.ref_runtime / result.runtime if result.ref_runtime > 0 and result.runtime > 0 else 0.0
         return {
             "reward": float(result.correctness),
             "correctness": float(result.correctness),
             "runtime_ms": result.runtime,
             "speedup": speedup,
+            "local_evaluation": int(bounded),
+            "bounded_inputs": int(bounded),
         }
     if spec["benchmark"] == "mle_bench":
         from mlebench.grade import grade_csv

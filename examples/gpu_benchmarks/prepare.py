@@ -70,6 +70,7 @@ def prepare(args):
     if backend == "env_worker" and (not getattr(args, "verifier_image", None) or args.benchmark == "inference_bench"):
         raise ValueError("Native tasks require prebuilt runtime and verifier images without upstream Compose tasks.")
     record = provenance(repo)
+    dataset_source = args.benchmark
     record["environment_backend"] = backend
     if out.exists():
         raise FileExistsError(out)
@@ -117,11 +118,22 @@ def prepare(args):
             raise FileNotFoundError(reference)
         spec["reference"] = str(Path("/opt/upstream") / reference.relative_to(repo))
         spec["backend"] = args.backend
+        record.update(benchmark="kernel_bench", level=args.level, problem=args.problem)
+        if getattr(args, "bounded_inputs", False):
+            from examples.kernel_bench.quick_check import bounded_source
+
+            source, overrides = bounded_source(reference.read_text())
+            dataset_source = "kernel_bench_local"
+            spec["input_profile"] = "bounded_module_dimensions"
+            record.update(benchmark=dataset_source, dimension_overrides=overrides)
         instruction = (
             f"Optimize {spec['reference']}. Submit /logs/artifacts/submission.py defining ModelNew. "
             "Match the reference on randomized inputs. Use psrl-gpu for GPU commands. "
             "The verifier checks correctness and reports speed. Do not modify the evaluator."
         )
+        if dataset_source == "kernel_bench_local":
+            instruction = instruction.replace("checks correctness and reports speed", "checks correctness only")
+            instruction += f" Local bounded input dimensions: {json.dumps(overrides)}. This is not canonical scoring."
         record["reference_sha256"] = hashlib.sha256(reference.read_bytes()).hexdigest()
     elif args.benchmark == "mle_bench":
         if args.data is None or not args.competition:
@@ -167,6 +179,8 @@ def prepare(args):
             (out / name / "docker-compose.yaml").write_text(yaml.safe_dump(definition))
     (out / "tests/spec.json").write_text(json.dumps(spec))
     shutil.copy2(Path(__file__).with_name("evaluate.py"), out / "tests/evaluate.py")
+    if dataset_source == "kernel_bench_local":
+        shutil.copy2(Path(__file__).parents[1] / "kernel_bench/quick_check.py", out / "tests/quick_check.py")
     if args.benchmark == "autoresearch":
         shutil.copy2(Path(__file__).with_name("autoresearch_replay.py"), out / "tests/autoresearch_replay.py")
     (out / "tests/test.sh").write_text(
@@ -182,7 +196,12 @@ def prepare(args):
         f"docker_image = {json.dumps(verifier_image)}\ncpus = 4\nmemory_mb = 16384\n"
         f'gpus = {int(args.benchmark != "mle_bench")}\nnetwork_mode = "no-network"\n'
     )
-    if args.benchmark == "kernel_bench" and args.level == 1 and args.problem == "1_Square_matrix_multiplication_.py":
+    if dataset_source == "kernel_bench_local":
+        (out / "solution/submission.py").write_text(source + "\nModelNew = Model\n")
+        (out / "solution/solve.sh").write_text(
+            "#!/bin/bash\nset -euo pipefail\ncp /solution/submission.py /logs/artifacts/submission.py\n"
+        )
+    elif args.benchmark == "kernel_bench" and args.level == 1 and args.problem == "1_Square_matrix_multiplication_.py":
         solution = Path(__file__).parents[1] / "kernel_bench/solutions/matmul.py"
         shutil.copy2(solution, out / "solution/submission.py")
         (out / "solution/solve.sh").write_text(
@@ -192,7 +211,7 @@ def prepare(args):
         (out / "solution/solve.sh").write_text(
             "#!/bin/bash\nset -euo pipefail\ncp /opt/upstream/train.py /logs/artifacts/train.py\n"
         )
-    write_dataset(out, args.benchmark, args.gpu_memory_mb)
+    write_dataset(out, dataset_source, args.gpu_memory_mb)
     return out
 
 
@@ -214,6 +233,7 @@ def main(benchmark=None):
     parser.add_argument("--level", type=int, default=1)
     parser.add_argument("--problem", default="1_Square_matrix_multiplication_.py")
     parser.add_argument("--backend", choices=["cuda", "triton"], default="triton")
+    parser.add_argument("--bounded-inputs", action="store_true")
     parser.add_argument("--timeout", type=int, default=900)
     parser.add_argument("--gpu-memory-mb", type=int, default=8192)
     args = parser.parse_args()

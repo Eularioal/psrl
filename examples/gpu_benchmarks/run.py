@@ -159,7 +159,9 @@ async def run(args):
                 regrade_unverified=False,
             )
         record["result"] = dataclasses.asdict(result)
-        record["passed"] = result.exception is None and bool(result.rewards)
+        record["passed"] = (
+            result.exception is None and bool(result.rewards) and result.rewards.get("eval_valid", 1) == 1
+        )
     except BaseException as exc:
         record["error"] = repr(exc)
         raise

@@ -1,0 +1,9 @@
+- name: gpu_benchmark
+  _target_: examples.gpu_benchmarks.agent_loop.GpuBenchmarkAgentLoop
+  harbor:
+    environment_backend: docker
+    agent_name: examples.sciaccel_rl.agent:TruncatingTerminus2
+    jobs_dir: /tmp/psrl_gpu_benchmarks
+    max_concurrent_episodes: 1
+  task_timeout_sec: 900.0
+  verifier_timeout_sec: 900.0
