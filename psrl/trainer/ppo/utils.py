@@ -169,6 +169,15 @@ class ResourcePoolManager:
 
 
 class PSRL_DummyWorker(Worker):
+    def get_runtime_gpu_ids(self) -> list[int]:
+        """Report the physical devices shared with the fused train worker."""
+        ids = ray.get_runtime_context().get_accelerator_ids()
+        return [int(index) for index in ids.get("GPU", ids.get("NPU", []))]
+
+    def get_node_id(self) -> str:
+        """Report the placement node for resource conflict checks."""
+        return ray.get_runtime_context().get_node_id()
+
     def __init__(self, config: DictConfig, **kwargs):
         Worker.__init__(self)
 

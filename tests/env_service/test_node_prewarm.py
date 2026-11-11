@@ -148,17 +148,21 @@ async def test_shutdown_refuses_to_abandon_active_leases(monkeypatch):
 @pytest.mark.parametrize("enabled", [False, True])
 def test_factory_only_joins_prewarm_submission(monkeypatch, enabled):
     handle = SimpleNamespace(
-        ping=SimpleNamespace(remote=Mock(return_value="ping-ref")),
+        startup_contract=SimpleNamespace(remote=Mock(return_value="contract-ref")),
         begin_prewarm=SimpleNamespace(remote=Mock(return_value="submission-ref")),
         wait_prewarm=SimpleNamespace(remote=Mock()),
     )
     actor = Mock()
     actor.options.return_value.remote.return_value = handle
-    get = Mock()
+    get = Mock(
+        side_effect=lambda ref: (
+            router.router_contract({"prewarm": {"enable": enabled}}) if ref == "contract-ref" else None
+        )
+    )
     monkeypatch.setattr(router, "EnvRouter", actor)
     monkeypatch.setattr(router.ray, "get", get)
     assert router.create_env_router({"prewarm": {"enable": enabled}}) is handle
     assert [call.args[0] for call in get.call_args_list] == (
-        ["ping-ref", "submission-ref"] if enabled else ["ping-ref"]
+        ["contract-ref", "submission-ref"] if enabled else ["contract-ref"]
     ), "Factory must wait for submission only, leaving node startup concurrent with model work."
     handle.wait_prewarm.remote.assert_not_called()

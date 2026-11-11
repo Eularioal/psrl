@@ -130,3 +130,15 @@ async def test_router_uses_global_priority_and_returns_the_chosen_nodes_url():
     assert result.lease.node_service_url == f"http://{OTHER}/telemetry", "Telemetry must follow the chosen node."
     with pytest.raises(RuntimeError, match="leases exist"):
         router.set_gpu_placement({MODEL: [1]})
+
+
+def test_dummy_role_reports_the_fused_actors_real_device_assignment(monkeypatch):
+    from types import SimpleNamespace
+
+    from psrl.trainer.ppo.utils import PSRL_DummyWorker
+
+    context = SimpleNamespace(get_accelerator_ids=lambda: {"GPU": ["2", "5"]}, get_node_id=lambda: "node")
+    monkeypatch.setattr("psrl.trainer.ppo.utils.ray.get_runtime_context", lambda: context)
+    worker = object.__new__(PSRL_DummyWorker)
+    assert worker.get_runtime_gpu_ids() == [2, 5], "Dummy roles must preserve actual fused GPU ownership."
+    assert worker.get_node_id() == "node", "Ownership must include the actual node identity."

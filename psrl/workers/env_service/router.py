@@ -14,6 +14,7 @@ from psrl.workers.env_service.health import NodeHealth
 from psrl.workers.env_service.ledger import EnvUnitLedger
 from psrl.workers.env_service.node_policy import NodeRules, lint_units
 from psrl.workers.env_service.process_identity import validate_identity_backend
+from psrl.workers.env_service.router_contract import router_contract, verify_router_contract
 from psrl.workers.env_service.types import (
     Admission,
     EnvDemand,
@@ -46,6 +47,8 @@ class EnvRouterCore:
     """
 
     def __init__(self, config: Mapping, train_rollout_node_ips: Iterable[str] = ()):
+        train_rollout_node_ips = tuple(train_rollout_node_ips)
+        self._startup_contract = router_contract(config, train_rollout_node_ips)
         self._gpu_identity_backend = validate_identity_backend(config.get("gpu_identity_backend", "procfs"))
         units = [EnvUnit.from_mapping(raw) for raw in (config.get("units") or ())]
         rules = NodeRules.build(
@@ -431,6 +434,12 @@ class EnvRouterCore:
     async def ping(self) -> bool:
         return True
 
+    async def startup_contract(self):
+        """Return the immutable startup identity used by clients before reuse."""
+        import copy
+
+        return copy.deepcopy(self._startup_contract)
+
 
 try:
     import ray
@@ -568,6 +577,45 @@ try:
                 self._health_tasks[node_ip] = task
                 return task
             return None
+
+        async def node_diagnostics(self, node_ip):
+            """Describe health and retained ownership without changing admission state."""
+            if node_ip not in self._node_health:
+                raise ValueError("Node has no configured environment unit.")
+            state = self._node_health[node_ip]
+            units = {u.unit_id for u in self._ledger._units.values() if u.node_ip == node_ip}
+            return {
+                "node_ip": node_ip,
+                "healthy": state.available,
+                "failures": state.failures,
+                "retry_exhausted": state.failures >= self._health_max_failures,
+                "error": state.error,
+                "pending_cleanup": state.pending_cleanup,
+                "active_leases": [x.lease_id for x in self._ledger._leases.values() if x.node_ip == node_ip],
+                "pending_reaped": [x.lease_id for x in self._ledger.pending_reaped(node_ip)],
+                "blocked_units": sorted(units & self._ledger._blocked_units),
+                "gpu_commands": {
+                    key: row.state
+                    for key, row in self._gpu_commands.requests.items()
+                    if row.unit_id in units and row.state != "completed"
+                },
+                "lending_phases": {key: binding.phase for key, binding in self._gpu_bindings.items() if key in units},
+            }
+
+        async def recover_node(self, node_ip):
+            """Run one operator requested physical probe without clearing ownership or quarantine."""
+            await self.node_diagnostics(node_ip)
+            if self._nodes_closing:
+                raise RuntimeError("Node services are closing.")
+            task = self._health_tasks.get(node_ip)
+            if task is None or task.done():
+                state = self._node_health[node_ip]
+                state.failures = 0
+                state.error = "Administrative recovery is awaiting physical checks."
+                task = asyncio.create_task(self._check_node(node_ip))
+                self._health_tasks[node_ip] = task
+            await asyncio.shield(task)
+            return await self.node_diagnostics(node_ip)
 
         async def node_capacity(self):
             capacity = await super().node_capacity()
@@ -717,8 +765,14 @@ def create_env_router(config: Mapping, train_rollout_node_ips: Iterable[str] = (
     if EnvRouter is None:  # pragma: no cover
         raise RuntimeError("Ray is required to create the EnvRouter actor.")
     name = str(config.get("router_name", DEFAULT_ROUTER_NAME))
-    handle = EnvRouter.options(name=name, get_if_exists=True).remote(dict(config), tuple(train_rollout_node_ips))
-    ray.get(handle.ping.remote())
+    train_rollout_node_ips = tuple(train_rollout_node_ips)
+    expected = router_contract(config, train_rollout_node_ips)
+    handle = EnvRouter.options(name=name, get_if_exists=True).remote(dict(config), train_rollout_node_ips)
+    try:
+        actual = ray.get(handle.startup_contract.remote())
+    except AttributeError as exc:
+        raise ValueError("EnvRouter has no startup contract. Stop the incompatible service after cleanup.") from exc
+    verify_router_contract(expected, actual)
     if (config.get("prewarm") or {}).get("enable", True):
         ray.get(handle.begin_prewarm.remote())
     return handle

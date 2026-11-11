@@ -342,3 +342,121 @@ async def test_production_cleanup_guard_survives_health_integration():
         "confirmed": "granted",
         "new_reap_after_cleanup": "wait",
     }, "No admission may cross an unacknowledged physical cleanup boundary."
+
+
+@pytest.mark.asyncio
+async def test_operator_recovery_reopens_exhausted_node_only_after_cleanup(monkeypatch):
+    router, service = make_health_router(monkeypatch)
+    service.prepare.remote.side_effect = RuntimeError("Docker is unavailable.")
+    for _ in range(3):
+        await router._health_task("node", force=True)
+    assert (await router.node_diagnostics("node"))["retry_exhausted"]
+    service.prepare.remote.side_effect = None
+    service.cleanup.remote.return_value = 1
+    result = await router.recover_node("node")
+    assert not result["healthy"] and result["pending_cleanup"]
+    service.cleanup.remote.return_value = 0
+    result = await router.recover_node("node")
+    assert result["healthy"] and not result["retry_exhausted"]
+    assert (await router.try_admit("new", EnvDemand(), "node")).status == "granted"
+    for lease in list(router._ledger._leases.values()):
+        router._ledger.release(lease.lease_id)
+    await router.shutdown_nodes()
+
+
+@pytest.mark.asyncio
+async def test_operator_recovery_is_bounded_and_does_not_reset_on_read(monkeypatch):
+    router, service = make_health_router(monkeypatch)
+    service.prepare.remote.side_effect = RuntimeError("Docker is unavailable.")
+    router._node_health["node"].failures = 3
+    result = await router.recover_node("node")
+    assert not result["healthy"] and result["failures"] == 1
+    assert service.prepare.remote.await_count == 1
+    assert (await router.node_diagnostics("node"))["failures"] == 1
+    with pytest.raises(ValueError, match="configured"):
+        await router.recover_node("unknown")
+    await router.shutdown_nodes()
+
+
+@pytest.mark.asyncio
+async def test_operator_recovery_retains_dead_service_with_active_ownership(monkeypatch):
+    import ray
+
+    router, service = make_health_router(monkeypatch)
+    await router._check_node("node")
+    lease = router._ledger.try_admit("owner", EnvDemand(cpu=1), "node").lease
+    old = router._node_services["node"]
+    router._ledger._blocked_units.add("cpu")
+    service.prepare.remote.side_effect = ray.exceptions.RayActorError()
+    result = await router.recover_node("node")
+    assert not result["healthy"]
+    assert result["active_leases"] == [lease.lease_id]
+    assert result["blocked_units"] == ["cpu"]
+    assert router._node_services["node"] is old
+    router._ledger.release(lease.lease_id)
+    await router.shutdown_nodes()
+
+
+@pytest.mark.asyncio
+async def test_concurrent_operator_recovery_joins_one_probe(monkeypatch):
+    router, service = make_health_router(monkeypatch)
+    await router._check_node("node")
+    service.prepare.remote.reset_mock()
+    entered, finish = asyncio.Event(), asyncio.Event()
+
+    async def prepare(*args):
+        entered.set()
+        await finish.wait()
+        return {}
+
+    service.prepare.remote.side_effect = prepare
+    first = asyncio.create_task(router.recover_node("node"))
+    await entered.wait()
+    second = asyncio.create_task(router.recover_node("node"))
+    await asyncio.sleep(0)
+    assert not (await router.node_diagnostics("node"))["healthy"]
+    finish.set()
+    assert all(row["healthy"] for row in await asyncio.gather(first, second))
+    assert service.prepare.remote.await_count == 1
+    await router.shutdown_nodes()
+
+
+@pytest.mark.asyncio
+async def test_operator_recovery_keeps_unacknowledged_retired_lease(monkeypatch):
+    router, service = make_health_router(monkeypatch)
+    await router._check_node("node")
+    lease = router._ledger.try_admit("owner", EnvDemand(cpu=1), "node").lease
+    router._ledger.retire(lease.lease_id)
+    result = await router.recover_node("node")
+    assert result["pending_reaped"] == [lease.lease_id]
+    assert (await router.try_admit("new", EnvDemand(), "node")).status == "wait"
+    router._ledger.acknowledge_reaped("node", lease.lease_id)
+    await router.shutdown_nodes()
+
+
+@pytest.mark.asyncio
+async def test_operator_recovery_timeout_keeps_node_unavailable(monkeypatch):
+    router, service = make_health_router(monkeypatch)
+    await router._check_node("node")
+
+    async def never_ready(*args):
+        await asyncio.Event().wait()
+
+    service.prepare.remote.side_effect = never_ready
+    result = await asyncio.wait_for(router.recover_node("node"), 1)
+    assert not result["healthy"] and "TimeoutError" in result["error"]
+    await router.shutdown_nodes()
+
+
+@pytest.mark.asyncio
+async def test_operator_recovery_replaces_dead_unowned_service_only_on_next_probe(monkeypatch):
+    import ray
+
+    router, service = make_health_router(monkeypatch)
+    await router._check_node("node")
+    service.prepare.remote.side_effect = ray.exceptions.RayActorError()
+    assert not (await router.recover_node("node"))["healthy"]
+    assert "node" not in router._node_services
+    service.prepare.remote.side_effect = None
+    assert (await router.recover_node("node"))["healthy"]
+    await router.shutdown_nodes()

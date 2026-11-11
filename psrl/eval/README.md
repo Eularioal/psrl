@@ -12,7 +12,7 @@ companion are gone.
 | [`vllm_server.py`](vllm_server.py) | One server process: `ServerSpec`, `build_command`, `launch`, `wait_ready`. |
 | [`vllm_fleet.py`](vllm_fleet.py) | N replicas on one host: GPU partitioning, concurrent readiness, `endpoints.json`. |
 | [`vllm_multinode.py`](vllm_multinode.py) | One fleet per host over a hosts file, via ssh. |
-| [`config/`](config/) | Hydra groups: `server/` presets and `topology/` shapes. |
+| [`config/`](config) | Hydra groups: `server/` presets and `topology/` shapes. |
 
 Hydra lives only at the entry point. `serve.py` turns composed config into plain
 frozen dataclasses and hands off; nothing below it imports hydra or omegaconf. That
