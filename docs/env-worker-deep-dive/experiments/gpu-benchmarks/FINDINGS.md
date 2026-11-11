@@ -1,10 +1,17 @@
 # GPU benchmark 接入验证
 
-> **核心结论**：KernelBench、autoresearch 已通过真实 GPU 执行与回收。InferenceBench 固定常驻服务已完成两类 H20 ON/OFF 对照：早期 24 GiB 人工配额只验证排队且更慢；episode 记账修复后采用整卡容量与 7 项真实任务，OFF 一次 OOM，ON 无 OOM，完成相同工作量的任务阶段耗时下降 17.9%。其官方完整评分仍未通过，MLE-bench 暂缓 Kaggle 接入。没有执行语言模型 agent rollout 或 PSRL 策略优化器更新。
+> **核心结论**：KernelBench、autoresearch 已通过真实 GPU 执行与回收。2026-11-10 新增的 MLE 本地竞赛、Inference 本地服务、RE 有界本地偏好与 FlashInfer 官方算子子集均通过独立 GPU oracle。六类代表任务均已完成真实语言模型 rollout、一次 PSRL 策略更新及版本 1 后续 GPU 评分，本地功能闭环通过。结论限于明确列出的本地协议和代表题。MLE 本地题不依赖 Kaggle，官方竞赛和 Inference 官方完整协议仍单列限制。
 
 > RE-Bench 聊天训练已有原生 Env/PSRL 接入，真实 GPT-2 XL、Alpaca 提示、生成和一次 CUDA 更新已通过。原 Replicate 分支仍缺凭据，本地 Qwen 已完成小样本真实偏好训练与隐藏评分。两种 smoke 的 `reward=0`，不冒充完整成绩。
 
+本轮统一盘点与下一步研究建议见 [Science GPU 现状与规划](../../milestones/science-gpu-bench-status-and-roadmap.md)。本篇保留各轮实验原条件，新一轮结果独立登记。
+
 ## 目录
+
+- [2026-11-11 扩题快速 GPU 检查](#2026-11-11-扩题快速-gpu-检查)
+- [2026-11-11 题库数量核对与批量准备](#2026-11-11-题库数量核对与批量准备)
+- [2026-11-10 本地完整接入验收](#2026-11-10-本地完整接入验收)
+- [2026-11-09 接入复核](#2026-11-09-接入复核)
 
 - [KernelBench command 接入验证](#kernelbench-command-接入验证)
 - [接入范围](#接入范围)
@@ -21,7 +28,44 @@
 - [修复与验证边界](#修复与验证边界)
 - [复现入口](#复现入口)
 
+## 2026-11-11 扩题快速 GPU 检查
+
+基于 `ab74120` 加未提交实现，使用真实 EnvRouter、Harbor 与独立 GPU 评分器，采用公开参考提交控制，不重复语言模型 rollout 或策略更新。KernelBench 原尺寸通过 22 题，小输入档通过 193 题，35 题失败/异常/超时，20 道 L4 因预训练资产未准备而未运行。小输入档通过不证明原尺寸通过，失败也可能来自缩放破坏形状约束。独立 `kernel_bench_local` 协议将相同的维度覆盖实现与 verifier 一起打包，评分需显式本地 profile 标记。
+
+FlashInfer 30 个定义各一条原始随机 workload 经官方 evaluator 全部 PASSED，缩短计时配置只用于快速功能检查，不作为性能数据。MLE 本地四题均完成真实 CUDA 分类器训练与隐藏标签评分：digits 0.97556、Iris 0.94737、Wine 1.0、乳腺癌 0.99301。公开准备器新增后三种真实数据，不算官方 Kaggle 竞赛。三类通过项共 249 个，已生成统一 Parquet、agent 配置与逐题资产，失败项排除。
+
+首选私有节点的八卡均有其他进程，因此使用已预检的备用节点独立空闲卡。最初逐题冷启动过慢，受控停止后保留正样本，再复用进程并显式使用小输入档，记录不同阶段的指纹与超时，不重跑已通过原尺寸题。一次手工 CUDA 探针误将 index 当作 minor，只执行四元素加法并退出；正式受管实验使用现场 UUID/minor 映射。备用节点 apt 外网构建失败，随后复用已有 agent 镜像，核验 tmux 与 asciinema，未修改基础镜像或共享依赖。
+
+封装后标准 ReLU 任务复验返回 `reward=1`，无异常，容器清空且 GPU 计算进程为空。首次普通入口验收暴露 Harbor 奖励只接受数值，已将字符串 profile 奖励改为 `bounded_inputs=1`，并同步本地任务奖励门槛及已发布 Kernel 任务的 verifier 副本。保留第一次失败和修复后的通过证据。26 项 CPU 回归通过，本次修改代码的 Ruff、格式及 prose 检查通过。249 个独立任务包、数据行、镜像与配套 agent 配置一致性检查通过。
+
+[逐题证据](quick-validation-20261111.json) 保留两类输入档、失败记录和各阶段资源回收；[路线图](../../milestones/science-gpu-bench-status-and-roadmap.md#results扩题与快速-gpu-验证) 给出覆盖表、数据入口及复现说明。原尺寸整批 240 秒、小输入整批 180 秒，首个冷启动诊断被提前停止。结论明确后不追加策略训练、收敛或效果实验。
+
+## 2026-11-11 题库数量核对与批量准备
+
+本节记录首次 CPU 准备阶段，该阶段没有运行 GPU 训练，后续扩题验证见上一节。基于 `ab74120` 加未提交改动，[KernelBench 批量准备器](../../../../examples/kernel_bench/prepare_suite.py) 实际枚举并生成 L1 100、L2 100、L3 50、L4 20，共 270 个独立任务和 270 行统一 PSRL 数据，逐项核对参考题映射及独立评分脚本。此前已通过 GPU 策略闭环的 KernelBench 题目仍为 1 个。CPU 回归 29 项通过，覆盖批量准备、原 recipe 与提交边界；任务生成不代替 CUDA 执行验收。
+
+[统计脚本](../../../../examples/gpu_benchmarks/inventory.py) 核对其他固定本地源码：MLE 官方名单 75 个竞赛、注册配置 82 个，指定资产根目录没有完整官方竞赛数据；RE 七个任务目录；Inference 四个场景；FlashInfer 190 个定义、111 个有 workload、3267 条输入案例，引用的 2570 个张量文件仍为 Git LFS 指针；autoresearch 为一个固定任务、一个本地训练分片。统计单位、题库位置和扩展优先级见[路线图](../../milestones/science-gpu-bench-status-and-roadmap.md#题库数量位置与逐题覆盖)，固定版本与逐题指纹见[统计 JSON](task-inventory-20261111.json)。
+
+## 2026-11-10 本地完整接入验收
+
+本轮基于 `bc5665f` 与工作区未提交实现，验收定义为独立 verifier、真实语言模型 rollout、PSRL 策略优化器更新和更新后的继续采样。采用本地有意义的任务协议，允许硬件和规模不同于官方评测，禁止将本地标记写成官方成绩。入口、任务例子和复现参数见[阶段报告](../../milestones/science-gpu-full-onboarding.md)，去除节点与模型路径的证据见 [full-onboarding-20261110.json](full-onboarding-20261110.json)。
+
+| 本地任务 | 独立 GPU oracle | 评分与边界 |
+|---|---|---|
+| MLE 风格 digits 竞赛 | 通过，隐藏预测 437/450 | 真实 sklearn 数据，CUDA 分类器，非官方 Kaggle 竞赛 |
+| Inference 固定服务 | 通过，两条真实请求与冻结基线一致 | 奖励约 0.0612，衡量服务一致性与请求耗时，不是答题正确率 |
+| RE 有界偏好训练 | 通过，本地偏好分 0.25 | 两条隐藏提示，本地 Qwen 裁判，非 smoke，非完整官方协议 |
+| FlashInfer RMSNorm | 通过，三个官方 workload 均 PASSED | 官方 evaluator，本地正确性奖励 1，非全题库性能成绩 |
+
+每个任务已核实所属容器和 GPU 计算进程清理。RE 的独立裁判在闭环验收后已关闭。Inference 在当前依赖运行时先独立生成参考输出，再冻结并验收候选。已有 KernelBench 与 autoresearch 的 oracle 证据按原日期保留，不为扩充表格重复执行。
+
+六类公共任务已完成混合策略闭环验收。初始化暴露并修复了融合 Dummy 角色缺少实际 GPU 身份查询的问题，另以独立依赖目录匹配共享 SMG 的 grpcio 要求，没有改共享环境。首批 12 条轨迹已完成一次 PSRL 策略更新，有效训练 token 为 11525，实际 loss 约 0.003347、梯度范数约 0.798689。版本 1 已发布并被推理端拉取，六类任务均有更新后真实采样和有效 GPU 评分。共保存 20 条已结束采样，其中 17 条有效正分、3 条失败，逐项版本与失败原因见机器可读证据。达到功能条件后主动停止余下 4 条采样，没有执行第二次优化器更新，训练子进程 `-15` 是受控收尾。最终所属容器和 GPU 计算进程为 0，裁判已关闭。仍无 Env ON/OFF 性能收益结论。
+
+后续同日补充提交物、CSV、来源身份和 verifier 服务进程组的边界修复，30 项 CPU 回归通过，见[修复详情](../../milestones/science-gpu-full-onboarding.md#本轮边界修复与回归)。这是 GPU 验收后的源码修复，不覆盖上述旧资产的实测与指纹，尚未重新进行 GPU 训练。
+
 ## 接入范围
+
+本节为此前官方 recipe 的验证范围。2026-11-10 新增本地协议请以上节为准，以下未取得官方凭据的结论不否定显式 `_local` 任务可用性。
 
 | 项目 | 实现 | 本次证据 |
 |---|---|---|
@@ -435,3 +479,41 @@ PSRL 接入回归使用受控 session 数据检查 token 保留、奖励传递�
 这次短等待是一个真实观测，不是稳定分布，更不能证明值得 offload。0.75 是两条隐藏提示的局部结果，不具有完整 benchmark 成绩意义。未执行多裁判副本吞吐测试、完整 512 条评分、PSRL 策略训练、command ON/OFF 或自动卸载收益实验。结论齐备后停止 GPU 验证。
 
 本地裁判最终 CPU 回归 30 项通过，覆盖原有 recipe、本地 HTTP 协议、评分来源隔离、请求预算和排名格式。新增代码 Ruff、格式与 prose-style 检查通过，相关文档 382 个本地链接及锚点检查通过。全仓 pre-commit 在临时快照执行，仍因本次范围外的既有格式与注释问题失败，自动修复未回写工作区。
+
+
+## 2026-11-09 接入复核
+
+本轮基于主目录 `bc5665f436065656c043b69e8a7aa21edd8a0cd3`，公共 benchmark 与 science 核心代码没有本轮补丁。使用已有真实资产和预构建镜像，在一张独立空闲 H20 顺序执行代表任务，不启动策略模型训练，不做性能 ON/OFF。同期其他 FlashInfer 实验与文档存在未提交改动，不能合并为本轮实验。
+
+验收目标为任务执行、真实 GPU 工作、模式对应评分、容器与 GPU 进程回收。KernelBench 预算 360 秒，autoresearch 外层预算 950 秒，RE-Bench CUDA smoke 360 秒，固定服务最多 600 秒。各组只运行一次，预检问题排除后才启动任务。没有额外要求非零策略梯度、效果提升或全量题库成绩。
+
+**预检与验证边界。** SSH 现场确认 Docker 可响应、设备空闲、UUID/minor 映射与依赖来源。PSRL 导入主目录，veRL 显式使用工作区隔离补丁，TransferQueue 使用现有共享安装。本机 Docker 的 `--gpus` 入口缺少运行时驱动支持，首次容器预检退出 125，没有启动 benchmark。随后按 PSRL 实际使用的设备与版本匹配驱动库挂载方式，容器执行 CUDA 张量求和得到 8，才进入任务验证。没有安装或修改节点 Docker/GPU 服务。
+
+CPU 回归命令为：
+
+```bash
+python -m pytest tests/examples/gpu_benchmarks tests/examples/sciaccel_rl \
+  tests/env_service/test_position_ids_roundtrip.py -q
+```
+
+在项目环境及显式隔离依赖路径下得到 **104 passed、27 skipped，59.86 秒**。跳过项不计为通过，不据此证明 SciAccel 全题库资产齐备。测试覆盖资源路由、数据隔离、奖励门槛、command verifier 与张量往返。它们不替代真实 GPU 执行。
+
+本轮结果见[机器可读摘要](science-audit-20261109.json)，其中记录提交、源码哈希、上游版本和原始证据哈希，已去除机器地址与私有路径。解释以实际指标为准。公共运行器 `passed` 只检查任务无异常且奖励字典存在，不能单独用它判定 correctness、正式评分或非零奖励成功。RE-Bench smoke 的零奖励是预期约束。
+
+KernelBench 沿用了既有任务目录的只读 verifier 挂载，实际指向早期准备的 evaluator，返回字段仍名为 `runtime_us`，上游 CUDA Event 实际单位为毫秒。本轮按 `kernel_result.json` 解释为毫秒，未把标签错误当作新速度结果，也未悄悄改写历史任务资产。当前公共准备器代码已用 `runtime_ms`，未来重新准备任务应使用该版本。
+
+CPU 生命周期教学脚本本轮实际运行通过：两个客户端退出码均为 0，服务在两次请求后仍存活，停止后模拟可归还为 true。全仓 pre-commit 在临时快照执行，未通过既有 Ruff/格式/prose 问题，自动格式改动只发生在快照中，没有回写主目录。
+
+MLE-bench 的正式竞赛数据、InferenceBench 官方基线/裁判/硬件配置，以及 RE-Bench 完整隐藏评分不在本轮通过清单中。用户尚未提供新增资产或授权凭据路径，不能宣称全部正式 benchmark 可用。FlashInfer、AIRS 与 SciAccel 的较早证据仍按各自原条件引用，本轮未重跑其全量评测。
+
+
+本轮代表任务 Results：
+
+| 任务及模式 | 实际结果 | 物理清理与验收范围 |
+|---|---|---|
+| KernelBench / Compose direct command | 编译成功，正确性 3/3，reward=1，候选约 7.80 ms，参考约 4.55 ms | 所属容器和 GPU 计算进程均为 0，显存残余约 0.19 MiB。代表题执行通过，候选没有加速 |
+| autoresearch / 原生 Env episode | 306 步，训练 300.2 秒，脚本总时长 382.7 秒，`val_bpb=1.158689967`，reward=0.463243919 | 所属容器和 GPU 计算进程均为 0，显存残余约 0.19 MiB。真实训练和独立官方指标评估通过 |
+| InferenceBench 固定常驻服务 / 原生 Env episode | 1 个 episode、同一服务处理 2 次真实请求，中间 CPU 等待 1 秒，功能 reward=1 | 所属容器和 GPU 进程均为 0，显存残余约 0.19 MiB。仅服务复用与请求链路通过，非官方完整评分或 ON/OFF 性能实验 |
+| RE-Bench / 原生 Env episode CUDA smoke | `smoke_valid=1`，reward=0，`official_evaluation=0`、`judge_valid=0` | 所属容器和 GPU 计算进程均为 0，显存残余约 0.19 MiB。只证明真实资产 CUDA 路径，不证明本地/云端裁判或完整评分 |
+
+本轮默认凭据检查只输出存在与否，没有读取密钥内容。默认 Kaggle 文件、Replicate 与 Anthropic 环境变量均不存在，工作区资产搜索未找到 MLE 的 prepared public/private 数据。该检查不排除用户另有尚未告知的私有配置路径。

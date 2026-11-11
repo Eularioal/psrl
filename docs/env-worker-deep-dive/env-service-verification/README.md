@@ -291,7 +291,7 @@ PYTHONPATH=. python "$VERIFY_DIR/scripts/multinode_check.py" \
 
 **这些结果支持“资源准入与 Harbor 执行可以接起来，且真实 CPU science 任务和 GPU 小任务能运行”，不支持“整份 Env Service 设计已完整验收”。** 当前证据同时包含通过的实验、明确复现的缺陷，以及没有完成的训练尝试。
 
-本节对照原始设计（本地资料，未随仓库发布） §6、§7、§9、§10 和[当前实现说明](../knowledge/env-service-implementation.md)。设计中的独立 EnvWorker actor、完整借还状态机等是提案内容；不能因为某个 Harbor 实验成功就把它们也算成已实现、已验证。
+本节对照原始设计（本地资料，未随仓库发布） §6、§7、§9、§10 和[当前实现说明](../archive/env-service-implementation.md)。设计中的独立 EnvWorker actor、完整借还状态机等是提案内容；不能因为某个 Harbor 实验成功就把它们也算成已实现、已验证。
 
 ### 9.1 本机 Docker 为什么没有用于真实容器实验
 

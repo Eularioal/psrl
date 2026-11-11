@@ -1,4 +1,14 @@
-# `lhy/activate` 脚本说明
+# `lhy/activate` 脚本说明与新 tunnel 启动配置
+
+> **核心结论**：环境脚本要用 `source` 在当前 Bash 中加载。新 tunnel 的终端需在自己的 `~/.bashrc` 中配置环境脚本和 `CODEX_HOME`，共享工作区存在并不代表新入口的启动文件已配置。
+
+目录：
+
+- [执行流程](#执行流程)
+- [安全与副作用](#安全与副作用)
+- [按代码解释](#按代码解释)
+- [如何让每个新 shell 自动执行该脚本](#如何让每个新-shell-自动执行该脚本)
+- [新 tunnel 两项配置的复现](#新-tunnel-两项配置的复现)
 
 目标脚本：`${PSRL_ENV_SCRIPT}`
 
@@ -195,27 +205,115 @@ export no_proxy="localhost,127.0.0.1,$NEW_NO_PROXY"
 
 ## 如何让每个新 shell 自动执行该脚本
 
-结论：把 `source ${PSRL_ENV_SCRIPT}` 加到 `~/.bashrc` 末尾即可。
+将 `source "$PSRL_ENV_SCRIPT"` 放在 `~/.bashrc` 末尾的交互式判断内。这里的变量必须先定义，或将它替换为已确认的脚本路径。不要把未定义的变量直接写入启动文件。非交互登录 Bash 也可能读取这个文件，应避免它重复执行较重的 Conda 初始化。
 
-原理：
+- 普通交互式 Bash 默认读取 `~/.bashrc`。`bash --norc` 等显式禁用启动文件的方式除外。
+- 登录 Bash 读取登录配置。在本次检查的入口中，`~/.bash_profile` 已加载 `~/.bashrc`，因此无需再追加一次 source。其他入口需要先核对，不能假定相同。
+- 普通 `bash script.sh` 不保证读取 `.bashrc`。自动任务应显式加载环境，不能仅凭工具名称或 SSH 连接方式推断它是否读取了启动文件。
+- 放在末尾是为了让目标环境在已有 Conda 初始化和 PATH 设置之后生效。新入口未必有旧入口相同的 `conda init` 段落。
+- 反复 source 会重新初始化 Conda，并可能重复追加 `no_proxy` 或库路径。配置文件不重复追加，不等于环境脚本本身完全幂等。
+- 自动工具命令默认继承启动它的进程环境。需要特定训练环境的脚本仍应显式 source 指定脚本，不能把跳过重复初始化理解为自动具备完整训练环境。
 
-- 交互式 shell（打开终端、SSH 登录、Claude Code 的 Bash 工具等）在启动时都会执行 `~/.bashrc`。
-- `~/.bash_profile` 里已经有 `source ~/.bashrc`，所以登录 shell 也会间接执行到它，不需要再改 `.bash_profile`。
-- 之所以要加在 `.bashrc` **文件末尾**、而不是开头，是因为 `.bashrc` 里已有一段 `conda init` 生成的代码（指向 `${HOME}/jhy/anaconda3`），而 `activate` 脚本本身会先 `conda deactivate` 并清理 `PATH` 中所有 `anaconda3`/`miniconda` 目录，再切换到 `lhy` 版本的 Conda；只有在它之后执行才能保证最终生效的是 `lhy` 的环境和代理设置，不被后面的初始化代码覆盖。
+修改工作区外的启动文件时，若工具要求授权，应通过其正式授权机制完成。
 
-实际改动（已在本机生效，`~/.bashrc` 第 65--66 行）：
+## 新 tunnel 两项配置的复现
+
+本节是终端配置操作说明。脚本解析部分解释基础 `activate`，本节集中维护新入口的复现方法。
+
+### 确定路径和脚本
+
+| 配置 | 如何选择 | 用途 |
+|---|---|---|
+| `PSRL_ENV_SCRIPT` | 基础环境用共享目录的 `lhy/activate`，完整训练环境用同目录下的 `env/psrl.sh` | 前者初始化 Conda、代理和镜像，后者还会激活 `psrl_smg_new` 并设置训练变量 |
+| `WORKSPACE_ROOT` | 包含 `.codex` 和 `psrl` 的个人工作区目录 | 用于定位共享配置和自己的仓库 |
+| `CODEX_HOME` | `WORKSPACE_ROOT` 下的 `.codex` | 本次沿用的 Codex 环境变量 |
+
+`env/psrl.sh` 内部已经 source 基础 `activate`，二者选择一个，不需要都写一遍。脚本可能覆盖 `PSRL_WORKSPACE`，因此在加载后恢复为自己的 `psrl` 仓库路径。
+
+例如，新入口中工作区文件仍可访问，但终端没有加载环境脚本。补齐配置后，新交互式 Bash 先加载脚本，再设置个人仓库路径和 `CODEX_HOME`，随后启动的命令继承这些变量。非交互 Bash 跳过较重的初始化，仍设置个人路径。已经运行的进程不会被追溯修改。
+
+### 写入启动文件
+
+以下命令在 Bash 终端执行。交互输入实际路径，避免把未定义占位符写入 `.bashrc`。脚本会备份 `.bashrc`，并管理一个可重复更新的配置块。执行前查看已有配置，删除或合并旧的同用途 source/export 行，避免后面的旧配置覆盖新值。
 
 ```bash
-# auto activate conda env + proxy
-source ${PSRL_ENV_SCRIPT}
+read -r -e -p '环境脚本的完整路径: ' PSRL_ENV_SCRIPT
+read -r -e -p '包含 .codex 和 psrl 的工作区路径: ' WORKSPACE_ROOT
+export PSRL_ENV_SCRIPT WORKSPACE_ROOT
+python3 - <<'PYCODE'
+import os
+import re
+import shutil
+import time
+from pathlib import Path
+
+script = Path(os.environ['PSRL_ENV_SCRIPT']).expanduser().resolve()
+workspace = Path(os.environ['WORKSPACE_ROOT']).expanduser().resolve()
+assert script.is_file(), f'环境脚本不存在: {script}'
+assert (workspace / '.codex').is_dir(), '未找到 .codex 目录'
+assert (workspace / 'psrl').is_dir(), '未找到 psrl 仓库'
+rc = Path.home() / '.bashrc'
+old = rc.read_text() if rc.exists() else ''
+if rc.exists():
+    backup = rc.with_name(f'.bashrc.backup-{time.time_ns()}')
+    shutil.copy2(rc, backup)
+    print(f'备份: {backup}')
+
+# shell 引号确保路径中的空格和特殊字符被当作普通字符。
+import shlex
+begin = '# BEGIN personal shell environment'
+end = '# END personal shell environment'
+block = '\n'.join([
+    begin,
+    'case $- in',
+    f'    *i*) source {shlex.quote(str(script))} ;;',
+    'esac',
+    f'export PSRL_WORKSPACE={shlex.quote(str(workspace / "psrl"))}',
+    f'export CODEX_HOME={shlex.quote(str(workspace / ".codex"))}',
+    end,
+])
+pattern = re.escape(begin) + r'.*?' + re.escape(end)
+clean = re.sub(pattern, '', old, flags=re.S).rstrip()
+rc.write_text(clean + '\n\n' + block + '\n')
+print(f'已更新: {rc}')
+PYCODE
+bash -n ~/.bashrc
 ```
 
-当时先尝试用 `Edit` 工具和 `cat >> ~/.bashrc << 'EOF' ... EOF` heredoc 追加，均被 Claude Code 的权限分类器判定为高风险而拒绝（多半是把"修改 shell 启动文件"当作敏感操作、需要人工确认，属于瞬时性误判）；改用 `printf '...' >> ~/.bashrc` 后一次写入成功。这不代表 `Edit`/heredoc 方式本身有问题，只是分类器当时的判断结果，换一种等价写法通常就能绕过。
+生成的配置先判断当前 shell 是否交互式，仅在交互式 shell 中 source 所选环境，再恢复个人仓库路径、设置 `CODEX_HOME`。`$-` 含 `i` 表示交互式。后两行属于个人路径配置，非交互 shell 也会执行。`bash -n` 只检查语法，不执行环境初始化。
 
-验证方法：用 `bash -ic '...'` 开一个全新的交互式子 shell（不手动 source 任何东西），检查 `http_proxy`/`https_proxy` 是否已经是 `http://internal.example.invalid`，`which python` 是否指向 `lhy/anaconda3`，以及 `curl https://www.baidu.com` 是否能拿到 `200`。
+2026-11-10 针对 Codex shell 快照超时的修复只修改了个人配置块，没有修改共享环境脚本。非交互登录 Bash 的现场启动耗时从约 6.5 秒降到约 0.7 秒，交互式启动仍能找到 Conda 和 Codex。修复后观察到真实会话生成的 shell 快照文件。详情见 [Codex 剩余问题修复记录](../codex/session-management/log-repair.md#剩余问题定位与修复)。这些是本次环境下的观测，不是所有入口的性能保证。
 
-注意事项：
+### 生效和验证
 
-- 这只覆盖**交互式 shell**。非交互式 shell（例如某些脚本用 `bash script.sh` 直接执行，而非 `source`）默认不会自动读取 `.bashrc`，仍需要显式 `source` 该脚本或设置 `BASH_ENV`。
-- 每次开新终端都会重新导出一次 [[activate-script-notes|脚本里的 W&B API Key]]（见上文“安全与副作用”），这是把凭据放进启动脚本的固有代价，不是这次改动引入的新问题。
-- 如果以后要切换到别的 Conda 环境或取消代理，直接在 `~/.bashrc` 里删掉这几行，或者改用条件判断（例如按项目目录切换）。
+在当前终端执行一次：
+
+```bash
+source ~/.bashrc
+```
+
+再启动一个新交互式 Bash 验证，清除继承的关键变量以免把父进程配置误判成自启成功：
+
+```bash
+env -u CODEX_HOME -u PSRL_WORKSPACE bash -ic '
+    printf "CODEX_HOME=%s\n" "$CODEX_HOME"
+    printf "PSRL_WORKSPACE=%s\n" "$PSRL_WORKSPACE"
+    printf "CONDA_DEFAULT_ENV=%s\n" "${CONDA_DEFAULT_ENV:-}"
+    command -v python
+    test -d "$CODEX_HOME" && test -d "$PSRL_WORKSPACE"
+'
+```
+
+预期前两项分别指向个人工作区的 `.codex` 和 `psrl`。基础 `activate` 没有显式选择 `psrl_smg_new`，不能以未进入该环境判定失败。若选择 `env/psrl.sh`，则应看到 `CONDA_DEFAULT_ENV=psrl_smg_new`，且 Python 来自该环境。
+
+检查登录 Bash 时，将 `bash -ic` 改为 `bash -lic`。不要用完整 `env` 输出检查配置，避免打印脚本加载的凭据。以上验证只确认 shell 初始化，不证明网络连通、GPU 可用或训练依赖全部正常。
+
+### 本次验证范围
+
+2026-11-09 在新入口实际采用基础 `lhy/activate`。`bash -ic` 与 `bash -lic` 均通过检查，个人工作区和 `CODEX_HOME` 正确，Python 来自该脚本指定的基础 Conda 安装。本节对应仓库 `bc5665f` 上的未提交文档修改，实际启动文件位于仓库之外。复现代码另在临时目录检查了语法和重复更新，不会重复生成配置块。未验证训练或网络请求。
+
+### 取消自动加载
+
+从 `.bashrc` 删除两个标记之间的整个块，保留其他设置。新开终端检查结果。删除文件中的配置不会撤销当前进程已加载的变量，必要时关闭旧终端。
+
+相关说明：[source 的作用](bash-source-command.md)、[Codex 配置备份](../codex/codex-config-backup-restore.md)。

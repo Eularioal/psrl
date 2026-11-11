@@ -221,7 +221,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/vllm_env_shari
 
 空窗场景的参考顺序明确为：保持模型常驻直到下一次请求完成，再 offload、执行同一个 30 秒 Docker 命令、清理并恢复。两种策略都包含模型请求后的 10 秒 CPU 工作以及最终模型恢复。参考顺序只是本教学模型中的一种可行策略，不代表生产系统的最优 baseline。复现脚本中有这些时间关系的断言。
 
-已有真实借卡与独立环境卡训练结果仍按[状态总览](../experiments/env-status-and-roadmap.md)各自的验收范围理解，不能视为本方案已经验证。关于当前 command 与借卡为何被隔开的源码说明，见[现有组合边界](../experiments/env-status-and-roadmap.md#为什么同卡借还还不能与-command-组合)。
+已有真实借卡与独立环境卡训练结果仍按[状态总览](../milestones/env-status-and-roadmap.md)各自的验收范围理解，不能视为本方案已经验证。关于当前 command 与借卡为何被隔开的源码说明，见[现有组合边界](../milestones/env-status-and-roadmap/implementation-and-results.md#为什么同卡借还还不能与-command-组合)。
 
 ## 9. 独立 GPU 优先的实现与实机验证
 

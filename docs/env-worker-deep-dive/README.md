@@ -13,7 +13,7 @@
 | 想了解什么 | 入口 | 内容边界 |
 |---|---|---|
 | 向他人介绍阶段设计、收益与重点规划 | [Env 设计与收益简版](experiments/env-design-and-results-brief.md) | 2026-10-28 阶段报告，保留当时结构与实验边界，当前实现先读现状入口。 |
-| 详细了解实现进度、收益与规划 | [Env 状态与路线图](experiments/env-status-and-roadmap.md) | 2026-10-28 阶段详细版，比较固定 baseline、当时实现及未来策略，不能替代当前设计。 |
+| 详细了解实现进度、收益与规划 | [Env 状态与路线图](milestones/env-status-and-roadmap.md) | 2026-10-28 阶段详细版，比较固定 baseline、当时实现及未来策略，不能替代当前设计。 |
 | 现在怎样工作，接口怎样使用 | [当前设计](knowledge/current-design.md) | 当前结构、模式区别、源码与能力边界，专题查[分类索引](knowledge/README.md)。 |
 | 测过什么，结果如何，哪里失败 | [实验与验证](experiments/README.md) | 训练对照、组件验证、性能分析、故障与未验证项。 |
 | 从概念出发理解为什么这样设计 | [EnvWorker 设计讲解](../psrl/psrl-env-service-envworker-design.md) | 问题背景与设计动机，阅读时区分提案和实现。 |
@@ -22,7 +22,7 @@
 
 ## 推荐阅读顺序
 
-当前实现以[当前设计](knowledge/current-design.md)为首读入口。回顾 2026-10-28 阶段设计与收益可读[设计与收益简版](experiments/env-design-and-results-brief.md)，需要展开时读[详细版](experiments/env-status-and-roadmap.md)，再按下面的路径查实现细节。
+当前实现以[当前设计](knowledge/current-design.md)为首读入口。回顾 2026-10-28 阶段设计与收益可读[设计与收益简版](experiments/env-design-and-results-brief.md)，需要展开时读[详细版](milestones/env-status-and-roadmap.md)，再按下面的路径查实现细节。
 
 1. [当前设计](knowledge/current-design.md)：串联准入、容器提供者、direct / MPS 分支、预算持有与清理。
 2. [统一执行后端](knowledge/unified-gpu-execution.md)和[GPU 作业与遥测](knowledge/gpu-jobs-and-task-telemetry.md)：理解实际接口、状态与部署条件。
@@ -36,8 +36,8 @@
 | [knowledge/](knowledge/README.md) | 知识、实现与接入说明。早期版本文档在索引中单列，不作为当前能力总览。 |
 | [experiments/](experiments/README.md) | 实验报告、对照分析与现场障碍记录。 |
 | [env-service-verification/](env-service-verification/README.md) | 共用复现脚本、教学脚本、原始结果及早期验证报告。 |
-| [gpu-job-validation/](gpu-job-validation/) | GPU 作业验证配套文件。 |
-| [airs-bench-audit/](airs-bench-audit/) | AIRS-Bench 审查、修复报告与对应脚本、证据。报告也在实验索引登记。 |
+| [gpu-job-validation/](gpu-job-validation) | GPU 作业验证配套文件。 |
+| [airs-bench-audit/](airs-bench-audit) | AIRS-Bench 审查、修复报告与对应脚本、证据。报告也在实验索引登记。 |
 
 一篇文章兼有原理与实测时，按主要阅读目的归类，在分类索引注明附带内容。新增长篇实验报告放到 `experiments/`，从相关知识文章链接过去。复现脚本和原始结果使用上述配套目录，阅读命令时以文中注明的工作目录为准。
 

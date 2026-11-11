@@ -195,4 +195,4 @@ PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}" nohup timeout 300 python \
 
 后续若推进跨 worker 重派发，建议先限定为“已确认旧执行结束的、可从头重跑的任务”，复用现有整组处理与有界失败策略，再增加 attempt 身份、旧结果隔离、坏 worker 排除和物理清理确认。不要先全局调高 `retry_limit`，也不要把任意 OOM 或低奖励都当成换节点后必定成功。
 
-相关总审计与物理清理机制见[设计审视第 13 节](../experiments/router-paired-latency-and-design-review.md#13-物理资源遥测与清理交接确认)。
+相关总审计与物理清理机制见[设计审视第 13 节](../experiments/router-paired-latency-and-design-review/remediation-and-handoff.md#13-物理资源遥测与清理交接确认)。

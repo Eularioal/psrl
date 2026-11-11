@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- 本文把 [`sciaccel-gpu-gate.md` §16.5](sciaccel-gpu-gate.md#165-修复已部署gate-a设备互斥-gate-b回复节流代码位置与验证脚本) 里 Gate B 那张 5 行的表，拆成"一个故事 + 一张图 + 逐行讲解"。表里每一行都是一个零件，五个零件合起来只做一件事：**当 AI 要在一张 GPU 上执行命令时，如果这张卡上上一件事还没干完，就把模型给 AI 的下一条回复先扣住，等卡空下来（最多约 600 秒）再放行。**
+- 本文把 [`sciaccel-gpu-gate.md` §16.5](../archive/sciaccel-gpu-gate.md#165-修复已部署gate-a设备互斥-gate-b回复节流代码位置与验证脚本) 里 Gate B 那张 5 行的表，拆成"一个故事 + 一张图 + 逐行讲解"。表里每一行都是一个零件，五个零件合起来只做一件事：**当 AI 要在一张 GPU 上执行命令时，如果这张卡上上一件事还没干完，就把模型给 AI 的下一条回复先扣住，等卡空下来（最多约 600 秒）再放行。**
 - 五个零件：①给 session（一次对话）的档案卡加一个 `gpu_device` 字段；②一个 HTTP 端点 `POST /control/gpu_bind` 让别的进程填这个字段；③用 `nvidia-smi` 读 GPU 的忙闲；④在回复出口处检查字段，非空就等；⑤`runner.py` 在拿到卡/还卡时各调一次端点。
 - 三个"不会把系统卡死"的保险：**没绑定的 session 完全不受影响**；**`nvidia-smi` 读不到时按"空闲"处理（失败开放）**；**最长等 600 秒，到点无论如何放行**。
 - 诚实声明：Gate B 的真实代码本机**没有运行**（缺 `aiohttp`、没有 GPU）；本文附的脚本是**复刻判定逻辑**的演示，用假遥测跑通，不是真实 GPU 上的实测。"为什么要有这道门"一节是设计意图，来自代码注释与设计提案，不是我验证出来的因果。
@@ -41,7 +41,7 @@
 | **GPU 利用率 / 显存** | 利用率：GPU 在忙的时间占比；显存：GPU 自带的内存，被程序占着就不能给别人 | 判断"这张卡空不空" |
 | **`nvidia-smi`** | NVIDIA 驱动自带的命令行工具，一敲就打印每张 GPU 的状态，相当于"GPU 版任务管理器" | Gate B 的"眼睛" |
 | **失败开放（fail open）** | 守卫自己坏了的时候，**默认放行**；反义词"失败关闭"是守卫坏了就**一律拦住** | 没有 GPU 的开发机不会被卡死 |
-| **Gate A** | 先于 Gate B 的另一道门：episode 开工前，给它分一张**整卡**，保证两个 episode 不会拿到同一张卡 | 本文只用到结论，细节见 [`sciaccel-gpu-gate.md` §16.5](sciaccel-gpu-gate.md#165-修复已部署gate-a设备互斥-gate-b回复节流代码位置与验证脚本) 和 [`commit-72ca50c-gate-ab-walkthrough.md` §4](commit-72ca50c-gate-ab-walkthrough.md#4-gate-a-代码逐段讲解) |
+| **Gate A** | 先于 Gate B 的另一道门：episode 开工前，给它分一张**整卡**，保证两个 episode 不会拿到同一张卡 | 本文只用到结论，细节见 [`sciaccel-gpu-gate.md` §16.5](../archive/sciaccel-gpu-gate.md#165-修复已部署gate-a设备互斥-gate-b回复节流代码位置与验证脚本) 和 [`commit-72ca50c-gate-ab-walkthrough.md` §4](../archive/commit-72ca50c-gate-ab-walkthrough.md#4-gate-a-代码逐段讲解) |
 
 ## 1. 一个故事：为什么要有 Gate B
 
@@ -319,7 +319,7 @@ while True:
 ```
 —— 节选自 [`session_router.py:120-172`](../../../psrl/workers/gen/session_router.py#L120)（省略日志语句，所以不用行号块）
 
-> **关于这段节选（2026-10-12 校正）：** 上面是提交 `72ca50c` 里的**单设备版本**，便于入门；工作区当前的真实源码在此基础上多了两点：①`device` 可以是逗号连接的多个设备，先用 `_parse_gpu_indices`（[`:110`](../../../psrl/workers/gen/session_router.py#L110)）拆成编号列表，**全部**设备都空闲才放行；②多了 `shared` 参数，共享卡（同一个 unit 的多个容器共用一张卡）只看利用率、不看显存，因为常驻的模型权重会让显存一直不为零。下文的讲解和表格仍按单设备、非共享的情况成立；这两点是工作区新增的行为，详见 [Env Service 实现讲解](env-service-implementation.md)。文中所有行号都已校正为工作区当前行号。
+> **关于这段节选（2026-10-12 校正）：** 上面是提交 `72ca50c` 里的**单设备版本**，便于入门；工作区当前的真实源码在此基础上多了两点：①`device` 可以是逗号连接的多个设备，先用 `_parse_gpu_indices`（[`:110`](../../../psrl/workers/gen/session_router.py#L110)）拆成编号列表，**全部**设备都空闲才放行；②多了 `shared` 参数，共享卡（同一个 unit 的多个容器共用一张卡）只看利用率、不看显存，因为常驻的模型权重会让显存一直不为零。下文的讲解和表格仍按单设备、非共享的情况成立；这两点是工作区新增的行为，详见 [Env Service 实现讲解](../archive/env-service-implementation.md)。文中所有行号都已校正为工作区当前行号。
 
 这个循环可以看成"轮询"（每隔一会儿看一眼）。每看一次，四选一：
 
@@ -458,12 +458,12 @@ python3 docs/psrl/scripts/gate_b_throttle_demo.py
 
 - Gate B 在真实 GPU 集群上的行为没有验证；`util ≤ 5%` 与 `mem ≤ 256 MB` 的阈值在真实卡上是否合适没有验证。
 - `nvidia-smi` 的真实输出格式、`utilization.gpu` 的精确定义，是按命令参数与我对 NVIDIA 文档的理解写的，本地没有核对文档。
-- Gate B 的 `nvidia-smi` 运行在 **SessionRouter 所在的节点**，不一定是容器所在的节点；如果两者不在同一台机器，读到的可能是别的机器上同编号的卡。这是 [`commit-72ca50c-gate-ab-walkthrough.md` §7 第 3 条](commit-72ca50c-gate-ab-walkthrough.md#7-从代码读出的-6-处注意点推断) 已经记录的推断，本文没有额外验证。
+- Gate B 的 `nvidia-smi` 运行在 **SessionRouter 所在的节点**，不一定是容器所在的节点；如果两者不在同一台机器，读到的可能是别的机器上同编号的卡。这是 [`commit-72ca50c-gate-ab-walkthrough.md` §7 第 3 条](../archive/commit-72ca50c-gate-ab-walkthrough.md#7-从代码读出的-6-处注意点推断) 已经记录的推断，本文没有额外验证。
 
 ## 相关文档
 
 - [从 Gate B 学 HTTP](http-basics-for-gate-b.md)：本文第 5 节、第 8 节涉及的 HTTP 请求、端口、URL 设计、"POST 之后为什么有回应"的网络基础补课。
-- [提交 72ca50c 代码讲解](commit-72ca50c-gate-ab-walkthrough.md)：本文的"专业版"，含 Gate A 的逐段讲解、与设计提案的对照和 6 处注意点。
-- [SciAccel GPU Gate 实测与部署](sciaccel-gpu-gate.md)：§16.5 是 Gate B 那张 5 行表格的出处。
+- [提交 72ca50c 代码讲解](../archive/commit-72ca50c-gate-ab-walkthrough.md)：本文的"专业版"，含 Gate A 的逐段讲解、与设计提案的对照和 6 处注意点。
+- [SciAccel GPU Gate 实测与部署](../archive/sciaccel-gpu-gate.md)：§16.5 是 Gate B 那张 5 行表格的出处。
 - Env Service 设计文档译文（本地资料，未随仓库发布）：Gate A / Gate B 的设计动机（§6.3 两道门）。
 - [PSRL 笔记总索引](../../README.md)

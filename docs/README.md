@@ -1,314 +1,38 @@
-# 知识文档索引
+# PSRL 文档总览
 
-本目录收录对话中产生的知识性 / 总结性解释，便于日后查阅。规则见 [AGENTS.md](../AGENTS.md)。
+> **核心结论**：按阅读目的选择入口。当前实现、论文研究与历史实验分别归类，历史结果不代表当前部署。
 
-> **核心结论**：按主题查阅下列索引。环境执行与回收专题按「知识与实现」「实验与验证」分类，早期版本讲解单独标明。
+## 目录
 
-按主题组织文档；下列入口提供主题索引，已拆分的长文同时列出子文档。
+- [使用与架构](#使用与架构)
+- [环境执行专题](#环境执行专题)
+- [基础知识与工具](#基础知识与工具)
+- [维护与核验](#维护与核验)
 
-目录：
+## 使用与架构
 
-- [PSRL 框架与相关知识](#psrl-框架与相关知识)
-- [环境执行与回收专题](#环境执行与回收专题)
-  - [知识与实现](#知识与实现)
-  - [实验与验证](#实验与验证)
-- [开发工具](#开发工具)
-- [其他位置的文档](#其他位置的文档)
-- [Documentation site](#documentation-site)
-- [Build locally](#build-locally)
-- [Layout](#layout)
-- [Editing](#editing)
-- [Publishing](#publishing)
-- [Troubleshooting](#troubleshooting)
+- [项目概览](overview/index.md)
+- [安装与运行](tutorial/index.md)
+- [架构设计](design/index.md)
+- [示例](examples/index.md)
+- [PSRL 原理与训练知识](psrl/README.md)
 
-## PSRL 框架与相关知识
+## 环境执行专题
 
-PSRL 训练框架本身（运行指南、源码地图、Agent Loop/Harbor/TITO 工具调用、Env Service/EnvWorker 设计提案）、以及理解它必须懂的 RL 算法知识（GAE、PPO/GRPO/DAPO、RLVR）和底层推理系统知识（vLLM、NIXL）、还有一次真实的训练崩溃复盘。包含以下两组已拆分专题；其他文档详见 [psrl/README.md](psrl/README.md)。
+- [当前设计](env-worker-deep-dive/knowledge/current-design.md)
+- [机制与接入](env-worker-deep-dive/knowledge/README.md)
+- [文献调研与论文精读](env-worker-deep-dive/literature-reviews/README.md)
+- [研究问题与提案](env-worker-deep-dive/research-proposals/README.md)
+- [历史实现归档](env-worker-deep-dive/archive/README.md)
+- [实验报告](env-worker-deep-dive/experiments/README.md)
+- [阶段汇报](env-worker-deep-dive/milestones/README.md)
 
-- [vllm-and-training-parallelism](psrl/vllm-and-training-parallelism.md)：已拆分为 5 篇子文档，原文件保留为索引。
-- [vLLM 推理机制：缓存、调度与合批](psrl/vllm-and-training-parallelism/inference-mechanisms.md)：从 prefill/decode 的计算差异出发，理解 KV 缓存、PagedAttention、前缀复用、连续合批和选择性合批；原有算例与性能边界保留。
-- [训练并行、通信量与带宽分析](psrl/vllm-and-training-parallelism/training-parallelism.md)：按切分对象理解训练并行，再用每卡通信量和互联带宽判断并行策略应如何排布。
-- [PSRL 训推协作与 PPO、GRPO 基础](psrl/vllm-and-training-parallelism/rl-training-workflow.md)：串联轨迹生成、概率重算、优势估计、参数更新与权重同步，并保留 PPO/GRPO 的逐步推导和长尾分析。
-- [PSRL 分组采样、DAPO 与训练损失](psrl/vllm-and-training-parallelism/rl-loss-and-sampling.md)：解释同一 prompt 的分组采样、DAPO 改动、熵与 KL 项，以及多轮 response_mask、奖励标签和 rollout correction。
-- [推理与训练并行：公式速查及实验记录](psrl/vllm-and-training-parallelism/experiments-and-reference.md)：集中查阅符号、公式、机制对应的实验脚本与历史测量条件；历史结果不代表当前环境的重新验证。
+## 基础知识与工具
 
-- [psrl-run-guide](psrl/psrl-run-guide.md)：已拆分为 5 篇子文档，原文件保留为索引。
-- [PSRL 基础运行与示例脚本](psrl/psrl-run-guide/getting-started.md)：以 DAPO 示例说明安装、模型与数据准备、启动参数和单机 Demo；执行前先核对集群检查专题中的环境约束。
-- [PSRL 的 Ray 调度与生成长尾](psrl/psrl-run-guide/ray-and-rollout.md)：分别说明 Ray 的角色、资源调度流程和 rollout 长尾，区分集群调度职责与模型计算职责。
-- [PSRL 日志监控、批量配置与进程排查](psrl/psrl-run-guide/monitoring-and-batches.md)：从训练日志提取指标，理解 train_prompt_bsz 的配置映射，并确认训练进程所在节点及运行状态。
-- [PSRL 单机与多机启动故障复盘](psrl/psrl-run-guide/startup-incident-reviews.md)：保留 IP、数据格式、环境变量覆盖及上下文长度问题的历史故障链、修复过程与验证边界。
-- [PSRL 共享环境与集群检查](psrl/psrl-run-guide/cluster-preflight.md)：源码依赖、节点与 Docker 预检、Docker 文件系统阻塞排查，以及 science 训练复盘、监控容错、显存交接、对照设计和停止条件；历史状态每次重新核实。
+- [开发工具与系统基础](tools/README.md)
 
-## 环境执行与回收专题
+## 维护与核验
 
-从[专题入口](env-worker-deep-dive/README.md)选择阅读路线。正文按主要用途分为知识与实验，配套脚本及原始结果目录保持独立。
-
-- [Env 设计与收益简版](env-worker-deep-dive/experiments/env-design-and-results-brief.md)：2026-10-28 阶段报告，说明当时设计、固定 baseline 对照与实测收益，当前结构查现状入口。
-- [Env 实现、实测收益与后续规划](env-worker-deep-dive/experiments/env-status-and-roadmap.md)：2026-10-28 阶段详细版，比较固定 baseline、当时 EnvRouter 和未来自动策略，保留实测数据与验证边界。
-
-### 知识与实现
-
-- [RollArt 与 DynaRL 精读](env-worker-deep-dive/knowledge/rollart-dynarl-deep-reading.md)：背景、架构、原创算例、实验边界，以及对当前同机命令池与研究选题的指导。
-
-- [Env 工程问题审查](env-worker-deep-dive/knowledge/engineering-review.md)：核对已完成旧问题，整理配置复用、故障恢复、队列限制和后续能力的修复顺序。
-- [环境执行与 GPU 调度：五篇近期顶会论文](env-worker-deep-dive/knowledge/recent-top-conference-papers.md)：OSDI 2026 的 RollArt、DynaRL、Murakkab、Prism、Weave，解释研究关联、可借鉴机制与差异边界。
-- [GPU benchmark README 导览](env-worker-deep-dive/experiments/gpu-benchmarks/README.md)：现有任务与图中六项 high GPU 候选的目标、评分和 command 适用性，区分常驻服务、后训练与外部裁判等待。
-- [InferenceBench 评分与 ON/OFF 边界](env-worker-deep-dive/knowledge/inferencebench-scoring.md)：延迟和吞吐公式、相对质量门槛、PSRL 裁判检查，以及常驻功能实验与卸载恢复的区别，配套 CPU 演示。
-- [GPU benchmark 接入 recipe](env-worker-deep-dive/knowledge/gpu-benchmark-recipes.md)：官方资产、Env 与 PSRL 接入，KernelBench command verifier 与测速隔离，以及常驻服务卸载恢复边界。
-- [非计时评分的 GPU 场景与调度研究](env-worker-deep-dive/knowledge/non-timing-gpu-scheduling-scenarios.md)：SWE-Serve correctness 场景、缓存实测、版本有效准备与资源联合调度及近邻论文边界。
-- [command 调度研究](env-worker-deep-dive/knowledge/command-scheduling-research.md)：以固定 rollout 组完成时间为目标，核查 KREX 等近邻，解释组内精度耦合、反馈保真调度候选及立项门槛，含统计性能评估研究、跨任务通用边界和可运行算例。
-- [AI4Infra 性能反馈 benchmark](env-worker-deep-dive/knowledge/ai4infra-performance-benchmarks.md)：现有任务是否足够、FlashInfer 官方 workload 的原生 Env command 验证、SWE-Serve 性能子集与服务级实验计划。
-- [YARN 对 GPU 工具调度的启发](env-worker-deep-dive/knowledge/yarn-inspired-gpu-feedback-scheduling.md)：应用与资源两层协作、比较关系感知的测量调度、状态保留与计算租约，以及已有工作和创新边界。
-- [RE-Bench 原生 Env 与 PSRL 接入](env-worker-deep-dive/knowledge/re-bench-recipe.md)：GPT-2 XL 聊天训练、真实 Alpaca 划分、宿主裁判请求桥接、独立评分、command/episode 边界，以及卸载成本、本地裁判和 command 空窗权衡。
-- [GPU benchmark 接入验证](env-worker-deep-dive/experiments/gpu-benchmarks/FINDINGS.md)：KernelBench、autoresearch、RE-Bench 真实资产 CUDA 验证与 InferenceBench 常驻 ON/OFF，分别记录完整评分缺口和资源回收。
-
-**了解现状先读[当前设计](env-worker-deep-dive/knowledge/current-design.md)**：结构图、模式区别、源码路径、能力与验证边界。[知识分类索引](env-worker-deep-dive/knowledge/README.md)按机制、接入、基础知识、提案和历史实现组织阅读。
-
-- [GPU workload 与 benchmark 接入调研](env-worker-deep-dive/knowledge/gpu-workload-benchmark-survey.md)：比较容器训练、GPU kernel、自动研究和 AI 基础设施任务，补充图中六项 high GPU、PostTrainBench 选题与 RE-Bench 真实驻留等待代码。
-- [EnvRouter 流程与通用接入设计讨论](env-worker-deep-dive/knowledge/env-router-current-flow.md)：阶段流程与设计理由，包含通用接入提案、恢复成本和教学模拟，不作为当前能力首读入口。
-- [GPU 命令动态放置](env-worker-deep-dive/knowledge/dynamic-command-placement.md)：同机命令池、CPU/主存与 GPU 分账，真实 Ray 固定工作量和准备前移对照，跨节点与成本预测仍待实现。
-- [Worker 重试、整组补采与重派发](env-worker-deep-dive/knowledge/worker-retry-and-redispatch.md)：说明框架已有的两层恢复与同请求转移的区别，记录执行监督、熔断和等待竞态修复，以及真实 Ray/Docker 故障验证。
-- [MPS 并行执行后端](env-worker-deep-dive/knowledge/mps-parallel-execution.md)：同容器及跨容器作业的预算准入、设备授权、MPS 定向取消、物理回收与真实 Docker 验证。
-- [MPS 真实 GPU 训练并发对照](env-worker-deep-dive/experiments/mps-training-comparison.md)：相同 autoresearch 工作量下比较串行、普通多进程和 MPS，区分训练计时、内核时间线和功能验收，包含控制通道并发故障的定位与修复。
-- [GPU 作业入口、任务遥测与执行后端统一](env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md)：显式 GPU 作业与遥测、宿主机部署前提及 Science 接线，区分 procfs 视图错误与驱动能力。附同容器并发的预算、子组、独立回收方案及 CPU 模型，明确生产能力边界。
-- [EnvWorker 历史实现与修复前审查](env-worker-deep-dive/knowledge/implementation-and-gaps.md)：旧计数器与 AIRS-Bench 修复前证据，已删除失效实施待办，第 15.3 节链接现有实现。
-- [Docker 借用 rollout GPU](env-worker-deep-dive/knowledge/rollout-gpu-lending.md)：解释 science 与 vLLM 同卡交接的当前调用链、配置条件和状态卸载边界，区分任务归因与物理归还。附 unit 配额、CPU 模拟、真实 GPU 借还结果及阶段租约、抢占和预测回填方案。
-- [vLLM 与环境同卡共享策略](env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md)：独立 GPU 优先、常驻 command 共享、KV 上限与已睡眠窗口协议。包含 Docker MPS 双客户端与定向取消实测、PID 视图障碍及框架接入规划，区分功能验证和性能收益。
-- [EnvRouter 命令阶段配额](env-worker-deep-dive/knowledge/command-gpu-reservations.md)：保留容器状态、按命令归还 GPU 配额及后台归还与规划重叠的实现，包含慢查询定位与直接接口修复的 GPU 对照、失败验收、CPU 教学模拟及跨节点调度提案。
-- [原生后端修复与 science 短验证](env-worker-deep-dive/experiments/native-backend-fixes-and-science.md)：生命周期与整次任务准入修复，固定 baseline 的真实 LAPS oracle 对照，区分任务耗时改善、服务启动成本和未验证的 GPU 竞争。
-- [EnvWorker 与 Harbor 共用容器后端](env-worker-deep-dive/knowledge/native-harbor-backend.md)：保留 Harbor 任务层、复用 EnvWorker 的容器管理，解释持久与独立命令语义，附 CPU 回归和真实 Docker oracle 验证及 GPU/远程调度边界。
-- [GPU 统一执行后端](env-worker-deep-dive/knowledge/unified-gpu-execution.md)：episode 与 command 共用作业执行、等待和取消，原生与 Compose 提供者进一步共用托管作业实现并通过真实 CUDA 检查，说明 EnvRouter 到容器提供者的完整调用链、与固定 baseline 的结构对照、模式配置、Docker 与 vLLM 的资源关系及验证边界。
-- [GPU 显存准入与未兑现预约](env-worker-deep-dive/knowledge/gpu-memory-admission.md)：区分 unit 总容量和动态余量，解释多任务共享、可信归属抵扣、episode 记账修复与整卡真实压力对照。
-- [Env Service 初期实现讲解](env-worker-deep-dive/knowledge/env-service-implementation.md)：租约、unit、overlay 与节点策略，按 2026-10-12 版本阅读。
-- [EnvWorker 接入与 GPU 验证方法](env-worker-deep-dive/knowledge/onboarding-and-gpu-validation.md)：环境类、AgentLoop 接入及分层验证方法。
-- [Gate B 新手讲解](env-worker-deep-dive/knowledge/gate-b-beginner-guide.md)：旧版会话绑定、遥测轮询与回复节流。
-- [从 Gate B 学 HTTP](env-worker-deep-dive/knowledge/http-basics-for-gate-b.md)：请求、端口、路径与响应的基础机制。
-- [提交 72ca50c 的 Gate A/B 讲解](env-worker-deep-dive/knowledge/commit-72ca50c-gate-ab-walkthrough.md)：限定提交的代码解读，不代表后续 EnvRouter。
-- [SciAccel GPU Gate 接入与部署](env-worker-deep-dive/knowledge/sciaccel-gpu-gate.md)：早期整卡锁、回复节流与部署验证。
-
-### 实验与验证
-
-[实验分类索引](env-worker-deep-dive/experiments/README.md)区分真实训练、组件对照与故障记录，并提供脚本和原始结果入口。
-
-- [GPU 进程归属的 procfs 挂载障碍](env-worker-deep-dive/experiments/host-proc-blocker.md)：可转发的平台问题说明、实验观察模式配置、未验证评分风险和替代方式。
-- [不用 procfs 标识进程](env-worker-deep-dive/knowledge/process-identity-without-procfs.md)：通俗比较 procfs 与 eBPF，解释 PID 分层的设计原因、SSH 容器层次、MPS 控制编号、pidfd 与 GPU 归属边界。
-- [AIRS-Bench 修复与小实验](env-worker-deep-dive/airs-bench-audit/fixes-and-results.md) —— 普通 CSV 评分隔离、最终奖励取值、shell 有界 I/O、资源回收，以及真实 MLGym 回放、远端 Docker 小实验和持续复核结果。
-- [APPS 判题隔离实现](env-worker-deep-dive/airs-bench-audit/apps-isolation.md) —— 可信 judge 与无答案容器分离、评分错误分类、正式镜像小样本对照与 MLGym 回放，以及全量吞吐的验收边界。
-- [EnvRouter 同期配对与 Gate A/B 设计审视](env-worker-deep-dive/experiments/router-paired-latency-and-design-review.md)：低负载配对、原设计剩余项，以及迁移恢复、逐卡预算、容器限额、资源遥测、负载派发与清理确认的实现和验收边界。
-- [修复后 Router 与固定 OFF 的单卡对照](env-worker-deep-dive/experiments/router-baseline-control-validation.md)：在相同物理 GPU 和固定成功数量下，比较低压力开销、高压力 OOM 补采与命令阶段安全回填，补充 NVML 连接复用后的低负载优化实测及私有节点预热、固定 OFF 的实机复验，明确合成任务和训练的区别，含低负载关键路径拆分、长尾复现与阻塞栈定位。 补充同步准备移出事件循环后的实现、安全边界和实机对照。
-- [Science 训练资源账本对照](env-worker-deep-dive/experiments/science-env-router-comparison.md) —— 解释 14 GiB 任务的 unit 余量，比较旧整卡锁与 EnvRouter 预算共享，附真实 GPU 并发与显存图、完整训练对照未完成的原因和修复验证边界。
-- [真实 LAPS 训练的 Router 开关对照](env-worker-deep-dive/experiments/science-training-router-ab.md) —— 两组各 8 条轨迹、2 step 的 entropy/loss 与资源曲线；第 10 节汇总 EnvRouter 的意义、共享预算与回收收益，区分 GPU 容器加速和训练尚无性能优势的证据，附源码路径与 CPU 演示。
-- [Science 真实训练的压力与原生任务对照](env-worker-deep-dive/experiments/science-single-gpu-training-control.md)：固定历史 OFF 与 ON 使用相同设备，比较显存准入、OOM 补采、逐步耗时及初始化摊销；包含修复后高压力完整三步结果，并区分修复前高低压力、原生任务及历史多步实验。
-- [真实 GPU 工作负载的同任务多协程对照](env-worker-deep-dive/experiments/science-natural-gpu-concurrency.md)：保留 MLGym 分类训练的同容器并发、高低显存压力与启动修复结果；已注明用户原意是同题多 rollout，单容器组件实验不代表该目标完成，附范围纠正和 CPU 教学示例。
-- [Science GPU 压力与 Router 训练对照](env-worker-deep-dive/experiments/science-gpu-pressure-ab.md) —— 最新按指定旧提交对照四题各四条、OOM 补采：两组完成，OOM 7/0，但 Router 采样慢 64.3%；保留历史结果、HTTP 修复、等完成量图表及整任务租约空闲占用证据。
-- [AIRS-Bench 审查与复现](env-worker-deep-dive/knowledge/implementation-and-gaps.md#17-airs-bench-接入批评核对与最小复现) —— 2026-10-13 修复前代码裁定、真实 Bash 复现、上游 MLGym 契约检查和修复顺序建议。
-- [Env Service 设计与修复验证](env-worker-deep-dive/env-service-verification/README.md)：早期进程、容器、跨节点与训练验证，保留各阶段验收边界。
-
-- [CUDA 上下文与计算竞争](env-worker-deep-dive/knowledge/cuda-context-and-compute-contention.md)：解释 context、stream、SM 与 MPS，以及上下文开销的显存准入。
-- [CPU 与 GPU 并行架构对比](env-worker-deep-dive/knowledge/cpu-gpu-parallelism-architecture-comparison.md)：比较处理器调度粒度、上下文切换及 MPS、MIG 的适用边界。
-- [GPU 准入、归属与恢复](env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md)：串联 eBPF 身份识别、资源预算、节点恢复和协程清理，附 CPU 演示。
-
-## 开发工具
-
-- [docs 文档时效巡检](tools/docs-freshness-audit.md)：11 月 2 日与 5 日的审计记录，列出已删除或修正的旧描述、源码依据与未验证范围。
-
-- [inode 与 Docker 写回阻塞](tools/linux/inode-basics.md)：用真实六字节文件实验解释文件名、inode、硬链接、删除后的打开引用，以及 inode 容量与写回等待的区别。
-
-和具体研究内容无关的开发工具与系统基础：Claude Code 权限模式与执行命令方式、Codex 的 `AGENTS.md` 作用范围、会话管理与配置备份回退、Shell `source`、Python `import` 和 Linux inode。详见 [tools/README.md](tools/README.md)。
-
-## 其他位置的文档
-
-- [文档站点构建指南](#documentation-site)
-
-## Documentation site
-
-Source for the PSRL documentation site, built with [Sphinx](https://www.sphinx-doc.org/)
-and published on [Read the Docs](https://psrl.readthedocs.io/en/latest/).
-
-This README is a guide for people editing the docs. It is excluded from the built
-site.
-
----
-
-## Build locally
-
-From the repository root:
-
-```bash
-# 1. Install the documentation toolchain
-python -m pip install -r docs/requirements.txt
-
-# 2. Build the HTML site
-cd docs
-make html
-
-# 3. Preview it
-python -m http.server -d _build/html 8000
-```
-
-Then open <http://localhost:8000>.
-
-Building the docs does not import PSRL itself, so a full PSRL environment (vLLM, Ray,
-Megatron) is not required. The packages in `requirements.txt` are enough and install
-cleanly into a bare virtualenv.
-
-For an auto-reloading dev server that rebuilds on save:
-
-```bash
-python -m pip install sphinx-autobuild
-cd docs
-make livehtml
-```
-
-`make clean` removes `_build/`, and `make help` lists every target Sphinx offers.
-
-To catch broken references the way CI does, promote warnings to errors:
-
-```bash
-cd docs
-make html SPHINXOPTS="-W --keep-going"
-```
-
----
-
-## Layout
-
-```
-docs/
-├── conf.py            # Sphinx configuration
-├── Makefile           # make html / livehtml / clean
-├── requirements.txt   # Sphinx, theme, and extensions
-├── README.md          # This guide (not part of the site)
-├── index.md           # Landing page and top-level toctree
-├── _static/           # CSS, JS, and figures (SVG, PNG, MP4)
-├── _templates/        # Theme template overrides
-├── overview/          # What PSRL is and how it fits together
-├── tutorial/          # Installation, quickstart, configuration reference
-├── design/            # Architecture and subsystem deep dives
-└── examples/          # End-to-end recipes (RLVR, agentic RL, reward models)
-```
-
-`.readthedocs.yaml` lives at the repository root, where Read the Docs expects it.
-
----
-
-## Editing
-
-### Add a page
-
-1. Create the `.md` file in the right section, for example `docs/design/new_feature.md`.
-2. Register it in that section's `index.md` toctree, otherwise Sphinx warns that the
-   page is orphaned:
-
-   ````markdown
-   ```{toctree}
-   :maxdepth: 1
-
-   architecture
-   parameter_server
-   new_feature
-   ```
-   ````
-
-3. Rebuild and check for warnings.
-
-### Markdown flavor
-
-Pages are MyST Markdown. Enabled extensions include `colon_fence`, `deflist`,
-`dollarmath`, `amsmath`, `attrs_inline`, `substitution`, and `tasklist`, so
-definition lists, `$...$` math, and `:::`-fenced directives all work.
-
-Cross-reference other pages with `` {doc}`../design/architecture` `` instead of a raw
-relative link, so Sphinx validates the target at build time.
-
-### Diagrams
-
-Mermaid renders client-side:
-
-````markdown
-```{mermaid}
-graph LR
-    A[Train Worker] -->|push| B[Parameter Server]
-    B -->|pull| C[Rollout Instance]
-```
-````
-
-### Figures
-
-Put figures in `docs/_static/img/` and reference them with a root-relative path:
-
-````markdown
-```{figure} /_static/img/overview.svg
-```
-````
-
-Prefer SVG. To convert a PDF figure, use `pdf2svg in.pdf out.svg` or
-`inkscape in.pdf --export-filename=out.svg`.
-
-The repository `.gitignore` excludes `**/*.png` as a runtime artifact, with an
-explicit exception for `docs/_static/img/*.png`. Keep new raster figures in that
-directory so they are not silently dropped from commits.
-
-### Sphinx Design components
-
-```markdown
-:::{grid-item-card} Title
-:link: target/page
-:link-type: doc
-Description text.
-:::
-
-::::{tab-set}
-:::{tab-item} FSDP
-FSDP instructions.
-:::
-:::{tab-item} Megatron
-Megatron instructions.
-:::
-::::
-
-:::{admonition} Title
-:class: tip
-Content.
-:::
-```
-
----
-
-## Publishing
-
-Read the Docs builds from `.readthedocs.yaml` at the repository root, which points at
-`docs/conf.py` and installs `docs/requirements.txt` on Python 3.11. Pushing to the
-default branch triggers a rebuild.
-
-To validate docs on pull requests:
-
-```yaml
-# .github/workflows/docs.yml
-name: Docs
-on: [pull_request]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: pip install -r docs/requirements.txt
-      - run: make -C docs html SPHINXOPTS="-W --keep-going"
-```
-
----
-
-## Troubleshooting
-
-| Symptom | Fix |
-|---|---|
-| `Could not import extension myst_parser` | `pip install -r docs/requirements.txt` |
-| `Theme error: no theme named 'pydata_sphinx_theme'` | Same, the theme ships in `requirements.txt` |
-| Mermaid block renders as plain text | Confirm `sphinxcontrib-mermaid` is installed and the fence is `{mermaid}` |
-| `document isn't included in any toctree` | Add the page to its section `index.md`, or list it in `exclude_patterns` |
-| Figure missing from output | Check the file is under `docs/_static/img/` and the path starts with `/_static/img/` |
-| Stale output after edits | `make clean && make html` |
+- [时效审计](tools/docs-freshness-audit.md)
+- [本次目录整理与核验](tools/docs-organization-audit.md)
+- [站点构建](site-maintenance.md)

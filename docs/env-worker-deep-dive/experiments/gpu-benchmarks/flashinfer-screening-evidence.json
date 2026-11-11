@@ -1,0 +1,4992 @@
+{
+  "scope": "Real measurements plus offline replay. Holdout medians are noisy references, not ground truth.",
+  "results": {
+    "1": {
+      "ranking_counts": [
+        {
+          "order": [
+            "flashinfer_wrapper_0af255",
+            "gemini-2.5-pro_triton_uc5ufi",
+            "gpt-o3_triton_38f281",
+            "gpt-5_triton_2f0daa"
+          ],
+          "count": 6
+        },
+        {
+          "order": [
+            "flashinfer_wrapper_0af255",
+            "gemini-2.5-pro_triton_uc5ufi",
+            "gpt-5_triton_2f0daa",
+            "gpt-o3_triton_38f281"
+          ],
+          "count": 6
+        }
+      ],
+      "kept": [
+        "flashinfer_wrapper_0af255",
+        "gemini-2.5-pro_triton_uc5ufi"
+      ],
+      "winners": {
+        "four_rounds_only": "flashinfer_wrapper_0af255",
+        "uniform_eight": "flashinfer_wrapper_0af255",
+        "screen_then_refine": "flashinfer_wrapper_0af255",
+        "holdout": "flashinfer_wrapper_0af255"
+      },
+      "decision_evaluation_counts": {
+        "four_rounds_only": 16,
+        "uniform_eight": 32,
+        "screen_then_refine": 24
+      },
+      "holdout_relative_loss_percent": {
+        "four_rounds_only": 0.0,
+        "uniform_eight": 0.0,
+        "screen_then_refine": 0.0
+      },
+      "candidate_summary": {
+        "flashinfer_wrapper_0af255": {
+          "screen_median_us": 5.6133332739894595,
+          "holdout_median_us": 5.613333235184352,
+          "all_median_us": 5.6186666479334235,
+          "all_min_us": 5.5946665816009045,
+          "all_max_us": 5.663999899600943,
+          "round_wins": 12
+        },
+        "gemini-2.5-pro_triton_uc5ufi": {
+          "screen_median_us": 5.805333300183216,
+          "holdout_median_us": 5.823999992571771,
+          "all_median_us": 5.8106666353220735,
+          "all_min_us": 5.78133335026602,
+          "all_max_us": 5.850666590655844,
+          "round_wins": 0
+        },
+        "gpt-5_triton_2f0daa": {
+          "screen_median_us": 12.122666540866097,
+          "holdout_median_us": 12.101333355531096,
+          "all_median_us": 12.10400004250308,
+          "all_min_us": 11.888000027587017,
+          "all_max_us": 12.346666616698107,
+          "round_wins": 0
+        },
+        "gpt-o3_triton_38f281": {
+          "screen_median_us": 12.298666639253497,
+          "holdout_median_us": 12.287999891365567,
+          "all_median_us": 12.298666639253497,
+          "all_min_us": 12.032000347971916,
+          "all_max_us": 12.629333573083082,
+          "round_wins": 0
+        }
+      }
+    },
+    "16254": {
+      "ranking_counts": [
+        {
+          "order": [
+            "flashinfer_wrapper_0af255",
+            "gemini-2.5-pro_triton_uc5ufi",
+            "gpt-5_triton_2f0daa",
+            "gpt-o3_triton_38f281"
+          ],
+          "count": 12
+        }
+      ],
+      "kept": [
+        "flashinfer_wrapper_0af255",
+        "gemini-2.5-pro_triton_uc5ufi"
+      ],
+      "winners": {
+        "four_rounds_only": "flashinfer_wrapper_0af255",
+        "uniform_eight": "flashinfer_wrapper_0af255",
+        "screen_then_refine": "flashinfer_wrapper_0af255",
+        "holdout": "flashinfer_wrapper_0af255"
+      },
+      "decision_evaluation_counts": {
+        "four_rounds_only": 16,
+        "uniform_eight": 32,
+        "screen_then_refine": 24
+      },
+      "holdout_relative_loss_percent": {
+        "four_rounds_only": 0.0,
+        "uniform_eight": 0.0,
+        "screen_then_refine": 0.0
+      },
+      "candidate_summary": {
+        "flashinfer_wrapper_0af255": {
+          "screen_median_us": 44.07199968894322,
+          "holdout_median_us": 44.13066649188598,
+          "all_median_us": 44.10400024304788,
+          "all_min_us": 43.98400026063124,
+          "all_max_us": 44.19733459750811,
+          "round_wins": 12
+        },
+        "gemini-2.5-pro_triton_uc5ufi": {
+          "screen_median_us": 51.65866669267416,
+          "holdout_median_us": 51.72533355653286,
+          "all_median_us": 51.70666612684727,
+          "all_min_us": 51.56266689300537,
+          "all_max_us": 51.78133398294449,
+          "round_wins": 0
+        },
+        "gpt-5_triton_2f0daa": {
+          "screen_median_us": 100.79199882845083,
+          "holdout_median_us": 100.77599870661894,
+          "all_median_us": 100.76533195873102,
+          "all_min_us": 100.5759984254837,
+          "all_max_us": 100.91733187437057,
+          "round_wins": 0
+        },
+        "gpt-o3_triton_38f281": {
+          "screen_median_us": 176.24800031383833,
+          "holdout_median_us": 176.36000116666156,
+          "all_median_us": 176.30133281151456,
+          "all_min_us": 175.9733334183693,
+          "all_max_us": 176.45333210627237,
+          "round_wins": 0
+        }
+      }
+    }
+  },
+  "actual_evaluations": 104,
+  "measurements": {
+    "config": {
+      "use_isolated_runner": false,
+      "definitions": null,
+      "solutions": null,
+      "timeout_seconds": 60,
+      "profile_baseline": true,
+      "log_dir": null,
+      "warmup_runs": null,
+      "iterations": null,
+      "num_trials": null,
+      "rtol": null,
+      "atol": null,
+      "required_matched_ratio": null,
+      "sampling_validation_trials": null,
+      "sampling_tvd_threshold": null,
+      "op_type_config": {
+        "moe": {
+          "warmup_runs": null,
+          "iterations": null,
+          "num_trials": null,
+          "rtol": null,
+          "atol": null,
+          "required_matched_ratio": 0.95,
+          "extra": {}
+        },
+        "sampling": {
+          "warmup_runs": null,
+          "iterations": null,
+          "num_trials": null,
+          "rtol": null,
+          "atol": null,
+          "required_matched_ratio": null,
+          "extra": {
+            "sampling_validation_trials": 100,
+            "sampling_tvd_threshold": 0.2
+          }
+        }
+      },
+      "definition_config": {}
+    },
+    "rounds": [
+      {
+        "index": 0,
+        "warmup": true,
+        "wall_s": 22.873114597052336,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:09.661823",
+              "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.0058346667016545934,
+                "reference_latency_ms": 0.036559998989105225,
+                "speedup_factor": 6.265996132861805
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:12.159715",
+              "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005824000031376879,
+                "reference_latency_ms": 0.036559998989105225,
+                "speedup_factor": 6.277472320078595
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:12.935234",
+              "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.01210133358836174,
+                "reference_latency_ms": 0.036559998989105225,
+                "speedup_factor": 3.0211545464928102
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:13.539599",
+              "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012250666817029318,
+                "reference_latency_ms": 0.036559998989105225,
+                "speedup_factor": 2.984327264397083
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:13.716769",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.044106667240460716,
+                "reference_latency_ms": 0.6783946553866068,
+                "speedup_factor": 15.380773425662271
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:13.743188",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.007812497206032276,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.05093866586685181,
+                "reference_latency_ms": 0.6783946553866068,
+                "speedup_factor": 13.317872461753463
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.358503",
+              "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+              "correctness": {
+                "max_relative_error": 0.007812497206032276,
+                "max_absolute_error": 0.015625,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.10065599903464317,
+                "reference_latency_ms": 0.6783946553866068,
+                "speedup_factor": 6.739733964123897
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.410766",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.1762133315205574,
+                "reference_latency_ms": 0.6783946553866068,
+                "speedup_factor": 3.8498486438721233
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "warmup": false,
+        "wall_s": 0.3740151636302471,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.597336",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.05172266624867916,
+                "reference_latency_ms": 0.677898645401001,
+                "speedup_factor": 13.106413388314305
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.634298",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.10071999952197075,
+                "reference_latency_ms": 0.677898645401001,
+                "speedup_factor": 6.730526693987188
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.686418",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.1759733334183693,
+                "reference_latency_ms": 0.677898645401001,
+                "speedup_factor": 3.852280525875617
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.711518",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.04404799888531367,
+                "reference_latency_ms": 0.677898645401001,
+                "speedup_factor": 15.389998695877729
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.746051",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005807999987155199,
+                "reference_latency_ms": 0.03677866607904434,
+                "speedup_factor": 6.332414972517726
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.760296",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012346666616698107,
+                "reference_latency_ms": 0.03677866607904434,
+                "speedup_factor": 2.9788336577666605
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.774327",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012133333211143812,
+                "reference_latency_ms": 0.03677866607904434,
+                "speedup_factor": 3.0312087733043644
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.786937",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005621333296100299,
+                "reference_latency_ms": 0.03677866607904434,
+                "speedup_factor": 6.54269443595506
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "warmup": false,
+        "wall_s": 0.36507560312747955,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.825204",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.011957333267976841,
+                "reference_latency_ms": 0.03578666659692923,
+                "speedup_factor": 2.99286352524523
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.839412",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012479999878754219,
+                "reference_latency_ms": 0.03578666659692923,
+                "speedup_factor": 2.867521389791995
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.852187",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005626666514823834,
+                "reference_latency_ms": 0.03578666659692923,
+                "speedup_factor": 6.360189732703517
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:14.864969",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005802666613211234,
+                "reference_latency_ms": 0.03578666659692923,
+                "speedup_factor": 6.167279456560861
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.052064",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.10086399813493092,
+                "reference_latency_ms": 0.6784159938494364,
+                "speedup_factor": 6.7260470177068
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.103922",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.17633066574732462,
+                "reference_latency_ms": 0.6784159938494364,
+                "speedup_factor": 3.847407885487041
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.129062",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.04412800073623657,
+                "reference_latency_ms": 0.6784159938494364,
+                "speedup_factor": 15.37382121398357
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.155544",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.007751937955617905,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.05159466713666916,
+                "reference_latency_ms": 0.6784159938494364,
+                "speedup_factor": 13.148955725450843
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "warmup": false,
+        "wall_s": 0.36939105577766895,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.362015",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.17628799875577292,
+                "reference_latency_ms": 0.6784373223781586,
+                "speedup_factor": 3.8484600606196495
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.387206",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.04399466576675574,
+                "reference_latency_ms": 0.6784373223781586,
+                "speedup_factor": 15.420899569393137
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.413882",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.05174399974445502,
+                "reference_latency_ms": 0.6784373223781586,
+                "speedup_factor": 13.111420178739877
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.450450",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.015625,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.1005759984254837,
+                "reference_latency_ms": 0.6784373223781586,
+                "speedup_factor": 6.745519139745947
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.485660",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012074666563421488,
+                "reference_latency_ms": 0.03559466699759165,
+                "speedup_factor": 2.9478799112698244
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.501578",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005599999955544869,
+                "reference_latency_ms": 0.03559466699759165,
+                "speedup_factor": 6.3561905857423096
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.514377",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.00578133335026602,
+                "reference_latency_ms": 0.03559466699759165,
+                "speedup_factor": 6.1568266074734845
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.528432",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012287999813755354,
+                "reference_latency_ms": 0.03559466699759165,
+                "speedup_factor": 2.89670145972386
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "warmup": false,
+        "wall_s": 0.36645535193383694,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.565903",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005605333251878619,
+                "reference_latency_ms": 0.03595733270049095,
+                "speedup_factor": 6.4148429869785
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.578822",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005813333361099164,
+                "reference_latency_ms": 0.03595733270049095,
+                "speedup_factor": 6.1853209625144
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.593047",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.011930666863918304,
+                "reference_latency_ms": 0.03595733270049095,
+                "speedup_factor": 3.0138577424566306
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.607185",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012464000067363182,
+                "reference_latency_ms": 0.03595733270049095,
+                "speedup_factor": 2.884895098375741
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.783089",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.015625,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.044096000492572784,
+                "reference_latency_ms": 0.6786453425884247,
+                "speedup_factor": 15.390179041356163
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.809677",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.007751937955617905,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.05156266689300537,
+                "reference_latency_ms": 0.6786453425884247,
+                "speedup_factor": 13.161564043935922
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.846448",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.10091733187437057,
+                "reference_latency_ms": 0.6786453425884247,
+                "speedup_factor": 6.724765012943991
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:15.898960",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.17620800187190375,
+                "reference_latency_ms": 0.6786453425884247,
+                "speedup_factor": 3.851387765476014
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "warmup": false,
+        "wall_s": 0.43857419304549694,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.152098",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.007812499068677425,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.051701332132021584,
+                "reference_latency_ms": 0.6783200105031332,
+                "speedup_factor": 13.119971624154939
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.188922",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.007812499068677425,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.10064533228675525,
+                "reference_latency_ms": 0.6783200105031332,
+                "speedup_factor": 6.739706602294152
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.240886",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.007812499068677425,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.17627199987570444,
+                "reference_latency_ms": 0.6783200105031332,
+                "speedup_factor": 3.848143840096217
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.266031",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.007812497206032276,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.044144000858068466,
+                "reference_latency_ms": 0.6783200105031332,
+                "speedup_factor": 15.366074603977644
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.301056",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005813333205878735,
+                "reference_latency_ms": 0.0349440003434817,
+                "speedup_factor": 6.011009365185633
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.315231",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012309333309531212,
+                "reference_latency_ms": 0.0349440003434817,
+                "speedup_factor": 2.8388215238614336
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.329231",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012117333554973206,
+                "reference_latency_ms": 0.0349440003434817,
+                "speedup_factor": 2.883802792499671
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.341947",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005626666592434049,
+                "reference_latency_ms": 0.0349440003434817,
+                "speedup_factor": 6.21042668326385
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "warmup": false,
+        "wall_s": 0.36804341338574886,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.381514",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.0119680001710852,
+                "reference_latency_ms": 0.03510400032003721,
+                "speedup_factor": 2.933155065024882
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.395917",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012469333441307148,
+                "reference_latency_ms": 0.03510400032003721,
+                "speedup_factor": 2.815226690766663
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.408570",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005626666670044263,
+                "reference_latency_ms": 0.03510400032003721,
+                "speedup_factor": 6.23886261237527
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.421502",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005802666613211234,
+                "reference_latency_ms": 0.03510400032003721,
+                "speedup_factor": 6.049632463825183
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.610442",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.007751937955617905,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.1009119985004266,
+                "reference_latency_ms": 0.678656001885732,
+                "speedup_factor": 6.725226058057537
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.662408",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.17640533298254013,
+                "reference_latency_ms": 0.678656001885732,
+                "speedup_factor": 3.8471399385238687
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.687621",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.04414933423201243,
+                "reference_latency_ms": 0.678656001885732,
+                "speedup_factor": 15.371828674001668
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.714648",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.051696001241604485,
+                "reference_latency_ms": 0.678656001885732,
+                "speedup_factor": 13.127823924214
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "warmup": false,
+        "wall_s": 0.36991733498871326,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.923583",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.007812499068677425,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.17627733697493872,
+                "reference_latency_ms": 0.678298662106196,
+                "speedup_factor": 3.847906224057773
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.949232",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.04399466700851917,
+                "reference_latency_ms": 0.678298662106196,
+                "speedup_factor": 15.417747382309988
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:16.976092",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.007751937955617905,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.05163733412822088,
+                "reference_latency_ms": 0.678298662106196,
+                "speedup_factor": 13.135818755126085
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.013185",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.10072533289591472,
+                "reference_latency_ms": 0.678298662106196,
+                "speedup_factor": 6.734141676226785
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.050154",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012122666463255882,
+                "reference_latency_ms": 0.035525333136320114,
+                "speedup_factor": 2.9304883743191588
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.062936",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005663999899600943,
+                "reference_latency_ms": 0.035525333136320114,
+                "speedup_factor": 6.272128136658875
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.075849",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005813333283488949,
+                "reference_latency_ms": 0.035525333136320114,
+                "speedup_factor": 6.11100919281874
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.090153",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012298666561643282,
+                "reference_latency_ms": 0.035525333136320114,
+                "speedup_factor": 2.8885516131574356
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 8,
+        "warmup": false,
+        "wall_s": 0.49177739955484867,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.243125",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005631999966378014,
+                "reference_latency_ms": 0.03456533389786879,
+                "speedup_factor": 6.1373107429363225
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.259785",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.0057920000205437345,
+                "reference_latency_ms": 0.03456533389786879,
+                "speedup_factor": 5.967771715343313
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.273858",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.011888000027587017,
+                "reference_latency_ms": 0.03456533389786879,
+                "speedup_factor": 2.907581916020969
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.287917",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012485333097477755,
+                "reference_latency_ms": 0.03456533389786879,
+                "speedup_factor": 2.768475108193274
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.473349",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.04407466699679693,
+                "reference_latency_ms": 0.6786880095799764,
+                "speedup_factor": 15.398596423412553
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.499856",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.0517493337392807,
+                "reference_latency_ms": 0.6786880095799764,
+                "speedup_factor": 13.114912995774736
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.536256",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.10079466427365939,
+                "reference_latency_ms": 0.6786880095799764,
+                "speedup_factor": 6.733372390996073
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.588129",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.17631466686725616,
+                "reference_latency_ms": 0.6786880095799764,
+                "speedup_factor": 3.8492997867894183
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 9,
+        "warmup": false,
+        "wall_s": 0.3666356150060892,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.772258",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.05173866699139277,
+                "reference_latency_ms": 0.6783466736475626,
+                "speedup_factor": 13.1110195351653
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.808835",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.10073599964380264,
+                "reference_latency_ms": 0.6783466736475626,
+                "speedup_factor": 6.733905218056721
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.860790",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.17645333210627237,
+                "reference_latency_ms": 0.6783466736475626,
+                "speedup_factor": 3.8443404017953906
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.885941",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.04398400026063124,
+                "reference_latency_ms": 0.6783466736475626,
+                "speedup_factor": 15.422577974444275
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.920325",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005808000064765413,
+                "reference_latency_ms": 0.03809600075085958,
+                "speedup_factor": 6.5592287062755545
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.934510",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.01230933346475164,
+                "reference_latency_ms": 0.03809600075085958,
+                "speedup_factor": 3.0948873763107714
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.948598",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012032000347971916,
+                "reference_latency_ms": 0.03809600075085958,
+                "speedup_factor": 3.166223375091653
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:17.961219",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.0055946665816009045,
+                "reference_latency_ms": 0.03809600075085958,
+                "speedup_factor": 6.809342468440447
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 10,
+        "warmup": false,
+        "wall_s": 0.36654132604599,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.003793",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.01190399999419848,
+                "reference_latency_ms": 0.03689600030581156,
+                "speedup_factor": 3.0994623927917635
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.018257",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012506666748474041,
+                "reference_latency_ms": 0.03689600030581156,
+                "speedup_factor": 2.95010661496304
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.031112",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005615999999766548,
+                "reference_latency_ms": 0.03689600030581156,
+                "speedup_factor": 6.5698006245272955
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.044299",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005834666624044378,
+                "reference_latency_ms": 0.03689600030581156,
+                "speedup_factor": 6.32358327959389
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.231284",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.10081599776943524,
+                "reference_latency_ms": 0.6786826550960541,
+                "speedup_factor": 6.731894442469256
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.283225",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.176336000363032,
+                "reference_latency_ms": 0.6786826550960541,
+                "speedup_factor": 3.8488037252677567
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.308355",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.044111999993522964,
+                "reference_latency_ms": 0.6786826550960541,
+                "speedup_factor": 15.385442854454709
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.334827",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.05171200012167295,
+                "reference_latency_ms": 0.6786826550960541,
+                "speedup_factor": 13.124277798174205
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 11,
+        "warmup": false,
+        "wall_s": 0.36547436751425266,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.544705",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.17638400197029114,
+                "reference_latency_ms": 0.6784266630808512,
+                "speedup_factor": 3.8463049681519332
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.569794",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.044149332990249,
+                "reference_latency_ms": 0.6784266630808512,
+                "speedup_factor": 15.366634490960289
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.596198",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.05178133398294449,
+                "reference_latency_ms": 0.6784266630808512,
+                "speedup_factor": 13.101761018831775
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.632536",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.10059733192125957,
+                "reference_latency_ms": 0.6784266630808512,
+                "speedup_factor": 6.743982669559023
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.667668",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012069333034257093,
+                "reference_latency_ms": 0.03610133255521456,
+                "speedup_factor": 2.9911621837549798
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.680374",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005610666625822584,
+                "reference_latency_ms": 0.03610133255521456,
+                "speedup_factor": 6.434410554542922
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.693241",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005813333361099164,
+                "reference_latency_ms": 0.03610133255521456,
+                "speedup_factor": 6.210091579607719
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.707333",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.01223999991392096,
+                "reference_latency_ms": 0.03610133255521456,
+                "speedup_factor": 2.94945529486118
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 12,
+        "warmup": false,
+        "wall_s": 0.3661319352686405,
+        "rows": [
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.748150",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.00561599984454612,
+                "reference_latency_ms": 0.03596800069014231,
+                "speedup_factor": 6.4045587047286
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.761127",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.005850666590655844,
+                "reference_latency_ms": 0.03596800069014231,
+                "speedup_factor": 6.1476756764070535
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.775234",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.011962666797141234,
+                "reference_latency_ms": 0.03596800069014231,
+                "speedup_factor": 3.0066874970334982
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.790155",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0,
+                "max_absolute_error": 0.0,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.012629333573083082,
+                "reference_latency_ms": 0.03596800069014231,
+                "speedup_factor": 2.847972973554279
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "flashinfer_wrapper_0af255",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.965649",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.0078125,
+                "max_absolute_error": 0.015625,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.04419733459750811,
+                "reference_latency_ms": 0.6786240041255951,
+                "speedup_factor": 15.35441017666836
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gemini-2.5-pro_triton_uc5ufi",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:18.992253",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.007633587811142206,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.051632000133395195,
+                "reference_latency_ms": 0.6786240041255951,
+                "speedup_factor": 13.143476959488659
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-5_triton_2f0daa",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:19.028929",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.00775193702429533,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.10084799801309903,
+                "reference_latency_ms": 0.6786240041255951,
+                "speedup_factor": 6.729176756066584
+              }
+            }
+          },
+          {
+            "definition": "rmsnorm_h2048",
+            "workload": {
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              },
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+            },
+            "solution": "gpt-o3_triton_38f281",
+            "evaluation": {
+              "status": "PASSED",
+              "environment": {
+                "hardware": "NVIDIA H20",
+                "libs": {
+                  "torch": "2.11.0+cu128",
+                  "triton": "3.6.0",
+                  "tilelang": "0.1.9",
+                  "cuda": "12.8"
+                }
+              },
+              "timestamp": "2026-11-09T08:57:19.080912",
+              "log": "",
+              "correctness": {
+                "max_relative_error": 0.00775193702429533,
+                "max_absolute_error": 0.03125,
+                "extra": null
+              },
+              "performance": {
+                "latency_ms": 0.17626133312781653,
+                "reference_latency_ms": 0.6786240041255951,
+                "speedup_factor": 3.8501013925356418
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "passed": true
+  },
+  "formal_measurement_s": 4.608032759279013,
+  "warmup_s": 22.873114597052336,
+  "actual_collection_command_s": 65.18940392136574,
+  "provenance": {
+    "upstream_head": "15618a67e8d7b7f49ca61b5ba3b9f26a876d0bee",
+    "trace_head": "da915083d4c7c5e61aa3005e3d17ae488e0fc71c",
+    "input_sha256": {
+      "subset/solutions/flashinfer_wrapper_0af255.json": "332c31e222e4cb949a03a2109309c6d9688b9153801338e06a983252aca2fd4c",
+      "subset/solutions/gemini-2.5-pro_triton_uc5ufi.json": "f3adc4b6cf0960bde9c8d3bbc627ac49e3d6fe4958823668604b60f83794a7db",
+      "subset/solutions/gpt-5_triton_2f0daa.json": "e46392926efaa52218023970b9fe5443ea77500da74a4f924eed28a847a3715e",
+      "subset/solutions/gpt-o3_triton_38f281.json": "d06a2751b306c5162ad4670474272b8a7d9c4f45366eff4c37eb0667fa1e7c24",
+      "subset/definitions/rmsnorm_h2048.json": "e67415d84b97cde71cc8ccc9faf41fe80cf3106cdab10c309e0b3e8f666b6842",
+      "subset/workloads/rmsnorm_h2048.jsonl": "a8115496b891698156586a44836821549ab69f15f51ae1308bb36b771f99f6bf"
+    },
+    "subset_uuids": [
+      "b8b3dda7-8959-4a11-bd6a-59863bc6fffc",
+      "932f75f9-e29a-4502-8794-68347b591fd5"
+    ],
+    "protocol": {
+      "rounds": 13,
+      "warmup_rounds": 1,
+      "screening_rounds": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "refinement_rounds": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "holdout_rounds": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "screening": "Keep two candidates with smallest median latency in rounds 1-4, per workload.",
+      "scope": "Offline screening replay, not a deployed adaptive scheduler or error probability guarantee.",
+      "portability": "Three official Triton solutions declare B200. Test unchanged on H20, without relabeling."
+    },
+    "psrl_head": "bc5665f436065656c043b69e8a7aa21edd8a0cd3",
+    "runtime_hashes": {
+      "psrl/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "psrl/environments/mlgym_env.py": "9f320c55d0cdbd79da3fff5a7034b8b3a21a80ed305f533e71fd20734f24d0cc",
+      "psrl/environments/mini_swe_env.py": "72ef3f4da7db7446ab05da8156fad29a575c11f0dc452b66f721e8af93132b5f",
+      "psrl/environments/__init__.py": "4b2f0371b4bdf36cff063689d9181d9480111f3057e2554987443160cedd0afb",
+      "psrl/environments/tool_env.py": "424c8792b55d08955e23f6abcc21755c274022ed904c705d73aa2c9c124996e6",
+      "psrl/environments/base.py": "e1cb97849a254d840d48e0d9c1557c16c6efb7bc4cd81f5d5e519778de859fa7",
+      "psrl/grpc/__init__.py": "0d09b56d9eae66f0d7a1c23003eb66131754f24f8c09749f2b764cb075cab507",
+      "psrl/grpc/ps_manager_service.py": "c3b702860d75675ce68d0fd118431a9aeb98c8c7d6a343a0a0e9c1999f569c8d",
+      "psrl/trainer/main_ppo.py": "c43e9bc6344c44e2b83cf74e8882f65616e877b2308b2620226047199f41133c",
+      "psrl/trainer/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "psrl/trainer/constants_ppo.py": "f4d362ea59c1c6d6f422af099e886e27a156d8a2e8b9637eb082bb3eabbff0cc",
+      "psrl/workers/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "psrl/utils/transferqueue_utils.py": "6095e2d205a7a8f9e411e034881024db31cdb2a5ac96fd254d74dccef0173df8",
+      "psrl/utils/__init__.py": "ba4007f1991b0401c05bc503978e40a8b99a87b473a100eef8688a3b8800397e",
+      "psrl/utils/config.py": "68814dadd0f91730d7f588de78cdb4a12ad46470729c21446112fe43b1445fc3",
+      "psrl/eval/vllm_server.py": "618b996f23c2c6b0080e778eb7fac9e637c928b6e2bf00fe79c4e7e70eaaf8b4",
+      "psrl/eval/serve.py": "6314d86947439cb0ccb5cf057cb1019d3e14cbac94ed20e12f7c4abd92cc681a",
+      "psrl/eval/__init__.py": "646dad38777718d2d24daf267a02a8bd623a4d4c41af6a1151f41a73ce7df524",
+      "psrl/eval/vllm_multinode.py": "9d53183ced357b0dbcef364981948eccd586065bb11cf61acffe70563e7f325b",
+      "psrl/eval/vllm_fleet.py": "3bd814c9cdef6803310d3cc7b11511833dcf0e82ea8f8df96d90a5b58f2e0b84",
+      "psrl/tools/__init__.py": "3f250848bbe80058a2da26f240a3e045c583f4590cc53f8294de3d271ced44b5",
+      "psrl/tools/function_tool.py": "350fe7e53b793cfb4dafae68c59e7d6bd9a81d280545474798cc604d0394285d",
+      "psrl/tools/base.py": "c27d8af048ea309f75409074486cf40cfb08e87e912919b1511fb3e1a2a8e2e5",
+      "psrl/tools/utils.py": "71ae94a4442ea1cb570195124a501d37f0c6dede284bc4aa78db5a1c9fcdc034",
+      "psrl/tools/sandbox_fusion_tool.py": "6cc3cc21e7153d3fbd01b5e3e270179969920de2927a82e2d5bdedc3b06f0e44",
+      "psrl/bench/basic/cluster_scanner.py": "6eadbbc2140ea5098026ba62febda1e8b8b3bbdae95a99527b5c919a4ab10aa0",
+      "psrl/bench/chunked_prefill/plot.py": "e7c60c00f19d407a6f795128d2390da63f99f6f1ed07bd7482fe130ace0076a5",
+      "psrl/bench/chunked_prefill/vllm_extension.py": "5882745d0675dcbb18eff2749f245ce22b8cdd4c306de8851bcda4f2198c1d45",
+      "psrl/bench/chunked_prefill/memory_probe.py": "10b4f9b972a88bc99120d4125e16e99908f0de6c81ef62f6549752eb36e17565",
+      "psrl/bench/chunked_prefill/__init__.py": "9ac0d7ab5eb8047a3caa7506b5c5bc95438329485b880ee8816f2305ad754f9b",
+      "psrl/bench/chunked_prefill/main_micro.py": "38d5e5245e3c73d47cf05bd9a2588b8bf5778c327a342c46b2cfba4711eb8885",
+      "psrl/bench/chunked_prefill/batch_spec.py": "30ac15fc373affbeb405c6dbc6c83d28806b9825740ca32229616d4b19840090",
+      "psrl/bench/chunked_prefill/test_batch_spec.py": "7a6e16de755dade7635307f5ae4cf5bf7e486531186f6a3505d4f933bdeaedbb",
+      "psrl/bench/rollout/vllm_extension.py": "bb9f61894d961e76025ba000f84d84a8294292f30e453c038e07c8976e4101b4",
+      "psrl/bench/rollout/stats_collector.py": "453354ceac6639269012ba5ec5302714d29d4623ad62c2f922c6791218da335d",
+      "psrl/bench/rollout/main_rollout.py": "cf057604bd20387dcf8fe4f783211b36d285a6dfb35bf01c1be4108ab8db0ded",
+      "psrl/trainer/ppo/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "psrl/trainer/ppo/utils.py": "444c1b5a43c9d8f66abd8788f281f908894c6db8cac9664e5071727c082d9c2a",
+      "psrl/trainer/ppo/ray_trainer.py": "3e55f3621a5af977ed4409f2b18452cce76bc65d7226587ad79ed9ef6ac69dab",
+      "psrl/trainer/ppo/batch_schedule.py": "132110b8dc26133fd5f0b9919ef788636b149df4167bb327701678adb2541bf8",
+      "psrl/trainer/config/__init__.py": "86235a1d016b3dc8bf21b4ee690870feb9215e654a6e91147153dd43f94d75ed",
+      "psrl/trainer/ppo/strategies/full_batch.py": "19bee629922bf7b57075d34bd0e55f7932242231c6c59820755b95948e94deea",
+      "psrl/trainer/ppo/strategies/__init__.py": "1cc7ffd75652ecef92a1bcc0459f2b3097a8f37814e2708a2128ba982c7a8a8f",
+      "psrl/trainer/ppo/strategies/fine_grain_overlap.py": "7c0a37298f92a4da8446befbff850337c778c4eadbe71bc7d601f3564d1a04bc",
+      "psrl/trainer/ppo/strategies/base.py": "a1eacebae690c6c8e8c8c97fcca89af300a4e8a1895a7571317e160a97abd4a8",
+      "psrl/trainer/config/cost_model/analyze.py": "2be4beb9ae9d6ad204e83c30a7d2ae65cc860fa337437df48b9769335d8343b6",
+      "psrl/trainer/config/hydra_plugins/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "psrl/trainer/config/hydra_plugins/psrl_searchpath.py": "64083ecc2e1b5ab5d62239bb5b36fa02529a1fb7594beaa6730c5405f8abd677",
+      "psrl/workers/train/base_train_worker.py": "26337feda7a03e8f327a8bb72804fc70fcd11a421bbf5c6433c9f6846d8f3843",
+      "psrl/workers/train/__init__.py": "72472f3705f949ca2399d127bbb7ecb87be0c0a2be9b9f9e20d6f33b3fb46a2d",
+      "psrl/workers/train/engine_train_worker.py": "46a955aeda2c111868468bd8475afb375f47615cadc6944c57c973d6e6a0b08d",
+      "psrl/workers/agent_loop/context.py": "f5bf3b6a0a504f18cbf5f39a90a36dcf4946c9a2063b63174d8655694eb1a6e9",
+      "psrl/workers/agent_loop/__init__.py": "644c23bdaa9a86879cf65d6b556fae569e40e95eaffd28c5d48ee83d13f58eff",
+      "psrl/workers/agent_loop/manager.py": "3512f250bc6cc644fc5ba9706034b0e781aa22322cb685f9a5e18d642097c29d",
+      "psrl/workers/agent_loop/prometheus_utils.py": "a30401e0ba99b6281f4a6948bb08141f44d96ae0e555f39ea756dd84844ee8f4",
+      "psrl/workers/agent_loop/worker.py": "46904e04233b0d93040e564a648c762664a6ba8f207247cc09eff2e288019e67",
+      "psrl/workers/env_worker/coordinator.py": "5f2a8b6f34ef2638b9050166f47c3882090263e0e003e96763cf6d8368e1a16c",
+      "psrl/workers/env_worker/__init__.py": "6f9dc53632e7a66e27db87adcb6a88cfe3f9a6f655632b387713e7bdad7834c5",
+      "psrl/workers/env_worker/manager.py": "0d0d388dedf08d7388b2da7a13d50163b74fea55dc225f711ef254782d0a9933",
+      "psrl/workers/env_worker/isolated_code.py": "428758b24ffb42058762929ceea3bea66b1ce399065d93b349b09d744cf16824",
+      "psrl/workers/env_worker/sandbox.py": "461a4c48c7501418338cd5aa65b87548adeba8603bcbf0720ca928eca6a690ca",
+      "psrl/workers/env_worker/shell.py": "fb8786a5602085bb4854a7df611cf90caf6c1790678c3d8b7f880a5f1a61a3a4",
+      "psrl/workers/env_worker/harbor.py": "11c39a13fe430e47b051029c0242b8b1bdbb1181650b6364eadc706b6666224f",
+      "psrl/workers/env_worker/process.py": "568ccba2f4ad3f8f42cff2d362ce957235d601c08befdf553096539a19d429cd",
+      "psrl/workers/env_worker/worker.py": "21cbfd2bdedc87c8e8ae5873fc023584d090114dbe18db4fb9f54aadba19f278",
+      "psrl/workers/gen/rollout_scheduler.py": "16c5f13c0029914e9d4ec28317941a0bd18ba0dace1df5186a3411aeb2b1c654",
+      "psrl/workers/gen/gpu_handoff.py": "2701ef554d2fd6d20ef7be0005c1f9801460507cd9b8ef6894663b3d69a13c91",
+      "psrl/workers/gen/vllm_extension.py": "e9a8edf73feca454bbee46489bd78ae600332e81ca5a3882b9727acfb01774c7",
+      "psrl/workers/gen/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "psrl/workers/gen/stats_collector.py": "d9b6b40208d9cb91e296982bc5602cdee18d81db5494547e9919801af4e74c50",
+      "psrl/workers/gen/smg_adapter.py": "bed954661ba064acd23c5faa6e55a4855070f37a5d6e0027c5e09092f10ad639",
+      "psrl/workers/gen/stats_recorder.py": "64734050bc80686eabac36fa265a8c50480e969efa6d5aca9d3a4a0eb09210f0",
+      "psrl/workers/gen/vllm_async_server.py": "90e0cc2e5a926c53707284b61c4dc06164ea8a4493284264c3bf227f61d48f59",
+      "psrl/workers/gen/vllm_rollout.py": "e3172ec5fb82845724f63633047231615f1b4825b12cb46df999554927b2bffe",
+      "psrl/workers/gen/utils.py": "8e37623bf2b15eea8cb4ae2fd8881c1935ad7cb8027499758374a5ae60c7b1a6",
+      "psrl/workers/gen/rollout_gateway.py": "e0233fedebc2930ad63a634a9960b58802587e44873a75a83196aa90af49aeb2",
+      "psrl/workers/gen/zmq_queue.py": "398df72d2b94f497fb23790971cc23c2df20fa5ffed588d1ea5bf21882a9c1b2",
+      "psrl/workers/gen/session_router.py": "4e5d6ec3fafab2db427a385da05a810fb895b1740057490cab0551f135d21834",
+      "psrl/workers/reward/reward_worker.py": "949dc36fac78c50cc7187bbf7e07fed6d681835c6e80de7e01270040dd7a1faf",
+      "psrl/workers/reward/reward_protocol.py": "d6bd8714fd42beea96533709be642cbd03388a32346fa56e5c7c06c29ee38d26",
+      "psrl/workers/reward/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "psrl/workers/reward/reward_manager.py": "b5b25b0999cdcded85c475be5b7b1ecc5307cfd8edca9d84e0b827879559ac58",
+      "psrl/workers/reward/utils.py": "7309c58215cf3eaddf4952f91c1d1a2e14f75ed797aec6e9e9fc49c9858b9ebb",
+      "psrl/workers/ps/ps_storage_worker.py": "221b14b86c2a4082c11389fc24d937cc17c86505bb739dd9a1b4584d685eb21c",
+      "psrl/workers/ps/__init__.py": "4bbf05d3f01b77998c80ec2a521e13d8571afbc61c7a2235d238ad034e45ca65",
+      "psrl/workers/ps/staleness_controller.py": "8045a9c8dc470cbc18a4443eb527e85fa053ec032308009fdbf222e87164f04e",
+      "psrl/workers/ps/ps_manager.py": "a3870e74076d03c1f7ac4ae3dcd11e79d5dc29305bf435e6c23bb8292be9936f",
+      "psrl/workers/ps/ps_worker_group.py": "186408a9a85b4018fac0371d84746ce3957a47092fba48428a79d46ccdcfb8df",
+      "psrl/workers/ps/request_status_tracker.py": "41239466e27b4b50ddc7d44e75a58c603378be755c5e7ea2d0a1854c7f99c152",
+      "psrl/workers/ps/broadcast.py": "ffe7644231305f4aa49fdcd1c87eeebdc718e444629f5995fc8e3fbc711a95c1",
+      "psrl/workers/config/reward_model.py": "137cd59907eadb911ca265d8b702825ccf85698449c01d9f7f9d6f0816899d69",
+      "psrl/workers/config/__init__.py": "1cbb3b7bbcbd720fec3e53a602af3a5e91eb21b2b8e49e29f9ff5550438ddda9",
+      "psrl/workers/config/rollout.py": "5bed2249f8c86d4ce4c1cb782dc60fe8fc074ea8d5acf8a528c8bef5a65da934",
+      "psrl/workers/config/model.py": "309ced7d98a597e24912eb8a03725ae5cb0ac68bf8f325fffe1d6144a4381fff",
+      "psrl/workers/env_service/overlay.py": "b9dd9d54da479e7479b28ed8256e3dcca478916794e69d074618cd096376a252",
+      "psrl/workers/env_service/router.py": "76f51662f138ce439a0dede44d8c9a5c53ffc40d7a9a29da8cf1b79c581dd127",
+      "psrl/workers/env_service/task_telemetry.py": "5e428fe24b062bd2aa47c080a0948d0a826fc33aa9a9e3cadca62b362e650f05",
+      "psrl/workers/env_service/placement.py": "a633c001f74a193017d3b0159404fe68b73338ede40055052db003efc1aa2805",
+      "psrl/workers/env_service/gpu_memory.py": "6f39205d5fd379ca77ab431d6ad4397377a642cd1ed69710e500d72ee9e28d9e",
+      "psrl/workers/env_service/prepared_gpu.py": "2ec54bd792f31ef49f63ebcb6d63e92e981e3dc91678381ab98b54f22466884a",
+      "psrl/workers/env_service/probe.py": "7af269e57ed3f65d0d8d728ea702dfd4939791e236f91b684419815cc05116b2",
+      "psrl/workers/env_service/parallel_gpu.py": "fc3a496a518c8e9f0c286da23590af927a6060063b93e7b4328663dab53d621f",
+      "psrl/workers/env_service/managed_execution.py": "fc7c27af7e1fabb20ab557300429669124a61c8700bf4b77d9145a671a3a9a43",
+      "psrl/workers/env_service/types.py": "73d89de8b7a50a659ad79cc88645c2dd681318b8b06f33bb14c96beb91874e11",
+      "psrl/workers/env_service/__init__.py": "5427eff689b6385a572ed4f9160aa8967f6c5f8c5d6d85bb6557ee31437ef384",
+      "psrl/workers/env_service/docker.py": "3777348a34cf6759f57a85d068643889f9d41722371b8ed0c55e235e3328d414",
+      "psrl/workers/env_service/job_fence.py": "6d658d30171c5178ce03e6d2fb1c2fd371766f619f3707637ba5500bd3d4a467",
+      "psrl/workers/env_service/docker_api.py": "ba3ffa7e915ccc4e9a2c51f5c8965a6d396c1a8cb64cee481bbdfd8f9973b1f2",
+      "psrl/workers/env_service/mps.py": "8a9612a078cac03167a3002c6729eee5e49d37fc16660ba357d4ffb09bf5d948",
+      "psrl/workers/env_service/process_identity.py": "29b8ce3d6b0993a341e0c53776b43e95f791d6d4014b1813882bbdaf598182a3",
+      "psrl/workers/env_service/config_check.py": "c569c137fa796b92bd369ac3dc396c042e201d53b5f92d2b5bf592f73497608a",
+      "psrl/workers/env_service/gpu_execution.py": "94f9ca5ecf8cb38fcacf3bb08b48ee0d5c305b34b861907382e86f024f080050",
+      "psrl/workers/env_service/client.py": "99f865b29bdffb936f6f9cf831b586de320a38025c98faa75f3cb159fa6eb6e9",
+      "psrl/workers/env_service/lending.py": "05781b0655e1e6bc1fd8816e6f357842d32df430163c624e0ea582e37d46ec62",
+      "psrl/workers/env_service/harbor_resources.py": "ddbcab62161fe304c679d707dee876748326bf7e606c934c84918996a487641f",
+      "psrl/workers/env_service/episode_memory.py": "b0eb6b52323f861506581299761d1c40ba70bfd93ccaa47f8c664886f6ed12e8",
+      "psrl/workers/env_service/bpf_layout.py": "5628277e3739b860b39c01d4c68f42de93d3b8a9fe3a19c583d71bfec097abea",
+      "psrl/workers/env_service/gpu_jobs.py": "253a585db647e086f9ae6365ff0338ac02fe62a53f2a00f9dd2b11972b22fef8",
+      "psrl/workers/env_service/container_budget.py": "e5133619edaf56224ac97d286c9f319dfc500b45b2ca120f6828414caebf8fa1",
+      "psrl/workers/env_service/node.py": "7e19c9fdfe4324932faece00c2d5aafd42d50fc3f136fc7ec26a49d92d0347d3",
+      "psrl/workers/env_service/ledger.py": "8736c67b5ae752b00f1966c036c531927e67b3c615dfed52931c85d5710eca7a",
+      "psrl/workers/env_service/lending_node.py": "193f747323c7437e95f12d54ee60025552b5f070d58efaaed2fbd998b033cff5",
+      "psrl/workers/env_service/command_gpu.py": "bcbd9d0e8001b620c047b47af64bcd19195fff0f6cc41d769e5ae45092308b2d",
+      "psrl/workers/env_service/command_gpu_node.py": "3ffad303f86d956bdccfd4d59aefce2762bb92f1b885d442a270c3e67028dcbf",
+      "psrl/workers/env_service/prepared_gpu_process.py": "faf9b530c02e1459a3e0d80a1b33f54f9e1eb6ae7d3346ee00f165746c922aaa",
+      "psrl/workers/env_service/resource_telemetry.py": "9cfe2b3aec7c3804dbef0b7d20905c07b84a2a6aa90fd9884090205d666f0aba",
+      "psrl/workers/env_service/gpu_job_process.py": "a2b49e342f6cb13b7440ad95217291d1524b2de1d876684f8dcdee457388aac9",
+      "psrl/workers/env_service/health.py": "35fcb149675762fb7108cae639fded239ef2b78034aa55785c45b5b1ca1c93f5",
+      "psrl/workers/env_service/bpf_identity.py": "2ab9f0d70a32f8fb955295ed05a5ea31e9c8f88e8a6d73efc0ae4775e9b3fa9c",
+      "psrl/workers/env_service/node_policy.py": "e203b0f506bc36f5f213784ba0f1f2a0a99e0f62a46c080d119ca0f266ebf706",
+      "psrl/workers/agent_loop/agent_data/__init__.py": "68a522d11c9cf41dc14bd1a2bec3ce56ddc728409682432a28be48e94b5c9587",
+      "psrl/workers/agent_loop/agent_data/mini_swe_agent_data.py": "ceff2bfbd8ffd40fb8958e4cb2d6bcb36c893bc09cfe8fc378fcb11c7513402c",
+      "psrl/workers/agent_loop/agent_data/tool_agent_data.py": "aae154653e339e7841afd081ec3cc3f3adb13a6485142a4c15e96e1f2770ea59",
+      "psrl/workers/agent_loop/agent_data/base.py": "a4b428a1efb16dee755653028326a7d4965d1601622aff1ae58074cf0060d2e4",
+      "psrl/workers/agent_loop/agent_data/conversation_agent_data.py": "26a8119bf75d0db5a493a9579b166d3e57efbf9a1090f022833ed60fcbd6b911",
+      "psrl/workers/agent_loop/loops/multi_turn_completion_agent_loop.py": "7597314246c35cfd7ea9ca4525df62254d1dec8e0bdd8edc4bb2081728bf0132",
+      "psrl/workers/agent_loop/loops/session_agent_loop.py": "01e587fcf6c743ca37dcb8aa93e94c39474c4f47d36fd2a03ac019c21c3bdd9e",
+      "psrl/workers/agent_loop/loops/__init__.py": "39d3e1fbb314218cc05a647fe64d60e2310be05507cc22321805f8604955d04b",
+      "psrl/workers/agent_loop/loops/generate_agent_loop.py": "0aac95e83b4dce31f8d8840de4382f9b85f61d273590e3ed8e9648e74f29eeb2",
+      "psrl/workers/agent_loop/loops/mini_swe_agent_loop_v1.py": "8400fa8314b9159ef070ebb789a4145442416a65ce3551626cfe3be067fd857a",
+      "psrl/workers/agent_loop/loops/utils.py": "c65af5335a9ca9fa144c434c1b38f31a5093c2c9ab4dd9ef7a653460a0c43d27",
+      "psrl/workers/agent_loop/loops/mlgym_agent_loop.py": "853506204843cdc5a9b440240ea28651d1d63ef0bbb9a54b9362c84d60f6b64b",
+      "psrl/workers/agent_loop/loops/base_agent_loop.py": "109bbab0ad5e6ef80d2144570345d522d37cfd832f26e689abf17fa27e65dc73",
+      "psrl/workers/agent_loop/loops/multi_turn_agent_loop.py": "63522f4090dbdf401cfffb670d5c0ccf7d62877c9b4faf6a24ab626a66c29cf8",
+      "psrl/workers/gen/rollout_coordination/command_loop.py": "e8f8b1f608f9fd7839e36c0b967872f999b1f060a73ce881628f13c204dd1018",
+      "psrl/workers/gen/rollout_coordination/coordinator.py": "2594c20c409b61212adb78dca12efda1f66cd1f427316e59b54a561c6423eaa8",
+      "psrl/workers/gen/rollout_coordination/routing_pause.py": "c279b464aecb46ebcddcb38682a73037d773e183337216fef39fd49f4b398728",
+      "psrl/workers/gen/rollout_coordination/__init__.py": "4e227a62465797cc188eeb9af72f0fbbaae3c37a60f45ea29f0b22df2aa24beb",
+      "psrl/workers/gen/rollout_coordination/status_loop.py": "e06f8b5a246ad32fa78fe169d0643a8a232ba53781423108e286b810ec5347b6",
+      "psrl/workers/gen/rollout_coordination/base.py": "3b5b0b31b0a08973a1ae930990916bb5d65c7362ab02b40bd73b0923cceaa81d",
+      "psrl/workers/gen/rollout_coordination/sync_and_migrate/status_based.py": "7d3dff23cd155ad237995dfc1e5adbda16924887e7dafac48f45712ece20a6ed",
+      "psrl/workers/gen/rollout_coordination/sync_and_migrate/__init__.py": "e4583e255c0884ac77a6c7cca7968e926c42920599171b98bdea0bd750f072f4",
+      "psrl/workers/gen/rollout_coordination/sync_and_migrate/sync_and_migrate_mixin.py": "2afcfadfcf1923307f985695ca460a79a541cb44c9783e40555511cb7d911fec",
+      "psrl/workers/gen/rollout_coordination/sync_and_migrate/greedy.py": "f110ce29c83be5a04e628c023a3ca364c065c510e1ef890899bac71396525ecc",
+      "psrl/workers/gen/rollout_coordination/session/thunder_agent.py": "7a32a6cc41c1987be9d28feaebc895a27015438b29b600bfd2402099fadbbf46",
+      "psrl/workers/gen/rollout_coordination/session/__init__.py": "90fa205c592d832cb252ab557ae6cf857d57b7a09d7a7dddb5071a6c3e071914",
+      "psrl/workers/gen/rollout_coordination/session/base.py": "1e1952e7f01ebbe7543bba6a84d7598cc8270bcc9685226a8ec0a71f84e82255",
+      "psrl/workers/reward/reward_model/coordinator.py": "61a5dfa2b3b37981cf302c45242bc23508b142171fc5b739de776fec54e04d6c",
+      "psrl/workers/reward/reward_model/__init__.py": "6eae656ceae87d7f41cc7e8b4bb7f4c77bc674f7a4da5fa59ff62ef45599229f",
+      "psrl/workers/reward/reward_model/gateway.py": "7181e2c57586d3ccda5d940930bdb4ae69440d8cb92c691e8d9d8c8462d12f45",
+      "psrl/workers/reward/reward_model/manager.py": "0515de80c048e4cc149db04ac2af04b3d69a76f9ab71cb22aee5ffe09cfbc995",
+      "psrl/workers/reward/reward_model/replica.py": "2b4f032176f6a76728584c792a310d5020b653754f5425b81e6e3890116a97f9",
+      "psrl/workers/reward/gen_reward_function/__init__.py": "c88d471c9bc6d4caad0a2477068c1ab9517a5cdb6feb5157ef53a130695370e1",
+      "psrl/workers/reward/gen_reward_function/registry.py": "d3497105be59532e4d59bc9cea7f3eda305f0611060fe4f92811635e5f11afc8",
+      "psrl/workers/reward/gen_reward_function/base.py": "b1be3936f41fe69aab7c0c400088ab32aa0e04d8440006ae871817bc78bb5b17",
+      "psrl/workers/reward/gen_reward_function/skywork_rm.py": "4ca176f619229217061a4bd7b8253dabcda31d13adaa16df465144b9956d7feb",
+      "psrl/workers/reward/gen_reward_function/default_gen_rm.py": "14dc8d5e2d65258d0783be408a4e6947960a7f1418fb4d8138c87894549f9f39",
+      "psrl/workers/reward/reward_loop/dapo.py": "a668518ac5c9b5e5aac783b951f0de67a7e7bbaa26a88789b824b17435152fe7",
+      "psrl/workers/reward/reward_loop/__init__.py": "503b03088d5bd5332392a5c5e82d811d6b29fc5891e9d3b263404174d7b90db0",
+      "psrl/workers/reward/reward_loop/gdpo.py": "42c409a149281438af413fb963ed55f74ee8ba8423694d31db68811b7f7f9670",
+      "psrl/workers/reward/reward_loop/registry.py": "9903d268d14ad19575e7a4a0e91d0ca71666a2c5c3c28ae241433ae1f9b45908",
+      "psrl/workers/reward/reward_loop/base.py": "f6ef2f40d921befee87ed070ab3200711bf11c045220f974bf78fa313d8ea7ce",
+      "psrl/workers/reward/reward_loop/prime.py": "2fd7b940eb73826ec119ed3809b8a1f5d37f78178d820c1ce19cb468403ee4e4",
+      "psrl/workers/reward/reward_loop/gen.py": "f10aced508af43ba50ddc33738d790221605261a8431624514ed9f8c78787eed",
+      "psrl/workers/reward/reward_loop/naive.py": "84f6b7592c42269501eb7c4458cd3e1404e1aa1eacd6a2db273e7a5e3d419daa",
+      "psrl/utils/converter/megatron_converter.py": "8aa611630e0670117d615fdd27b11d2cd34a48772d3d931c8b4c27d3c144a0b5",
+      "psrl/utils/converter/__init__.py": "9587939ecbbf3c8ed6a2b060c225dbd5fa744b6dd157e3cfd15e7e88dde5046e",
+      "psrl/utils/converter/fsdp_converter.py": "0df2bf0100b1aab319a85e53993a50c39215b4b80520d03064fdd5058e47e89d",
+      "psrl/utils/converter/base_converter.py": "9163c09ab68c13f29a875ecbf013da3ada528d1e8beaa90d658d9d7c29e478c7",
+      "psrl/utils/converter/weight_layout_plan.py": "b36211953bd8a0c456596d02bbc3a8b595e546f9b6d33c6631fbbb7d68663c31",
+      "psrl/utils/converter/param_sync.py": "a2dd8cf55f2a8d25589641f3e590f0489b9b8326da6870635eeadfc668694f29",
+      "psrl/utils/converter/hf_converter.py": "3ba3734c501f4af6ab0c68eeb687bcec12ccbd7501a64a8a2bf91e74805e9835",
+      "psrl/utils/converter/weight_layout_transforms.py": "f2d6711e91549c8ee9e8683587307a51d71b5d81983e517c45131c370daa390f",
+      "psrl/utils/converter/model_mappings.py": "4bbf44d3123fef165c3560ba587633f3f7aa38fce24bdb7d982c370e42f21bea",
+      "psrl/utils/converter/vllm_converter.py": "f8f84c089e8744cf6e96766b1a2a2258d58247d660eb3030e5b5650a4c454dd5",
+      "psrl/utils/converter/megatron_optimizer.py": "b78f331a71b8842c347f74b3e0254f9328190bdaa8fe5160dd3a4d3646e6084e",
+      "psrl/utils/dataset/__init__.py": "55489a3330654b3aa17ea40ce32af86ca4f1ddace450a9b0768278af6c50fb69",
+      "psrl/utils/dataset/rl_dataset.py": "9597305870070053a29b38e876209b7cebb61e0f2189c688f8aebc0e2d4ed6b2",
+      "psrl/utils/dataset/utils.py": "de3c41e20100859a1cdce8f2a9722fd80e56641108f3991232e4f08e65ced56c",
+      "psrl/utils/dataset/data_processor.py": "2390870eabd6f90dffad5b41de6cc29b8fc0a8f735138ded3fb14dc5c3d4549d",
+      "psrl/utils/post_processor/__init__.py": "bda5dae338f9ee5ab78eca8000e0b4b4ec4024723bef18d4803a0a08ce0d1059",
+      "psrl/utils/post_processor/base.py": "3e586ea24856d560aecec0a648476f96c96bdc5016c3a5dd7b45190524ee3049",
+      "psrl/utils/ray/lazy_primitives.py": "d2efa8ccceb333631df96f62cb9c1ba2a2d221296322e28bb4ea92d367571001",
+      "psrl/utils/ray/__init__.py": "c0dee79d7c1e22bbcd88cbcc9c5987ad36cd6daaf8778642dfffc5cb38f32642",
+      "psrl/utils/ray/lock_context.py": "e71f17ab330ca8d7d69edfb8e10ba354e5ae07fd82b37fbb70fb3bd624b9611f",
+      "psrl/utils/visualization/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "psrl/utils/visualization/event_type.py": "45eece454cbaac406dbb2da91707e2e08ea03a4071ced8790496167418517857",
+      "psrl/utils/visualization/log_stats.py": "866680bfb9b09ec4d9cbf38057b7f88fe6beeb70c1e82bf70bf3d1f94c06a017",
+      "psrl/utils/visualization/log_visualizer.py": "c9ff0278e333e2bb74f060ddbf15aa1797be78f8bbf9abd2f93e02fd51736ac7",
+      "psrl/utils/logger/ps_logger.py": "4585d299e0d24c414287b3dd60ad4099ba79603e436f18e27daaed6022ab73a9",
+      "psrl/utils/logger/deprecated.py": "550da27b8ae7e518c144fd82ac189cab13180cf0fb567529c790d945325fb0f7",
+      "psrl/utils/logger/memory_logger.py": "4fa6c6a13deee3245ef5432944528d9c17c0626d5adf2609688645a8b22a637b",
+      "psrl/utils/logger/env_logger.py": "8fca5aa8608286eff8bba6079aca381a5865b05322ab8359375ba392ce1fea5f",
+      "psrl/utils/logger/ray_logger.py": "b692d08229d4588fc11e6eea4ea811815c50eeb8deae29170024215cd023ca77",
+      "psrl/utils/logger/data_logger.py": "75c55ea610780b0ee16760f38651847a1cbeb14c8f3c232dcf9506b364e1cae5",
+      "psrl/utils/logger/__init__.py": "247c8aae397706cbd59dbfd9eb2d1b2c58e66a1916939c757071e8065ace68b6",
+      "psrl/utils/agent/exceptions.py": "05a63db3a1c87e6c2ced8dd0612d9c67b940fcf1d61dc6c1383f2fc81b4b1009",
+      "psrl/utils/agent/thinking.py": "72f44680754310e3f6e9edd3c5910e636461c68785feff5e10c83390de9d7534",
+      "psrl/utils/agent/overflow.py": "c0073e10978561667f87c948950e1f35a56641b2c3d7563f56ad8d7e82f2765d",
+      "psrl/utils/reward_score/__init__.py": "0068594c81b5e857e9229f837e4e76de4ca525d74741436ae5af2a9da49b7cd2",
+      "psrl/utils/reward_score/sandbox_fusion.py": "e09356a7b2b877c27428bea9bf372ec3bf201fc2889468bd30818720861a4bef",
+      "psrl/utils/checkpoint/__init__.py": "53c849bb59d3eb6f676d81383892ee976d0486c8e3a04b37571baa47535e8da0",
+      "psrl/utils/checkpoint/megatron_saver.py": "43dc52e1fec261543b6a9f207e7a38275e868f81948437e04a40573d6f4b78ab",
+      "psrl/utils/concurrency/gpu_device_gate.py": "8d8f35f8e28f886342dd5d5a4c5f143415d7652d47fbfafd08f5f1752b2d8524",
+      "psrl/utils/concurrency/__init__.py": "f076d8e79d44bee9e4bfb8833f567ee6d8cfe0c32ef223380007c81eeea5156a",
+      "psrl/utils/concurrency/slot.py": "f0ef8c9d95f8e8d37fc7cfcd11c777edfe206fa3dccc8623b765c986de030e3c",
+      "psrl/utils/concurrency/token_bucket.py": "4c2ab8c1e0281497209cc89a2204b44d5b9ebd63b8c8e0b53bc3a57be5082b69",
+      "psrl/utils/elastic_rm/elastic_executor.py": "eb6f8830da7f61a50a2f7528dda9f201d56cabadcc0dcb498a07ff5c3ca9b097",
+      "psrl/utils/elastic_rm/scaling_policy.py": "5d028e4826ed1588554ca004012ec3d773aee0b494d0cbbe7187686e206dc03d",
+      "psrl/utils/elastic_rm/diagnostics.py": "5accc4176b07254c60037c59ed2ec36053b1ede2566f048d1a4bd547b769525a",
+      "psrl/utils/elastic_rm/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "psrl/utils/elastic_rm/cluster_topology.py": "9f5cac966d453957d0413a6349a14cb4aa012d34ae06d8c56da92a8f131cefce",
+      "psrl/utils/kv_cache/types.py": "bee568cdd1972bac3839c730df381fda3d580c37513717db08be41a5eecfa9cb",
+      "psrl/utils/kv_cache/__init__.py": "ab15e0ea7af78bfd29926d7596bb9a9cd773d0e107ae7b193cd610b6f2a779fd",
+      "psrl/utils/kv_cache/manager.py": "08f9a6fd6341dba4cbfdcbcf1c86a1c2e921319b784a17093fd6635c50f4f191",
+      "psrl/utils/kv_cache/config.py": "c13eef26f7db54ff19fe9b8e95486e206279ee50de0ab23a382774cb29e7a369",
+      "psrl/utils/profiling/__init__.py": "220e737d31f3dced4c99ee71bca555d99bb8064984275be2c5c8541ed0819e17",
+      "psrl/utils/profiling/collector.py": "e378b100abaadf634be484639d20c99be60cc27c3bc152e30876153d3be4ec36",
+      "psrl/utils/profiling/event_converter.py": "7320f0a1fc9ed42a4f0331f107e72290b46e7e73b0f7c8f20c101c1e410ba4c0",
+      "psrl/utils/profiling/records.py": "b958daf1da3148898697f9a48d1e3cce1a551e95357885641e15119031b75ddd",
+      "psrl/utils/server/__init__.py": "7b4dcab5642606bc0d60bcbc8ece642cc7044e701ef0d5182fec004036fbeb52",
+      "psrl/utils/server/command.py": "08c3db7d35de35986a450e5f12497ae4d513116f60ca21d67c14c5cf99a11c41",
+      "psrl/utils/rollout/vision_utils.py": "64d43398f00e981782485b05a36076cd7e282bf820d4db0ecd002f757ed0e979",
+      "psrl/utils/rollout/turn_output_writer.py": "d4564450b00a334ff3c29b5e054ac9a215b12775bb69a191a6044580bd3af658",
+      "psrl/utils/rollout/rollout_trace.py": "e2ad2f373b04d109fed768a3c127dbc89735fb592ca6f139f9cd1c10f680fa0b",
+      "psrl/utils/rollout/gateway_multimodal.py": "90cbe3b44dab403818faa2b9feb444667bca7770db2cf65bfebd82029be0c197",
+      "psrl/utils/rollout/trajectory_writer.py": "08566eb14702bba544f4bffcf35c2e4d3f762f47f31edfefd4d1a3df34eaa15b",
+      "psrl/utils/rollout/loop_timer.py": "f411cb906fd23139a7e28fa3dd626a2ad7cc381fc16da16ef20d1f01f23ac519",
+      "psrl/utils/nixl/server.py": "e35a170803b9516bd33a320fb88a1ac1f31ed4324bc71cef34a615172e22773d",
+      "psrl/utils/nixl/__init__.py": "c08a04c403dcdd24d39ecd4254f6a2eac15eb6086d7399aa63a6636a379d280a",
+      "psrl/utils/nixl/nixl_spec.py": "7559e57fed94b67fcb1227d969cefda084d82f0d92916294a9a41500ead03fbb",
+      "psrl/utils/nixl/network_topology.py": "f6e5f6fbd443663997e5a1fd1f076e942b53c10c6d7ae82d2a8f828293e913a1",
+      "psrl/utils/nixl/global_vars.py": "2dda58e2418ac4ebcd85ac228646543657c1baddbaf10eb5c405edaac9260cbf",
+      "psrl/utils/nixl/client.py": "cbd9d593a4d06a3133cbb0b289996f8289defef7e6019688d101542ede96b1dd",
+      "psrl/utils/nixl/port_scanner.py": "a7d454a9d63979161eb6ddf0697f1d6fa37a5112515e8fd611710d738c65952f",
+      "psrl/utils/nixl/comm_plan.py": "81a8be7161b8fd4bc04bdc11be78200f9e4be8e154d6660ea6c420c021dab82f",
+      "psrl/utils/nixl/meta_buffer.py": "7f4ec440bccf72cab65379a02ca18e08e933dd540cc872ae7ec091478da8b12b",
+      "psrl/utils/common/docker_utils.py": "d3eccab7bea38672f941c8b7702bbecf6c05f8dd0d8f8287172b28ac416bd955",
+      "psrl/utils/common/serialization.py": "0d78a537ee4497268bfd9537b20f9005ca0b19fa2668324cdfaba735594381be",
+      "psrl/utils/common/http_utils.py": "45f188bc1f0b5ab5ee462d6412f837f4e42660b93515fa90509cf1f2c302d1f1",
+      "psrl/utils/common/nixl_names.py": "e1d18ff3d0b86671cab1b973d6e6d33d254f449ef33bb1d49b7e2a009bc8d5c6",
+      "psrl/utils/common/__init__.py": "39225e6252f150cfcc11ed61278416c7fb140d990b3a970eef804647d2d7922c",
+      "psrl/utils/common/memory_utils.py": "ce60fdb9482462e8ecc7797e5158c0961fc8445a904ef6b63aa315a0b6cbd1d3",
+      "psrl/utils/common/chat_template.py": "74bd0b76f203d88109d5f2a3984d29ee442114ef7bc5297f3a18e9dafb04a431",
+      "psrl/utils/common/http_io_thread.py": "0c7a77c6c02c48db6f1d24e9ba98f5e34b45e5a31ec223aaf39594a3aa2fb0e4",
+      "psrl/utils/common/worker_naming.py": "82cb9c04bbe4f6e1c7c88d8733adb1190da903187f8c0a6aca1fcc0e5fa7e529",
+      "psrl/utils/common/utils.py": "914fdab919445719253708991d121a12fa07ac94f7b06ce09d8c28e83e494114",
+      "psrl/utils/common/dynamic_import.py": "2f068b69ec001a835c8f0bd3e4e21b9f52f478546a458d5dd608436a61ac355e",
+      "psrl/utils/common/patch_utils.py": "c55b2fb24b783c7ccf786b0dc860b7bfbc302fab36a809a596a1a6d9d541f19d",
+      "psrl/utils/tito/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "psrl/utils/tito/training_data.py": "1bc64e76ef92485c004d38d0ae3410ca203717b5db678105721ec38151043a2c",
+      "psrl/utils/converter/modeling/hf_modeling.py": "61c050b7f2263e3f0581dc539a73389e0ccf2f42409e8c09ceba634479e3384b",
+      "psrl/utils/converter/modeling/__init__.py": "7cf38eaba526f03731faafa31a1236b164015213f1bf5125ec9b647c6e36e769",
+      "psrl/utils/converter/modeling/megatron_modeling.py": "ebd0579d852a76f187b656352a15e9a566c0f71c4b52ff055db10927096656d9",
+      "psrl/utils/converter/modeling/vllm_modeling.py": "c98cc0eec741d3d41bc9b3f9707fa6cc7671ec397431f66140e0ee4b192f1058",
+      "psrl/utils/converter/modeling/fsdp_modeling.py": "de09a97e296c2dffd61383a428502f354503dd2980ea9401e7d1311183d31ae5",
+      "psrl/utils/converter/utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "psrl/utils/converter/utils/parallel_states.py": "5b1c34230accb4a9c70abb78e1ea94df018d09e2cea34a8dfc1c7c7ef62498b1",
+      "psrl/utils/post_processor/group_post_process/__init__.py": "fe5224526a2b8a671a19dfc02fa04fef8d1d771d703e77580eb8ec4a4e81bed2",
+      "psrl/utils/post_processor/group_post_process/filter.py": "d6b5959aaaeee8c8855e3b4a3b523687dd73bdbf5a7c999dd9d9b6c28256aacf",
+      "psrl/utils/post_processor/buffer_post_process/__init__.py": "fe5224526a2b8a671a19dfc02fa04fef8d1d771d703e77580eb8ec4a4e81bed2",
+      "psrl/utils/post_processor/buffer_post_process/filter.py": "88d1b0b2706529c1ab77c27525d050cfa6c9f1b7e690d2cc26289e3193521ab5",
+      "psrl/eval/config/__init__.py": "389ac222a0725506e0c59e1276e0a5d92ca3e5d9b3bbf0dfce6eb4c38e4c5346",
+      "psrl/tools/tool_parser/qwen3_coder_tool_parser.py": "019a2503555f4b921d536de1d502d6c6d0c958d56e16e69da67f57a726c94936",
+      "psrl/tools/tool_parser/__init__.py": "5fc3c4c18faedb5ee4f5c4d29288b822b3af747308fa28d72d638feedf61877a",
+      "psrl/tools/tool_parser/xml_fc_tool_parser.py": "fd4672c36ef975bc3e96f9580d00ad6a019a7b91e8b33fefd41f6b01653917fb",
+      "psrl/tools/tool_parser/hermes_tool_parser.py": "26038c1ad2da7d2469abc541024b3198ceca62e6fd399a1f533e3b962789154c",
+      "psrl/tools/tool_parser/gpt_oss_tool_parser.py": "caba5fbd41bd49ffd6bf5b386dc200a655174da2e5e40544069a36d4dfbef403",
+      "psrl/tools/tool_parser/base.py": "571e8e75443125d9dc534413a5db9c1bea31845102f41c6ae72551a3a5a6d234",
+      "psrl/tools/tool_parser/gemma4_tool_parser.py": "d001fd8f8638ec3a6c8f7223cdf98a8087dbb766243cf86d263431fb215b9540",
+      "psrl/tools/mcp_clients/manager.py": "dedd5b090aa56234ef227f45aad6fb2f5770585d4074b5cabf289e22b31ff360"
+    },
+    "script_hashes": {
+      "flashinfer_racing_probe.py": "32d834984b8f6f6a80ddb2d278bbd5828b0e2ccfb38f550b528fb2f267417bfb",
+      "flashinfer_env_probe.py": "9599237d0091f1b9fc6b0c18c9bd2c5410d855d996a1bec2b4b28f463b63739e",
+      "flashinfer_official_eval.py": "52285d9087a34403af5adbfd23819d0ab3f1362104778289ab69c1c05d22cf59"
+    }
+  },
+  "measurement_sha256": "f09f03113d053f18d9d851a336e4fe73e592397b2ff13c9029db49891878f680",
+  "cleanup": {
+    "containers_remaining": "",
+    "gpu_pids": [],
+    "gpu_used_mb": 0.1875
+  }
+}

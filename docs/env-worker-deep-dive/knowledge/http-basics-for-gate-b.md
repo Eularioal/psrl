@@ -143,10 +143,10 @@ HTTP 是**应用层协议**：规定了"请求和响应的文本长什么样"。
 
 ### 4.1 先看 runner 和路由器是不是"一伙"的
 
-- `runner.py` 跑在 `AgentLoopWorker` 里。它是 [`@ray.remote`](../../../psrl/workers/agent_loop/worker.py#L45) 声明的 Ray Actor，即**独立的操作系统进程**（见 [`sciaccel-gpu-gate.md` §16.1 补充](sciaccel-gpu-gate.md#161-补充2026-10-07这里说的多进程具体指什么从哪行代码能看出来)）。
+- `runner.py` 跑在 `AgentLoopWorker` 里。它是 [`@ray.remote`](../../../psrl/workers/agent_loop/worker.py#L45) 声明的 Ray Actor，即**独立的操作系统进程**（见 [`sciaccel-gpu-gate.md` §16.1 补充](../archive/sciaccel-gpu-gate.md#161-补充2026-10-07这里说的多进程具体指什么从哪行代码能看出来)）。
 - SessionRouter 由 `RolloutGateway` Actor 用 `multiprocessing.Process` 拉起一个**另外的子进程**（[`rollout_gateway.py:187-204`](../../../psrl/workers/gen/rollout_gateway.py#L187)），并监听该 Actor 所在**节点的 IP**（[`:112`](../../../psrl/workers/gen/rollout_gateway.py#L112)、[`:148`](../../../psrl/workers/gen/rollout_gateway.py#L148)）。
 
-两个进程**不共享内存**，不能互相调用对方的函数、读对方的变量，而且可能在**两台不同的机器**上（具体是否同机取决于部署，见 [`commit-72ca50c-gate-ab-walkthrough.md` §7 第 3 条](commit-72ca50c-gate-ab-walkthrough.md#7-从代码读出的-6-处注意点推断)）。
+两个进程**不共享内存**，不能互相调用对方的函数、读对方的变量，而且可能在**两台不同的机器**上（具体是否同机取决于部署，见 [`commit-72ca50c-gate-ab-walkthrough.md` §7 第 3 条](../archive/commit-72ca50c-gate-ab-walkthrough.md#7-从代码读出的-6-处注意点推断)）。
 
 跨进程、跨机器要通信，**网络请求是最通用的办法**：只需要知道对方的 `IP:端口`。这就是为什么 `session_router_url` 要一层层传到 runner 手里。
 
@@ -168,7 +168,7 @@ HTTP 是**应用层协议**：规定了"请求和响应的文本长什么样"。
 这就是 SMG 路由器和 SessionRouter **必须各用各的端口**：代码里 SMG 从 8100 往上找（[`rollout_gateway.py:115`](../../../psrl/workers/gen/rollout_gateway.py#L115)），SessionRouter 从 8200 往上找（[`:147`](../../../psrl/workers/gen/rollout_gateway.py#L147)）。
 
 **怎么挑端口**：[`find_available_port`](../../../psrl/utils/common/http_utils.py#L18) 从基准端口开始，用"试着 bind + listen 一下，成功就说明空闲"的办法逐个往上试。有两个小细节（我读代码的观察）：
-1. 检查和真正启动之间有一小段时间窗口，期间端口可能被别的进程抢走（和 [`sciaccel-gpu-gate.md` §19.2](sciaccel-gpu-gate.md#192-背景知识什么是文件锁advisory-锁和-mandatory-锁有什么区别) 讲的 TOCTOU 是同一类问题），代码在启动后 `sleep(1)` 再断言进程还活着（[`:205-206`](../../../psrl/workers/gen/rollout_gateway.py#L205)）来兜底。
+1. 检查和真正启动之间有一小段时间窗口，期间端口可能被别的进程抢走（和 [`sciaccel-gpu-gate.md` §19.2](../archive/sciaccel-gpu-gate.md#192-背景知识什么是文件锁advisory-锁和-mandatory-锁有什么区别) 讲的 TOCTOU 是同一类问题），代码在启动后 `sleep(1)` 再断言进程还活着（[`:205-206`](../../../psrl/workers/gen/rollout_gateway.py#L205)）来兜底。
 2. 它是用通配地址 `""` 去试绑的，而真正的服务绑在具体 IP 上。**不同操作系统对"通配地址 vs 具体地址同端口"是否冲突的判定不同**：我在 macOS 上实测，服务绑在 `127.0.0.1:8200` 时，`find_available_port(8200)` 仍然返回 8200（看不出冲突）；我没有在 Linux 上验证。生产环境一般是 Linux，所以这更像是开发机上要留意的细节。
 
 ### 4.3 为什么是"独立进程 + 单独端口"，而不是塞进别的进程
@@ -425,6 +425,6 @@ python3 docs/psrl/scripts/http_gpu_bind_demo.py
 ## 相关文档
 
 - [Gate B 新手版讲解](gate-b-beginner-guide.md)：本文的上篇，讲 Gate B 五个零件各做什么。
-- [提交 72ca50c 代码讲解](commit-72ca50c-gate-ab-walkthrough.md)：Gate A/B 的专业版代码讲解。
+- [提交 72ca50c 代码讲解](../archive/commit-72ca50c-gate-ab-walkthrough.md)：Gate A/B 的专业版代码讲解。
 - 并发/并行全景（本地资料，未随仓库发布）：协程、线程、进程三层，解释 `await` 与事件循环。
 - [PSRL 笔记总索引](../../README.md)

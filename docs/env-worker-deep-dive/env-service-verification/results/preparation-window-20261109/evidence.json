@@ -1,0 +1,786 @@
+{
+  "scope": "Three sessions, two prepared correctness commands each, two GPUs. Window 0 has no extra limit.",
+  "memory_metric": "Maximum per-process RSS times ready waiting is a proxy, not sampled total physical RAM.",
+  "groups": {
+    "0": {
+      "batch_s": 28.844780683517456,
+      "gpu_held_s": 25.206873893737793,
+      "cpu_prepare_s": 39.05792689323425,
+      "ready_memory_proxy_mib_s": 5163.212284310721,
+      "batch_samples_s": [
+        28.938217401504517,
+        28.751343965530396
+      ],
+      "n": 2
+    },
+    "1": {
+      "batch_s": 51.83722245693207,
+      "gpu_held_s": 22.142164826393127,
+      "cpu_prepare_s": 42.290886878967285,
+      "ready_memory_proxy_mib_s": 1339.4797771731392,
+      "batch_samples_s": [
+        45.69476675987244,
+        57.9796781539917
+      ],
+      "n": 2
+    },
+    "2": {
+      "batch_s": 32.86088824272156,
+      "gpu_held_s": 25.292336583137512,
+      "cpu_prepare_s": 40.48529899120331,
+      "ready_memory_proxy_mib_s": 1133.7230109195225,
+      "batch_samples_s": [
+        29.52275562286377,
+        36.199020862579346
+      ],
+      "n": 2
+    }
+  },
+  "runs": [
+    {
+      "run": "0-window0-pooled",
+      "window": 0,
+      "batch_s": 28.938217401504517,
+      "elapsed_s": 76.75605821609497,
+      "commands": [
+        {
+          "name": "c_turn0",
+          "submitted": 1794209352.9869437,
+          "ready": 1794209360.7424097,
+          "prepare_started": 1794209354.050036,
+          "admitted": 1794209360.781949,
+          "released": 1794209365.8555481,
+          "finished": 1794209366.4247997,
+          "cpu_prepare_s": 6.692373752593994,
+          "ready_wait_s": 0.3578314781188965,
+          "maxrss_kb": 574016,
+          "gpu_held_s": 5.073599100112915,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "a_turn0",
+          "submitted": 1794209352.9772513,
+          "ready": 1794209360.7424095,
+          "prepare_started": 1794209354.0500233,
+          "admitted": 1794209360.7869725,
+          "released": 1794209365.8039985,
+          "finished": 1794209366.4375522,
+          "cpu_prepare_s": 6.692386150360107,
+          "ready_wait_s": 0.3553445339202881,
+          "maxrss_kb": 573280,
+          "gpu_held_s": 5.017025947570801,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "b_turn0",
+          "submitted": 1794209352.9841557,
+          "ready": 1794209360.7424767,
+          "prepare_started": 1794209354.0500367,
+          "admitted": 1794209365.8435836,
+          "released": 1794209368.9076102,
+          "finished": 1794209369.374867,
+          "cpu_prepare_s": 6.692440032958984,
+          "ready_wait_s": 5.622082471847534,
+          "maxrss_kb": 573024,
+          "gpu_held_s": 3.0640265941619873,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "c_turn1",
+          "submitted": 1794209366.4342892,
+          "ready": 1794209374.2344055,
+          "prepare_started": 1794209367.435957,
+          "admitted": 1794209374.2677667,
+          "released": 1794209378.9426913,
+          "finished": 1794209379.306885,
+          "cpu_prepare_s": 6.79844856262207,
+          "ready_wait_s": 0.40846705436706543,
+          "maxrss_kb": 470368,
+          "gpu_held_s": 4.674924612045288,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "a_turn1",
+          "submitted": 1794209366.44606,
+          "ready": 1794209374.2343457,
+          "prepare_started": 1794209367.4359648,
+          "admitted": 1794209374.279613,
+          "released": 1794209378.8948462,
+          "finished": 1794209379.3167536,
+          "cpu_prepare_s": 6.7983808517456055,
+          "ready_wait_s": 0.40542173385620117,
+          "maxrss_kb": 470372,
+          "gpu_held_s": 4.6152331829071045,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "b_turn1",
+          "submitted": 1794209369.383575,
+          "ready": 1794209375.8259327,
+          "prepare_started": 1794209370.2915542,
+          "admitted": 1794209378.9537363,
+          "released": 1794209381.3345146,
+          "finished": 1794209381.9058797,
+          "cpu_prepare_s": 5.534378528594971,
+          "ready_wait_s": 3.4138312339782715,
+          "maxrss_kb": 576068,
+          "gpu_held_s": 2.3807783126831055,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        }
+      ],
+      "gpu_held_s": 24.8255877494812,
+      "cpu_prepare_s": 39.20840787887573,
+      "ready_memory_proxy_mib_s": 5839.969618182629,
+      "passed": 54,
+      "cleanup_errors": [],
+      "observed_peak_preparing": 3
+    },
+    {
+      "run": "0-window1-pooled",
+      "window": 1,
+      "batch_s": 45.69476675987244,
+      "elapsed_s": 94.11704635620117,
+      "commands": [
+        {
+          "name": "b_turn0",
+          "submitted": 1794209436.079093,
+          "ready": 1794209442.8318965,
+          "prepare_started": 1794209436.981667,
+          "admitted": 1794209442.8951545,
+          "released": 1794209446.2505927,
+          "finished": 1794209446.6873372,
+          "cpu_prepare_s": 5.850229501724243,
+          "ready_wait_s": 0.36313343048095703,
+          "maxrss_kb": 577560,
+          "gpu_held_s": 3.355438232421875,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "a_turn0",
+          "submitted": 1794209436.0754423,
+          "ready": 1794209449.40356,
+          "prepare_started": 1794209443.526063,
+          "admitted": 1794209449.4411678,
+          "released": 1794209452.664624,
+          "finished": 1794209453.0771391,
+          "cpu_prepare_s": 5.877496957778931,
+          "ready_wait_s": 0.35602760314941406,
+          "maxrss_kb": 576496,
+          "gpu_held_s": 3.2234561443328857,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "c_turn0",
+          "submitted": 1794209436.0816317,
+          "ready": 1794209456.1348555,
+          "prepare_started": 1794209450.2125568,
+          "admitted": 1794209456.1714158,
+          "released": 1794209459.296444,
+          "finished": 1794209459.6877615,
+          "cpu_prepare_s": 5.9222986698150635,
+          "ready_wait_s": 0.30668210983276367,
+          "maxrss_kb": 576284,
+          "gpu_held_s": 3.125028133392334,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "b_turn1",
+          "submitted": 1794209446.6962235,
+          "ready": 1794209464.8534768,
+          "prepare_started": 1794209456.8213356,
+          "admitted": 1794209464.9179993,
+          "released": 1794209471.0031538,
+          "finished": 1794209471.4540129,
+          "cpu_prepare_s": 8.032141208648682,
+          "ready_wait_s": 0.45905089378356934,
+          "maxrss_kb": 576508,
+          "gpu_held_s": 6.0851545333862305,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "a_turn1",
+          "submitted": 1794209453.0857296,
+          "ready": 1794209471.5679262,
+          "prepare_started": 1794209465.7301836,
+          "admitted": 1794209471.6026103,
+          "released": 1794209474.2784424,
+          "finished": 1794209474.6780581,
+          "cpu_prepare_s": 5.837742567062378,
+          "ready_wait_s": 0.4056267738342285,
+          "maxrss_kb": 575964,
+          "gpu_held_s": 2.6758320331573486,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "c_turn1",
+          "submitted": 1794209459.6962695,
+          "ready": 1794209478.4444175,
+          "prepare_started": 1794209472.4509747,
+          "admitted": 1794209478.4699667,
+          "released": 1794209481.1906796,
+          "finished": 1794209481.760006,
+          "cpu_prepare_s": 5.99344277381897,
+          "ready_wait_s": 0.30597877502441406,
+          "maxrss_kb": 576336,
+          "gpu_held_s": 2.720712900161743,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        }
+      ],
+      "gpu_held_s": 21.185621976852417,
+      "cpu_prepare_s": 37.51335167884827,
+      "ready_memory_proxy_mib_s": 1236.6556067550555,
+      "passed": 54,
+      "cleanup_errors": [],
+      "observed_peak_preparing": 1
+    },
+    {
+      "run": "0-window2-pooled",
+      "window": 2,
+      "batch_s": 29.52275562286377,
+      "elapsed_s": 73.69613337516785,
+      "commands": [
+        {
+          "name": "a_turn0",
+          "submitted": 1794209532.8987226,
+          "ready": 1794209540.2972615,
+          "prepare_started": 1794209533.895631,
+          "admitted": 1794209540.336045,
+          "released": 1794209545.0522678,
+          "finished": 1794209545.524847,
+          "cpu_prepare_s": 6.401630401611328,
+          "ready_wait_s": 0.35749149322509766,
+          "maxrss_kb": 574276,
+          "gpu_held_s": 4.716222763061523,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "b_turn0",
+          "submitted": 1794209532.9021945,
+          "ready": 1794209540.2972636,
+          "prepare_started": 1794209533.895526,
+          "admitted": 1794209540.3308907,
+          "released": 1794209545.189165,
+          "finished": 1794209545.611782,
+          "cpu_prepare_s": 6.401737689971924,
+          "ready_wait_s": 0.4075500965118408,
+          "maxrss_kb": 574308,
+          "gpu_held_s": 4.858274459838867,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "c_turn0",
+          "submitted": 1794209532.904423,
+          "ready": 1794209547.457255,
+          "prepare_started": 1794209541.0126748,
+          "admitted": 1794209547.4889107,
+          "released": 1794209551.1344008,
+          "finished": 1794209551.6530943,
+          "cpu_prepare_s": 6.444580078125,
+          "ready_wait_s": 0.35607218742370605,
+          "maxrss_kb": 537260,
+          "gpu_held_s": 3.6454901695251465,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "a_turn1",
+          "submitted": 1794209545.5343604,
+          "ready": 1794209552.5770562,
+          "prepare_started": 1794209546.2546716,
+          "admitted": 1794209552.6319635,
+          "released": 1794209555.8267443,
+          "finished": 1794209556.2672439,
+          "cpu_prepare_s": 6.322384595870972,
+          "ready_wait_s": 0.40548062324523926,
+          "maxrss_kb": 442200,
+          "gpu_held_s": 3.1947808265686035,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "b_turn1",
+          "submitted": 1794209545.619392,
+          "ready": 1794209553.6028955,
+          "prepare_started": 1794209548.1810875,
+          "admitted": 1794209553.6299095,
+          "released": 1794209556.341204,
+          "finished": 1794209556.7069051,
+          "cpu_prepare_s": 5.4218080043792725,
+          "ready_wait_s": 0.35572314262390137,
+          "maxrss_kb": 573152,
+          "gpu_held_s": 2.711294412612915,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "c_turn1",
+          "submitted": 1794209551.662254,
+          "ready": 1794209559.4388735,
+          "prepare_started": 1794209553.369913,
+          "admitted": 1794209559.4743216,
+          "released": 1794209561.945583,
+          "finished": 1794209562.4113922,
+          "cpu_prepare_s": 6.068960428237915,
+          "ready_wait_s": 0.3061857223510742,
+          "maxrss_kb": 576360,
+          "gpu_held_s": 2.471261501312256,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        }
+      ],
+      "gpu_held_s": 21.59732413291931,
+      "cpu_prepare_s": 37.06110119819641,
+      "ready_memory_proxy_mib_s": 1162.4234122857451,
+      "passed": 54,
+      "cleanup_errors": [],
+      "observed_peak_preparing": 2
+    },
+    {
+      "run": "1-window0-pooled",
+      "window": 0,
+      "batch_s": 28.751343965530396,
+      "elapsed_s": 73.61740779876709,
+      "commands": [
+        {
+          "name": "a_turn0",
+          "submitted": 1794209847.0137463,
+          "ready": 1794209854.9167953,
+          "prepare_started": 1794209848.1414526,
+          "admitted": 1794209854.996402,
+          "released": 1794209859.3297892,
+          "finished": 1794209859.8809574,
+          "cpu_prepare_s": 6.775342702865601,
+          "ready_wait_s": 0.40825462341308594,
+          "maxrss_kb": 573020,
+          "gpu_held_s": 4.333387136459351,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "c_turn0",
+          "submitted": 1794209847.0193682,
+          "ready": 1794209854.917048,
+          "prepare_started": 1794209848.141457,
+          "admitted": 1794209854.9898047,
+          "released": 1794209859.5964944,
+          "finished": 1794209860.1434166,
+          "cpu_prepare_s": 6.775590896606445,
+          "ready_wait_s": 0.4102485179901123,
+          "maxrss_kb": 573780,
+          "gpu_held_s": 4.606689691543579,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "b_turn0",
+          "submitted": 1794209847.0172672,
+          "ready": 1794209854.9167552,
+          "prepare_started": 1794209848.1414883,
+          "admitted": 1794209859.4627578,
+          "released": 1794209863.3989575,
+          "finished": 1794209863.8428485,
+          "cpu_prepare_s": 6.775266885757446,
+          "ready_wait_s": 4.920257568359375,
+          "maxrss_kb": 575904,
+          "gpu_held_s": 3.93619966506958,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "a_turn1",
+          "submitted": 1794209859.9540713,
+          "ready": 1794209867.4027305,
+          "prepare_started": 1794209861.1339278,
+          "admitted": 1794209867.4318,
+          "released": 1794209872.3035676,
+          "finished": 1794209872.82488,
+          "cpu_prepare_s": 6.268802642822266,
+          "ready_wait_s": 0.4059619903564453,
+          "maxrss_kb": 492188,
+          "gpu_held_s": 4.87176775932312,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "c_turn1",
+          "submitted": 1794209860.151989,
+          "ready": 1794209867.4029834,
+          "prepare_started": 1794209861.2585914,
+          "admitted": 1794209867.4367752,
+          "released": 1794209872.4763446,
+          "finished": 1794209872.853542,
+          "cpu_prepare_s": 6.144392013549805,
+          "ready_wait_s": 0.4086153507232666,
+          "maxrss_kb": 491812,
+          "gpu_held_s": 5.03956937789917,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "b_turn1",
+          "submitted": 1794209863.851956,
+          "ready": 1794209871.1534634,
+          "prepare_started": 1794209864.9854126,
+          "admitted": 1794209872.3622317,
+          "released": 1794209875.1627781,
+          "finished": 1794209875.7540536,
+          "cpu_prepare_s": 6.168050765991211,
+          "ready_wait_s": 1.5602450370788574,
+          "maxrss_kb": 570700,
+          "gpu_held_s": 2.800546407699585,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        }
+      ],
+      "gpu_held_s": 25.588160037994385,
+      "cpu_prepare_s": 38.90744590759277,
+      "ready_memory_proxy_mib_s": 4486.454950438812,
+      "passed": 54,
+      "cleanup_errors": [],
+      "observed_peak_preparing": 3
+    },
+    {
+      "run": "1-window1-pooled",
+      "window": 1,
+      "batch_s": 57.9796781539917,
+      "elapsed_s": 135.0067949295044,
+      "commands": [
+        {
+          "name": "a_turn0",
+          "submitted": 1794209736.9804652,
+          "ready": 1794209747.6975892,
+          "prepare_started": 1794209738.4186642,
+          "admitted": 1794209747.7390976,
+          "released": 1794209751.6903899,
+          "finished": 1794209752.535476,
+          "cpu_prepare_s": 9.278924942016602,
+          "ready_wait_s": 0.45589256286621094,
+          "maxrss_kb": 577320,
+          "gpu_held_s": 3.9512922763824463,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "c_turn0",
+          "submitted": 1794209736.9859846,
+          "ready": 1794209756.7471654,
+          "prepare_started": 1794209748.9827065,
+          "admitted": 1794209756.8072047,
+          "released": 1794209761.1009924,
+          "finished": 1794209762.0863633,
+          "cpu_prepare_s": 7.764458894729614,
+          "ready_wait_s": 0.7071950435638428,
+          "maxrss_kb": 573308,
+          "gpu_held_s": 4.293787717819214,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "b_turn0",
+          "submitted": 1794209736.9836712,
+          "ready": 1794209768.7931762,
+          "prepare_started": 1794209757.9937432,
+          "admitted": 1794209768.8773856,
+          "released": 1794209773.6763494,
+          "finished": 1794209774.2149725,
+          "cpu_prepare_s": 10.79943299293518,
+          "ready_wait_s": 0.5074191093444824,
+          "maxrss_kb": 492224,
+          "gpu_held_s": 4.798963785171509,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "a_turn1",
+          "submitted": 1794209752.5440006,
+          "ready": 1794209776.8980372,
+          "prepare_started": 1794209769.9739347,
+          "admitted": 1794209776.9360578,
+          "released": 1794209780.1419377,
+          "finished": 1794209780.53579,
+          "cpu_prepare_s": 6.924102544784546,
+          "ready_wait_s": 0.3554189205169678,
+          "maxrss_kb": 576192,
+          "gpu_held_s": 3.2058799266815186,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "c_turn1",
+          "submitted": 1794209762.0952487,
+          "ready": 1794209784.1801777,
+          "prepare_started": 1794209777.8021073,
+          "admitted": 1794209784.2157354,
+          "released": 1794209787.5898259,
+          "finished": 1794209788.004427,
+          "cpu_prepare_s": 6.37807035446167,
+          "ready_wait_s": 0.3599720001220703,
+          "maxrss_kb": 504452,
+          "gpu_held_s": 3.3740904331207275,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "b_turn1",
+          "submitted": 1794209774.2237525,
+          "ready": 1794209790.8200443,
+          "prepare_started": 1794209784.896612,
+          "admitted": 1794209790.862661,
+          "released": 1794209794.3373544,
+          "finished": 1794209794.7515779,
+          "cpu_prepare_s": 5.923432350158691,
+          "ready_wait_s": 0.30557823181152344,
+          "maxrss_kb": 563328,
+          "gpu_held_s": 3.474693536758423,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        }
+      ],
+      "gpu_held_s": 23.098707675933838,
+      "cpu_prepare_s": 47.068422079086304,
+      "ready_memory_proxy_mib_s": 1442.3039475912228,
+      "passed": 54,
+      "cleanup_errors": [],
+      "observed_peak_preparing": 1
+    },
+    {
+      "run": "1-window2-pooled",
+      "window": 2,
+      "batch_s": 36.199020862579346,
+      "elapsed_s": 82.18771076202393,
+      "commands": [
+        {
+          "name": "c_turn0",
+          "submitted": 1794209616.079492,
+          "ready": 1794209623.64741,
+          "prepare_started": 1794209617.0816758,
+          "admitted": 1794209623.6879413,
+          "released": 1794209628.573627,
+          "finished": 1794209629.0020566,
+          "cpu_prepare_s": 6.565734148025513,
+          "ready_wait_s": 0.30524230003356934,
+          "maxrss_kb": 564380,
+          "gpu_held_s": 4.885685682296753,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "a_turn0",
+          "submitted": 1794209616.0745194,
+          "ready": 1794209623.6474855,
+          "prepare_started": 1794209617.0816743,
+          "admitted": 1794209623.6921651,
+          "released": 1794209628.6335382,
+          "finished": 1794209629.0157862,
+          "cpu_prepare_s": 6.5658111572265625,
+          "ready_wait_s": 0.30720090866088867,
+          "maxrss_kb": 564252,
+          "gpu_held_s": 4.941373109817505,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "b_turn0",
+          "submitted": 1794209616.0773776,
+          "ready": 1794209630.8933346,
+          "prepare_started": 1794209624.441613,
+          "admitted": 1794209630.9231918,
+          "released": 1794209636.47088,
+          "finished": 1794209636.973783,
+          "cpu_prepare_s": 6.451721668243408,
+          "ready_wait_s": 0.35597681999206543,
+          "maxrss_kb": 567768,
+          "gpu_held_s": 5.547688245773315,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "a_turn1",
+          "submitted": 1794209629.0235937,
+          "ready": 1794209639.4200509,
+          "prepare_started": 1794209631.7398076,
+          "admitted": 1794209639.478922,
+          "released": 1794209644.314432,
+          "finished": 1794209644.8731563,
+          "cpu_prepare_s": 7.680243253707886,
+          "ready_wait_s": 0.40557003021240234,
+          "maxrss_kb": 495800,
+          "gpu_held_s": 4.835510015487671,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "c_turn1",
+          "submitted": 1794209629.0112064,
+          "ready": 1794209638.030848,
+          "prepare_started": 1794209629.8893318,
+          "admitted": 1794209638.0596545,
+          "released": 1794209642.4309433,
+          "finished": 1794209644.8822336,
+          "cpu_prepare_s": 8.141516208648682,
+          "ready_wait_s": 0.4053168296813965,
+          "maxrss_kb": 446560,
+          "gpu_held_s": 4.371288776397705,
+          "gpu_indices": [
+            1
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        },
+        {
+          "name": "b_turn1",
+          "submitted": 1794209636.982207,
+          "ready": 1794209647.3671386,
+          "prepare_started": 1794209638.8626683,
+          "admitted": 1794209647.4193273,
+          "released": 1794209651.8251305,
+          "finished": 1794209652.2639022,
+          "cpu_prepare_s": 8.504470348358154,
+          "ready_wait_s": 0.4054839611053467,
+          "maxrss_kb": 497528,
+          "gpu_held_s": 4.405803203582764,
+          "gpu_indices": [
+            0
+          ],
+          "passed": 6,
+          "cuda_initialized_before_grant": false
+        }
+      ],
+      "gpu_held_s": 28.987349033355713,
+      "cpu_prepare_s": 43.909496784210205,
+      "ready_memory_proxy_mib_s": 1105.0226095532998,
+      "passed": 54,
+      "cleanup_errors": [],
+      "observed_peak_preparing": 2
+    }
+  ],
+  "provenance": {
+    "head": "0326d46694bdc372560e535069d3db0f7f48bd4b",
+    "uncommitted": true,
+    "workload": "SWE-Serve GDN unchanged correctness subset",
+    "hardware": "Two H20 GPUs",
+    "production_strategy_changed": false
+  },
+  "limitations": [
+    "Two samples per setting on one short correctness task.",
+    "Unrelated FlashInfer container found at cleanup, created during the latter part of this experiment. External resource contention was not fully monitored.",
+    "No physical RAM saturation, version invalidation policy, service benchmark or training tested."
+  ],
+  "decision": "No sufficient incremental speed evidence. Do not begin a complex production scheduling policy on these results."
+}

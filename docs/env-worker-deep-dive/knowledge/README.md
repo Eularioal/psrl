@@ -1,5 +1,7 @@
 # Env 环境执行文档导航
 
+分类阅读：[文献调研](../literature-reviews/README.md) · [研究提案](../research-proposals/README.md) · [历史归档](../archive/README.md) · [当前设计](../knowledge/current-design.md)
+
 > **核心结论**：想了解“目前设计是什么”，直接读[当前设计](current-design.md)。本文是分类导航，专题文档用于查细节，提案与历史文章用于理解演进，不再把它们当作并列的首读入口。
 
 ## 目录
@@ -19,6 +21,7 @@
 | 你的问题 | 直接阅读 | 读完应能回答 |
 |---|---|---|
 | 现在整体是什么设计 | [当前设计](current-design.md) | 谁管理任务、谁准入、谁创建容器、谁执行和回收 |
+| 从训练启动理解环境申请、配置复用与恢复 | [Router 配置与恢复](router-configuration-and-recovery.md) | 训练、题目、rollout、worker 协程与租约的层次，以及配置契约和恢复，附实验 |
 | 下一步优先修什么 | [工程问题审查](engineering-review.md) | 配置一致性、故障恢复、队列效率与后续能力的优先级和验收边界 |
 | 为什么我的任务排队 | [显存准入](gpu-memory-admission.md) | unit 配额、实测占用和未兑现预约如何计算 |
 | 同一个容器能否跑多个 GPU 作业 | [MPS 后端](mps-parallel-execution.md) | direct 与 MPS 的差异、并行条件和取消边界 |
@@ -48,17 +51,19 @@
 
 | 文档 | 阅读用途 |
 |---|---|
-| [RollArt 与 DynaRL 精读](rollart-dynarl-deep-reading.md) | 从零理解两篇论文的贡献与边界，配套 CPU 算例和研究否证路线 |
-| [五篇近期顶会论文](recent-top-conference-papers.md) | RollArt、DynaRL、Murakkab、Prism、Weave 与环境执行、GPU 调度课题的关系及阅读顺序 |
+| [KREX 精读与测量保真](../literature-reviews/krex-region-exclusivity.md) | 独占计时窗口、排空与 CPU 保护，测量分账、参考归一化反例及最小实验计划 |
+| [RollArt 与 DynaRL 精读](../literature-reviews/rollart-dynarl-deep-reading.md) | 从零理解两篇论文的贡献与边界，配套 CPU 算例和研究否证路线 |
+| [五篇近期顶会论文](../literature-reviews/recent-top-conference-papers.md) | RollArt、DynaRL、Murakkab、Prism、Weave 与环境执行、GPU 调度课题的关系及阅读顺序 |
 | [GPU benchmark 接入 recipe](gpu-benchmark-recipes.md) | 实际任务资产、准备、环境调用和 PSRL 接口，接入首选 |
-| [非计时评分的 GPU 调度场景](non-timing-gpu-scheduling-scenarios.md) | 功能开发任务、跨命令缓存实测、版本有效准备与资源联合调度研究，独立于测速评分 |
-| [command 调度研究](command-scheduling-research.md) | 整组完成时间、组内精度手算例、统计评估研究、通用边界与立项门槛 |
-| [AI4Infra 性能反馈 benchmark](ai4infra-performance-benchmarks.md) | 现有覆盖缺口、FlashInfer 官方任务的原生 Env command 验证、SWE-Serve 性能子集与服务级研究设计 |
-| [YARN 对 GPU 工具调度的启发](yarn-inspired-gpu-feedback-scheduling.md) | 分层协调、比较关系感知的测量调度、状态与计算租约分离，以及创新边界 |
+| [非计时评分的 GPU 调度场景](../research-proposals/non-timing-gpu-scheduling-scenarios.md) | 缓存与准备窗口实测、score 服务题正确性与准备前移对照、版本有效准备与资源联合调度研究，独立于测速评分 |
+| [command 调度研究](../research-proposals/command-scheduling-research.md) | 整组完成时间、组内精度手算例、统计评估研究、通用边界与立项门槛 |
+| [AI4Infra 性能反馈 benchmark](../literature-reviews/ai4infra-performance-benchmarks.md) | 现有覆盖缺口、FlashInfer 官方任务的原生 Env command 验证、SWE-Serve 性能子集与服务级研究设计 |
+| [YARN 对 GPU 工具调度的启发](../literature-reviews/yarn-inspired-gpu-feedback-scheduling.md) | 分层协调、比较关系感知的测量调度、状态与计算租约分离，以及创新边界 |
 | [RE-Bench 原生接入](re-bench-recipe.md) | 聊天模型训练、裁判凭据、command/episode 边界、卸载成本、本地裁判与 command 空窗权衡 |
-| [GPU workload 调研](gpu-workload-benchmark-survey.md) | 比较任务候选，调研建议不等于全部已接入 |
+| [GPU workload 调研](../literature-reviews/gpu-workload-benchmark-survey.md) | 比较任务候选，调研建议不等于全部已接入 |
 | [InferenceBench 评分](inferencebench-scoring.md) | 官方性能奖励、质量门槛与本地功能检查分数的区别 |
 | [EnvWorker 接入与 GPU 验证](onboarding-and-gpu-validation.md) | EnvWorker 环境类、AgentLoop 和分层验证，不替代当前 Router 接口 |
+| [Science GPU 现状与规划](../milestones/science-gpu-bench-status-and-roadmap.md) | 可转发的任务盘点、验收范围与后续研究方向 |
 | [benchmark 阅读入口](../experiments/gpu-benchmarks/README.md) | 按任务查输入、目标、评分、证据与模式适用性 |
 
 ## 基础知识
@@ -75,8 +80,8 @@
 
 | 文档 | 状态与用途 |
 |---|---|
-| [同机命令动态放置](dynamic-command-placement.md) | 显式单卡 direct command 池、主机/GPU 分账、真实 Ray 固定工作量与准备前移对照 |
-| [EnvRouter 流程与通用接入设计讨论](env-router-current-flow.md) | 混合阶段记录：第 10 至 13 节展开通用接入、持有范围和恢复成本。文件名保留，但不再作为当前现状入口 |
+| [同机命令动态放置](../research-proposals/dynamic-command-placement.md) | 显式单卡 direct command 池、主机/GPU 分账、真实 Ray 固定工作量与准备前移对照 |
+| [EnvRouter 流程与通用接入设计讨论](../archive/env-router-current-flow.md) | 混合阶段记录：第 10 至 13 节展开通用接入、持有范围和恢复成本。文件名保留，但不再作为当前现状入口 |
 
 其他提案保留在对应机制专题的明确章节中，例如命令配额第 9 节的跨节点调度。不要把一篇文章的“已实现”标签扩展到它包含的所有提案。
 
@@ -84,10 +89,10 @@
 
 | 文档 | 固定阅读范围 |
 |---|---|
-| [Env Service 初期实现](env-service-implementation.md) | 2026-10-12 的 unit、租约、节点策略和测试状态 |
-| [EnvWorker 历史实现与修复前审查](implementation-and-gaps.md) | 保留早期证据，旧实施待办已删除，第 15.3 节指向当前实现与修复报告 |
-| [提交 72ca50c 的 Gate A/B](commit-72ca50c-gate-ab-walkthrough.md) | 指定提交的代码讲解，“当时没有”不等于当前没有 |
-| [SciAccel GPU Gate](sciaccel-gpu-gate.md) | 早期整卡锁、回复节流与部署记录 |
+| [Env Service 初期实现](../archive/env-service-implementation.md) | 2026-10-12 的 unit、租约、节点策略和测试状态 |
+| [EnvWorker 历史实现与修复前审查](../archive/implementation-and-gaps.md) | 保留早期证据，旧实施待办已删除，第 15.3 节指向当前实现与修复报告 |
+| [提交 72ca50c 的 Gate A/B](../archive/commit-72ca50c-gate-ab-walkthrough.md) | 指定提交的代码讲解，“当时没有”不等于当前没有 |
+| [SciAccel GPU Gate](../archive/sciaccel-gpu-gate.md) | 早期整卡锁、回复节流与部署记录 |
 
 ## 文档维护规则
 

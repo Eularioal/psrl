@@ -1,6 +1,6 @@
 # GPU benchmark 导览：任务目标与 command 适用性
 
-> **核心结论**：写 GPU kernel 选 KernelBench，做机器学习竞赛选 MLE-bench，做自动训练实验选 autoresearch，优化推理服务选 InferenceBench。研究训练状态跨外部反馈等待驻留，新增 **RE-Bench 聊天模型训练接入**。已有 InferenceBench 常驻实验可验证跨命令持有。默认 recipe 使用 episode，KernelBench 有显式 direct command verifier 入口，这个接入限制不等于任务天然不能使用 command。RE-Bench 的真实资产验证与正式裁判评分需分别看待。
+> **核心结论**：写 GPU kernel 选 KernelBench 或 FlashInfer，做机器学习竞赛选 MLE，做自动训练实验选 autoresearch，优化推理服务选 InferenceBench，研究训练状态跨外部反馈等待驻留选 RE-Bench 聊天训练。MLE、Inference、RE 提供显式本地协议，完整 PSRL 策略闭环与独立 GPU 评分分别验收。默认 recipe 使用 episode，KernelBench 有显式 direct command verifier 入口，这个接入限制不等于任务天然不能使用 command。
 
 ## 目录
 
@@ -10,6 +10,8 @@
 - [推荐任务与真实执行路径](#推荐任务与真实执行路径)
 - [不占 GPU 的生命周期演示](#不占-gpu-的生命周期演示)
 - [接入状态与阅读入口](#接入状态与阅读入口)
+
+对外交流与本地完整接入请读[阶段成果目录](../../milestones/README.md)和[完整接入报告](../../milestones/science-gpu-full-onboarding.md)，逐项验收见 [FINDINGS](FINDINGS.md#2026-11-10-本地完整接入验收)。
 
 ## 按任务目标选择
 
@@ -22,6 +24,7 @@
 | **autoresearch** | 改训练代码里的模型结构、优化器或超参数，执行有固定预算的实验，按验证指标选择方案 | `train.py`，独立进程重新训练并调用官方验证函数 | **适合每次训练实验一条长 command**。一次训练持续数分钟，不代表两次实验之间必须保留显存 |
 | **InferenceBench 官方任务** | 给基础语言模型和请求场景，优化推理服务实现与启动配置，提高服务性能并保持回答质量 | 服务启动脚本，重新启动服务测速度、质量和方案合规性 | **取决于边界**。启动服务、跑完整批请求、停服务，可以整体是一条 command。单次请求结束通常不能归还后台服务的 GPU |
 | **本地常驻服务 workload** | 固定 InferenceBench 的服务和 Mistral 模型，让同一服务跨多条环境命令处理真实请求 | 请求输出、服务复用、显存、排队、失败及清理记录 | **不适合按每次请求借还，推荐 episode**。这是本地框架调度实验，不是第五个独立官方 benchmark |
+| **FlashInfer-Bench** | 为固定生产算子与真实 workload 提交官方格式 Solution JSON | 独立官方 evaluator 检查完整子集，本地奖励为正确性，时延另报 | **可按独立评估进程划分**。公共 Harbor 入口使用 episode，不扩大 KernelBench command 白名单 |
 
 官方任务定义参考 [KernelBench](https://github.com/ScalingIntelligence/KernelBench#-task-description)、[MLE-bench](https://github.com/openai/mle-bench#dataset)、[autoresearch](https://github.com/karpathy/autoresearch#how-it-works)、[InferenceBench](https://github.com/aisa-group/InferenceBench)。本地实际接入版本以 [upstream.json](../../../../examples/gpu_benchmarks/upstream.json) 为准，command 判断来自任务状态和本地回收协议分析，不是这些项目发布的模式兼容认证。
 
@@ -40,12 +43,12 @@
 |---|---|
 | AIRS-Bench | 论文驱动的研究、训练与评估。按具体任务拆训练和预测作业 |
 | Automated LLM Speedrunning | 优化达到目标损失的训练时间。官方配置 8 张 H100，完整训练可作为长 command |
-| MLE-bench | GPU 机器学习竞赛方案。已有 recipe，Kaggle 数据按用户安排暂缓 |
+| MLE-bench | GPU 机器学习竞赛方案。官方 Kaggle 数据需凭据，本地真实 digits 竞赛提供不依赖 Kaggle 的入口 |
 | MLGym-Bench | 可选 FineWeb 语言模型训练，保存模型后能退出训练进程 |
 | RE-Bench | 可选训练与外部裁判交替的任务。整次训练可作为 command，但中间归还需实现状态卸载恢复 |
 | PostTrainBench | 优先补充单卡后训练。完整训练后保存模型、退出，再评估，是自然的 command 边界 |
 
-表中选型不能代替逐项接入与评分验证，RE-Bench 已有本地 Qwen 裁判链路，完整 512 条评分仍未验收。high GPU 也不表示持续满显存，官方链接和具体选题见 [六项专项调研](../../knowledge/gpu-workload-benchmark-survey.md#图片中六项-high-gpu-的具体选题)。
+表中选型不能代替逐项接入与评分验证，RE-Bench 已有本地 Qwen 裁判链路，完整 512 条评分仍未验收。high GPU 也不表示持续满显存，官方链接和具体选题见 [六项专项调研](../../literature-reviews/gpu-workload-benchmark-survey.md#图片中六项-high-gpu-的具体选题)。
 
 **看 InferenceBench 分数前先分清来源**：官方在质量达标后按延迟或吞吐评分，本地 PSRL 还检查裁判标记。常驻实验中的 `reward=1` 只是请求与服务复用检查。公式、手算例子及 CPU 演示见 [InferenceBench 评分说明](../../knowledge/inferencebench-scoring.md)。
 
@@ -62,7 +65,7 @@
 | 启动服务、全部请求、停服务作为一条长 command | 可以设计这种适配，但预约区间仍覆盖全部请求间隙，无法在间隙借出 GPU |
 | 请求间卸载 GPU 状态，下次恢复 | 需要额外实现卸载与恢复协议。offload 指将状态移出 GPU，reload 指重新加载。当前回收还检查设备句柄，通常需要退出 GPU 工作进程并重建，不能只调用 `empty_cache()` |
 
-当前 [GpuBenchmarkAgentLoop](../../../../examples/gpu_benchmarks/agent_loop.py#L23) 明确拒绝非 episode 的 unit。若要把 KernelBench 或 autoresearch 改为 command，需要接线 agent 和独立 verifier 的全部 GPU 操作及回收，不能只改配置字符串。verifier 是独立验收任务结果的程序。
+当前 [GpuBenchmarkAgentLoop](../../../../examples/gpu_benchmarks/agent_loop.py#L23) 默认要求 episode，但配置 KernelBench 专属 verifier 时允许经过约束校验的 direct command。KernelBench 已有该入口，autoresearch 尚需接线 agent 和独立 verifier 的全部 GPU 操作及回收，不能只改配置字符串。verifier 是独立验收任务结果的程序。
 
 ## 推荐任务与真实执行路径
 
@@ -114,10 +117,10 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_reside
 
 | 入口 | 当前可用范围与下一步 |
 |---|---|
-| [KernelBench 接入](../../../../examples/kernel_bench/) | 已有真实 kernel 编译、正确性与性能评估。已新增独立 verifier 的 command 适配，同节点动态选卡仍待实现，见[必要性评估](../../knowledge/dynamic-command-placement.md#9-已接入-benchmark-的必要性评估) |
-| [MLE-bench 接入](../../../../examples/mle_bench/) | 已有任务和评分适配，官方数据下载待 Kaggle 认证。暂不以它作为马上可运行的 GPU 对照 |
-| [autoresearch 接入](../../../../examples/autoresearch/) | 已有真实任务内训练与验证。适合研究较长 GPU 作业，不适合仅凭运行时长证明 episode 必要性 |
-| [InferenceBench 接入](../../../../examples/inference_bench/) | 常驻服务框架 workload 已真实验证。官方完整优化与评分尚需对应基线、judge 及资源配置 |
+| [KernelBench 接入](../../../../examples/kernel_bench) | 已有真实 kernel 编译、正确性与性能评估。已新增独立 verifier 的 command 适配，同节点动态选卡仍待实现，见[必要性评估](../../research-proposals/dynamic-command-placement.md#9-已接入-benchmark-的必要性评估) |
+| [MLE-bench 接入](../../../../examples/mle_bench) | 已有任务和评分适配，官方数据下载待 Kaggle 认证。暂不以它作为马上可运行的 GPU 对照 |
+| [autoresearch 接入](../../../../examples/autoresearch) | 已有真实任务内训练与验证。适合研究较长 GPU 作业，不适合仅凭运行时长证明 episode 必要性 |
+| [InferenceBench 接入](../../../../examples/inference_bench) | 常驻服务框架 workload 已真实验证。官方完整优化与评分尚需对应基线、judge 及资源配置 |
 | [RE-Bench 接入](../../knowledge/re-bench-recipe.md) | 原生 Env、独立 verifier、PSRL 数据与奖励入口已接线。smoke 和正式评分分离，支持独立卡本地 Qwen，原 Replicate 分支仍需宿主凭据 |
 | [准备、下载与运行 recipe](../../knowledge/gpu-benchmark-recipes.md) | 具体命令、依赖、数据隔离与 Env/PSRL 接线，避免在本导览重复维护启动步骤 |
 | [记账与归属机制](../../knowledge/gpu-memory-admission.md#9-episode-归属记账修复) | 解释模型驻留时如何抵扣已兑现预约，以及何时仍需等待 |

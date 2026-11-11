@@ -1,0 +1,2943 @@
+{
+  "scope": "Quick task integration checks through PSRL EnvRouter and Harbor. No policy training.",
+  "date": "2026-11-11",
+  "kernel": {
+    "counts": {
+      "passed_original": 22,
+      "passed_bounded": 193,
+      "timeout": 5,
+      "error": 29,
+      "failed": 1,
+      "not_run_pretrained_assets": 20
+    },
+    "tasks": [
+      {
+        "task_id": "level1-100_HingeLoss",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-10_3D_tensor_matrix_multiplication",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-11_4D_tensor_matrix_multiplication",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-12_Matmul_with_diagonal_matrices_",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-13_Matmul_for_symmetric_matrices",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-14_Matmul_for_upper_triangular_matrices",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-15_Matmul_for_lower_triangular_matrices",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-16_Matmul_with_transposed_A",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-17_Matmul_with_transposed_B",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-18_Matmul_with_transposed_both",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-19_ReLU",
+        "level": 1,
+        "original": "timeout",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "dim": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-1_Square_matrix_multiplication_",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-20_LeakyReLU",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-21_Sigmoid",
+        "level": 1,
+        "original": "timeout",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "dim": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-22_Tanh",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-23_Softmax",
+        "level": 1,
+        "original": "timeout",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "dim": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-24_LogSoftmax",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-25_Swish",
+        "level": 1,
+        "original": "timeout",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "dim": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-26_GELU_",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-27_SELU_",
+        "level": 1,
+        "original": "timeout",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "dim": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-28_HardSigmoid",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-29_Softplus",
+        "level": 1,
+        "original": "timeout",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "dim": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-2_Standard_matrix_multiplication_",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-30_Softsign",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-31_ELU",
+        "level": 1,
+        "original": "timeout",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "dim": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-32_HardTanh",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-33_BatchNorm",
+        "level": 1,
+        "original": "timeout",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-34_InstanceNorm",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-35_GroupNorm_",
+        "level": 1,
+        "original": "timeout",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-36_RMSNorm_",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-37_FrobeniusNorm_",
+        "level": 1,
+        "original": "timeout",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-38_L1Norm_",
+        "level": 1,
+        "original": "passed",
+        "status": "passed_original"
+      },
+      {
+        "task_id": "level1-39_L2Norm_",
+        "level": 1,
+        "original": "timeout",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "dim": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-3_Batched_matrix_multiplication",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-40_LayerNorm",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-41_Max_Pooling_1D",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "sequence_length": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-42_Max_Pooling_2D",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-43_Max_Pooling_3D",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-44_Average_Pooling_1D",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "input_length": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-45_Average_Pooling_2D",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-46_Average_Pooling_3D",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "depth": 32,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-47_Sum_reduction_over_a_dimension",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-48_Mean_reduction_over_a_dimension",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-49_Max_reduction_over_a_dimension",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-4_Matrix_vector_multiplication_",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "timeout",
+        "status": "timeout"
+      },
+      {
+        "task_id": "level1-50_conv_standard_2D__square_input__square_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-51_Argmax_over_a_dimension",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-52_Argmin_over_a_dimension",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-53_Min_reduction_over_a_dimension",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-54_conv_standard_3D__square_input__square_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "depth": 32,
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-55_conv_standard_2D__asymmetric_input__square_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "height": 32,
+          "width": 32,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-56_conv_standard_2D__asymmetric_input__asymmetric_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "kernel_size": [
+            5,
+            7
+          ],
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-57_conv_transposed_2D__square_input__square_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-58_conv_transposed_3D__asymmetric_input__asymmetric_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "kernel_size": [
+            3,
+            5,
+            7
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-59_conv_standard_3D__asymmetric_input__square_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-5_Matrix_scalar_multiplication",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "timeout",
+        "status": "timeout"
+      },
+      {
+        "task_id": "level1-60_conv_standard_3D__square_input__asymmetric_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "kernel_size": [
+            3,
+            5,
+            7
+          ],
+          "width": 32,
+          "height": 32,
+          "depth": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-61_conv_transposed_3D__square_input__square_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "depth": 32,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-62_conv_standard_2D__square_input__asymmetric_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "kernel_size": [
+            5,
+            9
+          ],
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-63_conv_standard_2D__square_input__square_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-64_conv_transposed_1D",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "length": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-65_conv_transposed_2D__square_input__asymmetric_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "kernel_size": [
+            3,
+            7
+          ],
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-66_conv_standard_3D__asymmetric_input__asymmetric_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "kernel_size": [
+            3,
+            5,
+            7
+          ],
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-67_conv_standard_1D",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "length": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-68_conv_transposed_3D__square_input__asymmetric_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "depth": 32,
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-69_conv_transposed_2D__asymmetric_input__asymmetric_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "kernel_size": [
+            3,
+            5
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-6_Matmul_with_large_K_dimension_",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "M": 32,
+          "N": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-70_conv_transposed_3D__asymmetric_input__square_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "depth": 32,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-71_conv_transposed_2D__asymmetric_input__square_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-72_conv_transposed_3D_asymmetric_input_asymmetric_kernel___strided_padded_grouped_",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "kernel_size": [
+            3,
+            5,
+            7
+          ],
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-73_conv_transposed_3D_asymmetric_input_square_kernel__strided_padded__grouped",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-74_conv_transposed_1D_dilated",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "length": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-75_conv_transposed_2D_asymmetric_input_asymmetric_kernel_strided__grouped____padded____dilated__",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "kernel_size": [
+            3,
+            5
+          ],
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-76_conv_standard_1D_dilated_strided__",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "length": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-77_conv_transposed_3D_square_input_square_kernel___padded____dilated____strided__",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-78_conv_transposed_2D_asymmetric_input_asymmetric_kernel___padded__",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "kernel_size": [
+            3,
+            7
+          ],
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-79_conv_transposed_1D_asymmetric_input_square_kernel___padded____strided____dilated__",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "length": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-7_Matmul_with_small_K_dimension_",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-80_conv_standard_2D_square_input_asymmetric_kernel___dilated____padded__",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "kernel_size": [
+            5,
+            9
+          ],
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-81_conv_transposed_2D_asymmetric_input_square_kernel___dilated____padded____strided__",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-82_conv_depthwise_2D_square_input_square_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-83_conv_depthwise_2D_square_input_asymmetric_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-84_conv_depthwise_2D_asymmetric_input_square_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-85_conv_depthwise_2D_asymmetric_input_asymmetric_kernel",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-86_conv_depthwise_separable_2D",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-87_conv_pointwise_2D",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "width": 32,
+          "height": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-88_MinGPTNewGelu",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "dim": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-89_cumsum",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_shape": [
+            32
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-8_Matmul_with_irregular_shapes_",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "M": 32,
+          "K": 32,
+          "N": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-90_cumprod",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_shape": [
+            32
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-91_cumsum_reverse",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_shape": [
+            32
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-92_cumsum_exclusive",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_shape": [
+            32
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-93_masked_cumsum",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_shape": [
+            32
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-94_MSELoss",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_shape": [
+            32
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-95_CrossEntropyLoss",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level1-96_HuberLoss",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_shape": [
+            32
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-97_ScaledDotProductAttention",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "sequence_length": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-98_KLDivLoss",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "timeout",
+        "status": "timeout"
+      },
+      {
+        "task_id": "level1-99_TripletMarginLoss",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_shape": [
+            32
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level1-9_Tall_skinny_matrix_multiplication_",
+        "level": 1,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-100_ConvTranspose3d_Clamp_Min_Divide",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-10_ConvTranspose2d_MaxPool_Hardtanh_Mean_Tanh",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-11_ConvTranspose2d_BatchNorm_Tanh_MaxPool_GroupNorm",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-12_Gemm_Multiply_LeakyReLU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-13_ConvTranspose3d_Mean_Add_Softmax_Tanh_Scaling",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-14_Gemm_Divide_Sum_Scaling",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-15_ConvTranspose3d_BatchNorm_Subtract",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-16_ConvTranspose2d_Mish_Add_Hardtanh_Scaling",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-17_Conv2d_InstanceNorm_Divide",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-18_Matmul_Sum_Max_AvgPool_LogSumExp_LogSumExp",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-19_ConvTranspose2d_GELU_GroupNorm",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-1_Conv2D_ReLU_BiasAdd",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-20_ConvTranspose3d_Sum_ResidualAdd_Multiply_ResidualAdd",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-21_Conv2d_Add_Scale_Sigmoid_GroupNorm",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-22_Matmul_Scale_ResidualAdd_Clamp_LogSumExp_Mish",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-23_Conv3d_GroupNorm_Mean",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-24_Conv3d_Min_Softmax",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-25_Conv2d_Min_Tanh_Tanh",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-26_ConvTranspose3d_Add_HardSwish",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-27_Conv3d_HardSwish_GroupNorm_Mean",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-28_BMM_InstanceNorm_Sum_ResidualAdd_Multiply",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-29_Matmul_Mish_Mish",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-2_ConvTranspose2d_BiasAdd_Clamp_Scaling_Clamp_Divide",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-30_Gemm_GroupNorm_Hardtanh",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-31_Conv2d_Min_Add_Multiply",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-32_Conv2d_Scaling_Min",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-33_Gemm_Scale_BatchNorm",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-34_ConvTranspose3d_LayerNorm_GELU_Scaling",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-35_Conv2d_Subtract_HardSwish_MaxPool_Mish",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-36_ConvTranspose2d_Min_Sum_GELU_Add",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32,
+          "bias_shape": [
+            1,
+            1,
+            1
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-37_Matmul_Swish_Sum_GroupNorm",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-38_ConvTranspose3d_AvgPool_Clamp_Softmax_Multiply",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-39_Gemm_Scale_BatchNorm",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-3_ConvTranspose3d_Sum_LayerNorm_AvgPool_GELU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32,
+          "kernel_size": [
+            3,
+            3,
+            3
+          ],
+          "pool_kernel_size": [
+            2,
+            2,
+            2
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-40_Matmul_Scaling_ResidualAdd",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-41_Gemm_BatchNorm_GELU_ReLU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-42_ConvTranspose2d_GlobalAvgPool_BiasAdd_LogSumExp_Sum_Multiply",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-43_Conv3d_Max_LogSumExp_ReLU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-44_ConvTranspose2d_Multiply_GlobalAvgPool_GlobalAvgPool_Mean",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-45_Gemm_Sigmoid_LogSumExp",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "hidden_size": 32,
+          "output_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-46_Conv2d_Subtract_Tanh_Subtract_AvgPool",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-47_Conv3d_Mish_Tanh",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-48_Conv3d_Scaling_Tanh_Multiply_Sigmoid",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-49_ConvTranspose3d_Softmax_Sigmoid",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-4_Conv2d_Mish_Mish",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-50_ConvTranspose3d_Scaling_AvgPool_BiasAdd_Scaling",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-51_Gemm_Subtract_GlobalAvgPool_LogSumExp_GELU_ResidualAdd",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-52_Conv2d_Activation_BatchNorm",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-53_Gemm_Scaling_Hardtanh_GELU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-54_Conv2d_Multiply_LeakyReLU_GELU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-55_Matmul_MaxPool_Sum_Scale",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-56_Matmul_Sigmoid_Sum",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-57_Conv2d_ReLU_HardSwish",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-58_ConvTranspose3d_LogSumExp_HardSwish_Subtract_Clamp",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "bias_shape": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-59_Matmul_Swish_Scaling",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-5_ConvTranspose2d_Subtract_Tanh",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-60_ConvTranspose3d_Swish_GroupNorm_HardSwish",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-61_ConvTranspose3d_ReLU_GroupNorm",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-62_Matmul_GroupNorm_LeakyReLU_Sum",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-63_Gemm_ReLU_Divide",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-64_Gemm_LogSumExp_LeakyReLU_LeakyReLU_GELU_GELU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-65_Conv2d_AvgPool_Sigmoid_Sum",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-66_Matmul_Dropout_Softmax",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "failed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "failed"
+      },
+      {
+        "task_id": "level2-67_Conv2d_GELU_GlobalAvgPool",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-68_Matmul_Min_Subtract",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-69_Conv2d_HardSwish_ReLU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-6_Conv3d_Softmax_MaxPool_MaxPool",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-70_Gemm_Sigmoid_Scaling_ResidualAdd",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-71_Conv2d_Divide_LeakyReLU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-72_ConvTranspose3d_BatchNorm_AvgPool_AvgPool",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-73_Conv2d_BatchNorm_Scaling",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-74_ConvTranspose3d_LeakyReLU_Multiply_LeakyReLU_Max",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-75_Gemm_GroupNorm_Min_BiasAdd",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-76_Gemm_Add_ReLU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-77_ConvTranspose3d_Scale_BatchNorm_GlobalAvgPool",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-78_ConvTranspose3d_Max_Max_Sum",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-79_Conv3d_Multiply_InstanceNorm_Clamp_Multiply_Max",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-7_Conv3d_ReLU_LeakyReLU_GELU_Sigmoid_BiasAdd",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-80_Gemm_Max_Subtract_GELU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-81_Gemm_Swish_Divide_Clamp_Tanh_Clamp",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-82_Conv2d_Tanh_Scaling_BiasAdd_Max",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-83_Conv3d_GroupNorm_Min_Clamp_Dropout",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-84_Gemm_BatchNorm_Scaling_Softmax",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32,
+          "scale_shape": [
+            1
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-85_Conv2d_GroupNorm_Scale_MaxPool_Clamp",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-86_Matmul_Divide_GELU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "output_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-87_Conv2d_Subtract_Subtract_Mish",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-88_Gemm_GroupNorm_Swish_Multiply_Swish",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-89_ConvTranspose3d_MaxPool_Softmax_Subtract_Swish_Max",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-8_Conv3d_Divide_Max_GlobalAvgPool_BiasAdd_Sum",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "kernel_size": [
+            3,
+            3,
+            3
+          ],
+          "pool_size": [
+            2,
+            2,
+            2
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-90_Conv3d_LeakyReLU_Sum_Clamp_GELU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-91_ConvTranspose2d_Softmax_BiasAdd_Scaling_Sigmoid",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-92_Conv2d_GroupNorm_Tanh_HardSwish_ResidualAdd_LogSumExp",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-93_ConvTranspose2d_Add_Min_GELU_Multiply",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-94_Gemm_BiasAdd_Hardtanh_Mish_GroupNorm",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-95_Matmul_Add_Swish_Tanh_GELU_Hardtanh",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level2-96_ConvTranspose3d_Multiply_Max_GlobalAvgPool_Clamp",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-97_Matmul_BatchNorm_BiasAdd_Divide_Swish",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32,
+          "bias_shape": [
+            1
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-98_Matmul_AvgPool_GELU_Scale_Max",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-99_Matmul_GELU_Softmax",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level2-9_Matmul_Subtract_Multiply_ReLU",
+        "level": 2,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_features": 32,
+          "out_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-10_ResNet101",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-11_VGG16",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-12_VGG19",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-13_DenseNet121TransitionLayer",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "num_output_features": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-14_DenseNet121DenseBlock",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-15_DenseNet121",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-16_DenseNet201",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-17_SqueezeNetFireModule",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "num_output_features": 32,
+          "expand1x1_channels": 32,
+          "expand3x3_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-18_SqueezeNet",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-19_MobileNetV1",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level3-1_MLP",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "timeout",
+        "status": "timeout"
+      },
+      {
+        "task_id": "level3-20_MobileNetV2",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-21_EfficientNetMBConv",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "in_channels": 32,
+          "out_channels": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-22_EfficientNetB0",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-23_EfficientNetB1",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_shape": [
+            3,
+            32,
+            32
+          ]
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-24_EfficientNetB2",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-25_ShuffleNetUnit",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level3-26_ShuffleNet",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-27_RegNet",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-28_VisionTransformer",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "image_size": 32,
+          "dim": 32,
+          "mlp_dim": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-29_SwinMLP",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level3-2_ShallowWideMLP",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "timeout",
+        "status": "timeout"
+      },
+      {
+        "task_id": "level3-30_SwinTransformerV2",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level3-31_VisionAttention",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level3-32_ConvolutionalVisionTransformer",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "embed_dim": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-33_VanillaRNN",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "hidden_size": 32,
+          "output_size": 32,
+          "sequence_length": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-34_VanillaRNNHidden",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "hidden_size": 32,
+          "output_size": 32,
+          "sequence_length": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-35_LSTM",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "sequence_length": 32,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-36_LSTMHn",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "sequence_length": 32,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-37_LSTMCn",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "sequence_length": 32,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-38_LSTMBidirectional",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "sequence_length": 32,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-39_GRU",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-3_DeepNarrowMLP",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "output_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-40_GRUHidden",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-41_GRUBidirectional",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-42_GRUBidirectionalHidden",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "input_size": 32,
+          "hidden_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-43_MinGPTCausalAttention",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-44_MiniGPTBlock",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-45_UNetSoftmax",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-46_NetVladWithGhostClusters",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "num_features": 32,
+          "feature_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-47_NetVladNoGhostClusters",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "num_features": 32,
+          "feature_size": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-48_Mamba2ReturnY",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level3-49_Mamba2ReturnFinalState",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "error",
+        "status": "error"
+      },
+      {
+        "task_id": "level3-4_LeNet5",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-50_ReLUSelfAttention",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-5_AlexNet",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-6_GoogleNetInceptionModule",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "in_channels": 32,
+          "batch_size": 2,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-7_GoogleNetInceptionV1",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "batch_size": 2,
+          "height": 32,
+          "width": 32
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-8_ResNetBasicBlock",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "bounded_overrides": {
+          "out_channels": 32,
+          "batch_size": 2
+        },
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level3-9_ResNet18",
+        "level": 3,
+        "original": "not_run_budget",
+        "bounded": "passed",
+        "status": "passed_bounded"
+      },
+      {
+        "task_id": "level4-10_google-bigbird-roberta-base_bs1024_seq32",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-11_google-electra-small-discriminator_bs1_seq511",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-12_google-electra-small-discriminator_bs1024_seq32",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-13_google-reformer-enwik8_bs32_seq256",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-14_google-electra-small-discriminator_bs32_seq256",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-15_google-reformer-enwik8_bs1024_seq32",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-16_gpt2_bs1_seq1023",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-17_facebook-bart-large_bs1024_seq32",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-18_EleutherAI-gpt-neo-2p7B_bs512_seq32",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-19_gpt2_bs1024_seq32",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-1_EleutherAI-gpt-neo-2p7B_bs32_seq256",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-20_facebook-bart-large_bs32_seq256",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-2_facebook-opt-1p3b_bs1_seq2047",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-3_EleutherAI-gpt-neo-2p7B_bs1_seq2047",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-4_facebook-opt-1p3b_bs32_seq256",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-5_google-bigbird-roberta-base_bs1_seq4095",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-6_facebook-bart-large_bs1_seq1023",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-7_gpt2_bs32_seq256",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-8_facebook-opt-1p3b_bs512_seq32",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      },
+      {
+        "task_id": "level4-9_google-bigbird-roberta-base_bs32_seq256",
+        "level": 4,
+        "status": "not_run_pretrained_assets"
+      }
+    ]
+  },
+  "flashinfer": {
+    "prepared": 30,
+    "evaluations": 30,
+    "statuses": {
+      "PASSED": 30
+    }
+  },
+  "mle_local": {
+    "digits": {
+      "reward": 0.9755555555555555,
+      "accuracy": 0.9755555555555555,
+      "valid_submission": 1,
+      "local_evaluation": 1
+    },
+    "iris": {
+      "reward": 0.9473684210526315,
+      "accuracy": 0.9473684210526315,
+      "valid_submission": 1,
+      "local_evaluation": 1
+    },
+    "wine": {
+      "reward": 1.0,
+      "accuracy": 1.0,
+      "valid_submission": 1,
+      "local_evaluation": 1
+    },
+    "breast-cancer": {
+      "reward": 0.993006993006993,
+      "accuracy": 0.993006993006993,
+      "valid_submission": 1,
+      "local_evaluation": 1
+    }
+  },
+  "packaged_local_checks": {
+    "packaged-local-fixed": {
+      "passed": true,
+      "result": {
+        "task_name": "level1-19_ReLU",
+        "reward": 1.0,
+        "rewards": {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_ms": -1.0,
+          "speedup": 0.0,
+          "local_evaluation": 1,
+          "bounded_inputs": 1
+        },
+        "exception": null,
+        "exception_type": null
+      }
+    },
+    "packaged-local": {
+      "passed": false,
+      "result": {
+        "task_name": "level1-19_ReLU",
+        "reward": 0.0,
+        "rewards": {},
+        "exception": "2 validation errors for VerifierResult\nrewards.input_profile.float\n  Input should be a valid number, unable to parse string as a number [type=float_parsing, input_value='bounded_module_dimensions', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/float_parsing\nrewards.input_profile.int\n  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='bounded_module_dimensions', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/int_parsing",
+        "exception_type": "ValidationError"
+      }
+    }
+  },
+  "cleanup": {
+    "packaged-local-fixed": {
+      "owned_containers_remaining": "",
+      "gpu_compute_processes": 0,
+      "gpu_used_mib": 101.4375,
+      "cleanup_error": null
+    },
+    "kernel-bounded": {
+      "owned_containers_remaining": "",
+      "gpu_compute_processes": 0,
+      "gpu_used_mib": 101.4375,
+      "cleanup_error": null
+    },
+    "flash-check": {
+      "owned_containers_remaining": "",
+      "gpu_compute_processes": 0,
+      "gpu_used_mib": 101.4375,
+      "cleanup_error": null
+    },
+    "check1": {
+      "owned_containers_remaining": "",
+      "gpu_compute_processes": 0,
+      "gpu_used_mib": 107.4375,
+      "cleanup_error": null
+    },
+    "check0": {
+      "owned_containers_remaining": "",
+      "gpu_compute_processes": 0,
+      "gpu_used_mib": 101.4375,
+      "cleanup_error": null
+    },
+    "kernel-reuse": {
+      "owned_containers_remaining": "",
+      "gpu_compute_processes": 0,
+      "gpu_used_mib": 107.4375,
+      "cleanup_error": null
+    },
+    "packaged-local": {
+      "owned_containers_remaining": "",
+      "gpu_compute_processes": 0,
+      "gpu_used_mib": 101.4375,
+      "cleanup_error": null
+    },
+    "check": {
+      "owned_containers_remaining": "",
+      "gpu_compute_processes": 0,
+      "gpu_used_mib": 101.4375,
+      "cleanup_error": null
+    }
+  },
+  "current_source_sha256": {
+    "examples/kernel_bench/quick_check.py": "fd54dc938fae863cd0c766cc71901fccb1cc037e2ea9581fef2744562bc79e7b",
+    "examples/flashinfer_bench/quick_check.py": "9dbc588e6b7aa20ca85f3d15dfe180c2d28ef5a88676f4437339e313b8420613",
+    "examples/flashinfer_bench/verify.py": "9688078cd9c1e54f1e8783c7c27d76ec253764710dfe9abd98c1c52a30c26844",
+    "examples/mle_bench/local_baseline.py": "b83c242be093ed97fa0a0919f89b7686eda8227c2050088d655d0b4b0a8370c2",
+    "examples/gpu_benchmarks/evaluate.py": "ed4cd5f66a9df4ce61e859ece0cb67c5b5efd948e5626fffe1370a5ad365b7c0",
+    "examples/gpu_benchmarks/reward.py": "7798c009ed5319be00c5525fe297634b94d8c0a2c5394ece8f36bf28f7f5a4d2"
+  },
+  "prepared_checker_sha256": {
+    "batch1": "91ad93905d8140c152965f0a026d90e558309a8b7275507c16df835de89857a7",
+    "batch0": "91ad93905d8140c152965f0a026d90e558309a8b7275507c16df835de89857a7",
+    "kernel-reuse-task": "e4126fbec4492a45bbedf08b045f9331784d6505c90a69c67abf4342b7b16c4c",
+    "flash-batch-task": "91ad93905d8140c152965f0a026d90e558309a8b7275507c16df835de89857a7",
+    "kernel-bounded-task": "b91cc2ab21ce9db97822ab82b8f7431a489183e444f621811d31aa642f14c6c1"
+  },
+  "limitations": [
+    "Reference controls check integration, not agent optimization ability.",
+    "Bounded module dimensions are diagnostic overrides, not canonical KernelBench inputs.",
+    "L4 pretrained assets were not prepared for this quick check.",
+    "Cold per-task checks were stopped. Successful original checks were preserved and excluded from retries."
+  ]
+}

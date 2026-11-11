@@ -103,7 +103,7 @@
 
 本节记录的是修复前的性能对照，未为补齐第二轮而继续重跑。后续修复及验证见第 6 节，仍保留“确认物理回收后才归还预算”的约束。
 
-**收尾与证据留存**：最后核对本次 Docker 容器及 MPS 服务均已移除，GPU 无计算进程，NVML 占用回到约 0.19 MiB。物理资源已释放不等于作业协议成功，两者在结果中分别记录。紧凑数据见 [mps-training-results.json](mps-training-results.json)，完整失败日志、训练输出、trace 和源码哈希保存在 [本轮原始结果](../env-service-verification/results/mps-training-20261102/)。
+**收尾与证据留存**：最后核对本次 Docker 容器及 MPS 服务均已移除，GPU 无计算进程，NVML 占用回到约 0.19 MiB。物理资源已释放不等于作业协议成功，两者在结果中分别记录。紧凑数据见 [mps-training-results.json](mps-training-results.json)，完整失败日志、训练输出、trace 和源码哈希保存在 [本轮原始结果](../env-service-verification/results/mps-training-20261102)。
 
 新增脚本通过语法编译和 Ruff 检查，修改文档通过本地链接检查。全仓 pre-commit 在独立快照运行，仍因仓库既有格式及 prose 检查项失败，没有自动修改无关文件。
 
@@ -184,7 +184,7 @@ NVIDIA 的 [MPS 控制接口说明](https://docs.nvidia.com/deploy/mps/mpsv2-int
 
 **Results。** 控制通道修复通过 25 项相关 CPU 回归，覆盖同服务串行、不同服务独立、排队超时不发送命令、失败后解锁、终止错误不吞掉，以及原有取消与预算保留约束。原先失败的真实训练组已单独复测通过：两份任务各完成 3 步预热、10 步计时训练和 2 步 profiler 采样，均得到 `completed / exit_code=0`，没有清理错误。计时段为 20.159 秒，仅用来核对同负载执行，不加入原性能统计。容器和 MPS 服务均已移除，GPU 无计算进程，显存回到约 0.19 MiB。没有重跑其他性能对照。
 
-修复基于 `affe7c2`，生产代码改动是 `mps.py` 的控制通道和 `parallel_gpu.py` 的通道接线、关闭异常处理。源码哈希、请求数量和训练状态见 [修复结果 JSON](mps-control-fix-results.json)，原始控制查询、系统调用跟踪、服务日志和训练结果在 [修复验证目录](../env-service-verification/results/mps-control-fix-20261102/)。代码与文档仍是主开发目录未提交改动，未推送、未合并，也没有全局部署。
+修复基于 `affe7c2`，生产代码改动是 `mps.py` 的控制通道和 `parallel_gpu.py` 的通道接线、关闭异常处理。源码哈希、请求数量和训练状态见 [修复结果 JSON](mps-control-fix-results.json)，原始控制查询、系统调用跟踪、服务日志和训练结果在 [修复验证目录](../env-service-verification/results/mps-control-fix-20261102)。代码与文档仍是主开发目录未提交改动，未推送、未合并，也没有全局部署。
 
 可运行的最小诊断脚本是 [mps_control_check.py](../env-service-verification/scripts/mps_control_check.py)。它需要已核验的空闲 GPU、Docker 和所选镜像，只操作自己创建的服务。`--trace` 会刻意绕过通道复现原始连接竞争，用于诊断，不能把这部分预期失败算作修复后受管请求失败。
 

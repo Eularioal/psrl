@@ -1,8 +1,10 @@
 # EnvWorker 实验与验证
 
+分类阅读：[文献调研](../literature-reviews/README.md) · [研究提案](../research-proposals/README.md) · [历史归档](../archive/README.md) · [当前设计](../knowledge/current-design.md)
+
 > **核心结论**：按验证对象选择报告，先核对版本、工作负载、完成边界和计时口径。CPU 模拟、GPU 组件验证与真实训练的结论不能互相替代。报告中的历史「当前」只指其记录时的状态，理解实现请看[知识索引](../knowledge/README.md)。
 
-介绍当前架构先读[当前设计](../knowledge/current-design.md)。[Env 设计与收益简版](env-design-and-results-brief.md)与[详细版](env-status-and-roadmap.md)是 2026-10-28 阶段报告，保留当时图示、实验条件和结果。需要查完整实验记录时，再通过下表选择报告。
+介绍当前架构先读[当前设计](../knowledge/current-design.md)。[Env 设计与收益简版](env-design-and-results-brief.md)与[详细版](../milestones/env-status-and-roadmap.md)是 2026-10-28 阶段报告，保留当时图示、实验条件和结果。需要查完整实验记录时，再通过下表选择报告。
 
 ## 目录
 
@@ -49,10 +51,10 @@
 
 | 目录 | 用途 |
 |---|---|
-| [env-service-verification/scripts/](../env-service-verification/scripts/) | 共用复现与分析脚本，也包含知识文章的 CPU 教学示例。 |
-| [env-service-verification/results/](../env-service-verification/results/) | 报告引用的原始结果与图表，以各报告链接为准。 |
-| [gpu-job-validation/](../gpu-job-validation/) | GPU 作业接口与任务遥测的配套验证。 |
-| [airs-bench-audit/](../airs-bench-audit/) | AIRS-Bench 的复现脚本、基线快照和审查证据。 |
+| [env-service-verification/scripts/](../env-service-verification/scripts) | 共用复现与分析脚本，也包含知识文章的 CPU 教学示例。 |
+| [env-service-verification/results/](../env-service-verification/results) | 报告引用的原始结果与图表，以各报告链接为准。 |
+| [gpu-job-validation/](../gpu-job-validation) | GPU 作业接口与任务遥测的配套验证。 |
+| [airs-bench-audit/](../airs-bench-audit) | AIRS-Bench 的复现脚本、基线快照和审查证据。 |
 
 需要重跑时，先读[集群运行约束](../../psrl/psrl-run-guide/cluster-preflight.md)，再使用具体报告的复现步骤。不能把目录里的历史输出当作本次验证结果。
 

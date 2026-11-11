@@ -61,6 +61,37 @@ def percentile_example():
     print("  A small upper-tail inflation alone can hide systematic underestimation.")
 
 
+def accounting_example():
+    """Keep device time separate from disjoint host lifecycle intervals."""
+    events_ms = {"arrived": 0, "locked": 20, "isolated": 24, "region_done": 27, "returned": 30}
+    stages = (
+        ("queue", "arrived", "locked"),
+        ("isolation", "locked", "isolated"),
+        ("protected_region", "isolated", "region_done"),
+        ("return", "region_done", "returned"),
+    )
+    durations = {name: events_ms[end] - events_ms[start] for name, start, end in stages}
+    device_ms = 1.0
+    print("\nSynthetic host lifecycle with an independent device measurement:")
+    print(f"  Host intervals: {durations}, total={sum(durations.values())} ms.")
+    print(f"  Device measurement: {device_ms:.1f} ms, already contained in the protected region.")
+    print("  Adding device time to the host total would count part of the work twice.")
+
+
+def normalization_example():
+    """Demonstrate unequal interference on a reference and its candidate."""
+    reference_ms = 12.0
+    candidate_ms = 10.0
+    reference_slowdown = 1.25
+    candidate_slowdown = 1.10
+    native_speedup = reference_ms / candidate_ms
+    shared_speedup = reference_ms * reference_slowdown / (candidate_ms * candidate_slowdown)
+    print("\nReference normalization under unequal interference:")
+    print(f"  Native speedup: {native_speedup:.3f}x, shared speedup: {shared_speedup:.3f}x.")
+    print(f"  Relative speedup overstatement: {(shared_speedup / native_speedup - 1) * 100:.2f}%.")
+    print("  A ratio cancels interference only under additional assumptions about equal slowdown.")
+
+
 def main():
     """Print teaching examples without accessing a GPU or modifying system state."""
     print("Teaching simulation only. No KREX implementation or GPU performance reproduction.\n")
@@ -68,6 +99,8 @@ def main():
     ranking_example()
     pipeline_example()
     percentile_example()
+    accounting_example()
+    normalization_example()
 
 
 if __name__ == "__main__":

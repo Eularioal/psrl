@@ -19,7 +19,7 @@ def docker(*args):
     return subprocess.check_output(["docker", *args], text=True, timeout=15).strip()
 
 
-async def run(args):
+async def run(args, experiment=None):
     import ray
     from harbor.models.task.config import EnvironmentConfig, NetworkPolicy
     from harbor.models.trial.paths import TrialPaths
@@ -35,7 +35,7 @@ async def run(args):
         "status": "starting",
         "tag": tag,
         "started": time.time(),
-        "budget_s": 600,
+        "budget_s": getattr(args, "budget_s", 600),
         "environment_backend": "env_worker",
         "gpu_reservation": "command",
         "scope": "Real Ray EnvRouter and native EnvWorker; no agent rollout or PSRL training step.",
@@ -66,6 +66,7 @@ async def run(args):
             _temp_dir=f"/tmp/{tag}",
             num_cpus=4,
             num_gpus=0,
+            object_store_memory=134217728,
             include_dashboard=False,
             log_to_driver=False,
         )
@@ -73,7 +74,7 @@ async def run(args):
         alive = [node for node in record["ray_nodes"] if node["Alive"]]
         if len(alive) != 1 or alive[0]["NodeManagerAddress"] != args.node_ip:
             raise RuntimeError("Unexpected private Ray node identity.")
-        async with asyncio.timeout(600):
+        async with asyncio.timeout(getattr(args, "budget_s", 600)):
             router = EnvRouter.options(name=tag).remote(
                 {
                     "node_policy": "any",
@@ -138,6 +139,10 @@ async def run(args):
                 raise RuntimeError("Container CUDA execution failed.")
             record["gpu_between_commands"] = gpu_snapshot(args.gpu)
             record["ledger_between_commands"] = [dataclasses.asdict(x) for x in await router.snapshot.remote()]
+            if experiment is not None:
+                await experiment(environment, python, root, record, router, args.gpu)
+                record["status"] = "passed"
+                return
             command = shlex.join([python, "/work/flashinfer_official_eval.py"])
             result = await environment.exec_gpu(command, timeout_sec=420, wait_timeout_sec=30, overlap_return=False)
             (root / "benchmark.stdout").write_text(result.stdout or "")
@@ -197,6 +202,8 @@ async def run(args):
             record["status"] = "failed"
         record["finished"] = time.time()
         save()
+        if errors:
+            raise RuntimeError("Physical cleanup could not be confirmed.")
     if record["status"] != "passed":
         raise RuntimeError("The bounded probe did not pass.")
 

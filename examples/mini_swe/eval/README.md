@@ -10,7 +10,7 @@ OpenAI-compatible endpoint for mini-swe-agent to drive.
 | [`eval_swebench_multinode.py`](eval_swebench_multinode.py) | Hash-shards a prepared parquet across hosts, fans `eval_swebench` out over ssh, merges per-shard artefacts into one output directory. Forwards `OPENAI_API_BASE` / `OPENAI_API_KEY` to every host. |
 
 Model serving is **not** in this directory: it lives in
-[`psrl/eval/`](../../../psrl/eval/) because `examples/sciaccel_rl/eval/` needs the
+[`psrl/eval/`](../../../psrl/eval) because `examples/sciaccel_rl/eval/` needs the
 same thing. Use `python -m psrl.eval.serve` with `topology=single|fleet|multinode`.
 
 The grader itself — [`../swebench_grader.py`](../swebench_grader.py) — stays at
@@ -93,7 +93,7 @@ at. So to evaluate your own checkpoint, serve it with **any OpenAI-compatible
 server** (vLLM / sglang / TGI / llama.cpp server / litellm proxy) and point
 the eval at it.
 
-Serving lives in [`psrl/eval/`](../../../psrl/eval/), shared with
+Serving lives in [`psrl/eval/`](../../../psrl/eval), shared with
 `examples/sciaccel_rl/eval/`:
 
 #### Single-node

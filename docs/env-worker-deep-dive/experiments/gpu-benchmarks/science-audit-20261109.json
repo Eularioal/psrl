@@ -1,0 +1,122 @@
+{
+  "date": "2026-11-09",
+  "head": "bc5665f436065656c043b69e8a7aa21edd8a0cd3",
+  "scope": "Representative environment execution with fixed oracle actions, not LLM agent rollout or PSRL policy optimization.",
+  "tests": {
+    "passed": 104,
+    "skipped": 27,
+    "seconds": 59.86
+  },
+  "sources": {
+    "examples/gpu_benchmarks/run.py": "c3ce2a83d45ca47edcbd70a09d477da3f3d3d2642792d6597402143ca1454658",
+    "examples/gpu_benchmarks/agent_loop.py": "c07808e5792caad1f9883520be0944a0d0071bd9eea123005a17cc09df092ad4",
+    "examples/gpu_benchmarks/reward.py": "a6a6a391c42d9c4008fff067043a3c669816a073659ad6bc651413ce6ea1d76c",
+    "examples/gpu_benchmarks/prepare.py": "2e144998a23d9c418144e8db084c346b00384b5cbc2d8ed67e46c11a9969b877",
+    "examples/sciaccel_rl/runner.py": "2c43091a9b6917ab57f99243d0b31fafd5f93a15f5c0b8c4a0b3663bb336db3e",
+    "examples/re_bench/run.py": "24c8cdba6eeb4cfa2825ad7fa68d55e86da1ef35537f5867ba695254de657858",
+    "examples/inference_bench/resident_ab.py": "85eff97046cbe8acab6802e0566ed81fc0595161968254f4cf703510f1329189"
+  },
+  "runs": {
+    "kernel": {
+      "exit": 0,
+      "passed": true,
+      "result": {
+        "task_name": "task",
+        "reward": 1.0,
+        "rewards": {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 7.8,
+          "speedup": 0.5833333333333334
+        },
+        "exception": null,
+        "exception_type": null
+      },
+      "seconds": 87.29295134544373,
+      "gpu_name": "NVIDIA H20",
+      "remaining_containers": false,
+      "remaining_gpu_processes": 0,
+      "gpu_after_mb": 0.1875,
+      "cleanup_error": null,
+      "raw_evidence_sha256": "801e93a69b961b82cf7158114c37565d8554fe9a953f3995415ab819843b0539",
+      "ray_single_node": true
+    },
+    "autoresearch": {
+      "exit": 0,
+      "passed": true,
+      "result": {
+        "task_name": "task",
+        "reward": 0.4632439188489065,
+        "rewards": {
+          "reward": 0.4632439188489065,
+          "val_bpb": 1.158689967231203
+        },
+        "exception": null,
+        "exception_type": null
+      },
+      "seconds": 445.3941378593445,
+      "gpu_name": "NVIDIA H20",
+      "remaining_containers": false,
+      "remaining_gpu_processes": 0,
+      "gpu_after_mb": 0.1875,
+      "cleanup_error": null,
+      "raw_evidence_sha256": "6109f6b3174e2e64898c6920096e2dc64195f5a53bdb470c81393185f6b8b1af",
+      "ray_single_node": true
+    },
+    "re-bench": {
+      "exit": 0,
+      "passed": true,
+      "result": {
+        "task_name": "task-smoke-ready",
+        "reward": 0.0,
+        "rewards": {
+          "reward": 0.0,
+          "smoke_valid": 1,
+          "official_evaluation": 0,
+          "judge_valid": 0
+        },
+        "exception": null,
+        "exception_type": null
+      },
+      "seconds": 47.627493381500244,
+      "gpu_name": "NVIDIA H20",
+      "remaining_containers": false,
+      "remaining_gpu_processes": 0,
+      "gpu_after_mb": 0.1875,
+      "cleanup_error": null,
+      "raw_evidence_sha256": "a5db904eb820696f76c82d132f9b2f2a24b4b3ab00039add8cf3206bd83e1d16",
+      "ray_single_node": true
+    },
+    "inference-resident": {
+      "exit": 0,
+      "episodes": [
+        {
+          "accepted": true,
+          "result": {
+            "task_name": "task",
+            "reward": 1.0,
+            "rewards": {
+              "reward": 1.0
+            },
+            "exception": null,
+            "exception_type": null
+          }
+        }
+      ],
+      "remaining_containers": false,
+      "remaining_gpu_processes": 0,
+      "gpu_after_mb": 0.1875,
+      "cleanup_error": null,
+      "error": null,
+      "raw_evidence_sha256": "3a72107c57669d216a9460f4876d5494f21aa769b106dea2ccb843bafcac585d"
+    }
+  },
+  "upstreams": {
+    "KernelBench": "423217d9fda91e0c2d67e4a43bf62f96f6d104f1",
+    "autoresearch": "228791fb499afffb54b46200aca536f79142f117",
+    "RE-Bench": "a0cc6d4a91b20f84ebef505d5c72358f88b3b389",
+    "InferenceBench": "108ec747fab0bd92fd9de501f62157d074c50ed5",
+    "mle-bench": "507f92e1138bb6e40dac5c6ee7a6758e6424bf97",
+    "flashinfer-bench": "15618a67e8d7b7f49ca61b5ba3b9f26a876d0bee"
+  }
+}

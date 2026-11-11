@@ -210,5 +210,5 @@ def build_gpu_probe_row(task_id: str, image: str) -> dict:
 ## 延伸阅读
 
 - 设计动机和角色分工：[`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md) 第 0-10 节。
-- 现状代码深读（账本结构、崩溃回收、Coordinator/Worker 为什么要拆）：[`implementation-and-gaps.md`](implementation-and-gaps.md)。
-- SciAccel 接 GPU Gate 的实测与部署：[`sciaccel-gpu-gate.md`](sciaccel-gpu-gate.md)。
+- 现状代码深读（账本结构、崩溃回收、Coordinator/Worker 为什么要拆）：[`implementation-and-gaps.md`](../archive/implementation-and-gaps.md)。
+- SciAccel 接 GPU Gate 的实测与部署：[`sciaccel-gpu-gate.md`](../archive/sciaccel-gpu-gate.md)。

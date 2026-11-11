@@ -18,6 +18,7 @@
 - [对 Env 的研究价值与验证边界](#对-env-的研究价值与验证边界)
 - [本地裁判与 command 空窗的权衡](#本地裁判与-command-空窗的权衡)
 - [部署独立 Qwen 裁判并运行](#部署独立-qwen-裁判并运行)
+- [有界本地任务与完整策略验收](#有界本地任务与完整策略验收)
 
 ## 任务和执行路径
 
@@ -253,7 +254,7 @@ KV cache 是推理时缓存历史 token 的注意力键值，丢弃后可能需�
 |---|---|
 | J1 | 固定上游 [EvaluatorConfig](../../../../benchmark-sources/RE-Bench/ai_rd_nanogpt_chat_rl/assets/evaluation.py#L21) 定义模板，`_evaluate_prompt` 解析排名，`evaluate` 随机交换回答顺序 |
 | J2 | [call_judge](../../../examples/re_bench/judge.py#L52) 保留 Replicate 分支，新增 `call_local_judge` 本地服务适配器。[run:22](../../../examples/re_bench/run.py#L22) 按裁判配置检查 token 或本地服务 |
-| J2 结果 | [validate_ranking](../../../examples/re_bench/judge.py#L29) 校验输出，[verify.main](../../../examples/re_bench/verify.py#L12) 将完整本地评分与原服务评分分别标记，小样本验证不产生训练奖励 |
+| J2 结果 | [validate_ranking](../../../examples/re_bench/judge.py#L29) 校验输出，[verify.main](../../../examples/re_bench/verify.py#L12) 将完整本地评分与原服务评分分别标记，两种 smoke 不产生训练奖励，显式 `bounded-local` 则按本地正式协议允许有效分数进入 PSRL |
 | G1 | [GpuExecutionBackend.execute](../../../psrl/workers/env_service/gpu_execution.py#L102) 记录命令完成与归还阶段 |
 | G2 | [CommandGpuReservation.finish](../../../psrl/workers/env_service/gpu_execution.py#L54) 支持 `overlap_return`，[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L207) 检查实际归还 |
 | G3、G4 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L58) 以 lease.unit_id 排队，按 FIFO 和预算准入，不根据未来空窗预测选作业 |
@@ -281,7 +282,7 @@ KV cache 是推理时缓存历史 token 的注意力键值，丢弃后可能需�
 
 开销应拆成远程调用、准入排队、遥测与撤权确认、进程/CUDA 初始化、数据或模型加载。普通 command 完成后进程已经退出时，归还通常是验证与设备控制，不应把它叫作把活模型 offload。若两种策略都要重启相同的命令，就不能把共同的模型加载时间全部归咎于 command 调度。能与规划重叠的部分只计关键路径，不能将所有阶段简单相加。
 
-当前已有命令输出、请求、准入及归还等时间记录，但它们不是精确 GPU kernel 计时，不能直接将差值称为纯 GPU 计算时间。应配合任务自身阶段打点，先找开销主因。普通 direct command 目前也不是全局跨卡调度，队列仍绑定会话 unit，相关限制见 [动态放置分析](dynamic-command-placement.md)。
+当前已有命令输出、请求、准入及归还等时间记录，但它们不是精确 GPU kernel 计时，不能直接将差值称为纯 GPU 计算时间。应配合任务自身阶段打点，先找开销主因。普通 direct command 目前也不是全局跨卡调度，队列仍绑定会话 unit，相关限制见 [动态放置分析](../research-proposals/dynamic-command-placement.md)。
 
 运行以下标准库教学脚本可复现上表，无 GPU、网络或模型依赖：
 
@@ -333,4 +334,20 @@ python -m examples.re_bench.judge --jobs-dir "$REBENCH_JOBS_DIR" \
 
 本地请求使用相同评价文本、温度 0、输出上限 100 token，并显式关闭 Qwen thinking。若返回的是字符串排名 `"1"`、`"2"`，本地适配将其转换为整数后严格验证两个模型和排名，保持原始偏好。重复排名、缺失模型、截断或服务失败仍报错，不填造合法反馈。桥接器保存 `judge-events.jsonl` 的请求耗时、成功状态和模型名，以及 `judge.json` 的总计。本次服务使用模型自身 generation_config 的其余默认值，应在配对实验中固定一致。
 
-当前有界验证只证明本地模型、隔离请求传输、真实偏好更新、独立评分和清理接通，没有运行 PSRL 策略训练或 command ON/OFF。下一步研究问题与否证条件见 [command 调度研究](command-scheduling-research.md)。
+当前有界验证只证明本地模型、隔离请求传输、真实偏好更新、独立评分和清理接通，没有运行 PSRL 策略训练或 command ON/OFF。下一步研究问题与否证条件见 [command 调度研究](../research-proposals/command-scheduling-research.md)。
+
+## 有界本地任务与完整策略验收
+
+2026-11-10 局部核对 `bc5665f` 加本轮未提交接入代码。显式 `--bounded-local` 将小规模真实偏好训练与两条隐藏提示的评分定义为本地正式任务，使用 `data_source=re_bench_local`，允许有效本地分数进入 PSRL。它要求 `--local-judge-model`，不能与 `--smoke` 或 `--feedback-smoke` 同时使用。两种 smoke 的零奖励约束保持不变，原完整本地模式仍保留 512 条协议。
+
+沿用上节已定义的变量，准备新任务目录：
+
+```bash
+python -m examples.re_bench.prepare --repo "$BENCH_REPO" --assets "$ASSET_ROOT" \
+  --output "$TASK_DIR" --image "$TASK_IMAGE" --verifier-image "$VERIFIER_IMAGE" \
+  --local-judge-model "$JUDGE_SERVED_MODEL" --bounded-local --timeout 600
+```
+
+镜像须包含当前 [verify.py](../../../examples/re_bench/verify.py)，旧 verifier 不认识该模式。11-10 闭环验收之后补充的边界修复会把缺少训练模型或 `model.py` 明确计为无效提交零分，`judge_valid=0`，不冒充裁判已评分；裁判配置及基础设施异常仍需单独处理。该修复已做 CPU 回归，未重新进行 GPU 训练，已有镜像须重建才会包含修复，详见[边界回归](../milestones/science-gpu-full-onboarding.md#本轮边界修复与回归)。本地裁判 GPU 必须与环境卡、策略训推卡分开。桥接器的 jobs-dir 必须与实际 agent 配置的 jobs_dir 相同，混合任务准备器会生成新的 jobs 目录，不能仍监听其他任务目录。
+
+该本地协议已独立得到有效偏好分，并完成真实 PSRL 策略 rollout、一次优化器更新、参数回传与更新后独立评分，证据见[完整接入验收](../milestones/science-gpu-full-onboarding.md)。任务内 GPT-2 的更新和 PSRL 生成代码的策略模型更新是两个不同验收点，不能混计。

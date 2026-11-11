@@ -1,6 +1,6 @@
 # EnvRouter 命令阶段配额：保留任务状态，归还空档中的 GPU
 
-> **核心结论**：`gpu_reservation: command` 将容器生命周期与 GPU 使用期分开。容器中的文件和 CPU 状态继续保留，显式 `exec_gpu` 命令完成后，节点先禁止新 GPU 访问、确认已有 GPU 使用结束，Router 才释放显存预算。其他任务可以使用这段空档，原任务回来时重新排队。未设置 `command_gpu_pool` 时仍绑定原卡；显式同机池允许下一条命令重新选卡，主机资源不迁移，见[同机池实现](dynamic-command-placement.md#11-已实现的同机命令池与资源账本)。本模式面向独立环境 GPU，要求可写的 cgroup v1 设备控制器，不与 vLLM 借卡模式叠加。
+> **核心结论**：`gpu_reservation: command` 将容器生命周期与 GPU 使用期分开。容器中的文件和 CPU 状态继续保留，显式 `exec_gpu` 命令完成后，节点先禁止新 GPU 访问、确认已有 GPU 使用结束，Router 才释放显存预算。其他任务可以使用这段空档，原任务回来时重新排队。未设置 `command_gpu_pool` 时仍绑定原卡；显式同机池允许下一条命令重新选卡，主机资源不迁移，见[同机池实现](../research-proposals/dynamic-command-placement.md#11-已实现的同机命令池与资源账本)。本模式面向独立环境 GPU，要求可写的 cgroup v1 设备控制器，不与 vLLM 借卡模式叠加。
 >
 > 本文承接[阶段租约设计提案](rollout-gpu-lending.md#15-普通任务的阶段租约与预测回填)，说明已经实现的部分。预测器、后台 CUDA 进程的强制抢占及 cgroup v2 后端不在本实现中。真实实验的条件、结果和限制见第 7 节。
 >
@@ -94,7 +94,7 @@
 
 **几个容易误解的边界。** episode 不等于独占整卡，例如预算 80 GiB、两条各申报 20 GiB，宿主预算也够时仍可并发。预留 20 GiB 是账本承诺，不是提前在 CUDA 中分配了 20 GiB。command 也不是自动抢占，不能把还在运行的任意 GPU 进程暂停并搬走。当前每次命令计入的额度仍取自 `lease.demand.gpu_memory_mb`，没有逐命令传入不同显存需求的接口，细化的是持有时间，而非自动预测实际峰值。
 
-默认 Science 代理现已通过显式 psrl-gpu 工具接入受管理 GPU 作业，但普通终端调用、任意自定义代理、任务初始化及所有 verifier 尚未统一自动转换成命令协议。通用化需要明确资源与生命周期契约，详见[当前流程第 10 至 12 节](env-router-current-flow.md#10-episode-与-command-的区别及通用性边界)。反过来，仅调用一个名为 `exec_gpu` 的方法也不能证明命令模式已开启：[公共执行入口](../../../psrl/workers/env_service/managed_execution.py#L53)会读取 `gpu_execution` 持有策略，仅在没有受管理后端时走普通命令。episode 绑定也可以不带 `gpu_commands`，因此必须核对租约模式与 runner 注入，不能只凭旧参数是否存在判断。节点与容器仍随会话固定；未配置池时设备也固定，显式同机 command_gpu_pool 可为下一条命令重选设备。归还额度不会迁移容器。模型同卡借还另有 sleep/wake 协议，不能将当前 command 模式与该分支任意组合。
+默认 Science 代理现已通过显式 psrl-gpu 工具接入受管理 GPU 作业，但普通终端调用、任意自定义代理、任务初始化及所有 verifier 尚未统一自动转换成命令协议。通用化需要明确资源与生命周期契约，详见[当前流程第 10 至 12 节](../archive/env-router-current-flow.md#10-episode-与-command-的区别及通用性边界)。反过来，仅调用一个名为 `exec_gpu` 的方法也不能证明命令模式已开启：[公共执行入口](../../../psrl/workers/env_service/managed_execution.py#L53)会读取 `gpu_execution` 持有策略，仅在没有受管理后端时走普通命令。episode 绑定也可以不带 `gpu_commands`，因此必须核对租约模式与 runner 注入，不能只凭旧参数是否存在判断。节点与容器仍随会话固定；未配置池时设备也固定，显式同机 command_gpu_pool 可为下一条命令重选设备。归还额度不会迁移容器。模型同卡借还另有 sleep/wake 协议，不能将当前 command 模式与该分支任意组合。
 
 `episode` 模式把“这个任务可能再用 GPU”作为资源声明的有效期。即使某个 Python 进程退出、显存已经释放，容器仍可能在下一轮对话里执行 CUDA 命令。如果 Router 此时仅仅把账本数字清零，而容器仍能随时访问 GPU，就会出现 A、B 同时认为自己有资源的情况。
 
@@ -376,7 +376,7 @@ next_output = await environment.exec_gpu(next_command)
 
 用户提出的“模型返回时发现本机被占用，就等或换机器”是合理的方向。这里把 PD 理解为模型推理中的预填充与解码分离：预填充处理输入，解码逐个生成输出，阶段之间传递注意力计算使用的键值缓存，即 KV cache。vLLM 的对应机制见[官方说明](https://docs.vllm.ai/en/latest/features/disagg_prefill/)。可以借鉴阶段分离和状态交接，但 Docker 命令的状态不只有一种缓存。
 
-当前 `EnvLease` 固定记录 `unit_id`、`node_ip` 和 `gpu_indices`，节点授权还核验实际 `container_id`。修改一个节点地址不能把运行中的容器搬过去。任务可能依赖容器本地文件、当前目录、环境变量、tmux 会话、CPU 内存和 GPU 上下文。同机换卡也不能只改账本。当前显式池已实现候选设备映射、按命令授权和实际 GPU 记账，见[实现说明](dynamic-command-placement.md#11-已实现的同机命令池与资源账本)；下述独立远端执行器仍为提案。
+当前 `EnvLease` 固定记录 `unit_id`、`node_ip` 和 `gpu_indices`，节点授权还核验实际 `container_id`。修改一个节点地址不能把运行中的容器搬过去。任务可能依赖容器本地文件、当前目录、环境变量、tmux 会话、CPU 内存和 GPU 上下文。同机换卡也不能只改账本。当前显式池已实现候选设备映射、按命令授权和实际 GPU 记账，见[实现说明](../research-proposals/dynamic-command-placement.md#11-已实现的同机命令池与资源账本)；下述独立远端执行器仍为提案。
 
 建议将持久会话与 GPU 命令执行器分开：原容器保留 agent 的工作目录和交互状态，每条可移植 GPU 命令声明镜像版本、输入文件版本、参数、所需显存和输出位置，由调度器分配独立执行器。完成后把退出码、日志和结果文件提交回原会话。共享文件系统能减少复制，但仍需要输出版本和原子提交，不能让两个重试同时覆盖同一输出。授权重试也不意味着可以重复任意外部副作用。
 
@@ -782,4 +782,3 @@ python -m pytest -q \
 ```
 
 预期：本地模拟服务中的 `owned` 容器信息能返回，不存在的容器得到 404 错误，远程 TCP daemon 配置被拒绝。两项检查均已实际通过，见 [CPU 检查日志](../env-service-verification/results/async-admission-diagnosis-20261020/docker-locality-cpu-tests.log)。这说明健康本地服务上的直接接口可用，同时本机真实 Docker 探活仍失败，明确区分了接口代码与 daemon 健康状况。
-

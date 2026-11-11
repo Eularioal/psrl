@@ -1,10 +1,16 @@
 # GPU benchmark 的 Env 与 PSRL recipe
 
-> **核心结论**：GPU recipe 共用 `GpuBenchmarkAgentLoop`，强制通过 EnvRouter 准入，默认支持 Docker 与原生 Env 后端的 episode GPU 持有，KernelBench 另有显式 direct command verifier 入口，见末节。准备器生成 Harbor 任务与 PSRL Parquet。长训练可以包装为一条 command，跨请求常驻模型才更直接体现持续持有的必要性。InferenceBench 另有固定真实请求实验，RE-Bench 另有真实资产 CUDA smoke，两者都不能与官方评分混淆。
+> **核心结论**：GPU recipe 共用 `GpuBenchmarkAgentLoop`，强制通过 EnvRouter 准入，默认支持 Docker 与原生 Env 后端的 episode GPU 持有，KernelBench 另有显式 direct command verifier 入口，见末节。准备器生成 Harbor 任务与 PSRL Parquet。长训练可以包装为一条 command，跨请求常驻模型才更直接体现持续持有的必要性。InferenceBench 提供固定真实请求协议，RE-Bench 提供 CUDA smoke 与显式有界本地评分，均与官方完整协议区分。
 
 先读 [README 导览](../experiments/gpu-benchmarks/README.md) 了解任务目标、具体例子与 command 适用性。验证结果见 [GPU benchmark 接入验证](../experiments/gpu-benchmarks/FINDINGS.md)。官方性能分、质量门槛与本地功能分的区别见 [InferenceBench 评分说明](inferencebench-scoring.md)。
 
 新增的 RE-Bench 聊天模型训练使用原生 Env，镜像、裁判桥接和正式评分准备步骤见 [RE-Bench recipe](re-bench-recipe.md)。下文四类准备命令保留各自入口，不使用通用准备器的 autoresearch 分支处理 RE-Bench。
+
+2026-11-10 对 `bc5665f` 加未提交代码局部核对：六类代表任务均已通过真实 PSRL rollout、一次策略更新及版本 1 后续独立 GPU 评分。本地资源下的 MLE、InferenceBench、RE-Bench 与新增 FlashInfer 接入入口见[完整接入与本地验收](../milestones/science-gpu-full-onboarding.md)。本页原官方协议保持独立，不能用 local 数据源生成官方评分标记。
+
+本轮快速扩题已发布 249 题统一任务池：Kernel 原尺寸 22、本地小输入档 193、FlashInfer 定义 30、本地 MLE 4。FlashInfer 使用 [prepare_suite](../../../examples/flashinfer_bench/prepare_suite.py#L12) 按有原始随机输入的定义准备有界子集；MLE 的 `--dataset` 可选择 `digits`、`iris`、`wine`、`breast-cancer`。具体资源、运行方式、失败边界与数据入口见[快速验证结果](../milestones/science-gpu-bench-status-and-roadmap.md#results扩题与快速-gpu-验证)。
+
+2026-11-10 验收后边界修复经 30 项 CPU 回归：缺少提交物明确零分，MLE 检查损坏和超额 CSV，混合准备器核对显式来源标记，Inference verifier 清理完整服务进程组。六类修复尚未重跑混合策略训练，11-11 快速 GPU 复验仅覆盖上方列出的扩题路径。使用修复需重新准备任务，RE 还需重建 verifier 镜像，见[回归与产物边界](../milestones/science-gpu-full-onboarding.md#本轮边界修复与回归)。
 
 ## 目录
 
@@ -29,6 +35,9 @@
 | InferenceBench | [prepare.py](../../../examples/inference_bench/prepare.py) | 导入上游生成的 Harbor 任务，将 Modal handoff 改为本地 Docker bind |
 | autoresearch | [prepare.py](../../../examples/autoresearch/prepare.py) | 使用固定数据缓存，提交训练脚本，独立容器重放 |
 | RE-Bench | [prepare.py](../../../examples/re_bench/prepare.py) | GPT-2 XL 聊天训练，原生 Env、宿主裁判请求桥接与独立官方评分 |
+| MLE 本地协议 | [local.py](../../../examples/mle_bench/local.py) | 真实 digits 数据、CUDA 分类器、隐藏测试标签独立评分 |
+| Inference 本地协议 | [local.py](../../../examples/inference_bench/local.py) | 固定真实请求、冻结参考输出、独立服务重启与评分 |
+| FlashInfer-Bench | [prepare.py](../../../examples/flashinfer_bench/prepare.py) | 官方 Solution 格式和 RMSNorm 子集，独立 evaluator |
 | 公共准备器 | [prepare.py](../../../examples/gpu_benchmarks/prepare.py) | 记录源码版本、生成任务与 Parquet |
 | PSRL 循环 | [agent_loop.py](../../../examples/gpu_benchmarks/agent_loop.py) | 复用会话轨迹收集，强制 EnvRouter，不允许本地无准入回退 |
 | 环境验证 | [run.py](../../../examples/gpu_benchmarks/run.py) | 私有 Ray、EnvRouter、任务执行、清理证据 |
@@ -169,6 +178,8 @@ python -m examples.kernel_bench.prepare \
 
 这个题目自带一个固定 Triton 矩阵乘法提交，供 oracle 检查执行链路。它不是最优解，不要求速度超过 PyTorch。其他题目不会自动生成 oracle。上游输入尺寸不做缩小。
 
+2026-11-11 新增 [prepare_suite](../../../examples/kernel_bench/prepare_suite.py#L29) 批量入口，默认枚举 L1 至 L4，固定本地题库共 270 题，已实际生成 270 个任务和配套 PSRL 数据表。调用方式与所有题库的数量、位置见[路线图逐题统计](../milestones/science-gpu-bench-status-and-roadmap.md#题库数量位置与逐题覆盖)。批量准备与快速 GPU 验证分开登记：本轮原尺寸通过 22 题、小输入档通过 193 题，后者使用 `kernel_bench_local` 与 `--bounded-inputs`，不能冒充原尺寸结果。小输入档将相同维度覆盖实现打包进独立 verifier，奖励须携带本地 profile 标记。策略更新闭环仍仅有此前的方阵乘法代表题，不能把快速验证写成 270 题闭环通过。
+
 MLE-bench：先用官方 `mlebench prepare` 得到 `DATA_ROOT/competition/prepared/public` 与 `private`，再执行：
 
 ```bash
@@ -212,7 +223,7 @@ Episode 是一次完整任务执行。`gpu_reservation: episode` 表示 GPU 预�
 |---|---|
 | InferenceBench 常驻推理服务 | 模型权重跨多次请求、命令驻留。KV cache 是否跨请求保留取决于服务实现，不能一概而论 |
 | autoresearch | 一次训练及评估需要连续保留模型、优化器和 CUDA 上下文，适合验证长时间持卡。准备代码阶段未必必须保留 GPU |
-| MLE-bench | 训练期间连续持卡，但数据处理、训练、提交之间是否释放取决于任务实现。当前暂缓接入数据 |
+| MLE-bench | 训练期间连续持卡，但数据处理、训练、提交之间是否释放取决于任务实现。官方 Kaggle 数据待凭据，本地 digits 协议可独立准备和评分 |
 | KernelBench | 单次编译和测量通常较短，可以按命令安排。默认 episode，可显式选择本篇 KernelBench command 入口 |
 
 原生 Env 验证优先选择已有官方数据的 autoresearch。验证目标是原生容器启动、真实训练、官方评分、租约保留和物理归还，不以策略模型训练或资源管理性能提升为验收条件。
@@ -246,7 +257,7 @@ PSRL agent 配置中的 `harbor.environment_backend` 同样支持 `env_worker`�
 
 ## command 与常驻推理服务
 
-先区分“能用一条命令启动”和“每次请求结束可以归还 GPU”。前者几乎总能做到，后者取决于命令结束后是否仍存在 GPU 状态。autoresearch 的整个训练脚本可以是一条长 GPU command，因此长达数分钟不能证明它只能使用 episode。除显式 KernelBench command 配置外，公共 recipe 仍限制 episode，这是接入边界而非任务的物理限制。 动态放置不能通过只删除 episode 校验来启用。KernelBench 已接入受管 verifier，动态换卡收益仍需另做对照，见[按 benchmark 的必要性评估](dynamic-command-placement.md#9-已接入-benchmark-的必要性评估)。
+先区分“能用一条命令启动”和“每次请求结束可以归还 GPU”。前者几乎总能做到，后者取决于命令结束后是否仍存在 GPU 状态。autoresearch 的整个训练脚本可以是一条长 GPU command，因此长达数分钟不能证明它只能使用 episode。除显式 KernelBench command 配置外，公共 recipe 仍限制 episode，这是接入边界而非任务的物理限制。 动态放置不能通过只删除 episode 校验来启用。KernelBench 已接入受管 verifier，动态换卡收益仍需另做对照，见[按 benchmark 的必要性评估](../research-proposals/dynamic-command-placement.md#9-已接入-benchmark-的必要性评估)。
 
 常驻推理的实际路径如下。箭头表示调用或生命周期，两个请求通过独立环境命令发出。
 
@@ -373,7 +384,9 @@ bash examples/gpu_benchmarks/train.sh kernel_bench \
   "psrl.env_service.units=$ENV_UNITS"
 ```
 
-`ENV_UNITS` 是 Hydra 列表字符串，每项声明 `unit_id`、`node_ip`、`cpu_quota`、`memory_mb`、`gpu_indices`、`gpu_memory_mb`、`max_containers` 和 `gpu_reservation: episode`。环境卡与模型训推卡必须现场核验无重叠。公共 launcher 复用 science 的训练配置，只替换数据、agent loop、奖励入口和项目输出名。其他三项将最后的 recipe 名替换即可。
+`ENV_UNITS` 是 Hydra 列表字符串，每项声明 `unit_id`、`node_ip`、`cpu_quota`、`memory_mb`、`gpu_indices`、`gpu_memory_mb`、`max_containers` 和 `gpu_reservation: episode`。环境卡与模型训推卡必须现场核验无重叠。公共 launcher 复用 science 的训练配置，只替换数据、agent loop、奖励入口和项目输出名。recipe 可选择 `kernel_bench`、`mle_bench`、`inference_bench`、`autoresearch`、`re_bench`、`flashinfer_bench`。混合任务使用[混合准备器](../../../examples/gpu_benchmarks/mix.py)，并显式覆盖其生成的 agent 配置路径，见[本地协议入口](../milestones/science-gpu-full-onboarding.md#运行入口)。
+
+CPU 与主存需求包含主容器、独立 verifier 和预留 sidecar，不能只按 task.toml 的主容器数值设置 unit。准备后用 [demand_from_task](../../../psrl/workers/env_service/harbor_resources.py#L21) 核对单个任务能否装入空 unit，再初始化策略模型，避免到真实派发阶段才发现资源形状不匹配。
 
 为了避免题目元数据和预算脱节，准备的 task 路径必须可被实际环境 worker 访问。若调整任务的 agent/verifier 时限，同步调整对应 `agent_config.yaml`，否则外层 runner 预算可能更早结束任务。只用一题做集成检查时不要把同题 train/val 写成独立泛化评测。
 

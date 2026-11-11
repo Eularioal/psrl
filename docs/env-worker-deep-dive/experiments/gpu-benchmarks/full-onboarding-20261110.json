@@ -1,0 +1,534 @@
+{
+  "date": "2026-11-10",
+  "base_commit": "bc5665f436065656c043b69e8a7aa21edd8a0cd3",
+  "includes_uncommitted_changes": true,
+  "hardware": "NVIDIA H20",
+  "official_full_suite": false,
+  "oracle": {
+    "mle_bench_local": {
+      "phase": "oracle GPU verification",
+      "passed": true,
+      "metrics": {
+        "reward": 0.9711111111111111,
+        "accuracy": 0.9711111111111111,
+        "valid_submission": 1,
+        "local_evaluation": 1
+      },
+      "exception": null,
+      "owned_containers_remaining": 0,
+      "gpu_compute_processes_after": 0,
+      "gpu_memory_after_mib": 0.1875,
+      "source_sha256": {
+        "examples/gpu_benchmarks/run.py": "c3ce2a83d45ca47edcbd70a09d477da3f3d3d2642792d6597402143ca1454658",
+        "examples/sciaccel_rl/runner.py": "2c43091a9b6917ab57f99243d0b31fafd5f93a15f5c0b8c4a0b3663bb336db3e",
+        "psrl/workers/env_worker/harbor.py": "11c39a13fe430e47b051029c0242b8b1bdbb1181650b6364eadc706b6666224f",
+        "psrl/workers/env_service/managed_execution.py": "fc7c27af7e1fabb20ab557300429669124a61c8700bf4b77d9145a671a3a9a43"
+      }
+    },
+    "inference_bench_local": {
+      "phase": "oracle GPU verification",
+      "passed": true,
+      "metrics": {
+        "reward": 0.06122692228292354,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "quality_pass": 1,
+        "seconds": 15.332684425637126
+      },
+      "exception": null,
+      "owned_containers_remaining": 0,
+      "gpu_compute_processes_after": 0,
+      "gpu_memory_after_mib": 0.1875,
+      "source_sha256": {
+        "examples/gpu_benchmarks/run.py": "81b95650b37a3844306741f500305778a467375602cec51bc1c4238a901fefc4",
+        "examples/sciaccel_rl/runner.py": "2c43091a9b6917ab57f99243d0b31fafd5f93a15f5c0b8c4a0b3663bb336db3e",
+        "psrl/workers/env_worker/harbor.py": "11c39a13fe430e47b051029c0242b8b1bdbb1181650b6364eadc706b6666224f",
+        "psrl/workers/env_service/managed_execution.py": "fc7c27af7e1fabb20ab557300429669124a61c8700bf4b77d9145a671a3a9a43"
+      }
+    },
+    "flashinfer_bench": {
+      "phase": "oracle GPU verification",
+      "passed": true,
+      "metrics": {
+        "reward": 1.0,
+        "correctness": 1,
+        "local_evaluation": 1,
+        "evaluations": 3
+      },
+      "exception": null,
+      "owned_containers_remaining": 0,
+      "gpu_compute_processes_after": 0,
+      "gpu_memory_after_mib": 0.1875,
+      "source_sha256": {
+        "examples/gpu_benchmarks/run.py": "c3ce2a83d45ca47edcbd70a09d477da3f3d3d2642792d6597402143ca1454658",
+        "examples/sciaccel_rl/runner.py": "2c43091a9b6917ab57f99243d0b31fafd5f93a15f5c0b8c4a0b3663bb336db3e",
+        "psrl/workers/env_worker/harbor.py": "11c39a13fe430e47b051029c0242b8b1bdbb1181650b6364eadc706b6666224f",
+        "psrl/workers/env_service/managed_execution.py": "fc7c27af7e1fabb20ab557300429669124a61c8700bf4b77d9145a671a3a9a43"
+      }
+    },
+    "re_bench_local": {
+      "phase": "oracle GPU verification",
+      "passed": true,
+      "metrics": {
+        "reward": 0.25,
+        "official_evaluation": 0,
+        "local_evaluation": 1,
+        "judge_valid": 1,
+        "eval_valid": 1,
+        "feedback_smoke_valid": 0
+      },
+      "exception": null,
+      "owned_containers_remaining": 0,
+      "gpu_compute_processes_after": 0,
+      "gpu_memory_after_mib": 3.4375,
+      "source_sha256": {
+        "examples/gpu_benchmarks/run.py": "81b95650b37a3844306741f500305778a467375602cec51bc1c4238a901fefc4",
+        "examples/sciaccel_rl/runner.py": "2c43091a9b6917ab57f99243d0b31fafd5f93a15f5c0b8c4a0b3663bb336db3e",
+        "psrl/workers/env_worker/harbor.py": "11c39a13fe430e47b051029c0242b8b1bdbb1181650b6364eadc706b6666224f",
+        "psrl/workers/env_service/managed_execution.py": "fc7c27af7e1fabb20ab557300429669124a61c8700bf4b77d9145a671a3a9a43"
+      }
+    }
+  },
+  "policy_pipeline": {
+    "status": "passed_local_functional_acceptance",
+    "data_sources": [
+      "kernel_bench",
+      "autoresearch",
+      "mle_bench_local",
+      "inference_bench_local",
+      "flashinfer_bench",
+      "re_bench_local"
+    ],
+    "policy_model": "Qwen3.5-4B",
+    "training_steps": [
+      {
+        "step": 1,
+        "actor/loss": 0.003347197314724326,
+        "actor/grad_norm": 0.798688530921936,
+        "training/global_step": 1.0,
+        "termination/trained_tokens": 11525.0,
+        "termination/masked_sample_fraction": 0.0,
+        "group/count": 6.0
+      }
+    ],
+    "published_versions": [
+      1
+    ],
+    "configured_training_steps": 2,
+    "completed_training_steps": 1,
+    "completed_rollouts_before_stop": 20,
+    "planned_rollouts": 24,
+    "cancelled_remaining_rollouts": 4,
+    "stop_reason": "All six tasks have scored real rollouts before and after policy update 1. Stop at functional acceptance.",
+    "launcher_exit": -15,
+    "normal_two_step_training_completion": false,
+    "gpu_layout": {
+      "policy_training": 2,
+      "policy_rollout": 1,
+      "task_environment": 2,
+      "independent_judge": 1
+    },
+    "guided_public_starting_solution": true,
+    "rollouts": [
+      {
+        "uid": 0,
+        "data_source": "kernel_bench",
+        "model_version": 0,
+        "num_turns": 6,
+        "termination": "finished",
+        "metrics": {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 4.55,
+          "speedup": 1.0
+        },
+        "trial_name": "kernel_bench__K8fx6QF",
+        "exception_type": null
+      },
+      {
+        "uid": 1,
+        "data_source": "kernel_bench",
+        "model_version": 0,
+        "num_turns": 2,
+        "termination": "finished",
+        "metrics": {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 4.55,
+          "speedup": 1.0
+        },
+        "trial_name": "kernel_bench__3PB6yRg",
+        "exception_type": null
+      },
+      {
+        "uid": 2,
+        "data_source": "autoresearch",
+        "model_version": 0,
+        "num_turns": 5,
+        "termination": "finished",
+        "metrics": {
+          "reward": 0.46380600907626846,
+          "val_bpb": 1.1560738335228415
+        },
+        "trial_name": "autoresearch__se6cnrd",
+        "exception_type": null
+      },
+      {
+        "uid": 3,
+        "data_source": "autoresearch",
+        "model_version": 0,
+        "num_turns": 2,
+        "termination": "finished",
+        "metrics": {
+          "reward": 0.4636727924384322,
+          "val_bpb": 1.1566932895524227
+        },
+        "trial_name": "autoresearch__93cgscG",
+        "exception_type": null
+      },
+      {
+        "uid": 4,
+        "data_source": "mle_bench_local",
+        "model_version": 0,
+        "num_turns": 4,
+        "termination": "finished",
+        "metrics": {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        },
+        "trial_name": "mle_bench_local__Bo8zBQV",
+        "exception_type": null
+      },
+      {
+        "uid": 5,
+        "data_source": "mle_bench_local",
+        "model_version": 0,
+        "num_turns": 4,
+        "termination": "finished",
+        "metrics": {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        },
+        "trial_name": "mle_bench_local__VdxQKxh",
+        "exception_type": null
+      },
+      {
+        "uid": 6,
+        "data_source": "inference_bench_local",
+        "model_version": 0,
+        "num_turns": 8,
+        "termination": "max_turns_exceeded",
+        "metrics": null,
+        "trial_name": "inference_bench_local__7vTLyaE",
+        "exception_type": "RuntimeError"
+      },
+      {
+        "uid": 7,
+        "data_source": "inference_bench_local",
+        "model_version": 0,
+        "num_turns": 3,
+        "termination": "finished",
+        "metrics": {
+          "reward": 0.060998283816819376,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "quality_pass": 1,
+          "seconds": 15.393903851509094
+        },
+        "trial_name": "inference_bench_local__LKev73r",
+        "exception_type": null
+      },
+      {
+        "uid": 8,
+        "data_source": "flashinfer_bench",
+        "model_version": 0,
+        "num_turns": 5,
+        "termination": "finished",
+        "metrics": {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        },
+        "trial_name": "flashinfer_bench__cMDaEbv",
+        "exception_type": null
+      },
+      {
+        "uid": 9,
+        "data_source": "flashinfer_bench",
+        "model_version": 0,
+        "num_turns": 8,
+        "termination": "max_turns_exceeded",
+        "metrics": {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        },
+        "trial_name": "flashinfer_bench__4QguGXf",
+        "exception_type": null
+      },
+      {
+        "uid": 10,
+        "data_source": "re_bench_local",
+        "model_version": 0,
+        "num_turns": 4,
+        "termination": "finished",
+        "metrics": {
+          "reward": 0.75,
+          "official_evaluation": 0,
+          "local_evaluation": 1,
+          "judge_valid": 1,
+          "eval_valid": 1,
+          "feedback_smoke_valid": 0
+        },
+        "trial_name": "re_bench_local__EXFGsnw",
+        "exception_type": null
+      },
+      {
+        "uid": 11,
+        "data_source": "re_bench_local",
+        "model_version": 0,
+        "num_turns": 8,
+        "termination": "max_response_length_exceeded",
+        "metrics": null,
+        "trial_name": "re_bench_local__TeNXFmw",
+        "exception_type": "RewardFileNotFoundError"
+      },
+      {
+        "uid": 12,
+        "data_source": "kernel_bench",
+        "model_version": 1,
+        "num_turns": 7,
+        "termination": "finished",
+        "metrics": {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 4.56,
+          "speedup": 0.9978070175438597
+        },
+        "trial_name": "kernel_bench__pKCsLVR",
+        "exception_type": null
+      },
+      {
+        "uid": 13,
+        "data_source": "kernel_bench",
+        "model_version": 1,
+        "num_turns": 8,
+        "termination": "max_response_length_exceeded",
+        "metrics": {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 4.55,
+          "speedup": 1.0
+        },
+        "trial_name": "kernel_bench__iMPumJc",
+        "exception_type": null
+      },
+      {
+        "uid": 15,
+        "data_source": "autoresearch",
+        "model_version": 1,
+        "num_turns": 8,
+        "termination": "max_turns_exceeded",
+        "metrics": {
+          "reward": 0.46383581675741536,
+          "val_bpb": 1.1559352768201532
+        },
+        "trial_name": "autoresearch__68Qnj9f",
+        "exception_type": null
+      },
+      {
+        "uid": 16,
+        "data_source": "mle_bench_local",
+        "model_version": 1,
+        "num_turns": 5,
+        "termination": "finished",
+        "metrics": {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        },
+        "trial_name": "mle_bench_local__dncXQot",
+        "exception_type": null
+      },
+      {
+        "uid": 18,
+        "data_source": "inference_bench_local",
+        "model_version": 1,
+        "num_turns": 6,
+        "termination": "max_response_length_exceeded",
+        "metrics": {
+          "reward": 0.061211416670092174,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "quality_pass": 1,
+          "seconds": 15.33682169765234
+        },
+        "trial_name": "inference_bench_local__mKrRsRW",
+        "exception_type": null
+      },
+      {
+        "uid": 20,
+        "data_source": "flashinfer_bench",
+        "model_version": 1,
+        "num_turns": 8,
+        "termination": "max_turns_exceeded",
+        "metrics": {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        },
+        "trial_name": "flashinfer_bench__yDKUpyr",
+        "exception_type": null
+      },
+      {
+        "uid": 22,
+        "data_source": "re_bench_local",
+        "model_version": 1,
+        "num_turns": 6,
+        "termination": "finished",
+        "metrics": {
+          "reward": 0.75,
+          "official_evaluation": 0,
+          "local_evaluation": 1,
+          "judge_valid": 1,
+          "eval_valid": 1,
+          "feedback_smoke_valid": 0
+        },
+        "trial_name": "re_bench_local__Z5x8Em6",
+        "exception_type": null
+      },
+      {
+        "uid": 23,
+        "data_source": "re_bench_local",
+        "model_version": 1,
+        "num_turns": 2,
+        "termination": "verifier_error",
+        "metrics": null,
+        "trial_name": "re_bench_local__Fr85WkP",
+        "exception_type": "RewardFileNotFoundError"
+      }
+    ],
+    "coverage": {
+      "kernel_bench": {
+        "0": {
+          "completed": 2,
+          "positive_verified": 2
+        },
+        "1": {
+          "completed": 2,
+          "positive_verified": 2
+        }
+      },
+      "autoresearch": {
+        "0": {
+          "completed": 2,
+          "positive_verified": 2
+        },
+        "1": {
+          "completed": 1,
+          "positive_verified": 1
+        }
+      },
+      "mle_bench_local": {
+        "0": {
+          "completed": 2,
+          "positive_verified": 2
+        },
+        "1": {
+          "completed": 1,
+          "positive_verified": 1
+        }
+      },
+      "inference_bench_local": {
+        "0": {
+          "completed": 2,
+          "positive_verified": 1
+        },
+        "1": {
+          "completed": 1,
+          "positive_verified": 1
+        }
+      },
+      "flashinfer_bench": {
+        "0": {
+          "completed": 2,
+          "positive_verified": 2
+        },
+        "1": {
+          "completed": 1,
+          "positive_verified": 1
+        }
+      },
+      "re_bench_local": {
+        "0": {
+          "completed": 2,
+          "positive_verified": 1
+        },
+        "1": {
+          "completed": 2,
+          "positive_verified": 1
+        }
+      }
+    },
+    "source_sha256": {
+      "examples/gpu_benchmarks/mix.py": "79e8c90450093ff7030ec218612b0b5f28d210fbd2dab715e96ee422094cfb46",
+      "examples/gpu_benchmarks/train.sh": "9ab23a96822f5878b64ecca44d82e42151841465fd5bc7bd8a936da5a8add075",
+      "examples/gpu_benchmarks/reward.py": "aa849104afe3d5e63474c368a4c5795797fb6fc0ae5dfbd104eb0741406a1fbf",
+      "examples/gpu_benchmarks/agent_loop.py": "c07808e5792caad1f9883520be0944a0d0071bd9eea123005a17cc09df092ad4",
+      "examples/gpu_benchmarks/agent.Dockerfile": "a6b8e4cf0a2a4bde2a8f10f44fd539d34f4cce30d8e4067da29162b46245af38",
+      "examples/sciaccel_rl/fsdp_qwen35_4b.sh": "d363ef73e107f6aa9cb620652333db42be01d2ff9f1eeee98499999526255bff",
+      "examples/sciaccel_rl/runner.py": "2c43091a9b6917ab57f99243d0b31fafd5f93a15f5c0b8c4a0b3663bb336db3e",
+      "examples/mle_bench/local.py": "7c4011368a5fb8c5d05eaa542688946ac022827594aae740269657c55df6a65c",
+      "examples/mle_bench/local_baseline.py": "b29865a69fc1bd29457240dcd5a673b3992ecafba00c1a51efd99150deeae1a2",
+      "examples/mle_bench/local_grade.py": "4878a259f363f7f68ca5afd4302d4b466a5591b19c5ea677c0ba16ab27da8209",
+      "examples/inference_bench/local.py": "f48d6a98d951bbdb56eae1c7d77ed41ad8f1cb7ee2c1539ee88f911779084ee1",
+      "examples/inference_bench/local_verify.py": "64eef1cf2ed1767cb17485a8df56d0aab3d9a0097d35e46ab7118fbf76c17668",
+      "examples/re_bench/prepare.py": "223b2e910893d3df7e158643213d6e1e95c3ec0f1e89ba810eee316e464c801a",
+      "examples/re_bench/verify.py": "cbf93c06ce98b6facf31e6843acccde0be490325f15c912b1da0e3ea33b4f08e",
+      "examples/flashinfer_bench/prepare.py": "c34b8c6f81f400935e016647fd85146e8c6d155c45c5554f48bf6649a68cabad",
+      "examples/flashinfer_bench/verify.py": "8034c7a4f03c65490110bf914331ebe19cb20ddb9178fb545b6b8215925a3599",
+      "psrl/trainer/ppo/utils.py": "a976f850c7264c96daf7e0d2b07542808201c7c69cc3cb69df6861dd64df6e5a"
+    },
+    "cleanup": {
+      "checked_at": 1794297641.1696715,
+      "gpu_memory_mib": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0,
+        "5": 0.0,
+        "6": 0.0,
+        "7": 0.0
+      },
+      "gpu_compute_processes": [],
+      "owned_containers_remaining": 0,
+      "independent_judge_stopped": true
+    },
+    "stop_evidence": {
+      "coverage_versions": [
+        0,
+        1
+      ],
+      "training_steps_completed": 1,
+      "intentional_sigterm": true
+    }
+  },
+  "observed_head_at_close": "ab741202d2f1a06267284eeea91161a35f1bf579",
+  "base_to_close_committed_difference": [
+    "docs/tools/codex/session-archives/README.md",
+    "docs/tools/codex/session-archives/codex-20261109-180614.tar.gz",
+    "docs/tools/codex/session-archives/codex-20261109-180614.tar.gz.sha256"
+  ]
+}

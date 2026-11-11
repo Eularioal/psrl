@@ -2,11 +2,11 @@
 
 > **核心结论**：不必把 Docker 与训推 GPU 永久分成两个互斥资源池。可以让 Ray 保留 GPU 的逻辑归属，在 vLLM 睡眠期间把同一批物理卡借给 Docker。但需要统一的借还状态机，保证容器确实释放资源后才允许唤醒。当前已接入受控的 science 命令批次与模型调用交替借卡，详见[实现与验证](#12-命令批次与模型调用交替借卡的实现)。CPU 回归覆盖交接协议；2026-10-15 已完成两轮真实同卡 Docker CUDA / vLLM 交接，详见[GPU 结果](#14-真实-gpu-验证结果2026-10-15)。该实验未接入训练侧 NIXL 和完整 SMG 路由。
 >
-> 本文更新日期：2026-10-19。第 15 节为普通任务阶段租约、抢占与预测回填的设计分析及 CPU 教学模拟，其中命令阶段协议的落地实现见[命令阶段配额](command-gpu-reservations.md)。第 1–11 节保留实现前的设计分析，其中“拟新增/尚未实现”描述的是当时的状态，当前接入范围以第 12 节为准。第 12 节记录实现与 CPU 回归，第 13 节解释 unit 配额，第 14 节记录真实 GPU 验证；各节的验证时间与范围不可混用。本文补充[现有 Env Service 讲解](env-service-implementation.md)中尚未实现的借还协议，单独展开其跨调度器约束；原文主要描述静态 unit，不应把其中早期“没有实机验证”的状态当作今天的总结果。
+> 本文更新日期：2026-10-19。第 15 节为普通任务阶段租约、抢占与预测回填的设计分析及 CPU 教学模拟，其中命令阶段协议的落地实现见[命令阶段配额](command-gpu-reservations.md)。第 1–11 节保留实现前的设计分析，其中“拟新增/尚未实现”描述的是当时的状态，当前接入范围以第 12 节为准。第 12 节记录实现与 CPU 回归，第 13 节解释 unit 配额，第 14 节记录真实 GPU 验证；各节的验证时间与范围不可混用。本文补充[现有 Env Service 讲解](../archive/env-service-implementation.md)中尚未实现的借还协议，单独展开其跨调度器约束；原文主要描述静态 unit，不应把其中早期“没有实机验证”的状态当作今天的总结果。
 
 > 当前能力及调用图见[第 16 节](#16-当前交接能力与-procfs-报错的关系)：显式借还已实现，但不同于普通 command 配额释放，不会自动卸载任意环境 CUDA 状态。任务 procfs 归因报错也不能直接等同于交接协议不可用。
 
-> 2026-10-27 的源码核验与通俗对照见[为什么同卡借还还不能与 command 组合](../experiments/env-status-and-roadmap.md#为什么同卡借还还不能与-command-组合)。两者可以分层设计，但当前配置、runner 和 Docker 后端明确隔开，命令批次借卡不等于 `gpu_reservation=command`。该说明包含两条实际调用链、数字例子与尚未实现的组合边界。
+> 2026-10-27 的源码核验与通俗对照见[为什么同卡借还还不能与 command 组合](../milestones/env-status-and-roadmap/implementation-and-results.md#为什么同卡借还还不能与-command-组合)。两者可以分层设计，但当前配置、runner 和 Docker 后端明确隔开，命令批次借卡不等于 `gpu_reservation=command`。该说明包含两条实际调用链、数字例子与尚未实现的组合边界。
 
 ## 目录
 
@@ -254,7 +254,7 @@ python3 docs/env-worker-deep-dive/env-service-verification/scripts/gpu_lending_d
 - [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/)：基础睡眠级别和恢复语义；最新选项须按实际安装版本核对。
 - [Ray Resources](https://docs.ray.io/en/latest/ray-core/scheduling/resources.html)：逻辑资源、可见设备和小数 GPU 配额的含义。
 - [Ray Placement Groups](https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html)：成组预留资源；sleep 不等于销毁 actor 或移除资源组。
-- [现有 Env Service 实现说明](env-service-implementation.md)：静态 unit、准入、租约与节点策略的背景。
+- [现有 Env Service 实现说明](../archive/env-service-implementation.md)：静态 unit、准入、租约与节点策略的背景。
 - [验证报告](../env-service-verification/README.md)：实机结果及失败边界，以具体运行条件为准。
 
 实现前的分析结论是**机制上可行，已有代码可以复用，但当时联合借还尚未实现、尚未实机验证**。当前代码与验证状态见第 12 节。建议优先借用 rollout 的空闲实例；训练卡还涉及梯度、优化器状态和分布式同步，应与既有训推共置流程统一处理，不能把 vLLM sleep 直接当作训练进程的释放接口。

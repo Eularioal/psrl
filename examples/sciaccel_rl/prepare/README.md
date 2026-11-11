@@ -17,7 +17,7 @@ parquets. Four stages, in a hard dependency order:
 | [`resolve_defect_lines.py`](resolve_defect_lines.py) | Locates defect lines in the pinned upstream source |
 | [`warm_status.sh`](warm_status.sh) | Probes how warm each node's image cache already is |
 | [`warm_repair.sh`](warm_repair.sh) | Retries only the tasks that failed a warm pass |
-| [`internal/`](internal/) | Site-specific node provisioning, published as reference only |
+| [`internal/`](internal) | Site-specific node provisioning, published as reference only |
 
 Every command below is run from the repository root. `${SCIACCEL_REPO}` is your
 checkout of the task bank, and `192.168.1.x` stands in for your own node
@@ -225,7 +225,7 @@ uptime                               # load >> core count
 
 If `docker ps` times out, that node cannot host episodes. Exclude it with
 `AGENT_NODE_IPS` rather than waiting for it to recover. See
-[`internal/`](internal/) for the node provisioning this was developed against,
+[`internal/`](internal) for the node provisioning this was developed against,
 including why buildkit ignores your shell's proxy.
 
 ---

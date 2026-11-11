@@ -74,8 +74,8 @@ worse than no number.
 
 | Path | Purpose |
 |------|---------|
-| [`prepare/`](prepare/) | **Data preparation.** Compile tasks, build hinted datasets, warm caches |
-| [`eval/`](eval/) | **Standalone eval**, independent of the training stack |
+| [`prepare/`](prepare) | **Data preparation.** Compile tasks, build hinted datasets, warm caches |
+| [`eval/`](eval) | **Standalone eval**, independent of the training stack |
 | [`fsdp_qwen35_4b.sh`](fsdp_qwen35_4b.sh) | GRPO training entry point |
 | [`eval_qwen35_4b.sh`](eval_qwen35_4b.sh) | Score a checkpoint through PSRL, no training |
 | [`agent_loop.py`](agent_loop.py) | PSRL agent loop, one Harbor episode per prompt |
@@ -84,7 +84,7 @@ worse than no number.
 | [`reward.py`](reward.py) | Verifier reward extraction |
 | [`exceptions.py`](exceptions.py) | Harness failure to `TerminateReason` mapping |
 | [`config.py`](config.py) | Runtime config dataclasses |
-| [`config/`](config/) | Agent loop registration, chat template, compose overlays |
+| [`config/`](config) | Agent loop registration, chat template, compose overlays |
 | [`plot/plot.py`](plot/plot.py) | Training curves from a run log |
 
 ## Conventions
@@ -204,7 +204,7 @@ The checkpoint is FSDP-sharded across 16 ranks, so it must be scored on the same
 
 ### Standalone, without PSRL
 
-Use [`eval/`](eval/) when you want a number without the training stack: it serves
+Use [`eval/`](eval) when you want a number without the training stack: it serves
 the model with vLLM, drives Harbor's own `terminus-2` harness, and aggregates by
 category and family.
 

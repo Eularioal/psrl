@@ -11,7 +11,7 @@ reward. Use it for the pre-RL baseline and for evaluating saved checkpoints.
 | [`run_eval.sh`](run_eval.sh) | End-to-end wrapper: launch a vLLM fleet, run the eval, tear it down. Model-agnostic via `--model`. |
 
 vLLM serving is **not** reimplemented here: the wrapper calls
-[`psrl.eval.serve`](../../../psrl/eval/), shared with `examples/mini_swe/eval/`. It
+[`psrl.eval.serve`](../../../psrl/eval), shared with `examples/mini_swe/eval/`. It
 starts a fleet of independent replicas (`topology=fleet`) rather than one server
 with `--data-parallel-size`, because DP is broken in this repo's patched vLLM and
 `eval_sciaccel` spreads its work queue across every endpoint anyway.

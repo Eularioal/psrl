@@ -8,7 +8,7 @@
 
 > **当前实验策略：** 用户已授权在无挂载权限时跳过可信归因门槛。后续本节点实验显式使用 `harbor.gpu_attribution_mode: observe`，保留原任务评分并记录未验证风险，资源回收检查仍然生效。可转发的说明及配置见 [procfs 挂载障碍](../experiments/host-proc-blocker.md)。这不代表部署缺口或可信进程归属已经修复。
 
-> **适用目标纠正**：用户已澄清，原需求是同一道题的多次独立 rollout，而非单次尝试内部的多命令并发。因此上述提案保留为可选能力设计，不是验证原需求的前提。原需求应使用独立环境、跨租约的 command GPU 对照，详见[多 rollout 意图纠正](env-router-current-flow.md#9-多-rollout-意图纠正与-off-的同容器能力)。
+> **适用目标纠正**：用户已澄清，原需求是同一道题的多次独立 rollout，而非单次尝试内部的多命令并发。因此上述提案保留为可选能力设计，不是验证原需求的前提。原需求应使用独立环境、跨租约的 command GPU 对照，详见[多 rollout 意图纠正](../archive/env-router-current-flow.md#9-多-rollout-意图纠正与-off-的同容器能力)。
 
 ## 目录
 
