@@ -5,6 +5,13 @@ from statistics import mean
 
 
 def main():
+    # Teaching assumptions: four jobs, two shared preparation jobs per wave.
+    jobs, preparation_s, measurement_s, width, switching_s = 4, 10, 2, 2, 4
+    exclusive_s = jobs * (preparation_s + measurement_s)
+    phase_examples = {
+        str(slowdown): (jobs // width) * slowdown * preparation_s + jobs * measurement_s + switching_s
+        for slowdown in (1.5, 2.0)
+    }
     # Diagram 1: Independent samples can compare different device conditions.
     clean = {"A": 10.0, "B": 10.2}
     scattered = {"A": clean["A"] * 1.10, "B": clean["B"]}
@@ -20,6 +27,12 @@ def main():
         json.dumps(
             {
                 "scope": "Teaching simulation, not GPU data or an implemented Env policy.",
+                "phase_example": {
+                    "exclusive_s": exclusive_s,
+                    "phase_s_by_preparation_slowdown": phase_examples,
+                    "break_even_slowdown": (exclusive_s - jobs * measurement_s - switching_s)
+                    / ((jobs // width) * preparation_s),
+                },
                 "clean_us": clean,
                 "scattered_us": scattered,
                 "abba_samples_us": samples,
