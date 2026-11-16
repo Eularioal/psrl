@@ -126,6 +126,13 @@ def prepare(args):
             dataset_source = "kernel_bench_local"
             spec["input_profile"] = "bounded_module_dimensions"
             record.update(benchmark=dataset_source, dimension_overrides=overrides)
+        if getattr(args, "constraint_inputs", False):
+            from examples.kernel_bench.local_profile import prepare_source
+
+            source, overrides = prepare_source(reference.read_text())
+            dataset_source = "kernel_bench_local"
+            spec["input_profile"] = "constraint_preserving_inference"
+            record.update(benchmark=dataset_source, dimension_overrides=overrides, inference_mode=True)
         instruction = (
             f"Optimize {spec['reference']}. Submit /logs/artifacts/submission.py defining ModelNew. "
             "Match the reference on randomized inputs. Use psrl-gpu for GPU commands. "
@@ -134,6 +141,8 @@ def prepare(args):
         if dataset_source == "kernel_bench_local":
             instruction = instruction.replace("checks correctness and reports speed", "checks correctness only")
             instruction += f" Local bounded input dimensions: {json.dumps(overrides)}. This is not canonical scoring."
+            if getattr(args, "constraint_inputs", False):
+                instruction += " The verifier uses eval mode, paired random seeds and preserves integer input dtypes."
         record["reference_sha256"] = hashlib.sha256(reference.read_bytes()).hexdigest()
     elif args.benchmark == "mle_bench":
         if args.data is None or not args.competition:
@@ -179,6 +188,8 @@ def prepare(args):
             (out / name / "docker-compose.yaml").write_text(yaml.safe_dump(definition))
     (out / "tests/spec.json").write_text(json.dumps(spec))
     shutil.copy2(Path(__file__).with_name("evaluate.py"), out / "tests/evaluate.py")
+    if getattr(args, "constraint_inputs", False):
+        shutil.copy2(Path(__file__).parents[1] / "kernel_bench/local_profile.py", out / "tests/local_profile.py")
     if dataset_source == "kernel_bench_local":
         shutil.copy2(Path(__file__).parents[1] / "kernel_bench/quick_check.py", out / "tests/quick_check.py")
     if args.benchmark == "autoresearch":
@@ -204,6 +215,11 @@ def prepare(args):
     elif args.benchmark == "kernel_bench" and args.level == 1 and args.problem == "1_Square_matrix_multiplication_.py":
         solution = Path(__file__).parents[1] / "kernel_bench/solutions/matmul.py"
         shutil.copy2(solution, out / "solution/submission.py")
+        (out / "solution/solve.sh").write_text(
+            "#!/bin/bash\nset -euo pipefail\ncp /solution/submission.py /logs/artifacts/submission.py\n"
+        )
+    elif args.benchmark == "kernel_bench":
+        (out / "solution/submission.py").write_text(reference.read_text() + "\nModelNew = Model\n")
         (out / "solution/solve.sh").write_text(
             "#!/bin/bash\nset -euo pipefail\ncp /solution/submission.py /logs/artifacts/submission.py\n"
         )
@@ -233,7 +249,9 @@ def main(benchmark=None):
     parser.add_argument("--level", type=int, default=1)
     parser.add_argument("--problem", default="1_Square_matrix_multiplication_.py")
     parser.add_argument("--backend", choices=["cuda", "triton"], default="triton")
-    parser.add_argument("--bounded-inputs", action="store_true")
+    profiles = parser.add_mutually_exclusive_group()
+    profiles.add_argument("--bounded-inputs", action="store_true")
+    profiles.add_argument("--constraint-inputs", action="store_true")
     parser.add_argument("--timeout", type=int, default=900)
     parser.add_argument("--gpu-memory-mb", type=int, default=8192)
     args = parser.parse_args()

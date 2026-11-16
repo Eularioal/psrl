@@ -46,6 +46,27 @@ def main(
     (root / "solutions/agent.json").write_text(json.dumps(candidate))
     traces = TraceSet.from_path(root)
     expected = sum(len(items) for items in traces.workloads.values())
+    if (traces_root / "local-sampling.json").is_file():
+        from sampling_check import check
+
+        try:
+            definition = traces.definitions[expected_definition]
+            if definition.op_type != "sampling":
+                raise ValueError("The local sampling protocol requires a sampling definition.")
+            scores = [
+                check(definition, row.workload, Solution.model_validate(candidate), root)
+                for row in traces.workloads[expected_definition]
+            ]
+            if not scores:
+                raise ValueError("A sampling task requires at least one workload.")
+            reward.update(scores[-1], evaluations=len(scores))
+        except Exception as exc:
+            reward.update(reward=0, correctness=0)
+            (output / "sampling-error.json").write_text(json.dumps({"error": repr(exc)}))
+        finally:
+            shutil.rmtree(root)
+        (output / "reward.json").write_text(json.dumps(reward))
+        return
     benchmark = Benchmark(traces, BenchmarkConfig.default(timeout_seconds=120))
     try:
         result = benchmark.run_all(dump_traces=False)

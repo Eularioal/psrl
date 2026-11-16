@@ -119,8 +119,8 @@ def main():
             destination = output / f"{item['task_id']}.json"
             started = time.monotonic()
             if worker is None or not worker.is_alive():
-                connection, child_connection = mp.get_context("fork").Pipe()
-                worker = mp.get_context("fork").Process(target=worker_loop, args=(child_connection,))
+                connection, child_connection = mp.get_context("spawn").Pipe()
+                worker = mp.get_context("spawn").Process(target=worker_loop, args=(child_connection,))
                 worker.start()
                 budget = max(config["task_seconds"], config.get("worker_start_seconds", 30))
             else:

@@ -148,3 +148,92 @@ def test_bounded_task_publishes_distinct_protocol(tmp_path, monkeypatch):
     metrics = {"reward": 1, "local_evaluation": 1, "bounded_inputs": 1}
     score = compute_score("kernel_bench_local", "", "", {"harbor_rewards": metrics})
     assert score["score"] == 1, "Accept a bounded evaluation with valid numeric markers."
+
+
+def test_constraint_profile_preserves_dependent_shapes():
+    from examples.kernel_bench.local_profile import prepare_source
+
+    source = (
+        "batch_size=8192*2\nin_features=8192\nout_features=8192\n"
+        "bias_shape=(out_features,1,1)\nnum_groups=512\nimage_size=224\n"
+        "layer_sizes=[16384,32768]\neps=1e-6\n"
+    )
+    prepared, overrides = prepare_source(source)
+    scope = {}
+    exec(prepared, scope)
+    assert scope["batch_size"] == 2, "Bound arithmetic dimension expressions."
+    assert scope["bias_shape"] == (512, 1, 1), "Recompute dependent shapes after dimension changes."
+    assert scope["out_features"] % scope["num_groups"] == 0, "Preserve this task's group constraint."
+    assert scope["image_size"] == 224 and scope["eps"] == 1e-6, "Preserve geometry and tolerance parameters."
+    assert overrides["layer_sizes"] == [512, 512], "Bound dense hidden layers explicitly."
+
+
+def test_sampling_distribution_applies_top_p_after_top_k():
+    import torch
+    from examples.flashinfer_bench.sampling_check import expected_distribution
+
+    # Top-k retains .4/.3, renormalizes to 4/7 and 3/7. p=.5 keeps only token 0.
+    actual = expected_distribution(torch.tensor([[0.4, 0.3, 0.2, 0.1]]), torch.tensor([2]), torch.tensor([0.5]))
+    torch.testing.assert_close(actual, torch.tensor([[1.0, 0.0, 0.0, 0.0]]))
+    assert expected_distribution(torch.tensor([[0.1, 0.9]]), top_p=torch.tensor([0.0])).tolist() == [[0.0, 1.0]]
+
+
+def test_model_materialization_survives_cache_mount_boundary(tmp_path):
+    from examples.re_bench.bounded import materialize_model
+
+    blob = tmp_path / "blob"
+    blob.write_bytes(b"checkpoint")
+    snapshot = tmp_path / "snapshot"
+    snapshot.mkdir()
+    (snapshot / "model.safetensors").symlink_to(blob)
+    destination = tmp_path / "public/model"
+    destination.parent.mkdir()
+    materialize_model(snapshot, destination)
+    assert not (destination / "model.safetensors").is_symlink()
+    assert (destination / "model.safetensors").read_bytes() == b"checkpoint"
+
+
+@pytest.mark.parametrize(
+    "family,gate",
+    [
+        ("re_bench_embedding_local", {}),
+        ("re_bench_scaling_local", {}),
+        ("re_bench_foundry_local", {"weights_match": 1}),
+        ("re_bench_rust_local", {"gpu_inference_calls": 2}),
+    ],
+)
+def test_new_local_reward_protocols_require_valid_evaluation(family, gate):
+    metrics = {"reward": 0.5, **gate}
+    assert compute_score(family, "", "", {"harbor_rewards": metrics})["score"] == 0
+    metrics.update(local_evaluation=1, eval_valid=1)
+    assert compute_score(family, "", "", {"harbor_rewards": metrics})["score"] == 0.5
+
+
+def test_sampling_rejects_invalid_workload_probability():
+    import torch
+    from examples.flashinfer_bench.sampling_check import expected_distribution
+
+    with pytest.raises(ValueError, match="top_p"):
+        expected_distribution(torch.tensor([[0.4, 0.6]]), top_p=torch.tensor([-0.5]))
+
+
+def test_prepared_local_trace_keeps_local_identity(tmp_path, monkeypatch):
+    from examples.flashinfer_bench.prepare import prepare as prepare_flash
+
+    subset = tmp_path / "subset"
+    for folder in ["definitions", "workloads", "solutions"]:
+        (subset / folder).mkdir(parents=True)
+    (subset / "definitions/op.json").write_text("{}")
+    (subset / "workloads/op.jsonl").write_text("{}\n")
+    (subset / "local-protocol.json").write_text(json.dumps({"local": True}))
+    monkeypatch.setattr("examples.flashinfer_bench.prepare.provenance", lambda _: {"revision": "test"})
+    output = tmp_path / "task"
+    prepare_flash(
+        argparse.Namespace(
+            repo=tmp_path, subset=subset, cuda=tmp_path, output=output, image="test:local", python="python"
+        )
+    )
+    metadata = json.loads((output / "provenance.json").read_text())
+    assert metadata["benchmark"] == "flashinfer_bench_local", (
+        "Keep the declared local input protocol on re-preparation."
+    )

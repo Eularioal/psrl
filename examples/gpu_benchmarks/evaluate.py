@@ -17,6 +17,22 @@ def evaluate(spec):
         if not candidate.is_file():
             return {"reward": 0.0, "correctness": 0.0}
         reference = Path(spec["reference"]).read_text()
+        if spec.get("input_profile") == "constraint_preserving_inference":
+            from local_profile import evaluate_source, prepare_source
+
+            reference, _ = prepare_source(reference)
+            try:
+                result = evaluate_source(reference, candidate.read_text())
+            except Exception as exc:
+                result = {"correctness": False, "error": repr(exc)}
+            (Path("/logs/verifier") / "kernel_result.json").write_text(json.dumps(result))
+            return {
+                "reward": float(result["correctness"]),
+                "local_evaluation": 1,
+                "bounded_inputs": 1,
+                "inference_mode": 1,
+                "correctness": float(result["correctness"]),
+            }
         bounded = spec.get("input_profile") == "bounded_module_dimensions"
         if bounded:
             from quick_check import bounded_source

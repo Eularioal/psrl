@@ -69,11 +69,12 @@ def evaluate_source(reference, candidate):
     torch.manual_seed(42)
     custom = candidate_scope["ModelNew"](*init).cuda().eval()
     inputs = [x.cuda() if isinstance(x, torch.Tensor) else x for x in ref_scope["get_inputs"]()]
+    candidate_inputs = [x.clone() if isinstance(x, torch.Tensor) else x for x in inputs]
     with torch.no_grad():
         torch.manual_seed(43)
         expected = ref(*inputs)
         torch.manual_seed(43)
-        actual = custom(*inputs)
+        actual = custom(*candidate_inputs)
     torch.testing.assert_close(actual, expected, rtol=1e-4, atol=1e-4, equal_nan=False)
     torch.cuda.synchronize()
     return {"correctness": True, "local_evaluation": 1, "inference_mode": 1}
