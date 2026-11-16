@@ -1,4 +1,5 @@
 - name: mlgym_agent
+  _target_: psrl.workers.agent_loop.loops.mlgym_agent_loop.MLGymAgentLoop
   runtime:
     image: ${oc.env:SANDBOX_IMAGE,psrl/airs-bench-agent:latest}
     data_root: ${oc.env:AIRS_DATA_ROOT}

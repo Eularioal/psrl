@@ -66,6 +66,12 @@ def build_sandbox_spec(
     """Mount only named public splits into the agent container."""
     root = Path(dataset_data_path).resolve()
     mounts = []
+    if runtime_config.sandbox_python:
+        python = Path(runtime_config.sandbox_python)
+        if not python.is_absolute() or not python.is_file():
+            raise ValueError("Sandbox Python must be an existing absolute executable path.")
+        for prefix in dict.fromkeys((python.parent.parent, python.resolve().parent.parent)):
+            mounts.append((str(prefix), str(prefix), "ro"))
     for split in ("train", "validation", "test"):
         path = root / split
         if split == "validation" and not path.exists():
@@ -85,6 +91,7 @@ def build_sandbox_spec(
         image=runtime_config.image,
         cpus=runtime_config.sandbox_cpus,
         memory=runtime_config.sandbox_memory,
+        gpus=runtime_config.sandbox_gpus,
         mounts=tuple(mounts),
         network=runtime_config.sandbox_network,
         labels=labels,
@@ -197,6 +204,12 @@ def build_psrl_mlgym_env_class() -> type:
                 "conda activate mlgym_generic && cd /home/agent/workspace",
                 error_msg="Failed to activate the preinstalled AIRS environment.",
             )
+            python = getattr(self, "_psrl_sandbox_python", "")
+            if python:
+                self.communicate_with_handling(
+                    f"export PATH={shlex.quote(str(Path(python).parent))}:$PATH",
+                    error_msg="Failed to select the isolated sandbox Python.",
+                )
             return {"observation": None}, {}
 
         def _write_file(self, path: str, data: bytes) -> None:

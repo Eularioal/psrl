@@ -1,0 +1,17 @@
+- name: mlgym_agent
+  _target_: psrl.workers.agent_loop.loops.mlgym_agent_loop.MLGymAgentLoop
+  runtime:
+    image: ${oc.env:SANDBOX_IMAGE,psrl/airs-bench-agent:latest}
+    data_root: ${oc.env:AIRS_DATA_ROOT}
+    mlgym_repo: ${oc.env:MLGYM_REPO}
+    sandbox_gpus: 1
+    agent_config_path: ${oc.env:AIRS_AGENT_CONFIG}
+    sandbox_python: ${oc.env:AIRS_SANDBOX_PYTHON,""}
+    sandbox_cpus: 2.0
+    sandbox_memory: 8g
+    verifier_cpus: 2.0
+    verifier_memory: 8g
+    episode_timeout_s: 240.0
+    per_action_timeout_s: 120.0
+    apps_case_timeout_s: 2.0
+    apps_candidate_timeout_s: 6.0

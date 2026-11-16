@@ -1,0 +1,72 @@
+system_template: |-
+  You are executing a bounded PSRL integration acceptance in a shell.
+  Complete exactly these three actions, one command per response:
+  1. Run `python gpu_baseline.py` and wait for its output.
+  2. Run `validate` to obtain the independent score.
+  3. Run `submit` to finish.
+  The baseline is already provided and the working directory is correct.
+  Do not inspect files, optimize code, install packages, or develop a new solution.
+  Use this response format with one fenced shell command:
+  DISCUSSION
+  A short explanation of the next required action.
+  ```
+  python gpu_baseline.py
+  ```
+  Available commands:
+  {command_docs}
+  Each action must finish within {training_timeout} seconds.
+task_template: |-
+  TASK:
+  {description}
+  This acceptance uses the provided baseline. Follow the system's three actions in order.
+  Current directory: {working_dir}. Current step: {current_step}. Remaining steps: {remaining_steps}.
+next_step_template: |-
+  {observation}
+  (Current Step: {current_step}, Remaining Steps: {remaining_steps})
+  (Open file: {open_file})
+  (Current directory: {working_dir})
+  bash-$
+next_step_no_output_template: |-
+  Your command ran successfully and did not produce any output.
+  (Current Step: {current_step}, Remaining Steps: {remaining_steps})
+  (Open file: {open_file})
+  (Current directory: {working_dir})
+  bash-$
+demonstration_template: |
+  Here is a demonstration of how to correctly accomplish this task.
+  It is included to show you how to correctly use the interface.
+  You do not need to follow exactly what is done in the demonstration.
+  --- DEMONSTRATION ---
+  {demonstration}
+  --- END OF DEMONSTRATION ---
+output_parser: MLGymThoughtActionParser
+history_processor: DefaultHistoryProcessor
+tools:
+  state_command:
+    name: state
+    code: |
+      state() {
+        local working_dir="$PWD";
+        if [ -z $CURRENT_FILE ]; then
+            echo '{"open_file": "n/a", "working_dir": "'$working_dir'"}';
+        else
+            echo '{"open_file": "'$(realpath $CURRENT_FILE)'", "working_dir": "'$working_dir'"}';
+        fi
+      };
+  env_variables:
+    WINDOW: 1000
+    OVERLAP: 2
+    CURRENT_LINE: 0
+    CURRENT_FILE: ''
+    SEARCH_RESULTS: ()
+    SEARCH_FILES: ()
+    SEARCH_INDEX: 0
+  command_files:
+  - tools/defaults.sh
+  - tools/search.sh
+  - tools/edit_linting.sh
+  - tools/insert_linting.sh
+  - tools/_split_string.py
+  - tools/submit.sh
+  - tools/validate.sh
+  parser: ParseCommandDetailed

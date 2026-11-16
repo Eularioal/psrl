@@ -76,6 +76,7 @@ def test_model_config_points_litellm_at_the_session_url():
 
     model_config = build_mlgym_model_config(payload)
 
+    assert model_config["model_name"] == "litellm:openai/Qwen3-4B"
     assert model_config["host_url"] == payload["base_url"], (
         "MLGym reaches the policy via host_url, which it forwards to litellm api_base."
     )

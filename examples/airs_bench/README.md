@@ -2,6 +2,7 @@
 
 ## TL;DR
 
+- The bounded GPU recipe covers all 19 non-Kaggle task identities. See [Bounded GPU suite](#bounded-gpu-suite).
 - Run MLGym's unchanged agent against a remote persistent sandbox and capture LLM calls through TITO.
 - Only public data splits are mounted into the agent. Trusted grading uses a separate container.
 - Command timeout discards the episode. Admission waits consume the episode deadline but create no TITO session.
@@ -12,6 +13,7 @@
 - [Prerequisites](#prerequisites)
 - [Prepare and validate](#prepare-and-validate)
 - [Run](#run)
+- [Bounded GPU suite](#bounded-gpu-suite)
 - [Resource and lifecycle settings](#resource-and-lifecycle-settings)
 - [Behavior and limits](#behavior-and-limits)
 - [Small CPU checks](#small-cpu-checks)
@@ -92,11 +94,26 @@ For time-series tasks, provide `--prediction-length` from the public submission 
 The script does not derive prediction shapes from hidden test labels. This checks sandbox I/O
 and grading, not the MLGym agent or the training pipeline.
 
+## Bounded GPU suite
+
+The GPU recipe prepares all 19 non-Kaggle task identities on bounded real data. It declares one
+native sandbox GPU, preserves isolated grading, and provides CUDA starting solutions. It is a local
+protocol, not the full official evaluation. See the [GPU runbook](../../docs/env-worker-deep-dive/knowledge/airs-gpu-recipe.md)
+for the task inventory, verified results, resource budgets, and runnable preparation and checks.
+Use `config/gpu_agent_config.yaml` with `gpu_train.sh`. The launcher sets `AIRS_AGENT_CONFIG` to
+the regular research prompt by default. For bounded pipeline acceptance, explicitly set it to
+`$PSRL_WORKSPACE/examples/airs_bench/acceptance_agent_config.yaml` and use the prepared
+`acceptance/` task configs. This asks the real policy to run the CUDA baseline, validate, and submit.
+Direct YAML users must also set `AIRS_AGENT_CONFIG` to an absolute prompt-config path.
+The default CPU recipe still requests zero GPUs. Both agent YAML files declare the factory target.
+
 ## Resource and lifecycle settings
 
 | Setting | Owner and behavior |
 |---|---|
 | `runtime.sandbox_cpus`, `runtime.sandbox_memory` | Agent container limits, default 8 CPUs and 32 GiB |
+| `runtime.sandbox_gpus` | Native sandbox GPU demand, default 0, GPU recipe 1 |
+| `runtime.sandbox_python` | Optional compatible Python executable with a read-only prefix mount, default empty |
 | `runtime.verifier_cpus`, `runtime.verifier_memory` | Additional reserved grader capacity, default 1 CPU and 4 GiB |
 | `runtime.apps_candidate_cpus`, `runtime.apps_candidate_memory` | Additional APPS execution budget, default 1 CPU and 512 MiB |
 | `runtime.apps_case_timeout_s`, `runtime.apps_candidate_timeout_s` | APPS deadlines, default 4 seconds per input and 11 seconds across one candidate's inputs |
@@ -148,4 +165,6 @@ PYTHONPATH="${MLGYM_REPO}:${PYTHONPATH:-}" \
 
 The first command uses real local Bash and injected RPC/container ownership operations.
 The second uses the actual upstream `BaseAgent` with a fixed replay, local Bash, and a tiny
-CSV grading substitute. Neither starts Docker, Ray, model inference, or training.
+CSV grading substitute. It also checks the real LiteLLM backend against a local HTTP response
+fixture, including request routing, the TITO header, and zero API cost metadata. Neither command
+starts Docker, Ray, model inference, or training.

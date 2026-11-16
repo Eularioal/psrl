@@ -43,6 +43,8 @@ class AirsBenchRuntimeConfig:
     image: str = DEFAULT_IMAGE
     sandbox_cpus: float = 8.0
     sandbox_memory: str = "32g"
+    sandbox_gpus: int = 0
+    sandbox_python: str = ""
     data_root: str = DEFAULT_DATA_ROOT
     mlgym_repo: str = DEFAULT_MLGYM_REPO
     agent_config_path: str = DEFAULT_AGENT_CONFIG
@@ -59,6 +61,8 @@ class AirsBenchRuntimeConfig:
     apps_candidate_timeout_s: float = 11.0
 
     def __post_init__(self) -> None:
+        if isinstance(self.sandbox_gpus, bool) or self.sandbox_gpus not in (0, 1):
+            raise ValueError("AIRS sandbox_gpus must be zero or one.")
         for name in (
             "sandbox_cpus",
             "verifier_cpus",

@@ -24,6 +24,65 @@ from psrl.workers.env_worker.worker import ContainerShell, EnvWorker
 pytestmark = pytest.mark.cpu_test
 
 
+def test_real_litellm_backend_calls_local_policy_and_accounts_zero_cost(monkeypatch):
+    import threading
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+
+    from mlgym.backend.base import ModelArguments
+    from mlgym.backend.utils import get_model
+
+    for name in ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "all_proxy"):
+        monkeypatch.delenv(name, raising=False)
+    calls = []
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_POST(self):
+            request = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+            calls.append((self.path, request, self.headers.get("x-smg-tito-trajectory-id")))
+            body = json.dumps(
+                {
+                    "id": "local-policy-test",
+                    "object": "chat.completion",
+                    "created": 1,
+                    "model": request["model"],
+                    "choices": [
+                        {"index": 0, "message": {"role": "assistant", "content": "submit"}, "finish_reason": "stop"}
+                    ],
+                    "usage": {"prompt_tokens": 5, "completion_tokens": 2, "total_tokens": 7},
+                }
+            ).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, *args):
+            pass
+
+    server = HTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    payload = {
+        "model": "/local/psrl-test-policy",
+        "base_url": f"http://127.0.0.1:{server.server_port}/v1",
+        "sampling_params": {"max_tokens": 32},
+        "trajectory_id_strategy": "manual",
+    }
+    try:
+        runner.register_local_policy(payload)
+        model = get_model(ModelArguments(**runner.build_mlgym_model_config(payload)))
+        assert model.query([{"role": "user", "content": "Test local policy routing."}]) == "submit"
+        assert model.stats.api_calls == 1 and model.stats.total_cost == 0
+        assert calls[0][0] == "/v1/chat/completions"
+        assert calls[0][1]["model"] == payload["model"]
+        assert calls[0][2] == "0"
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=2)
+
+
 class LocalHandle:
     """Use real Bash while substituting Docker mounts and the prebuilt conda image."""
 
@@ -73,8 +132,11 @@ class LocalHandle:
         self.worker._shells[self.sandbox_id].close()
 
 
+@pytest.mark.parametrize("agent_config_name", ["agent_config.yaml", "acceptance_agent_config.yaml"])
 @pytest.mark.parametrize("ending", ["submitted", "exec_error", "missing", "invalid"])
-async def test_real_base_agent_initializes_installs_tools_validates_and_submits(tmp_path, monkeypatch, ending):
+async def test_real_base_agent_initializes_installs_tools_validates_and_submits(
+    tmp_path, monkeypatch, ending, agent_config_name
+):
     import mlgym
 
     root = tmp_path / "airs_configs"
@@ -118,10 +180,13 @@ async def test_real_base_agent_initializes_installs_tools_validates_and_submits(
         runner, "build_mlgym_model_config", lambda payload: {"model_name": "replay", "replay_path": str(replay)}
     )
     runtime = AirsBenchRuntimeConfig(
-        data_root=str(tmp_path), mlgym_repo=str(Path(mlgym.__file__).resolve().parent.parent)
+        data_root=str(tmp_path),
+        mlgym_repo=str(Path(mlgym.__file__).resolve().parent.parent),
+        agent_config_path=str(Path(runner.__file__).with_name(agent_config_name)),
     )
     payload = {
         "episode_dir": str(tmp_path),
+        "model": "/local/replay-policy",
         "runtime_config": runtime,
         "task_config_path": "tasks/tiny.yaml",
         "max_turns": 5,

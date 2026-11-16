@@ -51,6 +51,7 @@ def build_mlgym_model_config(payload: dict[str, Any]) -> dict[str, Any]:
         "max_tokens": int(sampling.get("max_tokens", 4096)),
         "logprobs": True,
         "top_logprobs": 1,
+        "api_key": "psrl-local",
     }
     if top_k is not None and int(top_k) >= 0:
         completion_kwargs["extra_body"] = {"top_k": int(top_k)}
@@ -58,12 +59,25 @@ def build_mlgym_model_config(payload: dict[str, Any]) -> dict[str, Any]:
         completion_kwargs["extra_headers"] = {"x-smg-tito-trajectory-id": "0"}
 
     return {
-        "model_name": f"openai/{payload['model']}",
+        "model_name": f"litellm:openai/{payload['model']}",
         "host_url": payload["base_url"],
         "temperature": float(sampling.get("temperature", 1.0)),
         "top_p": float(sampling.get("top_p", 1.0)),
         "completion_kwargs": completion_kwargs,
     }
+
+
+def register_local_policy(payload: dict[str, Any]) -> None:
+    """Describe the local policy endpoint so MLGym can account for zero API cost."""
+    import litellm
+
+    metadata = {
+        "input_cost_per_token": 0.0,
+        "output_cost_per_token": 0.0,
+        "litellm_provider": "openai",
+        "mode": "chat",
+    }
+    litellm.register_model({payload["model"]: metadata, f"openai/{payload['model']}": metadata})
 
 
 def collect_scores_from_info(
@@ -190,7 +204,9 @@ def run_mlgym_agent(payload: dict[str, Any]) -> dict[str, Any]:
             per_action_timeout_s=runtime_config.per_action_timeout_s,
             grader=grader,
         )
+        env._psrl_sandbox_python = runtime_config.sandbox_python
 
+        register_local_policy(payload)
         model_args = ModelArguments(**build_mlgym_model_config(payload))
         agent_args = AgentArguments(
             model=model_args,
