@@ -1,10 +1,11 @@
 # GPU 统一执行后端：EnvRouter、容器提供者与预算策略
 
-> **核心结论**：两种模式现在共用受管理 GPU 作业的提交、状态、等待、执行超时、取消和收尾流程。episode 保留会话 GPU 预算，command 每次执行后确认物理归还。自动 offload、运行时模式切换和逐任务 TOML 模式选择尚未实现。显式启用 MPS 后的同容器并行见 [MPS 并行后端](mps-parallel-execution.md)，本文的串行描述限定于 direct 路径。
->
-> 模式仍由 EnvRouter 的 YAML 资源单元配置确定，任务的 task.toml 主要声明 CPU、主存和 GPU 数量。本文是[通用接入设计](../archive/env-router-current-flow.md#11-通用-gpu-执行服务的具体设计)的第一阶段落地记录，不能将完整提案视为已实现。
+> **核心结论**：容器由谁创建，与 GPU 命令怎样执行，可以分开管理。原生 EnvWorker 和 Harbor Compose 共用 `ManagedGpuExecution`，调用方使用相同的提交、等待、超时、取消和收尾接口；容器构建与网络仍由各提供者负责。
 
-> **当前接入**：原生 EnvWorker 与 Harbor Compose 共用 `ManagedGpuExecution`，原生路径已接入 GPU 租约和 command 设备权限，创建与网络实现仍不同。当前结构读第 10 节，固定日期的实验分别按第 4、8、9 节说明的任务与版本理解，不把旧预检失败扩大成当前整个 GPU 接入尚未完成。
+例如同一条 GPU 检查在两种提供者上都先得到作业编号，再等待结果。采用 `episode` 时整次会话持有预算；采用 `command` 时每次执行后确认物理归还。文件保留、预算变化和取消顺序应保持一致，第 10 节给出完整数字例子。
+
+**了解当前结构先读[第 10 节](#10-当前结构与前两阶段的对照)。** 前文保留统一接口的形成过程和各固定版本的实验，direct 串行语义按该分支理解，受管并发见[MPS 后端](mps-parallel-execution.md)。模式由 YAML 资源单元配置决定，自动卸载和运行中切换仍待实现。默认开关与整体边界见[当前设计](current-design.md)。
+
 
 ## 目录
 
@@ -229,7 +230,7 @@ CPU 回归入口包括 [test_gpu_execution.py](../../../tests/env_service/test_g
 | 同机器、同 GPU，绑定 lending | 有专门协作路径 | 物理卡相同，模型与环境使用权按阶段交接，不能随意同时使用 |
 | 同机器、同 GPU，仅设置 node_policy=any | 配置可能放行 | 不会自动获得互斥或安全借还，可能争抢资源 |
 
-默认 Env Service 关闭。开启后默认 node_policy=cpu_only，对被标记为训练／推理的节点，普通 GPU 环境请求不允许进入，CPU 任务可以，显式 lending 绑定有例外。这个规则是节点粒度，同节点 GPU 0 给模型、GPU 7 给环境也会被普通 cpu_only 规则拒绝。若配置 any 允许同机不同卡，必须核对实际设备映射。
+默认 Env Service 关闭。开启后的默认 `node_policy=cpu_only` 会保护已知训推设备：当前 [NodeRules.overlaps_train_rollout](../../../psrl/workers/env_service/node_policy.py#L93) 使用实际 GPU 设备集合，已确认与模型不重叠的同机独立卡可以进入。只有节点身份、缺少设备映射时，按整个受保护节点保守处理。显式共享和 lending 还需各自完整协议；`any` 放宽候选过滤，也仍需核对设备映射与预算。
 
 环境 unit 之间禁止重复卡的检查，不等于已经将所有 Docker GPU 与所有模型 worker 的设备统一登记。普通 any 路径没有自动提供这样的全局互斥保证。此前默认“command 使用独立环境卡”的要求是接入约束，不能理解为仅配置一个 command 字串就已向平台取得物理独占。
 
@@ -239,7 +240,7 @@ CPU 回归入口包括 [test_gpu_execution.py](../../../tests/env_service/test_g
 PYTHONPATH=. python docs/env-worker-deep-dive/env-service-verification/scripts/explain_gpu_policy_axes.py
 ```
 
-脚本验证 P2 中租约继承模式、P3 中 cpu_only 拒绝同模型节点的普通 GPU 请求而 any 允许，以及 P4 中环境单元的重叠拒绝。它把模型 GPU 0、环境 GPU 7 设为教学例子，说明节点筛选不会逐卡区分，不是机器上实际部署了这些角色。此次实际运行通过，输出保存在 env-service-verification/results/science-next-step-20261026/policy-axes.jsonl。
+脚本验证模式继承、保护节点的保守过滤和环境单元的重叠拒绝。该脚本只提供模型节点身份，未传入实际训推设备集合，因此其中同节点 GPU 7 也被保守拒绝。当前生产可接收逐设备映射，独立卡优先的实现另见[共享专题](vllm-env-opportunistic-sharing.md#9-独立-gpu-优先的实现与实机验证)。此次实际运行通过，输出保存在 env-service-verification/results/science-next-step-20261026/policy-axes.jsonl。
 
 ## 8. 原生 science 验收与下一步优先级
 
@@ -249,7 +250,7 @@ PYTHONPATH=. python docs/env-worker-deep-dive/env-service-verification/scripts/e
 
 **Results：本次重新执行原生 science 所需的生产预检。** 在首选节点检查路由身份、Docker info 与 ping、GPU 清单，再运行 [gpu_job_probe.py --preflight-only](../env-service-verification/scripts/gpu_job_probe.py#L50)。Docker 和设备控制通过，GPU 进程归属能力被拒绝，错误为 GPU attribution needs host PID procfs。结果明确 workload_started=false、node_service_closed=true，未启动任务容器、CUDA 工作或模型。原始日志与 result.json 位于 env-service-verification/results/science-next-step-20261026/native-preflight。
 
-这个 /proc 视图用于把 GPU 驱动报告的进程对应到实际任务容器。当前缺少宿主机 PID 视图，所以即使 GPU 可以计算，也不能按该任务的资源归属要求确认“确实是这个任务产生了 GPU 活动”。这是本次重新发现的部署条件，不是沿用历史状态。原生 CUDA command 的 [runner 预检](../../../examples/sciaccel_rl/runner.py#L402)会在任务启动前检查，不能关闭检查或改任务名绕过。
+这个 /proc 视图用于把 GPU 驱动报告的进程对应到实际任务容器。该次预检缺少宿主机 PID 视图，所以即使 GPU 可以计算，也未能按该任务的资源归属要求确认“确实是这个任务产生了 GPU 活动”。这是 2026-10-26 那次预检的部署条件；当前另有 eBPF 后端，见[进程身份教程](process-identity-without-procfs.md)。原生 CUDA command 的 [runner 预检](../../../examples/sciaccel_rl/runner.py#L402)会在任务启动前检查，不能关闭检查或改任务名绕过。
 
 原生任务的 reward_gpu 还要求真实 GPU 工作及原始数值正确性。原 oracle 的 CPU 正确解、只在独立进程分配显存、或仅看到整卡利用率都不足以通过。需要合法可运行的 GPU 求解器候选、受管理入口执行原检查，以及任务所属 GPU 遥测和独立 verifier 结果相互对应。若缺少 GPU 候选实现，也应记录为前置条件，不能把成功的 CPU oracle 当 GPU 验收。
 

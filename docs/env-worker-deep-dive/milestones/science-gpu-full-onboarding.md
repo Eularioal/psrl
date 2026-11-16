@@ -1,202 +1,306 @@
-# Science GPU 任务完整接入与本地验收
+# Science GPU 接入与验收：流程、环境和实测记录
 
-> **核心结论**：本轮按“独立 verifier → 真实策略模型 rollout → PSRL 后训练更新 → 更新后的继续采样”验收。允许使用本地硬件、小规模真实数据和本地裁判，不要求复现官方榜单协议。任务内部训练模型、oracle 提交与 PSRL 策略更新分别登记，不能互相替代。
->
-> 状态：2026-11-10 六类 GPU 代表任务均通过本地完整闭环验收。框架代码基准为 `bc5665f`，收尾时 HEAD 为 `ab74120`，两者已提交差异仅为会话归档文档。验收包含本轮未提交实现及既有工作区内容，结论限定为本文列出的协议、准备资产和代表题，不代表整套官方题库。改动位于本地 `main` 工作区，尚未提交或推送，未宣称远端合并或共享部署。任务总览与后续工作见[当前路线图](science-gpu-bench-status-and-roadmap.md)，持续架构入口为[当前设计](../knowledge/current-design.md)。
+> **核心结论**：接入一类 GPU 任务，要依次确认“任务可运行并独立评分”“真实 agent 能操作任务”“交互记录能进入 PSRL 训练”“发布后的策略能继续执行任务”。2026-11-10 的固定实验用六类代表题打通了这条链路。本文先解释怎样接入与检查，再保留该次验收的结果、失败和适用范围。
+
+最新核对：**2026-11-16**。流程说明对应当前 `6aa328d` 加主目录未提交内容，并关联本轮新增 GPU 任务验证；环境安装审计保留 11-12 的原范围。历史六类验收基于 `bc5665f` 加当时未提交内容，收尾 HEAD 为 `ab74120`，提交间差异仅为会话归档文档。**本页保留历史六类代表题条件，当前全部题库覆盖看[任务现状与路线图](science-gpu-bench-status-and-roadmap.md)。** 本轮代码与文档未提交、未推送、未合并。
 
 ## 目录
 
 - [验收目标与执行链](#验收目标与执行链)
+  - [用数字分类题串起两种训练](#用数字分类题串起两种训练)
+  - [跟着流程读源码](#跟着流程读源码)
+- [环境与依赖怎样隔离](#环境与依赖怎样隔离)
+  - [镜像、容器与挂载各负责什么](#镜像容器与挂载各负责什么)
+  - [例子一：PostTrain 怎样训练只读模型](#例子一posttrain-怎样训练只读模型)
+  - [例子二：SWE 怎样交付代码修改](#例子二swe-怎样交付代码修改)
+  - [例子三：MLGym 虚拟环境怎样复用依赖](#例子三mlgym-虚拟环境怎样复用依赖)
+  - [安装审计与长期复现](#安装审计与长期复现)
+  - [不需要 GPU 的教学实验](#不需要-gpu-的教学实验)
 - [本地任务协议](#本地任务协议)
 - [运行入口](#运行入口)
+  - [先准备可运行的任务](#先准备可运行的任务)
+  - [再生成配套数据与训练配置](#再生成配套数据与训练配置)
 - [Results 与验证边界](#results-与验证边界)
-- [本轮边界修复与回归](#本轮边界修复与回归)
+  - [真实 GPU 与策略闭环结果](#真实-gpu-与策略闭环结果)
+  - [怎样解释失败和受控停止](#怎样解释失败和受控停止)
+- [验收相关修复与回归](#验收相关修复与回归)
+- [复现时最容易遗漏的条件](#复现时最容易遗漏的条件)
 - [下一步研究优先级](#下一步研究优先级)
 
 ## 验收目标与执行链
 
-这里有两种不同的“训练”。任务内训练是 agent 在容器中训练数字分类器、语言模型等提交物。PSRL 后训练则是框架用 agent 的工具调用轨迹和奖励，更新负责发出这些命令的策略语言模型。rollout 指用某个版本的策略模型实际采样一次任务交互。TITO（Token-In-Token-Out，输入输出 token 记录）是框架收集模型输入、输出 token 以及对应生成概率的会话机制，用于把多轮交互交给训练器。独立 verifier 只读取提交物并评分，它通过不代表策略模型已经更新。
+接入有三个验收层次：先用固定参考程序（oracle）在真实 GPU 上跑通任务执行与独立 verifier 评分；再让真实 agent 生成工具调用；最后把交互记录交给 PSRL，执行策略训练与更新后采样。oracle 用于先检查环境和评分规则，把接入故障与 agent 解题困难分开。
 
 ```text
-[1] 真实资产准备 → Harbor task + PSRL Parquet
-         ↓
-[2] oracle 先检查独立 verifier 与 GPU 工作
-         ↓
-[3] 策略模型生成工具命令 → 任务执行 → verifier 评分
-         ↓
-[4] TITO 收集模型 token 与工具交互 → PSRL 收到轨迹和奖励
-         ↓
-[5] PSRL 训练计算 loss 并调用优化器 → 发布新模型版本
-         ↓
-[6] 下一批 rollout 使用更新后的模型 → 最终资源清理
+[1] 真实数据、源码与模型 → 准备任务目录、数据表和资源声明
+                                      ↓
+[2] 策略语言模型 v0 生成操作 ←→ [3] 任务容器执行 CPU/GPU 工作
+                                      ↓ 提交代码、预测或权重
+                              [4] 独立评分器检查提交物
+                                      ↓
+                      [5] 模型交互记录 + 任务奖励
+                                      ↓
+                      [6] PSRL 执行一次策略优化器步骤
+                                      ↓
+                      [7] 发布 v1 → 用 v1 再交互和评分
+
+每次任务退出 → 清理本次容器和进程 → 核实物理释放 → 归还资源
 ```
 
-图例：图里每个部分对应的源码位置。
+图描述数据怎样流动；多个任务、模型生成和监控可以异步执行。Harbor 负责驱动公共 GPU 任务，EnvRouter 负责资源准入，即判断任务当前能否占用所声明的 CPU、内存与 GPU。租约记录这次资源占用，任务结束后释放。AIRS 的独立协调组件与沙箱路径见 [AIRS recipe](../knowledge/airs-gpu-recipe.md)。
 
-| 节点 | 入口和状态变化 |
-|---|---|
-| 1 | [write_dataset](../../../examples/gpu_benchmarks/prepare.py#L47) 生成模型输入和任务资源声明，本轮为不同本地协议保留独立 data_source |
-| 2 | [验证运行器](../../../examples/gpu_benchmarks/run.py) 经实际 science runner 与 EnvRouter 执行 oracle，检查评分和清理 |
-| 3、4 | [GpuBenchmarkAgentLoop](../../../examples/gpu_benchmarks/agent_loop.py#L14) 复用 science 的会话和轨迹采集，模型实际生成动作 |
-| 5 | [公共训练启动器](../../../examples/gpu_benchmarks/train.sh) 调用 [PSRL 训练入口](../../../psrl/trainer/main_ppo.py)，[完整批次策略](../../../psrl/trainer/ppo/strategies/full_batch.py#L110) 进入 [_update_actor](../../../psrl/trainer/ppo/ray_trainer.py#L3222) |
-| 6 | [push_model_state_dict_nixl](../../../psrl/workers/ps/ps_manager.py#L1194) 登记更新后的模型版本，参数实际位于 PS worker，[pull_model_state_dict_nixl](../../../psrl/workers/ps/ps_manager.py#L1269) 协调推理端取回参数 |
-| 5 的 GPU 身份核对 | [PSRL_DummyWorker](../../../psrl/trainer/ppo/utils.py#L171) 为融合角色提供实际节点与设备信息，资源检查不因占位角色缺接口而中断 |
+### 用数字分类题串起两种训练
 
-跟着图读源码：
+以 MLE 本地 digits 题为例：1797 张真实的 8×8 数字图像被固定分成 **1347 张训练图像、450 张测试图像**。agent 只能看到训练标签和测试图像。它调用 GPU 训练分类器，然后提交每个测试 ID 的数字预测。
 
-| 步骤 | 图中编号 | 真实入口 | 输入、输出或状态变化 |
-|---|---|---|---|
-| 准备 | 1 | [write_dataset](../../../examples/gpu_benchmarks/prepare.py#L47)，混合任务使用 [prepare](../../../examples/gpu_benchmarks/mix.py#L12) | 任务目录和资源声明变成 Parquet 数据行与 agent 配置 |
-| 环境验收 | 2 | [run.py](../../../examples/gpu_benchmarks/run.py) | 固定参考提交进入实际 runner，得到独立评分和清理记录 |
-| 策略采样 | 3 | [SciAccelAgentLoop.run](../../../examples/sciaccel_rl/agent_loop.py#L144) 与 [GpuBenchmarkAgentLoop._run_harbor_in_thread](../../../examples/gpu_benchmarks/agent_loop.py#L32) | 建立模型会话并申请任务资源，真实模型决定工具调用 |
-| 容器与评分 | 3、4 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L275) | 模型和容器反复交互，独立 verifier 在任务结束后评分，runner 在退出路径归还资源 |
-| 策略更新 | 5 | [FullBatchStepStrategy 中的更新阶段](../../../psrl/trainer/ppo/strategies/full_batch.py#L110) → [_update_actor](../../../psrl/trainer/ppo/ray_trainer.py#L3222) | 批次轨迹、生成概率和奖励进入训练 worker，实际计算 loss 并调用优化器 |
-| 版本回传与后续采样 | 6 | [PS Manager 模型推送](../../../psrl/workers/ps/ps_manager.py#L1194) 与 [模型拉取](../../../psrl/workers/ps/ps_manager.py#L1269) | 推理端取回新版本，后续任务必须留下使用该版本的实际采样证据 |
+独立评分器先检查提交的 ID 是否齐全、是否重复、类别是否合法，再读取隐藏标签计算准确率。固定参考提交答对 437 张，所以结果是 `437/450≈97.11%`。
 
-模型生成、环境工具和资源监控存在异步执行，图中箭头表示数据依赖。5 的策略模型优化与任务内的小模型训练是不同事件，必须看实际训练 step。6 还需要模型版本和新采样记录，不能只凭进程存活作结论。这些代码如有理解上的问题，可以随时追问。
+这时完成的是**任务内训练**：分类器学会识别数字，对应图中 [3]。PSRL 随后把 agent 生成的命令、工具结果和奖励组合成训练样本，更新负责操作的**策略语言模型**，对应 [5]→[6]。最后还要看到 v1 生成真实操作并取得评分，才完成 [7] 的策略闭环。两份模型的参数与结果各自记录，97.11% 说明该份分类提交的表现。
+
+### 跟着流程读源码
+
+TITO 是 Token-In-Token-Out 的简称，这里指保存真实模型输入、输出 token 及生成概率的会话记录机制。它让多轮工具交互能进入策略训练。
+
+| 图中步骤 | 本地实现 | 输入如何变成结果 |
+|---|---|---|
+| [1] 准备 | [write_dataset](../../../examples/gpu_benchmarks/prepare.py#L47)、[混合准备器](../../../examples/gpu_benchmarks/mix.py#L12) | 任务路径、奖励身份和显存需求 → Parquet 数据表与配套 agent 配置 |
+| [2] 创建会话 | [SciAccelAgentLoop.run](../../../examples/sciaccel_rl/agent_loop.py#L144) | 数据行 → 模型会话、任务交互与 TITO 记录 |
+| [3] 申请与执行 | [GpuBenchmarkAgentLoop](../../../examples/gpu_benchmarks/agent_loop.py#L14)、[run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L275) | 任务资源需求 → 获准资源 → 容器、模型与工具交互 |
+| [4] 评分 | [MLE grader](../../../examples/mle_bench/local_grade.py#L9)、[公共奖励适配](../../../examples/gpu_benchmarks/reward.py#L6) | 提交物与隐藏标签 → 协议指标 → PSRL 奖励 |
+| [5]→[6] 策略训练 | [完整批次策略](../../../psrl/trainer/ppo/strategies/full_batch.py#L110) → [_update_actor](../../../psrl/trainer/ppo/ray_trainer.py#L3222) | 轨迹、生成概率和奖励 → 训练 worker 的优化器步骤 |
+| [7] 参数发布 | [模型版本推送](../../../psrl/workers/ps/ps_manager.py#L1194)、[模型拉取](../../../psrl/workers/ps/ps_manager.py#L1269) | 参数服务登记新版本，推理端接收参数并继续采样；实际参数位于 PS worker |
+| 退出清理 | [runner 的 finally](../../../examples/sciaccel_rl/runner.py#L610)、[快检收尾](../../../examples/gpu_benchmarks/run.py#L183) | 清理所属容器，再检查容器、GPU 进程和显存状态，保存证据 |
+
+初读只需沿表格理解数据流；要追查实现时，再按编号进入源码。资源管理的完整原理见[当前设计](../knowledge/current-design.md)。
+
+## 环境与依赖怎样隔离
+
+不同题可能要求不同版本的 PyTorch、模型服务或 GPU 扩展。接入时需要让这些依赖各有安装位置，同时把公开数据、隐藏测试和提交物分开管理。**环境隔离回答“文件、包与进程会影响谁”，资源调度回答“CPU、内存和 GPU 当前给谁用”。**
+
+### 镜像、容器与挂载各负责什么
+
+| 对象 | 用通俗语言理解 | 本项目中的作用 |
+|---|---|---|
+| 镜像 image | 预先准备的软件模板，本身不执行任务 | 保存固定源码、Python 和依赖；同一模板可以反复启动 |
+| 容器 container | 从模板启动的一次运行实例 | agent 和独立评分器有各自的进程与文件修改 |
+| 容器可写层 | 当前实例新增或修改的文件 | 临时修改源码、安装包；删除容器时随实例移除 |
+| 绑定挂载 bind mount | 将宿主目录接到容器中的指定路径 | 复用模型、数据或 Python；`:ro` 表示只读，可写挂载则直接修改宿主文件 |
+| 虚拟环境 venv | 一套单独的 Python 包目录与入口 | 把某类任务新增的包放在专用目录；可与容器一起使用 |
+| 提交物 artifacts | 明确交给评分器、并保留供复查的文件 | 代码补丁、预测 CSV 或模型权重 |
+
+同一镜像启动 A、B 两个容器时，各自拥有可写层。A 修改镜像中的普通文件，B 仍读取原版本。这个机制称为**写时复制**：共享模板保持只读，修改保存在当前实例的上层。停止容器后可写层仍在，删除容器才移除它。
+
+挂载目录按其读写配置处理。例如 `/model:ro` 代表从宿主只读提供模型文件；可写的输出挂载会把结果保存到宿主。要判断安装影响范围，应看实际使用哪个 Python、安装目标在哪、该路径是否挂载，以及是否只读。[公共 compose 准备器](../../../examples/gpu_benchmarks/prepare.py#L23)在需要复用解释器时，将解释器前缀和其实际基础前缀去重后都以 `:ro` 挂载。
+
+GPU 显存由运行进程占用。删除容器文件、租约计数归零与显存释放是不同观察，实验收尾还要检查实际进程和设备。
+
+### 例子一：PostTrain 怎样训练只读模型
+
+以已验证的 **GSM8K + Qwen3-1.7B-Base** 为例。GSM8K 是数学应用题数据，当前本地任务做两次小范围模型更新，并交付更新后的参数。
+
+1. [准备器](../../../examples/posttrain_bench/prepare.py)向 agent 提供只读 `/model`、公开训练数据和 Python。独立评分器另获得隐藏数据与测试程序。
+2. [模型加载函数](../../../examples/posttrain_bench/local_model.py#L9)读取磁盘权重，把模型加载到进程内存和 GPU 显存。只读约束作用在磁盘文件；加载后的内存张量可以计算梯度和更新。
+3. 程序固定模型主体，只更新最后一个归一化参数向量 `model.norm.weight`。本地协议选择这一个向量来控制训练成本。
+4. 两次更新后，将该向量写为新的 `final_model/adapter.safetensors` 提交文件。原始 `/model` 文件继续保持原样。
+5. 评分器启动自己的模型进程，重新读取基础模型，检查提交权重的名字、形状和数值，再复制到自己的模型内存，在隐藏答案上评分。
+
+因此，**磁盘基础权重、GPU 中的模型、提交的参数文件是三个对象**。评分器再次加载模型，是为了独立检查提交物；agent 的模型进程和显存状态不会随提交文件传过去。该任务目录保存在[固定资产](../../../../benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-gsm8k-qwen3-1.7b)。
+
+写作和健康问答采用同一提交路径，但多一个只读 `/judge` 挂载，仅提供给独立评分器。以 **HealthBench + Qwen3-1.7B** 为例，agent 在两条公开记录上更新任务模型的归一化参数并交权重；verifier 加载提交物，在另外两条隐藏记录上生成回答。随后它释放任务模型，加载冻结的 Qwen3.5-4B 裁判，对每条回答的四项原始标准评分。裁判来自已有模型缓存，冻结权重不会进入 agent 的提交文件，也不随外层 PSRL 策略更新。[准备器](../../../examples/posttrain_bench/prepare.py)明确区分 agent 与 verifier 的挂载，[裁判评分](../../../examples/posttrain_bench/judged_model.py)实现生成、模型释放与独立评判。
+
+### 例子二：SWE 怎样交付代码修改
+
+SWE 要求修改真实 SGLang 推理服务。不同题固定的源码和 GPU 扩展版本可能不同，所以各题使用选定运行镜像。下面解释当前本地快速协议的补丁交付路径，历史原题协议仍按自己的记录阅读。
+
+1. [构建器](../../../examples/swe_serve/build_local_images.py#L47)取得固定源码，将其装入镜像中的 `/code`，配齐该题依赖。
+2. agent 在自己的容器中编辑 `/code`，改动保存到当前容器可写层。
+3. [补丁配置](../../../examples/swe_serve/patch_submission.py#L5)将改动导出为 `submission.patch`。Harbor 收集并交付该文件。
+4. 评分器从干净环境启动，应用补丁，读取只给评分器的测试，再独立运行。agent 临时安装的包、进程和整个可写层仍留在原实例；需要的评分依赖由评分环境自己准备。
+5. 本次容器删除后，宿主保留的补丁与日志仍可复查，任务基础镜像可继续复用。
+
+部分性能题还给评分器只读提供未修改源码 `/base` 和私有计时程序，用于独立比较。[SWE 准备器](../../../examples/swe_serve/prepare.py#L62)核对这些挂载。本地 score 闭环题公开参考补丁并选择两个原测试，验收目标是这条交互、执行和评分路径。
+
+### 例子三：MLGym 虚拟环境怎样复用依赖
+
+MLGym 强化学习任务使用 JAX 数组计算、Flax 网络和 Gymnax 游戏环境。新增依赖放入 `benchmark-assets/mlgym-rl-env/`，这是 Python 的 venv，包含自己的包安装目录和解释器入口。
+
+实际 [pyvenv.cfg](../../../../benchmark-assets/mlgym-rl-env/pyvenv.cfg)启用 `include-system-site-packages = true`，表示它可以同时读取基础 Python 中已有的包。新包写到该 venv，基础解释器与部分包继续复用。容器因此需要同时只读挂载 venv 和它依赖的基础 Python 前缀。[RL 准备器](../../../examples/mlgym_bench/prepare.py#L18)还生成 `/opt/task/python`，显式设置 GPU 动态库搜索路径。
+
+例如 Breakout 本地题使用该入口运行 16 个并行游戏环境和两次参数更新，提交 `policy.msgpack`。独立评分器用相同软件、可信网络结构和新的随机种子重新评分。软件文件可以只读复用，任务进程和模型状态各自独立。
+
+### 安装审计与长期复现
+
+| 对象 | 实际依赖位置 | 复现时要固定什么 |
+|---|---|---|
+| SWE、部分 RE/Inference | 专用任务镜像与各自容器 | 源码版本、实际 image ID、评分资产 |
+| MLGym RL | 专用 JAX venv，部分包来自基础 Python | venv 与基础包两个来源 |
+| 多种公共任务、MLGym 视觉/NLP、PostTrain、当前 FastKernels 子集 | 容器内只读复用已有主 Python | 已有包版本及任务脚本，后续宜固化镜像 |
+| AIRS | 预装 agent 镜像或显式只读复用解释器 | 按 GPU 配置选择的实际分支，见[沙箱构建](../../../psrl/environments/mlgym_env.py#L57) |
+| PSRL 验证进程的额外依赖 | `.verification-deps/` 与实验专用依赖目录 | 进程 `PYTHONPATH`，即 Python 模块搜索顺序 |
+
+2026-11-12 审计检查主环境 **2540 个包元数据文件**，未观察到 11-09 以来的安装变更，检查的 **90 份 Compose 配置**中，匹配的主 Python/JAX 前缀挂载均为只读。[状态 JSON](../experiments/gpu-benchmarks/onboarding-status-audit-20261112.json)保存结果，[审计脚本](../experiments/gpu-benchmarks/scripts/audit_onboarding_status.py#L115)说明检查方法。审计依据是安装路径、包元数据和挂载配置，接入前的完整文件快照未保存。
+
+只读挂载保护任务到宿主的写入方向。宿主之后升级包，任务仍可能读取到新版本，所以长期复现需把验证过的依赖固化到镜像。各次输出也要使用独立目录。CPU、GPU、磁盘、驱动与 Docker 服务仍由宿主共享，按实际预算调度。
+
+下载反复发生，主要是为了准备真实数据、模型和各版本 GPU 扩展。wheel 是 Python 安装包文件，下载 wheel 后还要决定装入哪个镜像或 venv。**下载、安装、导入和 GPU 运行分别验收**，可以据此判断准备卡在哪一步。
+
+本轮启动前现场检查共享存储约剩余 **140 TiB**，节点本地存储约剩余 **8 TiB**。扩题复用了现有任务模型、冻结裁判与源码兼容镜像，没有下载新模型或新安装包。PostTrain 与 FastKernels 继续只读挂载 Python 前缀，SWE 的依赖准备在各自容器内执行。本次磁盘与依赖来源检查见[现场预检](../../../../benchmark-runs/complete-bench-onboarding-20261116/preflight.json)，当前扩题记录见[状态审计](../experiments/gpu-benchmarks/onboarding-status-audit-20261116.json)。剩余容量是启动时观测值，后续下载前须重新检查。
+
+### 不需要 GPU 的教学实验
+
+在仓库根目录可运行：
+
+```bash
+python docs/env-worker-deep-dive/experiments/gpu-benchmarks/scripts/bench_environment_layers_demo.py
+```
+
+脚本用临时目录模拟镜像、两份可写层、只读主 Python、隐藏数据和提交物。先修改 agent 的代码，观察评分器仍读取原版本；再交付一个文件快照，独立读取和评分；最后删除两份可写层，观察模板和提交物仍保留。已有运行的 11 条观察全部通过，三份版本输出为 `image-version`、`agent-version`、`image-version`，见[固定记录](../experiments/gpu-benchmarks/bench-environment-layers-demo.json)。
+
+这是 Python 标准库教学模拟，只读与分层由脚本实现。真实容器权限、Docker 和 GPU 的验收依据仍来自各实验。想理解“客户端结束后服务为何还占资源”，另有[常驻服务生命周期示例](../env-service-verification/scripts/explain_resident_command_lifetime.py)。本文整理期间未重跑这些脚本。
 
 ## 本地任务协议
 
-| 家族 | 本地协议和独立验收 | 数据与结果身份 |
+下面是 **2026-11-10 六类代表题验收**实际采用的协议。后续扩展到更多任务的输入和规模见[当前路线图](science-gpu-bench-status-and-roadmap.md#题库数量位置与逐题覆盖)。
+
+| 家族 | agent 提交与独立评分 | 结果身份与解释 |
 |---|---|---|
-| KernelBench | 保留原始矩阵乘法题，独立 GPU 验收正确性和速度 | `kernel_bench`，奖励仍为正确性，速度另报 |
-| autoresearch | 现有真实缓存与原始限时训练，独立重放并计算验证 BPB | `autoresearch`，不把任务内训练算作 PSRL 更新 |
-| MLE-bench 本地任务 | 使用 sklearn 打包的真实手写数字数据，固定训练/隐藏测试划分，agent 在 CUDA 训练并提交 id,label CSV。verifier 按隐藏标签算准确率 | `mle_bench_local`，是 MLE 风格本地竞赛，不是 Kaggle 竞赛成绩，也不是原 MLE-bench 全题库 |
-| InferenceBench 本地任务 | agent 提交前台服务脚本，独立 verifier 重启服务并发送两个真实 MMLU-Pro 请求。输出需与固定基线完全相同，再按批请求耗时计分 | `inference_bench_local`，仅固定模型、请求和输出协议，无云裁判，无官方 H100 要求 |
-| RE-Bench 本地任务 | 保留真实 GPT-2 XL、Alpaca、偏好训练与官方评价函数，固定本地 Qwen 裁判，只评估两条隐藏提示和有界生成 | `re_bench_local` 的显式 `bounded-local` 协议，非完整 512 条评测。`feedback-smoke` 继续保持零奖励 |
-| FlashInfer-Bench | agent 提交官方格式 Solution JSON，独立 verifier 对固定 RMSNorm 子集运行官方评估器 | `flashinfer_bench`，本地奖励要求全部 workload 正确，时延另报，不宣称完整题库成绩 |
+| KernelBench | 原始矩阵乘法题，提交计算代码，独立 GPU 比较正确性并记录速度 | `kernel_bench`；训练奖励主要为正确性 |
+| autoresearch | 真实缓存与固定训练预算，提交训练程序，独立重放并计算验证 BPB | `autoresearch`；BPB 为每字节预测编码代价，奖励为 `1/(1+BPB)` |
+| MLE 本地 digits | CUDA 训练后提交 `id,label` CSV，按隐藏标签计算准确率 | `mle_bench_local`；本地公开数据任务，官方 Kaggle 单列 |
+| Inference 本地服务 | 提交前台服务脚本；评分器重启服务，发送两个真实 MMLU-Pro 请求 | `inference_bench_local`；输出先与冻结参考一致，再按批请求耗时计分 |
+| RE 有界聊天训练 | 真实 GPT-2 XL、Alpaca 与偏好训练，使用原评价函数、本地 Qwen 裁判、两条隐藏提示 | `re_bench_local` 的 `bounded-local`；完整官方协议为 512 条提示 |
+| FlashInfer RMSNorm | 提交规定格式 Solution JSON，独立运行官方评估器 | `flashinfer_bench`；固定子集全部正确才给正确性奖励，时延另报 |
 
-具体例子：MLE 本地题把 1797 张真实 8×8 手写数字图像按固定种子划分，训练标签公开，450 个测试标签只挂给 verifier。agent 的 CUDA 分类器生成每个测试 ID 对应的数字类别。verifier 检查 ID 集合完整且不重复，再逐条比较隐藏标签。本轮参考实现得到 437/450，准确率约 0.9711。提交缺行、重复行或非法标签均不得获得有效提交标志。该结果只说明此本地任务的模型训练与评分可运行，不是策略模型学习提升。
-
-已有 CPU 生命周期实验可从仓库根目录运行：
-
-```bash
-python docs/env-worker-deep-dive/env-service-verification/scripts/explain_resident_command_lifetime.py
-```
-
-它模拟客户端结束但服务仍持有状态的情况，对应图中 3 的后台服务与 6 的清理边界。预期客户端退出后模拟不可归还，服务停止后才可归还。本轮已实际运行，观察到客户端结束时仍拒绝归还，停止服务后才允许归还。这是 CPU 教学模拟，不代替本轮真实 GPU 验收。
+本地协议使用显式身份标记，让准备器、评分器和奖励函数能对齐同一规则。RE 的 `feedback-smoke` 是接线探活模式，训练奖励保持零；正式本地偏好评价使用上表的 `bounded-local`。
 
 ## 运行入口
 
-准备命令的 `--output` 必须指向新的任务目录。`--python` 是任务镜像中可执行的解释器路径，使用只读挂载独立 Python 环境时仍须满足镜像系统库要求。
+以下命令用于理解复现步骤；运行前先完成[集群最小预检](../../psrl/psrl-run-guide/cluster-preflight.md)。节点与设备用现场确认的值，准备资产和结果放新目录。
 
-真实 Terminus agent 需要 `tmux`。公共 science runner [关闭终端录制](../../../examples/sciaccel_rl/runner.py#L499)，因此本轮没有依赖 `asciinema` 录制轨迹，训练轨迹由 TITO 收集。公共镜像层额外包含可选的录制工具。**oracle 不使用这套 agent 初始化，因此 oracle 通过不证明镜像包含 tmux。** 任务容器禁网时必须提前安装，不能依赖运行时联网安装。对 apt 系统的任务基础镜像，可使用[公共 agent 镜像层](../../../examples/gpu_benchmarks/agent.Dockerfile)：
+### 先准备可运行的任务
 
-| 环境变量 | 含义 |
-|---|---|
-| `BASE_IMAGE` | 已准备任务资产与依赖的基础镜像 |
-| `AGENT_IMAGE` | 将要构建的新 agent 镜像标签，不能覆盖共享基础镜像 |
-| `BUILD_NETWORK` | 可选的 Docker 构建网络，默认 `default`，由当前节点网络条件决定 |
+真实 Terminus agent 使用终端工具，需要镜像中有 `tmux`。固定参考程序 oracle 的启动方式更简单，所以还需单独检查真实 agent 所需工具。公共 science runner 关闭终端录制，交互训练记录由 TITO 收集。
+
+对于 apt 系统的基础镜像，可使用已有 agent 镜像层：
 
 ```bash
 docker build --network "${BUILD_NETWORK:-default}" \
-    --build-arg BASE_IMAGE="$BASE_IMAGE" \
-    -f examples/gpu_benchmarks/agent.Dockerfile -t "$AGENT_IMAGE" .
+  --build-arg BASE_IMAGE="$BASE_IMAGE" \
+  -f examples/gpu_benchmarks/agent.Dockerfile -t "$AGENT_IMAGE" .
 docker run --rm --network none --entrypoint bash "$AGENT_IMAGE" \
-    -c 'tmux -V && asciinema --version'
+  -c 'tmux -V && asciinema --version'
 ```
 
-准备任务时将 agent 环境指向新镜像。独立 verifier 可以继续使用包含当前评分代码与私有资产的原镜像，RE-Bench 不得把没有隐藏资产的 runtime 镜像误当 verifier。
+`BASE_IMAGE` 是已准备任务依赖的模板，`AGENT_IMAGE` 是新的 agent 镜像标签，`BUILD_NETWORK` 按节点构建网络设置。第二条命令在禁网条件下检查工具。独立评分器可使用自己的镜像；RE 评分镜像还必须包含隐藏资产与当前评分脚本。
 
-| 准备器 | 必要参数 |
+| 准备器 | 关键输入 |
 |---|---|
-| `python -m examples.mle_bench.local` | `--output`、`--image`、`--python`，使用 sklearn 自带公开真实数据，无 Kaggle 凭据 |
-| `python -m examples.inference_bench.local` | 上述三项加 `--references`，目录含独立生成的 request-0.json、request-1.json。先冻结基线，不能从待评分候选生成其自己的参考答案 |
-| `python -m examples.re_bench.prepare` | 原有资产与镜像参数，加 `--local-judge-model`、`--bounded-local`。verifier 镜像必须包含本轮 verify.py，本地裁判独立部署并启动 judge 桥接 |
-| `python -m examples.flashinfer_bench.prepare` | `--repo`、`--subset`、`--cuda`、`--output`、`--image`、`--python`，使用固定官方源码和工作负载 |
+| `python -m examples.mle_bench.local` | `--output`、`--image`、`--python`；使用 sklearn 自带真实公开数据 |
+| `python -m examples.inference_bench.local` | 上述三项及 `--references`，其中保存预先独立生成的请求参考输出 |
+| `python -m examples.re_bench.prepare` | 固定源码、资产、镜像，另加 `--local-judge-model`、`--bounded-local`；配好独立裁判与桥接器 |
+| `python -m examples.flashinfer_bench.prepare` | `--repo`、`--subset`、`--cuda`、`--output`、`--image`、`--python` |
 
-训练沿用公共 `examples/gpu_benchmarks/train.sh`。MLE 与 InferenceBench 的本地数据分别使用其原 recipe 的 agent 配置，data_source 保留 local 身份。FlashInfer 新增自己的 agent 配置。混合原生 Env 与 Compose 任务时，在同一个 agent 配置列表中分别声明后端，并在数据表 agent_name 中对应选择。不得把原生任务交给不解析其镜像约束的配置。
+`--output` 使用新任务目录，`--python` 是容器中实际可执行的解释器路径。详细模型和数据准备分别见[公共 recipe](../knowledge/gpu-benchmark-recipes.md)与 [RE recipe](../knowledge/re-bench-recipe.md)。先独立冻结服务参考输出，再评候选，可避免候选给自己定义正确答案。
 
-[混合任务准备器](../../../examples/gpu_benchmarks/mix.py) 接受 JSON 数组，每项包含以下字段。它读取已经准备好的任务，不更改任务资产，不接受 smoke 冒充完整协议。
+### 再生成配套数据与训练配置
+
+混合准备器读取已准备任务。将清单保存为 `task-manifest.json`，每项声明：
 
 | 字段 | 含义 |
 |---|---|
-| `task_path` | 已准备且执行节点可读的任务目录，包含 instruction.md、task.toml、provenance.json |
-| `environment_backend` | `docker` 或 `env_worker`，后者要求无 Compose 依赖的预构建镜像 |
-| `data_source` | 上表对应的奖励身份，本地协议保留 `_local` |
-| `gpu_memory_mb` | 此任务的显存准入需求，单位 MiB，需根据实际候选与硬件设置 |
+| `task_path` | 节点可读的任务目录，含指令、配置与来源记录 |
+| `environment_backend` | `docker` 或 `env_worker`；后者使用预构建、无 Compose 依赖的任务镜像 |
+| `data_source` | 选择哪份奖励协议，本地任务保留本地身份 |
+| `gpu_memory_mb` | 任务显存准入需求，单位 MiB；按模型与候选实际用量设置 |
 
-先将清单保存到 `task-manifest.json`，在仓库根目录执行：
+从仓库根目录执行：
 
 ```bash
 python -m examples.gpu_benchmarks.mix \
-    --manifest task-manifest.json --output prepared-gpu-suite
+  --manifest task-manifest.json --output prepared-gpu-suite
 ```
 
-产物 `prepared-gpu-suite/tasks.parquet` 和 `prepared-gpu-suite/agent.yaml` 必须成对使用。实际训练时设置 `TRAIN_FILES`、`VAL_FILES`、`HF_MODEL_PATH`、`OUTPUT_DIR`，并通过命令行覆盖 agent 配置路径：
+产物中的 `tasks.parquet` 是训练任务表，`agent.yaml` 决定每行任务由谁执行，二者配套使用。设置 `TRAIN_FILES`、`VAL_FILES`、`HF_MODEL_PATH`、`OUTPUT_DIR` 和实际资源布局后，公共训练入口为：
 
 ```bash
 bash examples/gpu_benchmarks/train.sh kernel_bench \
-    gen_actor_rollout_ref.rollout.agent.agent_loop_config_path="${PWD}/prepared-gpu-suite/agent.yaml"
+  gen_actor_rollout_ref.rollout.agent.agent_loop_config_path="${PWD}/prepared-gpu-suite/agent.yaml"
 ```
 
-这里 `kernel_bench` 选择公共启动模板，具体任务仍由数据行的 `agent_name` 和 `data_source` 决定。节点、独立 GPU unit 和训推布局按[公共配置说明](../knowledge/gpu-benchmark-recipes.md)显式设置，不能把示例命令当作任意节点都能自动选卡。正式实验使用不重叠的训练与验证任务。本轮闭环验收关闭独立验证，只验证任务与框架能衔接，不提供泛化结论。
+这里 `kernel_bench` 选择公共启动模板，实际任务由数据行中的 `agent_name` 和 `data_source` 决定。资源节点与独立 GPU unit 仍按[公共配置](../knowledge/gpu-benchmark-recipes.md)显式设置。正式效果实验使用独立训练/验证划分；下面的历史功能验收关闭独立验证，检查重点是任务与训练链路。
 
 ## Results 与验证边界
 
-当前已确认的环境层结果如下。它们是独立 oracle 验收，不是 PSRL 策略更新的替代证据。
+### 真实 GPU 与策略闭环结果
 
-| 本轮任务 | 真实 GPU 结果 | 物理清理 |
+固定参考程序先得到下列独立任务结果：
+
+| 代表题 | GPU 与评分结果 | 收尾观察 |
 |---|---|---|
-| MLE 本地题 | 隐藏集 437/450，`valid_submission=1` | 所属容器与 GPU 进程归零 |
-| Inference 本地服务 | 两条请求与当前运行时冻结基线一致，`eval_valid=1`、`quality_pass=1`，奖励约 0.0612 | 所属容器与 GPU 进程归零 |
-| RE-Bench 有界本地题 | 本地偏好分 0.25，`local_evaluation=1`、`judge_valid=1`、`eval_valid=1`，不是 smoke | 任务所属容器与 GPU 进程归零，独立裁判在策略验收后关闭 |
-| FlashInfer RMSNorm | 三项官方 evaluator 结果全部 PASSED，正确性奖励 1 | 所属容器与 GPU 进程归零 |
+| MLE digits | 437/450，提交格式有效 | 所属容器与 GPU 进程归零 |
+| Inference 服务 | 两条输出与当前运行时冻结参考一致，奖励约 0.0612 | 所属容器与 GPU 进程归零 |
+| RE 有界聊天训练 | 本地偏好分 0.25，裁判与评价有效 | 任务资源归零，裁判在策略验收后关闭 |
+| FlashInfer RMSNorm | 三项评估结果全部通过，正确性奖励 1 | 所属容器与 GPU 进程归零 |
 
-Inference 的固定输出依赖运行时版本，必须先独立运行基线，再冻结引用。本轮共享依赖与前次记录不同，先以当前运行时重新生成参考输出，再执行上表独立验收，未使用待评分候选生成其自己的参考答案。该短输出协议衡量服务一致性，不证明题目回答正确率。
+随后六类代表题进入同一次真实策略训练。首批 12 条轨迹产生 **11525 个有效训练 token**，执行一次优化器步骤，策略 loss 约为 0.003347，梯度范数约为 0.798689。这两个数字用于检查该次训练计算，学习效果还要用任务表现评估。版本 1 发布并由推理端拉取后，六类任务均至少有一条实际 v1 交互通过独立评分。
 
-**六类任务均已完成真实 PSRL 闭环。** 首批 12 条轨迹覆盖六类任务，进入同一次策略更新，产生 11525 个有效训练 token，`masked_sample_fraction=0`，实际策略 loss 约 0.003347、梯度范数约 0.798689。版本 1 已发布且推理端完成参数拉取，路由日志有 `version_tag=1` 的实际模型请求，轨迹目录也分别记录 v0、v1。随后六类任务均至少有一条版本 1 轨迹通过独立 GPU 评分。这些证据证明训练与参数回传执行，不证明策略效果改善。
+| 任务 | v0 有效正分 / 已结束 | v1 有效正分 / 已结束 |
+|---|---:|---:|
+| KernelBench | 2/2 | 2/2 |
+| autoresearch | 2/2 | 1/1 |
+| MLE digits | 2/2 | 1/1 |
+| Inference 服务 | 1/2 | 1/1 |
+| FlashInfer RMSNorm | 2/2 | 1/1 |
+| RE 有界聊天训练 | 1/2 | 1/2 |
 
-| 任务 | v0 有效正分 / 已结束 | v1 有效正分 / 已结束 | 本地完整闭环 |
-|---|---|---|---|
-| KernelBench | 2/2 | 2/2 | 通过 |
-| autoresearch | 2/2 | 1/1 | 通过 |
-| MLE 本地 digits | 2/2 | 1/1 | 通过 |
-| Inference 本地服务 | 1/2 | 1/1 | 通过 |
-| FlashInfer RMSNorm | 2/2 | 1/1 | 通过 |
-| RE 有界本地任务 | 1/2 | 1/2 | 通过 |
+有效正分要求评分器实际返回对应协议的有效标记和正分。该次证据支持**六类任务能经过一次策略训练并在发布后继续评分**。任务提示提供公开起始程序，验收聚焦功能；策略解题能力、泛化与性能收益各有不同实验目标。
 
-“有效正分”要求实际独立 verifier 返回相应协议标记和正分，不能用模型自述成功替代。共保存 20 条已结束采样，17 条有效正分，另有 3 条失败。v0 的 RE 失败样本未运行起始训练，达到预算后缺失提交物。v0 的 Inference 失败样本额外启动常驻服务，却没有结束，GPU 作业超时。v1 的另一个 RE 样本也缺少提交物，框架标记为 `verifier_error`，不冒充有效零分。达到轮数或 token 预算的轨迹可能已有可评分提交，表格保留这类有效评分，原始 termination 也记录在证据中。它不表示每条 agent 轨迹都自然完成。
+### 怎样解释失败和受控停止
 
-原配置上限为两个策略训练步。在一次更新和新版本六类任务覆盖齐备后，按功能验收停止条件结束，未等待第二次优化器更新。剩余 4 条已派发采样被取消，不计成功。训练子进程退出码为 `-15`，对应主动发送 SIGTERM 的收尾，不是“两个训练步正常结束”。本轮不声称收敛、长期稳定性或成功率提升。
+v0 的 12 条采样已结束，用于首轮训练；v1 后续又有 8 条采样结束，合计 **20 条，其中 17 条有效正分、3 条失败**。三个失败是：两个 RE 样本没有提交模型，一个 Inference 样本试运行常驻服务却没有结束，最终超时。v1 的 RE 缺失提交在当时被记录为 `verifier_error`，历史记录保留原样。
 
-清理后检查了任务主容器、独立 verifier 与网络 sidecar 的归属，所属容器为 0，现场八张卡的 GPU 计算进程为空，显存查询均为 0 MiB，独立裁判已关闭。只清理本次进程、私有 Ray 与所属容器，没有停止共享 Ray、重启 Docker 或清理共享镜像。完整的逐任务评分、版本、终止原因、训练指标及源码 SHA256 见[机器可读证据](../experiments/gpu-benchmarks/full-onboarding-20261110.json)。
+配置原本最多运行两个训练步。一次更新和六类 v1 评分齐备后，实验达到功能验收的停止条件，主动终止剩余 4 条已派发采样。这些取消样本另行统计；子进程 `-15` 对应主动 SIGTERM 收尾。实际完成的优化器步骤为 **1 次**。
 
-首个任务派发尝试因 RE 容器集合主存预算比 unit 多 256 MiB 被拒绝。修正配置并逐题核对预算后，真实 agent 初始化又暴露基础镜像缺少 tmux。该异常不影响 oracle verifier，但导致零轨迹，已补充公共 agent 镜像层。后续隔离验收任务明确要求采用公开起始实现，跳过探索性优化，检查真实工具命令、GPU 验收与策略闭环，不以此评价 agent 优化能力。任务内部评分数据和 GPU 运算保持真实。
+清理覆盖本次主容器、独立评分器、网络 sidecar 与裁判。固定现场检查显示所属容器为 0，八张实验卡无 GPU 计算进程、显存查询均为 0 MiB。这描述当次收尾状态，下一次实验仍现场预检。
 
-上下文预算须包含 Terminus 的完整提示、GPU 工具说明、模型回复和工具输出，不能只统计数据表里的任务说明。6144 token 的尝试实际出现 6227 至 7604 token 的请求，被服务拒绝，部分任务只有未完成轨迹和零分，不能据此宣布接入成功。最终有界验收把完整上下文和训练单样本 token 预算设为 16384，回复预算保持 4096，取消额外第三轮数据。启动脚本新增 `MAX_PROMPT_LENGTH` 覆盖入口，本轮设为 12288。`MAX_TOKENS_PER_GPU` 只控制训练打包预算，单独增大它不会扩大推理窗口。已通过无 GPU 的命令捕获检查实际启动参数，并在本轮日志确认两侧 `max_model_len=16384`。验收提示给出公开基线的具体命令，真实 LLM 仍负责生成工具调用与完成提交，verifier 不替 agent 生成提交物。
+完整指标、模型版本、失败、退出原因与源码 SHA256 保存在 [full-onboarding-20261110.json](../experiments/gpu-benchmarks/full-onboarding-20261110.json)。实验只清本次资源。AIRS、MLGym、PostTrain 等后续接入的结果分别见[当前覆盖](science-gpu-bench-status-and-roadmap.md#results验证覆盖与证据索引)。
 
-本轮先后排除私有 Ray runtime-env 连接问题，以及共享 SMG Python 生成代码要求 grpcio 1.85 而共享环境为 1.83 的版本不匹配。匹配依赖只安装在实验独立目录，没有修改共享环境。失败尝试均保留原始日志，不计为 benchmark 通过。训练资源和裁判资源独立分配，实验不进行 Env ON/OFF 性能比较。
+<a id="本轮边界修复与回归"></a>
 
-停止条件为所选代表任务的 verifier、真实轨迹、策略更新及后续采样证据齐备，或达到预设时间/重试预算。本轮已达到功能停止条件。CPU 针对性回归首轮 53 项通过，增加混合任务校验后的专项 3 项通过，其中 2 项与前轮重复。本轮代码范围 Ruff 检查与格式检查通过，shell 语法及实际启动参数捕获通过。全仓 pre-commit 在临时完整快照执行，仍报既有文档脚本长行和既有源码注释风格问题，未改无关内容，不能写成全仓检查通过。本轮维护的 12 篇索引与正文共检查 477 个本地路径、124 处源码行号和 139 处章节锚点，均有效。
+## 验收相关修复与回归
 
-范围外项目须单列：AIRS/MLGym 保留独立 recipe，本轮现场未找到其完整准备资产，不能自动算入上述六类公共任务的 GPU 闭环。SciAccel 作为原有 science 会话来源，已有历史训练记录，本轮未把它的 CPU 科学修复题重复计入新增 GPU 覆盖。上述代表题通过也不等于整套官方题库通过。 2026-11-11 后续扩题没有重跑本节策略更新：快速任务检查通过 Kernel 原尺寸 22 题、小输入档 193 题、FlashInfer 30 个定义与四个本地 MLE 题。原尺寸策略闭环仍保留本节历史条件，新增验证不等于新增训练闭环。数量、题库位置与复现见[路线图统计](science-gpu-bench-status-and-roadmap.md#题库数量位置与逐题覆盖)。
+2026-11-10 GPU 验收之后，基于 `ab74120` 加主目录未提交改动，补充了提交错误、来源身份与清理路径的修复。该阶段证据是 **30 项 CPU 回归全部通过**，包含一个真实 CPU 服务进程的停止与回收。GPU 原始结果仍对应此前任务资产与镜像。
 
-## 本轮边界修复与回归
-
-2026-11-10 在上述 GPU 验收结束后，针对失败归类、提交格式、协议身份与服务清理补充修复。核对范围是 `ab74120` 加主目录未提交改动。**本节是新增 CPU 回归，不是再次完成 GPU 训练**；上节实测、镜像指纹和失败记录保持原始条件。
-
-| 问题与触发条件 | 修复后的行为 | 对应源码 |
+| 触发问题 | 修复后的行为 | 实现 |
 |---|---|---|
-| RE 没有提交训练模型或 `model.py` | 写出无效提交零分及原因，`judge_valid=0`，不启动模型评价。非法本地裁判配置仍报异常，不伪装成任务零分 | [verify.main](../../../examples/re_bench/verify.py#L12) |
-| MLE 提交 CSV 多列、多行、损坏引号或非法 UTF-8 | 评分器拒绝无效提交，限制最多读取隐藏集大小加一行。空隐藏标签属于准备错误并抛异常 | [grade](../../../examples/mle_bench/local_grade.py#L9) |
-| manifest 将本地准备任务标成官方数据源 | 根据显式 provenance 标记与 RE 裁判来源检查一致性，在写出数据前拒绝冲突。没有来源标记的历史资产仍需人工核验 | [mix.prepare](../../../examples/gpu_benchmarks/mix.py#L12) |
-| Inference 独立评分器的前台 shell 退出，子进程可能仍在运行 | 在回收主进程之外清理整个所属进程组；缺少启动脚本也明确返回零分 | [stop_service](../../../examples/inference_bench/local_verify.py#L11) |
+| RE 缺少模型或 `model.py` | 返回明确的提交无效零分，记录原因并跳过模型评价；裁判配置错误仍报告环境异常 | [RE verify](../../../examples/re_bench/verify.py#L12) |
+| MLE CSV 多列、超额行、损坏引号或非法编码 | 拒绝无效提交并限制读取行数；隐藏标签损坏报告准备错误 | [MLE grade](../../../examples/mle_bench/local_grade.py#L9) |
+| 本地任务被标为官方数据源 | 根据显式来源记录与裁判身份检查一致性，在生成数据前拒绝冲突 | [mix.prepare](../../../examples/gpu_benchmarks/mix.py#L12) |
+| Inference 评分 shell 退出但子进程仍在 | 回收整个所属进程组；缺启动脚本时产生明确零分 | [stop_service](../../../examples/inference_bench/local_verify.py#L11) |
 
-例如，RE 的 agent 花完预算却没有训练模型，旧镜像可能只留下“找不到奖励文件”的 verifier 异常。新脚本直接登记“提交物缺失、奖励零分、未调用裁判”。这既给策略训练保留明确失败反馈，也不会把没有进行的裁判评价写成成功。若裁判模式配置错误，仍应先修复实验环境，不能把它解释为 agent 能力差。
+例如 RE 的 agent 花完预算却没有交出模型，新脚本会写出“提交物缺失、奖励零分、未调用裁判”。这让训练获得明确失败反馈。裁判自身配置损坏则属于需要修复的运行环境问题。
 
-新增 [12 项边界回归](../../../tests/examples/gpu_benchmarks/test_task_boundaries.py)，与已有 MLE、RE 专项一起实际运行，**30 项全部通过**。检查不依赖 GPU，包含一个真实 CPU 服务进程的停止与回收；完整命令见[路线图复现节](science-gpu-bench-status-and-roadmap.md#可用性验收与复现)。它们覆盖上述错误路径，不能代替完整 CUDA 模型评价和修复后训练。
+MLE、Inference 准备器会复制评分脚本，所以应用修复后需重新准备任务；RE 把评分脚本打入镜像，需重建评分镜像再准备。agent 自己试运行常驻服务时，仍要按协议结束所属服务；独立评分器的进程组清理只负责它自身启动的服务。
 
-MLE 和 Inference 的准备器会复制评分脚本，需要重新准备任务才能带入修复。RE 将评分器打入独立 verifier 镜像，需重建该镜像后重新准备。原有任务目录和旧镜像不会自动更新，本次未执行这些产物的 GPU 再验收。agent 自己启动常驻服务后没有取消受管作业的失败，也不由 verifier 清理函数自动修复：它发生在独立评分器启动之前，仍须遵守服务生命周期协议。
+针对性回归代码见 [test_task_boundaries.py](../../../tests/examples/gpu_benchmarks/test_task_boundaries.py)，复现命令见[路线图验收节](science-gpu-bench-status-and-roadmap.md#可用性验收与复现)。本次文档整理未重跑这些回归。
+
+## 复现时最容易遗漏的条件
+
+| 条件 | 历史实验中遇到什么 | 下一次怎样检查 |
+|---|---|---|
+| 容器集合预算 | RE 的主存需求比 unit 多 256 MiB，首次准入被拒 | 主容器、评分器与 sidecar 一并计入预算 |
+| agent 工具 | oracle 可运行，真实 agent 镜像却缺 `tmux`，产生零轨迹 | 禁网启动真实 agent 所需终端工具做预检 |
+| 完整上下文长度 | 6144 token 窗口遇到 6227–7604 token 请求被拒 | 算上完整提示、工具说明和多轮输出；该次最终窗口与单样本预算为 16384，回复预算 4096，`MAX_PROMPT_LENGTH=12288` |
+| 训练与推理预算 | `MAX_TOKENS_PER_GPU` 只控制训练打包 | 推理窗口单独核对 `max_model_len`，该次日志两侧均为 16384 |
+| 依赖实际来源 | 私有 Ray runtime-env 与 gRPC 版本不匹配导致准备失败 | 在隔离目录补匹配依赖，核对 driver 和 worker 实际导入路径 |
+| 评分与裁判身份 | 固定服务输出随运行时变化，RE 需要独立裁判 | 提前冻结参考，记录模型与镜像；桥接器监听实际 jobs 目录 |
+
+历史静态检查也各有范围：首轮 CPU 回归 53 项通过，后加 3 项专项中有 2 项与首轮重复；修改代码范围的 Ruff、shell 与启动参数捕获通过。全仓 pre-commit 仍有既有文档脚本长行与源码注释问题，完整状态保留在原记录。后续验证按本次修改选必要检查。
 
 ## 下一步研究优先级
 
-以下是设计提案，不是本轮已取得的性能收益。下一阶段先使用固定任务、固定候选和固定策略模型版本研究环境反馈，避免同时改变模型、任务规模和调度器而无法解释结果。具体研究背景与否证条件见[当前研究规划](science-gpu-bench-status-and-roadmap.md#后续研究方向与否证条件)。
+接入完成后，可以先固定任务、候选程序、策略版本和评分协议，再比较资源策略。建议从**候选反馈的可靠性与总等待时间**开始，然后研究准备复用、训练阶段共享，最后考虑等待裁判时的模型状态释放。
 
-| 优先级 | 问题与适用任务 | 最小有意义的对照 | 何时不继续 |
-|---|---|---|---|
-| 1 | 多候选评估能否更快且保持可信反馈，使用 KernelBench 与 FlashInfer | 固定一组真实候选，比较串行、直接并行和受控分批，记录完整候选组耗时、正确性和相对独占测量的排序变化 | 原本没有可观等待，或并行收益不足以抵消评分干扰 |
-| 2 | 长训练、短算子与服务任务混合时，怎样缩短整组反馈时间和减少无效等待 | 使用 autoresearch、MLE 与 Inference 的同一任务集合，比固定 episode 准入与有界任务分类策略，保留初始化、执行、排队和清理的独立计时 | 仅靠镜像预热和正确资源配置已消除主要成本，或收益来自不等工作量 |
-| 3 | 等待裁判时，让出训练状态是否值得，使用 RE 的真实偏好等待 | 先测实际等待分布与卸载恢复成本，再讨论常驻、总卸载和阈值策略，优先使用其他独立 GPU | 等待窗口普遍短于恢复成本，或让位增加关键路径而没有足够任务收益 |
+例如服务测试完成后，agent 正在改代码，模型可能仍占显存。继续保留可以省下次加载，释放则能腾给其他任务。研究应先测真实等待与重载成本，再选择策略。推进顺序、比较基线和停止条件统一维护在[研究路线图](science-gpu-bench-status-and-roadmap.md#后续研究方向与否证条件)。
 
-举例说明第一项的验收方式：教学假设有 4 个候选，独占时每个评估 10 秒，串行共 40 秒。如果两两并行，每组因争用变成 16 秒，总共 32 秒，说明整组完成更快。但若候选 A 与 B 的快慢顺序被争用反转，反馈可能误导下一轮 agent。这时要同时比较“整组完成时间”和“排序是否可靠”，不能只报告 40 秒变成 32 秒。这些数字不是本轮实测。当前本地 KernelBench 与 FlashInfer 的训练奖励主要检查正确性，若要研究速度奖励，还需显式定义可靠的性能反馈，不能把现有 reward=1 当作加速证明。
+如果想继续理解，可以分别追问：“独立评分器为什么要重载模型”“TITO 怎样把多轮工具调用变成训练样本”“客户端退出后服务为何仍占显存”。相关入口分别是本文模型交付例子、[会话与训练机制](../../psrl/psrl-agent-loop-harbor-tool-calling.md)和[GPU 执行与生命周期](../knowledge/unified-gpu-execution.md)。

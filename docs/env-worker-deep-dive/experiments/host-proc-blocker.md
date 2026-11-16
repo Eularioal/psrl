@@ -1,6 +1,8 @@
 # GPU 进程归属的 procfs 挂载障碍与实验处理
 
-> **核心结论：** 当前节点能运行 Docker CUDA，但 procfs 后端缺少与 NVML 宿主进程号对应的宿主视图，不等于驱动损坏。新增可选 eBPF 后端已接入节点任务遥测和显存核销，并通过双容器 CUDA 归属及回收验证，可以绕开宿主挂载。完整 science 严格评分尚未验收，已有 `observe` 结果仍须标记 GPU 归因未验证。
+> **核心结论**：原实验节点可以正常做GPU计算，但节点服务看不到宿主机的进程目录，因此无法可靠确认“这份GPU占用属于哪个任务”。可以补只读宿主进程视图，或使用已验证的可选eBPF身份后端。旧观察模式的结果继续保留“归因未验证”标记。
+
+procfs是Linux通过 `/proc` 提供的进程信息；NVML是NVIDIA的GPU监控接口；eBPF是在内核事件上采集进程身份的机制。它们在这里共同解决进程归属，而任务执行和评分是另外的验收问题。后续GPU任务接入见[证据导航](gpu-benchmarks/FINDINGS.md)，详细机制见[进程身份专题](../knowledge/process-identity-without-procfs.md)。
 
 ## 目录
 
@@ -36,7 +38,7 @@ harbor:
   gpu_attribution_mode: observe
 ```
 
-这是 `SciAccelAgentLoop` 的 `harbor` 配置，不是任务的 `task.toml`，也不是 `psrl.env_service` 下的字段。仓库默认配置保持 `required`，本节点后续实验按用户要求显式使用 `observe`。
+这是 `SciAccelAgentLoop` 的 `harbor` 配置，不是任务的 `task.toml`，也不是 `psrl.env_service` 下的字段。仓库默认配置保持 `required`。原节点实验按当时指令显式使用 `observe`；新实验应根据实际身份能力与验收目标选择。
 
 `observe` 跳过原生 CUDA command 路径的可信归因启动门槛，保留任务 verifier 返回的评分。verifier 是检查任务结果并计算分数的程序。结果新增 `gpu_attribution_enforced=0`，`gpu-job-reports.json` 记录 `task_verifier_unverified`、跳过原因及原始遥测错误，即使没有 GPU 作业报告也保存标记。
 
@@ -46,7 +48,7 @@ harbor:
 
 - **评分风险：** 若任务原始 `gpu_active` 使用整卡利用率，邻居的 GPU 计算可能让本任务的 CPU 计算也获得 GPU 活动分。保留的 `reward_gpu` 必须标为未经可信归因验证。优先用数值正确性、完成量、OOM 和耗时评价本轮调度实验。
 - **性能解释风险：** 无法准确拆分每个任务的显存和利用率，保守预算可能减少并发。整卡曲线不能写成某条任务的曲线，观察到的耗时变化也不能全部归因于调度器。
-- **适用边界：** 如果验收目标就是准确 GPU 评分或进程记账，需要恢复 `required` 并补齐能力。当前没有宣称这个问题已经解决。
+- **适用边界：** 如果验收目标就是准确 GPU 评分或进程记账，需要恢复 `required` 并补齐能力。原 observe 实验不补写成严格归因通过，后续可选 eBPF 路径已另有真实验证。
 
 | 替代方式 | 能解决什么 | 当前限制 |
 |---|---|---|

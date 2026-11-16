@@ -1,22 +1,26 @@
 # README Style Guide
 
-Rules for every `README.md` and user-facing `.md` in this repository.
+Rules for operational `README.md` files in this repository.
+Knowledge tutorials and experiment reports follow the parent workspace `AGENTS.md`:
+explain needed system mechanisms, preserve evidence, and organize around the
+reader's question and existing ML background. Detailed explanations are not subject to the README-only
+cut lists or the assumption that the reader already knows the stack.
 The [prose punctuation bans](coding-style.md#banned-characters-in-all-prose-) apply
 here in full: no `;`, no `—`/`–`, no clause dashes, no double spaces.
 
 `scripts/audit_prose_style.py` enforces the code-side rules and runs in pre-commit.
-It does not read `.md` files, so this guide is on you. Run
-`pre-commit run --all-files` before claiming a docs change is done, because a README
-edit usually comes with comment edits that the linter does check.
+It does not read `.md` files. For documentation-only changes, check links,
+anchors, cited facts and readability. When code or comments also change, run the
+applicable code checks. Keep unrelated automatic formatting out of the workspace.
 
 ## The one rule
 
 > **A README tells a reader what to do and what will bite them.
 > It is not the lab notebook that proves how we learned it.**
 
-Every sentence must survive this test: *does a first-time user act differently
-because of it?* If not, delete it. The evidence lives in the commit message, the
-PR, or a dedicated findings file, never in the recipe.
+For an operational README, keep the instructions and context needed to run the
+project. Link to tutorials for detailed mechanisms and to experiment reports for
+measurements. Those documents keep the explanation and evidence they need.
 
 ---
 
@@ -63,13 +67,11 @@ should be reproducible from a committed script.
 
 ## §2. Length
 
-| Document | Target | Hard ceiling |
-|---|---|---|
-| Hub README (entry point) | ~150 lines | 250 |
-| Topic README (`prepare/`, `eval/`) | ~200 lines | 300 |
-
-Past the ceiling, split by **task** rather than by chapter: a reader preparing
-data should not scroll through training flags. Link from the hub, do not inline.
+Length follows the reading task, with no fixed line-count ceiling. Keep a hub
+focused on navigation, and use headings within a topic to keep related steps
+together. Split when readers need independent tasks or references, rather than
+separating each chapter into its own file. Merge fragments that readers usually
+need together.
 
 A hub README opens with what the thing is, then results or a quickstart. Move
 reference detail (every flag, every stage, every failure mode) to the topic
@@ -93,7 +95,9 @@ Cut on sight:
   would actively try X and break something
 - **Rationale longer than the instruction it defends.** One clause of "because",
   not a paragraph
-- **Tutorials** on Docker, FSDP, or GRPO. Assume the reader knows the stack
+- **Full tutorials** on Docker, FSDP, or GRPO. Explain the background needed to run
+  this recipe briefly, then link to the relevant topic guide for more detail.
+  A reader unfamiliar with the stack must still understand the instructions.
 
 ## §4. Gotchas
 

@@ -1,0 +1,924 @@
+{
+  "verification_date": "2026-11-12",
+  "basis": "6aa328d56eff746c2ae6d9fd766b2f3f76b4a670 plus uncommitted changes",
+  "raw_root": "../../../../../benchmark-runs/heterogeneous-onboarding-20261112",
+  "scope": "Local bounded functional protocols. Not official benchmark scores or full completion of all recommended benchmarks.",
+  "counts": {
+    "mlgym_selected_tasks": 7,
+    "mlgym_verified_policy_loop": 7,
+    "swe_source_gpu_tasks": 41,
+    "swe_imported": 41,
+    "swe_original_test_passes": 9,
+    "swe_passes_with_gpu_observed": 7,
+    "swe_test_passes_gpu_unobserved": 2,
+    "swe_failed": 2,
+    "swe_without_pass_or_failure": 30,
+    "swe_local_policy_loop": 1,
+    "fastkernels_targets": 458,
+    "fastkernels_runnable": 0,
+    "posttrainbench_combinations": 24,
+    "posttrainbench_runnable": 0
+  },
+  "reference_trials": [
+    {
+      "task": "ss-sgl22544-score-multi-item-delimiters",
+      "evidence": "verify-swe-score-v3/evidence.json",
+      "evidence_sha256": "9baef2142f011caf790a6375302044bcad41181dd68cb949a855c3f7b45d3dfe",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 85355.8125,
+      "gpu_observed": true,
+      "seconds": 555.8844423294067,
+      "metrics": {
+        "f2p_passed": 18,
+        "f2p_score": 1.0,
+        "f2p_total": 18,
+        "invocations_failed": 0,
+        "invocations_total": 26,
+        "p2p_passed": 8,
+        "p2p_score": 1.0,
+        "p2p_total": 8,
+        "resolved": 1.0,
+        "reward": 1.0
+      },
+      "error": null
+    },
+    {
+      "task": "swe-score-acceptance",
+      "evidence": "verify-swe-acceptance-v2/evidence.json",
+      "evidence_sha256": "a69eaaa1bb983d5f9230fce816c93ffeb3290df2d21ea5affb915497d2a8db29",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 29224.125,
+      "gpu_observed": true,
+      "seconds": 289.50709652900696,
+      "metrics": {
+        "reward": 1.0,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "tests": 2
+      },
+      "error": null
+    },
+    {
+      "task": "rlBreakoutMinAtar",
+      "evidence": "verify-rlBreakoutMinAtar-v2/evidence.json",
+      "evidence_sha256": "6db1401955d64e85b9691481b13e26666d7f8856aca9385dc5fac311dcc61693",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 553.0625,
+      "gpu_observed": true,
+      "seconds": 130.85625004768372,
+      "metrics": {
+        "reward": 0.04579333403081165,
+        "raw_return": 0.46875,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "cuda": 1,
+        "evaluation_episodes": 32,
+        "frames_per_episode": 64,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 111991
+      },
+      "error": null
+    },
+    {
+      "task": "rlMetaMazeMisc",
+      "evidence": "verify-rlMetaMazeMisc-v2/evidence.json",
+      "evidence_sha256": "781d1ac275f97d3b01db5ad4dba7d20e0aa7b1ad4a9cfa402a8eaf9230a58cc6",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 489.0,
+      "gpu_observed": true,
+      "seconds": 136.565678358078,
+      "metrics": {
+        "reward": 0.17097088181959963,
+        "raw_return": 1.875,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "cuda": 1,
+        "evaluation_episodes": 32,
+        "frames_per_episode": 64,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 13559
+      },
+      "error": null
+    },
+    {
+      "task": "rlMountainCarContinuous",
+      "evidence": "verify-rlMountainCarContinuous/evidence.json",
+      "evidence_sha256": "038743fb1f2cc89c5110727f9d4e783707c65b7ba9d7f5bb4e1bac4e65554ec7",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 485.0625,
+      "gpu_observed": true,
+      "seconds": 102.67454981803894,
+      "metrics": {
+        "reward": 0.9777929451022602,
+        "raw_return": -2.245734393596649,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "cuda": 1,
+        "evaluation_episodes": 32,
+        "frames_per_episode": 64,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 10036
+      },
+      "error": null
+    },
+    {
+      "task": "rlMountainCarContinuousReinforce",
+      "evidence": "verify-rlMountainCarContinuousReinforce/evidence.json",
+      "evidence_sha256": "c2ce7d4264488f0837ac5ba913788a996b0cb3608e71cfe6251b9e5a2cbc577f",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 485.0625,
+      "gpu_observed": true,
+      "seconds": 118.803151845932,
+      "metrics": {
+        "reward": 0.9777929451022602,
+        "raw_return": -2.245734393596649,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "cuda": 1,
+        "evaluation_episodes": 32,
+        "frames_per_episode": 64,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 10036
+      },
+      "error": null
+    },
+    {
+      "task": "imageClassificationCifar10",
+      "evidence": "verify-imageClassificationCifar10/evidence.json",
+      "evidence_sha256": "52eea7aee2a4c0434a2cd3c3f931538fcd3b34dacf8af481a976327ae3224bc2",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 381.0625,
+      "gpu_observed": true,
+      "seconds": 94.01837301254272,
+      "metrics": {
+        "reward": 0.125,
+        "accuracy": 0.125,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "cuda": 1,
+        "test_rows": 16,
+        "checkpoint_bytes": 24509
+      },
+      "error": null
+    },
+    {
+      "task": "imageClassificationFMnist",
+      "evidence": "verify-imageClassificationFMnist/evidence.json",
+      "evidence_sha256": "f7160f236642b10261a72746c79491c44aa6fdf6d7f23dc1a44ae248467d6acf",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 381.0625,
+      "gpu_observed": true,
+      "seconds": 101.84016227722168,
+      "metrics": {
+        "reward": 0.0625,
+        "accuracy": 0.0625,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "cuda": 1,
+        "test_rows": 16,
+        "checkpoint_bytes": 24509
+      },
+      "error": null
+    },
+    {
+      "task": "imageCaptioningCOCO",
+      "evidence": "verify-imageCaptioningCOCO/evidence.json",
+      "evidence_sha256": "19b76376a65423dc7f30942b383c6da8b6601c2a81e02b033f21b336753fa125",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 393.0625,
+      "gpu_observed": true,
+      "seconds": 115.23787021636963,
+      "metrics": {
+        "reward": 0.002821656218856984,
+        "bleu4": 0.002821656218856984,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "cuda": 1,
+        "test_rows": 16,
+        "checkpoint_bytes": 214385
+      },
+      "error": null
+    },
+    {
+      "task": "ss-sgl-cluster-gemma4-fused-ops",
+      "evidence": "swe-sweep/ss-sgl-cluster-gemma4-fused-ops/evidence.json",
+      "evidence_sha256": "94fbfb993bb5cb08939f17d97e5a0c90d14b80c7b6dae6bc3980682067c2a2da",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 1499.0625,
+      "gpu_observed": true,
+      "seconds": 202.4993245601654,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 51,
+        "f2p_total": 51,
+        "f2p_score": 1.0,
+        "p2p_passed": 1,
+        "p2p_total": 1,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 51,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 1
+      },
+      "error": null
+    },
+    {
+      "task": "ss-sgl-cluster-gpu-fused-kernels",
+      "evidence": "swe-sweep/ss-sgl-cluster-gpu-fused-kernels/evidence.json",
+      "evidence_sha256": "16473f6862a8e0fff57c77dc4ce52a9301c50c375ffafbcbb97a27abf0215b27",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 407.0625,
+      "gpu_observed": true,
+      "seconds": 162.75212359428406,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 8,
+        "f2p_total": 8,
+        "f2p_score": 1.0,
+        "p2p_passed": 4,
+        "p2p_total": 4,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 8,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 4
+      },
+      "error": null
+    },
+    {
+      "task": "ss-sgl-cluster-hicache-evict-tombstone-4pr",
+      "evidence": "swe-sweep/ss-sgl-cluster-hicache-evict-tombstone-4pr/evidence.json",
+      "evidence_sha256": "f85ffd2e0f17204606df7426f6db974990b9a7ae274db410aff23324bbf12662",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 897.0,
+      "gpu_observed": true,
+      "seconds": 168.74697947502136,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 45,
+        "f2p_total": 45,
+        "f2p_score": 1.0,
+        "p2p_passed": 14,
+        "p2p_total": 14,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 45,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 14
+      },
+      "error": null
+    },
+    {
+      "task": "ss-sgl-cluster-hicache-framework-swa",
+      "evidence": "swe-sweep/ss-sgl-cluster-hicache-framework-swa/evidence.json",
+      "evidence_sha256": "617f8d9c66db0b791c534101464722f99fa71e201c3749d8c6c4268ca991dc4d",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 791.0,
+      "gpu_observed": true,
+      "seconds": 165.5796127319336,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 35,
+        "f2p_total": 35,
+        "f2p_score": 1.0,
+        "p2p_passed": 66,
+        "p2p_total": 66,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 35,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 66
+      },
+      "error": null
+    },
+    {
+      "task": "ss-sgl-cluster-spec-v2-maturation",
+      "evidence": "swe-sweep/ss-sgl-cluster-spec-v2-maturation/evidence.json",
+      "evidence_sha256": "1e21a59cd8f5bef6a2b130e6fc63d5939919707e2173ed809eb36efb651a0ff8",
+      "scored": false,
+      "reference_passed": false,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 16761.0625,
+      "gpu_observed": true,
+      "seconds": 264.2990448474884,
+      "metrics": {},
+      "error": "TimeoutError()"
+    },
+    {
+      "task": "ss-sgl20457",
+      "evidence": "swe-sweep/ss-sgl20457/evidence.json",
+      "evidence_sha256": "54dcd2558b5cdb82949ea24e1f3e8b57c53a47b5218f8dda4019a030c37908cf",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 16473.0625,
+      "gpu_observed": true,
+      "seconds": 138.37140774726868,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 9,
+        "f2p_total": 9,
+        "f2p_score": 1.0,
+        "p2p_passed": 15,
+        "p2p_total": 15,
+        "p2p_score": 1.0,
+        "pytest_exit_code": 0
+      },
+      "error": null
+    },
+    {
+      "task": "ss-sgl23856-use-torch-torch-mm-for-deepseek-v3-2-indexer",
+      "evidence": "swe-sweep/ss-sgl23856-use-torch-torch-mm-for-deepseek-v3-2-indexer/evidence.json",
+      "evidence_sha256": "58133ec017d050bf40ac9432e62782893c740d2522ec5aef5008544d0daa8c78",
+      "scored": false,
+      "reference_passed": false,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 3.5,
+      "gpu_observed": false,
+      "seconds": 179.0320861339569,
+      "metrics": {},
+      "error": null
+    },
+    {
+      "task": "ss-sgl25052",
+      "evidence": "swe-sweep/ss-sgl25052/evidence.json",
+      "evidence_sha256": "eaeeaadd272b745e638917a65d247dbb638c58a5cded84fb4fc3abede5e4c0eb",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 3.4375,
+      "gpu_observed": false,
+      "seconds": 153.9222390651703,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 7,
+        "f2p_total": 7,
+        "f2p_score": 1.0,
+        "p2p_passed": 16,
+        "p2p_total": 16,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 7,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 16
+      },
+      "error": null
+    },
+    {
+      "task": "ss-sgl25062-priority-scheduling-pd",
+      "evidence": "swe-sweep/ss-sgl25062-priority-scheduling-pd/evidence.json",
+      "evidence_sha256": "1d6fb49eb5bb2bcfc2910857847e2506edf23895082bc3d9277af4b88860bad3",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 3.4375,
+      "gpu_observed": false,
+      "seconds": 178.40127635002136,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 6,
+        "f2p_total": 6,
+        "f2p_score": 1.0,
+        "p2p_passed": 7,
+        "p2p_total": 7,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 6,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 7
+      },
+      "error": null
+    },
+    {
+      "task": "ss-sgl25265",
+      "evidence": "swe-sweep/ss-sgl25265/evidence.json",
+      "evidence_sha256": "e5f560562e77203b3fa04cc568c1df7224e0dd9ab5f2cfc77978475152b78a98",
+      "scored": true,
+      "reference_passed": true,
+      "physical_cleanup": true,
+      "gpu_peak_mib": 1295.0,
+      "gpu_observed": true,
+      "seconds": 206.9063310623169,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 1,
+        "f2p_total": 1,
+        "f2p_score": 1.0,
+        "p2p_passed": 19,
+        "p2p_total": 19,
+        "p2p_score": 1.0,
+        "perf_ok": 1,
+        "tokenize_speedup": 2028.2653,
+        "speedup_threshold": 467.1,
+        "candidate_ms": 0.12452,
+        "slow_call_ms": 252.55897,
+        "correctness_ok": 1,
+        "encode_count": 24,
+        "call_count": 0,
+        "pytest_status": 0,
+        "profile_status": 0
+      },
+      "error": null
+    }
+  ],
+  "policy": {
+    "passed": true,
+    "policy_model": "Qwen3.5-4B",
+    "train_gpus": 2,
+    "generation_gpus": 1,
+    "environment_gpus": 2,
+    "step": {
+      "step": 1,
+      "metrics": {
+        "actor/pg_loss": -0.002815223066136241,
+        "actor/loss": -0.0028152242302894592,
+        "actor/grad_norm": 1.3372862339019775,
+        "training/global_step": 1.0,
+        "critic/rewards/mean": 0.22102902829647064,
+        "response_length/mean": 2031.75,
+        "response_length/max": 2048.0,
+        "response_length/min": 1875.0,
+        "response_length/clip_ratio": 0.875,
+        "timing_s/step": 816.6374814305454
+      },
+      "response_length_contract": "(TaskRunner pid=1411152) <MainRayTrainer> - [length-contract] old_log_prob stage: rows=16 responses[min=1875 max=2048] response_mask[min=1875 max=2048] equal=True",
+      "batch_rows": 16,
+      "effective_response_tokens": 32508,
+      "published_version": 1,
+      "interpretation": "Functional optimizer update with nonempty masks. Prompt guidance was repaired before version-1 trials, so do not infer a learning improvement."
+    },
+    "coverage": {
+      "0": [
+        "imageCaptioningCOCO",
+        "imageClassificationCifar10",
+        "imageClassificationFMnist",
+        "rlBreakoutMinAtar",
+        "rlMetaMazeMisc",
+        "rlMountainCarContinuous",
+        "swe-score-acceptance"
+      ],
+      "1": [
+        "imageCaptioningCOCO",
+        "imageClassificationCifar10",
+        "imageClassificationFMnist",
+        "rlBreakoutMinAtar",
+        "rlMetaMazeMisc",
+        "rlMountainCarContinuous",
+        "rlMountainCarContinuousReinforce",
+        "swe-score-acceptance"
+      ]
+    },
+    "updated_rollouts": [
+      {
+        "task": "imageClassificationCifar10",
+        "uid": 24,
+        "version": 1,
+        "termination": "finished",
+        "valid_score": true,
+        "metrics": {
+          "reward": 0.125,
+          "accuracy": 0.125,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "cuda": 1,
+          "test_rows": 16,
+          "checkpoint_bytes": 24509
+        },
+        "agent_gpu_outputs": [
+          {
+            "cuda": 1,
+            "optimizer_updates": 8,
+            "checkpoint_bytes": 24509
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0692-7340-b90d-ffa3b260e10c/2026-11-12__02-24-07/imageClassificationCifar10__mWTbHsF/agent/trajectory.json",
+        "trajectory_sha256": "2f28dd9e05f435d32ff1510b44657f993f6acb2c91ab3665a298a23b9c76a896"
+      },
+      {
+        "task": "swe-score-acceptance",
+        "uid": 30,
+        "version": 1,
+        "termination": "finished",
+        "valid_score": true,
+        "metrics": {
+          "reward": 1.0,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "tests": 2
+        },
+        "agent_gpu_outputs": [
+          {
+            "cuda_service_probe": 1,
+            "items": 2
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0691-7152-b6da-566c3e86138f/2026-11-12__02-19-25/swe-score-acceptance__rzFZbvo/agent/trajectory.json",
+        "trajectory_sha256": "df737c17fd224cc18d39c92a991133d5e5750426292016e0bef62a6c4fee8952"
+      },
+      {
+        "task": "rlMountainCarContinuousReinforce",
+        "uid": 23,
+        "version": 1,
+        "termination": "finished",
+        "valid_score": true,
+        "metrics": {
+          "reward": 0.9777929451022602,
+          "raw_return": -2.245734393596649,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "cuda": 1,
+          "evaluation_episodes": 32,
+          "frames_per_episode": 64,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 10036
+        },
+        "agent_gpu_outputs": [
+          {
+            "reward": 0.9781273122084531,
+            "raw_return": -2.211544133722782,
+            "local_evaluation": 1,
+            "eval_valid": 1,
+            "cuda": 1,
+            "evaluation_episodes": 16,
+            "frames_per_episode": 64,
+            "optimizer_updates": 2,
+            "checkpoint_bytes": 10036
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0691-7152-b6da-56af538f9340/2026-11-12__02-21-30/rlMountainCarContinuousReinforce__nfcmdci/agent/trajectory.json",
+        "trajectory_sha256": "32d9ece3b77806ca0bd690ad7ad1a7a7274b4fc23721faf956024fa3cd0fbb41"
+      },
+      {
+        "task": "rlMetaMazeMisc",
+        "uid": 18,
+        "version": 1,
+        "termination": "finished",
+        "valid_score": true,
+        "metrics": {
+          "reward": 0.17097088181959963,
+          "raw_return": 1.875,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "cuda": 1,
+          "evaluation_episodes": 32,
+          "frames_per_episode": 64,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 13559
+        },
+        "agent_gpu_outputs": [
+          {
+            "reward": 0.17097088181959963,
+            "raw_return": 1.875,
+            "local_evaluation": 1,
+            "eval_valid": 1,
+            "cuda": 1,
+            "evaluation_episodes": 16,
+            "frames_per_episode": 64,
+            "optimizer_updates": 2,
+            "checkpoint_bytes": 13559
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0692-7340-b90d-ffd3e8de8b99/2026-11-12__02-21-24/rlMetaMazeMisc__9Qrcy8m/agent/trajectory.json",
+        "trajectory_sha256": "3692379de7a2ca465490d1954afa1a006e7b8b18cb34fe2a590daaec12c1b473"
+      },
+      {
+        "task": "rlMetaMazeMisc",
+        "uid": 19,
+        "version": 1,
+        "termination": "finished",
+        "valid_score": true,
+        "metrics": {
+          "reward": 0.17097088181959963,
+          "raw_return": 1.875,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "cuda": 1,
+          "evaluation_episodes": 32,
+          "frames_per_episode": 64,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 13559
+        },
+        "agent_gpu_outputs": [
+          {
+            "reward": 0.17097088181959963,
+            "raw_return": 1.875,
+            "local_evaluation": 1,
+            "eval_valid": 1,
+            "cuda": 1,
+            "evaluation_episodes": 16,
+            "frames_per_episode": 64,
+            "optimizer_updates": 2,
+            "checkpoint_bytes": 13559
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0691-7152-b6da-567e802f55c2/2026-11-12__02-19-25/rlMetaMazeMisc__D7nZsgE/agent/trajectory.json",
+        "trajectory_sha256": "bcc8af911f4dc7bceae16d80701104f510ddf832a465a2022029894df1178604"
+      },
+      {
+        "task": "rlMountainCarContinuous",
+        "uid": 20,
+        "version": 1,
+        "termination": "finished",
+        "valid_score": true,
+        "metrics": {
+          "reward": 0.9777929451022602,
+          "raw_return": -2.245734393596649,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "cuda": 1,
+          "evaluation_episodes": 32,
+          "frames_per_episode": 64,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 10036
+        },
+        "agent_gpu_outputs": [
+          {
+            "reward": 0.9781273122084531,
+            "raw_return": -2.211544133722782,
+            "local_evaluation": 1,
+            "eval_valid": 1,
+            "cuda": 1,
+            "evaluation_episodes": 16,
+            "frames_per_episode": 64,
+            "optimizer_updates": 2,
+            "checkpoint_bytes": 10036
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0691-7152-b6da-56c7ab411fac/2026-11-12__02-23-21/rlMountainCarContinuous__GDh4osw/agent/trajectory.json",
+        "trajectory_sha256": "07c0e41997b07922ae2728f6872ca2c59aa1dda220e0ab9d983d7c1042f41085"
+      },
+      {
+        "task": "imageCaptioningCOCO",
+        "uid": 28,
+        "version": 1,
+        "termination": "finished",
+        "valid_score": true,
+        "metrics": {
+          "reward": 0.002821656218856984,
+          "bleu4": 0.002821656218856984,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "cuda": 1,
+          "test_rows": 16,
+          "checkpoint_bytes": 214385
+        },
+        "agent_gpu_outputs": [
+          {
+            "cuda": 1,
+            "optimizer_updates": 8,
+            "checkpoint_bytes": 214385
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0692-7340-b90d-ffbc8fad6f52/2026-11-12__02-24-06/imageCaptioningCOCO__XNBEUHZ/agent/trajectory.json",
+        "trajectory_sha256": "244c2717b29caae672554a3e79ccb766a43f30b9b174f24f7932d4bbd7969425"
+      },
+      {
+        "task": "rlBreakoutMinAtar",
+        "uid": 16,
+        "version": 1,
+        "termination": "finished",
+        "valid_score": true,
+        "metrics": {
+          "reward": 0.04579333403081165,
+          "raw_return": 0.46875,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "cuda": 1,
+          "evaluation_episodes": 32,
+          "frames_per_episode": 64,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 111991
+        },
+        "agent_gpu_outputs": [
+          {
+            "reward": 0.05469721934794047,
+            "raw_return": 0.5625,
+            "local_evaluation": 1,
+            "eval_valid": 1,
+            "cuda": 1,
+            "evaluation_episodes": 16,
+            "frames_per_episode": 64,
+            "optimizer_updates": 2,
+            "checkpoint_bytes": 111991
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0691-7152-b6da-56bd1fd60573/2026-11-12__02-21-22/rlBreakoutMinAtar__oxXSkcx/agent/trajectory.json",
+        "trajectory_sha256": "76ace4721a8c2428f54a1f04ab64c6647e5acb22314a0394213a7a3b0bd9a0bc"
+      },
+      {
+        "task": "rlBreakoutMinAtar",
+        "uid": 17,
+        "version": 1,
+        "termination": "max_response_length_exceeded",
+        "valid_score": true,
+        "metrics": {
+          "reward": 0.04579333403081165,
+          "raw_return": 0.46875,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "cuda": 1,
+          "evaluation_episodes": 32,
+          "frames_per_episode": 64,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 111991
+        },
+        "agent_gpu_outputs": [
+          {
+            "reward": 0.05469721934794047,
+            "raw_return": 0.5625,
+            "local_evaluation": 1,
+            "eval_valid": 1,
+            "cuda": 1,
+            "evaluation_episodes": 16,
+            "frames_per_episode": 64,
+            "optimizer_updates": 2,
+            "checkpoint_bytes": 111991
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0691-7152-b6da-568518db0968/2026-11-12__02-19-25/rlBreakoutMinAtar__g4KRzs3/agent/trajectory.json",
+        "trajectory_sha256": "df9cad915caf2585a74e2a56c44aee51b1137cfafaf89e1eed3ad32628d2327e"
+      },
+      {
+        "task": "rlMountainCarContinuousReinforce",
+        "uid": 22,
+        "version": 1,
+        "termination": "finished",
+        "valid_score": true,
+        "metrics": {
+          "reward": 0.9777929451022602,
+          "raw_return": -2.245734393596649,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "cuda": 1,
+          "evaluation_episodes": 32,
+          "frames_per_episode": 64,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 10036
+        },
+        "agent_gpu_outputs": [
+          {
+            "reward": 0.9781273122084531,
+            "raw_return": -2.211544133722782,
+            "local_evaluation": 1,
+            "eval_valid": 1,
+            "cuda": 1,
+            "evaluation_episodes": 16,
+            "frames_per_episode": 64,
+            "optimizer_updates": 2,
+            "checkpoint_bytes": 10036
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0692-7340-b90d-ff71f4143eea/2026-11-12__02-23-12/rlMountainCarContinuousReinforce__sh9uy5D/agent/trajectory.json",
+        "trajectory_sha256": "bdd849345262662990c212ee53f06255f30778971e0d3ca7e463e68229776b52"
+      },
+      {
+        "task": "rlMountainCarContinuous",
+        "uid": 21,
+        "version": 1,
+        "termination": "max_turns_exceeded",
+        "valid_score": true,
+        "metrics": {
+          "reward": 0.9777929451022602,
+          "raw_return": -2.245734393596649,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "cuda": 1,
+          "evaluation_episodes": 32,
+          "frames_per_episode": 64,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 10036
+        },
+        "agent_gpu_outputs": [
+          {
+            "reward": 0.9781273122084531,
+            "raw_return": -2.211544133722782,
+            "local_evaluation": 1,
+            "eval_valid": 1,
+            "cuda": 1,
+            "evaluation_episodes": 16,
+            "frames_per_episode": 64,
+            "optimizer_updates": 2,
+            "checkpoint_bytes": 10036
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0691-7152-b6da-56d1430e8753/2026-11-12__02-19-26/rlMountainCarContinuous__dowNwDo/agent/trajectory.json",
+        "trajectory_sha256": "79f27f16c488ed2b165a698d8c74ad07107d18e03f911ae157b5ec9d228fb2d6"
+      },
+      {
+        "task": "imageClassificationFMnist",
+        "uid": 26,
+        "version": 1,
+        "termination": "finished",
+        "valid_score": true,
+        "metrics": {
+          "reward": 0.0625,
+          "accuracy": 0.0625,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "cuda": 1,
+          "test_rows": 16,
+          "checkpoint_bytes": 24509
+        },
+        "agent_gpu_outputs": [
+          {
+            "cuda": 1,
+            "optimizer_updates": 8,
+            "checkpoint_bytes": 24509
+          }
+        ],
+        "trajectory": "policy-jobs/01a1cbd6-0692-7340-b90d-ffc68fe11ad9/2026-11-12__02-23-21/imageClassificationFMnist__cGN3c7w/agent/trajectory.json",
+        "trajectory_sha256": "3951f2402c34b2b2f68db976294a1bea2b21084eb22f7b396be5d2f1bf478b3e"
+      }
+    ],
+    "updated_agent_gpu_coverage": [
+      "imageCaptioningCOCO",
+      "imageClassificationCifar10",
+      "imageClassificationFMnist",
+      "rlBreakoutMinAtar",
+      "rlMetaMazeMisc",
+      "rlMountainCarContinuous",
+      "rlMountainCarContinuousReinforce",
+      "swe-score-acceptance"
+    ],
+    "initial_termination_counts": {
+      "max_response_length_exceeded": 14,
+      "max_turns_exceeded": 2
+    },
+    "updated_termination_counts": {
+      "finished": 10,
+      "max_response_length_exceeded": 1,
+      "max_turns_exceeded": 1
+    },
+    "prompt_intervention": "Explicit managed GPU job guidance added before version 1 trials. Initial and updated success rates are not a learning comparison. Reference solutions were public.",
+    "same_train_validation_pool": true,
+    "driver_exit": -15,
+    "stop_reason": "Controlled SIGTERM after all eight task identities had valid version 1 scores and all independent GPU reference checks passed.",
+    "physical_cleanup": {
+      "passed": true,
+      "owned_containers_remaining": 0,
+      "target_gpu_pids_remaining": 0,
+      "target_gpu_used_mib": {
+        "0": 0.1875,
+        "1": 0.1875,
+        "2": 0.1875,
+        "3": 0.1875,
+        "5": 0.1875
+      },
+      "initial_poll": "First poll did not yet show environment GPU release. Preserved as policy-cleanup-first-poll.json. Subsequent observation confirmed release."
+    }
+  },
+  "source_sha256": {
+    "examples/gpu_benchmarks/acceptance.py": "06053422e7ad7d58a742cd37af91b459071c1889d783be0dfa153681585a14f6",
+    "examples/gpu_benchmarks/reward.py": "35bf3a28f113ee8ea8a862236c5a17a5ca28ed0955721b2f1b2efce1f4757943",
+    "examples/gpu_benchmarks/train.sh": "88278ab031f16f5ccc683591e174a619454ee1c15e95def930e377d5474b4522",
+    "examples/mlgym_bench/download_vision.py": "4fe74adde135fe820d6ea1dc26af09578692634dc3b6638d868309169f612770",
+    "examples/mlgym_bench/prepare.py": "305559698b4d5a48b6572dca3344eddd13ab8eddd0b740f5d00c76073a2a50c5",
+    "examples/mlgym_bench/prepare_vision.py": "94528c3868d3afa753fd1284df3a2ba7453643651ff8d57c0f442a2f3472a3d8",
+    "examples/mlgym_bench/rl.py": "982c4a71ae3147437619e5a3a060e4b061b16c1c4d8580edeaabd39643f7d7dd",
+    "examples/mlgym_bench/vision.py": "14b3feecd49030301f9b39e90efa7edf91a18b7d1698601670064e1f6927eb59",
+    "examples/swe_serve/build_local_images.py": "7b89835d5dc6f17c2977169b93e3559326d12dde668564f328a720ab746f8231",
+    "examples/swe_serve/prepare.py": "77e9918177f71c38ba9b59adc61cbc55a08d6e185d826b035c9c7906f7aa7fca",
+    "examples/swe_serve/quick_profile.py": "b707c728383b22cc5458a1a234259efc4dbe910723fa6155e8d9ba655c1cfaea",
+    "examples/swe_serve/score_probe.py": "7d40dfab46568db0451d68169a83c603e7c43d5490d0f08abb46d00241038e72"
+  },
+  "remaining": {
+    "swe": "Unrun images, failed regression, asset access and per-task runtime compatibility remain. Original baseline mount fix has CPU-container evidence only.",
+    "fastkernels": "No captured workloads. Capture scenarios include multi-GPU and hardware-specific NVFP4 kernels.",
+    "posttrainbench": "No runtime adapter yet. Gated model and dataset assets missing. Official API judge can be replaced by an explicitly local evaluator, which is not implemented.",
+    "kaggle": "Deferred by user."
+  }
+}

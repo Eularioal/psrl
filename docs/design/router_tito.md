@@ -1,8 +1,20 @@
 # Router, SessionRouter, and TITO
 
+> **Core idea:** the Router chooses a generation instance, SessionRouter preserves one agent conversation, and TITO records the actual tokens used for training. For example, an agent can request a command, read its output, and ask the model again while PSRL retains the complete training record.
+
 PSRL uses [SMG](https://github.com/psrl-project/smg) as its rollout gateway, configured and
 extended with PSRL-aware worker selection, routing-loop state, partial-rollout
 loopback, weight-version updates, KV transfer, and TITO training-data capture.
+
+## Contents
+
+- [Request Path](#request-path)
+- [PSRL Changes to SMG](#psrl-changes-to-smg)
+- [Partial Rollout in SMG](#partial-rollout-in-smg)
+- [SessionRouter](#sessionrouter)
+- [TITO](#tito)
+- [Agent Loop Impact](#agent-loop-impact)
+- [Configuration](#configuration)
 
 ## Request Path
 

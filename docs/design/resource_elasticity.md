@@ -1,56 +1,76 @@
-# Resource Elasticity
+# Resource Elasticity and Worker Memory
 
-:::{admonition} Under Development
-:class: warning
-This feature is under active development. Documentation will continue to evolve as the implementation stabilizes.
-:::
+> **Core idea:** an idle worker can release GPU memory and restore it when needed. PSRL has explicit sleep/wake paths, including a switch between training and validation on the training allocation. GPU placement, memory lifecycle and automatic pool resizing are separate controls.
+
+For the overall workflow in Chinese, start with [从一道题理解 PSRL](../overview/reading-guide.md). This page explains the narrower memory lifecycle.
+
+## Contents
+
+- [Concept](#concept)
+- [TMS (torch_memory_saver)](#tms-torch_memory_saver)
+- [Configuration](#configuration)
+- [Scope Options](#scope-options)
+- [CUDA Graph Management](#cuda-graph-management)
+- [NIXL Buffer Management](#nixl-buffer-management)
+- [Verification Scope](#verification-scope)
 
 ## Concept
 
-Resource Elasticity lets PSRL dynamically reallocate GPU resources across its four major workload components, **training**, **generation**, **evaluation**, and **reward**: based on runtime demand.
+Training changes model weights. Validation uses a model to answer held-out questions. When these two roles share the training GPUs, both model copies may be too large to keep resident together. PSRL switches which role holds the required memory.
 
-Traditional asynchronous RL systems either statically partition GPUs (wasting capacity whenever a phase is idle) or rely on heavy external orchestration to swap workloads in and out. PSRL takes a lighter-weight route: GPU memory is transparently managed by TMS, so the same physical GPUs can host different workloads at different points in the training loop without any change to the workload code itself.
+The regular asynchronous generation pool uses its own allocation and can keep generating while training runs. A validation/training switch is therefore different from alternating the whole training job between generation and training.
 
-### Supported Components
+The following describes the implemented switch, with some transport details omitted:
 
-| Component | Status | Elasticity granularity |
-|-----------|--------|------------------------|
-| Training | Supported | **Whole training pool**: all training workers pause/resume together (all-or-nothing) |
-| Generation | Supported | **Per rollout instance**: each instance pauses/resumes independently |
-| Evaluation | Supported | **Per validate instance**: each instance pauses/resumes independently |
-| Reward | Work in progress | **Per reward worker** (planned, will follow the per-instance model) |
+```mermaid
+flowchart LR
+    A[Training active] --> B[Sleep training model]
+    B --> C[Wake validation and load weights]
+    C --> D[Run validation]
+    D --> E[Pause validation and sleep its model]
+    E --> F[Wake training and restore weights]
+    F --> A
+```
 
-Training is "all-or-nothing" because mainstream parallelism backends (FSDP, Megatron) do not natively support scaling up/down at runtime: optimizer states are sharded with a fixed ZeRO-style partition that is bound to the world size at initialization, and re-sharding them on the fly would require a heavyweight repartition. The other components carry no such cross-worker state and can therefore scale at the finer per-instance granularity.
+Source legend and reading order:
 
----
+| Step | Entry | State change |
+|---|---|---|
+| Training → validation | [switch_to_rollout_mode](../../psrl/trainer/ppo/ray_trainer.py#L2298) | Sleep training, wake validation, refresh NIXL peers, synchronize weights, resume validation routing |
+| Validation → training | [switch_to_trainer_mode](../../psrl/trainer/ppo/ray_trainer.py#L2369) | Pause validation, sleep it, wake training, refresh peers and restore model weights |
+| Training memory | [sleep_model](../../psrl/workers/train/engine_train_worker.py#L237), [wake_up_model](../../psrl/workers/train/engine_train_worker.py#L264) | Use TMS or backend-specific memory helpers; wakeup is followed by weight restoration |
+| Generation memory | [sleep](../../psrl/workers/gen/vllm_async_server.py#L726), [wake_up](../../psrl/workers/gen/vllm_async_server.py#L735) | Invoke the engine's sleep/wake methods and manage eligible cache memory |
+
+For a **teaching example**, suppose each role needs 30 GiB on a 40 GiB GPU. Keeping both full copies resident would require 60 GiB. Releasing the inactive copy may make alternating roles possible, provided the remaining buffers and temporary allocations fit. Switching also costs time for memory operations and weight restoration. These numbers illustrate capacity, not measured usage.
+
+To explore the state transition without a GPU, run this CPU teaching simulation:
+
+```python
+# Model storage only. Actual workers also own caches and transport state.
+capacity = 40
+resident = {"train": 30, "validate": 0}
+for active in ("validate", "train"):
+    resident = {role: 30 if role == active else 0 for role in resident}
+    print(active, sum(resident.values()), sum(resident.values()) <= capacity)
+```
+
+Expected output: `validate 30 True`, then `train 30 True`. In the real source, pause, wakeup, peer registration and model restoration must complete before work resumes. These code paths can be read in the order shown above, and any individual transition can be explored further.
 
 ## TMS (torch_memory_saver)
 
-PSRL uses [torch_memory_saver](https://github.com/fzyzcjy/torch_memory_saver) (TMS) as its underlying primitive for dynamic GPU memory management when multiple workloads are colocated on the same GPUs.
+TMS is the optional memory-management library used by covered workers. It supports pausing allocations and resuming them through the integrated lifecycle. Some paths release reconstructible storage and later restore weights from the Parameter Server; "sleep" does not always mean every tensor value was copied to CPU and kept there.
 
-:::{important}
-TMS is used for supported worker sleep/wake and memory-management paths.
-`tms.range=all` selects which workers TMS manages. It does not enable a
-train/rollout colocate mode. PSRL runs training and generation on separate
-GPU allocations.
-:::
+| Component | Checked lifecycle scope |
+|---|---|
+| Training | The training worker group switches together |
+| Generation and validation | Engine instances expose sleep/wake methods |
+| Reward and auxiliary models | Follow their own deployment/lifecycle configuration; the `tms.range` flag alone does not define their scheduling |
 
-TMS operates in two phases:
+Changing the training group's world size, meaning the number of cooperating training ranks, also requires handling sharded model and optimizer state. Memory sleep/wake by itself preserves the existing worker layout.
 
-1. **Pause**: when a workload is idle, its GPU memory is released (or offloaded to CPU).
-2. **Resume**: when the workload becomes active again, its GPU memory is reclaimed (or reloaded from CPU).
+## Configuration
 
-This lifecycle is fully transparent to the workload: existing training and generation code does not need to be modified.
-
-### Configuration
-
-**Config**: `psrl.tms.*`
-
-| Field | Type | Options | Description |
-|-------|------|---------|-------------|
-| `range` | str \| null | `null`, `train`, `all` | Scope of TMS-managed memory |
-| `enable_cuda_graph` | bool | `true` / `false` | Also release captured CUDA graphs when pausing |
-| `enable_nixl` | bool | `true` / `false` | Manage NIXL pinned transfer buffers under TMS |
+The shipped defaults are in [tms.yaml](../../psrl/trainer/config/psrl/tms.yaml). An opt-in example is:
 
 ```yaml
 psrl:
@@ -60,32 +80,26 @@ psrl:
     enable_nixl: false
 ```
 
-### Scope Options
+GPU placement is configured separately. In particular, `colocate_validate_and_train` controls the training/validation placement relationship; `tms.range=all` selects which workers use TMS.
 
-| `range` | Behavior |
-|---------|----------|
-| `null` | TMS disabled. Training and generation must run on separate GPU allocations. |
-| `train` | Only the training worker's memory is managed by TMS. While generation is active, training tensors are offloaded. |
-| `all` | Manage both rollout and training worker memory on supported lifecycle paths. |
+## Scope Options
 
-:::{note}
-The `range` interface currently covers **training, generation, and evaluation** workers. It will be extended to also cover the **reward worker** once reward-side elasticity lands, so that reward models can be colocated and TMS-managed on the same shared GPUs.
-:::
+| `range` | Meaning |
+|---|---|
+| `null` | TMS disabled, the shipped default. Covered code may still use backend-specific sleep/wake helpers |
+| `train` | Enable TMS management for training workers |
+| `all` | Enable TMS management for training and rollout-side workers on integrated paths |
 
-When `range=all`, the execution flow becomes:
+Choose based on the lifecycle you need, then measure peak memory and switch latency. A larger scope is not automatically faster.
 
-1. **Generation phase**: the rollout instance holds GPU memory, training tensors are offloaded to CPU.
-2. **Training phase**: the training worker reclaims GPU memory, the rollout instance's model and KV cache are offloaded.
-3. Transitions are driven by the training loop's consume/generate cycle.
+## CUDA Graph Management
 
-:::{tip}
-Use `range=all` for maximum GPU utilization in resource-constrained deployments. The offload/reload overhead is typically small compared with the compute saved by not dedicating separate GPUs to each phase.
-:::
+CUDA graphs record GPU work for replay and may retain device allocations. `enable_cuda_graph` includes graph memory in the configured management path. Its shipped default is `False`. Check the pinned inference backend when changing this setting.
 
-### CUDA Graph Management
+## NIXL Buffer Management
 
-When `enable_cuda_graph=true`, TMS additionally releases captured CUDA graphs during the pause phase. This matters because CUDA graphs pin GPU memory that ordinary tensor offloading cannot release, without it, a paused vLLM instance would still hold significant GPU memory via its captured attention kernels.
+NIXL moves model parameters between registered memory regions. `enable_nixl` includes eligible temporary transfer buffers in TMS management. After workers wake, the explicit training/validation switch exchanges updated client information and restores weights. Registration, transfer and wakeup overhead should be measured separately.
 
-### NIXL Buffer Management
+## Verification Scope
 
-When `enable_nixl=true`, TMS also manages the pinned memory buffers used by NIXL for weight transfers. This lets the pinned memory be reclaimed when no transfer is active, reducing the steady-state memory footprint of the PS communication layer.
+The lifecycle entries and defaults above were read from local commit `6aa328d` plus the main directory's existing uncommitted changes on 2026-11-16. The CPU exercise produced `validate 30 True` and `train 30 True`, as explained above. This review did not measure memory savings or switching speed. The tiny example illustrates a capacity calculation; it does not validate CUDA memory behavior or automatic resource scaling.

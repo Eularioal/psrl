@@ -2,6 +2,12 @@
 
 > **核心结论**：保留 IP、数据格式、环境变量覆盖及上下文长度问题的历史故障链、修复过程与验证边界。
 
+本篇保留早期单机 Demo 与 2026-09 的多机故障：症状→定位→当时修复→验证结果。旧本地脚本及部分补丁不在当前仓库；2026-11-16 仅整理证据与修正说明，实际启动以现有脚本和[集群检查](cluster-preflight.md)为准。
+
+[返回专题索引](../psrl-run-guide.md)
+
+运行前先阅读[共享环境与集群检查](cluster-preflight.md)；文中的历史地址、依赖和机器状态需要重新核对。
+
 ## 目录
 
 - [单机 Demo 踩坑记录：两处根因与修复](#单机-demo-踩坑记录两处根因与修复)
@@ -22,12 +28,6 @@
   - [检查清单：下次启动一个新的训练任务前](#检查清单下次启动一个新的训练任务前)
   - [记忆点](#记忆点)
 
-本篇由原长文按章节迁移，保留原有例子、推导和历史证据。本次仅整理结构，未重新验证技术结论或重跑实验。旧的中文章节编号已改为主题标题，正文引用已改为可点击链接。
-
-[返回专题索引](../psrl-run-guide.md)
-
-运行前先阅读[共享环境与集群检查](cluster-preflight.md)；文中的历史地址、依赖和机器状态需要重新核对。
-
 ## 单机 Demo 踩坑记录：两处根因与修复
 
 跑 `qwen2.5_3b_fsdp_singlenode_demo.sh` 时依次遇到两个报错，都是环境/数据问题而非代码逻辑 bug，记录下来避免下次重复排查。
@@ -37,7 +37,7 @@
 1. 探测 `LOCAL_IP` → 本地起 Ray（`ray_init.address=local`）→ Hydra 把脚本参数覆盖进 `ppo_trainer.yaml`。
 2. `TaskRunner` 建 worker pool：2 卡跑 `PSRL_vLLMHttpServer`（rollout，显存占用高，因为 `gpu_memory_utilization=0.9`），2 卡跑 `FusedWorker_actor_dummy`（FSDP2 训练）。
 3. 加载 GSM8K parquet 数据集，建 DataLoader。
-4. 训练侧 FSDP 初始化完成后，通过 **NIXL** 把权重推给 `PSManager`，rollout 侧的 vLLM 实例再拉取对齐。
+4. 训练侧 FSDP 初始化完成后，通过 **NIXL** 把权重写入 PS Worker，由 `PSManager` 协调版本，rollout 侧的 vLLM 实例再拉取对齐。
 5. 训练循环 `trainer.total_training_steps=3`：rollout 生成 → reward → GRPO advantage → FSDP 反向更新 actor → NIXL 把新权重推给 rollout。第 3 步夹一次验证。
 6. 3 步跑完，停 PSManager/NIXL，打印 `Training completed successfully!`，退出码 0。
 
@@ -45,7 +45,7 @@
 
 - **现象**：`ray_trainer.py` 里 `assert self.config.psrl.ps_manager_ip in ip_to_node_id` 断言失败。
 - **根因**：脚本用 `LOCAL_IP=$(hostname -I | awk '{print $1}')` 取本机 IP，依赖 `hostname -I` 输出顺序。这台机器有上百个虚拟/桥接网卡，真实可路由 IP 没有排在最前面，导致取到了一个虚拟网卡 IP，而 Ray 节点注册用的是真实可路由 IP，两者对不上。
-- **修复**：改用不依赖网卡枚举顺序的路由查询法——建一个 UDP socket "连"外部地址（不会真发包，只走内核路由选择），读出内核选定的本地出口 IP：
+- **修复**：改用不依赖网卡枚举顺序的路由查询法——建一个 UDP socket "连"外部地址（这个 UDP connect 用于内核路由选择），读出内核选定的本地出口 IP：
   ```bash
   LOCAL_IP=$(python3 -c "import socket; s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(('8.8.8.8', 80)); print(s.getsockname()[0]); s.close()")
   ```
@@ -87,13 +87,13 @@
    ```bash
    LOCAL_IP=$(python3 -c "import socket; s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(('8.8.8.8', 80)); print(s.getsockname()[0]); s.close()")
    ```
-   不再要求调用方手动导出，避免因取错网卡 IP 导致和 Ray 实际注册的节点 IP 对不上而报 `PSManager IP not found`。
+   这是当时修改的记录；当前仓库 DAPO 脚本仍使用外部 `LOCAL_IP`，需要按目标节点路由并核对 Ray 注册地址。
 
 3. **日志/checkpoint 路径改为跟着 `PSRL_WORKSPACE` 走，而不是跟着 Python 包安装路径走**：删掉了通过 `python -c "import psrl..."` 反推安装目录的写法（以及从未真正生效的 `HOME=` 赋值），`logging_path`、最终 `tee` 的日志文件、`CKPT_ROOT` 默认值统一改成基于 `${PSRL_WORKSPACE}`，并补上 `mkdir -p ${PSRL_WORKSPACE}/logs`。
 
 ### 验证
 
-2 节点（16 GPU：8 卡训练 + 8 卡生成）实验用改后的脚本跑完全部训练步数，训练/验证/wandb 上报均正常退出，过程中无报错。
+原记录报告：当时修改后的 2 节点、16 GPU 脚本完成训练并正常退出。原始完整日志未随本页发布，当前脚本也未保留本节全部修改，因此该结果作为历史记录保存。
 
 ### 教训
 
@@ -114,7 +114,7 @@
 
 ### 改脚本 vs. 改调用参数：为什么选后者
 
-`fsdp_qwen2.5_3b_laps.sh` 里 `max_response_length` 本来就写成了 `${MAX_RESPONSE_LENGTH:-65536}`——脚本作者已经预留了外部覆盖的口子，只是默认值是从别的模型抄过来的、没人替 Qwen2.5-3B 校正过。既然口子已经在，就没必要改脚本本身（改了会影响这份脚本以后被用在别的、真的需要大 `max_response_length` 的模型上），直接在调用时传 `MAX_RESPONSE_LENGTH=30720` 即可——这也是仓库里"能用参数覆盖就不碰脚本默认值"的一贯做法（同一份脚本很多变量都是 `${VAR:-default}` 形式）。
+`fsdp_qwen2.5_3b_laps.sh` 里 `max_response_length` 本来就写成了 `${MAX_RESPONSE_LENGTH:-65536}`——脚本作者已经预留了外部覆盖的口子，只是默认值是从别的模型抄过来的、没人替 Qwen2.5-3B 校正过。既然口子已经在，就没必要改脚本本身（改了会影响这份脚本以后被用在别的、真的需要大 `max_response_length` 的模型上），直接在调用时传 `MAX_RESPONSE_LENGTH=30720` 即可——这也是当时"能用参数覆盖就不碰脚本默认值"的一贯做法（同一份脚本很多变量都是 `${VAR:-default}` 形式）。
 
 ### 检查清单：下次启动一个新的训练任务前
 
@@ -123,9 +123,9 @@
 3. **复用集群前先确认它真的空闲**：`ray status`（3 节点/GPU 数是否符合预期、`Total Usage` 是否接近 0）+ `ps aux | grep main_ppo`（确认没有残留进程）+ `nvidia-smi`（两台机器 GPU 利用率/显存是否都是 0），三者都确认了再重用，不要凭"看起来没人用"就直接抢占共享集群资源。
 4. **`LOCAL_IP` 多机场景必须显式传**：单机脚本能自动探测（见[单机启动故障复盘](#单机-demo-踩坑记录两处根因与修复) UDP socket 技巧），但 `fsdp_qwen2.5_3b_laps.sh` 这类多机脚本默认 `LOCAL_IP=127.0.0.1`，必须显式传成头节点的真实可路由 IP，否则 worker 节点连不上 `ps_manager`（`PSManager IP xxx not found` 类报错，见[多机启动脚本修复](#让-qwen25_3b_fsdpsh-跑通-2-节点实验脚本改了什么)同源问题)。
 5. **后台启动用 `nohup setsid ... & disown` 三件套**，并把 stdout/stderr 重定向到固定路径的日志文件，这样断开 SSH 连接、甚至当前 Claude 会话结束都不影响训练进程存活；重启前记得把旧崩溃日志 `mv` 走而不是覆盖（`tee` 不是 `tee -a`，直接重跑会连崩溃现场一起冲掉）。
-6. **别只看"进程还活着"就判定训练健康**：这次崩溃发生在启动阶段（`validate_config`/vLLM 初始化），下一类常见故障发生在训练中途——[dapo-training-collapse-diagnosis.md](../dapo-training-collapse-diagnosis.md) 记录过一次 DAPO+Qwen2.5-3B 训练在 step~115 由**熵崩溃**触发的不可逆连锁崩溃（`entropy`→0、`response_length` 打满、`reward`→-1、`grad_norm` 爆炸），过程中进程本身没有退出、只是指标全废。所以监控除了"进程存活 + GPU 利用率"，还必须盯 `actor/entropy`、`response_length/clip_ratio`、`group/zero_variance_fraction`、`grad_norm` 这几个指标（见[训练日志与指标](monitoring-and-batches.md#如何阅读训练日志抓取每步指标)指标表），越早发现越有救（该案例是过了 40% 训练量才发现，等于白烧了近一半算力）。
-7. **建立自动化的定期巡检**，不要指望自己全程盯着：本次用 `CronCreate` 设了一个每 20 分钟检查一次日志/GPU/进程的定时任务，正常就极简汇报一句，异常或训练结束才详细汇报并自动清理，比人工不定期看一眼更不容易错过第 6 条里说的那类"进程没死但指标已经废了"的情况。
+6. **别只看"进程还活着"就判定训练健康**：这次崩溃发生在启动阶段（`validate_config`/vLLM 初始化），下一类常见故障发生在训练中途——[dapo-training-collapse-diagnosis.md](../dapo-training-collapse-diagnosis.md) 记录过一次 DAPO+Qwen2.5-3B 训练约 step 115 后的持续训练退化（`entropy`→0、`response_length` 打满、`reward`→-1、`grad_norm` 爆炸），过程中进程本身没有退出、只是指标全废。所以监控除了"进程存活 + GPU 利用率"，还必须盯 `actor/entropy`、`response_length/clip_ratio`、`group/zero_variance_fraction`、`grad_norm` 这几个指标（见[训练日志与指标](monitoring-and-batches.md#如何阅读训练日志抓取每步指标)指标表），以预先定义的异常阈值及时保存并结束。
+7. **建立自动化的定期巡检**，不要指望自己全程盯着：历史执行曾每 20 分钟巡检日志、GPU 与进程；后续可用实际支持的监控系统，并按进程归属与退出状态决定清理，单次遥测失败单独记录。
 
 ### 记忆点
 
-崩溃分两大类，排查思路不一样：**启动期崩溃**（配置/资源不匹配，比如这次的 `max_model_len`，或第八/十二节的 IP/数据类型问题）通常几秒内就能从日志报错定位到根因，修好参数重启即可；**训练中期崩溃**（熵崩溃、reward 坍缩这类）不会报错、进程也不退出，只能靠持续盯几个关键指标的变化趋势发现，且往往不可逆（回滚到出问题前的 checkpoint 重新调超参，而不是"再等等它会不会自己恢复"）。
+崩溃分两大类，排查思路不一样：**启动期崩溃**（配置/资源不匹配，比如这次的 `max_model_len`，或第八/十二节的 IP/数据类型问题）通常几秒内就能从日志报错定位到根因，修好参数重启即可；**训练中期崩溃**（熵崩溃、reward 坍缩这类）不会报错、进程也不退出，只能靠持续盯几个关键指标的变化趋势发现，可根据预设阈值停止、保全证据，再决定从健康 checkpoint 做有界对照。

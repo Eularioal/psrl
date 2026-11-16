@@ -1,8 +1,19 @@
 # EnvRouter 执行流程的阶段分析（历史归档）
 
-> **核心结论**：本文用于追溯命令阶段配额、通用接入和持有范围的设计讨论，混有不同阶段实现与提案。了解现在的完整设计请先读[当前设计](../knowledge/current-design.md)，再按本文目录查设计理由。
->
-> **阅读边界**：正文区分 direct 的同容器串行、显式 [MPS 后端](../knowledge/mps-parallel-execution.md)的同容器并发，以及原设计与历史实验的适用阶段。原生 Harbor 适配器的 CPU 原型限制也不代表当前 GPU 能力，见[统一执行层第 9 节](../knowledge/unified-gpu-execution.md#9-两种容器创建方式共用托管执行层)。第 10 至 13 节的完整通用接入设计不可整体当成已经完成。
+**这份阶段讨论回答：GPU 命令结束后，为什么可以保留任务容器，同时让其他任务用卡？** 关键是把容器会话和 GPU 使用权分开管理：容器继续保留文件、CPU 和主机内存，只有真正计算的阶段申请 GPU，确认释放后让下一条命令进入。
+
+用文中的教学例子理解：A、B 各需要两段 5 秒 GPU 工作，中间等待模型 10 秒，卡一次只能容纳一个任务。按整个任务持卡，两者顺序完成需要 40 秒；每段计算后归还，B 可以利用 A 的等待空档，25 秒完成。第 12 节给出完整时间线和 CPU 模型，数值来自教学设定。
+
+本文保存 2026-10 的实验与方案讨论，以及第 14 节 2026-11-05 的同机命令池说明。现在的完整实现见[当前设计](../knowledge/current-design.md)。同容器并发后来沿 [MPS 后端](../knowledge/mps-parallel-execution.md)实现。MPS 是 NVIDIA 的多进程服务，允许受支持任务共享 GPU 执行资源；通用任务接入、任意 CUDA 状态卸载和跨节点迁移分别有自己的条件。
+
+| 阅读目的 | 对应章节 | 内容性质 |
+|---|---|---|
+| 看准入、归还、预热和独立任务回填 | 第 1—6 节 | 早期实现与固定版本实验 |
+| 区分异步返回、同容器并发和独立 rollout | 第 7—9 节 | 机制讲解；MPS 部分提供后续实现入口 |
+| 理解持有范围、通用接入和保存恢复成本 | 第 10—13 节 | 设计提案与可手算的 CPU 教学模型 |
+| 看资源单元与同机重新选卡 | 第 14 节 | 2026-11-05 的局部阶段说明 |
+
+源码表用于定位相应模块，历史实验结论以所链接的快照和结果为依据。
 
 ## 目录
 
@@ -11,12 +22,12 @@
 - [3. 用一张卡说明准入、并发和回填](#3-用一张卡说明准入并发和回填)
 - [4. 预热的实现与生命周期](#4-预热的实现与生命周期)
 - [5. 跟着图读源码](#5-跟着图读源码)
-- [6. 当前限制与可复现实验](#6-当前限制与可复现实验)
+- [6. 适用条件与复现实验](#6-适用条件与复现实验)
 - [7. command GPU 异步与同容器并发有什么区别](#7-command-gpu-异步与同容器并发有什么区别)
 - [8. 容器与作业的申请关系](#8-容器与作业的申请关系)
-- [9. 多 rollout 意图纠正与 OFF 的同容器能力](#9-多-rollout-意图纠正与-off-的同容器能力)
-- [10. episode 与 command 的区别及通用性边界](#10-episode-与-command-的区别及通用性边界)
-- [11. 通用 GPU 执行服务的具体设计](#11-通用-gpu-执行服务的具体设计)
+- [9. 独立 rollout 与同容器命令的区别](#9-独立-rollout-与同容器命令的区别)
+- [10. episode 与 command 的持有范围](#10-episode-与-command-的持有范围)
+- [11. 通用接入的设计提案](#11-通用接入的设计提案)
 - [12. Results：持有范围的 CPU 教学验证](#12-results持有范围的-cpu-教学验证)
 - [13. 常驻 GPU 状态与释放恢复成本](#13-常驻-gpu-状态与释放恢复成本)
 - [14. unit 如何共享及命令能否跨机器](#14-unit-如何共享及命令能否跨机器)
@@ -26,7 +37,7 @@
 ```text
 [1] Trainer 创建 EnvRouter
       ├─ 继续模型初始化
-      └─ 异步预热本轮配置的节点服务 [6]
+      └─ 异步预热本次启动配置的节点服务 [6]
 
 [2] AgentLoopManager 读取节点可用容量，选择执行任务的 worker
       ↓
@@ -59,14 +70,14 @@
 
 | 编号 | 职责、数据与源码 |
 |---|---|
-| 1 | [训练器初始化](../../../psrl/trainer/ppo/ray_trainer.py#L591) 调用 [create_env_router](../../../psrl/workers/env_service/router.py#L408)；提交预热后继续模型工作，首请求按需等待节点 |
-| 2 | [AgentLoopManager._refresh_env_capacity](../../../psrl/workers/agent_loop/manager.py#L909) 更新调度容量，[get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py#L947) 分配任务组；这是正式训练入口，本轮合成实验直接调用 runner |
-| 3 | [EnvServiceClient.acquire](../../../psrl/workers/env_service/client.py#L159)、[EnvUnitLedger.try_admit](../../../psrl/workers/env_service/ledger.py#L105)、[runner](../../../examples/sciaccel_rl/runner.py#L259)：会话需求变为带归属标签的容器配置 |
-| 4 | [ManagedDockerEnvironment.exec_gpu](../../../psrl/workers/env_service/docker.py#L92)、[GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L49)：请求标识、队列、显存预算与授权确认 |
-| 5 | [begin_return](../../../psrl/workers/env_service/command_gpu.py#L112)、[_return](../../../psrl/workers/env_service/command_gpu.py#L127)：服务持有后台归还任务，锁外检查，锁内提交配额释放 |
-| 6 | [EnvNodeService](../../../psrl/workers/env_service/node.py#L19)、[grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L139)、[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153)：同节点 Docker 身份校验、GPU 权限和实时状态确认 |
-| 7 | [runner 等待延迟归还](../../../examples/sciaccel_rl/runner.py#L505)、[Node.cleanup](../../../psrl/workers/env_service/node.py#L68)、[Ledger.block_gpu_cleanup](../../../psrl/workers/env_service/ledger.py#L332)：错误不能变成成功，配额过期不等于物理资源已消失 |
-| 8 | [GpuLendingBinding](../../../psrl/workers/env_service/lending.py#L27)、[EnvUnit 配置约束](../../../psrl/workers/env_service/types.py#L50)：确认借还的状态机与整副本绑定限制 |
+| 1 | [训练器初始化](../../../psrl/trainer/ppo/ray_trainer.py) 调用 [create_env_router](../../../psrl/workers/env_service/router.py)；提交预热后继续模型工作，首请求按需等待节点 |
+| 2 | [AgentLoopManager._refresh_env_capacity](../../../psrl/workers/agent_loop/manager.py) 更新调度容量，[get_dispatch_plan](../../../psrl/workers/agent_loop/manager.py) 分配任务组；这是正式训练入口；所述合成实验直接调用 runner |
+| 3 | [EnvServiceClient.acquire](../../../psrl/workers/env_service/client.py)、[EnvUnitLedger.try_admit](../../../psrl/workers/env_service/ledger.py)、[runner](../../../examples/sciaccel_rl/runner.py)：会话需求变为带归属标签的容器配置 |
+| 4 | [ManagedDockerEnvironment.exec_gpu](../../../psrl/workers/env_service/docker.py)、[GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py)：请求标识、队列、显存预算与授权确认 |
+| 5 | [begin_return](../../../psrl/workers/env_service/command_gpu.py)、[_return](../../../psrl/workers/env_service/command_gpu.py)：服务持有后台归还任务，锁外检查，锁内提交配额释放 |
+| 6 | [EnvNodeService](../../../psrl/workers/env_service/node.py)、[grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py)、[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py)：同节点 Docker 身份校验、GPU 权限和实时状态确认 |
+| 7 | [runner 等待延迟归还](../../../examples/sciaccel_rl/runner.py)、[Node.cleanup](../../../psrl/workers/env_service/node.py)、[Ledger.block_gpu_cleanup](../../../psrl/workers/env_service/ledger.py)：错误不能变成成功，配额过期不等于物理资源已消失 |
+| 8 | [GpuLendingBinding](../../../psrl/workers/env_service/lending.py)、[EnvUnit 配置约束](../../../psrl/workers/env_service/types.py)：确认借还的状态机与整副本绑定限制 |
 
 这些代码如果有理解上的问题，可以随时追问。
 
@@ -90,7 +101,7 @@ Router 是记账与授权协调者，Harbor 负责实际任务容器执行，节
 
 基线代码的静态映射见[本次运行快照](../env-service-verification/results/router-prewarm-private-20261020/baseline-runner.py#L191)。保留了必要的运行修复，详细补丁见[baseline.patch](../env-service-verification/results/router-prewarm-private-20261020/baseline.patch)。它不是当前代码关闭 `env_service` 的分支；当前关闭服务的路径已经包含其他 GPU gate，不能替代指定基线。
 
-表中的直接 Docker 接口、NVML 连接复用和预热，都是为了降低 ON 自身安全协议的成本。不能说 baseline 原本也花了这些检查时间，然后把节省次数直接算作相对 OFF 的收益。相对 OFF 的主要收益需要竞争、失败补采或更好任务放置等实际条件来体现；低负载仍可能付出净管理成本。 具体耗时边界、长尾和优化优先级见[低负载关键路径分析](../experiments/router-baseline-control-validation.md#11-results低负载慢在哪里与优化优先级)。
+表中的直接 Docker 接口、NVML 连接复用和预热，都是为了降低 ON 自身安全协议的成本。不能说 baseline 原本也花了这些检查时间，然后把节省次数直接算作相对 OFF 的收益。相对 OFF 的主要收益需要竞争、失败补采或更好任务放置等实际条件来体现；低负载仍可能付出净管理成本。 具体耗时边界、长尾和优化优先级见[低负载关键路径分析](../experiments/history/router-baseline-control-validation-chronology.md#11-results低负载慢在哪里与优化优先级)。
 
 ## 3. 用一张卡说明准入、并发和回填
 
@@ -113,13 +124,13 @@ CPU／主存／容器位置：A、B 仍各自保留，直到自己的任务结�
 
 ## 4. 预热的实现与生命周期
 
-环境服务启用时，默认配置为 `prewarm.enable: True`，启动预算 30 秒、最多四个节点并行准备。[create_env_router](../../../psrl/workers/env_service/router.py#L408) 等待 [begin_prewarm](../../../psrl/workers/env_service/router.py#L329) 确认提交，随后训练器继续初始化模型；它不等待全部节点启动完成。[wait_prewarm](../../../psrl/workers/env_service/router.py#L336) 提供显式等待接口，实验用它测量串行与并行准备。
+环境服务启用时，默认配置为 `prewarm.enable: True`，启动预算 30 秒、最多四个节点并行准备。[create_env_router](../../../psrl/workers/env_service/router.py) 等待 [begin_prewarm](../../../psrl/workers/env_service/router.py) 确认提交，随后训练器继续初始化模型；它不等待全部节点启动完成。[wait_prewarm](../../../psrl/workers/env_service/router.py) 提供显式等待接口，实验用它测量串行与并行准备。
 
-[_node_task](../../../psrl/workers/env_service/router.py#L317) 保存每节点唯一启动任务，预热、准入、GPU 借用绑定均复用它。一个请求取消不会取消所有人共用的启动任务。[_start_node](../../../psrl/workers/env_service/router.py#L297) 的超时覆盖并发名额等待和实际准备；失败会销毁本次刚创建的服务，失败结果留给后续消费者，不自动无限重试。
+[_node_task](../../../psrl/workers/env_service/router.py) 保存每节点唯一启动任务，预热、准入、GPU 借用绑定均复用它。一个请求取消不会取消所有人共用的启动任务。[_start_node](../../../psrl/workers/env_service/router.py) 的超时覆盖并发名额等待和实际准备；失败会销毁本次刚创建的服务，失败结果留给后续消费者，不自动无限重试。
 
-[Node.prepare](../../../psrl/workers/env_service/node.py#L49) 在执行节点探测 Docker，首次读取 GPU 身份和实时占用，使该服务的 NVML 连接就绪。它不创建租约、不授权容器，也不把这次状态读数缓存成以后 GPU 空闲的证明。节点只读准备与模型加载可以重叠，真正的借用 GPU 仍要求模型 sleep 后再次确认。 节点服务连接复用与 runner 准备是两条不同路径。runner 生成租约 overlay 仍使用短生命周期的实时设备查询，但已移到后台线程，Docker 同步探测也通过异步准备移出主事件循环；实现、取消边界和实机对照见[同步准备优化](../experiments/router-baseline-control-validation.md#13-results同步准备路径移出事件循环)。
+[Node.prepare](../../../psrl/workers/env_service/node.py) 在执行节点探测 Docker，首次读取 GPU 身份和实时占用，使该服务的 NVML 连接就绪。它不创建租约、不授权容器，也不把这次状态读数缓存成以后 GPU 空闲的证明。节点只读准备与模型加载可以重叠，真正的借用 GPU 仍要求模型 sleep 后再次确认。 节点服务连接复用与 runner 准备是两条不同路径。runner 生成租约 overlay 仍使用短生命周期的实时设备查询，但已移到后台线程，Docker 同步探测也通过异步准备移出主事件循环；实现、取消边界和实机对照见[同步准备优化](../experiments/history/router-baseline-control-validation-chronology.md#13-results同步准备路径移出事件循环)。
 
-[shutdown_nodes](../../../psrl/workers/env_service/router.py#L342) 拒绝丢弃活动租约；租约结束后取消未完成启动、关闭服务接口与连接、销毁所属服务 actor。训练器正常停止以及模型初始化异常的退出路径都调用环境服务停止入口。实际 CUDA、容器、后台评分器的释放仍单独核验，不能用服务 actor 消失替代物理清理检查。
+[shutdown_nodes](../../../psrl/workers/env_service/router.py) 拒绝丢弃活动租约；租约结束后取消未完成启动、关闭服务接口与连接、销毁所属服务 actor。训练器正常停止以及模型初始化异常的退出路径都调用环境服务停止入口。实际 CUDA、容器、后台评分器的释放仍单独核验，不能用服务 actor 消失替代物理清理检查。
 
 ## 5. 跟着图读源码
 
@@ -135,7 +146,9 @@ CPU／主存／容器位置：A、B 仍各自保留，直到自己的任务结�
 | 会话结束与故障 | 7 → 6 | 正常结束释放剩余预算；心跳超时进入待清理，按归属物理回收后才恢复不确定资源 |
 | 模型借卡分支 | 8 | `GpuLendingBinding.set_phase` 根据阶段和序号推进 sleep／归还／wake，失败进入隔离，不能混用命令模式 |
 
-## 6. 当前限制与可复现实验
+<a id="6-当前限制与可复现实验"></a>
+
+## 6. 适用条件与复现实验
 
 已经实现的并非跨机器运行中容器迁移，也没有预测下一次 GPU 调用时间的调度器。任务启动前可以选择节点，活着的 Harbor 容器仍留在原节点，命令阶段默认在原 unit 排队，显式同机 command_gpu_pool 可在池内重新选卡。CPU／主存／容器数预算仍按会话保留，可能成为吞吐瓶颈。先入先出队列也没有抢占正在执行的 CUDA 命令。
 
@@ -152,13 +165,13 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/plot_router_pr
   docs/env-worker-deep-dive/env-service-verification/results/router-prewarm-private-20261020
 ```
 
-教学模拟的预期是串行预热只移动等待位置，并行预热才缩短总时间；真实实验分析则核对四个任务均完成、八条有效 CUDA 命令、全部失败补采计时、GPU 身份一致和最终清理状态。完整条件、结果与停止预算见[实机报告](../experiments/router-baseline-control-validation.md#10-results私有节点预热与固定-off-复验)。
+教学模拟的预期是串行预热只移动等待位置，并行预热才缩短总时间；真实实验分析则核对四个任务均完成、八条有效 CUDA 命令、全部失败补采计时、GPU 身份一致和最终清理状态。完整条件、结果与停止预算见[实机报告](../experiments/history/router-baseline-control-validation-chronology.md#10-results私有节点预热与固定-off-复验)。
 
 ## 7. command GPU 异步与同容器并发有什么区别
 
-**用户记得的异步设计已经存在。** command GPU 的基本能力是把 GPU 使用期从整个任务会话中分离：A 的某条 GPU 命令结束并确认归还后，A 的容器仍然存活，可以等待模型或执行 CPU 工作，B 则使用腾出的容量。`overlap_return=True` 又允许 A 的模型规划与后台归还检查重叠。显式 MPS 后端已在这些基础上提供同容器内多作业同时使用 GPU、逐作业取消和回收。下文比较 direct 协议与并发设计，MPS 部署条件见[专题](../knowledge/mps-parallel-execution.md)。
+**GPU 使用期可以从整个任务会话中分离。** A 的某条 GPU 命令结束并确认归还后，A 的容器仍然存活，可以等待模型或执行 CPU 工作，B 则使用腾出的容量。`overlap_return=True` 又允许 A 的模型规划与后台归还检查重叠。显式 MPS 后端已在这些基础上提供同容器内多作业同时使用 GPU、逐作业取消和回收。下文比较 direct 协议与并发设计，MPS 部署条件见[专题](../knowledge/mps-parallel-execution.md)。
 
-先看完整关系。图中 A、B 是不同任务容器；A1、A2、A3 是同一容器内的不同作业。前半段是已有实现，后半段是尚未落地的提案。
+先看完整关系。图中 A、B 是不同任务容器，A1、A2、A3 是同一容器内的作业。上半图解释 direct 路径，即同容器逐条执行；下半图展示并发作业语义，对应后续显式 MPS 实现。
 
 ```text
 已有 command GPU，示例假设环境卡一次只能容纳一个命令：
@@ -184,12 +197,12 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/plot_router_pr
 
 | 编号 | 当前实现与源码 |
 |---|---|
-| C1 | [exec_gpu](../../../psrl/workers/env_service/docker.py#L92)，[overlap_return 分支](../../../psrl/workers/env_service/gpu_execution.py#L55) 等待服务接管后返回输出 |
-| C2 | [Science 模型请求 _query_llm](../../../examples/sciaccel_rl/agent.py#L125)；显式异步作业也可由 [GpuJobManager.start](../../../psrl/workers/env_service/gpu_jobs.py#L60) 返回 job_id，让调用方做独立工作 |
-| C3 | [begin_return](../../../psrl/workers/env_service/command_gpu.py#L112) 创建服务持有的后台任务，[_return](../../../psrl/workers/env_service/command_gpu.py#L127) 等待 [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153) 后才释放预算 |
-| C4、C5 | [acquire](../../../psrl/workers/env_service/command_gpu.py#L49) 判断队列与容量；[同租约限制](../../../psrl/workers/env_service/command_gpu.py#L63) 禁止一份租约多个待执行或活动命令，说明不是同容器多 GPU 作业并行 |
-| C6 | [wait_gpu_command_returns](../../../psrl/workers/env_service/router.py#L234)、[finish_gpu_command_lease](../../../psrl/workers/env_service/router.py#L240) 收敛归还与租约清理 |
-| N1 | 当前实现入口为 [ManagedGpuExecution._execute_mps_job](../../../psrl/workers/env_service/managed_execution.py#L187) 与 [MpsDomain](../../../psrl/workers/env_service/parallel_gpu.py#L29)，更广范围契约见 [原提案](../knowledge/gpu-jobs-and-task-telemetry.md#11-同容器并发的目标架构) |
+| C1 | [exec_gpu](../../../psrl/workers/env_service/docker.py)，[overlap_return 分支](../../../psrl/workers/env_service/gpu_execution.py) 等待服务接管后返回输出 |
+| C2 | [Science 模型请求 _query_llm](../../../examples/sciaccel_rl/agent.py)；显式异步作业也可由 [GpuJobManager.start](../../../psrl/workers/env_service/gpu_jobs.py) 返回 job_id，让调用方做独立工作 |
+| C3 | [begin_return](../../../psrl/workers/env_service/command_gpu.py) 创建服务持有的后台任务，[_return](../../../psrl/workers/env_service/command_gpu.py) 等待 [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py) 后才释放预算 |
+| C4、C5 | [acquire](../../../psrl/workers/env_service/command_gpu.py) 判断队列与容量；[同租约限制](../../../psrl/workers/env_service/command_gpu.py) 禁止一份租约多个待执行或活动命令，说明不是同容器多 GPU 作业并行 |
+| C6 | [wait_gpu_command_returns](../../../psrl/workers/env_service/router.py)、[finish_gpu_command_lease](../../../psrl/workers/env_service/router.py) 收敛归还与租约清理 |
+| N1 | 当前实现入口为 [ManagedGpuExecution._execute_mps_job](../../../psrl/workers/env_service/managed_execution.py) 与 [MpsDomain](../../../psrl/workers/env_service/parallel_gpu.py)，更广范围契约见 [原提案](../knowledge/gpu-jobs-and-task-telemetry.md#11-同容器并发的目标架构) |
 
 这些代码如果有理解上的问题，可以随时追问。
 
@@ -224,7 +237,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/plot_router_pr
 **“发给 vLLM 就暂时不用 GPU”需要区分三种情况。** vLLM 是大模型推理服务，替代理生成下一步操作。代理等待回复时，可以不占环境 GPU，但推理服务本身仍需使用模型 GPU。
 
 1. **独立模型卡和环境卡。** A 的环境命令结束且资源释放后，A 在模型卡上请求推理，B 在环境卡上执行。command GPU 解决的就是这类环境空档复用。发送模型请求本身不触发资源释放，释放由命令退出与归还协议触发。
-2. **Docker 与同一个 vLLM 实例共用一张卡。** 需要另一条 GPU lending 状态机：模型释放／休眠后才让环境用卡，环境物理归还后才让模型恢复。当前 [GpuLendingBinding._transition](../../../psrl/workers/env_service/lending.py#L51) 和 [agent 的阶段切换](../../../examples/sciaccel_rl/agent.py#L136) 实现这一分支；[EnvUnit 校验](../../../psrl/workers/env_service/types.py#L54) 明确禁止它与 command 模式直接叠加。异步提交请求不等于同卡 vLLM 能提前计算。
+2. **Docker 与同一个 vLLM 实例共用一张卡。** 需要另一条 GPU lending 状态机：模型释放／休眠后才让环境用卡，环境物理归还后才让模型恢复。当前 [GpuLendingBinding._transition](../../../psrl/workers/env_service/lending.py) 和 [agent 的阶段切换](../../../examples/sciaccel_rl/agent.py) 实现这一分支；[EnvUnit 校验](../../../psrl/workers/env_service/types.py) 明确禁止它与 command 模式直接叠加。异步提交请求不等于同卡 vLLM 能提前计算。
 3. **同一个仍在运行的 GPU 程序中途 await 模型请求。** 如果该进程保留张量、上下文或后台子进程，它仍持有 GPU。command 模式不会因为协程等待或利用率下降而自动收回。必须拆出显式可归还边界，或者程序配合实现释放和恢复；本次提案也没有通用的任意 CUDA 程序暂停恢复能力。
 
 如果以后要组合“vLLM 借卡 + 多个环境作业”，需要父级 env/model 阶段和子级 job 预约两层协议，切回 model 前必须收敛所有环境作业。这是额外的组合设计，不是同容器并发补丁自然附带的功能。
@@ -242,7 +255,6 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_concurre
 
 本次实际在 CPU 中调用上述模拟及契约检查，结果保存于 [models.json](../env-service-verification/results/command-vs-concurrency-20261026/models.json)。它们没有调用生产 Router、Docker、vLLM 或 CUDA。这份 2026-10-26 的 CPU 记录不能作为后续 MPS 后端的实现或验收状态，后者见 [MPS 专题](../knowledge/mps-parallel-execution.md)。本次修改在主开发目录完成，只更新说明和验证记录，没有新增功能分支、修改生产调度代码、提交、推送或合并。
 
-本页及总索引的 94 个本地链接路径、源码行号范围与章节锚点检查通过，相关源码位置已核对并修正。全仓 pre-commit 在隔离副本运行，仍因仓库既有 Ruff 与注释风格违规失败，未将自动修改回写工作区；检查记录与日志保存在上述结果目录。
 
 ## 8. 容器与作业的申请关系
 
@@ -272,11 +284,11 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_concurre
 
 | 编号 | 实现、输入和状态 |
 |---|---|
-| R1、R2 | [run_harbor_episode 申请租约](../../../examples/sciaccel_rl/runner.py#L346) → [EnvServiceClient.acquire](../../../psrl/workers/env_service/client.py#L159) → [Ledger.try_admit](../../../psrl/workers/env_service/ledger.py#L105)，输入 session_id 和环境需求，输出 EnvLeaseHandle |
-| R3 | [_apply_env_lease](../../../examples/sciaccel_rl/runner.py#L99) 配置设备与归属；[JobConfig](../../../examples/sciaccel_rl/runner.py#L440) 绑定一个任务和代理；[Job.create / run](../../../examples/sciaccel_rl/runner.py#L502) 进入 Harbor 执行 |
-| R4 | [dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py#L28) 调用已有环境的 [start_gpu_job](../../../psrl/workers/env_service/managed_execution.py#L130)，[GpuJobManager.start](../../../psrl/workers/env_service/gpu_jobs.py#L60) 创建 job_id 并启动后台生命周期，没有申请新容器 |
-| R5 | [exec_gpu](../../../psrl/workers/env_service/docker.py#L92) 读取已有 lease_id 和 main container ID，将它们与 request_id 送入 [Scheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L49)；[物理归还](../../../psrl/workers/env_service/command_gpu_node.py#L153) 成功后释放 GPU 预算 |
-| R6 | [runner 的 finally](../../../examples/sciaccel_rl/runner.py#L555) 先清理本次 Compose 容器，再调用 [lease_handle.release](../../../examples/sciaccel_rl/runner.py#L577)，停止心跳并释放环境资源 |
+| R1、R2 | [run_harbor_episode 申请租约](../../../examples/sciaccel_rl/runner.py) → [EnvServiceClient.acquire](../../../psrl/workers/env_service/client.py) → [Ledger.try_admit](../../../psrl/workers/env_service/ledger.py)，输入 session_id 和环境需求，输出 EnvLeaseHandle |
+| R3 | [_apply_env_lease](../../../examples/sciaccel_rl/runner.py) 配置设备与归属；[JobConfig](../../../examples/sciaccel_rl/runner.py) 绑定一个任务和代理；[Job.create / run](../../../examples/sciaccel_rl/runner.py) 进入 Harbor 执行 |
+| R4 | [dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py) 调用已有环境的 [start_gpu_job](../../../psrl/workers/env_service/managed_execution.py)，[GpuJobManager.start](../../../psrl/workers/env_service/gpu_jobs.py) 创建 job_id 并启动后台生命周期，没有申请新容器 |
+| R5 | [exec_gpu](../../../psrl/workers/env_service/docker.py) 读取已有 lease_id 和 main container ID，将它们与 request_id 送入 [Scheduler.acquire](../../../psrl/workers/env_service/command_gpu.py)；[物理归还](../../../psrl/workers/env_service/command_gpu_node.py) 成功后释放 GPU 预算 |
+| R6 | [runner 的 finally](../../../examples/sciaccel_rl/runner.py) 先清理本次 Compose 容器，再调用 [lease_handle.release](../../../examples/sciaccel_rl/runner.py)，停止心跳并释放环境资源 |
 
 这些代码如果有理解上的问题，可以随时追问。图中的 sidecar 是网络等辅助容器，verifier 是评分器。它们说明“一次 episode 的容器集合”可能不止一只 Docker 容器，不能把 lease 和物理容器总数机械视为一对一。当前 GPU 命令接口要求绑定一个运行中的 main 主容器。
 
@@ -284,7 +296,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_concurre
 
 一个 GPU 作业也不必恰好只有一个进程：一条程序可以启动多个子进程或多个计算进程，它们仍属于这条作业。反过来，模型请求、文件编辑和编译也不一定产生 GPU 作业。不能用“有四个协程”直接推断“四个容器”或“四份 GPU 预约”。
 
-**两层申请分别解决什么。** 第一层申请让这次 episode 有地方运行，保留 CPU、主机内存、环境名额，并确定 GPU 所在 unit。unit 是预先配置的节点及资源集合。command 模式在这一层不持有整段会话的活动 GPU 显存预算，[Ledger 创建 lease 时 gpu_active 为 false](../../../psrl/workers/env_service/ledger.py#L182)，[环境准入](../../../psrl/workers/env_service/ledger.py#L376) 主要检查会话资源与需求是否可能装入。
+**两层申请分别解决什么。** 第一层申请让这次 episode 有地方运行，保留 CPU、主机内存、环境名额，并确定 GPU 所在 unit。unit 是预先配置的节点及资源集合。command 模式在这一层不持有整段会话的活动 GPU 显存预算，[Ledger 创建 lease 时 gpu_active 为 false](../../../psrl/workers/env_service/ledger.py)，[环境准入](../../../psrl/workers/env_service/ledger.py) 主要检查会话资源与需求是否可能装入。
 
 第二层申请是环境里某条命令真正准备使用 GPU 时的准入。它复用已有租约与主容器，不再扣一份完整 CPU／主机内存会话资源。当前每次 GPU 需求仍取自 lease.demand，确认归还后释放活动 GPU 预算，但租约和容器继续存在。拟议的每 job 独立显存需求是在第二层细化，不能写成当前已实现。
 
@@ -309,11 +321,11 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_concurre
 | 多个独立 episode，各自执行一条 GPU 检查 | 多份租约、多个独立主环境，Router 跨租约调度 | 不以同容器改造为前提 |
 | 一个 episode，同一代码版本上同时运行多组独立 GPU 检查 | 一份租约，一个主环境，多条同时提交的命令 | 若要求 GPU 执行重叠，需要新能力 |
 
-**此前四命令实验为什么用了这种结构。** 当时我把用户的“一个真实 science 任务多开几个协程”理解成一次 episode 内部提交多条命令，因此实验脚本只调用一次 [run_harbor_episode](../env-service-verification/scripts/science_natural_gpu_ab.py#L180)，固定代理再用 [asyncio.gather](../env-service-verification/scripts/science_natural_gpu_agent.py#L47) 提交四条训练命令。用户已于 2026-10-26 澄清，实际指同一道题多次独立 rollout 尝试。前述实验结构没有准确覆盖该意图，不能再称为按澄清后的需求完成了验证。它也不是 PSRL 自动合并独立任务，纠正后的关系见第 9 节。
+**历史四命令实验的结构。** 该脚本只调用一次 [run_harbor_episode](../env-service-verification/scripts/science_natural_gpu_ab.py#L180)，再由固定代理用 [asyncio.gather](../env-service-verification/scripts/science_natural_gpu_agent.py#L47) 提交四条命令。因此它研究的是一个容器内的命令调度。同一道题采样四次独立 rollout，会创建各自独立的会话，应按第 9 节的流程理解。
 
-严格说，该实验直接调用 exec_gpu_prepared／exec_gpu，四条是四个 GPU 命令申请，没有通过 start_gpu_job 创建四个 GpuJob 管理对象。讨论调度时把它们统称为四个作业，是为了描述四份独立程序工作，不能因此混淆实际入口。单容器四命令是实验选择，足以暴露这个场景的限制，不能据此认定所有训练都受该限制影响。
+实验入口是 `exec_gpu_prepared` / `exec_gpu`：四条调用对应四份命令申请，尚未使用 `start_gpu_job` 创建作业对象。单容器实验覆盖命令间竞争，独立 rollout 的并发需要单独的会话实验。
 
-配置也应按层读：实验中的 max_concurrent_episodes=1 限制 episode 并发，unit.max_containers=1 在 [账本中按活动 lease 数计名额](../../../psrl/workers/env_service/ledger.py#L380)，都不是“容器内最多只能提交一个命令”。把 max_containers 改成 4 不会自动生成四个环境，也不会把四个命令拆成四份租约。必须真正启动四次独立 episode，才会沿 R1/R2 产生相应环境申请。
+配置也应按层读：实验中的 max_concurrent_episodes=1 限制 episode 并发，unit.max_containers=1 在 [账本中按活动 lease 数计名额](../../../psrl/workers/env_service/ledger.py)，都不是“容器内最多只能提交一个命令”。把 max_containers 改成 4 不会自动生成四个环境，也不会把四个命令拆成四份租约。必须真正启动四次独立 episode，才会沿 R1/R2 产生相应环境申请。
 
 **跟着图读源码。** R1 调用 runner 后先进入 R2，成功返回 lease 后才进入 R3 的 Harbor 环境执行。R4 可以发生零次或多次，每次使用同一个 environment；GPU 分支进入 R5，CPU 分支不申请 GPU。多条 GPU 调用可以同时登记，但 direct 后端在同容器锁处等待，MPS 走节点级逐作业准入。不能把提交当成执行。每条 R5 结束仅归还 GPU，后续仍可回到 R4；整个 episode 结束才进入 R6，关闭所属容器并释放会话资源。独立 episode 则各自运行这条链，可以在 Router 的容量约束下并发。
 
@@ -325,21 +337,24 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_c
 
 脚本对应 R4/R5：四条协程都提交并完成准备，共享锁时执行区间峰值为 1，无锁模型为 4。它不创建容器或租约，不执行 GPU，不能作为新协议实现证据；作用只是确认“四条已提交工作”和“四条同时执行工作”是不同数量。环境申请与命令申请的对应关系由上面的真实源码确定，不由教学脚本假造。
 
-本次实际 CPU 运行得到上述结果，输出保存在 env-service-verification/results/container-job-relationship-20261026/cpu-demo.jsonl。本文及总索引的 115 个本地链接、行号范围和章节锚点检查通过，新增源码位置逐项核对。全仓 pre-commit 在隔离副本仍因既有风格违规失败，日志保存在同结果目录，自动改动未回写。此次没有修改生产代码或启动 GPU 实验，文档在主目录未提交，未推送或合并。
 
-## 9. 多 rollout 意图纠正与 OFF 的同容器能力
+<a id="9-多-rollout-意图纠正与-off-的同容器能力"></a>
 
-**用户的目标是同一道题多次独立 rollout，不是同一个容器的多个 GPU 命令。** rollout 在这里指一次从题目开始、包含模型交互和环境执行的完整尝试；它不是一次尝试内部的一轮模型问答。该澄清修正实验拓扑，不改变已保存的原始日志。
+2026-10-26 的教学输出见[容器与作业关系 CPU 结果](../env-service-verification/results/container-job-relationship-20261026/cpu-demo.jsonl)。
+
+## 9. 独立 rollout 与同容器命令的区别
+
+**同一道题采样四次独立 rollout，会建立四个独立的任务环境。** rollout 在这里指从题目开始、包含模型交互和环境执行的完整尝试。一次尝试内部可以有多轮模型问答和多条 GPU 命令，下面按这两个层次画出对应关系。
 
 ```text
-用户实际目标：同一道题
+独立 rollout 场景：同一道题
     ├─ rollout A → session A → 环境 A 的主容器
     ├─ rollout B → session B → 环境 B 的主容器
     ├─ rollout C → session C → 环境 C 的主容器
     └─ rollout D → session D → 环境 D 的主容器
       并发受配置限制；ON 为各环境建立独立租约，跨租约调度 GPU
 
-此前误选的组件实验：一次固定脚本 episode
+单容器组件实验：一次固定脚本 episode
     └─ 一个主容器 → 并发提交四条 CIFAR GPU 命令
 ```
 
@@ -347,8 +362,8 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_c
 
 | 路径 | 实现与源码 |
 |---|---|
-| 每次 rollout 的独立会话 | [SciAccelAgentLoop 创建 session 并调用环境](../../../examples/sciaccel_rl/agent_loop.py#L171)，每次尝试产生自己的会话身份 |
-| 独立环境及 ON 租约 | [_run_harbor_in_thread](../../../examples/sciaccel_rl/agent_loop.py#L358) → [runner 申请租约](../../../examples/sciaccel_rl/runner.py#L346) → [Harbor Job](../../../examples/sciaccel_rl/runner.py#L440)；不能拿当前关闭服务分支代替固定 OFF |
+| 每次 rollout 的独立会话 | [SciAccelAgentLoop 创建 session 并调用环境](../../../examples/sciaccel_rl/agent_loop.py)，每次尝试产生自己的会话身份 |
+| 独立环境及 ON 租约 | [_run_harbor_in_thread](../../../examples/sciaccel_rl/agent_loop.py) → [runner 申请租约](../../../examples/sciaccel_rl/runner.py) → [Harbor Job](../../../examples/sciaccel_rl/runner.py)；不能拿当前关闭服务分支代替固定 OFF |
 | 单容器实验的命令提交 | [NaturalGpuAgent 的普通 exec](../env-service-verification/scripts/science_natural_gpu_agent.py#L37) 与 [gather](../env-service-verification/scripts/science_natural_gpu_agent.py#L47)，不是四次真实模型 rollout |
 | 固定 OFF 的设备映射 | [冻结 OFF runner](../env-service-verification/results/science-natural-gpu-20261022/source/off-runner.py#L192) 使用静态 GPU compose override，基线为 0eeead861ffafed6bf31c962d259fd847775dcf9，运行修复另行披露 |
 
@@ -356,7 +371,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_c
 
 **OFF 可以让同一容器的多个 GPU 命令重叠执行。** 在固定基线及已测实验条件下，静态设备映射给进程提供 GPU 访问，实验代理对同一个 environment 并发调用普通 exec，没有当前 ON 的 GPU 命令串行协议。命令是调用方并发提交的，不是 OFF 自动把顺序代码改成并发。若调用方逐条 await，仍然顺序执行。
 
-**Results：已有实机证据。** [四命令低压力实验](../experiments/science-natural-gpu-concurrency.md#11-results高低显存压力实测) 中，OFF 在一个容器内完成四条训练命令，GPU 训练进程峰值为 4，命令阶段 55.00 秒；ON 峰值为 1，耗时 156.93 秒。它证明该实验中 OFF 的同容器 CUDA 工作可以重叠，不保证任意负载都放得下，也不表示 GPU 每个计算内核始终同时执行。高压力下 OFF 四条失败已保留，不能称其具有容量调度保护。
+**Results：已有实机证据。** [四命令低压力实验](../experiments/history/science-natural-gpu-concurrency.md#11-results高低显存压力实测) 中，OFF 在一个容器内完成四条训练命令，GPU 训练进程峰值为 4，命令阶段 55.00 秒；ON 峰值为 1，耗时 156.93 秒。它证明该实验中 OFF 的同容器 CUDA 工作可以重叠，不保证任意负载都放得下，也不表示 GPU 每个计算内核始终同时执行。高压力下 OFF 四条失败已保留，不能称其具有容量调度保护。
 
 固定 OFF 仍有进程内 episode 信号量，限制能同时运行多少次尝试；它不是同容器 GPU 命令锁，也不是按显存决定是否放行的跨任务调度器。当前工作区关闭 Env Service 的路径还包含其他 GPU gate，回答固定 OFF 行为时不得将两者混用。
 
@@ -366,7 +381,9 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_c
 
 教学复现仍可用第 8 节的 explain_same_container_lock.py 观察并发提交与串行执行的差别；它不运行 rollout、容器或 GPU，不能替代上述实机证据或修正实验拓扑。
 
-## 10. episode 与 command 的区别及通用性边界
+<a id="10-episode-与-command-的区别及通用性边界"></a>
+
+## 10. episode 与 command 的持有范围
 
 本节核对的是主目录当前实现。episode 与 command 都是启用 EnvRouter 后的策略，均不是固定 OFF 的别名。episode 表示一次完整尝试，command 表示其中一次显式 GPU 执行。核心区别是**显存额度从什么时候承诺，到什么时候允许转给别人**。
 
@@ -395,12 +412,12 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_c
 
 | 图中节点／箭头 | 当前函数及源码 | 输入、输出或状态变化 |
 |---|---|---|
-| G1 独立尝试 | [agent_loop.run](../../../examples/sciaccel_rl/agent_loop.py#L171)、[runner](../../../examples/sciaccel_rl/runner.py#L346) | 每次尝试自己的 session，申请自己的 lease |
-| G2 两种持有策略 | [Ledger.try_admit](../../../psrl/workers/env_service/ledger.py#L105)、[gpu_active 初始化](../../../psrl/workers/env_service/ledger.py#L182)、[_fits_now](../../../psrl/workers/env_service/ledger.py#L376) | episode 立即计 GPU 预算，command 暂不计活动 GPU 预算 |
-| G3 工具入口 | [agent._execute_commands](../../../examples/sciaccel_rl/agent.py#L104) → [dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py#L28) → [start_gpu_job](../../../psrl/workers/env_service/managed_execution.py#L130) | 显式 psrl-gpu 请求转成受管理的作业 |
-| G3 等待与执行 | [exec_gpu](../../../psrl/workers/env_service/docker.py#L92) → [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L49) → [grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L139) | 额度与物理占用检查通过后授权，当前同租约仍只允许一条待执行／活动命令 |
-| G4 输出与异步归还 | [exec_gpu 的 overlap_return](../../../psrl/workers/env_service/gpu_execution.py#L55)、[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153) | 输出就绪与物理归还分开，后台确认完成前继续计费 |
-| G5 最终清理 | [ManagedDockerEnvironment.stop](../../../psrl/workers/env_service/docker.py#L76)、[runner finally](../../../examples/sciaccel_rl/runner.py#L555) | 处理在途命令、回收所属容器、释放租约 |
+| G1 独立尝试 | [agent_loop.run](../../../examples/sciaccel_rl/agent_loop.py)、[runner](../../../examples/sciaccel_rl/runner.py) | 每次尝试自己的 session，申请自己的 lease |
+| G2 两种持有策略 | [Ledger.try_admit](../../../psrl/workers/env_service/ledger.py)、[gpu_active 初始化](../../../psrl/workers/env_service/ledger.py)、[_fits_now](../../../psrl/workers/env_service/ledger.py) | episode 立即计 GPU 预算，command 暂不计活动 GPU 预算 |
+| G3 工具入口 | [agent._execute_commands](../../../examples/sciaccel_rl/agent.py) → [dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py) → [start_gpu_job](../../../psrl/workers/env_service/managed_execution.py) | 显式 psrl-gpu 请求转成受管理的作业 |
+| G3 等待与执行 | [exec_gpu](../../../psrl/workers/env_service/docker.py) → [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py) → [grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py) | 额度与物理占用检查通过后授权，当前同租约仍只允许一条待执行／活动命令 |
+| G4 输出与异步归还 | [exec_gpu 的 overlap_return](../../../psrl/workers/env_service/gpu_execution.py)、[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py) | 输出就绪与物理归还分开，后台确认完成前继续计费 |
+| G5 最终清理 | [ManagedDockerEnvironment.stop](../../../psrl/workers/env_service/docker.py)、[runner finally](../../../examples/sciaccel_rl/runner.py) | 处理在途命令、回收所属容器、释放租约 |
 
 这些代码如果有理解上的问题，可以随时追问。跟着图读源码时，先读 G1 的申请与 G2 的初始状态，再沿 G3 看工具到授权，接着读 G4 的双分支，最后读 G5。G4 的模型请求和归还检查是并发关系，不能读成先释放预算再让模型思考。异常也会直接进入 G5，不保证每条命令都正常返回。
 
@@ -419,13 +436,15 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_c
 
 1. **必须知道真正的 GPU 生命周期。** 某个 Python 服务加载 6 GiB 模型后一直不退出，收到下一条请求才计算。它等待 10 秒时仍占显存，GPU 利用率为零只表示没执行计算，不表示内存空闲。CUDA 上下文是进程使用 GPU 的运行状态，也可能继续持有设备句柄。当前归还协议检查句柄及 GPU 进程，不能凭 shell 返回或模型请求发出就确认释放。
 2. **GPU 工作必须经过受管理入口。** 普通终端可能运行后台程序、tmux 会话或长期 Python 解释器。任务在初始化或评分器中也可能调用 GPU。只包装代理的一条工具调用，无法覆盖这些位置。当前默认 Science 代理已接入显式 psrl-gpu 工具，但普通 terminal、任意自定义代理和所有 verifier 尚未统一自动接入，不能说成默认代理完全没有支持。
-3. **必须能确定和回收归属。** 超时的是观察请求，可能不是底层程序。取消一条作业，需要终止其所属进程并确认资源释放。当前依赖 Docker 主容器、节点进程视图和设备访问控制，要求预检能力通过。[DeviceCgroupFence](../../../psrl/workers/env_service/command_gpu_node.py#L17) 当前面向 cgroup v1 设备控制，不是任意容器平台都已有同等实现。cgroup 是 Linux 将进程分组并施加资源／访问限制的机制，这里控制设备访问，没有自动搬走已占用的显存。
-4. **资源描述和入口还未完全统一。** [demand_from_task](../../../psrl/workers/env_service/harbor_resources.py#L22) 从 task.toml 取 CPU、主存和 GPU 需求，显存来自覆盖值或 Router 默认值。当前命令仍复用 lease 的显存需求，不能逐命令分别申报。模式在 [EnvUnit](../../../psrl/workers/env_service/types.py#L49) 上配置，不能直接在同一 unit 中任意混用不同持有策略。
-5. **存在独立的集成边界。** Science 的 [runner](../../../examples/sciaccel_rl/runner.py#L402) 及 [gpu_grading](../../../examples/sciaccel_rl/gpu_grading.py#L12) 仍有 LAPS CUDA 的归属检查和奖励接入分支。它们不是通用调度算法的必要条件。旧 [EnvWorker._allocate_gpu_indices](../../../psrl/workers/env_worker/worker.py#L195) 仍维护另一条整卡分配路径，尚未因为 Science 接入就自动统一。vLLM 推理副本的同卡借还还有另一套协议，[当前类型检查](../../../psrl/workers/env_service/types.py#L54) 禁止与 command 任意组合。
+3. **必须能确定和回收归属。** 超时的是观察请求，可能不是底层程序。取消一条作业，需要终止其所属进程并确认资源释放。当前依赖 Docker 主容器、节点进程视图和设备访问控制，要求预检能力通过。[DeviceCgroupFence](../../../psrl/workers/env_service/command_gpu_node.py) 当前面向 cgroup v1 设备控制，不是任意容器平台都已有同等实现。cgroup 是 Linux 将进程分组并施加资源／访问限制的机制，这里控制设备访问，没有自动搬走已占用的显存。
+4. **资源描述和入口还未完全统一。** [demand_from_task](../../../psrl/workers/env_service/harbor_resources.py) 从 task.toml 取 CPU、主存和 GPU 需求，显存来自覆盖值或 Router 默认值。当前命令仍复用 lease 的显存需求，不能逐命令分别申报。模式在 [EnvUnit](../../../psrl/workers/env_service/types.py) 上配置，不能直接在同一 unit 中任意混用不同持有策略。
+5. **存在独立的集成边界。** Science 的 [runner](../../../examples/sciaccel_rl/runner.py) 及 [gpu_grading](../../../examples/sciaccel_rl/gpu_grading.py) 仍有 LAPS CUDA 的归属检查和奖励接入分支。它们不是通用调度算法的必要条件。旧 [EnvWorker._allocate_gpu_indices](../../../psrl/workers/env_worker/worker.py) 仍维护另一条整卡分配路径，尚未因为 Science 接入就自动统一。vLLM 推理副本的同卡借还还有另一套协议，[当前类型检查](../../../psrl/workers/env_service/types.py) 禁止与 command 任意组合。
 
 因此不能通过识别命令字符串里有没有 python／cuda 来解决通用性，也不能把所有任务都改成“等待模型即归还”。正确的边界是：谁持有 GPU 状态，谁必须提供可验证的结束或释放边界。没有这样的边界，完整会话持有仍是合法且必要的策略。
 
-## 11. 通用 GPU 执行服务的具体设计
+<a id="11-通用-gpu-执行服务的具体设计"></a>
+
+## 11. 通用接入的设计提案
 
 **本节是完整设计提案。执行后端及标准 Science 作业入口已完成[第一阶段实现](../knowledge/unified-gpu-execution.md)，本节的任务级配置、混合范围账本及动态状态策略尚未完成。** 目标是新任务声明资源与生命周期，再接标准执行适配器，即可复用调度与控制优化。首期保持每个环境一次最多执行一条 GPU 命令，各独立 rollout 可以共享 GPU 容量。同容器并发见 [已实现的 MPS 后端](../knowledge/mps-parallel-execution.md)，不作为这项设计的前置条件。
 
@@ -447,11 +466,11 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_same_c
 
 | 模块 | 建议改动与现有落点 | 新任务得到什么 |
 |---|---|---|
-| 任务声明 | 扩展 [EnvDemand／EnvUnit](../../../psrl/workers/env_service/types.py#L49) 与 [demand_from_task](../../../psrl/workers/env_service/harbor_resources.py#L22) | 声明显存、GPU 数量、持有范围及必要能力，无需按题目名分支 |
-| 统一执行适配器 | 从 [gpu_tools](../../../examples/sciaccel_rl/gpu_tools.py#L28)、[runner](../../../examples/sciaccel_rl/runner.py#L387) 提取通用接入层 | 标准代理和任务初始化／评分器都能提交 GPU 阶段，任务不用重写调度器 |
-| 统一使用权账本 | 重构 [Ledger](../../../psrl/workers/env_service/ledger.py#L325) 与 [CommandScheduler](../../../psrl/workers/env_service/command_gpu.py#L49) | 长期和短期使用权都参加相同容量准入，避免两套账各自认为有空间 |
-| 执行与回收后端 | 抽象 [ManagedDockerEnvironment](../../../psrl/workers/env_service/docker.py#L92) 和 [node 授权／撤权](../../../psrl/workers/env_service/command_gpu_node.py#L139) | 复用执行身份、取消、物理归还和异常隔离，后续其他后端实现同一契约 |
-| 任务语义验证 | 从 [gpu_grading](../../../examples/sciaccel_rl/gpu_grading.py#L30) 提取可配置验证插件 | 正确性和奖励留在任务侧，资源安全与容量调度不依赖固定题目名称 |
+| 任务声明 | 扩展 [EnvDemand／EnvUnit](../../../psrl/workers/env_service/types.py) 与 [demand_from_task](../../../psrl/workers/env_service/harbor_resources.py) | 声明显存、GPU 数量、持有范围及必要能力，无需按题目名分支 |
+| 统一执行适配器 | 从 [gpu_tools](../../../examples/sciaccel_rl/gpu_tools.py)、[runner](../../../examples/sciaccel_rl/runner.py) 提取通用接入层 | 标准代理和任务初始化／评分器都能提交 GPU 阶段，任务不用重写调度器 |
+| 统一使用权账本 | 重构 [Ledger](../../../psrl/workers/env_service/ledger.py) 与 [CommandScheduler](../../../psrl/workers/env_service/command_gpu.py) | 长期和短期使用权都参加相同容量准入，避免两套账各自认为有空间 |
+| 执行与回收后端 | 抽象 [ManagedDockerEnvironment](../../../psrl/workers/env_service/docker.py) 和 [node 授权／撤权](../../../psrl/workers/env_service/command_gpu_node.py) | 复用执行身份、取消、物理归还和异常隔离，后续其他后端实现同一契约 |
+| 任务语义验证 | 从 [gpu_grading](../../../examples/sciaccel_rl/gpu_grading.py) 提取可配置验证插件 | 正确性和奖励留在任务侧，资源安全与容量调度不依赖固定题目名称 |
 
 **统一的是服务，保留两种持有范围。** session 表示完整会话，适合常驻状态或不能切分的程序。invocation 表示一次独立执行，适合前台程序结束后只留文件的任务。它们应是请求所有者的属性，物理 unit 负责描述卡、容量及后端能力。当前模式属于 unit，混合两种范围必须改类型、账本和准入状态机，不是简单加一个 task.toml 字段就完成。
 
@@ -486,7 +505,7 @@ gpu_execution:
 
 NVML 是读取 NVIDIA GPU 状态的管理接口。复用连接能省重复初始化，但不能缓存旧的空闲显存并一直据此放行。异步也不是提前把预算清零，而是让独立 CPU 工作不必等确认过程结束。
 
-**容量合成已修复，不能再按旧 max 公式理解。** 当前 [accounted_gpu_memory_mb](../../../psrl/workers/env_service/gpu_memory.py#L9) 使用实测占用加未兑现预约。教学反例：卡容量 16 GiB，外部已占 8 GiB，A 已获准 6 GiB 但还没实际分配，B 又申请 6 GiB。旧 max(6, 8) + 6 = 14 会错误放行，当前合计 8 + 6 + 6 = 20，B 等待。这是机制算例，后续高压力训练证据按各实验冻结版本单列。
+**容量合成已修复，不能再按旧 max 公式理解。** 当前 [accounted_gpu_memory_mb](../../../psrl/workers/env_service/gpu_memory.py) 使用实测占用加未兑现预约。教学反例：卡容量 16 GiB，外部已占 8 GiB，A 已获准 6 GiB 但还没实际分配，B 又申请 6 GiB。旧 max(6, 8) + 6 = 14 会错误放行，当前合计 8 + 6 + 6 = 20，B 等待。这是机制算例，后续高压力训练证据按各实验冻结版本单列。
 
 当前公式是总实测占用 U，加上每个已批准所有者尚未实际分配的承诺 max(bᵢ − mᵢ, 0)，再检查新请求能否放下。其中 bᵢ 是承诺，mᵢ 是同一次采样中可靠归属到该所有者的实测显存。没有可信归属时不给预约抵扣，不能凭总占用增长猜测归属。逐卡需求另行核验，多卡不能拿任务总归属量推断每张卡的抵扣。显式模型共享还增加模型余量。它仍不是硬隔离，任务超出声明或外部进程突增显存仍可能造成内存不足。
 
@@ -523,9 +542,8 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_gpu_hold
 
 脚本使用整数逻辑时间，循环上限 101 次，没有真实 sleep。G2/G3 对应准入与执行，G4/G5 对应阶段结束、确认归还及会话结束。每个 rollout 自有状态，断言总承诺不超过容量，最终全部释放。它省略真实设备权限、过程取消、遥测波动和控制开销，真实系统必须由第 11 节的验收补足。
 
-本次 CPU 运行实际得到表中 40、25、20、20、40 秒的逻辑结果，并拒绝常驻 GPU 程序使用 invocation 的契约。原始输出保存在 env-service-verification/results/gpu-policy-generalization-20261026/cpu-demo.jsonl。本次仅记录 TODO、核对源码、形成设计与运行 CPU 模拟，没有修改生产调度代码或启动 GPU／真实训练。通用任务接入与性能收益仍待按第 11 节落地和实机验证。
+2026-10-26 的 CPU 模型得到表中 40、25、20、20、40 秒的逻辑结果，并拒绝给常驻 GPU 程序套用逐次释放契约。原始输出见[CPU 结果](../env-service-verification/results/gpu-policy-generalization-20261026/cpu-demo.jsonl)。模型用于核对时间线；第 11 节的通用任务接入仍是设计提案。
 
-本次编辑文档及总索引共 394 个本地链接、源码行号范围和章节锚点检查通过，新增源码引用已逐项核对。教学脚本 Ruff 检查及格式检查通过。全仓 pre-commit 在隔离副本运行，仍因其他文件的既有 Ruff／格式及 prose-style 问题失败，日志保存在上述结果目录，自动修订没有回写主目录。此次改动保持在 psrl 主目录未提交状态，未推送或合并。
 
 ## 13. 常驻 GPU 状态与释放恢复成本
 
@@ -553,14 +571,14 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_gpu_hold
 
 | 节点／箭头 | 源码位置 | 边界 |
 |---|---|---|
-| H1 模型请求边界 | [TruncatingTerminus2._query_llm](../../../examples/sciaccel_rl/agent.py#L125) | 配置 lending 时先切 model 阶段，再请求模型，finally 切回 env |
-| H2 command 当前归还 | [exec_gpu](../../../psrl/workers/env_service/docker.py#L92)、[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L153) | 已支持结束与确认，不实现任意活进程的状态卸载 |
-| H3 排队及再次申请 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L49) | 当前按容量及先来先服务准入，没有预测模型完成时间的恢复预约 |
+| H1 模型请求边界 | [TruncatingTerminus2._query_llm](../../../examples/sciaccel_rl/agent.py) | 配置 lending 时先切 model 阶段，再请求模型，finally 切回 env |
+| H2 command 当前归还 | [exec_gpu](../../../psrl/workers/env_service/docker.py)、[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py) | 已支持结束与确认，不实现任意活进程的状态卸载 |
+| H3 排队及再次申请 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py) | 当前按容量及先来先服务准入，没有预测模型完成时间的恢复预约 |
 | H4 通用保存／恢复 | 尚无通用实现，拟接入第 11 节执行后端 | CPU 教学模型只计算时间，不证明可恢复任意 CUDA 上下文 |
-| 同卡交接 | [GpuLendingBinding._transition](../../../psrl/workers/env_service/lending.py#L51)、[freeze_gpu_lease](../../../psrl/workers/env_service/lending_node.py#L79) | 先确认环境 GPU 已归还，再交回模型。暂停容器不是把显存搬到主存 |
-| 模型侧释放／恢复 | [prepare_env_gpu](../../../psrl/workers/gen/gpu_handoff.py#L64)、[return_env_gpu](../../../psrl/workers/gen/gpu_handoff.py#L92) | 调用模型侧 sleep/wake，并关闭／恢复生成准入，不是环境进程通用检查点 |
+| 同卡交接 | [GpuLendingBinding._transition](../../../psrl/workers/env_service/lending.py)、[freeze_gpu_lease](../../../psrl/workers/env_service/lending_node.py) | 先确认环境 GPU 已归还，再交回模型。暂停容器不是把显存搬到主存 |
+| 模型侧释放／恢复 | [prepare_env_gpu](../../../psrl/workers/gen/gpu_handoff.py)、[return_env_gpu](../../../psrl/workers/gen/gpu_handoff.py) | 调用模型侧 sleep/wake，并关闭／恢复生成准入，不是环境进程通用检查点 |
 
-这些代码如果有理解上的问题，可以随时追问。跟着图读源码时，独立环境卡沿 H1 与 H2 两个并发分支，再走 H3/H4。当前 H4 只是在后续命令中重新运行程序，通用恢复尚无实现。同卡分支从 agent 的阶段通知进入 lending，再到节点确认和模型侧交接。失败会保留隔离状态，不能当作成功释放。当前 [EnvUnit 检查](../../../psrl/workers/env_service/types.py#L54) 仍禁止 command 与绑定推理副本的同卡借还直接组合。
+这些代码如果有理解上的问题，可以随时追问。跟着图读源码时，独立环境卡沿 H1 与 H2 两个并发分支，再走 H3/H4。当前 H4 只是在后续命令中重新运行程序，通用恢复尚无实现。同卡分支从 agent 的阶段通知进入 lending，再到节点确认和模型侧交接。失败会保留隔离状态，不能当作成功释放。当前 [EnvUnit 检查](../../../psrl/workers/env_service/types.py) 仍禁止 command 与绑定推理副本的同卡借还直接组合。
 
 **哪些任务可能有这种状态？** 下表是任务形态示例，不是声称当前 science 数据集已经逐一包含或实测过这些任务。
 
@@ -644,13 +662,12 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_gpu_susp
 
 当前 command 的主要目标仍是利用程序自然结束后本来就存在的空档，而不是为一个持续运行程序反复制造昂贵的销毁重建。前者的性能对照应只算相对 baseline 新增的开销，若 OFF 本来每次也启动同一个 Python 程序，就不能把双方共有的全部加载成本只归因于 ON。真正的状态卸载恢复，需要新契约和实测后再决定何时值得做。
 
-本节新增脚本实际 CPU 运行及 Ruff／格式检查通过，文档与总索引的 172 个本地链接、行号范围及章节锚点检查通过。全仓 pre-commit 在隔离副本仍因其他文件的既有 Ruff／格式与 prose-style 问题失败，日志保存在本节结果目录。未修改生产调度代码、未运行 GPU、未提交或推送。
 
 ## 14. unit 如何共享及命令能否跨机器
 
-> **局部核对范围**：2026-11-05，`0326d466` 加本次未提交代码。固定绑定仍是默认值，显式同机 command_gpu_pool 已支持下一条 direct 命令重新选卡。以下图区分两条分支；设备授权、分开记账与实机验证见[GPU 命令动态放置](../research-proposals/dynamic-command-placement.md#11-已实现的同机命令池与资源账本)。跨节点执行仍未实现。
+本节保存 2026-11-05、`0326d466` 加当时工作区修改的局部核对。固定绑定为默认值，显式同机 `command_gpu_pool` 支持为下一条 direct 命令重新选卡。以下图区分两条分支；后续机制与实机验证见[GPU 命令动态放置](../research-proposals/dynamic-command-placement.md#11-已实现的同机命令池与资源账本)。跨节点执行仍未实现。
 
-**结论**：unit 是预先配置在一台节点上的资源池，session 获得的是该池中的一份 lease 租约，不是独占整个池。多个环境可以共享同一个 unit，但需满足数量、CPU、主存和 GPU 策略约束。跨节点放置与命令阶段排队是两层不同决策。
+**结论**：unit 是预先配置在一台节点上的资源池；session 通过 lease 租约申请其中一份容量。多个环境可以共享同一个 unit，但需满足数量、CPU、主存和 GPU 策略约束。跨节点放置与命令阶段排队是两层不同决策。
 
 ```text
 [U1] 任务组 → 派发器选择有 worker 的节点
@@ -671,12 +688,12 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_gpu_susp
 
 | 编号 | 实际函数与职责 | 源码 |
 |---|---|---|
-| U1 | `EnvAwareDispatcher._assign_resources` 按节点容量和任务组需求选择 worker | [placement.py:188](../../../psrl/workers/env_service/placement.py#L188) |
-| U2 | `EnvServiceClient.acquire` 把执行 worker 的 node_ip 传给 Router | [client.py:159](../../../psrl/workers/env_service/client.py#L159) |
-| U3 | `EnvUnitLedger.try_admit` 过滤节点、选择主机 unit，按需求创建租约 | [ledger.py:113](../../../psrl/workers/env_service/ledger.py#L113) |
-| U4 | `EnvLease` 固定主机 unit 和节点，候选字段记录允许的同机设备全集 | [types.py:240](../../../psrl/workers/env_service/types.py#L240)、[overlay.py:140](../../../psrl/workers/env_service/overlay.py#L140) |
-| U5 | `acquire` 选候选，`_grant` 登记实际 GPU unit 后申请该节点设备权限 | [command_gpu.py:82](../../../psrl/workers/env_service/command_gpu.py#L82)、[command_gpu.py:143](../../../psrl/workers/env_service/command_gpu.py#L143) |
-| U6 | `_return` 确认实际设备归还，Router 会话释放负责最终清理 | [command_gpu.py:259](../../../psrl/workers/env_service/command_gpu.py#L259)、[router.py:241](../../../psrl/workers/env_service/router.py#L241) |
+| U1 | `EnvAwareDispatcher._assign_resources` 按节点容量和任务组需求选择 worker | [placement.py:188](../../../psrl/workers/env_service/placement.py) |
+| U2 | `EnvServiceClient.acquire` 把执行 worker 的 node_ip 传给 Router | [client.py:159](../../../psrl/workers/env_service/client.py) |
+| U3 | `EnvUnitLedger.try_admit` 过滤节点、选择主机 unit，按需求创建租约 | [ledger.py:113](../../../psrl/workers/env_service/ledger.py) |
+| U4 | `EnvLease` 固定主机 unit 和节点，候选字段记录允许的同机设备全集 | [types.py:240](../../../psrl/workers/env_service/types.py)、[overlay.py:140](../../../psrl/workers/env_service/overlay.py) |
+| U5 | `acquire` 选候选，`_grant` 登记实际 GPU unit 后申请该节点设备权限 | [command_gpu.py:82](../../../psrl/workers/env_service/command_gpu.py)、[command_gpu.py:143](../../../psrl/workers/env_service/command_gpu.py) |
+| U6 | `_return` 确认实际设备归还，Router 会话释放负责最终清理 | [command_gpu.py:259](../../../psrl/workers/env_service/command_gpu.py)、[router.py:241](../../../psrl/workers/env_service/router.py) |
 
 这些代码如果有理解上的问题，可以随时按编号追问。**跟着图读源码**：U1 先给任务组选 worker，U2 才提交受节点约束的会话申请，U3 返回租约，U4 建立环境，U5 在每次 GPU 命令时重复执行，U6 分别处理阶段归还与会话结束。不同环境可以并发，U1 的容量快照不是资源授权，最终仍需 U3/U5 检查。当前同题多条 rollout 通常按组派给同一个 worker，不是逐条命令在集群里重新选机器。
 

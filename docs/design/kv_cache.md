@@ -1,7 +1,8 @@
 # KV Cache Management
 
-PSRL configures LMCache for KV offloading and explicit cross-instance transfer.
-Backend configuration plumbing and a validated deployment are separate capabilities.
+> **Core idea:** KV cache stores intermediate attention results for a processed text prefix. Reusing it can avoid processing that prefix again. vLLM keeps GPU cache, and LMCache can retain or transfer eligible cache blocks beyond that local tier.
+
+The example below explains what is reused. Model-version compatibility and backend configuration determine whether a real request can obtain a cache hit.
 The remote configuration boundary below was checked against local commit `0326d46`
 on 2026-11-05. No remote service or GPU experiment was run.
 
@@ -9,8 +10,14 @@ on 2026-11-05. No remote service or GPU experiment was run.
 
 - [Motivation](#motivation)
 - [LMCache Integration](#lmcache-integration)
+  - [How It Works](#how-it-works)
 - [Configuration](#configuration)
+  - [Key Considerations](#key-considerations)
 - [P2P Cross-Instance Transfer](#p2p-cross-instance-transfer)
+  - [Architecture](#architecture)
+  - [Transfer Flow](#transfer-flow)
+  - [Configuration](#configuration-1)
+  - [Integration with Routing](#integration-with-routing)
 
 ## Motivation
 
@@ -18,7 +25,7 @@ In multi-turn agentic RL, each trajectory may accumulate **10,000+ tokens** acro
 1. Concatenating the full conversation history (prompt + all prior turns).
 2. Sending the full sequence to the rollout instance for the next generation step.
 
-Without KV cache reuse, each turn requires **full re-prefill** of all prior tokens, a massive waste of GPU compute that grows quadratically with conversation length. For a 10-turn trajectory with 1k tokens per turn, this means re-computing ~55k tokens of prefill across the trajectory, when only ~10k tokens of new computation are actually needed.
+Without KV cache reuse, each turn requires **full re-prefill** of all prior tokens, repeating computation on earlier context. In a teaching example with 10 turns adding 1k input tokens each, processing every full prefix touches `1k + 2k + ... + 10k = 55k` input-token positions. Perfect reuse would process only the 10k newly added positions. This counts repeated input positions, not total attention FLOPs or a measured speedup.
 
 PSRL integrates with [LMCache](https://github.com/LMCache/LMCache) to solve this problem, enabling KV cache offloading, prefix reuse, and cross-instance transfer.
 
@@ -30,9 +37,9 @@ PSRL integrates with [LMCache](https://github.com/LMCache/LMCache) to solve this
 
 LMCache operates as a secondary KV cache backend alongside vLLM's GPU-resident cache. When enabled:
 
-1. **Offloading**: After prefill, KV blocks are copied to the offload backend (CPU memory by default). This frees GPU memory for new requests while preserving computed attention state.
+1. **Offloading**: After prefill, KV blocks are copied to the offload backend (CPU memory by default). This retains a reusable copy outside GPU memory. The GPU cache can then evict eligible blocks according to its own lifecycle.
 
-2. **Hash-based chunk indexing**: KV blocks are indexed by **token content hashes** in fixed-size chunks (default: 256 tokens). This means matching is content-based, not position-based: if two requests share the same prefix tokens, they share KV cache regardless of when they were computed.
+2. **Hash-based chunk indexing**: KV blocks are indexed by **token content hashes** in fixed-size chunks (default: 256 tokens). This means matching is content-based, not position-based: if two requests share the same prefix tokens, they may reuse matching KV when the model version and other cache-identity conditions also match.
 
 3. **Prefix retrieval**: On subsequent turns, the system checks the offload backend for matching prefix KV. Matching blocks are loaded back to GPU, and only the new (unmatched) tokens require fresh prefill computation.
 
@@ -112,13 +119,18 @@ P2P transfer forces the choice: `enable_p2p: true` requires `multi_version_kv: t
 :::
 
 :::{tip}
-**Memory sizing**: A rule of thumb for `offload_size_gb` is:
+**Memory sizing**: estimate the KV payload using the number of key/value heads,
+which may differ from the number of query heads:
 
 $$
-\text{offload\_size\_gb} \approx \frac{\text{num\_layers} \times \text{hidden\_dim} \times \text{max\_concurrent\_seqs} \times \text{avg\_seq\_len} \times 2 \times 2}{10^9}
+\text{bytes} \approx 2 \times \text{layers} \times \text{KV heads} \times \text{head dimension} \times \text{cached tokens} \times \text{bytes per element}.
 $$
 
-The factor of 2×2 accounts for key+value and fp16 storage. For a 7B model with 32 layers, 4096 hidden dim, 64 concurrent sequences at 4k average length: ~64 GB across all TP ranks.
+The leading 2 counts keys and values. In a **teaching example**, 32 layers, 8 KV
+heads, head dimension 128, and fp16 storage need `2 × 32 × 8 × 128 × 2 = 131072`
+bytes per token, or 128 KiB. For 64 sequences of 4096 cached tokens, the payload
+is 32 GiB across all tensor-parallel ranks. Metadata, alignment and temporary
+buffers add overhead. Use the model's actual KV-head count and dtype.
 :::
 
 ---

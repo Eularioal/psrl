@@ -1,67 +1,89 @@
 # SWE Training
 
-Once the [data and Docker images](prepare) are in place, kick off training with the
-smallest reference recipe, FSDP2 on Qwen2.5-7B against the toy dataset:
+> **Goal:** run the SWE-smith reference recipe with task-specific Docker images and fresh-container grading. Prepare the data, model, agent configuration and allocated cluster before launching.
+
+## Contents
+
+- [Choose a valid data path](#choose-a-valid-data-path)
+- [SWE-specific knobs](#swe-specific-knobs)
+- [Reward function](#reward-function)
+  - [Toy path](#toy-path)
+- [Follow the implementation](#follow-the-implementation)
+
+## Choose a valid data path
+
+The current `MiniSWEEnvironment` expects a grader identity, problem metadata and a
+problem image. Use the [SWE-smith preparation path](prepare.md#path-b-swe-smith-py)
+or SWE-Gym preparation. The old toy data generator does not emit this full contract.
+Its retained scripts are useful for schema work, but are not a ready training path.
+
+The checked-in SWE-smith FSDP recipe uses **SWE-agent-LM-7B**, **4 nodes × 8 GPUs**,
+and staleness 1. Its filename retains the historical `qwen_7b` label, so read its
+actual model path rather than inferring the model from the filename.
 
 ```bash
-bash examples/mini_swe/fsdp_qwen_7b_dapo.sh        # default staleness=2
-bash examples/mini_swe/fsdp_qwen_7b_dapo.sh 3      # override staleness
+bash examples/mini_swe/fsdp_qwen_7b_swe_smith.sh
+# Optional: change the version-age bound to 2.
+bash examples/mini_swe/fsdp_qwen_7b_swe_smith.sh 2
 ```
 
-The other launch scripts (`fsdp_qwen_7b_swe_smith.sh`, `fsdp_qwen_7b_swe_gym.sh`,
-`megatron_qwen_*_swe_*.sh`) follow the same structure, switching paths only changes
-the dataset, the agent-config YAML, and the cluster layout, not the agentic-RL knobs
-documented below.
-
----
+The script expects `${PSRL_WORKSPACE}/env/psrl.sh`, the model at
+`${PSRL_WORKSPACE}/models/SWE-agent-LM-7B`, prepared parquets and per-problem images.
+Check the [launch script](../../../../examples/mini_swe/fsdp_qwen_7b_swe_smith.sh)
+before allocating resources. Other scripts may use different models, prompt
+formats, layouts and reward settings.
 
 ## SWE-specific knobs
 
-On top of the [common agentic-RL knobs](../index) (`multi_turn.enable`,
-`multi_turn.max_turns`, `agent.env.name`, `agent.data.name`, `data.return_raw_chat`),
-the launch script pins the agent loop to mini-SWE-agent's Docker-sandboxed bash
-environment.
+The [common agentic knobs](../index.md#common-launch-script-knobs) select the loop
+and cap interaction length. This recipe then chooses:
 
-| Knob | Value in `fsdp_qwen_7b_dapo.sh` | Role |
-|---|---|---|
-| `*.rollout.agent.env.name` | `mini_swe_env` | Selects `MiniSWEEnvironment` (Docker bash sandbox) |
-| `*.rollout.agent.data.name` | `mini_swe_agent_data` | Selects `MiniSWEAgentData` (bridges `DefaultAgent` ↔ PSRL via thread-safe queues) |
-| `*.rollout.agent.agent_loop_config_path` | `examples/mini_swe/config/simple_agent_config.yaml` | mini-SWE-agent YAML (system prompt, command parser, max steps). Swap to `swebench_agent_config.yaml` for SWE-smith / SWE-Gym. |
-| `*.rollout.agent.num_workers` | `${NNODES}` | Parallel agent worker threads per rollout instance, each one runs its own Docker container, so set this to the number of nodes (or available cores) |
-| `custom_reward_function.path` / `.name` | `examples/mini_swe/reward.py` / `compute_score` | Patch-grading reward (toy) or F2P/P2P test-execution reward (SWE-smith / SWE-Gym) |
+| Knob | SWE-smith value or role |
+|---|---|
+| `*.rollout.agent.env.name` | `mini_swe_env`, parses each problem and owns cleanup metadata |
+| `*.rollout.agent.data.name` | `mini_swe_agent_data`, converts run and grading results into training fields |
+| `*.rollout.agent.agent_loop_config_path` | `swebench_agent_config_full_sweagent.yaml`, the prompt/command format for this model |
+| `*.rollout.agent.num_workers` | Number of AgentLoopWorker actors, not a per-instance Docker-container limit |
+| Reward manager settings | Select `examples/mini_swe/reward.py:compute_score` and `reward_mode=binary` |
 
-The `agent_loop_config_path` is the field that decides *which* SWE flavour the agent
-runs in (toy vs. SWE-smith vs. SWE-Gym), picking the wrong YAML is the most common
-silent misconfiguration. The launch scripts wire this up automatically.
-
----
+For example, a correct YAML prompt format lets the model produce a command the
+agent parser can execute. Selecting an incompatible format can stop interaction
+before any patch is tested, even when Docker and model inference are healthy.
 
 ## Reward function
 
-`compute_score` (in `examples/mini_swe/reward.py`) returns different `score` / `acc`
-pairs depending on the dataset path.
+For SWE-smith, SWE-Gym and Verified, the grader applies the patch in a fresh
+container from the problem image and runs **FAIL_TO_PASS** tests (the bug should be
+fixed) and **PASS_TO_PASS** tests (existing behavior should still work).
 
-### SWE-smith / SWE-Gym / Verified
+With the script's `reward_mode=binary`, the actual reward function returns:
 
 | Condition | `score` | `acc` |
 |---|---|---|
-| All F2P pass, no P2P regressions | `+1.0` | `1.0` |
-| Patch modified test/config files (policy violation) | `0.0` | `0.0` |
-| Not resolved (tests failed) | `-1.0` | `0.0` |
-| No patch / 0 turns (aborted) | `0.0` | `0.0` |
+| Zero turns, such as an aborted run | `0.0` | `0.0` |
+| Grader reports resolved | `+1.0` | `1.0` |
+| Other unresolved run with at least one turn | `-1.0` | `0.0` |
 
-Grading runs in a **fresh** Docker container started from the same per-problem image,
-so it is independent of any side effects from the agent's exploration.
+For a teaching example, a submitted patch that fixes two failing tests and keeps
+all existing tests passing can be marked resolved and receive `+1`. A patch that
+fails the full resolution condition receives `-1` in binary mode, even if some
+tests pass. Other modes (`partial_credit`, `test_ratio`, `shaped`) expose more
+partial feedback and have their own policy-violation handling.
 
 ### Toy path
 
-Graduated scoring from `-0.1` (premature exit) to `+1.0` (exact patch match), with
-partial credit for file-level and line-level overlap.
+The reward module retains patch-overlap scoring for toy data. This is a separate
+reward branch, and does not make the old toy dataset compatible with the current
+environment schema.
 
----
+## Follow the implementation
 
-```{seealso}
-Full launch-script parameter reference, agent-YAML schema, evaluation guide, and
-troubleshooting:
-[`examples/mini_swe/README.md`](https://github.com/psrl-project/psrl/blob/main/examples/mini_swe/README.md).
-```
+- [Environment metadata validation](../../../../psrl/environments/mini_swe_env.py#L143): inspect the per-problem input contract.
+- [MiniSWEAgentLoopV1.run](../../../../psrl/workers/agent_loop/loops/mini_swe_agent_loop_v1.py#L79): follow session creation, execution and trajectory conversion.
+- [SWE reward implementation](../../../../examples/mini_swe/reward.py#L135): check the exact scoring mode before comparing scores.
+- [Complete workflow and CPU exercise](../../../overview/reading-guide.md): understand how the resulting samples reach training.
+
+This page's launch values and reward branches were checked against local `6aa328d`
+plus existing uncommitted changes on 2026-11-16. No training was rerun. The
+[recipe overview](index.md) provides the full interaction path and the
+[repository recipe](../../../../examples/mini_swe/README.md) covers operational details.

@@ -1,0 +1,1253 @@
+{
+  "date": "2026-11-11",
+  "base_commit": "6aa328d56eff746c2ae6d9fd766b2f3f76b4a670",
+  "includes_uncommitted_changes": true,
+  "scope": "19 non-Kaggle AIRS task identities with bounded real data",
+  "official_full_score": false,
+  "manifest": {
+    "revision": "18e4f1d501069cf7d7e2740d81c2ca748c56a6a1",
+    "local_evaluation": true,
+    "tasks": [
+      {
+        "task": "CodeGenerationAPPSPassAt5",
+        "train_rows": 64,
+        "test_rows": 2,
+        "submission_rows": 2,
+        "kind": "code",
+        "metric": "Pass@5",
+        "public_columns": [
+          "question",
+          "starter_code"
+        ],
+        "evaluator_sha256": "dedcaeaa505c5f6faf7a3cb22180a1c25849036e20d13fb68168ba7407093a3d"
+      },
+      {
+        "task": "CodeRetrievalCodeXGlueMRR",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "retrieval",
+        "metric": "MRR",
+        "public_columns": [
+          "query"
+        ],
+        "evaluator_sha256": "0c82ef79ec95e9858ac914124a81b1248afaac3533bad4055e303cfbb152707b",
+        "search_corpus_rows": 19210
+      },
+      {
+        "task": "CoreferenceResolutionSuperGLUEWSCAccuracy",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "classification",
+        "metric": "Accuracy",
+        "public_columns": [
+          "text",
+          "span1_index",
+          "span2_index",
+          "span1_text",
+          "span2_text"
+        ],
+        "evaluator_sha256": "19e061944ba9088c90f6b1896fd174a57a2b996e8e3db590a10657aa9554005c"
+      },
+      {
+        "task": "CoreferenceResolutionWinograndeAccuracy",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "classification",
+        "metric": "Accuracy",
+        "public_columns": [
+          "sentence",
+          "option1",
+          "option2"
+        ],
+        "evaluator_sha256": "e52c4f0a5f4efdd8b879d524116f6c9df75f8d2bfcf14771d20627832fb7888f"
+      },
+      {
+        "task": "CvMolecularPropertyPredictionQm9MeanAbsoluteError",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "regression",
+        "metric": "MeanAbsoluteError",
+        "public_columns": [
+          "pos",
+          "atomic_numbers",
+          "A",
+          "B",
+          "C",
+          "tags",
+          "natoms",
+          "id",
+          "composition"
+        ],
+        "evaluator_sha256": "0c11fc35a89a6ced5ce4f5f8d4e5837bdf35c068317719eefbdc8bb3e8073e8c"
+      },
+      {
+        "task": "GMolecularPropertyPredictionQm9MeanAbsoluteError",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "regression",
+        "metric": "MeanAbsoluteError",
+        "public_columns": [
+          "pos",
+          "atomic_numbers",
+          "A",
+          "B",
+          "C",
+          "tags",
+          "natoms",
+          "id",
+          "composition"
+        ],
+        "evaluator_sha256": "9ad4657ace9ac0443ddd11dea879d536c30b5cc9def7683aff607ad286ff6ae3"
+      },
+      {
+        "task": "GraphRegressionZincMae",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "regression",
+        "metric": "MAE",
+        "public_columns": [
+          "node_feat",
+          "edge_index",
+          "edge_attr",
+          "num_nodes"
+        ],
+        "evaluator_sha256": "d0a9f42bea7fa68379ccd3a57e443492dc09b871040b9662870a0f4f0504ef52"
+      },
+      {
+        "task": "MathQuestionAnsweringSVAMPAccuracy",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "text",
+        "metric": "Accuracy",
+        "public_columns": [
+          "ID",
+          "Body",
+          "Question",
+          "question_concat"
+        ],
+        "evaluator_sha256": "22a2f5407ce9dfc924a00010476f24752f8eb40af2c682307d4b993c6645a3e9"
+      },
+      {
+        "task": "QuestionAnsweringDuoRCAccuracy",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "duorc",
+        "metric": "Accuracy",
+        "public_columns": [
+          "plot_id",
+          "plot",
+          "title",
+          "question",
+          "no_answer"
+        ],
+        "evaluator_sha256": "979abfd39c02585324dd447b0583081cf3a9c08fc0c3b6c547151923731991a7"
+      },
+      {
+        "task": "QuestionAnsweringEli5RougeL",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "text",
+        "metric": "RougeL",
+        "public_columns": [
+          "q_id",
+          "title",
+          "selftext",
+          "document",
+          "subreddit",
+          "url",
+          "title_urls",
+          "selftext_urls",
+          "answers_urls"
+        ],
+        "evaluator_sha256": "a21fe316b28cbcdd12bf64bb69742286714662312f2c44f4768c759be32134af"
+      },
+      {
+        "task": "QuestionAnsweringFinqaAccuracy",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "text",
+        "metric": "Accuracy",
+        "public_columns": [
+          "post_text",
+          "pre_text",
+          "question",
+          "table"
+        ],
+        "evaluator_sha256": "d63d389e7eef3fd4b62a4c4d503e5d6a2bff2a18caf35d9cdbc1e62cefedbd0f"
+      },
+      {
+        "task": "R2AbsMolecularPropertyPredictionQm9MeanAbsoluteError",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "regression",
+        "metric": "MeanAbsoluteError",
+        "public_columns": [
+          "pos",
+          "atomic_numbers",
+          "A",
+          "B",
+          "C",
+          "tags",
+          "natoms",
+          "id",
+          "composition"
+        ],
+        "evaluator_sha256": "2b6c59b032e0018dbdb38938274499909b6a9b56a4277d2ac437d540306c39b1"
+      },
+      {
+        "task": "ReadingComprehensionSquadExactMatch",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "text",
+        "metric": "ExactMatch",
+        "public_columns": [
+          "title",
+          "context",
+          "question"
+        ],
+        "evaluator_sha256": "1d1ba5a0c61fe17e0fc8ce6130f5be203557d7580dee87ad2c29a1f8d8c93464"
+      },
+      {
+        "task": "SentimentAnalysisYelpReviewFullAccuracy",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "classification",
+        "metric": "Accuracy",
+        "public_columns": [
+          "text"
+        ],
+        "evaluator_sha256": "a5dff4f63285aebe190a752b2c2e4e7e913412148af257be3345a2602239368d"
+      },
+      {
+        "task": "TextualClassificationSickAccuracy",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "classification",
+        "metric": "Accuracy",
+        "public_columns": [
+          "sentence_A",
+          "sentence_B"
+        ],
+        "evaluator_sha256": "8cec9852726e5722ae5f1040efa1c28c859c876bbe7668e46c35e577e4c8fdd6"
+      },
+      {
+        "task": "TextualSimilaritySickSpearmanCorrelation",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "regression",
+        "metric": "SpearmanCorrelation",
+        "public_columns": [
+          "sentence_A",
+          "sentence_B"
+        ],
+        "evaluator_sha256": "e9425d39ef2ddeefea85999e976324a6f87bfb60401c9a40ac525900dcd1612d"
+      },
+      {
+        "task": "TimeSeriesForecastingRideshareMAE",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 120,
+        "kind": "regression",
+        "metric": "MAE",
+        "public_columns": [
+          "target"
+        ],
+        "evaluator_sha256": "4737712817a13a3a8745473a2472bd327f1e1d59dc3110df19b7c61d0a76e82d"
+      },
+      {
+        "task": "TimeSeriesForecastingSolarWeeklyMAE",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "regression",
+        "metric": "MAE",
+        "public_columns": [
+          "target"
+        ],
+        "evaluator_sha256": "cc96787d9f907efbb6645840a1d4daa41c073057384c761b462d1da249690ae1"
+      },
+      {
+        "task": "U0MolecularPropertyPredictionQm9MeanAbsoluteError",
+        "train_rows": 64,
+        "test_rows": 8,
+        "submission_rows": 8,
+        "kind": "regression",
+        "metric": "MeanAbsoluteError",
+        "public_columns": [
+          "pos",
+          "atomic_numbers",
+          "A",
+          "B",
+          "C",
+          "tags",
+          "natoms",
+          "id",
+          "composition"
+        ],
+        "evaluator_sha256": "15ed88526f018fbbba62a8a389638a80241a35920429fcf129af4023f2142980"
+      }
+    ],
+    "deferred": [
+      "TimeSeriesForecastingKaggleWebTrafficMASE"
+    ]
+  },
+  "quick_validation": {
+    "tag": "airs-3e6ee96144",
+    "started": 1794397400.809193,
+    "gpu_before": {
+      "uuid": "GPU-cd83b1a8-7650-5cec-d666-4f2f535eeb4b",
+      "name": "NVIDIA H20",
+      "minor": 0,
+      "total_mb": 97871.0,
+      "used_mb": 0.1875,
+      "pids": []
+    },
+    "tasks": [
+      {
+        "task": "CodeGenerationAPPSPassAt5",
+        "started": 1794397411.2984626,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 2,
+          "optimizer_steps": 0,
+          "peak_cuda_bytes": 33589760,
+          "kind": "code"
+        },
+        "metrics": {
+          "Pass@5": 0.0
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 2, \"optimizer_steps\": 0, \"peak_cuda_bytes\": 33589760, \"kind\": \"code\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 7.548181310296059
+        },
+        "passed": true,
+        "finished": 1794397464.850702,
+        "reward_adapter": {
+          "score": 0.0,
+          "reward_extra_info": {
+            "airs_task_id": "CodeGenerationAPPSPassAt5",
+            "airs_metric": "Pass@5",
+            "airs_raw_metric": 0.0,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.0
+          }
+        }
+      },
+      {
+        "task": "CodeRetrievalCodeXGlueMRR",
+        "started": 1794397464.852622,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 19210,
+          "prediction_rows": 8,
+          "optimizer_steps": 0,
+          "peak_cuda_bytes": 44009984,
+          "kind": "retrieval"
+        },
+        "metrics": {
+          "MRR": 0.0
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 19210, \"prediction_rows\": 8, \"optimizer_steps\": 0, \"peak_cuda_bytes\": 44009984, \"kind\": \"retrieval\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 16.108256785199046
+        },
+        "passed": true,
+        "finished": 1794397485.512527,
+        "reward_adapter": {
+          "score": 0.0,
+          "reward_extra_info": {
+            "airs_task_id": "CodeRetrievalCodeXGlueMRR",
+            "airs_metric": "MRR",
+            "airs_raw_metric": 0.0,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.0
+          }
+        }
+      },
+      {
+        "task": "CoreferenceResolutionSuperGLUEWSCAccuracy",
+        "started": 1794397485.5149941,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 68199936,
+          "kind": "classification"
+        },
+        "metrics": {
+          "Accuracy": 0.5
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 68199936, \"kind\": \"classification\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 10.871605712920427
+        },
+        "passed": true,
+        "finished": 1794397499.4198134,
+        "reward_adapter": {
+          "score": 0.08468005689665767,
+          "reward_extra_info": {
+            "airs_task_id": "CoreferenceResolutionSuperGLUEWSCAccuracy",
+            "airs_metric": "Accuracy",
+            "airs_raw_metric": 0.5,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.08468005689665767
+          }
+        }
+      },
+      {
+        "task": "CoreferenceResolutionWinograndeAccuracy",
+        "started": 1794397499.4226773,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 68199936,
+          "kind": "classification"
+        },
+        "metrics": {
+          "Accuracy": 0.625
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 68199936, \"kind\": \"classification\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 12.735099408775568
+        },
+        "passed": true,
+        "finished": 1794397516.1359477,
+        "reward_adapter": {
+          "score": 0.2720933260895178,
+          "reward_extra_info": {
+            "airs_task_id": "CoreferenceResolutionWinograndeAccuracy",
+            "airs_metric": "Accuracy",
+            "airs_raw_metric": 0.625,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.2720933260895178
+          }
+        }
+      },
+      {
+        "task": "CvMolecularPropertyPredictionQm9MeanAbsoluteError",
+        "started": 1794397516.1389396,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 67151872,
+          "kind": "regression"
+        },
+        "metrics": {
+          "MeanAbsoluteError": 3.862074851989746
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 67151872, \"kind\": \"regression\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 10.530274419113994
+        },
+        "passed": true,
+        "finished": 1794397535.6904702,
+        "reward_adapter": {
+          "score": 0.4041201537595487,
+          "reward_extra_info": {
+            "airs_task_id": "CvMolecularPropertyPredictionQm9MeanAbsoluteError",
+            "airs_metric": "MeanAbsoluteError",
+            "airs_raw_metric": 3.862074851989746,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.4041201537595487
+          }
+        }
+      },
+      {
+        "task": "GMolecularPropertyPredictionQm9MeanAbsoluteError",
+        "started": 1794397535.6931167,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 67151872,
+          "kind": "regression"
+        },
+        "metrics": {
+          "MeanAbsoluteError": 624129250.0
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 67151872, \"kind\": \"regression\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 10.87463429197669
+        },
+        "passed": true,
+        "finished": 1794397556.0136409,
+        "reward_adapter": {
+          "score": 0.0,
+          "reward_extra_info": {
+            "airs_task_id": "GMolecularPropertyPredictionQm9MeanAbsoluteError",
+            "airs_metric": "MeanAbsoluteError",
+            "airs_raw_metric": 624129250.0,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.0
+          }
+        }
+      },
+      {
+        "task": "GraphRegressionZincMae",
+        "started": 1794397556.01665,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 67151872,
+          "kind": "regression"
+        },
+        "metrics": {
+          "MAE": 1.428567672148347
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 67151872, \"kind\": \"regression\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 16.813188776373863
+        },
+        "passed": true,
+        "finished": 1794397577.5511425,
+        "reward_adapter": {
+          "score": 0.3018037425052693,
+          "reward_extra_info": {
+            "airs_task_id": "GraphRegressionZincMae",
+            "airs_metric": "MAE",
+            "airs_raw_metric": 1.428567672148347,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.3018037425052693
+          }
+        }
+      },
+      {
+        "task": "MathQuestionAnsweringSVAMPAccuracy",
+        "started": 1794397577.5543883,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 0,
+          "peak_cuda_bytes": 33594368,
+          "kind": "text"
+        },
+        "metrics": {
+          "Accuracy": 0.0
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 0, \"peak_cuda_bytes\": 33594368, \"kind\": \"text\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 7.198791710659862
+        },
+        "passed": true,
+        "finished": 1794397587.5153813,
+        "reward_adapter": {
+          "score": 0.0,
+          "reward_extra_info": {
+            "airs_task_id": "MathQuestionAnsweringSVAMPAccuracy",
+            "airs_metric": "Accuracy",
+            "airs_raw_metric": 0.0,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.0
+          }
+        }
+      },
+      {
+        "task": "QuestionAnsweringDuoRCAccuracy",
+        "started": 1794397587.5183647,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 0,
+          "peak_cuda_bytes": 33594368,
+          "kind": "duorc"
+        },
+        "metrics": {
+          "Accuracy": 0.5
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 0, \"peak_cuda_bytes\": 33594368, \"kind\": \"duorc\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 8.006435640156269
+        },
+        "passed": true,
+        "finished": 1794397598.509847,
+        "reward_adapter": {
+          "score": 1.0,
+          "reward_extra_info": {
+            "airs_task_id": "QuestionAnsweringDuoRCAccuracy",
+            "airs_metric": "Accuracy",
+            "airs_raw_metric": 0.5,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 1.0
+          }
+        }
+      },
+      {
+        "task": "QuestionAnsweringEli5RougeL",
+        "started": 1794397598.5128694,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 0,
+          "peak_cuda_bytes": 33594368,
+          "kind": "text"
+        },
+        "metrics": {
+          "RougeL": 0.08817717480107157
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 0, \"peak_cuda_bytes\": 33594368, \"kind\": \"text\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 7.0468713622540236
+        },
+        "passed": true,
+        "finished": 1794397611.8576376,
+        "reward_adapter": {
+          "score": 0.28902771480460193,
+          "reward_extra_info": {
+            "airs_task_id": "QuestionAnsweringEli5RougeL",
+            "airs_metric": "RougeL",
+            "airs_raw_metric": 0.08817717480107157,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.28902771480460193
+          }
+        }
+      },
+      {
+        "task": "QuestionAnsweringFinqaAccuracy",
+        "started": 1794397611.8607142,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 0,
+          "peak_cuda_bytes": 33594368,
+          "kind": "text"
+        },
+        "metrics": {
+          "Accuracy": 0.0
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 0, \"peak_cuda_bytes\": 33594368, \"kind\": \"text\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 8.254706120118499
+        },
+        "passed": true,
+        "finished": 1794397624.6699867,
+        "reward_adapter": {
+          "score": 0.0,
+          "reward_extra_info": {
+            "airs_task_id": "QuestionAnsweringFinqaAccuracy",
+            "airs_metric": "Accuracy",
+            "airs_raw_metric": 0.0,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.0
+          }
+        }
+      },
+      {
+        "task": "R2AbsMolecularPropertyPredictionQm9MeanAbsoluteError",
+        "started": 1794397624.6734467,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 67151872,
+          "kind": "regression"
+        },
+        "metrics": {
+          "MeanAbsoluteError": 176.2069091796875
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 67151872, \"kind\": \"regression\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 11.122111540287733
+        },
+        "passed": true,
+        "finished": 1794397645.1633847,
+        "reward_adapter": {
+          "score": 0.2962762769552658,
+          "reward_extra_info": {
+            "airs_task_id": "R2AbsMolecularPropertyPredictionQm9MeanAbsoluteError",
+            "airs_metric": "MeanAbsoluteError",
+            "airs_raw_metric": 176.2069091796875,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.2962762769552658
+          }
+        }
+      },
+      {
+        "task": "ReadingComprehensionSquadExactMatch",
+        "started": 1794397645.1665308,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 0,
+          "peak_cuda_bytes": 33594368,
+          "kind": "text"
+        },
+        "metrics": {
+          "ExactMatch": 0.0
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 0, \"peak_cuda_bytes\": 33594368, \"kind\": \"text\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 7.448082365095615
+        },
+        "passed": true,
+        "finished": 1794397657.169116,
+        "reward_adapter": {
+          "score": 0.0,
+          "reward_extra_info": {
+            "airs_task_id": "ReadingComprehensionSquadExactMatch",
+            "airs_metric": "ExactMatch",
+            "airs_raw_metric": 0.0,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.0
+          }
+        }
+      },
+      {
+        "task": "SentimentAnalysisYelpReviewFullAccuracy",
+        "started": 1794397657.1722581,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 68205056,
+          "kind": "classification"
+        },
+        "metrics": {
+          "Accuracy": 0.25
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 68205056, \"kind\": \"classification\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 10.519360393285751
+        },
+        "passed": true,
+        "finished": 1794397670.6605244,
+        "reward_adapter": {
+          "score": 0.06647663520775329,
+          "reward_extra_info": {
+            "airs_task_id": "SentimentAnalysisYelpReviewFullAccuracy",
+            "airs_metric": "Accuracy",
+            "airs_raw_metric": 0.25,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.06647663520775329
+          }
+        }
+      },
+      {
+        "task": "TextualClassificationSickAccuracy",
+        "started": 1794397670.6632936,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 68201984,
+          "kind": "classification"
+        },
+        "metrics": {
+          "Accuracy": 0.75
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 68201984, \"kind\": \"classification\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 10.770528212189674
+        },
+        "passed": true,
+        "finished": 1794397689.7791986,
+        "reward_adapter": {
+          "score": 0.5596034297279355,
+          "reward_extra_info": {
+            "airs_task_id": "TextualClassificationSickAccuracy",
+            "airs_metric": "Accuracy",
+            "airs_raw_metric": 0.75,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.5596034297279355
+          }
+        }
+      },
+      {
+        "task": "TextualSimilaritySickSpearmanCorrelation",
+        "started": 1794397689.782583,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 67151872,
+          "kind": "regression"
+        },
+        "metrics": {
+          "SpearmanCorrelation": -0.047905050476530354
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 67151872, \"kind\": \"regression\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 10.469643872231245
+        },
+        "passed": true,
+        "finished": 1794397705.852212,
+        "reward_adapter": {
+          "score": 0.173970828644716,
+          "reward_extra_info": {
+            "airs_task_id": "TextualSimilaritySickSpearmanCorrelation",
+            "airs_metric": "SpearmanCorrelation",
+            "airs_raw_metric": -0.047905050476530354,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.173970828644716
+          }
+        }
+      },
+      {
+        "task": "TimeSeriesForecastingRideshareMAE",
+        "started": 1794397705.855547,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 945,
+          "prediction_rows": 120,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 69637632,
+          "kind": "regression"
+        },
+        "metrics": {
+          "MAE": 9.091476668440414
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 945, \"prediction_rows\": 120, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 69637632, \"kind\": \"regression\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 12.032113749533892
+        },
+        "passed": true,
+        "finished": 1794397721.5787148,
+        "reward_adapter": {
+          "score": 0.3709037315705179,
+          "reward_extra_info": {
+            "airs_task_id": "TimeSeriesForecastingRideshareMAE",
+            "airs_metric": "MAE",
+            "airs_raw_metric": 9.091476668440414,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.3709037315705179
+          }
+        }
+      },
+      {
+        "task": "TimeSeriesForecastingSolarWeeklyMAE",
+        "started": 1794397721.5814376,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 68208128,
+          "kind": "regression"
+        },
+        "metrics": {
+          "MAE": 2575.227117919922
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 68208128, \"kind\": \"regression\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 16.789602799341083
+        },
+        "passed": true,
+        "finished": 1794397744.5652587,
+        "reward_adapter": {
+          "score": 0.6348446724684728,
+          "reward_extra_info": {
+            "airs_task_id": "TimeSeriesForecastingSolarWeeklyMAE",
+            "airs_metric": "MAE",
+            "airs_raw_metric": 2575.227117919922,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.6348446724684728
+          }
+        }
+      },
+      {
+        "task": "U0MolecularPropertyPredictionQm9MeanAbsoluteError",
+        "started": 1794397744.568809,
+        "gpu": {
+          "device": "NVIDIA H20",
+          "train_rows": 64,
+          "prediction_rows": 8,
+          "optimizer_steps": 3,
+          "peak_cuda_bytes": 67151872,
+          "kind": "regression"
+        },
+        "metrics": {
+          "MeanAbsoluteError": 624100500.0
+        },
+        "baseline": {
+          "stdout": "{\"device\": \"NVIDIA H20\", \"train_rows\": 64, \"prediction_rows\": 8, \"optimizer_steps\": 3, \"peak_cuda_bytes\": 67151872, \"kind\": \"regression\"}\n\n",
+          "exit_code": 0,
+          "timed_out": false,
+          "duration_s": 11.02486664429307
+        },
+        "passed": true,
+        "finished": 1794397764.6374478,
+        "reward_adapter": {
+          "score": 0.0,
+          "reward_extra_info": {
+            "airs_task_id": "U0MolecularPropertyPredictionQm9MeanAbsoluteError",
+            "airs_metric": "MeanAbsoluteError",
+            "airs_raw_metric": 624100500.0,
+            "airs_submit_count": 1,
+            "airs_validate_count": 0,
+            "airs_zero_reason": "",
+            "airs_normalized_score": 0.0
+          }
+        }
+      }
+    ],
+    "sources": {
+      "psrl": "/apdcephfs_zwfy10_303541817/share_303541817/lw/psrl/psrl/__init__.py",
+      "verl": "/apdcephfs_zwfy10_303541817/share_303541817/lw/.verification-deps/verl/__init__.py",
+      "transfer_queue": "/apdcephfs_zwfy10/share_303541817/lhy/psrl/third_party/TransferQueue/transfer_queue/__init__.py"
+    },
+    "ray_nodes": [
+      {
+        "NodeID": "a1d566875f4cef3ef6c2cda95e241e571fd7022512bd36cf5e6d8165",
+        "Alive": true,
+        "NodeManagerAddress": "28.49.55.40",
+        "NodeManagerHostname": "TENCENT64.site",
+        "NodeManagerPort": 43357,
+        "ObjectManagerPort": 33809,
+        "ObjectStoreSocketName": "/tmp/airs-3e6ee96144/session_2026-11-11_19-43-20_914085_1025630/sockets/plasma_store",
+        "RayletSocketName": "/tmp/airs-3e6ee96144/session_2026-11-11_19-43-20_914085_1025630/sockets/raylet",
+        "MetricsExportPort": 39674,
+        "NodeName": "28.49.55.40",
+        "RuntimeEnvAgentPort": 63837,
+        "DeathReason": 0,
+        "DeathReasonMessage": "",
+        "alive": true,
+        "Resources": {
+          "node:__internal_head__": 1.0,
+          "accelerator_type:H20": 1.0,
+          "CPU": 8.0,
+          "GPU": 1.0,
+          "object_store_memory": 200000000000.0,
+          "node:28.49.55.40": 1.0,
+          "memory": 1942418804736.0
+        },
+        "Labels": {
+          "ray.io/accelerator-type": "H20",
+          "ray.io/node-id": "a1d566875f4cef3ef6c2cda95e241e571fd7022512bd36cf5e6d8165"
+        }
+      }
+    ],
+    "finished": 1794397766.492694,
+    "gpu_after": {
+      "uuid": "GPU-cd83b1a8-7650-5cec-d666-4f2f535eeb4b",
+      "name": "NVIDIA H20",
+      "minor": 0,
+      "total_mb": 97871.0,
+      "used_mb": 0.1875,
+      "pids": []
+    },
+    "containers_after": [],
+    "passed": true
+  },
+  "policy_pipeline": {
+    "status": "passed",
+    "representative_task": "TextualClassificationSickAccuracy",
+    "model": "Qwen3.5-4B",
+    "node": "28.49.55.40",
+    "training_gpus": 2,
+    "generation_gpus": 1,
+    "environment_gpus": 1,
+    "steps": [
+      {
+        "step": 1,
+        "actor/loss": 0.0,
+        "actor/grad_norm": 0.0,
+        "actor/lr": 1e-06,
+        "critic/rewards/mean": 0.5596034526824951,
+        "critic/rewards/min": 0.5596034526824951,
+        "critic/rewards/max": 0.5596034526824951,
+        "termination/trained_tokens": 672.0,
+        "termination/masked_sample_fraction": 0.0,
+        "group/zero_variance_fraction": 1.0,
+        "termination/finished/fraction": 1.0,
+        "termination/finished/score_mean": 0.5596034526824951,
+        "timing_s/update_actor": 17.393031494691968,
+        "timing_s/step": 212.1302218362689
+      }
+    ],
+    "trajectory_versions": {
+      "v0": {
+        "0": {
+          "token_chunks": 3,
+          "cuda_baseline_observed": true,
+          "accuracy_075_observed": true,
+          "files": [
+            "benchmark-runs/airs-gpu-20261111/policy-acceptance/psrl_logs/GRPO-sciaccel-Qwen35-4B-pluto-cooling-chemistry_repair_easy-L1/trajectories/v0/0_0.txt",
+            "benchmark-runs/airs-gpu-20261111/policy-acceptance/psrl_logs/GRPO-sciaccel-Qwen35-4B-pluto-cooling-chemistry_repair_easy-L1/trajectories/v0/0_1.txt",
+            "benchmark-runs/airs-gpu-20261111/policy-acceptance/psrl_logs/GRPO-sciaccel-Qwen35-4B-pluto-cooling-chemistry_repair_easy-L1/trajectories/v0/0_2.txt"
+          ]
+        },
+        "1": {
+          "token_chunks": 3,
+          "cuda_baseline_observed": true,
+          "accuracy_075_observed": true,
+          "files": [
+            "benchmark-runs/airs-gpu-20261111/policy-acceptance/psrl_logs/GRPO-sciaccel-Qwen35-4B-pluto-cooling-chemistry_repair_easy-L1/trajectories/v0/1_0.txt",
+            "benchmark-runs/airs-gpu-20261111/policy-acceptance/psrl_logs/GRPO-sciaccel-Qwen35-4B-pluto-cooling-chemistry_repair_easy-L1/trajectories/v0/1_1.txt",
+            "benchmark-runs/airs-gpu-20261111/policy-acceptance/psrl_logs/GRPO-sciaccel-Qwen35-4B-pluto-cooling-chemistry_repair_easy-L1/trajectories/v0/1_2.txt"
+          ]
+        }
+      },
+      "v1": {
+        "2": {
+          "token_chunks": 3,
+          "cuda_baseline_observed": true,
+          "accuracy_075_observed": true,
+          "files": [
+            "benchmark-runs/airs-gpu-20261111/policy-acceptance/psrl_logs/GRPO-sciaccel-Qwen35-4B-pluto-cooling-chemistry_repair_easy-L1/trajectories/v1/2_0.txt",
+            "benchmark-runs/airs-gpu-20261111/policy-acceptance/psrl_logs/GRPO-sciaccel-Qwen35-4B-pluto-cooling-chemistry_repair_easy-L1/trajectories/v1/2_1.txt",
+            "benchmark-runs/airs-gpu-20261111/policy-acceptance/psrl_logs/GRPO-sciaccel-Qwen35-4B-pluto-cooling-chemistry_repair_easy-L1/trajectories/v1/2_2.txt"
+          ]
+        }
+      }
+    },
+    "v1_published": true,
+    "v1_pulled": true,
+    "launch": {
+      "started": 1794400326.7901402,
+      "command": [
+        "bash",
+        "examples/airs_bench/gpu_train.sh",
+        "psrl.rollout_n=2",
+        "psrl.staleness_buffer_entries=1",
+        "psrl.deployment.n_rollout_instances=1",
+        "psrl.deployment.rollout_nnodes_per_instance=1",
+        "psrl.deployment.rollout_ngpus_per_node_per_instance=1",
+        "psrl.deployment.train_nnodes=1",
+        "psrl.deployment.train_ngpus_per_node=2",
+        "psrl.deployment.total_nnodes=1",
+        "psrl.deployment.n_validate_instances=0",
+        "psrl.colocate_validate_and_train=False",
+        "psrl.env_service.node_policy=any",
+        "psrl.env_service.router_name=full_bench_router",
+        "psrl.env_service.units=[{unit_id:bench-gpu,node_ip:28.49.55.40,cpu_quota:8,memory_mb:32768,gpu_indices:[3],gpu_memory_mb:90000,max_containers:2,gpu_reservation:episode}]",
+        "gen_actor_rollout_ref.rollout.n=2",
+        "gen_actor_rollout_ref.rollout.tensor_model_parallel_size=1",
+        "gen_actor_rollout_ref.rollout.gpu_memory_utilization=0.55",
+        "gen_actor_rollout_ref.rollout.enforce_eager=True",
+        "++gen_actor_rollout_ref.rollout.engine_kwargs.vllm.disable_custom_all_reduce=True",
+        "++gen_actor_rollout_ref.rollout.engine_kwargs.vllm.distributed_executor_backend=uni",
+        "train_actor_rollout_ref.actor.rollout_n=2",
+        "train_actor_rollout_ref.rollout.n=2",
+        "train_actor_rollout_ref.actor.optim.lr_warmup_steps=0",
+        "trainer.nnodes=1",
+        "trainer.n_gpus_per_node=3",
+        "trainer.logger=[console]",
+        "trainer.resume_mode=disable",
+        "trainer.total_training_steps=1",
+        "reward.managers.dapo.reward_kwargs.overlong_buffer_cfg.len=0",
+        "++ray_kwargs.ray_init.address=28.49.55.40:43929",
+        "++ray_kwargs.ray_init.runtime_env.env_vars.RAY_ADDRESS=28.49.55.40:43929",
+        "++ray_kwargs.ray_init.runtime_env.env_vars.PYTHONPATH=/apdcephfs_zwfy10_303541817/share_303541817/lw/psrl:/apdcephfs_zwfy10_303541817/share_303541817/lw/psrl/../.verification-deps:/apdcephfs_zwfy10_303541817/share_303541817/lw/psrl/../benchmark-assets/airs-psrl-deps:/apdcephfs_zwfy10_303541817/share_303541817/lw/psrl/../benchmark-runs/full-onboarding-20261110/deps",
+        "++ray_kwargs.ray_init.runtime_env.env_vars.TRANSFER_QUEUE_ENABLE=\"1\"",
+        "++ray_kwargs.ray_init.include_dashboard=False",
+        "gen_actor_rollout_ref.rollout.agent.retry_limit=1",
+        "gen_actor_rollout_ref.rollout.agent.raise_on_error=True",
+        "psrl.agentic_rl.refill_failure_threshold=1",
+        "trainer.total_training_steps=2",
+        "trainer.total_epochs=3",
+        "data.shuffle=False",
+        "psrl.env_service.enable=False",
+        "gen_actor_rollout_ref.rollout.agent.env.name=mlgym_env"
+      ],
+      "exit": -15,
+      "finished": 1794401258.6070461
+    },
+    "controlled_stop": {
+      "time": 1794401256.24446,
+      "reason": "One optimizer step and updated-version CUDA, independent validation and explicit submission are complete. Stop remaining sampling.",
+      "proof_files": [
+        "/apdcephfs_zwfy10_303541817/share_303541817/lw/benchmark-runs/airs-gpu-20261111/policy-acceptance/psrl_logs/GRPO-sciaccel-Qwen35-4B-pluto-cooling-chemistry_repair_easy-L1/trajectories/v1/2_2.txt"
+      ],
+      "owner": {
+        "pid": 1096473,
+        "pgid": 1096463,
+        "leader": "bash /apdcephfs_zwfy10_303541817/share_303541817/lw/psrl/examples/sciaccel_rl/fsdp_qwen35_4b.sh psrl.env_service.enable=False psrl.env_worker.enable=True psrl.env_worker.gpu_slots_per_worker=1 psrl.env_worker.cpu_slots_per_worker=1 psrl.env_worker.cpu_budget_per_worker=6 psrl.env_worker.memory_budget_bytes_per_worker=21474836480 psrl.deployment.total_nnodes=1 psrl.deployment.train_nnodes=1 psrl.deployment.train_ngpus_per_node=2 psrl.deployment.n_rollout_instances=1 psrl.deployment.rollout_nnodes_per_instance=1 psrl.deployment.rollout_ngpus_per_node_per_instance=1 psrl.deployment.n_validate_instances=0 psrl.colocate_validate_and_train=False psrl.rollout_n=2 gen_actor_rollout_ref.rollout.n=2 gen_actor_rollout_ref.rollout.tensor_model_parallel_size=1 gen_actor_rollout_ref.rollout.gpu_memory_utilization=0.55 gen_actor_rollout_ref.rollout.enforce_eager=True train_actor_rollout_ref.actor.rollout_n=2 train_actor_rollout_ref.rollout.n=2 trainer.nnodes=1 trainer.n_gpus_per_node=3 trainer.resume_mode=disable gen_actor_rollout_ref.rollout.agent.env.name=mlgym_env psrl.rollout_n=2 psrl.staleness_buffer_entries=1 psrl.deployment.n_rollout_instances=1 psrl.deployment.rollout_nnodes_per_instance=1 psrl.deployment.rollout_ngpus_per_node_per_instance=1 psrl.deployment.train_nnodes=1 psrl.deployment.train_ngpus_per_node=2 psrl.deployment.total_nnodes=1 psrl.deployment.n_validate_instances=0 psrl.colocate_validate_and_train=False psrl.env_service.node_policy=any psrl.env_service.router_name=full_bench_router psrl.env_service.units=[{unit_id:bench-gpu,node_ip:28.49.55.40,cpu_quota:8,memory_mb:32768,gpu_indices:[3],gpu_memory_mb:90000,max_containers:2,gpu_reservation:episode}] gen_actor_rollout_ref.rollout.n=2 gen_actor_rollout_ref.rollout.tensor_model_parallel_size=1 gen_actor_rollout_ref.rollout.gpu_memory_utilization=0.55 gen_actor_rollout_ref.rollout.enforce_eager=True ++gen_actor_rollout_ref.rollout.engine_kwargs.vllm.disable_custom_all_reduce=True ++gen_actor_rollout_ref.rollout.engine_kwargs.vllm.distributed_executor_backend=uni train_actor_rollout_ref.actor.rollout_n=2 train_actor_rollout_ref.rollout.n=2 train_actor_rollout_ref.actor.optim.lr_warmup_steps=0 trainer.nnodes=1 trainer.n_gpus_per_node=3 trainer.logger=[console] trainer.resume_mode=disable trainer.total_training_steps=1 reward.managers.dapo.reward_kwargs.overlong_buffer_cfg.len=0 ++ray_kwargs.ray_init.address=28.49.55.40:43929 ++ray_kwargs.ray_init.runtime_env.env_vars.RAY_ADDRESS=28.49.55.40:43929 ++ray_kwargs.ray_init.runtime_env.env_vars.PYTHONPATH=/apdcephfs_zwfy10_303541817/share_303541817/lw/psrl:/apdcephfs_zwfy10_303541817/share_303541817/lw/psrl/../.verification-deps:/apdcephfs_zwfy10_303541817/share_303541817/lw/psrl/../benchmark-assets/airs-psrl-deps:/apdcephfs_zwfy10_303541817/share_303541817/lw/psrl/../benchmark-runs/full-onboarding-20261110/deps ++ray_kwargs.ray_init.runtime_env.env_vars.TRANSFER_QUEUE_ENABLE=\"1\" ++ray_kwargs.ray_init.include_dashboard=False gen_actor_rollout_ref.rollout.agent.retry_limit=1 gen_actor_rollout_ref.rollout.agent.raise_on_error=True psrl.agentic_rl.refill_failure_threshold=1 trainer.total_training_steps=2 trainer.total_epochs=3 data.shuffle=False psrl.env_service.enable=False gen_actor_rollout_ref.rollout.agent.env.name=mlgym_env "
+      }
+    },
+    "log": "benchmark-runs/airs-gpu-20261111/policy-acceptance/train.log",
+    "limits": [
+      "One representative task validates the common policy path. All 19 task identities have separate real GPU and verifier quick checks.",
+      "Acceptance uses a dedicated three-action prompt: public CUDA baseline, validate, submit. Research prompts remain separate.",
+      "Equal group rewards can produce zero policy gradient. Optimizer execution and version publication do not prove learning improvement.",
+      "One episode can produce several TITO token chunks. Chunk counts are not episode counts."
+    ],
+    "prior_retry": {
+      "exit": 1,
+      "optimizer_steps": 1,
+      "trained_tokens": 1565,
+      "v1_gpu_success": false,
+      "reason": "Conflicting research prompts caused exploration, a missing submission, and a 240-second episode timeout. Fixed acceptance prompts and bounded response length.",
+      "log": "benchmark-runs/airs-gpu-20261111/policy-retry/train.log",
+      "cleanup": "benchmark-runs/airs-gpu-20261111/retry-policy-cleanup.txt"
+    },
+    "first_attempt": {
+      "exit": 1,
+      "reason": "Legacy agent YAML missing Hydra _target_. Fixed both CPU and GPU YAMLs.",
+      "log": "benchmark-runs/airs-gpu-20261111/policy/train.log",
+      "cleanup": "benchmark-runs/airs-gpu-20261111/failed-policy-cleanup.txt"
+    },
+    "cleanup": {
+      "started": 1794401319.5946307,
+      "actor_ids": [
+        "a1b6c41310fd7e8deedd368602000000"
+      ],
+      "containers_before": [],
+      "removed": [],
+      "observations": [
+        {
+          "time": 1794401319.6140866,
+          "owned_containers": [],
+          "gpu_memory": "0, GPU-cd83b1a8-7650-5cec-d666-4f2f535eeb4b, 0\n1, GPU-2f8fe97a-f959-7178-2514-2f34b2c6d473, 0\n2, GPU-15852607-844e-e50b-7207-00bd93c4a487, 0\n3, GPU-7035c158-6b6f-dad7-33fb-21374b66f50e, 0\n4, GPU-96888a29-6526-25f4-f713-a56b4ed02a33, 0\n5, GPU-80113142-e4cc-9956-4832-1ba75d47089c, 0\n6, GPU-e5f1f5fc-d032-e6be-f415-1f8a42ef4e82, 0\n7, GPU-d2ab934c-c98b-2caa-8c9a-f058678aa926, 0",
+          "gpu_processes": ""
+        }
+      ],
+      "passed": true,
+      "finished": 1794401320.1736267
+    },
+    "elapsed_s_including_initialization": 931.8169059753418,
+    "completed_episodes_by_version": {
+      "v0": 2,
+      "v1": 1
+    }
+  },
+  "regressions": {
+    "passed_unique_tests": 123,
+    "full_suite": {
+      "passed": 116,
+      "failed": 3,
+      "log": "benchmark-runs/airs-gpu-20261111/tests-final.log",
+      "failure": "Replay fixture lacked model after adding local-policy registration."
+    },
+    "targeted_after_fixture_fix": {
+      "passed": 5,
+      "log": "benchmark-runs/airs-gpu-20261111/upstream-final.log"
+    },
+    "coverage_note": "All three failed fixtures and both other upstream tests pass after correction. Remaining 114 tests passed in the full run.",
+    "acceptance_configs": {
+      "passed": 17,
+      "log": "benchmark-runs/airs-gpu-20261111/acceptance-config-tests.log",
+      "new_unique_cases": 4
+    }
+  },
+  "source_sha256_before_policy_fix": {
+    "examples/airs_bench/config.py": "777e6bd30531c1ad59fa40032b8adbeeacbec2f6721dac9d9a12faea9b046784",
+    "examples/airs_bench/gpu_baseline.py": "4106a9c57a98b60bef517bdd8bd9225eb188c1e90b0c22c348a12275cf6f7fd0",
+    "examples/airs_bench/gpu_quick_check.py": "a18dfed8d29c36079d8e1c9d611fea374144eefa9f200c99f4df7dfe8213a9e2",
+    "examples/airs_bench/prepare/prepare_gpu_suite.py": "0bc96b0721144c995cd3ccf9d171d00ba91c5f6282891895899b3087082012e5",
+    "examples/airs_bench/grading.py": "1a2b45a963a6e19fc1de11bff223e108bc439f7c9cc65521aff095a7eccd72d9",
+    "examples/airs_bench/reward.py": "82248bcf0b2e013102c67d010ed619415c92d54a84a8b739da296e822410af5e",
+    "examples/airs_bench/runner.py": "ff0f3631635b111e88747f07eec984686b06c34cc14fd00823cdf02fb1a00758",
+    "psrl/environments/mlgym_env.py": "97b571f54a1b0e4b0bce03d80bec4f3e5f5c258704921f297936e6be070cb9ee",
+    "psrl/workers/agent_loop/loops/mlgym_agent_loop.py": "853506204843cdc5a9b440240ea28651d1d63ef0bbb9a54b9362c84d60f6b64b"
+  },
+  "source_sha256": {
+    "examples/airs_bench/config.py": "777e6bd30531c1ad59fa40032b8adbeeacbec2f6721dac9d9a12faea9b046784",
+    "examples/airs_bench/gpu_baseline.py": "4106a9c57a98b60bef517bdd8bd9225eb188c1e90b0c22c348a12275cf6f7fd0",
+    "examples/airs_bench/gpu_quick_check.py": "a18dfed8d29c36079d8e1c9d611fea374144eefa9f200c99f4df7dfe8213a9e2",
+    "examples/airs_bench/prepare/prepare_gpu_suite.py": "0bc96b0721144c995cd3ccf9d171d00ba91c5f6282891895899b3087082012e5",
+    "examples/airs_bench/grading.py": "1a2b45a963a6e19fc1de11bff223e108bc439f7c9cc65521aff095a7eccd72d9",
+    "examples/airs_bench/reward.py": "82248bcf0b2e013102c67d010ed619415c92d54a84a8b739da296e822410af5e",
+    "examples/airs_bench/runner.py": "aef8b3a7cf6b5f37439464e93fb666113c8b293dad3f5c3a295fcce624c44d40",
+    "psrl/environments/mlgym_env.py": "97b571f54a1b0e4b0bce03d80bec4f3e5f5c258704921f297936e6be070cb9ee",
+    "psrl/workers/agent_loop/loops/mlgym_agent_loop.py": "853506204843cdc5a9b440240ea28651d1d63ef0bbb9a54b9362c84d60f6b64b",
+    "examples/airs_bench/gpu_train.sh": "6a9556e8d2ebd02f4884f0e92f89c4d566dadd1a82565bc1049b20ec48e49fa9",
+    "examples/airs_bench/config/gpu_agent_config.yaml": "6ff703af8ed7b508b314424ea9eaeec2beaf360164c267af4d3d3db6af91ce6d",
+    "examples/airs_bench/config/mlgym_agent_config.yaml": "7ae23b23e54b24dd03495c8e20b1c4644d36c393c78363fbc45eccc4f3abde0f",
+    "examples/airs_bench/prepare/audit_gpu_suite.py": "2d4d5a54c9709bc75b9738b863240f46d0321b47cb5cfa150b2a1f096758301c",
+    "examples/airs_bench/acceptance_agent_config.yaml": "db0abe04f03702636bffc7509aec7510fed59641261e689d1336ff15ab6c4648"
+  }
+}

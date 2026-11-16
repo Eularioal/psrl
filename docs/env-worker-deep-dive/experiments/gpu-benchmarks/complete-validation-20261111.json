@@ -1,0 +1,4434 @@
+{
+  "date": "2026-11-11",
+  "base_head": "6aa328d56eff746c2ae6d9fd766b2f3f76b4a670",
+  "includes_uncommitted_changes": true,
+  "scope": "PSRL-managed quick task checks. No new policy training. Six historical representative policy loops retained separately.",
+  "counts": {
+    "tasks": 476,
+    "kernel": 270,
+    "flashinfer": 190,
+    "re_bench_types": 7,
+    "inference_local_scenarios": 4,
+    "mle_local": 4,
+    "autoresearch": 1,
+    "kaggle_official_prepared": 0
+  },
+  "protocol_counts": {
+    "kernel_bench": 22,
+    "kernel_bench_local": 248,
+    "mle_bench_local": 4,
+    "re_bench_cumsum_local": 1,
+    "re_bench_mlm_local": 1,
+    "flashinfer_bench_local": 95,
+    "flashinfer_bench": 95,
+    "re_bench_embedding_local": 1,
+    "re_bench_scaling_local": 1,
+    "re_bench_foundry_local": 1,
+    "re_bench_rust_local": 1,
+    "inference_bench_local": 4,
+    "autoresearch": 1,
+    "re_bench_local": 1
+  },
+  "kernel": [
+    {
+      "task_id": "level1-100_HingeLoss",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-10_3D_tensor_matrix_multiplication",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-11_4D_tensor_matrix_multiplication",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-12_Matmul_with_diagonal_matrices_",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-13_Matmul_for_symmetric_matrices",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-14_Matmul_for_upper_triangular_matrices",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-15_Matmul_for_lower_triangular_matrices",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-16_Matmul_with_transposed_A",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-17_Matmul_with_transposed_B",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-18_Matmul_with_transposed_both",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-19_ReLU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-1_Square_matrix_multiplication_",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-20_LeakyReLU",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-21_Sigmoid",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-22_Tanh",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-23_Softmax",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-24_LogSoftmax",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-25_Swish",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-26_GELU_",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-27_SELU_",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-28_HardSigmoid",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-29_Softplus",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-2_Standard_matrix_multiplication_",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-30_Softsign",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-31_ELU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-32_HardTanh",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-33_BatchNorm",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-34_InstanceNorm",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-35_GroupNorm_",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-36_RMSNorm_",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-37_FrobeniusNorm_",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-38_L1Norm_",
+      "status": "passed",
+      "protocol": "passed_original",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-39_L2Norm_",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-3_Batched_matrix_multiplication",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-40_LayerNorm",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-41_Max_Pooling_1D",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-42_Max_Pooling_2D",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-43_Max_Pooling_3D",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-44_Average_Pooling_1D",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-45_Average_Pooling_2D",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-46_Average_Pooling_3D",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-47_Sum_reduction_over_a_dimension",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-48_Mean_reduction_over_a_dimension",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-49_Max_reduction_over_a_dimension",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-50_conv_standard_2D__square_input__square_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-51_Argmax_over_a_dimension",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-52_Argmin_over_a_dimension",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-53_Min_reduction_over_a_dimension",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-54_conv_standard_3D__square_input__square_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-55_conv_standard_2D__asymmetric_input__square_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-56_conv_standard_2D__asymmetric_input__asymmetric_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-57_conv_transposed_2D__square_input__square_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-58_conv_transposed_3D__asymmetric_input__asymmetric_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-59_conv_standard_3D__asymmetric_input__square_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-60_conv_standard_3D__square_input__asymmetric_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-61_conv_transposed_3D__square_input__square_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-62_conv_standard_2D__square_input__asymmetric_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-63_conv_standard_2D__square_input__square_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-64_conv_transposed_1D",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-65_conv_transposed_2D__square_input__asymmetric_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-66_conv_standard_3D__asymmetric_input__asymmetric_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-67_conv_standard_1D",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-68_conv_transposed_3D__square_input__asymmetric_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-69_conv_transposed_2D__asymmetric_input__asymmetric_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-6_Matmul_with_large_K_dimension_",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-70_conv_transposed_3D__asymmetric_input__square_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-71_conv_transposed_2D__asymmetric_input__square_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-72_conv_transposed_3D_asymmetric_input_asymmetric_kernel___strided_padded_grouped_",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-73_conv_transposed_3D_asymmetric_input_square_kernel__strided_padded__grouped",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-74_conv_transposed_1D_dilated",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-75_conv_transposed_2D_asymmetric_input_asymmetric_kernel_strided__grouped____padded____dilated__",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-76_conv_standard_1D_dilated_strided__",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-77_conv_transposed_3D_square_input_square_kernel___padded____dilated____strided__",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-78_conv_transposed_2D_asymmetric_input_asymmetric_kernel___padded__",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-79_conv_transposed_1D_asymmetric_input_square_kernel___padded____strided____dilated__",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-7_Matmul_with_small_K_dimension_",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-80_conv_standard_2D_square_input_asymmetric_kernel___dilated____padded__",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-81_conv_transposed_2D_asymmetric_input_square_kernel___dilated____padded____strided__",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-82_conv_depthwise_2D_square_input_square_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-83_conv_depthwise_2D_square_input_asymmetric_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-84_conv_depthwise_2D_asymmetric_input_square_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-85_conv_depthwise_2D_asymmetric_input_asymmetric_kernel",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-86_conv_depthwise_separable_2D",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-87_conv_pointwise_2D",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-88_MinGPTNewGelu",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-89_cumsum",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-8_Matmul_with_irregular_shapes_",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-90_cumprod",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-91_cumsum_reverse",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-92_cumsum_exclusive",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-93_masked_cumsum",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-94_MSELoss",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-96_HuberLoss",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-97_ScaledDotProductAttention",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-99_TripletMarginLoss",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-9_Tall_skinny_matrix_multiplication_",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-100_ConvTranspose3d_Clamp_Min_Divide",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-10_ConvTranspose2d_MaxPool_Hardtanh_Mean_Tanh",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-11_ConvTranspose2d_BatchNorm_Tanh_MaxPool_GroupNorm",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-12_Gemm_Multiply_LeakyReLU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-13_ConvTranspose3d_Mean_Add_Softmax_Tanh_Scaling",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-14_Gemm_Divide_Sum_Scaling",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-15_ConvTranspose3d_BatchNorm_Subtract",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-16_ConvTranspose2d_Mish_Add_Hardtanh_Scaling",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-17_Conv2d_InstanceNorm_Divide",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-18_Matmul_Sum_Max_AvgPool_LogSumExp_LogSumExp",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-19_ConvTranspose2d_GELU_GroupNorm",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-21_Conv2d_Add_Scale_Sigmoid_GroupNorm",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-22_Matmul_Scale_ResidualAdd_Clamp_LogSumExp_Mish",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-23_Conv3d_GroupNorm_Mean",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-24_Conv3d_Min_Softmax",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-25_Conv2d_Min_Tanh_Tanh",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-26_ConvTranspose3d_Add_HardSwish",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-27_Conv3d_HardSwish_GroupNorm_Mean",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-28_BMM_InstanceNorm_Sum_ResidualAdd_Multiply",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-29_Matmul_Mish_Mish",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-30_Gemm_GroupNorm_Hardtanh",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-32_Conv2d_Scaling_Min",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-35_Conv2d_Subtract_HardSwish_MaxPool_Mish",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-36_ConvTranspose2d_Min_Sum_GELU_Add",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-38_ConvTranspose3d_AvgPool_Clamp_Softmax_Multiply",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-3_ConvTranspose3d_Sum_LayerNorm_AvgPool_GELU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-40_Matmul_Scaling_ResidualAdd",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-41_Gemm_BatchNorm_GELU_ReLU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-43_Conv3d_Max_LogSumExp_ReLU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-44_ConvTranspose2d_Multiply_GlobalAvgPool_GlobalAvgPool_Mean",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-45_Gemm_Sigmoid_LogSumExp",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-46_Conv2d_Subtract_Tanh_Subtract_AvgPool",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-47_Conv3d_Mish_Tanh",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-48_Conv3d_Scaling_Tanh_Multiply_Sigmoid",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-49_ConvTranspose3d_Softmax_Sigmoid",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-4_Conv2d_Mish_Mish",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-50_ConvTranspose3d_Scaling_AvgPool_BiasAdd_Scaling",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-51_Gemm_Subtract_GlobalAvgPool_LogSumExp_GELU_ResidualAdd",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-52_Conv2d_Activation_BatchNorm",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-53_Gemm_Scaling_Hardtanh_GELU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-55_Matmul_MaxPool_Sum_Scale",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-56_Matmul_Sigmoid_Sum",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-57_Conv2d_ReLU_HardSwish",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-58_ConvTranspose3d_LogSumExp_HardSwish_Subtract_Clamp",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-59_Matmul_Swish_Scaling",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-60_ConvTranspose3d_Swish_GroupNorm_HardSwish",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-61_ConvTranspose3d_ReLU_GroupNorm",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-63_Gemm_ReLU_Divide",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-64_Gemm_LogSumExp_LeakyReLU_LeakyReLU_GELU_GELU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-65_Conv2d_AvgPool_Sigmoid_Sum",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-67_Conv2d_GELU_GlobalAvgPool",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-68_Matmul_Min_Subtract",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-69_Conv2d_HardSwish_ReLU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-6_Conv3d_Softmax_MaxPool_MaxPool",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-70_Gemm_Sigmoid_Scaling_ResidualAdd",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-71_Conv2d_Divide_LeakyReLU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-72_ConvTranspose3d_BatchNorm_AvgPool_AvgPool",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-73_Conv2d_BatchNorm_Scaling",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-74_ConvTranspose3d_LeakyReLU_Multiply_LeakyReLU_Max",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-77_ConvTranspose3d_Scale_BatchNorm_GlobalAvgPool",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-78_ConvTranspose3d_Max_Max_Sum",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-79_Conv3d_Multiply_InstanceNorm_Clamp_Multiply_Max",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-7_Conv3d_ReLU_LeakyReLU_GELU_Sigmoid_BiasAdd",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-80_Gemm_Max_Subtract_GELU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-81_Gemm_Swish_Divide_Clamp_Tanh_Clamp",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-83_Conv3d_GroupNorm_Min_Clamp_Dropout",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-84_Gemm_BatchNorm_Scaling_Softmax",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-86_Matmul_Divide_GELU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-87_Conv2d_Subtract_Subtract_Mish",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-89_ConvTranspose3d_MaxPool_Softmax_Subtract_Swish_Max",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-8_Conv3d_Divide_Max_GlobalAvgPool_BiasAdd_Sum",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-92_Conv2d_GroupNorm_Tanh_HardSwish_ResidualAdd_LogSumExp",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-93_ConvTranspose2d_Add_Min_GELU_Multiply",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-96_ConvTranspose3d_Multiply_Max_GlobalAvgPool_Clamp",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-97_Matmul_BatchNorm_BiasAdd_Divide_Swish",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-98_Matmul_AvgPool_GELU_Scale_Max",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-99_Matmul_GELU_Softmax",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level2-9_Matmul_Subtract_Multiply_ReLU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-10_ResNet101",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-11_VGG16",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-12_VGG19",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-13_DenseNet121TransitionLayer",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-14_DenseNet121DenseBlock",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-15_DenseNet121",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-16_DenseNet201",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-17_SqueezeNetFireModule",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-18_SqueezeNet",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-20_MobileNetV2",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-21_EfficientNetMBConv",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-22_EfficientNetB0",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-23_EfficientNetB1",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-24_EfficientNetB2",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-26_ShuffleNet",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-27_RegNet",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-28_VisionTransformer",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-32_ConvolutionalVisionTransformer",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-33_VanillaRNN",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-34_VanillaRNNHidden",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-35_LSTM",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-36_LSTMHn",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-37_LSTMCn",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-38_LSTMBidirectional",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-39_GRU",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-3_DeepNarrowMLP",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-40_GRUHidden",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-41_GRUBidirectional",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-42_GRUBidirectionalHidden",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-43_MinGPTCausalAttention",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-44_MiniGPTBlock",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-45_UNetSoftmax",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-46_NetVladWithGhostClusters",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-47_NetVladNoGhostClusters",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-4_LeNet5",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-50_ReLUSelfAttention",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-5_AlexNet",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-6_GoogleNetInceptionModule",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-7_GoogleNetInceptionV1",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-8_ResNetBasicBlock",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level3-9_ResNet18",
+      "status": "passed",
+      "protocol": "passed_bounded",
+      "evidence": "quick-validation-20261111.json"
+    },
+    {
+      "task_id": "level1-4_Matrix_vector_multiplication_",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "M": 512,
+        "K": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level1-5_Matrix_scalar_multiplication",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "M": 512,
+        "N": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level1-95_CrossEntropyLoss",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level1-98_KLDivLoss",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-1_Conv2D_ReLU_BiasAdd",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-20_ConvTranspose3d_Sum_ResidualAdd_Multiply_ResidualAdd",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-2_ConvTranspose2d_BiasAdd_Clamp_Scaling_Clamp_Divide",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-31_Conv2d_Min_Add_Multiply",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-33_Gemm_Scale_BatchNorm",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "in_features": 512,
+        "out_features": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-34_ConvTranspose3d_LayerNorm_GELU_Scaling",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-37_Matmul_Swish_Sum_GroupNorm",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "in_features": 512,
+        "out_features": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-39_Gemm_Scale_BatchNorm",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "in_features": 512,
+        "out_features": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-42_ConvTranspose2d_GlobalAvgPool_BiasAdd_LogSumExp_Sum_Multiply",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-54_Conv2d_Multiply_LeakyReLU_GELU",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-5_ConvTranspose2d_Subtract_Tanh",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-62_Matmul_GroupNorm_LeakyReLU_Sum",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "input_size": 512,
+        "hidden_size": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-66_Matmul_Dropout_Softmax",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "in_features": 512,
+        "out_features": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-75_Gemm_GroupNorm_Min_BiasAdd",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "in_features": 512,
+        "out_features": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-76_Gemm_Add_ReLU",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "in_features": 512,
+        "out_features": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-82_Conv2d_Tanh_Scaling_BiasAdd_Max",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-85_Conv2d_GroupNorm_Scale_MaxPool_Clamp",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-88_Gemm_GroupNorm_Swish_Multiply_Swish",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "in_features": 512,
+        "out_features": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-90_Conv3d_LeakyReLU_Sum_Clamp_GELU",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-91_ConvTranspose2d_Softmax_BiasAdd_Scaling_Sigmoid",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-94_Gemm_BiasAdd_Hardtanh_Mish_GroupNorm",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "in_features": 512,
+        "out_features": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level2-95_Matmul_Add_Swish_Tanh_GELU_Hardtanh",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "in_features": 512,
+        "out_features": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level3-19_MobileNetV1",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level3-1_MLP",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "input_size": 512,
+        "layer_sizes": [
+          512,
+          512
+        ],
+        "output_size": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level3-25_ShuffleNetUnit",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level3-29_SwinMLP",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level3-2_ShallowWideMLP",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2,
+        "input_size": 512,
+        "hidden_layer_sizes": [
+          512,
+          512
+        ],
+        "output_size": 512
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level3-30_SwinTransformerV2",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level3-31_VisionAttention",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level3-48_Mamba2ReturnY",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level3-49_Mamba2ReturnFinalState",
+      "status": "passed",
+      "protocol": "constraint_preserving_inference",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-repair"
+    },
+    {
+      "task_id": "level4-7_gpt2_bs32_seq256",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-spawn-check"
+    },
+    {
+      "task_id": "level4-6_facebook-bart-large_bs1_seq1023",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 1
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-10_google-bigbird-roberta-base_bs1024_seq32",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-15_google-reformer-enwik8_bs1024_seq32",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-14_google-electra-small-discriminator_bs32_seq256",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-12_google-electra-small-discriminator_bs1024_seq32",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-19_gpt2_bs1024_seq32",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-13_google-reformer-enwik8_bs32_seq256",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-11_google-electra-small-discriminator_bs1_seq511",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 1
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-3_EleutherAI-gpt-neo-2p7B_bs1_seq2047",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 1
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-4_facebook-opt-1p3b_bs32_seq256",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-5_google-bigbird-roberta-base_bs1_seq4095",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 1
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-1_EleutherAI-gpt-neo-2p7B_bs32_seq256",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-17_facebook-bart-large_bs1024_seq32",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-16_gpt2_bs1_seq1023",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 1
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-18_EleutherAI-gpt-neo-2p7B_bs512_seq32",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-20_facebook-bart-large_bs32_seq256",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-8_facebook-opt-1p3b_bs512_seq32",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-2_facebook-opt-1p3b_bs1_seq2047",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 1
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    },
+    {
+      "task_id": "level4-9_google-bigbird-roberta-base_bs32_seq256",
+      "status": "passed",
+      "protocol": "pretrained_batch_at_most_2",
+      "overrides": {
+        "batch_size": 2
+      },
+      "evidence_phase": "kernel-l4-remaining-check"
+    }
+  ],
+  "flashinfer": [
+    {
+      "definition": "dsa_sparse_attention_h16_ckv512_kpe64_topk2048_ps1",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "dsa_sparse_attention_h16_ckv512_kpe64_topk2048_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "dsa_topk_indexer_fp8_h64_d128_topk2048_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "fused_add_rmsnorm_h2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "fused_add_rmsnorm_h3072",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "fused_add_rmsnorm_h4096",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "fused_add_rmsnorm_h5120",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "fused_add_rmsnorm_h5376",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "fused_add_rmsnorm_h7168",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gdn_decode_qk16_v32_d128_k_last",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gdn_decode_qk4_v8_d128_k_last",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gdn_decode_qk8_v16_d128_k_last",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gdn_mtp_qk16_v32_d128_k_last",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-repair-retry",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gdn_mtp_qk4_v8_d128_k_last",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gdn_mtp_qk8_v16_d128_k_last",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gdn_prefill_qk16_v32_d128_k_last",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gdn_prefill_qk4_v8_d128_k_last",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gdn_prefill_qk8_v16_d128_k_last",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_fp4_e2m1_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_fp4_e2m1_n4096_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_fp4_fp6_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_fp4_fp8_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_fp8_fp4_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_fp8_fp4_n4096_k4096",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_mxfp4_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_mxfp4_n4096_k4096",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_mxfp4_n5120_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_mxfp4_out_nvfp4_n2048_k2048",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-final-repair",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n10240_k8192",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n128_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n16384_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n16384_k3072",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n2048_k4096",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n2048_k5376",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n2048_k8192",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n21504_k5376",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n256_k3072",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n256_k7168",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n28672_k4096",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n3072_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n3072_k3072",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n3072_k6144",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n3072_k8192",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n34816_k5120",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n3584_k18944",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n3584_k3584",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n37888_k3584",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n4096_k14336",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n4096_k4096",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n4096_k5376",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n4608_k3584",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n5120_k17408",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n5120_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n5120_k3072",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n5120_k5120",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n5376_k21504",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n5376_k4096",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n57344_k8192",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n6144_k4096",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n7168_k5120",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n8192_k28672",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n8192_k3072",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_n8192_k8192",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_nvfp4_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gemm_nvfp4_n4096_k4096",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h16_kv2_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h16_kv2_d128_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h20_kv4_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h20_kv4_d128_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h24_kv4_d128_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h24_kv8_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h24_kv8_d128_ps64",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h32_kv16_d128_ps1",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h32_kv16_d128_ps64",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h32_kv4_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h32_kv4_d128_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h32_kv8_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h32_kv8_d128_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h32_kv8_d64_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h32_kv8_d64_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h48_kv8_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h5_kv1_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h6_kv1_d128_ps1",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_decode_h6_kv1_d128_ps64",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h16_kv1_d128_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h16_kv2_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h16_kv2_d128_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h20_kv4_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h20_kv4_d128_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h24_kv4_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h24_kv4_d128_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h24_kv8_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h24_kv8_d128_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h32_kv16_d128_ps1",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h32_kv16_d128_ps64",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h32_kv4_d128_ps1",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-final-repair",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h32_kv4_d128_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h32_kv8_d128_ps1",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-final-repair",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h32_kv8_d128_ps64",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h32_kv8_d64_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h32_kv8_d64_ps64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h40_kv10_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h5_kv1_d128_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h5_kv1_d128_ps64",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h6_kv1_d128_ps1",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_paged_prefill_causal_h6_kv1_d128_ps64",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_ragged_prefill_causal_h16_kv2_d128",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_ragged_prefill_causal_h20_kv4_d128",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_ragged_prefill_causal_h24_kv8_d128",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_ragged_prefill_causal_h32_kv16_d128",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_ragged_prefill_causal_h32_kv4_d128",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_ragged_prefill_causal_h32_kv8_d128",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_ragged_prefill_causal_h32_kv8_d64",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_ragged_prefill_causal_h5_kv1_d128",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_ragged_prefill_causal_h6_kv1_d128",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "gqa_ragged_prefill_causal_h8_kv1_d256",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "grouped_gemm_fp8_fp4_m_contiguous_g4_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "grouped_gemm_fp8_fp4_m_contiguous_g4_n4096_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "grouped_gemm_fp8_fp4_m_masked_g4_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "grouped_gemm_fp8_fp4_m_masked_g4_n4096_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "grouped_gemm_mxfp8_mxfp4_g4_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "grouped_gemm_mxfp8_mxfp4_g4_n4096_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "grouped_gemm_nvfp4_m_contiguous_g4_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "mamba_ssu_decode_h128_d64_s128_ng8",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "mamba_ssu_decode_h64_d64_s128_ng4",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "mla_paged_decode_h16_ckv512_kpe64_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "mla_paged_decode_h16_ckv512_kpe64_ps64",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "mla_paged_decode_h8_ckv512_kpe64_ps1",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "mla_paged_prefill_causal_h16_ckv512_kpe64_ps1",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "mla_paged_prefill_causal_h16_ckv512_kpe64_ps64",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "mla_paged_prefill_causal_h8_ckv512_kpe64_ps1",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "mla_ragged_prefill_causal_h16_qk192_vo128",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "mla_ragged_prefill_causal_h8_qk192_vo128",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-check",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "moe_fp8_block_scale_ds_routing_topk8_ng1_kg1_e384_h7168_i2048",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-shards-typed",
+      "original_name_retained": true,
+      "axis_changes": {
+        "num_local_experts": [
+          {
+            "type": "const",
+            "value": 384,
+            "description": "Number of local experts (EP=1 → all experts)."
+          },
+          {
+            "type": "const",
+            "value": 8,
+            "description": "Number of local experts (EP=1 → all experts)."
+          }
+        ]
+      },
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "moe_fp8_block_scale_ds_routing_topk8_ng1_kg1_e48_h7168_i2048",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-shards-typed",
+      "original_name_retained": true,
+      "axis_changes": {
+        "num_local_experts": [
+          {
+            "type": "const",
+            "value": 48,
+            "description": "Number of local experts per device (EP=8 → 384/8=48)."
+          },
+          {
+            "type": "const",
+            "value": 8,
+            "description": "Number of local experts per device (EP=8 → 384/8=48)."
+          }
+        ]
+      },
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "moe_fp8_block_scale_renorm_topk10_e128_h2048_i512",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-repair-retry",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "moe_fp8_block_scale_renorm_topk8_e128_h2048_i768",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-repair-retry",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "moe_fp8_block_scale_renorm_topk8_e128_h4096_i1536",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-repair-retry",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "rmsnorm_h128",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "rmsnorm_h1536",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "rmsnorm_h2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "rmsnorm_h3072",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-repair-retry",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "rmsnorm_h4096",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "rmsnorm_h512",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "rmsnorm_h5120",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "rmsnorm_h5376",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-repair-retry",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "rmsnorm_h7168",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "rope_with_cos_sin_cache_neox_style_d128_rd64",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-repair-retry",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "sparse_gemm_fp4_fp8_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "quick-validation-20261111",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "sparse_gemm_nvfp4_n2048_k2048",
+      "local": false,
+      "sampling_quick": false,
+      "evidence_phase": "flash-materialized-retry",
+      "original_name_retained": true,
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_sampling_from_probs_v128256",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-support",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_sampling_from_probs_v129280",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-support",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_sampling_from_probs_v151936",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-support",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_sampling_from_probs_v152064",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_sampling_from_probs_v163840",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_sampling_from_probs_v200064",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_sampling_from_probs_v202048",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_sampling_from_probs_v262208",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_top_p_sampling_from_probs_v128256",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-support",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_top_p_sampling_from_probs_v129280",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_top_p_sampling_from_probs_v151936",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-support",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_top_p_sampling_from_probs_v152064",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_top_p_sampling_from_probs_v163840",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_top_p_sampling_from_probs_v200064",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_top_p_sampling_from_probs_v202048",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_top_p_sampling_from_probs_v248320",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "packaged-sampling-valid",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": true,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "input_changes": {
+        "top_p": "Fixed valid probability 0.9; upstream random normal may be negative."
+      },
+      "status": "passed"
+    },
+    {
+      "definition": "top_k_top_p_sampling_from_probs_v262208",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_p_sampling_from_probs_v128256",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-support",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_p_sampling_from_probs_v129280",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_p_sampling_from_probs_v151936",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-support",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_p_sampling_from_probs_v152064",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_p_sampling_from_probs_v163840",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_p_sampling_from_probs_v200064",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_p_sampling_from_probs_v202048",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "top_p_sampling_from_probs_v262208",
+      "local": true,
+      "sampling_quick": true,
+      "evidence_phase": "flash-sampling-exact",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp4_block_scale_moe_topk10_e128_h2048_i512",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-nonsampling",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp4_block_scale_moe_topk1_e128_h5120_i8192",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-ordered",
+      "original_name_retained": true,
+      "axis_changes": {
+        "num_experts": [
+          {
+            "type": "const",
+            "value": 128,
+            "description": "Total number of local experts."
+          },
+          {
+            "type": "const",
+            "value": 8,
+            "description": "Total number of local experts."
+          }
+        ]
+      },
+      "input_order_changed": true,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp4_block_scale_moe_topk1_e16_h5120_i8192",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-ordered",
+      "original_name_retained": true,
+      "axis_changes": {
+        "num_experts": [
+          {
+            "type": "const",
+            "value": 16,
+            "description": "Total number of local experts."
+          },
+          {
+            "type": "const",
+            "value": 8,
+            "description": "Total number of local experts."
+          }
+        ]
+      },
+      "input_order_changed": true,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp4_block_scale_moe_topk8_e128_h2048_i768",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-nonsampling",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp4_block_scale_moe_topk8_e64_h4096_i1536",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-nonsampling",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp4_block_scale_routed_moe_topk10_e128_h2048_i512",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-nonsampling",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp4_block_scale_routed_moe_topk1_e128_h5120_i8192",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-routed",
+      "original_name_retained": true,
+      "axis_changes": {
+        "num_experts": [
+          {
+            "type": "const",
+            "value": 128,
+            "description": "Total number of local experts."
+          },
+          {
+            "type": "const",
+            "value": 8,
+            "description": "Total number of local experts."
+          }
+        ]
+      },
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp4_block_scale_routed_moe_topk1_e16_h5120_i8192",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-nonsampling",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp4_block_scale_routed_moe_topk8_e128_h2048_i768",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-nonsampling",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp4_block_scale_routed_moe_topk8_e64_h4096_i1536",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-nonsampling",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp8_per_tensor_scale_moe_topk1_e128_h5120_i8192",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-ordered",
+      "original_name_retained": true,
+      "axis_changes": {
+        "num_experts": [
+          {
+            "type": "const",
+            "value": 128,
+            "description": "Total number of local experts."
+          },
+          {
+            "type": "const",
+            "value": 8,
+            "description": "Total number of local experts."
+          }
+        ]
+      },
+      "input_order_changed": true,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp8_per_tensor_scale_moe_topk1_e16_h5120_i8192",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-ordered",
+      "original_name_retained": true,
+      "axis_changes": {
+        "num_experts": [
+          {
+            "type": "const",
+            "value": 16,
+            "description": "Total number of local experts."
+          },
+          {
+            "type": "const",
+            "value": 8,
+            "description": "Total number of local experts."
+          }
+        ]
+      },
+      "input_order_changed": true,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    },
+    {
+      "definition": "trtllm_fp8_per_tensor_scale_moe_topk8_e128_h2048_i768",
+      "local": true,
+      "sampling_quick": false,
+      "evidence_phase": "flash-local-nonsampling",
+      "original_name_retained": true,
+      "axis_changes": {},
+      "input_order_changed": false,
+      "reference_completed": false,
+      "scope": "One explicitly bounded workload per definition; not all upstream inputs.",
+      "status": "passed"
+    }
+  ],
+  "inference_scenarios": [
+    {
+      "profile": "a_input_heavy",
+      "repeat_context": 3,
+      "max_tokens": 8,
+      "requests": 2,
+      "concurrency": 1,
+      "seconds": 12.21711984090507,
+      "quality_pass": 1
+    },
+    {
+      "profile": "b_output_heavy",
+      "repeat_context": 1,
+      "max_tokens": 64,
+      "requests": 2,
+      "concurrency": 1,
+      "seconds": 37.59598287381232,
+      "quality_pass": 1
+    },
+    {
+      "profile": "c_high_load",
+      "repeat_context": 1,
+      "max_tokens": 16,
+      "requests": 4,
+      "concurrency": 2,
+      "seconds": 16.58180671930313,
+      "quality_pass": 1
+    },
+    {
+      "profile": "d_general",
+      "repeat_context": 1,
+      "max_tokens": 16,
+      "requests": 2,
+      "concurrency": 1,
+      "seconds": 14.243154358118773,
+      "quality_pass": 1
+    }
+  ],
+  "normal_psrl_checks": [
+    "re-cumsum",
+    "restricted-check",
+    "embedding-check",
+    "scaling-check",
+    "foundry-mounted-check",
+    "rust-check",
+    "inference-all-check",
+    "packaged-sampling-valid",
+    "packaged-original-kernel"
+  ],
+  "phases": {
+    "embedding-check": {
+      "passed_runner": true,
+      "elapsed_seconds": 106.89858388900757,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "6653ae180486f50571e3003405f324e45376c219164807bc5cbe23bee87c39f0",
+      "rewards": {
+        "reward": 0.2628061400699061,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "loss": 2.805086135864258
+      },
+      "exception_type": null
+    },
+    "flash-final-repair": {
+      "passed_runner": true,
+      "elapsed_seconds": 165.08817887306213,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "7af8827727d936d3c635856267dacb98d20726c722d6adb1038e863c7af92749",
+      "rewards": {
+        "reward": 0.0,
+        "quick_check": 1,
+        "evaluations": 4
+      },
+      "exception_type": null
+    },
+    "flash-last-four": {
+      "passed_runner": true,
+      "elapsed_seconds": 170.5223617553711,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "bc1b429bbfede6722e73cc351657969c6baea9f96faf6ea031be8b437e05ae45",
+      "rewards": {
+        "reward": 0.0,
+        "quick_check": 1,
+        "evaluations": 0
+      },
+      "exception_type": null
+    },
+    "flash-local-check": {
+      "passed_runner": true,
+      "elapsed_seconds": 157.97009015083313,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "1913035b449c4e1824e4ec18e79efed86186ac1b34407831c8a1c3548b06fd84",
+      "rewards": {
+        "reward": 0.0,
+        "quick_check": 1,
+        "evaluations": 47
+      },
+      "exception_type": null
+    },
+    "flash-local-nonsampling": {
+      "passed_runner": true,
+      "elapsed_seconds": 189.64610600471497,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "17a8bf7e3c6972965620ffeaf1e4169f032c4253161a302ea3db7b28d2e80ec1",
+      "rewards": {
+        "reward": 0.0,
+        "quick_check": 1,
+        "evaluations": 9
+      },
+      "exception_type": null
+    },
+    "flash-local-repair-retry": {
+      "passed_runner": false,
+      "elapsed_seconds": 407.9668083190918,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "5381333149b159a72287c5a4c0bb440189fc12a9a7108ede8ececa45357693b5",
+      "error_type": "CancelledError"
+    },
+    "flash-materialized-check": {
+      "passed_runner": false,
+      "elapsed_seconds": 112.22865891456604,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "ecdd3647a061e705d777a30202f5cd578a3fd21e5b2ec03502ffbdbe42974ce6",
+      "rewards": {},
+      "exception_type": "RewardFileNotFoundError"
+    },
+    "flash-materialized-fixed": {
+      "passed_runner": false,
+      "elapsed_seconds": 477.77641797065735,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "306d14505c033412712a89394bbada6e73923c0f0919a93b57eba471f2bb33a0",
+      "rewards": {},
+      "exception_type": "VerifierTimeoutError"
+    },
+    "flash-materialized-retry": {
+      "passed_runner": false,
+      "elapsed_seconds": 407.68493127822876,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "b84efdf8a42edecd7dbff6fdfc2979daf8afef3151ae781d4ffb57db0f3bd5be",
+      "error_type": "CancelledError"
+    },
+    "flash-ordered": {
+      "passed_runner": true,
+      "elapsed_seconds": 113.28855228424072,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "f17f2b0977a0f77962d920ef751b8cc9bcc9696f28c26366421e11aeb9406fce",
+      "rewards": {
+        "reward": 0.0,
+        "quick_check": 1,
+        "evaluations": 4
+      },
+      "exception_type": null
+    },
+    "flash-routed": {
+      "passed_runner": true,
+      "elapsed_seconds": 93.40541458129883,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "4f8c9197ff08bd69e6209792c558b9af1fb6b89c823e4c489fbcadd611a2ebed",
+      "rewards": {
+        "reward": 0.0,
+        "quick_check": 1,
+        "evaluations": 1
+      },
+      "exception_type": null
+    },
+    "flash-sampling-check": {
+      "passed_runner": true,
+      "elapsed_seconds": 203.7688193321228,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "4841e2683832a71f9c8545f1676e2e5f40e62a612c3ecf1ca631908b14707c31",
+      "rewards": {
+        "reward": 0,
+        "quick_check": 1,
+        "evaluations": 25
+      },
+      "exception_type": null
+    },
+    "flash-sampling-exact": {
+      "passed_runner": true,
+      "elapsed_seconds": 222.18023014068604,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "4d77ec8c004b10ea2b04785b7e7fe7977543b237ee648a1ba9e76da3703dea45",
+      "rewards": {
+        "reward": 0,
+        "quick_check": 1,
+        "evaluations": 25
+      },
+      "exception_type": null
+    },
+    "flash-sampling-support": {
+      "passed_runner": true,
+      "elapsed_seconds": 205.99357914924622,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "6b4a0a5cc8e3584ae6a2167219b0f555f0febbfcbf4955ab6b84f6462f99d2f9",
+      "rewards": {
+        "reward": 0,
+        "quick_check": 1,
+        "evaluations": 8
+      },
+      "exception_type": null
+    },
+    "flash-shards": {
+      "passed_runner": true,
+      "elapsed_seconds": 124.74064517021179,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "c7b2e8469b3b2ca7fdfa26c2704285a1019c9b2893e23fe07b6cef23d52ed062",
+      "rewards": {
+        "reward": 0.0,
+        "quick_check": 1,
+        "evaluations": 0
+      },
+      "exception_type": null
+    },
+    "flash-shards-typed": {
+      "passed_runner": true,
+      "elapsed_seconds": 91.88473582267761,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "4eeda72a716426fab90cb56797f501f9660c6d77595fa897ddef4b0a54ab25d0",
+      "rewards": {
+        "reward": 0.0,
+        "quick_check": 1,
+        "evaluations": 2
+      },
+      "exception_type": null
+    },
+    "foundry-check": {
+      "passed_runner": false,
+      "elapsed_seconds": 41.916033029556274,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "c33734e177d848da49d353da7343cf7fcf5acfdc502a7bdcf9b9c640c0e6d14d",
+      "rewards": {},
+      "exception_type": "RuntimeError"
+    },
+    "foundry-mounted-check": {
+      "passed_runner": true,
+      "elapsed_seconds": 145.8785629272461,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "0cc00115bd8e337983c9c524fb28ae1fd55f3e67c30b30f719a52011a3527138",
+      "rewards": {
+        "reward": 0.0221898229607642,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "weights_match": 1,
+        "seconds": 44.065704299136996,
+        "norm_diff": 0.0,
+        "max_scalar_diff": 0.0
+      },
+      "exception_type": null
+    },
+    "inference-all-check": {
+      "passed_runner": true,
+      "elapsed_seconds": 203.48038339614868,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "cbad8002f30c08d629509310170d13ec0b44163916dbaa89f52b3461c916a891",
+      "rewards": {
+        "reward": 0.056012269076626216,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "quality_pass": 1
+      },
+      "exception_type": null
+    },
+    "inference-calibration-check": {
+      "passed_runner": false,
+      "elapsed_seconds": 171.33700704574585,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "ef07458586050d60751d48d7ecedc9428d92792cb2c1306a481803945b172ac4",
+      "rewards": {
+        "reward": 0,
+        "local_evaluation": 1,
+        "eval_valid": 0,
+        "quality_pass": 0,
+        "quick_check": 1,
+        "reference_collection": 1
+      },
+      "exception_type": null
+    },
+    "kernel-l4-check": {
+      "passed_runner": false,
+      "elapsed_seconds": 340.828439950943,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "120209f890eb07785f8a8b8753d64e1c39a5bb72f1e00f1351ebb21aead4c99f",
+      "error_type": "CancelledError"
+    },
+    "kernel-l4-remaining-check": {
+      "passed_runner": true,
+      "elapsed_seconds": 245.58544516563416,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "aa09670964389b2d45e80d6107e0e6f6a1bcb387f93731a93f90d985b53ef1be",
+      "rewards": {
+        "reward": 0.0,
+        "quick_check": 1,
+        "passed_tasks": 19,
+        "total_tasks": 19
+      },
+      "exception_type": null
+    },
+    "kernel-l4-spawn-check": {
+      "passed_runner": true,
+      "elapsed_seconds": 114.04202914237976,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "d0fbb1c8754bd169980f1b3edecf3c9fc03df1451c8143e5291a437d2f77739c",
+      "rewards": {
+        "reward": 0.0,
+        "quick_check": 1,
+        "passed_tasks": 1,
+        "total_tasks": 1
+      },
+      "exception_type": null
+    },
+    "kernel-repair": {
+      "passed_runner": true,
+      "elapsed_seconds": 94.80261397361755,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "7c2eb966f2a368634984313e64e66036db9cc9bdec785230b237d5df89b5bdc6",
+      "rewards": {
+        "reward": 0.0,
+        "quick_check": 1,
+        "passed_tasks": 35,
+        "total_tasks": 35
+      },
+      "exception_type": null
+    },
+    "packaged-original-kernel": {
+      "passed_runner": true,
+      "elapsed_seconds": 111.549649477005,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "fa4af3c80664eee25ec47ecc1c3139cff53e42ab601a4fe28315cd42cda9d692",
+      "rewards": {
+        "reward": 1.0,
+        "correctness": 1.0,
+        "runtime_ms": 11.2,
+        "speedup": 1.0,
+        "local_evaluation": 0,
+        "bounded_inputs": 0
+      },
+      "exception_type": null
+    },
+    "packaged-repair": {
+      "passed_runner": true,
+      "elapsed_seconds": 80.07356929779053,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "e74b3f194d73b1447333cc0fe8b9a0b28d2597a68ba420ad7d8369e78b4e4e6b",
+      "rewards": {
+        "reward": 1.0,
+        "local_evaluation": 1,
+        "bounded_inputs": 1,
+        "inference_mode": 1,
+        "correctness": 1.0
+      },
+      "exception_type": null
+    },
+    "packaged-sampling": {
+      "passed_runner": true,
+      "elapsed_seconds": 146.48994731903076,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "54549eda40b6d71ead4dbb5db7f6b6a2e21c67ad8e241071e50af5910da8d032",
+      "rewards": {
+        "reward": 0,
+        "correctness": 0,
+        "local_evaluation": 1,
+        "eval_valid": 1
+      },
+      "exception_type": null
+    },
+    "packaged-sampling-valid": {
+      "passed_runner": true,
+      "elapsed_seconds": 149.2279601097107,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "734022cb48cf9703d91bbe63b56d2048a1d846e5ac29fa9c05917ba98dbe29bd",
+      "rewards": {
+        "reward": 1,
+        "correctness": 1,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "sampling_quick": 1,
+        "samples_per_row": 2048,
+        "max_bin_error": 0.009970173239707947,
+        "evaluations": 1
+      },
+      "exception_type": null
+    },
+    "re-cumsum": {
+      "passed_runner": true,
+      "elapsed_seconds": 73.02549576759338,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "662f3af8b836fa9bd09eec1ecbaaaeb2760e31227a5b2663eee9450ba3a52018",
+      "rewards": {
+        "reward": 1,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "correctness": 1
+      },
+      "exception_type": null
+    },
+    "restricted-check": {
+      "passed_runner": true,
+      "elapsed_seconds": 92.08117032051086,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "5f2140f63ed85696082a11e4a8563c531ef1bc37bc6746711c898d4cc9b9e452",
+      "rewards": {
+        "reward": 0.08492972018191705,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "loss": 10.774441242218018
+      },
+      "exception_type": null
+    },
+    "rust-check": {
+      "passed_runner": true,
+      "elapsed_seconds": 136.39361953735352,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "4abe82d16347fb689f8a50895b3c0ca27f5be9ce995e524bf5057b858a17ad94",
+      "rewards": {
+        "reward": 1.0,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "gpu_inference_calls": 4
+      },
+      "exception_type": null
+    },
+    "scaling-check": {
+      "passed_runner": true,
+      "elapsed_seconds": 82.76603436470032,
+      "containers_remaining_empty": true,
+      "gpu_compute_processes_after": 0,
+      "evidence_sha256": "a1316f51d8bdc052615e6ae723f6f78f51aff832d473a5b2b977ec6a4884ac0b",
+      "rewards": {
+        "reward": 0.2355999999999998,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "flops": 377487360000000000,
+        "interpolated_loss": 3.7612733718998133
+      },
+      "exception_type": null
+    }
+  },
+  "cpu_regression_tests_passed": 35,
+  "library_audit": {
+    "tasks": 476,
+    "data_rows": 476,
+    "agent_routes": [
+      "gpu_docker",
+      "gpu_env_worker"
+    ],
+    "images": [
+      "psrl-autoresearch-verifier:20261030",
+      "psrl-inference-resident:20261102",
+      "psrl-onboard-agent:autoresearch-20261110",
+      "psrl-onboard-agent:inference-20261110",
+      "psrl-onboard-agent:qwt-20261110",
+      "psrl-onboard-agent:rebench-20261110",
+      "psrl-quick-agent:qwt-20261111",
+      "psrl-re-bench-verifier:bounded-local-20261110",
+      "qwt-gpu-probe:latest"
+    ],
+    "data_sources": {
+      "kernel_bench": 22,
+      "kernel_bench_local": 248,
+      "mle_bench_local": 4,
+      "re_bench_cumsum_local": 1,
+      "re_bench_mlm_local": 1,
+      "flashinfer_bench_local": 95,
+      "flashinfer_bench": 95,
+      "re_bench_embedding_local": 1,
+      "re_bench_scaling_local": 1,
+      "re_bench_foundry_local": 1,
+      "re_bench_rust_local": 1,
+      "inference_bench_local": 4,
+      "autoresearch": 1,
+      "re_bench_local": 1
+    },
+    "missing_bind_sources": [],
+    "manifest_sha256": "b121863f824fa4a472bfe2088b7cdc4285576415275b815ec2405142a3d3a205"
+  },
+  "source_sha256": {
+    "examples/re_bench/replicate.py": "73b9b534aa3dd86589a674aec2e8c373596255df690dc264d335534d727bc901",
+    "examples/re_bench/foundry_baseline.py": "5d157998c29383962b22f163488bdbb276e37928d963b985545d1f6c27e4d24d",
+    "examples/re_bench/__init__.py": "11b1972918db2ab70e34b0dafcaf02784dd78290a455593cb4a9c738a8068d62",
+    "examples/re_bench/run.py": "24c8cdba6eeb4cfa2825ad7fa68d55e86da1ef35537f5867ba695254de657858",
+    "examples/re_bench/scaling_verify.py": "d513c39a2424be3c2c099a4400a9dbebdb51400951060f7aa972a1d4311931be",
+    "examples/re_bench/feedback_smoke.py": "57045209cb93c872e38fbc8cfbe00ce0376b1df93460a3429dbeb8583301bb54",
+    "examples/re_bench/smoke.py": "98218cd6848c820d4d0dd02842e8f20364374856c958e7578652c89c48969071",
+    "examples/re_bench/image.py": "5784fbc29e1cbcd503b7273ad768c406313a64e7f619ac4816e91f2860744778",
+    "examples/re_bench/bounded.py": "108c3a9ed384cbaebb030dd365dd4393bbe439d4107a25fef08e47ca666982ff",
+    "examples/re_bench/restricted_mlm.py": "47bceb6114929e1e98eeeadc84a1b86f0815a2149bb5b2acbf3a905371f8b4e6",
+    "examples/re_bench/judge.py": "f8278e1c5dc06d526617ff2d8b9a50cad86dba13d273dcd7f5ff5787fcd85c60",
+    "examples/re_bench/rust_baseline.py": "469ba09fc15768b7c46313a1a3c884fc39164a14b8c0b62b261c5f959c232161",
+    "examples/re_bench/cumsum.py": "91e2db86b5eefbf2c7a86d0860f51beb42b14d8c0b1e2f5939c5fdd70c191938",
+    "examples/re_bench/scaling_baseline.py": "690b6a6685550c58e3ab0a51c9ae3cd42f0514cd56b088a3acf0322b9b8fd294",
+    "examples/re_bench/prepare.py": "223b2e910893d3df7e158643213d6e1e95c3ec0f1e89ba810eee316e464c801a",
+    "examples/re_bench/rust_verify.py": "f0246eb901dd14aba08302d52fb05433cc99e9f30c1d87056ce2f18340f14bf7",
+    "examples/re_bench/verify.py": "a90ea17d388db786381c8a04a7b4f89dd89020809a637e645fff256b9157684a",
+    "examples/re_bench/cumsum_verify.py": "1757d6aa1fc40baf4ac04f1c578abbff4bd09b81d03f6b42bde2338d57db5a87",
+    "examples/re_bench/download.py": "cb309214ef3919522811c84ddea580f55d98780e5a406a44f36e911130953bba",
+    "examples/re_bench/embedding_verify.py": "bf05aba103cd9b3d695aff74d51ce7a072d6cd6108f376d8dfab2bc3ab682d10",
+    "examples/re_bench/embedding_oracle.py": "8003a285385177e96af9c8369bbc7774a74cdc054d8c350d373f264ac29af9a8",
+    "examples/re_bench/restricted_mlm_baseline.py": "d273f8ec444f05eebff24c215e8bd85099ebd5730710c580700c464064dfd22f",
+    "examples/re_bench/foundry_verify.py": "8803e794aeb8e41438d80bb41d7772c1ddabcdeb2696fb90cdb918db189fafaa",
+    "examples/re_bench/rust.py": "bc8f27d4f938d6e38dd8c241e41da8d788bbf83f6306ddb318815eee700c2b69",
+    "examples/re_bench/restricted_mlm_verify.py": "5d99c885ada54c03d3eb08a064b32b6aa96f710b395661ecb0777d0194e32bc8",
+    "examples/re_bench/strict_evaluation.py": "591259641f98ac1c6b6a584a93f54b0f9c92983eeaf9caa9717625db1333e7a9",
+    "examples/flashinfer_bench/quick_check.py": "375040d5d6dc4e96f2b400da15d713d5937ae4345d4a6fb638aff3205bcf3bc2",
+    "examples/flashinfer_bench/prepare.py": "03919617b47edc30af652a4e59eee802d2dfcc3a87fb142c3d142da98b0f9fc8",
+    "examples/flashinfer_bench/verify.py": "ab73b0d067a4d9c6e424dab079bfcc68d63bf1f9938fd53812f32beb1f29d0d3",
+    "examples/flashinfer_bench/sampling_check.py": "a5b4f12184a460b36242989abfb933bab265df0f77fda383d3912f937f65fddd",
+    "examples/flashinfer_bench/prepare_suite.py": "a059e96d9e4d061dab8907e047fb6fe95aad0cfd596f55b36e65fb6abb9916b6",
+    "examples/inference_bench/resident_image.py": "4b62dc26e2ffc13596d7bb65cbcb329f87bc64bcb12a8fadf978842bebc898c9",
+    "examples/inference_bench/resident_analyze.py": "0507c473a1e3cd0e86af785cc85a033c75089e6e063f33ecfa04526f45535df6",
+    "examples/inference_bench/scenarios.py": "df4a3b5ba996574cdc3bee7a61388b5edbfc3a032efa3e0a93a793a91408689a",
+    "examples/inference_bench/__init__.py": "b9a6658d39fe173f85ecd048675f9994ad7c8f2d75eb53da0a67006434876942",
+    "examples/inference_bench/resident_agent.py": "f2651a13b0e50680d70fbcf80b1a6918c89b810c6f3ea5928ba0addedbd68adc",
+    "examples/inference_bench/scenario_verify.py": "b933380980e3743ed077aacd6a7b5e3e137ef0229f723532b3f8d80fc79587a5",
+    "examples/inference_bench/resident_ab.py": "85eff97046cbe8acab6802e0566ed81fc0595161968254f4cf703510f1329189",
+    "examples/inference_bench/resident_client.py": "d5552ff135e00a886316e81fd6fe8cbbddb4c5155c3398b4973a6117194cbf8f",
+    "examples/inference_bench/prepare.py": "bbc47ab6cbfb92fa40f7d8288638d6e34a7a55aab02d62675549be0f93ddea38",
+    "examples/inference_bench/local.py": "f48d6a98d951bbdb56eae1c7d77ed41ad8f1cb7ee2c1539ee88f911779084ee1",
+    "examples/inference_bench/local_verify.py": "814ea9543785f0772b5d4d15bbdbd46414274fffff7a48a1ed37b4fdf3b863f9",
+    "examples/kernel_bench/__init__.py": "b9a6658d39fe173f85ecd048675f9994ad7c8f2d75eb53da0a67006434876942",
+    "examples/kernel_bench/quick_check.py": "3043f4673414611b1f140afcdf900e9d1b5019a16cf196e4ff6127bd7f810c6d",
+    "examples/kernel_bench/verifier.py": "b44e35b8de59fae7eb4e9aebe2afa1fc233d4d0653f8aa04ce601a5a86a0c48f",
+    "examples/kernel_bench/prepare.py": "59700e091d9fcfc58a9e7286edca01924ba481b0610bda79df87b9aa26d61fde",
+    "examples/kernel_bench/local_profile.py": "b940185c56560c0ef211b9629bb5bc5b0df15f412245fae01fd5238e402826fc",
+    "examples/kernel_bench/prepare_suite.py": "0c61739cb49a2ff3f8e33c3a6a876f60a84f74fef375ac7dddefba5ade8ac946",
+    "examples/gpu_benchmarks/autoresearch_replay.py": "ed32bf03370fe899d4771994289648b2ab876ae9371759f2e7f087d0dd4ba697",
+    "examples/gpu_benchmarks/agent_loop.py": "c07808e5792caad1f9883520be0944a0d0071bd9eea123005a17cc09df092ad4",
+    "examples/gpu_benchmarks/mix.py": "2e38f376febf67660f2b987baaffe350de6ea002310e03324276263f60b39034",
+    "examples/gpu_benchmarks/__init__.py": "42b58c73fece4280e96bdd18036228db8f940bdca2cbaf5b1f40cf5c5b7d1aa1",
+    "examples/gpu_benchmarks/run.py": "81b95650b37a3844306741f500305778a467375602cec51bc1c4238a901fefc4",
+    "examples/gpu_benchmarks/inventory.py": "e0fe1e49da7b64d2ad223b450caf372c255d55aea0bf17ef5685c56dc913994e",
+    "examples/gpu_benchmarks/summarize_quick_checks.py": "e9cf26c26d576ad573e27d7ce8313ee376ba90823efa9909aa9b0d79089d3a1f",
+    "examples/gpu_benchmarks/evaluate.py": "df49980e7d392b38d440818193fd5b2fc78064fd10f7c73fd85744f2a129f10b",
+    "examples/gpu_benchmarks/prepare.py": "7ce7be791646350c0d505146aa59bb3ba578a5a29bc85d8f54353087d3cb1b51",
+    "examples/gpu_benchmarks/reward.py": "316cf7ff545850e5b742e408d7983907cffaf70634e280fec35b0ee0bc3da481"
+  },
+  "manifest_sha256": "b121863f824fa4a472bfe2088b7cdc4285576415275b815ec2405142a3d3a205",
+  "reused_evidence": [
+    "quick-validation-20261111.json: original Kernel 22, bounded Kernel 193, FlashInfer 30, MLE 4",
+    "full-onboarding-20261110.json: autoresearch and RE chat; six representative policy update loops"
+  ],
+  "limitations": [
+    "One workload per FlashInfer definition, not all 3267 upstream workloads.",
+    "Kernel 248 tasks use explicit local input/evaluation profiles.",
+    "RE tasks use documented local models, data, budgets or candidate ranking. Foundry task substitutes a Transformers pipeline.",
+    "Sampling checks 2048 draws/row in 32 probability buckets with absolute error bound .07, not the original 500000-draw per-token test.",
+    "Historical policy training is not new per-task policy-loop verification.",
+    "Kaggle official competitions require user authentication and are not counted as complete.",
+    "Batch diagnostic fixture provenance may retain its initial Kernel scaffold. Per-operator identities, workload records and published task provenance determine benchmark coverage."
+  ],
+  "final_node_observation": {
+    "running_containers": 0,
+    "node_gpu_processes_visible": 8,
+    "scope": "Each owned run previously recorded zero owned containers and no GPU compute processes after cleanup. Later node-wide telemetry is not zero and is not interpreted as benchmark ownership. No node-wide process cleanup performed."
+  }
+}

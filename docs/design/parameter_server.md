@@ -2,9 +2,14 @@
 
 The Parameter Server (PS) is the central weight-storage and synchronization hub that
 makes PSRL's decoupled train/gen architecture possible. Training workers **push**
-updated weights to it after every gradient step, rollout instances **pull** weights
-from it on demand (bounded by `staleness`). Because the PS sits between the two
-clusters, training and generation never block on each other.
+updated weights to it, and rollout instances **pull** weights when coordinated to
+sync. The two compute pipelines can overlap, while parameter transfers still obey
+read/write locks and resource limits.
+
+For example, training publishes version 11 while a rollout instance is finishing
+work begun at version 10. The instance later loads version 11 before serving new
+work under that version. This is a teaching example, not a timing measurement.
+Read [the complete flow](../overview/reading-guide.md) if the roles are unfamiliar.
 
 ```{figure} /_static/img/ps.svg
 :alt: PSRL Parameter Server architecture
@@ -17,6 +22,21 @@ IPC / shared memory).
 ```
 
 ---
+
+## Contents
+
+- [Motivation](#motivation)
+- [Architecture](#architecture)
+  - [PS Manager (control plane)](#ps-manager-control-plane)
+  - [PS Workers (data plane)](#ps-workers-data-plane)
+- [Synchronization Modes (psrl.ps_mode)](#synchronization-modes-psrlps_mode)
+- [Push / Pull Path](#push--pull-path)
+  - [Push (after every training step)](#push-after-every-training-step)
+  - [Pull (when a rollout instance syncs)](#pull-when-a-rollout-instance-syncs)
+  - [How push and pull interact](#how-push-and-pull-interact)
+- [Broadcast Initialization](#broadcast-initialization)
+- [Configuration Reference](#configuration-reference)
+- [Compatibility With Other Subsystems](#compatibility-with-other-subsystems)
 
 ## Motivation
 
@@ -54,7 +74,7 @@ launched on the head node. It owns:
 - The **current model version tag** and a small `ModelStore` per version (either the
   state dict or a Ray `ObjectRef` to it, depending on `ps_mode`).
 - The **staleness inventory** (the per-version buffers + Reserve/Occupy/Consume
-  protocol described in [Staleness Control](staleness_control)), the PS Manager is
+  protocol described in [Staleness Control](staleness_control.md)), the PS Manager is
   also the request-status tracker, so version assignment and buffer bookkeeping live
   in the same place.
 - A **single-writer / multi-reader lock** on push/pull operations
@@ -63,8 +83,9 @@ launched on the head node. It owns:
 - A NIXL meta-server that PS Workers and train/rollout sides connect to so they can
   discover each other's transport endpoints.
 
-The PS Manager is intentionally **stateless w.r.t. tensor data**: it routes RPC
-calls and updates metadata, but the actual bytes flow worker-to-worker.
+In `nixl_cpu` mode the PS Manager coordinates metadata and bytes flow between
+workers. The simpler `cpu` and `cpu_ref` modes store a state dict or its references
+through the Manager instead.
 
 ### PS Workers (data plane)
 
@@ -116,14 +137,13 @@ them.
 | `ps_mode` | Where weights live | Train → PS path | PS → Rollout path | Status |
 |---|---|---|---|---|
 | **`cpu`** | Real state dict in PS Manager process | `push_model_state_dict_cpu` (Ray RPC, serialized) | `pull_model_state_dict_cpu` (Ray RPC) | Implemented. Smallest models / debugging, simplest path, no NIXL setup needed. |
-| **`cpu_ref`** | Ray `ObjectRef` to state dict (shared-mem plasma store) | `push_model_state_dict_cpu_ref_list` (zero-copy ref hand-off) | `pull_model_state_dict_cpu_ref` (clients resolve the ref) | Implemented. Default fallback when NIXL is unavailable, avoids serializing the state dict but still single-process. |
+| **`cpu_ref`** | Ray `ObjectRef` to state dict | `push_model_state_dict_cpu_ref_list` (pass references) | `pull_model_state_dict_cpu_ref` (resolve references) | Implemented. Shipped default. References reduce repeated RPC payloads; tensor copies depend on placement and serialization. |
 | **`nixl_cpu`** | Sharded across PS Workers in pinned CPU memory | NIXL write from each train rank | NIXL read into each rollout rank | Implemented. **Recommended default**: same-node DMA / cross-node RDMA, no Ray RPC on the hot path. |
 | **`nixl_gpu`** | (planned) sharded across PS Workers in GPU memory | (planned) NIXL write, GPU-direct | (planned) NIXL read, GPU-direct | **TBD, not implemented.** Initializing this mode currently raises `NotImplementedError`, the scaffolding exists so the eventual GPU path can drop in without churning the API. |
 
-The recommended default for any real training run is **`nixl_cpu`**: every example
-launch script (`examples/dapo_trainer/*.sh`, `examples/retool/*.sh`,
-`examples/mini_swe/*.sh`) sets `psrl.ps_mode=nixl_cpu`. Use `cpu` / `cpu_ref` for
-tiny smoke tests and debugging where NIXL setup is overkill.
+The main DAPO launch example sets **`nixl_cpu`** for distributed weight transfer.
+Use `cpu` / `cpu_ref` for small debugging runs where NIXL setup is unnecessary.
+Select the mode explicitly when reproducing a recipe.
 
 :::{admonition} Why CPU, not GPU, in the production default?
 :class: tip
@@ -145,8 +165,8 @@ every request.
    `psrl.ps_manager.acquire_exclusive_push_lock()`, waits until no concurrent pull
    is in flight.
 2. Each train rank streams its **shard** of the freshly-computed state dict over
-   NIXL into the matching PS Worker. The state dict is already sharded across
-   train ranks (FSDP or Megatron TP/PP/CP), so no all-gather is needed.
+   NIXL into the matching PS Worker. Backend-specific conversion and
+   synchronization happen before transfer, according to the parameter-sync plan.
 3. Once all shards are received, the train side calls
    `push_model_state_dict_nixl(version_tag=v+1)`, a control-plane Ray RPC that
    simply bumps the PS Manager's version counter and frees `v−1`'s storage.
@@ -155,7 +175,7 @@ every request.
 ### Pull (when a rollout instance syncs)
 
 1. The rollout instance, driven by the configured sync strategy (see [Flexible
-   Rollout](flexible_rollout)), calls
+   Rollout](flexible_rollout.md)), calls
    `psrl.ps_manager.acquire_shared_pull_lock()`. Multiple instances may hold this
    lock simultaneously.
 2. Each GPU rank inside the instance issues a NIXL read from its **local** PS
@@ -173,11 +193,14 @@ The single-writer / multi-reader lock on `PSManager` gives the following semanti
 | Push | Yes (one writer only) | Yes (waits for all readers to drain) |
 | Pull | Yes (waits for the writer to finish) | **No, multiple pulls run concurrently** |
 
-The important architectural property is the last cell: **rollout instances never
-queue behind each other on the PS.** A push briefly suspends pulls (and vice versa),
-but pushes are infrequent (one per training step) and short (one sharded streaming
-write), while pulls fan out in parallel across all rollout instances. In steady
-state, generation is not gated by the PS.
+The lock admits multiple readers at once. They can still contend for memory and
+network bandwidth, and a writer waits for active readers to finish. Measure these
+costs for the actual model and topology rather than assuming transfer is free.
+
+The lock conditions are in [PSManager](../../psrl/workers/ps/ps_manager.py#L1088).
+The training entry [push_model](../../psrl/workers/train/base_train_worker.py#L294)
+also shows backend preparation around NIXL transfer. For the full execution path
+and a CPU teaching exercise, see [the reading guide](../overview/reading-guide.md).
 
 ---
 
@@ -216,7 +239,7 @@ serve in parallel (typically `>= 4` nodes).
 | `psrl.nixl.server_ip` | str | `${psrl.ps_manager_ip}` | NIXL meta-server bind address. |
 | `psrl.nixl.server_port` | int | `23456` | NIXL meta-server port. Change if it collides with something on your cluster. |
 | `psrl.nixl.max_pinned_temp_memory_slots` | int | `16` | Pinned temp-memory slot count for non-contiguous tensor transfers. Bump if you see "no free slot" warnings during push. |
-| `psrl.nixl.enable_tms_for_temp_buffers` | bool | `${psrl.tms.enable_nixl}` | Let TMS reclaim NIXL pinned buffers when not transferring. See [Resource Elasticity](resource_elasticity). |
+| `psrl.nixl.enable_tms_for_temp_buffers` | bool | `${psrl.tms.enable_nixl}` | Let TMS reclaim NIXL pinned buffers when not transferring. See [Resource Elasticity](resource_elasticity.md). |
 | `psrl.broadcast_init.enabled` | bool | `False` | Rank-0 reads checkpoint, broadcasts to all PS Workers over NIXL instead of parallel disk reads. |
 | `psrl.broadcast_init.algorithm` | str | `binary_tree` | Broadcast topology. `binary_tree` is the only one currently shipped (`ring` is reserved). |
 
@@ -230,10 +253,10 @@ so model consumers can prefer a local CPU storage worker when one is available.
 
 - **Staleness Control**: version tags and Reserve/Occupy/Consume buffers are owned
   by the same `PSManager` actor, so weight push and buffer state always advance
-  atomically. See [Staleness Control](staleness_control).
+  atomically. See [Staleness Control](staleness_control.md).
 - **Flexible Rollout**: the sync strategy (`psrl.rollout_coordination.sync_and_mig_strategy.sync`) is
   what decides *when* a rollout instance triggers a pull, the PS only services the
-  pull when asked. See [Flexible Rollout](flexible_rollout).
+  pull when asked. See [Flexible Rollout](flexible_rollout.md).
 - **Resource Elasticity (TMS)**: when `psrl.tms.enable_nixl=True`, NIXL's pinned
   temp buffers are managed by TMS and can be reclaimed between transfers, lowering
-  the PS's steady-state memory footprint. See [Resource Elasticity](resource_elasticity).
+  the PS's steady-state memory footprint. See [Resource Elasticity](resource_elasticity.md).

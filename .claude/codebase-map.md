@@ -16,9 +16,9 @@ PSRL (Post-training Streaming RL) is a distributed LLM post-training framework. 
 - **Asynchronous training**: rollout generation and PPO training run concurrently, connected via a parameter server
 - **Staleness control**: multi-buffer system tracks model versions; training consumes rollouts within an acceptable staleness window
 - **Streaming rollout via SMG**: a Rust routing gateway dispatches live inference requests to vLLM replicas with PSRL-aware worker selection, partial-rollout loopback, and weight-version gating
-- **GPU-direct communication (NIXL)**: model weights transfer GPU→GPU bypassing CPU/Ray serialization
+- **Parameter transfer (NIXL)**: the `nixl_cpu` path transfers weights through CPU-resident PS Workers, with metadata RPCs separate from the tensor data path
 - **TransferQueue data plane**: rollout/reward/train components exchange lightweight metadata references instead of serializing whole batches
-- **Resource elasticity**: GPUs are transparently re-shared across train/gen/eval/reward via TMS memory pause/resume
+- **Worker memory lifecycle**: explicit training/validation switching and inference sleep/wake paths. TMS manages eligible memory, while placement and resizing use separate configuration
 - **Pluggable parallelism**: FSDP and Megatron-LM for training (behind one engine worker), vLLM for inference
 
 ---
@@ -45,7 +45,7 @@ PSRL (Post-training Streaming RL) is a distributed LLM post-training framework. 
    │(vLLM)  │ │(vLLM)  │  │ Worker(FSDP/ │  │ (stats/pause/weight-version│
    └────────┘ └────────┘  │  Megatron)   │  │  loops driving SMG)        │
         │          │      └──────┬───────┘  └───────────────────────────┘
-        └──────────┴──── NIXL ───┘   (GPU-direct model push/pull)
+        └──────────┴──── NIXL ───┘   (model push/pull via CPU PS storage)
         └─────── TransferQueue ───────── sample fields (prompt/response/reward/logp) ──────┘
 ```
 
@@ -445,7 +445,7 @@ before rollout finishes. `overlap_scope: pre_step` additionally runs advantage+u
 
 ```
 EngineTrainWorker completes update
-  → nixl_push_model() [async background, GPU-direct] → PSManager.push(version=N)
+  → nixl_push_model() [async background, NIXL transfer] → PSManager.push(version=N)
   → PSManager creates StalenessBuffer(version=N)
   → RolloutCoordinator gates SMG: pause dispatch → publish weight-version update → resume
 
@@ -682,7 +682,7 @@ main_ppo.py (TaskRunner, TransferQueue init)
 | **ThunderAgent** | Capacity-based session hang/continue scheduler (ported); "program→session, reasoning→generate, acting→env, pause/resume→hang/continue" |
 | **TransferQueue** | Async sample **data plane**; components exchange `KVBatchMeta` references instead of serializing whole TensorDict batches (distinct from SMG's request queue) |
 | **LMCache** | KV cache offload / prefix reuse / cross-instance transfer backend |
-| **NIXL** | GPU-direct RDMA transport for GPU→GPU weight movement |
+| **NIXL** | Registered-memory transport. PSRL `nixl_cpu` uses CPU-resident PS storage with local or cross-node transfers |
 | **TMS** | torch_memory_saver — GPU memory pause/resume primitive underpinning resource elasticity |
 | **elastic_rm** | Resource elasticity subsystem re-sharing GPUs across train/gen/eval/reward |
 | **partial rollout** | On weight-sync abort, SMG preserves the generated prefix and continues the request after re-selection instead of restarting |

@@ -1,8 +1,11 @@
 # AI4Infra 性能反馈研究：benchmark 选择与最小验证
 
-> **核心结论**：现有 KernelBench 足够做第一轮机制实验，现有 InferenceBench 的常驻服务功能检查不能替代完整性能评分验证。建议新增 FlashInfer-Bench 的生产算子任务，再考察 SWE-Serve 的 speedup 子集与推理服务级负载。研究目标是“反馈可靠性达标时，固定一组 rollout 全部完成得更快”，不是增加 benchmark 数量，也不是单独优化公平性。
->
-> 本文承接 [command 调度研究](../research-proposals/command-scheduling-research.md)。[非计时评分场景](../research-proposals/non-timing-gpu-scheduling-scenarios.md)是另一条并行路线，两者不要混用验收结论。2026-11-05 的本地试验基于 `0326d466` 加运行快照中的未提交修改，只核对下述调用路径，不表示全部 Env 设计重新验收。
+> **核心结论**：性能反馈研究要同时回答“结果是否可靠”和“整批是否更快”。共享 GPU 的竞争可能把较快候选测成较慢，导致 Agent 朝错误方向优化。KernelBench 与 FlashInfer 适合先验证算子测量，InferenceBench 与 SWE-Serve 性能子集用于检验服务和工程层面的适用性。
+
+例如真实耗时为 10 ms 和 11 ms 的两个候选，若前者测量时遭遇 20% 干扰，就会被记录为 12 ms，从而错选 11 ms 的候选。这是教学数字。研究目标是降低这类错误，同时计入独占、重复测量和排队的完整成本。
+
+本文的原生 Env 实验基于 2026-11-05 的 `0326d466` 加运行快照，保留原配置与证据。此后 FlashInfer 和 FastKernels 已有本地接入与有界验证，具体完成范围查[当前路线图](../milestones/science-gpu-bench-status-and-roadmap.md)。下面的候选顺序表示性能反馈研究的使用顺序，任务可用状态以该入口为准。[非计时场景](../research-proposals/non-timing-gpu-scheduling-scenarios.md)则按功能与质量目标单独验收。
+
 
 ## 目录
 
@@ -36,7 +39,7 @@ AI4Infra 在这里指让 AI agent 改进计算基础设施，例如生成 GPU �
 | 第一 | [FlashInfer-Bench](https://github.com/flashinfer-ai/flashinfer-bench)，从生产推理捕获的算子定义和 workload | 带形状、数据类型、参考实现、候选与官方评估器，能补充 KernelBench 的任务来源，并覆盖不同 batch 形状 | 单次评估进程可以完整包入一个 command。本次 RMSNorm baseline 明确列 H20，但不能把这推广到所有低精度或 Blackwell 专用任务 |
 | 第二 | [SWE-Serve](https://github.com/NVIDIA/swe-serve) 的 speedup 子集，修改实际 SGLang 工程代码 | 从孤立函数走到真实工程修改，适合检查方法是否仍有价值 | 必须逐题核验。官方 GPU 平台与 H20 不同，硬件专用测试不能只改设备名字就算兼容 |
 | 服务级验证 | 当前 [InferenceBench](https://github.com/aisa-group/InferenceBench) 的正式任务，或 FastKernels 的端到端负载 | 补齐模型初始化、请求调度、缓存和服务时延，验证跨层次适用性 | 常驻服务更适合 episode，或将服务启动、预热、测量、关闭包为一个完整 command。不能仅在客户端请求结束时归还服务仍持有的 GPU |
-| 储备 | [FastKernels](https://github.com/Snowflake-AI-Research/fastkernels)，单算子、融合算子、层/块、端到端四层 | 提供从局部改进到模型级效果的桥梁 | 已核查代码与文档，未完成本地运行。完整依赖较重，不为增加名字先安装整套依赖 |
+| 储备 | [FastKernels](https://github.com/Snowflake-AI-Research/fastkernels)，单算子、融合算子、层/块、端到端四层 | 提供从局部改进到模型级效果的桥梁 | 已有 29/458 个本地目标快检与 Linear 代表闭环，整库及官方完整协议仍待验收，详见当前路线图 |
 | 暂缓 | [SOL-ExecBench](https://research.nvidia.com/benchmarks/sol-execbench/blog/introducing-sol-execbench) | 生产模型来源与硬件性能上界视角有参考价值 | 官方 B200 条件不能直接转换成 H20 官方成绩，本轮不作为首个接入目标 |
 
 SWE-Serve 不能整个算作“性能评分 benchmark”。在已审计的固定版本中，GPU 任务的 speedup 子集只有三题：`ss-sgl23856-use-torch-torch-mm-for-deepseek-v3-2-indexer`、`ss-sgl25265`、`ss-sgl25311-perf-mla-tma-bulk-store-set-mla-kv-buffer-up`。其余 GPU correctness 任务属于另一条研究路线。任务清单审计见[既有说明](../research-proposals/non-timing-gpu-scheduling-scenarios.md)。本轮未运行这三题的完整评分器。
@@ -155,21 +158,21 @@ PYTHONPATH="$PWD" python "$FIB_SCRIPTS/flashinfer_env_probe.py" \
   --node-ip "$FIB_NODE" --gpu "$FIB_GPU" --image "$FIB_IMAGE"
 ```
 
-脚本在实际执行节点运行，不要仅传一个远程 IP 却在无 Docker 的工具容器内启动。镜像需提供运行所挂载 Python 的系统库。当前 pilot 明确使用 CUDA 12.8 工具链，所有任务在无网络容器中运行。正式可移植 recipe 尚需把依赖固化到镜像，并接上任务 manifest 与 Harbor verifier。
+脚本在实际执行节点运行，不要仅传一个远程 IP 却在无 Docker 的工具容器内启动。镜像需提供运行所挂载 Python 的系统库。当前 pilot 明确使用 CUDA 12.8 工具链，所有任务在无网络容器中运行。该命令是 11-05 探针复现入口，公共 recipe、任务 manifest 与独立 Harbor verifier 已在后续接入，见[任务 recipe](../knowledge/gpu-benchmark-recipes.md)。
 
 `status.json` 看总状态与清理结果，`official-results.json` 看官方正确性和时间，`benchmark.stderr` 看编译或评估失败。官方 `speedup_factor` 比较的是数学参考实现，不能解释成相对当前生产最优 FlashInfer 实现的加速。
 
 ## Results 与验证边界
 
-2026-11-09 的后续[批量评估成本对照](../experiments/gpu-benchmarks/flashinfer-batching.md)单独记录，不与以下 2026-11-05 功能验证混为一次实验。探针现在支持可选实验回调，并对回调路径的清理失败返回失败状态，原有默认官方验证流程保留。
+本节保存 2026-11-05 的官方任务与 Env 联通性探针：从申请环境到正确性评分，再到命令归还和容器清理。另一项研究——多次候选评估能否共用准备、降低成本——见[批量评估对照](../experiments/gpu-benchmarks/flashinfer-batching.md)。
 
-本轮已准备官方 RMSNorm 隐藏维度 2048 的三种 batch：1、64、16254。定义注明来自 Qwen3-30B-A3B，使用 BF16，即 16 位浮点表示。官方 workload 将输入标为 `random`，因此是**真实生产形状下的官方随机输入评估**，不是加载 Qwen 模型或真实用户文本，也不是生产激活张量回放。
+探针选用官方 RMSNorm（按均方根归一化）任务，隐藏维度为 2048，批量大小为 1、64、16254。定义中的形状来自 Qwen3-30B-A3B，数据采用 BF16（16 位浮点表示）。评估器按这些形状生成官方规定的随机输入，用于检查算子正确性与耗时。
 
 离线任务使用原生 EnvWorker command 后端，一张空闲 H20、4 CPU、16 GiB 容器内存。命令主体有 600 秒异步期限，离线监督进程设 900 秒总期限。固定工作区代码快照保留了 HEAD、未提交覆盖文件清单及源码哈希，避免其他会话修改正在运行的代码。共享 Python 依赖只读使用，未重新安装。
 
 初次工具容器内 Docker 预检失败，未启动 GPU 工作，证据保留。随后改为在指定节点 SSH 启动，任务已经完成并停止。可移植的[结果记录](../experiments/gpu-benchmarks/flashinfer-env/evidence.json)保留了上游版本、运行时源码哈希、官方评估结果和原始日志哈希。
 
-| 验收项 | 本轮结果 |
+| 验收项 | 2026-11-05 探针结果 |
 |---|---|
 | 实际链路 | 私有 Ray EnvRouter → 原生 EnvWorker → direct command GPU |
 | 容器 CUDA | 小型张量运算通过 |
@@ -179,9 +182,9 @@ PYTHONPATH="$PWD" python "$FIB_SCRIPTS/flashinfer_env_probe.py" \
 | 最终清理 | 本次容器为 0、GPU 计算进程为 0，显存回到约 0.19 MiB，无清理异常 |
 | 时间边界 | 整次约 75 秒，官方 Benchmark 内部约 5.43 秒，两者包含的阶段不同，不能混作 kernel 耗时 |
 
-本环境缺少 CUPTI，即 CUDA 性能分析工具接口。官方评估器自动回退到 CUDA Event，在 GPU 流上记录时间戳测量耗时。未改评分器或放松容差。它是本轮实际计时路径，正式性能研究须固定后端、预热与缓存条件，并另行验证测量误差。不能把这轮结果称为 CUPTI 计时，也不能将单次通过当成稳定性结论。
+当次环境缺少 CUPTI（CUDA 性能分析工具接口），官方评估器采用 CUDA Event，在 GPU 流上记录时间戳。评分器与正确性容差保持官方设置。做稳定的性能比较时，需要固定计时后端、预热与缓存条件，并测量重复运行的波动。
 
-本轮不是 ON/OFF 性能对照，不是共享干扰实验，不是完整 FlashInfer-Bench 成绩，也没有验证策略训练效果。新增的是可复现的官方任务与 Env 联通性探针，公共 GPU benchmark runner 的 command 白名单仍只支持 KernelBench。研究策略、完整 Harbor/PSRL 数据集接入与服务级泛化均未完成。
+这次探针验证了三项官方工作负载能够走完 Env 执行、评分和清理链路。FlashInfer 现有的公共 Harbor / PSRL 接入、代表题策略闭环和题库覆盖范围，统一见[有效接入结果](../experiments/gpu-benchmarks/FINDINGS.md)。研究资源调度时，还应独立比较启用与关闭调度器的相同工作量、同卡计算干扰和完整服务完成时间；功能联通性是这些研究的基础证据。
 
 ## 官方资料与固定版本
 
@@ -189,4 +192,4 @@ PYTHONPATH="$PWD" python "$FIB_SCRIPTS/flashinfer_env_probe.py" \
 - [FlashInfer-Trace 官方数据](https://huggingface.co/datasets/flashinfer-ai/flashinfer-trace)，本轮 `da915083d4c7c5e61aa3005e3d17ae488e0fc71c`。
 - [RMSNorm 定义](https://huggingface.co/datasets/flashinfer-ai/flashinfer-trace/blob/da915083d4c7c5e61aa3005e3d17ae488e0fc71c/definitions/rmsnorm/rmsnorm_h2048.json)，核对模型来源、数据类型与参考函数。
 - [SWE-Serve 固定版本](https://github.com/NVIDIA/swe-serve/tree/84d8fd92739a4a76ceddba56e5a70605921c4ad2)，区分 correctness 与 speedup。
-- [FastKernels 官方代码](https://github.com/Snowflake-AI-Research/fastkernels)，本轮仅核查 `9acebaa1349c78af8bb0ecb7e0719b5372d26fd8`，未运行。
+- [FastKernels 官方代码](https://github.com/Snowflake-AI-Research/fastkernels)，历史资料核查版本为 `9acebaa1349c78af8bb0ecb7e0719b5372d26fd8`；本地接入与验证范围见[当前任务 recipe](../knowledge/gpu-benchmark-recipes.md)。

@@ -1,0 +1,685 @@
+{
+  "date": "2026-11-13",
+  "base_commit": "6aa328d56eff746c2ae6d9fd766b2f3f76b4a670",
+  "includes_uncommitted_changes": true,
+  "scope": "Two disjoint current CPU regression runs, existing real prepared data schema audit and standard-library demonstrations. No real Docker, Ray cluster, GPU or policy training.",
+  "total_unique_cpu_tests": 164,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "one_single_pytest_run": false,
+  "historical_tests_added_to_total": false,
+  "groups": [
+    {
+      "name": "cpu",
+      "scope": "Current CPU regressions, no real Docker, Ray cluster, model or GPU. Upstream MLGym test deferred to separate run.",
+      "activation": "Attempted project activation, conda did not finish within 82 seconds, own activation process group terminated. Using explicit existing project interpreter without installs.",
+      "command": [
+        "/apdcephfs_zwfy10/share_303541817/lhy/anaconda3/envs/psrl_smg_new/bin/python",
+        "-m",
+        "pytest",
+        "tests/examples/airs_bench",
+        "--ignore=tests/examples/airs_bench/test_upstream_mlgym.py",
+        "tests/env_worker/test_airs_regressions.py",
+        "tests/env_worker/test_shell.py",
+        "tests/env_worker/test_coordinator.py",
+        "tests/env_worker/test_worker.py",
+        "tests/env_worker/test_sandbox.py",
+        "tests/env_worker/test_manager_placement.py",
+        "tests/env_service/test_position_ids_roundtrip.py",
+        "-q",
+        "--disable-warnings",
+        "--junitxml=../benchmark-runs/airs-status-review-20261113/cpu.xml"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_s": 128.372,
+      "python": "/apdcephfs_zwfy10/share_303541817/lhy/anaconda3/envs/psrl_smg_new/bin/python",
+      "roots": {
+        "psrl": "/apdcephfs_zwfy10_303541817/share_303541817/lw/psrl/psrl/__init__.py",
+        "verl": "/apdcephfs_zwfy10_303541817/share_303541817/lw/.verification-deps/verl/__init__.py",
+        "transfer_queue": "/apdcephfs_zwfy10/share_303541817/lhy/psrl/third_party/TransferQueue/transfer_queue/__init__.py"
+      },
+      "stats": {
+        "tests": 155,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "pytest_elapsed_s": 117.593,
+      "log": "../../../../benchmark-runs/airs-status-review-20261113/cpu.log",
+      "junit": "../../../../benchmark-runs/airs-status-review-20261113/cpu.xml",
+      "test_ids": [
+        "tests.examples.airs_bench.test_apps_isolation::test_judge_counts_fifth_candidate_and_never_transmits_expected_answers",
+        "tests.examples.airs_bench.test_apps_isolation::test_bad_function_result_does_not_skip_remaining_candidates",
+        "tests.examples.airs_bench.test_apps_isolation::test_private_fixture_failures_are_not_submission_errors[not-json]",
+        "tests.examples.airs_bench.test_apps_isolation::test_private_fixture_failures_are_not_submission_errors[{}]",
+        "tests.examples.airs_bench.test_apps_isolation::test_private_fixture_failures_are_not_submission_errors[{\"inputs\": [1], \"outputs\": [1]}]",
+        "tests.examples.airs_bench.test_apps_isolation::test_private_protocol_limit_is_not_a_submission_error",
+        "tests.examples.airs_bench.test_apps_isolation::test_judge_does_not_relabel_unexpected_value_errors",
+        "tests.examples.airs_bench.test_apps_isolation::test_candidate_spec_cannot_inherit_private_mounts_or_proxy_environment",
+        "tests.examples.airs_bench.test_apps_isolation::test_apps_comparison_contract[5\\n-5-False-True]",
+        "tests.examples.airs_bench.test_apps_isolation::test_apps_comparison_contract[wrong-5-False-False]",
+        "tests.examples.airs_bench.test_apps_isolation::test_apps_comparison_contract[1.000001\\n-1.0-False-True]",
+        "tests.examples.airs_bench.test_apps_isolation::test_apps_comparison_contract[a b\\nc d-d c\\nb a-False-True]",
+        "tests.examples.airs_bench.test_apps_isolation::test_apps_comparison_contract[actual4-expected4-True-True]",
+        "tests.examples.airs_bench.test_apps_isolation::test_apps_comparison_contract[3-4-True-False]",
+        "tests.examples.airs_bench.test_apps_isolation::test_apps_comparison_contract[actual6-1-True-False]",
+        "tests.examples.airs_bench.test_apps_isolation::test_apps_comparison_contract[actual7-expected7-True-True]",
+        "tests.examples.airs_bench.test_apps_isolation::test_apps_comparison_contract[actual8-expected8-True-True]",
+        "tests.examples.airs_bench.test_apps_isolation::test_candidate_adapter_with_fixed_trusted_programs[a,b=map(int,input().split());print(a+b)-2 3\\n-None-5]",
+        "tests.examples.airs_bench.test_apps_isolation::test_candidate_adapter_with_fixed_trusted_programs[a,b=map(int,open(0).read().split());print(a+b)-2 3\\n-None-5]",
+        "tests.examples.airs_bench.test_apps_isolation::test_candidate_adapter_with_fixed_trusted_programs[import sys; a,b=map(int,sys.stdin.buffer.read().split());print(a+b)-2 3\\n-None-5]",
+        "tests.examples.airs_bench.test_apps_isolation::test_candidate_adapter_with_fixed_trusted_programs[class Solution:\\n def add(self,a,b): return a+b-inputs3-add-5]",
+        "tests.examples.airs_bench.test_apps_isolation::test_candidate_adapter_with_fixed_trusted_programs[def negate(a): return [-x for x in a]-inputs4-negate-[-1, -2]]",
+        "tests.examples.airs_bench.test_apps_isolation::test_candidate_adapter_with_fixed_trusted_programs[def lookup(d): return d['name']-inputs5-lookup-7]",
+        "tests.examples.airs_bench.test_apps_isolation::test_candidate_adapter_with_fixed_trusted_programs[def lookup(d): return d[1]-inputs6-lookup-7]",
+        "tests.examples.airs_bench.test_apps_isolation::test_candidate_adapter_with_fixed_trusted_programs[def add(a,b): return np.int64(a+b)-inputs7-add-5]",
+        "tests.examples.airs_bench.test_apps_isolation::test_candidate_adapter_with_fixed_trusted_programs[def negate(a): return -np.array(a)-inputs8-negate-[-1, -2]]",
+        "tests.examples.airs_bench.test_apps_isolation::test_output_reader_enforces_a_byte_limit",
+        "tests.examples.airs_bench.test_apps_isolation::test_process_cleanup_drains_a_paused_pipe_and_reaps_the_child",
+        "tests.examples.airs_bench.test_gpu_suite::test_gpu_sandbox_preserves_private_label_boundary",
+        "tests.examples.airs_bench.test_gpu_suite::test_invalid_gpu_demand_is_rejected[-1]",
+        "tests.examples.airs_bench.test_gpu_suite::test_invalid_gpu_demand_is_rejected[2]",
+        "tests.examples.airs_bench.test_gpu_suite::test_invalid_gpu_demand_is_rejected[True]",
+        "tests.examples.airs_bench.test_gpu_suite::test_shipped_configs_create_callable_agent_factories[gpu_agent_config.yaml]",
+        "tests.examples.airs_bench.test_gpu_suite::test_shipped_configs_create_callable_agent_factories[mlgym_agent_config.yaml]",
+        "tests.examples.airs_bench.test_gpu_suite::test_numeric_baseline_uses_only_public_features",
+        "tests.examples.airs_bench.test_gpu_suite::test_rideshare_forecast_flattens_series_without_using_future_as_input",
+        "tests.examples.airs_bench.test_grading_isolation::test_agent_cannot_mount_labels_or_inherit_proxy_credentials",
+        "tests.examples.airs_bench.test_grading_isolation::test_public_split_symlink_is_rejected",
+        "tests.examples.airs_bench.test_grading_isolation::test_untrusted_or_incomplete_metric_values_are_rejected[{\"Accuracy\": NaN}]",
+        "tests.examples.airs_bench.test_grading_isolation::test_untrusted_or_incomplete_metric_values_are_rejected[{\"Accuracy\": true}]",
+        "tests.examples.airs_bench.test_grading_isolation::test_untrusted_or_incomplete_metric_values_are_rejected[{\"other\": 1}]",
+        "tests.examples.airs_bench.test_grading_isolation::test_untrusted_or_incomplete_metric_values_are_rejected[{\"Accuracy\": 1}\\nnoise]",
+        "tests.examples.airs_bench.test_grading_isolation::test_logs_before_final_metrics_are_supported",
+        "tests.examples.airs_bench.test_grading_isolation::test_code_execution_task_uses_an_isolated_judge_and_reserves_executor",
+        "tests.examples.airs_bench.test_grading_isolation::test_grader_dependency_failure_is_not_a_bad_submission[import nonexistent_airs_verifier_dependency-RuntimeError]",
+        "tests.examples.airs_bench.test_grading_isolation::test_grader_dependency_failure_is_not_a_bad_submission[import argparse; argparse.ArgumentParser().error('Invalid CSV')-ValueError]",
+        "tests.examples.airs_bench.test_grading_isolation::test_invalid_verifier_metrics_are_infrastructure_failures[{\"Accuracy\": NaN}]",
+        "tests.examples.airs_bench.test_grading_isolation::test_invalid_verifier_metrics_are_infrastructure_failures[{\"other\": 1}]",
+        "tests.examples.airs_bench.test_grading_isolation::test_invalid_verifier_metrics_are_infrastructure_failures[not-json]",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_submitted_maps_to_finished",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_context_overflow_maps_to_max_response_length",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_max_steps_maps_to_max_turns",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_error_statuses_map_to_rollout_error",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_unknown_status_maps_to_unknown",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_agent_loop_is_registered_under_mlgym_agent",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_queue_timeout_never_creates_a_session",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_infrastructure_failure_discards_data_and_cleans_up[False-exit_error]",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_infrastructure_failure_discards_data_and_cleans_up[False-unexpected_status]",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_infrastructure_failure_discards_data_and_cleans_up[False-]",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_infrastructure_failure_discards_data_and_cleans_up[True-exit_error]",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_infrastructure_failure_discards_data_and_cleans_up[True-unexpected_status]",
+        "tests.examples.airs_bench.test_mlgym_agent_loop::test_infrastructure_failure_discards_data_and_cleans_up[True-]",
+        "tests.examples.airs_bench.test_prepare::test_load_task_metadata_extracts_normalization_constants",
+        "tests.examples.airs_bench.test_prepare::test_load_task_metadata_rejects_missing_sota",
+        "tests.examples.airs_bench.test_prepare::test_rewrite_dataset_yaml_replaces_only_the_data_path",
+        "tests.examples.airs_bench.test_prepare::test_load_split_returns_fourteen_train_and_six_val",
+        "tests.examples.airs_bench.test_prepare::test_split_is_stratified_across_categories",
+        "tests.examples.airs_bench.test_prepare::test_build_row_embeds_every_constant_the_reward_needs",
+        "tests.examples.airs_bench.test_prepare::test_build_row_extra_info_feeds_the_reward_function",
+        "tests.examples.airs_bench.test_process_runner::test_grading_error_category_survives_process_boundary[ValueError]",
+        "tests.examples.airs_bench.test_process_runner::test_grading_error_category_survives_process_boundary[RuntimeError]",
+        "tests.examples.airs_bench.test_process_runner::test_timeout_kills_the_running_process",
+        "tests.examples.airs_bench.test_process_runner::test_process_bridges_sandbox_calls_and_returns_result",
+        "tests.examples.airs_bench.test_reward::test_phi_is_the_negative_log_distance_to_optimal",
+        "tests.examples.airs_bench.test_reward::test_phi_at_the_optimum_is_finite",
+        "tests.examples.airs_bench.test_reward::test_normalized_score_is_zero_at_worst_and_one_at_sota",
+        "tests.examples.airs_bench.test_reward::test_normalized_score_clips_beyond_the_endpoints",
+        "tests.examples.airs_bench.test_reward::test_normalized_score_handles_higher_is_better_metric",
+        "tests.examples.airs_bench.test_reward::test_normalized_score_is_monotonic_for_lower_is_better",
+        "tests.examples.airs_bench.test_reward::test_normalized_score_is_monotonic_for_higher_is_better",
+        "tests.examples.airs_bench.test_reward::test_degenerate_range_yields_binary_reward",
+        "tests.examples.airs_bench.test_reward::test_no_submission_scores_zero_with_a_flag",
+        "tests.examples.airs_bench.test_reward::test_missing_metric_key_scores_zero_with_a_flag",
+        "tests.examples.airs_bench.test_reward::test_non_finite_metric_scores_zero_with_a_flag",
+        "tests.examples.airs_bench.test_reward::test_last_submission_wins_not_the_best",
+        "tests.examples.airs_bench.test_reward::test_successful_submission_reports_diagnostics",
+        "tests.examples.airs_bench.test_reward::test_all_twenty_task_constant_sets_produce_valid_rewards",
+        "tests.examples.airs_bench.test_reward::test_eval_error_field_scores_zero_with_eval_error_flag",
+        "tests.examples.airs_bench.test_runner::test_runtime_rejects_nonfinite_or_nonpositive_deadlines[inf]",
+        "tests.examples.airs_bench.test_runner::test_runtime_rejects_nonfinite_or_nonpositive_deadlines[nan]",
+        "tests.examples.airs_bench.test_runner::test_runtime_rejects_nonfinite_or_nonpositive_deadlines[-1.0]",
+        "tests.examples.airs_bench.test_runner::test_runtime_rejects_nonfinite_or_nonpositive_deadlines[0.0]",
+        "tests.examples.airs_bench.test_runner::test_collect_scores_separates_submit_from_validate",
+        "tests.examples.airs_bench.test_runner::test_collect_scores_handles_no_submission",
+        "tests.examples.airs_bench.test_runner::test_failed_final_submission_cannot_reuse_an_earlier_validation_score[invalid_submission]",
+        "tests.examples.airs_bench.test_runner::test_failed_final_submission_cannot_reuse_an_earlier_validation_score[submission_not_found]",
+        "tests.examples.airs_bench.test_runner::test_failed_final_submission_cannot_reuse_an_earlier_validation_score[exit_forfeit]",
+        "tests.examples.airs_bench.test_runner::test_failed_final_submission_cannot_reuse_an_earlier_validation_score[skipped]",
+        "tests.examples.airs_bench.test_runner::test_model_config_points_litellm_at_the_session_url",
+        "tests.examples.airs_bench.test_runner::test_model_config_omits_trajectory_header_for_auto_strategy",
+        "tests.examples.airs_bench.test_runner::test_model_config_drops_negative_top_k",
+        "tests.examples.airs_bench.test_scripted_episode::test_scripted_actions_end_with_a_submission",
+        "tests.examples.airs_bench.test_scripted_episode::test_scripted_actions_exercise_state_persistence",
+        "tests.env_worker.test_airs_regressions::test_timeout_destroys_shell_before_any_following_observation",
+        "tests.env_worker.test_airs_regressions::test_persistent_state_nonzero_exit_and_marker_spoof",
+        "tests.env_worker.test_airs_regressions::test_process_exit_does_not_wait_for_startup_deadline",
+        "tests.env_worker.test_airs_regressions::test_continuous_output_cannot_bypass_deadline",
+        "tests.env_worker.test_airs_regressions::test_full_stdin_pipe_respects_deadline_and_keeps_the_event_loop_alive",
+        "tests.env_worker.test_airs_regressions::test_output_flood_is_bounded_before_observation_truncation",
+        "tests.env_worker.test_airs_regressions::test_background_output_cannot_keep_drain_running_forever",
+        "tests.env_worker.test_airs_regressions::test_utf8_character_split_between_pipe_reads_is_preserved",
+        "tests.env_worker.test_airs_regressions::test_expired_owner_frees_container_and_capacity_but_failed_delete_does_not",
+        "tests.env_worker.test_airs_regressions::test_many_waiters_do_not_prevent_release_and_cancelled_wait_leaks_nothing",
+        "tests.env_worker.test_airs_regressions::test_resource_budget_rejects_impossible_demands_without_waiting",
+        "tests.env_worker.test_airs_regressions::test_stalled_cleanup_does_not_block_other_expired_owners",
+        "tests.env_worker.test_shell::test_wrap_command_appends_sentinel_echo_and_trailing_newline",
+        "tests.env_worker.test_shell::test_wrap_command_does_not_double_newline",
+        "tests.env_worker.test_shell::test_parse_sentinel_returns_none_when_incomplete",
+        "tests.env_worker.test_shell::test_parse_sentinel_extracts_body_and_exit_code",
+        "tests.env_worker.test_shell::test_parse_sentinel_handles_nonzero_exit_code",
+        "tests.env_worker.test_shell::test_parse_sentinel_rejects_unexpanded_or_foreign_markers",
+        "tests.env_worker.test_shell::test_truncate_observation_keeps_short_text_unchanged",
+        "tests.env_worker.test_shell::test_truncate_observation_keeps_head_and_tail_with_marker",
+        "tests.env_worker.test_shell::test_truncate_observation_disabled_when_max_chars_non_positive",
+        "tests.env_worker.test_coordinator::test_least_loaded_picks_the_emptiest_worker",
+        "tests.env_worker.test_coordinator::test_round_robin_cycles_across_calls",
+        "tests.env_worker.test_coordinator::test_full_workers_are_never_selected",
+        "tests.env_worker.test_coordinator::test_gpu_request_only_matches_workers_with_free_gpus",
+        "tests.env_worker.test_coordinator::test_gpu_request_rejected_when_all_gpus_busy",
+        "tests.env_worker.test_coordinator::test_unknown_routing_method_raises",
+        "tests.env_worker.test_worker::test_gpu_slot_indices_come_from_cuda_visible_devices",
+        "tests.env_worker.test_worker::test_worker_without_cuda_visible_devices_has_no_gpus",
+        "tests.env_worker.test_worker::test_allocate_gpu_indices_is_exclusive",
+        "tests.env_worker.test_worker::test_allocate_gpu_indices_raises_when_exhausted",
+        "tests.env_worker.test_worker::test_gpu_inventory_failure_releases_the_reserved_device",
+        "tests.env_worker.test_worker::test_sandbox_labels_always_include_the_cleanup_key",
+        "tests.env_worker.test_worker::test_exec_on_unknown_sandbox_raises",
+        "tests.env_worker.test_worker::test_exec_parses_sentinel_and_returns_exit_code",
+        "tests.env_worker.test_worker::test_exec_timeout_invalidates_the_sandbox",
+        "tests.env_worker.test_worker::test_exec_drains_stale_output_before_issuing_a_command",
+        "tests.env_worker.test_worker::test_exec_truncates_oversized_observations",
+        "tests.env_worker.test_sandbox::test_cpu_only_argv_has_interactive_shell_and_no_gpu_flags",
+        "tests.env_worker.test_sandbox::test_resource_limits_and_mounts_are_translated",
+        "tests.env_worker.test_sandbox::test_gpu_sandbox_uses_device_passthrough_not_gpus_flag",
+        "tests.env_worker.test_sandbox::test_gpu_sandbox_bind_mounts_driver_libraries",
+        "tests.env_worker.test_sandbox::test_gpu_count_must_match_assigned_devices",
+        "tests.env_worker.test_sandbox::test_argv_is_deterministic",
+        "tests.env_worker.test_manager_placement::test_colocated_placement_uses_every_alive_node",
+        "tests.env_worker.test_manager_placement::test_dedicated_placement_uses_only_listed_nodes",
+        "tests.env_worker.test_manager_placement::test_dedicated_placement_requires_a_node_list",
+        "tests.env_worker.test_manager_placement::test_dedicated_placement_rejects_nodes_absent_from_the_cluster",
+        "tests.env_worker.test_manager_placement::test_unknown_placement_policy_raises",
+        "tests.env_service.test_position_ids_roundtrip::test_stored_position_ids_keep_coordinates_and_token_lengths[lengths0]",
+        "tests.env_service.test_position_ids_roundtrip::test_stored_position_ids_keep_coordinates_and_token_lengths[lengths1]",
+        "tests.env_service.test_position_ids_roundtrip::test_stored_position_ids_keep_coordinates_and_token_lengths[lengths2]"
+      ]
+    },
+    {
+      "name": "upstream",
+      "scope": "Current actual upstream MLGym BaseAgent with local Bash and grader substitute, plus real local HTTP policy routing. No real Docker, Ray cluster, policy model or GPU.",
+      "command": [
+        "/apdcephfs_zwfy10/share_303541817/lhy/anaconda3/envs/psrl_smg_new/bin/python",
+        "-m",
+        "pytest",
+        "tests/examples/airs_bench/test_upstream_mlgym.py",
+        "-q",
+        "--disable-warnings",
+        "--junitxml=../benchmark-runs/airs-status-review-20261113/upstream.xml"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_s": 78.016,
+      "mlgym_source": "/apdcephfs_zwfy10/share_303541817/lhy/science_infra/MLGym/mlgym/__init__.py",
+      "stats": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "pytest_elapsed_s": 73.108,
+      "log": "../../../../benchmark-runs/airs-status-review-20261113/upstream.log",
+      "junit": "../../../../benchmark-runs/airs-status-review-20261113/upstream.xml",
+      "test_ids": [
+        "tests.examples.airs_bench.test_upstream_mlgym::test_real_litellm_backend_calls_local_policy_and_accounts_zero_cost",
+        "tests.examples.airs_bench.test_upstream_mlgym::test_real_base_agent_initializes_installs_tools_validates_and_submits[submitted-agent_config.yaml]",
+        "tests.examples.airs_bench.test_upstream_mlgym::test_real_base_agent_initializes_installs_tools_validates_and_submits[submitted-acceptance_agent_config.yaml]",
+        "tests.examples.airs_bench.test_upstream_mlgym::test_real_base_agent_initializes_installs_tools_validates_and_submits[exec_error-agent_config.yaml]",
+        "tests.examples.airs_bench.test_upstream_mlgym::test_real_base_agent_initializes_installs_tools_validates_and_submits[exec_error-acceptance_agent_config.yaml]",
+        "tests.examples.airs_bench.test_upstream_mlgym::test_real_base_agent_initializes_installs_tools_validates_and_submits[missing-agent_config.yaml]",
+        "tests.examples.airs_bench.test_upstream_mlgym::test_real_base_agent_initializes_installs_tools_validates_and_submits[missing-acceptance_agent_config.yaml]",
+        "tests.examples.airs_bench.test_upstream_mlgym::test_real_base_agent_initializes_installs_tools_validates_and_submits[invalid-agent_config.yaml]",
+        "tests.examples.airs_bench.test_upstream_mlgym::test_real_base_agent_initializes_installs_tools_validates_and_submits[invalid-acceptance_agent_config.yaml]"
+      ]
+    }
+  ],
+  "static_checks": {
+    "data-boundaries": {
+      "exit_code": 0,
+      "stderr": "",
+      "result": {
+        "passed": true,
+        "scope": "CPU schema audit, not GPU or policy execution",
+        "tasks": [
+          {
+            "task": "CodeGenerationAPPSPassAt5",
+            "public_columns": [
+              "question",
+              "starter_code"
+            ],
+            "excluded_private_columns": [
+              "difficulty",
+              "input_output",
+              "problem_id",
+              "solutions",
+              "url"
+            ],
+            "submission_rows": 2
+          },
+          {
+            "task": "CodeRetrievalCodeXGlueMRR",
+            "public_columns": [
+              "query"
+            ],
+            "excluded_private_columns": [
+              "id"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "CoreferenceResolutionSuperGLUEWSCAccuracy",
+            "public_columns": [
+              "span1_index",
+              "span1_text",
+              "span2_index",
+              "span2_text",
+              "text"
+            ],
+            "excluded_private_columns": [
+              "idx",
+              "label"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "CoreferenceResolutionWinograndeAccuracy",
+            "public_columns": [
+              "option1",
+              "option2",
+              "sentence"
+            ],
+            "excluded_private_columns": [
+              "answer"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "CvMolecularPropertyPredictionQm9MeanAbsoluteError",
+            "public_columns": [
+              "A",
+              "B",
+              "C",
+              "atomic_numbers",
+              "composition",
+              "id",
+              "natoms",
+              "pos",
+              "tags"
+            ],
+            "excluded_private_columns": [
+              "G",
+              "G_ATOM",
+              "H",
+              "H_ATOM",
+              "R_2_Abs",
+              "U",
+              "U_0",
+              "U_0_ATOM",
+              "U_ATOM",
+              "ZPVE",
+              "alpha",
+              "c_v",
+              "delta_eps",
+              "eps_HOMO",
+              "eps_LUMO",
+              "mu"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "GMolecularPropertyPredictionQm9MeanAbsoluteError",
+            "public_columns": [
+              "A",
+              "B",
+              "C",
+              "atomic_numbers",
+              "composition",
+              "id",
+              "natoms",
+              "pos",
+              "tags"
+            ],
+            "excluded_private_columns": [
+              "G",
+              "G_ATOM",
+              "H",
+              "H_ATOM",
+              "R_2_Abs",
+              "U",
+              "U_0",
+              "U_0_ATOM",
+              "U_ATOM",
+              "ZPVE",
+              "alpha",
+              "c_v",
+              "delta_eps",
+              "eps_HOMO",
+              "eps_LUMO",
+              "mu"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "GraphRegressionZincMae",
+            "public_columns": [
+              "edge_attr",
+              "edge_index",
+              "node_feat",
+              "num_nodes"
+            ],
+            "excluded_private_columns": [
+              "y"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "MathQuestionAnsweringSVAMPAccuracy",
+            "public_columns": [
+              "Body",
+              "ID",
+              "Question",
+              "question_concat"
+            ],
+            "excluded_private_columns": [
+              "Answer",
+              "Equation",
+              "Type"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "QuestionAnsweringDuoRCAccuracy",
+            "public_columns": [
+              "no_answer",
+              "plot",
+              "plot_id",
+              "question",
+              "title"
+            ],
+            "excluded_private_columns": [
+              "answers",
+              "question_id"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "QuestionAnsweringEli5RougeL",
+            "public_columns": [
+              "answers_urls",
+              "document",
+              "q_id",
+              "selftext",
+              "selftext_urls",
+              "subreddit",
+              "title",
+              "title_urls",
+              "url"
+            ],
+            "excluded_private_columns": [
+              "answers"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "QuestionAnsweringFinqaAccuracy",
+            "public_columns": [
+              "post_text",
+              "pre_text",
+              "question",
+              "table"
+            ],
+            "excluded_private_columns": [
+              "answer",
+              "gold_evidence",
+              "id"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "R2AbsMolecularPropertyPredictionQm9MeanAbsoluteError",
+            "public_columns": [
+              "A",
+              "B",
+              "C",
+              "atomic_numbers",
+              "composition",
+              "id",
+              "natoms",
+              "pos",
+              "tags"
+            ],
+            "excluded_private_columns": [
+              "G",
+              "G_ATOM",
+              "H",
+              "H_ATOM",
+              "R_2_Abs",
+              "U",
+              "U_0",
+              "U_0_ATOM",
+              "U_ATOM",
+              "ZPVE",
+              "alpha",
+              "c_v",
+              "delta_eps",
+              "eps_HOMO",
+              "eps_LUMO",
+              "mu"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "ReadingComprehensionSquadExactMatch",
+            "public_columns": [
+              "context",
+              "question",
+              "title"
+            ],
+            "excluded_private_columns": [
+              "answers",
+              "id"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "SentimentAnalysisYelpReviewFullAccuracy",
+            "public_columns": [
+              "text"
+            ],
+            "excluded_private_columns": [
+              "label"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "TextualClassificationSickAccuracy",
+            "public_columns": [
+              "sentence_A",
+              "sentence_B"
+            ],
+            "excluded_private_columns": [
+              "entailment_AB",
+              "entailment_BA",
+              "id",
+              "label",
+              "relatedness_score",
+              "sentence_A_dataset",
+              "sentence_A_original",
+              "sentence_B_dataset",
+              "sentence_B_original"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "TextualSimilaritySickSpearmanCorrelation",
+            "public_columns": [
+              "sentence_A",
+              "sentence_B"
+            ],
+            "excluded_private_columns": [
+              "entailment_AB",
+              "entailment_BA",
+              "id",
+              "label",
+              "relatedness_score",
+              "sentence_A_dataset",
+              "sentence_A_original",
+              "sentence_B_dataset",
+              "sentence_B_original"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "TimeSeriesForecastingRideshareMAE",
+            "public_columns": [
+              "target"
+            ],
+            "excluded_private_columns": [
+              "label_target"
+            ],
+            "submission_rows": 120
+          },
+          {
+            "task": "TimeSeriesForecastingSolarWeeklyMAE",
+            "public_columns": [
+              "target"
+            ],
+            "excluded_private_columns": [
+              "label_target"
+            ],
+            "submission_rows": 8
+          },
+          {
+            "task": "U0MolecularPropertyPredictionQm9MeanAbsoluteError",
+            "public_columns": [
+              "A",
+              "B",
+              "C",
+              "atomic_numbers",
+              "composition",
+              "id",
+              "natoms",
+              "pos",
+              "tags"
+            ],
+            "excluded_private_columns": [
+              "G",
+              "G_ATOM",
+              "H",
+              "H_ATOM",
+              "R_2_Abs",
+              "U",
+              "U_0",
+              "U_0_ATOM",
+              "U_ATOM",
+              "ZPVE",
+              "alpha",
+              "c_v",
+              "delta_eps",
+              "eps_HOMO",
+              "eps_LUMO",
+              "mu"
+            ],
+            "submission_rows": 8
+          }
+        ]
+      }
+    },
+    "pass5-demo": {
+      "exit_code": 0,
+      "stderr": "",
+      "result": {
+        "candidate_passes_all_tests": {
+          "sum": [
+            false,
+            false,
+            true,
+            false,
+            false
+          ],
+          "maximum": [
+            false,
+            false,
+            false,
+            false,
+            false
+          ]
+        },
+        "Pass@5": 0.5
+      }
+    },
+    "judge-error-classification": {
+      "exit_code": 0,
+      "stderr": "",
+      "result": {
+        "result": {
+          "Pass@5": 0.0
+        },
+        "operations": [
+          "begin",
+          "case",
+          "end",
+          "begin",
+          "case",
+          "end",
+          "begin",
+          "case",
+          "end",
+          "begin",
+          "case",
+          "end",
+          "begin",
+          "case",
+          "end"
+        ]
+      }
+    }
+  },
+  "current_source_sha256": {
+    "examples/airs_bench/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "examples/airs_bench/apps/__init__.py": "510d376fdfd61f186a310f74226a6f4b41712448056e8a7dafcc2c1986d5b4eb",
+    "examples/airs_bench/apps/candidate.py": "0d3b00b482d572b9f4de2c3cd3622ad444e92372dbf28889e7e65cf782253c40",
+    "examples/airs_bench/apps/comparison.py": "30922ea6651d60f5568c5860963be15c8e003a57a19872e4aeaf864118ba6a96",
+    "examples/airs_bench/apps/judge.py": "65820ba7e4dcfa73a6d7a1086dc4807dded468d02669bf77e8a201725847f416",
+    "examples/airs_bench/config.py": "777e6bd30531c1ad59fa40032b8adbeeacbec2f6721dac9d9a12faea9b046784",
+    "examples/airs_bench/gpu_baseline.py": "4106a9c57a98b60bef517bdd8bd9225eb188c1e90b0c22c348a12275cf6f7fd0",
+    "examples/airs_bench/gpu_quick_check.py": "a18dfed8d29c36079d8e1c9d611fea374144eefa9f200c99f4df7dfe8213a9e2",
+    "examples/airs_bench/grading.py": "1a2b45a963a6e19fc1de11bff223e108bc439f7c9cc65521aff095a7eccd72d9",
+    "examples/airs_bench/process_runner.py": "6d09f6469a0c988b56c2635aafc36e3bc74180a9d103c6b6b391e9b26406fb4a",
+    "examples/airs_bench/reward.py": "82248bcf0b2e013102c67d010ed619415c92d54a84a8b739da296e822410af5e",
+    "examples/airs_bench/runner.py": "aef8b3a7cf6b5f37439464e93fb666113c8b293dad3f5c3a295fcce624c44d40",
+    "examples/airs_bench/scripted_episode.py": "13e6949742fa6dd9e5bc0ec581547500ef162fe88e690131004214ff3880557b",
+    "psrl/environments/mlgym_env.py": "97b571f54a1b0e4b0bce03d80bec4f3e5f5c258704921f297936e6be070cb9ee",
+    "psrl/workers/agent_loop/loops/mlgym_agent_loop.py": "853506204843cdc5a9b440240ea28651d1d63ef0bbb9a54b9362c84d60f6b64b",
+    "psrl/workers/env_worker/__init__.py": "6f9dc53632e7a66e27db87adcb6a88cfe3f9a6f655632b387713e7bdad7834c5",
+    "psrl/workers/env_worker/coordinator.py": "5f2a8b6f34ef2638b9050166f47c3882090263e0e003e96763cf6d8368e1a16c",
+    "psrl/workers/env_worker/harbor.py": "11c39a13fe430e47b051029c0242b8b1bdbb1181650b6364eadc706b6666224f",
+    "psrl/workers/env_worker/isolated_code.py": "428758b24ffb42058762929ceea3bea66b1ce399065d93b349b09d744cf16824",
+    "psrl/workers/env_worker/manager.py": "0d0d388dedf08d7388b2da7a13d50163b74fea55dc225f711ef254782d0a9933",
+    "psrl/workers/env_worker/process.py": "568ccba2f4ad3f8f42cff2d362ce957235d601c08befdf553096539a19d429cd",
+    "psrl/workers/env_worker/sandbox.py": "461a4c48c7501418338cd5aa65b87548adeba8603bcbf0720ca928eca6a690ca",
+    "psrl/workers/env_worker/shell.py": "fb8786a5602085bb4854a7df611cf90caf6c1790678c3d8b7f880a5f1a61a3a4",
+    "psrl/workers/env_worker/worker.py": "21cbfd2bdedc87c8e8ae5873fc023584d090114dbe18db4fb9f54aadba19f278",
+    "tests/env_service/test_position_ids_roundtrip.py": "8bf83882f01d3f8ded36b8c2520d819ce5fae906d93913255016f2e754f66ef0"
+  },
+  "environment_changed": false,
+  "dependencies": "Existing shared project interpreter, isolated veRL and AIRS dependencies prepended for these processes. Upstream MLGym source explicitly selected. No package installation.",
+  "activation_note": "Attempted project activation, conda did not finish within 82 seconds, own activation process group terminated. Using explicit existing project interpreter without installs.",
+  "limits": [
+    "CPU container and remote-service substitutes do not establish current deployment or GPU runtime health.",
+    "MLGym replay uses actual BaseAgent and local Bash, scripted model responses and substitute grader. HTTP test uses a real local endpoint, no real policy weights.",
+    "GPU and PSRL SICK results remain historical 2026-11-11 evidence, see current-source-review.json."
+  ]
+}

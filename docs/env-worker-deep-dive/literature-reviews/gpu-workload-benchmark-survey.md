@@ -1,8 +1,9 @@
 # GPU 环境工作负载调研与 benchmark 接入顺序
 
-> **核心结论**：当前有两条并行研究路线。非计时评分的调度优先看 [SWE-Serve 功能开发场景](../research-proposals/non-timing-gpu-scheduling-scenarios.md)，性能反馈可靠性看 [AI4Infra benchmark 选择与 FlashInfer 验证](ai4infra-performance-benchmarks.md)，两者不互相替代。已有 recipe 的实测状态看 [导览](../experiments/gpu-benchmarks/README.md)。为研究训练状态跨外部反馈等待驻留，已新增 [RE-Bench 原生接入](../knowledge/re-bench-recipe.md)，已有独立卡本地 Qwen 反馈验证，完整评分仍待验收。PostTrainBench 的 Qwen3-1.7B × GSM8K 是后续训练候选。高 GPU 计算需求本身不说明必须使用 episode。
+> **核心结论**：当前有两条并行研究路线。非计时评分的调度优先看 [SWE-Serve 功能开发场景](../research-proposals/non-timing-gpu-scheduling-scenarios.md)，性能反馈可靠性看 [AI4Infra benchmark 选择与 FlashInfer 验证](ai4infra-performance-benchmarks.md)，两者不互相替代。已有 recipe 的实测状态看 [导览](../experiments/gpu-benchmarks/README.md)。[RE-Bench 原生接入](../knowledge/re-bench-recipe.md)已有本地有界偏好评分与策略闭环。PostTrainBench 的 9 个公开本地组合已完成闭环，整库 24 组合仍未完成，范围统一查[路线图](../milestones/science-gpu-bench-status-and-roadmap.md)。高 GPU 计算需求本身不说明必须使用 episode。
 >
-> 初始调研日期为 2026-10-29，图中六项 high GPU 的专项核对日期为 2026-11-02。候选表不是逐项已验证的证明，RE-Bench 的资产、接入和本次运行边界单列在 [recipe](../knowledge/re-bench-recipe.md) 与 [验证记录](../experiments/gpu-benchmarks/FINDINGS.md#re-bench-原生接入验证)。
+> 最新核对：2026-11-12，仅同步本地接入能力与已验证范围，基于 `6aa328d` 加未提交修改，未重新做外部文献调研。官方协议与本地协议分开，RE-Bench 的资产和运行边界见 [recipe](../knowledge/re-bench-recipe.md) 与 [验证记录](../experiments/history/gpu-benchmark-onboarding-chronology.md#re-bench-原生接入验证)。
+
 
 ## 目录
 
@@ -15,14 +16,13 @@
 - [本地实现与源码阅读路径](#本地实现与源码阅读路径)
 - [可运行的教学模拟](#可运行的教学模拟)
 - [验收与未验证事项](#验收与未验证事项)
-
 - [非计时评分场景的当前优先级](#非计时评分场景的当前优先级)
 
 ## 目标与全局流程
 
 这里的 workload 指实际交给计算资源执行的一段工作。我们关心 agent 在环境中启动的训练、计算核和模型服务。驱动 agent 思考的大语言模型也需要算力，但它属于 PSRL 的策略模型训推资源，需要另记。
 
-下图是接入目标图。实线主流程可映射到本地 science 路径，候选分支的实际覆盖以各 recipe 为准，PostTrainBench 仍是提案，RE-Bench 已有原生接线但完整评分待验证。
+下图描述本地 science 的公共执行结构，具体 benchmark 的完成数量以路线图和对应 recipe 为准。PostTrain 的 9 个本地组合与 RE 的有界协议已有执行及策略闭环证据，不能由此推断官方全量评测完成。
 
 ```text
 [1] benchmark 任务与资源需求
@@ -50,9 +50,9 @@
 |---|---|---|
 | 1 → 2 | science 任务转换资源需求并申请租约 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L372) |
 | 2 | 向路由器申请资源 | [EnvServiceClient.acquire](../../../psrl/workers/env_service/client.py#L159) |
-| 3 → 4 | 创建并运行 Harbor job，由 Harbor 内部执行 agent 与 verifier | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L545) |
-| 4 | 提取奖励，按条件处理 GPU 作业报告 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L569) |
-| 5 | finally 清理容器，随后归还资源 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L605)、[EnvLeaseHandle.release](../../../psrl/workers/env_service/client.py#L69) |
+| 3 → 4 | 创建并运行 Harbor job，由 Harbor 内部执行 agent 与 verifier | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L550) |
+| 4 | 提取奖励，按条件处理 GPU 作业报告 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L574) |
+| 5 | finally 清理容器，随后归还资源 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L610)、[EnvLeaseHandle.release](../../../psrl/workers/env_service/client.py#L69) |
 | 候选分支 | 训练、kernel、服务的专属任务适配 | [已有 recipe 与边界](../knowledge/gpu-benchmark-recipes.md)，新增候选仍需适配 |
 
 租约表示某个任务获准使用一份资源预算，不自动保证显存硬隔离。verifier 是负责重新检查结果的评分程序，不能直接相信 agent 打印出来的分数。一个 episode 是一次从任务开始到评分和清理结束的完整尝试。若这些源码有理解上的问题，可以随时沿图中编号追问。
@@ -85,8 +85,8 @@ GPU 形态是根据任务机制作的接入判断，不是本地测得的资源�
 | [MLE-bench](https://github.com/openai/mle-bench) | 75 个 Kaggle 机器学习竞赛，Lite 为 22 个低复杂度任务 | 数据准备、训练、预测交替，选图像任务可形成持续训练负载 | **第一批**。官方参考资源为单张 24GB A10、24 小时，不是所有任务的最低要求。部分表格任务可以只用 CPU |
 | [InferenceBench](https://github.com/aisa-group/InferenceBench) | agent 优化模型推理服务，涵盖首 token 时延、后续 token 时延、吞吐及综合场景 | 模型服务常驻显存，外部请求产生 GPU 压力 | **第一批 AI4Infra**。官方仓库公开 Mistral-7B 和每次 2 小时设置。重点是服务生命周期与性能隔离，不是普通命令执行 |
 | [autoresearch](https://github.com/karpathy/autoresearch) | agent 修改训练代码，运行实验后保留或放弃修改 | 单张 NVIDIA GPU，每次训练固定 5 分钟，另计启动、编译和评估 | **第一批补充负载**。是研究循环框架，不直接视为标准多任务 benchmark。必须额外设置总轮数与总期限 |
-| [MLGym](https://github.com/facebookresearch/MLGym) | 13 个开放研究任务，覆盖监督学习、强化学习等 | 不同任务差异大，训练类可用 GPU | AIRS 已复用其 agent，接入成本可能较低，但新增资源形态有限。上游页面显示仓库已归档，需固定依赖 |
-| [RE-Bench](https://github.com/METR/RE-Bench) | 7 类研究工程任务，包括训练脚本优化、模型修复、Triton 前缀和 | 同时覆盖长训练与短 kernel，逐任务审核卡数和评分环境 | 聊天训练任务已有原生 Env 接入，真实资产 CUDA smoke 通过，已支持本地 Qwen，小样本反馈验证通过，完整评分未验证。其他任务尚未接入，上游已归档 |
+| [MLGym](https://github.com/facebookresearch/MLGym) | 13 个开放研究任务，覆盖监督学习、强化学习等 | 不同任务差异大，训练类可用 GPU | 本地 9 个 GPU 任务已有逐题闭环，RL、视觉和 NLP 使用明确的小预算协议，源码与依赖需固定 |
+| [RE-Bench](https://github.com/METR/RE-Bench) | 7 类研究工程任务，包括训练脚本优化、模型修复、Triton 前缀和 | 同时覆盖长训练与短 kernel，逐任务审核卡数和评分环境 | 7 类本地协议已有逐题 GPU 快检，聊天训练代表题闭环，官方模型规模和完整裁判协议仍未复现 |
 | [PostTrainBench](https://github.com/aisa-group/PostTrainBench) | 自动对基础语言模型做后训练 | 官方设置为一张 H100、10 小时，训练和评估均可能占 GPU | **第二批 RSI 相关**。权重、优化器状态与评分成本较重。官网已出现版本更新入口，不沿用图片的固定目标集数量 |
 | [TritonBench](https://github.com/thunlp/TritonBench) | 生成 Triton 算子，Triton 是便于编写 GPU 并行计算的语言与编译系统 | GPU 正确性与性能评测 | KernelBench 接口稳定后扩充 kernel 题型，初期无需两个近似负载同时接 |
 | [InfraDev 论文](https://arxiv.org/abs/2610.36589) | 2026-10-27 发布，36 个源自 Megatron-LM、vLLM、verl 的真实修改任务 | 多 GPU 执行与隐藏验证 | **跟进候选**。论文定位明确，公开任务包、运行入口、每题硬件预算本次尚未核实，不能宣称可立即运行 |
@@ -101,16 +101,16 @@ GPU 形态是根据任务机制作的接入判断，不是本地测得的资源�
 
 | 图中项目与官方来源 | 真正要做的任务 | GPU 形态与 command 判断 | 当前建议 |
 |---|---|---|---|
-| [AIRS-Bench](https://github.com/facebookresearch/airs-bench) | 20 个来自论文的研究任务，自行提出方法、训练、评估 | 按具体题选择 GPU 训练。训练进程保存结果并退出，可作为 command | 已有 recipe，继续逐题核验，不能只凭入口存在认定默认脚本已执行 GPU |
+| [AIRS-Bench](https://github.com/facebookresearch/airs-bench) | 20 个来自论文的研究任务，自行提出方法、训练、评估 | 按具体题选择 GPU 训练。训练进程保存结果并退出，可作为 command | 19/19 非 Kaggle 任务有 CUDA 快检，SICK 代表题闭环，原生 sandbox 分支尚无 command 借还 |
 | [Automated LLM Speedrunning](https://github.com/facebookresearch/llm-speedrunner/blob/main/config/task/nanogpt_speedrun/default_config.yaml) | 修改 GPT-2 训练代码，在验证损失不高于 3.28 的条件下缩短训练时间 | 官方配置固定 8 张 H100，使用 8 进程 `torchrun`。完整训练作业可是一条 command | 多卡资源重，优先级低于单卡后训练。不把缩成单 H20 的结果称作原版成绩 |
 | [MLE-bench](https://github.com/openai/mle-bench) | 75 个 Kaggle 竞赛，做特征、训练、预测和提交 | 选择 GPU 图像或语言模型方案。训练和预测可以分别作为 command | 保留现有接入，按用户安排暂缓 Kaggle 权限和数据 |
-| [MLGym-Bench](https://github.com/facebookresearch/MLGym/blob/main/configs/tasks/languageModelingFineWeb.yaml) | 例如 `languageModelingFineWeb`，训练 GPT-2 风格模型做下一个 token 预测 | 官方要求保存 `model.pt` 与 `model_config.pt`，天然有落盘边界。单次训练超时 2400 秒，不等于必须跨命令保留模型 | 可作为较直接的持续训练候选，套件的博弈题不都需要 GPU |
-| [RE-Bench](https://github.com/METR/RE-Bench/blob/main/ai_rd_nanogpt_chat_rl/ai_rd_nanogpt_chat_rl.py) | 例如用强化学习把 GPT-2 XL 训练成聊天模型，按外部模型偏好训练 | GPU 生成、外部裁判等待、GPU 更新交替。官方起始代码在等待时保留 CUDA 模型 | 已有原生接入，最贴近“自然等待期间仍保留训练状态”；已有本地 Qwen 反馈等待观测，完整评分未验证 |
-| [PostTrainBench](https://github.com/aisa-group/PostTrainBench/blob/main/src/harbor_adapter/README.md) | 对基础语言模型后训练，提高数学、知识或代码等目标能力 | 官方单 H100、默认 10 小时，训练后交付最终模型。完整训练或评估可作为 command | 优先新增 Qwen3-1.7B × GSM8K，已存在官方 Harbor 适配，但尚未接到本地 Env |
+| [MLGym-Bench](https://github.com/facebookresearch/MLGym/blob/main/configs/tasks/languageModelingFineWeb.yaml) | 例如 `languageModelingFineWeb`，训练 GPT-2 风格模型做下一个 token 预测 | 官方要求保存 `model.pt` 与 `model_config.pt`，天然有落盘边界。单次训练超时 2400 秒，不等于必须跨命令保留模型 | 本地 4 个 RL、3 个视觉、2 个 NLP 任务均有闭环，CPU 博弈题不计入 GPU 范围 |
+| [RE-Bench](https://github.com/METR/RE-Bench/blob/main/ai_rd_nanogpt_chat_rl/ai_rd_nanogpt_chat_rl.py) | 例如用强化学习把 GPT-2 XL 训练成聊天模型，按外部模型偏好训练 | GPU 生成、外部裁判等待、GPU 更新交替。官方起始代码在等待时保留 CUDA 模型 | 已有原生接入、本地 Qwen 反馈观测及有界评分闭环，官方全量偏好评测未复现 |
+| [PostTrainBench](https://github.com/aisa-group/PostTrainBench/blob/main/src/harbor_adapter/README.md) | 对基础语言模型后训练，提高数学、知识或代码等目标能力 | 官方单 H100、默认 10 小时，训练后交付最终模型。完整训练或评估可作为 command | 已接入数学、代码目标配三个公开模型的 9 个本地组合，全部闭环，整库 24 组合未完成 |
 
-**PostTrainBench 为什么值得先选。** 后训练是在已有基础模型上继续优化参数，使其更擅长指定任务。选 Qwen3-1.7B-Base 与 GSM8K，输入是基础权重及数学任务要求，agent 设计数据和训练方法，在 GPU 上训练，交付 `final_model/`，再由验收器检查数学答题表现。这比固定推理请求多出了真实训练和模型交付。这里的示例任务不是本次已经跑通的实验。
+**PostTrainBench 提供的工作形态。** 后训练是在已有基础模型上继续优化参数。当前本地协议使用真实基础权重和真实数据，仅训练最终归一化层，提交 safetensors 权重，再由独立 verifier 重载基础模型并评分隐藏答案似然。Qwen3-1.7B × GSM8K 已包含在通过的 9 个组合中。这个协议保留真实训练、模型交付与独立 GPU 评分，不是官方生成答案准确率。
 
-当前官方 Harbor 文档标注 v1.2，支持 4 个基础模型与 6 个评测目标，共 24 种组合，不能继续照搬图片中的 5 个目标。目标包括 AIME2025、ArenaHardWriting、GPQA、GSM8K、HealthBench、HumanEval。官方设置的 10 小时是 agent 预算，独立 verifier 还会额外占时间，不能把它当作整次运行的严格总上限。原版 Harbor 运行依赖 Modal、HF 下载身份及裁判 API。迁移到本地 Env 时，需替换容器执行和模型交付存储，保留可信评分。单 H20 上的镜像、CUDA 和显存可用性本次尚未验证，官方 H100 设置也不是 H20 必然不兼容的证明。
+固定上游的范围为 4 个模型、6 个目标，共 24 个组合。现有 9 个组合对应三个公开模型和 AIME2025、GSM8K、HumanEval。其余组合涉及 Gemma-3 许可、GPQA 数据授权及 ArenaHard / HealthBench 裁判适配。单卡 H20 已有已选子集的实际闭环证据，不能外推其余组合或官方完整训练预算。逐组合数据入口、边界与证据见[任务协议](../milestones/science-gpu-bench-status-and-roadmap.md#posttrainbench-与-fastkernels-任务协议)。
 
 **RE-Bench 的驻留证据更具体。** 下面是已查阅的上游起始代码流程，本地接入复用该训练程序。它描述正式裁判链的状态生命周期，不是无裁判 smoke 已测得的等待曲线：
 
@@ -142,20 +142,18 @@ GPU 形态是根据任务机制作的接入判断，不是本地测得的资源�
 
 ## 首批接入建议
 
-四项 recipe 的实际入口和运行条件见 [GPU benchmark 接入 recipe](../knowledge/gpu-benchmark-recipes.md)，实机状态以该文链接的验收记录为准。下面保留调研时的选型建议。
+已有入口和运行条件见 [GPU benchmark recipe](../knowledge/gpu-benchmark-recipes.md)，完成范围以[当前路线图](../milestones/science-gpu-bench-status-and-roadmap.md)为准。研究选题应从已通过的协议中取代表任务，避免重复处理依赖和数据错误。
 
-建议分三个正式 benchmark 和一个补充 workload，分别覆盖短作业、训练、服务、研究循环。以下是拟议目录，不是本次创建完成的 recipe。
-
-| 顺序 | 拟议目录 | 首次选题 | 适配核心 |
+| 研究顺序 | 已有目录 | 当前可用选题 | 适合检验的机制 |
 |---|---|---|---|
-| 1 | `examples/kernel_bench/` | 从 Level 1 中选一个矩阵运算任务，核定输入尺寸 | 保留官方参考实现、正确性检查与计时协议，外包可信 GPU evaluator |
-| 2 | `examples/mle_bench/` | Lite 中的 `aerial-cactus-identification` | 准备数据、容器训练、导出预测，由可信 grader 评分 |
-| 3 | `examples/inference_bench/` | 固定一个推理场景 | 启动服务、等待就绪、压测、验证质量、停止服务及其子进程 |
-| 4 | `examples/autoresearch/` | 一个固定训练起点，最多两轮修改 | 保留官方单次训练预算，设置有界外层循环和不可修改的评估输入 |
+| 1 | `examples/kernel_bench/` | 270 题身份中的矩阵运算代表题 | 短 GPU 工作、编译成本、计时争用与反馈可靠性 |
+| 2 | `examples/mlgym_bench/`、`examples/posttrain_bench/` | MLGym 9 题，PostTrain 已闭环的 9 个组合 | 训练与 CPU 阶段交替、权重交付、独立重载的成本 |
+| 3 | `examples/inference_bench/`、`examples/swe_serve/` | 4 个本地服务场景与 SWE score 本地闭环任务 | 常驻服务状态、重启、自测和物理回收 |
+| 4 | `examples/autoresearch/`、`examples/re_bench/` | 固定训练起点与有界偏好任务 | 多次实验、外部反馈等待和有代价的状态恢复 |
 
-第一项先验证一题的完整执行和回收。第二项不一次下载完整 75 题，Lite 也不等于只需很少磁盘。第三项要把 agent 自己调用的策略模型服务和它正在优化的目标服务分开，端口、权重、GPU 账目也分开。
+MLE 官方 Kaggle 题等待凭据和逐竞赛准备，不作为当前可直接执行的研究输入。任务自己的目标服务与 agent 使用的策略模型服务继续分别核对端口、权重和 GPU 归属。对照必须保持真实数据、工作量和评分边界一致。
 
-共同架构建议：benchmark 适配器只负责任务准备、提交协议、评分和终止条件。资源申请、容器生命周期、GPU 归属和清理复用公共后端。science runner 中包含 LAPS 专用评分分支，不能直接把整个 runner 当作无条件通用接口复制四遍。是否需要抽取公共 runner，应在首个适配器实现时结合真实接口确定。
+当前适配器负责任务准备、提交和评分，资源申请、容器生命周期及 GPU 清理复用 [GpuBenchmarkAgentLoop](../../../examples/gpu_benchmarks/agent_loop.py#L14)与公共 science runner。不要为每个 benchmark 复制一套调度器。AIRS 使用另一条原生 Coordinator/sandbox 分支，后端统一混训尚未验证。
 
 ## 具体例子与评分干扰
 
@@ -172,8 +170,8 @@ GPU 形态是根据任务机制作的接入判断，不是本地测得的资源�
 本次核对的是带有未提交修改的主开发目录，而不是一个干净的已发布版本。
 
 - science 的 [runner.py](../../../examples/sciaccel_rl/runner.py#L275) 已有 `needs_gpu`、资源租约和 GPU 作业报告路径。其 [README](../../../examples/sciaccel_rl/README.md) 也提示 ScienceInfra 为后续开发入口。任务是否实际执行 GPU 仍需逐题证明。
-- AIRS 的 [run_mlgym_agent](../../../examples/airs_bench/runner.py#L123) 复用 MLGym，其 [启动脚本](../../../examples/airs_bench/run_qwen3-4b.sh#L193) 明确设置 `gpu_slots_per_worker=0`。因此本次只能确认已有 recipe，不能确认默认 AIRS 已提供环境 GPU 训练。
-- 这篇文档补充的是候选选择，公共调度机制继续以 [当前流程总览](../archive/env-router-current-flow.md) 和 [统一 GPU 执行后端](../knowledge/unified-gpu-execution.md) 为入口，避免重复维护架构说明。
+- AIRS 的 [run_mlgym_agent](../../../examples/airs_bench/runner.py#L137) 复用 MLGym。原 CPU recipe 保持零 GPU，新增 [GPU 配置](../../../examples/airs_bench/config/gpu_agent_config.yaml) 与 [训练入口](../../../examples/airs_bench/gpu_train.sh) 已覆盖 19 个非 Kaggle 任务，并有 SICK 代表题的策略闭环。实际协议与证据见 [AIRS GPU 接入](../knowledge/airs-gpu-recipe.md)。这是 AIRS 分支的证据。MLGym 的 4 个 RL、3 个视觉和 2 个 NLP 任务已有独立 GPU 快检与策略闭环，实际协议及未完成范围见[当前接入状态](../milestones/science-gpu-bench-status-and-roadmap.md#目前有哪些任务及可用边界)，不等于整个 MLGym 全部任务已完成。
+- 这篇文档补充的是候选选择，公共调度机制继续以 [当前设计](../knowledge/current-design.md) 和 [统一 GPU 执行后端](../knowledge/unified-gpu-execution.md) 为入口，避免重复维护架构说明。
 
 跟着图读源码，按真实 science 路径查看：
 
@@ -181,9 +179,9 @@ GPU 形态是根据任务机制作的接入判断，不是本地测得的资源�
 |---|---|---|
 | 申请 → 1、2 | [runner.py:372](../../../examples/sciaccel_rl/runner.py#L372)，`run_harbor_episode` | 任务路径和需求转换为租约，可能异步等待 |
 | 维持租约 → 2 | [client.py:50](../../../psrl/workers/env_service/client.py#L50)，`start_heartbeat` | 后台心跳与任务并发，不是任务执行完才调用 |
-| 执行 → 3、4 | [runner.py:545](../../../examples/sciaccel_rl/runner.py#L545)，`Job.create`、`job.run` 调用点 | Harbor 执行任务并返回结果，内部 agent/verifier 顺序由 Harbor 管理 |
-| 评分处理 → 4 | [runner.py:583](../../../examples/sciaccel_rl/runner.py#L583)，`run_harbor_episode` | command 模式读取 GPU 报告，LAPS 条件分支检查活动证据 |
-| 清理 → 5 | [runner.py:605](../../../examples/sciaccel_rl/runner.py#L605)，`run_harbor_episode` 的 finally | 正常、异常、取消均进入收尾，再调用 lease release |
+| 执行 → 3、4 | [runner.py:550](../../../examples/sciaccel_rl/runner.py#L550)，`Job.create`、`job.run` 调用点 | Harbor 执行任务并返回结果，内部 agent/verifier 顺序由 Harbor 管理 |
+| 评分处理 → 4 | [runner.py:589](../../../examples/sciaccel_rl/runner.py#L589)，`run_harbor_episode` | command 模式读取 GPU 报告，LAPS 条件分支检查活动证据 |
+| 清理 → 5 | [runner.py:610](../../../examples/sciaccel_rl/runner.py#L610)，`run_harbor_episode` 的 finally | 正常、异常、取消均进入收尾，再调用 lease release |
 
 ## 可运行的教学模拟
 
@@ -217,8 +215,8 @@ PY
 
 资源紧张时首先选择满足要求的独立 GPU。若研究共享机制，单列共享实验与正式分数实验。多 GPU 任务需确认同时分配的设备集合、互联要求以及失败后整个进程组的清理，不能用单卡通过代替。
 
-本次尚未逐题审核许可证、下载权限、镜像可构建性、峰值显存、评分隔离漏洞和硬件兼容性。InfraDev 仅核验到论文，其他项目也仅核验公开入口和说明，没有声称其在本工作区可直接运行。执行任何真实实验前按 [集群检查指南](../../psrl/psrl-run-guide/cluster-preflight.md) 做现场预检。
+路线图已标注的通过范围有本地 GPU 和策略证据，不能扩展为逐题完整许可审计、峰值显存上界、漏洞审计或全部硬件兼容保证。未接入的候选仍按公开入口和调研结论阅读，InfraDev 只核验到论文。执行任何真实实验前按 [集群检查指南](../../psrl/psrl-run-guide/cluster-preflight.md) 做现场预检。
 
 ## 非计时评分场景的当前优先级
 
-2026-11-05 本 session 专注执行与调度策略，测速评分方向由其他 session 处理。首选 SWE-Serve 的 GPU correctness 子集，次选 ResearchEnvBench 的 GPU 环境验证，详见[场景与策略研究](../research-proposals/non-timing-gpu-scheduling-scenarios.md)。本轮实际核查上游固定版本清单：41 个 GPU 任务中有 3 个 speedup，必须排除，38 个 correctness 仅是初筛候选。已抽查 embedding LoRA 与多条目评分任务的评分器和服务测试，这两项服务尚未执行。另在 fused-kernels 任务的 6 个原始正确性测试上完成 11 组真实 H20 运行，确认跨 command 同机换卡仍可复用编译缓存；不是完整 benchmark 通过或生产动态放置验证，详见 [Results](../research-proposals/non-timing-gpu-scheduling-scenarios.md#results跨命令上下文复用实测)。
+非计时研究按[场景与策略](../research-proposals/non-timing-gpu-scheduling-scenarios.md)进入，测速反馈按[AI4Infra 选择](ai4infra-performance-benchmarks.md)进入。固定 SWE 清单包含 41 个 GPU 题，其中 3 个按 speedup 评分、38 个按正确性评分，适用问题不同。后续 score 服务题已完成原始评分与相同工作量准备前移对照；fused-kernels 的六项原始正确性测试完成 11 组 H20 运行，观察到跨命令同机换卡仍可利用编译缓存。这些分别支持任务功能、准备取舍和缓存机制，完整接入范围统一见[当前路线图](../milestones/science-gpu-bench-status-and-roadmap.md)。

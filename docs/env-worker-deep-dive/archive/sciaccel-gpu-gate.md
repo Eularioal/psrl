@@ -1,37 +1,41 @@
-# SciAccel 接入 EnvWorker 管理 GPU：Gate A/B 实测与部署
+# Science GPU Gate 的早期设计与验证：静态映射、整卡锁和设备账本
 
-## TL;DR
+**早期 science 任务会给多个容器重复挂载同一张 GPU，整卡锁让它们按设备排队。** 假设 4 个任务都使用固定的 `/dev/nvidia0`，它们可能同时分配显存；改为 3 张卡的互斥池后，前三个各拿一张，第 4 个等释放。Gate A 负责这种设备分配，Gate B 在模型回复出口根据 GPU 读数进行有上限的等待。
 
-> 本文是 [`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md)（EnvWorker 设计详细版）原第 16 节拆分出来的独立文档。章节编号沿用原文档编号（16），没有从 1 重新编号，方便和速查表、其他文档里已经写好的"详细版 §16.x"引用对应。
->
-> 读本文前建议先读完详细版的第 0-10 节（问题背景、角色分工、unit、流程、GPU 难点）和 [`implementation-and-gaps.md`](implementation-and-gaps.md) 第 15.3 节（提案里还没落地的部分，尤其是第 (1)(2) 条——本文讲的正是这两条从"缺口"到"已部署"的具体过程）。
+这份记录保存 2026-09 至 10 月的设计讨论、提交 `72ca50c` 的实现，以及 CPU 诊断输出。它解释“为什么先用整卡锁，后来又需要共享显存账本”。完整任务尝试称为 **episode**；当时的锁覆盖整个 episode，等待模型期间也持续持有设备名额。
+
+从第 16 节看静态映射怎样改为互斥，第 17 节看训练与环境的设备账本，第 18 节看资源单元提案，第 19 节用完整算例解释跨进程文件锁。章节沿用原文的 16—19 编号，原跳转保留。
+
+了解现行能力请读[当前设计](../knowledge/current-design.md)和[GPU 预约机制](../knowledge/command-gpu-reservations.md)。本篇的“已实现”“待实现”均限定到早期阶段；历史代码行号和输出保留，本地源码链接用于查找同名模块。固定版本可用 `git show 72ca50c:psrl/utils/concurrency/gpu_device_gate.py` 恢复。
 
 ## 目录
 
-- [16. 追加问题（2026-09-27）：Science（SciAccel）任务接入 EnvWorker 管理 GPU 是否可行？Harbor 自己管理 Docker，能不能手动管理？GPU 抢占怎么实测](#16-追加问题2026-09-27sciencesciaccel任务接入-envworker-管理-gpu-是否可行harbor-自己管理-docker能不能手动管理gpu-抢占怎么实测)
+- [16. Science 任务如何取得 GPU](#16-science-任务如何取得-gpu)
   - [16.1 先看一个具体场景：mitgcm-biogeo 的一道 GPU 题，GPU 到底是怎么给的](#161-先看一个具体场景mitgcm-biogeo-的一道-gpu-题gpu-到底是怎么给的)
-  - [16.1 补充（2026-10-07）：这里说的"多进程"具体指什么，从哪行代码能看出来](#161-补充2026-10-07这里说的多进程具体指什么从哪行代码能看出来)
-  - [16.2 Harbor 自己管理 Docker，我们能不能手动管理？—— 能，而且现在已经在这么做](#162-harbor-自己管理-docker我们能不能手动管理-能而且现在已经在这么做)
+  - [16.1 补充：为什么需要跨进程锁](#161-补充为什么需要跨进程锁)
+  - [16.2 Harbor 与 PSRL 各负责什么](#162-harbor-与-psrl-各负责什么)
   - [16.3 评估：science 任务要不要接入 EnvWorker 管理 GPU，怎么接](#163-评估science-任务要不要接入-envworker-管理-gpu怎么接)
   - [16.4 实测脚本：验证 GPU 调度确实会出现抢占](#164-实测脚本验证-gpu-调度确实会出现抢占)
-  - [16.5 修复已部署：Gate A（设备互斥）+ Gate B（回复节流）代码位置与验证脚本](#165-修复已部署gate-a设备互斥-gate-b回复节流代码位置与验证脚本)
-- [17. 追加问题（2026-10-08）：训练设备、vLLM 推理设备、SciAccel episode 容器设备，分别是谁分的，彼此有没有关系](#17-追加问题2026-10-08训练设备vllm-推理设备sciaccel-episode-容器设备分别是谁分的彼此有没有关系)
+  - [16.5 整卡锁与回复节流的实现记录](#165-整卡锁与回复节流的实现记录)
+- [17. 训练、推理与环境的设备账本](#17-训练推理与环境的设备账本)
   - [17.1 账本①内部：训练设备和 vLLM 推理设备是怎么分的](#171-账本①内部训练设备和-vllm-推理设备是怎么分的)
   - [17.2 账本②：SciAccel episode 容器的设备是怎么分的](#172-账本②sciaccel-episode-容器的设备是怎么分的)
-  - [17.3 对比：EnvWorker 路径为什么天然安全，SciAccel（Gate A）路径为什么需要额外小心](#173-对比envworker-路径为什么天然安全sciaccelgate-a路径为什么需要额外小心)
-- [18. 追加问题（2026-10-08）：`env-service-design` 这份方案，能修复 §17.3 这两个问题吗](#18-追加问题2026-10-08env-service-design-这份方案能修复-173-这两个问题吗)
-  - [18.1 问题1：能不能让多个低显存的 episode 共享一张物理卡——能，这正是这份设计的核心改动](#181-问题1能不能让多个低显存的-episode-共享一张物理卡能这正是这份设计的核心改动)
-  - [18.2 问题2：会不会和 train_pool/rollout_pool 抢同一张卡——必然触发的 bug 被修了，但没有自动化的结构性保证](#182-问题2会不会和-train_poolrollout_pool-抢同一张卡必然触发的-bug-被修了但没有自动化的结构性保证)
-- [19. 追加问题（2026-10-08）：fcntl 文件锁背景知识与 Gate A 的分配粒度](#19-追加问题2026-10-08fcntl-文件锁背景知识与-gate-a-的分配粒度)
+  - [17.3 两套设备账本的安全条件](#173-两套设备账本的安全条件)
+- [18. 资源单元方案怎样解决共享与设备边界](#18-资源单元方案怎样解决共享与设备边界)
+  - [18.1 从整卡独占改为容量准入](#181-从整卡独占改为容量准入)
+  - [18.2 配置边界与训推设备保护](#182-配置边界与训推设备保护)
+- [19. 文件锁如何保证一张卡只发给一个 episode](#19-文件锁如何保证一张卡只发给一个-episode)
   - [19.1 先看一个具体场景：两个 episode 进程抢两张卡，发生了什么](#191-先看一个具体场景两个-episode-进程抢两张卡发生了什么)
   - [19.2 背景知识：什么是文件锁，advisory 锁和 mandatory 锁有什么区别](#192-背景知识什么是文件锁advisory-锁和-mandatory-锁有什么区别)
   - [19.3 逐行解读抢锁循环的源码](#193-逐行解读抢锁循环的源码)
-  - [19.4 直接回答：现在的 Gate A 是按 episode 分配整卡，还是按资源 unit 分配](#194-直接回答现在的-gate-a-是按-episode-分配整卡还是按资源-unit-分配)
+  - [19.4 分配粒度：整卡与资源单元](#194-分配粒度整卡与资源单元)
 - [延伸阅读](#延伸阅读)
 
 ---
 
-## 16. 追加问题（2026-09-27）：Science（SciAccel）任务接入 EnvWorker 管理 GPU 是否可行？Harbor 自己管理 Docker，能不能手动管理？GPU 抢占怎么实测
+<a id="16-追加问题2026-09-27sciencesciaccel任务接入-envworker-管理-gpu-是否可行harbor-自己管理-docker能不能手动管理gpu-抢占怎么实测"></a>
+
+## 16. Science 任务如何取得 GPU
 
 ### 16.1 先看一个具体场景：`mitgcm-biogeo` 的一道 GPU 题，GPU 到底是怎么给的
 
@@ -40,15 +44,15 @@
 ```python
 needs_gpu = int(extra_info.get("gpus", 0)) > 0   # 这里算出 True
 ```
-—— [`agent_loop.py:131`](../../../examples/sciaccel_rl/agent_loop.py#L131)
+—— [`agent_loop.py:131`](../../../examples/sciaccel_rl/agent_loop.py)
 
-`needs_gpu=True` 只做了一件事：如果这次运行的 `config.harbor.gpu_compose_override`（一个配置里的文件路径字符串，默认是空串 `""`，需要显式配置才会生效，见 [`sciaccel_agent_config.yaml:21`](../../../examples/sciaccel_rl/config/sciaccel_agent_config.yaml#L21)）非空，就把这个文件作为一层 Compose overlay 叠加进去：
+`needs_gpu=True` 只做了一件事：如果这次运行的 `config.harbor.gpu_compose_override`（一个配置里的文件路径字符串，默认是空串 `""`，需要显式配置才会生效，见 [`sciaccel_agent_config.yaml:21`](../../../examples/sciaccel_rl/config/sciaccel_agent_config.yaml)）非空，就把这个文件作为一层 Compose overlay 叠加进去：
 
 ```python
 if needs_gpu and config.harbor.gpu_compose_override:
     extra_compose_paths.append(Path(config.harbor.gpu_compose_override))
 ```
-—— [`runner.py:190-191`](../../../examples/sciaccel_rl/runner.py#L190)
+—— [`runner.py:190-191`](../../../examples/sciaccel_rl/runner.py)
 
 而这个 overlay 文件本身，内容是写死的：
 
@@ -61,7 +65,7 @@ services:
       - /dev/nvidia-uvm:/dev/nvidia-uvm
       - /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools
 ```
-—— [`gpu-compose-override.yaml:1-7`](../../../examples/sciaccel_rl/config/gpu-compose-override.yaml#L1)
+—— [`gpu-compose-override.yaml:1-7`](../../../examples/sciaccel_rl/config/gpu-compose-override.yaml)
 
 **关键点**：这一行 `/dev/nvidia0:/dev/nvidia0` 是同一个文件、同一份字符串，不管当前是第 1 个 episode 还是第 20 个 episode 在跑，`extra_compose_paths.append(Path(config.harbor.gpu_compose_override))` 追加的都是**指向磁盘上同一份 yaml 的同一个路径**。所以只要这个 override 一旦启用（`gpu_compose_override` 配了非空路径），**每一个 `needs_gpu=True` 的 episode，不看当前有几个这样的 episode 同时在跑，也不看这台机器实际有几张卡，都会被分配到完全相同的 `/dev/nvidia0`**。
 
@@ -71,11 +75,13 @@ services:
 |---|---|---|
 | 层面 | **数量**层面：`max_concurrent_episodes`/Harbor 自己的 `n_concurrent_trials` 只数"有几个 episode 在跑"，不看 cpu/mem/gpu 类型 | **设备身份**层面：就算数量控制得当（比如只放行 1 个 GPU episode），只要**同时**有 ≥2 个 GPU episode 被放行，它们拿到的会是**同一个物理设备字符串**，而不是像 Path A 那样各分到不同的卡 |
 | 后果 | 8 卡机器同时放行 8 个 `gpus=1` 的任务，可能超过总显存 → OOM | 哪怕只放行 2 个 GPU 任务，也会**共享同一张卡**，而不是分散到 2 张不同的卡上 |
-| 对照 Path A 的机制 | Path A 也只在 `WorkerSlot.has_gpu_capacity` 里做**计数**检查（[`coordinator.py:40-41`](../../../psrl/workers/env_worker/coordinator.py#L40)，`used_gpu` 也只是个整数），本身不区分具体是哪张卡 | Path A 在计数检查通过之后，还有一层 Path B 完全没有的东西：`EnvWorker._allocate_gpu_indices` 维护一个真实的 `_busy_gpu_indices: set[int]`，从 `CUDA_VISIBLE_DEVICES` 解析出的 `available_gpu_indices` 里挑一个当前空闲的物理编号，选中的编号会被登记为占用，直到 `destroy_sandbox` 才释放（[`worker.py:169-187`](../../../psrl/workers/env_worker/worker.py#L169)、释放见 [`worker.py:344-349`](../../../psrl/workers/env_worker/worker.py#L344)） |
+| 对照 Path A 的机制 | Path A 也只在 `WorkerSlot.has_gpu_capacity` 里做**计数**检查（[`coordinator.py:40-41`](../../../psrl/workers/env_worker/coordinator.py)，`used_gpu` 也只是个整数），本身不区分具体是哪张卡 | Path A 在计数检查通过之后，还有一层 Path B 完全没有的东西：`EnvWorker._allocate_gpu_indices` 维护一个真实的 `_busy_gpu_indices: set[int]`，从 `CUDA_VISIBLE_DEVICES` 解析出的 `available_gpu_indices` 里挑一个当前空闲的物理编号，选中的编号会被登记为占用，直到 `destroy_sandbox` 才释放（[`worker.py:169-187`](../../../psrl/workers/env_worker/worker.py)、释放见 [`worker.py:344-349`](../../../psrl/workers/env_worker/worker.py)） |
 
 一句话总结这个场景：**Path A 是"先数个数、再分配具体哪张卡、卡与卡互斥"；Path B 现状是"不数具体哪张卡的个数（只数 episode 总数），也压根不存在'分配具体哪张卡'这一步——配置文件里的设备号是写死的常量"**。16.4 节的实测脚本会把这个场景变成一段可以亲手跑的代码。
 
-### 16.1 补充（2026-10-07）：这里说的"多进程"具体指什么，从哪行代码能看出来
+<a id="161-补充2026-10-07这里说的多进程具体指什么从哪行代码能看出来"></a>
+
+### 16.1 补充：为什么需要跨进程锁
 
 16.1 的场景、以及 [`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md) 第 3 节开头"两个进程各开 8 个任务"的例子，都直接假设了"存在多个进程"，但没有交代这些进程具体从哪来、由谁创建、创建了几个——而这正是 16.5 节"Gate A 为什么必须换成 `fcntl` 文件锁、内存信号量管不住"这个结论成立的前提，补在这里。
 
@@ -95,17 +101,19 @@ class PSRL_AgentLoopWorker:
     ):
         ...
 ```
-—— [`worker.py:45-67`](../../../psrl/workers/agent_loop/worker.py#L45)
+—— [`worker.py:45-67`](../../../psrl/workers/agent_loop/worker.py)
 
-`@ray.remote` 是 Ray（PSRL 依赖的分布式计算框架）声明"Actor"的方式，含义是：这个类的每一个实例不是普通的本地 Python 对象，而是由 Ray 在后台另外拉起一个**独立的 OS 进程**（甚至是独立的 Python 解释器实例）来承载；调用它的方法时走的是跨进程 RPC，不是本地函数调用。构造参数里的 `worker_id`/`worker_num` 就是训练入口按配置创建**多个**这样的 Actor 实例时传进去的编号（`worker_id` 从 `0` 到 `worker_num - 1`）——这就是"进程 A、进程 B……"的真实来源：训练配置里的 `worker_num` 决定本次训练会同时存在多少个 `PSRL_AgentLoopWorker` 实例，每个实例都是独立进程，大概率被 Ray 调度到同一台物理机上（因为 GPU/CPU 是这台机器上的有限资源，同机部署才方便共享）。
+`@ray.remote` 是 Ray（PSRL 依赖的分布式计算框架）声明"Actor"的方式，含义是：这个类的每一个实例不是普通的本地 Python 对象，而是由 Ray 在后台另外拉起一个**独立的 OS 进程**（甚至是独立的 Python 解释器实例）来承载；调用它的方法时走的是跨进程 RPC，不是本地函数调用。构造参数里的 `worker_id`/`worker_num` 就是训练入口按配置创建**多个**这样的 Actor 实例时传进去的编号（`worker_id` 从 `0` 到 `worker_num - 1`）——这就是例子中“进程 A、进程 B”的来源。`worker_num` 决定这组 worker 的数量，实际节点由 Ray 资源与放置配置决定；部署在同一节点时，它们需要跨进程协调设备。
 
 理解这一点后再回看 [`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md) 第 3 节和本文 16.5 节会更具体：第 3 节讲的那个 `asyncio.Semaphore`（也就是 `_episode_gate`）是在**每一个 `PSRL_AgentLoopWorker` Actor 自己的解释器里**单独创建的模块级全局变量；`worker_num` 个 Actor 就有 `worker_num` 份互不相通的计数器——这正是 16.5 节 Gate A 必须换成 `fcntl` 文件锁（锁状态挂在磁盘 inode 上，不属于任何一个进程的内存）而不能继续用内存信号量的直接原因，不是随便挑了个更复杂的方案。
 
-### 16.2 Harbor 自己管理 Docker，我们能不能手动管理？—— 能，而且现在已经在这么做
+<a id="162-harbor-自己管理-docker我们能不能手动管理-能而且现在已经在这么做"></a>
+
+### 16.2 Harbor 与 PSRL 各负责什么
 
 这个问题看起来是"能不能"，但更准确的问法应该是"现在到底是怎么管的"，答案里已经包含了"能"：
 
-**Harbor 不是一个独立跑着的、把 Docker 藏起来的服务进程**。它是一个 Python 依赖包（`from harbor.job import Job`，见 [`runner.py:20`](../../../examples/sciaccel_rl/runner.py#L20)），在 PSRL 自己的进程里被同步调用：`Job.create(config)` 再 `await job.run()`（调用处见 [`runner.py:214-263`](../../../examples/sciaccel_rl/runner.py#L214) 附近的 `JobConfig`/`Job.create`）。这个调用背后，Harbor 把 `task.toml` 里声明的沙箱翻译成一份 `docker-compose` 配置，用 `docker compose --project-name <session_id 净化后的字符串>` 的方式起停容器——这一点不是猜测，是 [`docker_utils.py:153-172`](../../../psrl/utils/common/docker_utils.py#L153) 里 `sanitize_compose_project_name` 函数注释明确写的：
+**Harbor 不是一个独立跑着的、把 Docker 藏起来的服务进程**。它是一个 Python 依赖包（`from harbor.job import Job`，见 [`runner.py:20`](../../../examples/sciaccel_rl/runner.py)），在 PSRL 自己的进程里被同步调用：`Job.create(config)` 再 `await job.run()`（调用处见 [`runner.py:214-263`](../../../examples/sciaccel_rl/runner.py) 附近的 `JobConfig`/`Job.create`）。这个调用背后，Harbor 把 `task.toml` 里声明的沙箱翻译成一份 `docker-compose` 配置，用 `docker compose --project-name <session_id 净化后的字符串>` 的方式起停容器——这一点不是猜测，是 [`docker_utils.py:153-172`](../../../psrl/utils/common/docker_utils.py) 里 `sanitize_compose_project_name` 函数注释明确写的：
 
 > "Mirrors `harbor.environments.docker.docker._sanitize_docker_compose_project_name`. Harbor passes `--project-name <sanitized session_id>`, so Compose stamps that value onto every container of the episode as `com.docker.compose.project`."
 
@@ -115,10 +123,10 @@ class PSRL_AgentLoopWorker:
 
 | 手动管理的动作 | 怎么定位到 Harbor 起的容器 | 源码位置 |
 |---|---|---|
-| 按 Compose 项目名强制删容器 | 用 `com.docker.compose.project` 标签（值 = 净化后的 `session_id`），绕开 Harbor 自己的 `job.cleanup()`，直接 `docker rm -f` | [`docker_utils.py:175-200`](../../../psrl/utils/common/docker_utils.py#L175)（`force_remove_compose_project`），调用处见 [`implementation-and-gaps.md` §13.7](implementation-and-gaps.md) 讨论过的取消/超时兜底路径 |
-| 删除 Compose 构建出的镜像 | Compose 给镜像命名的规则是 `<project>-<service>`，用这个前缀过滤 | [`docker_utils.py:203-252`](../../../psrl/utils/common/docker_utils.py#L203)（`force_remove_compose_images`） |
-| 按 actor 级自定义标签清理（不是 Harbor 自带的标签，是 PSRL 自己塞进去的） | `psrl.actor_id=<actor_id>`，这个标签是 PSRL 通过**动态生成一份新的 compose overlay 文件**、追加到 `extra_docker_compose` 里塞进去的，Harbor 本身根本不知道这个标签的存在 | 标签生成：[`runner.py:193-207`](../../../examples/sciaccel_rl/runner.py#L193)（`main_override["labels"] = [f"psrl.actor_id={actor_id}"]`，写成临时 yaml 文件后追加到 `extra_compose_paths`）；用标签清理：[`docker_utils.py:105-150`](../../../psrl/utils/common/docker_utils.py#L105)（`force_remove_containers_by_label`） |
-| 进程退出后兜底回收（哪怕 Python 进程被杀，容器也要清） | 同样按 `psrl.actor_id` 标签，用一个独立于 Harbor/Python 的 `bash` 常驻进程轮询父进程是否存活 | [`docker_utils.py:332-427`](../../../psrl/utils/common/docker_utils.py#L332)（`spawn_actor_reaper`） |
+| 按 Compose 项目名强制删容器 | 用 `com.docker.compose.project` 标签（值 = 净化后的 `session_id`），绕开 Harbor 自己的 `job.cleanup()`，直接 `docker rm -f` | [`docker_utils.py:175-200`](../../../psrl/utils/common/docker_utils.py)（`force_remove_compose_project`），调用处见 [`implementation-and-gaps.md` §13.7](implementation-and-gaps.md) 讨论过的取消/超时兜底路径 |
+| 删除 Compose 构建出的镜像 | Compose 给镜像命名的规则是 `<project>-<service>`，用这个前缀过滤 | [`docker_utils.py:203-252`](../../../psrl/utils/common/docker_utils.py)（`force_remove_compose_images`） |
+| 按 actor 级自定义标签清理（不是 Harbor 自带的标签，是 PSRL 自己塞进去的） | `psrl.actor_id=<actor_id>`，这个标签是 PSRL 通过**动态生成一份新的 compose overlay 文件**、追加到 `extra_docker_compose` 里塞进去的，Harbor 本身根本不知道这个标签的存在 | 标签生成：[`runner.py:193-207`](../../../examples/sciaccel_rl/runner.py)（`main_override["labels"] = [f"psrl.actor_id={actor_id}"]`，写成临时 yaml 文件后追加到 `extra_compose_paths`）；用标签清理：[`docker_utils.py:105-150`](../../../psrl/utils/common/docker_utils.py)（`force_remove_containers_by_label`） |
+| 进程退出后兜底回收（哪怕 Python 进程被杀，容器也要清） | 同样按 `psrl.actor_id` 标签，用一个独立于 Harbor/Python 的 `bash` 常驻进程轮询父进程是否存活 | [`docker_utils.py:332-427`](../../../psrl/utils/common/docker_utils.py)（`spawn_actor_reaper`） |
 
 这一条"用动态生成的 compose overlay 塞自定义标签"（`runner.py:193-207`）是本节后面 16.3 小节要复用的关键机制：**它证明"往 Harbor 的 compose 配置里插入一份运行时才决定内容的 overlay 文件"这件事本来就是这份代码已经在做、已经跑通的模式，不是要新发明的能力**——现在只是拿它塞了 label，完全可以同样拿它塞"这次分配到的真实设备号"，取代 16.1 节里那份写死的静态文件。
 
@@ -164,7 +172,7 @@ class PSRL_AgentLoopWorker:
 
 | 方案 | 复用什么 | 优点 | 代价 |
 |---|---|---|---|
-| 接入 `EnvWorkerCoordinator`（Path A 的账本） | [`coordinator.py:123`](../../../psrl/workers/env_worker/coordinator.py#L123) 全局路由 + [`worker.py:171-187`](../../../psrl/workers/env_worker/worker.py#L171) 的 `_allocate_gpu_indices` | 一步到位统一了 Path A/Path B（正是 [`implementation-and-gaps.md` §15.3(5)](implementation-and-gaps.md) 里说的 Roadmap Phase 0 目标），CPU/GPU/跨节点路由都有了 | 改动面最大：SciAccel 的 Harbor 调用需要挪到一个 `EnvWorker` actor 背后才能拿到 `self.available_gpu_indices`/`_busy_gpu_indices` 这套状态；工作量对应原文 Phase 0 四步（§15.3(5) 已列出） |
+| 接入 `EnvWorkerCoordinator`（Path A 的账本） | [`coordinator.py:123`](../../../psrl/workers/env_worker/coordinator.py) 全局路由 + [`worker.py:171-187`](../../../psrl/workers/env_worker/worker.py) 的 `_allocate_gpu_indices` | 一步到位统一了 Path A/Path B（正是 [`implementation-and-gaps.md` §15.3(5)](implementation-and-gaps.md) 里说的 Roadmap Phase 0 目标），CPU/GPU/跨节点路由都有了 | 改动面最大：SciAccel 的 Harbor 调用需要挪到一个 `EnvWorker` actor 背后才能拿到 `self.available_gpu_indices`/`_busy_gpu_indices` 这套状态；工作量对应原文 Phase 0 四步（§15.3(5) 已列出） |
 | 只加一个轻量的节点级设备账本（复用 [`psrl/utils/concurrency/slot.py`](../../../psrl/utils/concurrency/slot.py) 的 `SlotManager`，`fcntl` 文件锁天然跨进程） | `SlotManager.acquire(max_slots=本机 GPU 数, output_dir=...)` 返回的 `slot_index` 直接当成物理设备号用 | 改动面最小：只在 `runner.py`/`agent_loop.py` 内加十几行，不用挪 Harbor 调用的宿主进程，`SlotManager` 本来就是跨进程安全的（`fcntl.flock`），天然解决"多个 worker 进程各自独立信号量、互相看不见"的问题（对应 §15.3(5) 提到的"节点级原语，只是 SciAccel 没用"） | 只解决了本节两个具体问题（设备互斥 + 跨进程可见），不统一 Path A/Path B 的整体架构，CPU 账本、跨节点路由仍然是两套 |
 
 **给的建议**：如果目标只是"尽快让 science 任务的 GPU 分配不再互相踩踏"，选轻量方案（`SlotManager`），改动小、风险低，一两天内可以落地并用 16.4 的脚本验证；如果目标是"从架构上让 Path A/Path B 用同一套账本"（对应 §15.3(5) 的长期目标），需要按 Phase 0 四步走完整迁移，工作量和风险都更大，但轻量方案不会与之冲突——轻量方案本质是 Phase 0 里"把进程级 Semaphore 换成节点级原语"这一步的 GPU 版本，即使先落地轻量方案，之后往 `EnvWorkerCoordinator` 迁移时这部分逻辑基本可以直接搬过去，不是要推倒重来。
@@ -203,13 +211,15 @@ RESULT: reproduced real preemption/oversubscription. Up to 3 episodes were simul
         assigned the same physical device string at the same time.
 ```
 
-3 个 episode（0、2、4，因为脚本按"偶数编号需要 GPU"交替生成）在同一时刻都拿到了 `/dev/nvidia0`——这就是用户问的"多个 worker 同时争抢一份资源"的真实复现：只要 `max_concurrent_episodes >= 2`（真实配置默认是 16，见 [`sciaccel_agent_config.yaml:19`](../../../examples/sciaccel_rl/config/sciaccel_agent_config.yaml#L19)）且一批里有 ≥2 个 GPU 任务，就会触发。
+3 个 episode（0、2、4，因为脚本按"偶数编号需要 GPU"交替生成）在同一时刻都拿到了 `/dev/nvidia0`——这就是用户问的"多个 worker 同时争抢一份资源"的真实复现：只要 `max_concurrent_episodes >= 2`（真实配置默认是 16，见 [`sciaccel_agent_config.yaml:19`](../../../examples/sciaccel_rl/config/sciaccel_agent_config.yaml)）且一批里有 ≥2 个 GPU 任务，就会触发。
 
 加 `--fixed-devices --num-gpus 3` 参数会切到 16.3 节建议的"修复后"逻辑（真实按物理编号互斥分配，逻辑复刻自 `worker.py:171-187`），同样 6 个 episode，输出变成每张卡 `peak simultaneous holders = 1`，零重叠——这组对照证明"抢占"不是无解的固有特性，而是 Path B 现状缺一层设备互斥account 导致的，加上之后就没有了。
 
-**诚实说明（按项目规则，不能把没做过的验证说成已验证）**：这次会话所在的沙箱环境没有安装 `docker`、没有 NVIDIA 驱动（[`nvidia-smi` 不存在），脚本走的是"进程内 asyncio 模拟"分支——并发行为、时间戳、门禁逻辑都是真代码真实跑出来的，但没有真的起 Docker 容器，也没有真的显卡资源被占用。脚本支持 `--use-docker`，在真实训练节点（有 `docker` 命令）上会改用真正的 `docker run --rm` 容器复现同样的时间线，会打印相同结构的结果，但那一步本次未能实测，需要在真实节点上重跑确认。
+**当次验证范围：** 脚本运行的是进程内 asyncio 模型。并发调度、时间戳和门禁逻辑实际执行，设备用字符串表示。`--use-docker` 分支留给具备 Docker 与 GPU 的节点，当次没有执行。
 
-### 16.5 修复已部署：Gate A（设备互斥）+ Gate B（回复节流）代码位置与验证脚本
+<a id="165-修复已部署gate-a设备互斥-gate-b回复节流代码位置与验证脚本"></a>
+
+### 16.5 整卡锁与回复节流的实现记录
 
 16.3 节比较的两个方案里，选的是"轻量方案"（复用 `SlotManager`），理由和 16.3 节给的建议一致：改动面小、风险低、不影响 Path A 的架构。同时按 [`implementation-and-gaps.md` §15.3(2)](implementation-and-gaps.md) 的思路把 Gate B 也接了进去。下面是实际改了哪些文件、怎么验证。
 
@@ -224,7 +234,7 @@ RESULT: reproduced real preemption/oversubscription. Up to 3 episodes were simul
 | 释放：episode 的 compose 项目被 `force_remove_compose_project` 确认删除之后才 `release`，避免"设备号已经能被下一个 episode 拿到，但上一个容器还没退干净" | 同上，`finally` 块末尾 |
 | 没有发现任何 `/dev/nvidiaN` 时的降级行为：回退成旧的静态映射（不是直接报错），并打印 WARNING——不能悄悄假装提供了互斥保证 | 同上 |
 
-沿用的正是 16.3 节表格里"轻量方案"那一行说的机制：`SlotManager.acquire(max_slots, jobs_dir)` 返回的 `slot_index` 直接当物理设备号用，`fcntl.flock` 天然跨进程，解决的正是"多个 `AgentLoopWorker` 进程各自起一个 Python 解释器、互相看不到对方的内存"这个根本原因。
+`SlotManager.acquire(max_slots, jobs_dir)` 返回的是设备列表中的位置。取得 `slot_index` 后，用 `devices[slot_index]` 找到真实设备路径；例如列表为 `[nvidia2, nvidia7]`，位置 1 对应 `nvidia7`。锁文件由同节点、使用同一锁目录的进程共同遵守，因此独立 Python 进程也能协调。
 
 **Gate B：SessionRouter 出口的 GPU 空闲节流**
 
@@ -238,7 +248,7 @@ RESULT: reproduced real preemption/oversubscription. Up to 3 episodes were simul
 | 出口 hook：`session_chat_completions` 返回响应前，若该 session 绑定了 `gpu_device`，先 `await _wait_for_gpu_idle(...)`，最长等待 `PSRL_GATE_B_MAX_WAIT_SEC`（默认 600 秒，与本节前面"初步实现路径"给的默认值一致） | 同上，`session_chat_completions` 末尾 |
 | `runner.py` 侧的绑定/解绑调用（best-effort，失败只记日志，不影响 episode 本身） | [`runner.py`](../../../examples/sciaccel_rl/runner.py) 的 `_bind_gate_b` 函数 |
 
-**和原方案的一处已知差异**：本节前面"初步实现路径"建议用 `nvidia-smi pmon` 按进程判断空闲，本次实现用的是 `nvidia-smi --query-gpu` 整卡计数器。差异方向是"偏保守"——整卡有其他无关进程占用时会被误判成"忙"而多等一会儿，但不会把"忙"误判成"空闲"而少等，不会引入本节 §5.4 讨论的"评分被污染"风险，只是吞吐上更保守。如果之后要收紧到逐进程级别，替换 `_read_gpu_utilization` 的实现即可，其余代码不用动。
+**整卡读数与任务归属的区别。** 早期实现用整卡 `nvidia-smi --query-gpu`，而提案考虑按进程查询。整卡上有其他任务时，读数会把它们一起算入，从而增加等待；它也无法证明活动来自本任务。再加上轮询间隔、超时放行和遥测失败放行，Gate B 只能提供软节流。严格评分需要可信进程归属，现行机制见[GPU 作业与任务遥测](../knowledge/gpu-jobs-and-task-telemetry.md)。
 
 **对照验证脚本（真实导入部署好的模块，不是复刻）**
 
@@ -273,9 +283,11 @@ python3 examples/sciaccel_rl/diagnostics/gate_a_after.py --cross-process \
 # after（跨进程，4 个真实 OS 子进程）: 3 个设备各自 peak = 1 -> ok, exclusive，exit code 0
 ```
 
-**诚实说明**：和 16.4 节的旧脚本一样，本次会话的沙箱没有 `docker`、没有真实 NVIDIA 设备，`before`/`after` 两个脚本都是靠 `PSRL_SCIACCEL_GPU_DEVICES` 环境变量喂假设备路径字符串跑通的——并发行为、进程/协程调度、`fcntl` 加锁解锁本身都是真实发生的，但"设备"只是字符串，没有真的 GPU 显存/算力被占用或释放。`before` 脚本支持 `--use-docker` 会改用真实 `docker run --device`；`after` 脚本在真实 GPU 节点上把 `PSRL_SCIACCEL_GPU_DEVICES` 去掉（不设置该环境变量）即可改为 `discover_gpu_devices()` 自动 glob 真实的 `/dev/nvidia[0-9]*`。这两处在真实训练节点上的行为，本次没有条件实测，需要在服务器上重新跑一遍确认。
+这组 CPU 诊断实际执行了文件锁、进程和协程调度，使用 `PSRL_SCIACCEL_GPU_DEVICES` 提供设备字符串。三张“卡”各自的持有峰值为 1，说明锁遵守了互斥关系；实际显存、CUDA 和容器分配仍需单独的实机证据。
 
-## 17. 追加问题（2026-10-08）：训练设备、vLLM 推理设备、SciAccel episode 容器设备，分别是谁分的，彼此有没有关系
+<a id="17-追加问题2026-10-08训练设备vllm-推理设备sciaccel-episode-容器设备分别是谁分的彼此有没有关系"></a>
+
+## 17. 训练、推理与环境的设备账本
 
 这三类设备分配，答案是**两套完全独立、互不通信的"账本"**：训练设备和 vLLM 推理设备同属一套（Ray 自己的资源账本），SciAccel episode 容器设备是另一套（本文 Gate A 的节点级账本）。先看全景图，再逐层拆开看代码证据。
 
@@ -324,9 +336,9 @@ for i in range(deployment_config.n_rollout_instances):
         deployment_config.rollout_ngpus_per_node_per_instance
     ] * deployment_config.rollout_nnodes_per_instance
 ```
-—— [`main_ppo.py:234-238,247-249,293-297`](../../../psrl/trainer/main_ppo.py#L234)
+—— [`main_ppo.py:234-238,247-249,293-297`](../../../psrl/trainer/main_ppo.py)
 
-`Actor`/`Critic`/`RefPolicy`/`DummyPolicy` 这几个训练角色全部登记进同一个 `"train_pool"`（[`main_ppo.py:210,218,228`](../../../psrl/trainer/main_ppo.py#L210)），`Rollout`（vLLM）角色登记进各自独立的 `rollout_pool_i`（[`main_ppo.py:310`](../../../psrl/trainer/main_ppo.py#L310)）。这些池子名字和 GPU 数量的字典传给 `ResourcePoolManager.create_resource_pool()`（[`utils.py:118-135`](../../../psrl/trainer/ppo/utils.py#L118)），每个池子各自建一个 `RayResourcePool`（底层是 Ray 的 placement group），在 `ray_trainer.py` 的 `init_workers()` 里**只调用一次**（[`ray_trainer.py:1458`](../../../psrl/trainer/ppo/ray_trainer.py#L1458)），之后整个训练过程不再重新划分。
+`Actor`/`Critic`/`RefPolicy`/`DummyPolicy` 这几个训练角色全部登记进同一个 `"train_pool"`（[`main_ppo.py:210,218,228`](../../../psrl/trainer/main_ppo.py)），`Rollout`（vLLM）角色登记进各自独立的 `rollout_pool_i`（[`main_ppo.py:310`](../../../psrl/trainer/main_ppo.py)）。这些池子名字和 GPU 数量的字典传给 `ResourcePoolManager.create_resource_pool()`（[`utils.py:118-135`](../../../psrl/trainer/ppo/utils.py)），每个池子各自建一个 `RayResourcePool`（底层是 Ray 的 placement group），在 `ray_trainer.py` 的 `init_workers()` 里**只调用一次**（[`ray_trainer.py:1458`](../../../psrl/trainer/ppo/ray_trainer.py)），之后整个训练过程不再重新划分。
 
 拿项目里**真实的默认配置**举例（不是我编的教学数字）：
 
@@ -338,11 +350,11 @@ rollout_ngpus_per_node_per_instance: 1
 train_nnodes: 1
 train_ngpus_per_node: 1
 ```
-—— [`deployment.yaml:66,72,75,84,87`](../../../psrl/trainer/config/psrl/deployment.yaml#L66)
+—— [`deployment.yaml:66,72,75,84,87`](../../../psrl/trainer/config/psrl/deployment.yaml)
 
-代入上面的公式：`train_pool` = 1 节点 × 1 卡 = 1 张卡；`rollout_pool_0` = 1 节点 × 1 卡 = 1 张卡。这就是**单机最小可跑配置至少要 2 张物理 GPU**的原因——`train_pool` 和 `rollout_pool_0` 是 Ray 账本里两个不重叠的池子，哪怕都在同一台机器上，Ray 也会把它们当成两份独立预订的资源，即使只有 1 张卡可用，`ResourcePoolManager._check_resource_available`（[`utils.py:147-168`](../../../psrl/trainer/ppo/utils.py#L147)）也会在训练一开始就报错拒绝启动，而不是让两个池子挤在同一张卡上"悄悄共享"。
+代入上面的公式：`train_pool` = 1 节点 × 1 卡 = 1 张卡；`rollout_pool_0` = 1 节点 × 1 卡 = 1 张卡。这就是**单机最小可跑配置至少要 2 张物理 GPU**的原因——`train_pool` 和 `rollout_pool_0` 是 Ray 账本里两个不重叠的池子，哪怕都在同一台机器上，Ray 也会把它们当成两份独立预订的资源，即使只有 1 张卡可用，`ResourcePoolManager._check_resource_available`（[`utils.py:147-168`](../../../psrl/trainer/ppo/utils.py)）也会在训练一开始就报错拒绝启动，而不是让两个池子挤在同一张卡上"悄悄共享"。
 
-唯一的例外、也是**账本①内部唯一一处"同一张卡登记给两个角色"**的情况：`colocate_validate_and_train=True` 时，`validate_pool_i` 和 `train_pool` 会用 Ray 资源包的**小数资源份额**（`resource_num_per_bundle`）分别登记 `0.9` 和 `0.1`（[`main_ppo.py:235,241,307`](../../../psrl/trainer/main_ppo.py#L235)），让 Ray 同意把同一张物理卡同时"发"给训练和验证两个角色——但这不是真的同时用：谁在用由 `is_rollout_mode_in_actor` 这个布尔开关和 `switch_to_rollout_mode()`/`switch_to_trainer_mode()`（[`ray_trainer.py:2155-2312`](../../../psrl/trainer/ppo/ray_trainer.py#L2155)）手动协调，训练在用的时候验证侧处于"meta-sleep"（只保留元数据描述符，不占真实显存），反过来也一样，是**显式握手的轮流使用**，不是并发抢占。
+唯一的例外、也是**账本①内部唯一一处"同一张卡登记给两个角色"**的情况：`colocate_validate_and_train=True` 时，`validate_pool_i` 和 `train_pool` 会用 Ray 资源包的**小数资源份额**（`resource_num_per_bundle`）分别登记 `0.9` 和 `0.1`（[`main_ppo.py:235,241,307`](../../../psrl/trainer/main_ppo.py)），让 Ray 同意把同一张物理卡同时"发"给训练和验证两个角色——但这不是真的同时用：谁在用由 `is_rollout_mode_in_actor` 这个布尔开关和 `switch_to_rollout_mode()`/`switch_to_trainer_mode()`（[`ray_trainer.py:2155-2312`](../../../psrl/trainer/ppo/ray_trainer.py)）手动协调，训练在用的时候验证侧处于"meta-sleep"（只保留元数据描述符，不占真实显存），反过来也一样，是**显式握手的轮流使用**，不是并发抢占。
 
 ### 17.2 账本②：SciAccel episode 容器的设备是怎么分的
 
@@ -353,28 +365,35 @@ devices = discover_gpu_devices()              # glob("/dev/nvidia[0-9]*")，不�
 slot = await SlotManager.acquire(len(devices), self.jobs_dir, prefix=self.slot_prefix)  # fcntl 文件锁
 device = devices[slot_index]
 ```
-—— [`gpu_device_gate.py:69-90,117-147`](../../../psrl/utils/concurrency/gpu_device_gate.py#L69)，接入点 [`runner.py:240-245,403-404`](../../../examples/sciaccel_rl/runner.py#L240)
+—— [`gpu_device_gate.py:69-90,117-147`](../../../psrl/utils/concurrency/gpu_device_gate.py)，接入点 [`runner.py:240-245,403-404`](../../../examples/sciaccel_rl/runner.py)
 
 关键一行区别：`EnvWorker`（账本①的一部分，见下 17.3）是从 `os.getenv("CUDA_VISIBLE_DEVICES")` 派生可用设备——这个环境变量是 **Ray 在调度这个 Actor 时根据账本①写入的**，天然被限制在 Ray 分给它的那部分卡里；而 `GpuDeviceGate.discover_gpu_devices()` 是直接 `glob` 宿主机文件系统上的 `/dev/nvidia[0-9]*`，**不读 `CUDA_VISIBLE_DEVICES`，也不知道 Ray 账本的存在**。它解决的问题范围很明确：保证"这台机器上同时跑的多个 SciAccel episode 不会抢到同一个物理设备号"（本文 §16.4/§16.5 的实测脚本验证的就是这一点），但没有、也没打算去检查"这张卡是不是 Ray 已经分给了同一台机器上的某个 `train_pool`/`rollout_pool` Actor"。
 
-### 17.3 对比：EnvWorker 路径为什么天然安全，SciAccel（Gate A）路径为什么需要额外小心
+<a id="173-对比envworker-路径为什么天然安全sciaccelgate-a路径为什么需要额外小心"></a>
 
-同样是"分 GPU 给容器/沙箱"，EnvWorker（用于非 SciAccel 的其他 Environment，比如 MLGym）和 SciAccel 当前用的 Gate A 走的是两条不同的路：
+### 17.3 两套设备账本的安全条件
 
-| | EnvWorker（账本①的一部分） | SciAccel 的 Gate A（独立账本②） |
+早期两条路径的区别在于：一条从 Ray 分给 actor 的设备中选择，另一条自行扫描宿主机设备。
+
+| 环节 | 旧 EnvWorker | science 的 `GpuDeviceGate` |
 |---|---|---|
-| 怎么申请到 GPU | `ray.remote(EnvWorker).options(num_gpus=gpu_slots)`，走 Ray 的资源请求 API | 不申请，直接 glob 宿主机设备文件 |
-| 可见设备范围 | `CUDA_VISIBLE_DEVICES`（Ray 写入，限定在分给这个 Actor 的卡） | 这台机器上的全部 `/dev/nvidia*` |
-| 互斥靠什么 | Ray 调度器保证不重复发卡 + Actor 内 `_busy_gpu_indices` 内存集合管理自己名下多张卡的分配 | `fcntl` 文件锁（`SlotManager`），只在"同一台机器"范围内生效 |
-| 和 train_pool/rollout_pool 会不会抢同一张卡 | **结构上不可能**——Ray 账本统一调度，[`worker.py:157-159`](../../../psrl/workers/env_worker/worker.py#L157) 注释原话就是"makes it impossible for a sandbox to touch a training GPU" | **没有结构性保证**——`PSRL_AgentLoopWorker` 本身是 `@ray.remote` 不带 `num_gpus` 的纯 CPU Actor（[`agent_loop/worker.py:45-46`](../../../psrl/workers/agent_loop/worker.py#L45)），Ray 不知道它后面会摸真实 GPU，可能把它和 `train_pool`/`rollout_pool` 的 Actor 调度到同一台物理机上 |
+| 取得设备范围 | actor 声明 GPU 资源需求，Ray 设置 `CUDA_VISIBLE_DEVICES` | 扫描 `/dev/nvidia[0-9]*`，或使用显式覆盖列表 |
+| 同路径内部协调 | Ray 的资源账本，加 actor 内 `_busy_gpu_indices` 集合 | 同节点、同锁目录中的 `fcntl` 文件锁 |
+| 与训练、推理协调的条件 | 使用同一套 Ray 资源管理，正确声明设备需求，并遵守设备可见性约定 | 显式配置安全设备池，避免把已分给训练、推理的设备再次纳入 |
 
-最后一行是这次追问真正要回答的"关系"：**账本①（训练+推理）和账本②（SciAccel）之间没有任何代码把它们打通**。各自内部都能做到互斥（账本①靠 Ray 调度器全局记账，账本②靠单机 `fcntl` 锁），但如果运维部署时把跑 SciAccel 的物理机，和跑 `train_pool`/`rollout_pool` 的物理机**设成同一批机器**，`GpuDeviceGate` 的 `discover_gpu_devices()` 会把这台机器上**所有**物理 GPU（包括 Ray 已经预订给训练/推理的那几张）都当作"可分配池"去抢——这是结构上存在、但现有文档里没有专门展开讨论的潜在风险点，是本次追问综合 §17.1/§17.2 两处代码对照后得到的推断，不是已经被验证/修复过的结论。如果要彻底消除这个风险，思路和本文 §16.3 当初评估"要不要迁到 Path A（EnvWorker）"是同一个方向：让 SciAccel 的 GPU 申请也走 `ray.remote(...).options(num_gpus=...)`，纳入账本①统一调度，而不是维持现在这套只在单机范围内自证清白的独立账本；实际部署上目前更可行的规避方式，是在分配物理机时让"跑 SciAccel 的节点"和"`train_pool`/`rollout_pool` 所在节点"物理隔离（不复用同一批机器），这属于部署配置层面的约束，不在本仓库代码里体现，需要在实际集群拓扑/调度亲和性配置中确认。
+教学例子：Ray 已把 GPU 0 分给推理 actor。EnvWorker 若按同一套整卡资源声明取得 GPU 1，随后只把 GPU 1 挂给容器，两条路径可以分开使用。旧 Gate 扫描到 `[nvidia0, nvidia1]` 时，却可能把 GPU 0 也当成候选；它的文件锁只能协调其他遵守同一锁协议的 Gate 使用者。
 
-## 18. 追加问题（2026-10-08）：`env-service-design` 这份方案，能修复 §17.3 这两个问题吗
+Ray 的资源声明属于调度约定，设备可见性也需要正确传递到容器。能否安全共用节点，还取决于实际设备集合、分配粒度和权限。原文把 EnvWorker 描述为“天然安全、结构上不可能碰到训练卡”，保证范围过大；准确的结论是：统一账本减少了重复分配来源，正确的设备映射与部署约束仍然必要。后续的具体保护见[当前节点策略](../knowledge/router-configuration-and-recovery.md)。
 
-`2026-09-21-env-service-design.md`（本地资料，未随仓库发布） 是一份独立的重构设计稿（整个 SciAccel/EnvWorker 环境服务要不要重写、怎么重写），和本文 §16/§17 描述的"现状"不是一回事——本节对照看它是否、以及在多大程度上解决了 §17.3 结尾指出的两个问题。先说结论：**问题1（显存共享）被结构性解决了；问题2（和训练/推理池抢卡）只是把"必然触发的 bug"修掉了，没有变成自动化的结构性保证，作者自己给的落地方案本质上还是"物理隔离、人工配置"**。
+<a id="18-追加问题2026-10-08env-service-design-这份方案能修复-173-这两个问题吗"></a>
 
-### 18.1 问题1：能不能让多个低显存的 episode 共享一张物理卡——能，这正是这份设计的核心改动
+## 18. 资源单元方案怎样解决共享与设备边界
+
+这一节分析 2026-09-21 的资源服务提案。提案用资源单元和显存预算支持一卡多容器，同时要求配置安全的设备边界。下面先解释容量准入，再解释它怎样与训练、推理的设备分配配合；实施后的早期记录见[2026-10-12 实现](env-service-implementation.md)。
+
+<a id="181-问题1能不能让多个低显存的-episode-共享一张物理卡能这正是这份设计的核心改动"></a>
+
+### 18.1 从整卡独占改为容量准入
 
 现状（本文 §16.5 已部署的 `GpuDeviceGate`）把"一张物理卡"当成不可再分的互斥单位：`fcntl` 文件锁一次只把一个设备索引登记给一个 episode，哪怕这个 episode 只用 2 GB 显存，这张卡剩下的几十 GB 在它跑完之前也不能分给别的 episode——这是本文 §17.3 表格里"只认设备索引、不认显存用量"的直接后果。
 
@@ -391,8 +410,8 @@ compute-apps:  pid 3762699   8508 MiB
 
 | 资源 | 共享时的行为 | 能不能靠调度化解 |
 |---|---|---|
-| **SM / 算力** | 驱动在多个 context 之间**时间片轮转**，两边都能推进、都不会失败 | 能——这正是允许共享的理由 |
-| **显存** | **直接相加**，分配了多少就是多少，调度器回收不了 | 不能——这是共享必须守住的硬约束 |
+| **SM / 算力** | SM 是执行 GPU 指令的计算单元；普通独立 CUDA 上下文通常通过时间片轮换共享计算机会 | 共享会带来竞争，需要测量各任务时延和吞吐 |
+| **显存** | 多进程分配通常分别占用设备容量，放在同卡时累加 | 在准入时为实测占用和未兑现预约留足容量 |
 
 —— `2026-09-21-env-service-design.md:377-380`（本地资料，未随仓库发布）
 
@@ -433,18 +452,13 @@ units:
 
 —— `2026-09-21-env-service-design.md:487-491`（本地资料，未随仓库发布）
 
-**两个必须说清楚的边界条件（不是无条件的"能共享"）**：
+**这组结果说明了什么。** 两个容器可以共存在同一张卡，显存占用随进程累加。程序是否真正重叠执行、每个任务得到多少计算时间，需要进一步测量；普通 CUDA 上下文与 [MPS](../knowledge/mps-parallel-execution.md) 的共享机制也不同。Gate B 只按整卡读数等待，任务评分还需要独立的归属证据。
 
-1. 共享的是"显存 + SM 时间片"，不是"同时并行算"——同一个评分窗口内仍然要过 Gate B（回报节流）排队，§6.3 原文把 Gate A 比作 vLLM 的等待队列、Gate B 比作"SM 时间片仲裁"（`2026-09-21-env-service-design.md:487-497`（本地资料，未随仓库发布）），即"能共存在同一张卡上"和"能同时被记为有效计算、拿到正确的 reward 归因"是两件分开处理的事,不是共享显存就自动没有排队了。
-2. "一个 unit 到底能塞几个容器、每个给多少显存预算"目前还是**没有实测过的配置超参**，文档自己承认这一点并列为待办：
+提案把 `max_containers` 和显存预算作为配置参数。上面的双容器测量可以说明可行性，实际任务应按峰值、设备容量和干扰要求确定并发数。对这种计费方式的进一步改进见[现行显存准入](../knowledge/gpu-memory-admission.md)。
 
-   > How many GPU env containers per unit, and how much device memory each? ... It is unmeasured, since no GPU task has run here. **Sizing is a configured hyperparameter with conservative defaults**
+<a id="182-问题2会不会和-train_poolrollout_pool-抢同一张卡必然触发的-bug-被修了但没有自动化的结构性保证"></a>
 
-   —— `2026-09-21-env-service-design.md:926-930`（本地资料，未随仓库发布）
-
-   也就是说"能共享"这件事本身被证明可行、机制也已经设计出来了，但具体"一张卡上限几个 episode"不是系统自动探测出来的，需要 Phase 2 实际跑起来之后手工测量调优——这是一个待落地的工程量，不是文档发布当天就能自动生效的能力。
-
-### 18.2 问题2：会不会和 train_pool/rollout_pool 抢同一张卡——必然触发的 bug 被修了，但没有自动化的结构性保证
+### 18.2 配置边界与训推设备保护
 
 §17.3 指出的根因是：`PSRL_AgentLoopWorker` 声明时是不带 `num_gpus` 的纯 CPU Actor，Ray 完全不知道它后面会摸真实 GPU，`GpuDeviceGate.discover_gpu_devices()` 又是直接 `glob` 宿主机上的全部 `/dev/nvidia*`，不读 `CUDA_VISIBLE_DEVICES`——如果运维把跑 SciAccel 的物理机和跑 `train_pool`/`rollout_pool` 的物理机设成同一批，这台机器上所有卡（包括 Ray 已经预订给训练/推理的那几张）都会被当成"可分配池"去抢。
 
@@ -519,7 +533,9 @@ units:
 | 依据是否已验证 | 实测过（§5.3 两容器共存跑通），但"每个 unit 装几个合适"未实测，需 Phase 2 调优 | B3 修复方案未实现（仍在 Roadmap），借还协议本身也未实现且不被推荐启用 |
 | 最终落地靠什么兜底 | 代码层面的加总判断（Gate A） | 作者推荐的是**部署层面的物理隔离**（专属 dedicated 节点），不是代码层面的自动互斥 |
 
-## 19. 追加问题（2026-10-08）：fcntl 文件锁背景知识与 Gate A 的分配粒度
+<a id="19-追加问题2026-10-08fcntl-文件锁背景知识与-gate-a-的分配粒度"></a>
+
+## 19. 文件锁如何保证一张卡只发给一个 episode
 
 本节回答两个问题：(1) `SlotManager.acquire` 用的 `fcntl`/`flock` 文件锁，背景原理是什么、具体是怎么轮询抢锁的；(2) 现在部署的 Gate A（`GpuDeviceGate`）到底是"每个 episode 分配一整张卡"，还是按 §18.1 介绍的 `EnvUnit` 资源包模型分配。先说结论：**现状是前者**——`GpuDeviceGate` 里压根没有"unit"这个概念，`EnvUnit`/一张卡塞多个容器只存在于 §18 讨论的 `2026-09-21-env-service-design.md` 设计提案里，尚未落地到这份已部署的代码。
 
@@ -527,9 +543,9 @@ units:
 
 ### 19.1 先看一个具体场景：两个 episode 进程抢两张卡，发生了什么
 
-延续 16.1 的场景：这台机器只有 2 张物理卡，`discover_gpu_devices()` 会返回 `['/dev/nvidia0', '/dev/nvidia1']`（[`gpu_device_gate.py:69-90`](../../../psrl/utils/concurrency/gpu_device_gate.py#L69)）。假设两个不同的 `AgentLoopWorker` **进程**（回忆 16.1 补充：`worker_num` 个 Ray Actor，每个都是独立 OS 进程）P1（pid=1001）和 P2（pid=1002）几乎同时各自跑一个 `needs_gpu=True` 的 episode，都会调用到 `GpuDeviceGate.acquire()` → `SlotManager.acquire(max_slots=2, jobs_dir, prefix="sciaccel_gpu_gate")`（[`gpu_device_gate.py:137`](../../../psrl/utils/concurrency/gpu_device_gate.py#L137)）。
+延续 16.1 的场景：这台机器只有 2 张物理卡，`discover_gpu_devices()` 会返回 `['/dev/nvidia0', '/dev/nvidia1']`（[`gpu_device_gate.py:69-90`](../../../psrl/utils/concurrency/gpu_device_gate.py)）。假设两个不同的 `AgentLoopWorker` **进程**（回忆 16.1 补充：`worker_num` 个 Ray Actor，每个都是独立 OS 进程）P1（pid=1001）和 P2（pid=1002）几乎同时各自跑一个 `needs_gpu=True` 的 episode，都会调用到 `GpuDeviceGate.acquire()` → `SlotManager.acquire(max_slots=2, jobs_dir, prefix="sciaccel_gpu_gate")`（[`gpu_device_gate.py:137`](../../../psrl/utils/concurrency/gpu_device_gate.py)）。
 
-手工画一条时间线（`poll_interval` 默认 0.2 秒，见 [`slot.py:35`](../../../psrl/utils/concurrency/slot.py#L35)）：
+手工画一条时间线（`poll_interval` 默认 0.2 秒，见 [`slot.py:35`](../../../psrl/utils/concurrency/slot.py)）：
 
 ```
 t=0.000  P1 进入 for slot_idx in range(2) 循环，先试 slot_idx=0
@@ -543,11 +559,11 @@ t=0.001  P2 打开 slot_1.lock，flock(EX|NB) 成功
          → P2 拿到 (fd_P2, 1)，对应 /dev/nvidia1
 ```
 
-两个槽位、两个竞争者，所以一轮循环内都能拿到槽位，不需要睡眠。如果这时来了第三个 episode（P3），它会先后对 `slot_0.lock`、`slot_1.lock` 都尝试加锁并都失败，`for` 循环跑完一轮仍然两手空空，于是执行 [`slot.py:73`](../../../psrl/utils/concurrency/slot.py#L73) 的 `await asyncio.sleep(0.2)`，睡 0.2 秒后回到 `while True` 的开头重新扫一遍两个槽位——直到 P1 或 P2 中有一个 episode 结束、调用 `SlotManager.release` 解锁，P3 才能在下一次扫描时抢到那个刚释放的槽位。这个"扫一遍所有槽位 → 都占用就睡一下 → 再扫一遍"的循环，就是用户问的"具体怎么轮询抢锁"。
+两个槽位、两个竞争者，所以一轮循环内都能拿到槽位，不需要睡眠。如果这时来了第三个 episode（P3），它会先后对 `slot_0.lock`、`slot_1.lock` 都尝试加锁并都失败，`for` 循环跑完一轮仍然两手空空，于是执行 [`slot.py:73`](../../../psrl/utils/concurrency/slot.py) 的 `await asyncio.sleep(0.2)`，睡 0.2 秒后回到 `while True` 的开头重新扫一遍两个槽位——直到 P1 或 P2 中有一个 episode 结束、调用 `SlotManager.release` 解锁，P3 才能在下一次扫描时抢到那个刚释放的槽位。这个"扫一遍所有槽位 → 都占用就睡一下 → 再扫一遍"的循环，就是用户问的"具体怎么轮询抢锁"。
 
 ### 19.2 背景知识：什么是文件锁，advisory 锁和 mandatory 锁有什么区别
 
-**先明确这里用的是哪一种锁**。Python 的 `fcntl` 标准库模块名字叫 `fcntl`，但它同时封装了两套不同的 POSIX 文件锁 API：一套是 `fcntl()` 系统调用本身的 `F_SETLK`/`F_SETLKW`（可以锁文件里的任意字节区间，称为"记录锁"/record lock）；另一套是 `flock()` 系统调用（只能锁整个文件，不能锁字节区间，称为"BSD 锁"）。`slot.py` 里用的是 `fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)`（[`slot.py:66`](../../../psrl/utils/concurrency/slot.py#L66)）——函数名带 `flock`，调用的就是后一种、锁整个文件的语义。因为这里每个 `slot_N.lock` 文件本身就是专门为"一把锁"创建的空文件，不需要在同一个文件内部再划分字节区间，所以选最简单的整文件锁已经够用，不需要记录锁的额外复杂度。
+**先明确这里用的是哪一种锁**。Python 的 `fcntl` 标准库模块名字叫 `fcntl`，但它同时封装了两套不同的 POSIX 文件锁 API：一套是 `fcntl()` 系统调用本身的 `F_SETLK`/`F_SETLKW`（可以锁文件里的任意字节区间，称为"记录锁"/record lock）；另一套是 `flock()` 系统调用（只能锁整个文件，不能锁字节区间，称为"BSD 锁"）。`slot.py` 里用的是 `fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)`（[`slot.py:66`](../../../psrl/utils/concurrency/slot.py)）——函数名带 `flock`，调用的就是后一种、锁整个文件的语义。因为这里每个 `slot_N.lock` 文件本身就是专门为"一把锁"创建的空文件，不需要在同一个文件内部再划分字节区间，所以选最简单的整文件锁已经够用，不需要记录锁的额外复杂度。
 
 **advisory（劝告式）锁 vs mandatory（强制式）锁**：这是文件锁领域一个必须先搞清楚的区分，否则会误以为"加了锁，这个文件就被保护起来了"。`flock`/`fcntl` 在 Linux/POSIX 系统上默认都是 **advisory（劝告式）** 的，意思是：操作系统内核并不会阻止任何进程直接 `open()`/`read()`/`write()`/`unlink()` 这个文件——加锁本身只在"调用者主动调用 `flock()` 并检查返回值"这个协作协议内生效。一个不遵守这个协议、直接用 `open()` 读写文件的进程，完全可以在别人持有锁的情况下照样把文件改了，操作系统不会报错拦截。
 
@@ -555,7 +571,7 @@ t=0.001  P2 打开 slot_1.lock，flock(EX|NB) 成功
 
 （与之相对的 mandatory lock 是由内核在系统调用层面强制拒绝不符合锁状态的 I/O 操作，Linux historically 支持过一种依附于文件系统挂载选项 `-o mand` 的强制锁，但已经被标记废弃、现代 Linux 内核默认不再支持，这里只是帮助理解"advisory"这个词是相对谁而言的，不是这份代码会用到的机制。）
 
-**`LOCK_EX`、`LOCK_NB` 这两个标志位分别是什么**（[`slot.py:66`](../../../psrl/utils/concurrency/slot.py#L66) 的 `fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)`）：
+**`LOCK_EX`、`LOCK_NB` 这两个标志位分别是什么**（[`slot.py:66`](../../../psrl/utils/concurrency/slot.py) 的 `fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)`）：
 
 | 标志 | 含义 | 在这里的作用 |
 |---|---|---|
@@ -578,9 +594,9 @@ def slot_lock_dir(output_dir: str, prefix: str = "psrl_slots") -> str:
     digest = hashlib.sha1(os.path.abspath(output_dir).encode("utf-8")).hexdigest()[:12]
     return os.path.join(tempfile.gettempdir(), f"{prefix}_{digest}")
 ```
-—— [`slot.py:18-26`](../../../psrl/utils/concurrency/slot.py#L18)
+—— [`slot.py:18-26`](../../../psrl/utils/concurrency/slot.py)
 
-`output_dir`（对 Gate A 而言就是 `config.harbor.jobs_dir`，见 [`gpu_device_gate.py:137`](../../../psrl/utils/concurrency/gpu_device_gate.py#L137)）先取绝对路径再做 SHA1 哈希、截取前 12 位，拼成锁目录名。这样设计的作用：不同的 `output_dir`（比如不同的训练任务用了不同的 jobs 目录）会落到系统临时目录下不同的子目录，各自的槽位池互不相干——同一台机器上两个毫不相关的训练任务，不会因为共用了同一套 `slot_0.lock`...`slot_N.lock` 而互相把对方的 episode 挤占掉。
+`output_dir`（对 Gate A 而言就是 `config.harbor.jobs_dir`，见 [`gpu_device_gate.py:137`](../../../psrl/utils/concurrency/gpu_device_gate.py)）先取绝对路径再做 SHA1 哈希、截取前 12 位，拼成锁目录名。这样设计的作用：不同的 `output_dir`（比如不同的训练任务用了不同的 jobs 目录）会落到系统临时目录下不同的子目录，各自的槽位池互不相干——同一台机器上两个毫不相关的训练任务，不会因为共用了同一套 `slot_0.lock`...`slot_N.lock` 而互相把对方的 episode 挤占掉。
 
 再看抢锁主循环：
 
@@ -603,7 +619,7 @@ while True:
 
     await asyncio.sleep(poll_interval)
 ```
-—— [`slot.py:57-73`](../../../psrl/utils/concurrency/slot.py#L57)
+—— [`slot.py:57-73`](../../../psrl/utils/concurrency/slot.py)
 
 逐行拆开看每一步在做什么、为什么这么做：
 
@@ -629,11 +645,13 @@ def release(run_slot: tuple[int, int] | None) -> None:
     finally:
         os.close(fd)
 ```
-—— [`slot.py:75-87`](../../../psrl/utils/concurrency/slot.py#L75)
+—— [`slot.py:75-87`](../../../psrl/utils/concurrency/slot.py)
 
 `flock(fd, LOCK_UN)` 显式解锁，`finally: os.close(fd)` 保证不管解锁是否抛异常，这个 fd 一定会被关闭。前面提到过"关闭 fd 本身也会让内核自动释放 flock 锁"，这里为什么还要显式 `LOCK_UN` 再 close？——这是防御性写法：显式解锁让意图在代码里一目了然（"这里是在释放锁"，而不是依赖"关闭 fd 顺带解锁"这个不那么直观的副作用），且不依赖具体平台对"关闭即解锁"这条规则的实现细节，两步都做，哪一步出问题都不会让锁永久泄漏（`try/finally` 保证即使 `flock(LOCK_UN)` 抛出异常，`close` 依然会执行，进程退出时未显式关闭的 fd 也会被内核回收并连带释放锁，所以即便某处异常跳过了 `release`，锁最终也不会永久卡死，只是不会立刻释放）。
 
-### 19.4 直接回答：现在的 Gate A 是按 episode 分配整卡，还是按资源 unit 分配
+<a id="194-直接回答现在的-gate-a-是按-episode-分配整卡还是按资源-unit-分配"></a>
+
+### 19.4 分配粒度：整卡与资源单元
 
 **结论：按 episode 分配整卡，不按资源 unit 分配**。完整源码在 [`psrl/psrl/utils/concurrency/gpu_device_gate.py`](../../../psrl/utils/concurrency/gpu_device_gate.py)，核心的 `acquire`：
 
@@ -655,11 +673,11 @@ class GpuDeviceGate:
         device = devices[slot_index]
         return AllocatedGpu(device=device, index=slot_index, _slot=slot)
 ```
-—— [`gpu_device_gate.py:102-147`](../../../psrl/utils/concurrency/gpu_device_gate.py#L102)
+—— [`gpu_device_gate.py:102-147`](../../../psrl/utils/concurrency/gpu_device_gate.py)
 
 三个关键点能直接证明"一个 episode 独占一整张卡"，而不是"按 unit/按显存切分"：
 
-1. **`max_slots` 直接等于物理卡数量**：`SlotManager.acquire(len(devices), ...)`（[`gpu_device_gate.py:137`](../../../psrl/utils/concurrency/gpu_device_gate.py#L137)）——`devices` 是 `discover_gpu_devices()` glob 出来的 `/dev/nvidia0`、`/dev/nvidia1`…（[`gpu_device_gate.py:69-90`](../../../psrl/utils/concurrency/gpu_device_gate.py#L69)），一张卡对应一个槽位，槽位总数就是卡的总数。这里没有任何地方出现"一张卡划成几个子槽位"或"按显存 MB 切分配额"的逻辑。
+1. **`max_slots` 直接等于物理卡数量**：`SlotManager.acquire(len(devices), ...)`（[`gpu_device_gate.py:137`](../../../psrl/utils/concurrency/gpu_device_gate.py)）——`devices` 是 `discover_gpu_devices()` glob 出来的 `/dev/nvidia0`、`/dev/nvidia1`…（[`gpu_device_gate.py:69-90`](../../../psrl/utils/concurrency/gpu_device_gate.py)），一张卡对应一个槽位，槽位总数就是卡的总数。这里没有任何地方出现"一张卡划成几个子槽位"或"按显存 MB 切分配额"的逻辑。
 2. **`AllocatedGpu` 只记录"哪张卡"，不记录"用了多少显存"**：
    ```python
    @dataclass
@@ -668,7 +686,7 @@ class GpuDeviceGate:
        index: int
        _slot: tuple[int, int]
    ```
-   —— [`gpu_device_gate.py:93-99`](../../../psrl/utils/concurrency/gpu_device_gate.py#L93)
+   —— [`gpu_device_gate.py:93-99`](../../../psrl/utils/concurrency/gpu_device_gate.py)
    
    字段里没有 `gpu_memory_mb`、`max_containers` 这类"资源包预算"概念，和 §18.1 介绍的 `EnvUnit`（`2026-09-21-env-service-design.md:429-439`（本地资料，未随仓库发布），带 `gpu_memory_mb`/`max_containers`/`gpu_indices: tuple[int, ...]` 这些字段，一个 unit 可以装下多个容器）在数据结构层面就是两回事。
 3. **一把 `flock` 独占锁，天然排斥"多个 episode 同时持有同一个槽位"**：19.1/19.2 节已经讲过，`LOCK_EX` 独占锁决定了 `slot_0.lock` 同一时刻只能有一个 episode 的进程持有——既然"一个槽位"直接映射"一张卡"，这就直接等价于"一张卡同一时刻只服务一个 episode"，中间没有"同一张卡上多个 episode 共存"的空间。
@@ -688,6 +706,6 @@ class GpuDeviceGate:
 
 - 设计动机和角色分工：[`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md) 第 0-10 节。
 - 怎么把现有 EnvWorker 接进 PSRL、怎么写 GPU 集成测试：[`onboarding-and-gpu-validation.md`](../knowledge/onboarding-and-gpu-validation.md)。
-- EnvWorker 现状代码深读 + 提案未落地部分清单（本文 §15.3(1)(2) 引用的内容出处）：[`implementation-and-gaps.md`](implementation-and-gaps.md)。
+- 旧 EnvWorker 的修复前审查和后续阅读入口：[`implementation-and-gaps.md`](implementation-and-gaps.md)。
 - 完整的重构设计稿（unit 模型、两道 Gate、Harbor 集成深度、Roadmap、Known bugs）：`2026-09-21-env-service-design.md`（本地资料，未随仓库发布）。
 - 训练设备 / vLLM 推理设备这两个 Ray 资源池的划分，和 PSRL 整体并发/并行机制（协程/线程/进程三层）的关系：`psrl-concurrency-landscape.md`（本地资料，未随仓库发布）。

@@ -1,44 +1,55 @@
-# SciAccel GRPO OOM 分析
+# SciAccel 首步训练显存不足：原因与五步修复验证
 
-一句话结论：这次 OOM 的直接触发点是 actor 训练反向传播的峰值显存不足；多轮轨迹使单条样本很长，是主要上游原因，但过大的训练 token 预算才是让它必现的配置因素。
+**核心结论**：2026-09-22 的 Qwen3.5-4B 训练在第一次反向传播时显存不足。缩短轨迹预算、增加序列并行后，后续五步验证全部完成，最高记录的 PyTorch 预留显存为 82.4 GB。该验证回答了这组配置能否完成训练步骤，模型解题效果需另行分析。
 
-## 证据与判断
+## 目录
 
-- 失败栈位于 `update_actor -> train_mini_batch -> forward_backward_batch -> loss.backward()`，即 rollout 完成后首次 PPO actor 更新，而不是 vLLM 生成或 KV cache 分配阶段。
-- 失败时 GPU 仅剩约 582 MiB 可用；PyTorch 已分配约 83 GiB，反向传播额外申请约 1.64 GiB 失败。另一个进程占用约 4.25 GiB，会压缩安全余量，但不是根因。
-- rollout 启用了 multi-turn，`max_turns=50`。日志中多条轨迹达到 45--50 turns，累计 response token 可超过 7 万。这些 token 会被拼入 PPO 训练序列，因此不只是最后一次请求的 prompt 变长。
-- `data.max_response_length=16384` 不能限制整条 agent trajectory 的累计长度；多轮的模型输出、工具返回和消息模板都会留在后续上下文中，并在训练时一起参与前向和反向传播。
-- actor 启用了动态 batch，但 `ppo_max_token_len_per_gpu=131072`。对 4B 模型的反向传播而言，这个上限在含长轨迹的 batch 上已经接近或超过 95 GiB 卡的可承受范围；`ppo_micro_batch_size_per_gpu=1` 只能避免把多个序列并入同一 micro batch，不能降低一条超长序列本身的激活显存。
+- [故障发生在哪一步](#故障发生在哪一步)
+- [为什么多轮做题会增加训练显存](#为什么多轮做题会增加训练显存)
+- [实际采用的修复](#实际采用的修复)
+- [五步运行结果](#五步运行结果)
+- [怎样把这个经验用于新任务](#怎样把这个经验用于新任务)
+- [证据范围与延伸阅读](#证据范围与延伸阅读)
 
-## 是否是 turns 太多
+## 故障发生在哪一步
 
-是，但需要更准确地表述：`max_turns=50` 允许上下文不断累计，确实生产了极长训练样本；OOM 并非“训练跑到后期 prompt 越来越长”造成，因为它发生在训练进度 0% 的第一次 actor update。触发它的是首批 rollout 中已经存在的长轨迹，加上 131072 的每卡训练 token 上限。
+训练先让模型生成做题过程，称为 **rollout（轨迹采样）**，随后用这些轨迹更新策略模型。策略模型又叫 **actor**，反向传播是根据损失计算参数梯度的阶段。
 
-## 处理优先级
+失败栈为 `update_actor → train_mini_batch → forward_backward_batch → loss.backward()`。因此，应先检查训练侧序列长度和激活显存。**激活**是前向计算产生、供反向传播使用的中间结果。
 
-1. 首先降低 `ppo_max_token_len_per_gpu`，建议从 32768 或 49152 开始压测，再逐档上调；同时让 rollout/log-prob 的 token 上限保持一致或更低。
-2. 给 agent trajectory 增加独立的总 token 上限或超长轨迹过滤。仅保留 `data.max_response_length` 不足以约束多轮累计长度。
-3. 如果任务质量允许，降低 `multi_turn.max_turns`（例如 20--30），并限制工具响应长度，减少后续轮次的上下文膨胀。
-4. 预留共卡余量：清理或隔离额外占用的约 4 GiB 进程。`PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` 只能缓解碎片，不能替代降低 token 预算。
+| 当时观察 | 含义 |
+|---|---|
+| GPU 仅剩约 582 MiB，反向传播再申请约 1.64 GiB 失败 | 可用显存小于本次申请 |
+| PyTorch 已分配约 83 GiB，另一个进程约占 4.25 GiB | 长序列训练与其他常驻占用共同压缩余量 |
+| 首批轨迹中多条达到 45–50 轮，累计 response token 超过 7 万 | 第一次参数更新前，数据已经很长 |
+| 每卡训练 token 预算为 131072 | 打包预算允许长样本进入训练，需要同时检查单条序列是否放得下 |
 
-## 建议验证
+这些观察支持“长轨迹与训练显存预算不匹配”的判断。后续一次同时修改多个参数，验证的是组合修复效果，各参数的独立贡献尚未分离。
 
-重跑时记录每个 PPO micro batch 的累计 token、最长序列 token、`max_memory_allocated` 和 `max_memory_reserved`。若在降低 token 预算后 OOM 消失，即可验证此判断；若仍在单条长样本上失败，再收紧 trajectory 总 token 或 turns。
+## 为什么多轮做题会增加训练显存
 
-## 验证结果：修复方案已确认有效（2026-09-22）
+本次显存分析需要统计整条轨迹：模型输出和工具返回会累计进入上下文。工具文本即便不直接计算策略损失，仍参与后续前向计算，并占用相关激活内存。
 
-一句话结论：`TRAIN_SP` 4→8 + `MAX_RESPONSE_LENGTH` 65536→32768（连带 `MAX_MODEL_LEN` 131072→65536）之后，5 步验证跑（`TOTAL_TRAINING_STEPS=5`, `MAX_TURNS=30`）全程无 OOM，显存稳定在预算内；但同一次跑暴露出验证集准确率极低，是训练效果问题，与显存修复是两件独立的事。
+教学例子：初始问题占 2000 token，每轮新增模型输出 1000 token、工具结果 2000 token。10 轮后约有 `2000 + 10 × 3000 = 32000` token，20 轮后约为 62000 token。模型要处理的是整个上下文，所以轮数和工具输出都影响显存。
 
-### 采用的修复
+**micro-batch（微批）** 是一次前反向传播处理的数据。把微批设为 1，只保留一条序列一起计算；若这一条仍很长，仍需降低长度或用适当的并行策略分担。**序列并行**把长序列相关计算和中间结果分到多张 GPU，换取更低的单卡压力，同时带来通信成本。
 
-- `train_actor_rollout_ref.actor.ulysses_sequence_parallel_size`（`TRAIN_SP`）从 4 提到 8：把反向传播的激活显存进一步切分到更多卡上。
-- `max_response_length` 从 65536 降到 32768，`max_model_len` 从 131072 降到 65536：直接压低单条轨迹能累积到的 token 上限，同时降低 `ppo_max_token_len_per_gpu`（脚本里与 `max_model_len` 绑定）。
-- `max_turns` 从 50 降到 30（上一版重跑已经改过，这次沿用）：减少多轮累积把上下文推到上限的概率。
-- 以上验证了「处理优先级」一节里第 1、3 条判断（压 token 预算 + 压 turns）已经足以解决问题，没有再单独去做第 2 条（独立的 trajectory 总 token 上限/过滤）。
+## 实际采用的修复
 
-### 跑出来的结果
+| 参数 | 修复前 → 五步验证 | 作用 |
+|---|---|---|
+| `TRAIN_SP` | 4 → 8 | 增加 Ulysses 序列并行规模，进一步分摊激活 |
+| `MAX_RESPONSE_LENGTH` | 65536 → 32768 | 收紧这次配方的响应长度预算 |
+| `MAX_MODEL_LEN` | 131072 → 65536 | 降低该次运行的上下文与相关训练预算 |
+| `MAX_TURNS` | 最初 50，前一次重跑已降到 30，五步验证沿用 30 | 减少积累到极长轨迹的机会 |
 
-全部 5 步都跑完，无 Traceback / OOM / BadRequestError（trainer 级别），进程正常退出（非崩溃），总耗时 4:04:54。
+早期失败记录另出现过 `data.max_response_length=16384`。这是不同阶段的配置，不能把它与上表合并成一次只改一个参数的对照。本文保留每次记录的条件。
+
+这组组合配置完成了五步验收。原先建议的“再做独立轨迹总长度过滤”仍可作为新任务的工程选项，是否需要由现有配方的真实预算控制决定。
+
+## 五步运行结果
+
+运行设置为 `TOTAL_TRAINING_STEPS=5`、`MAX_TURNS=30`，总耗时 4:04:54。训练进程正常退出，trainer 级别日志未出现 OOM、Traceback 或 BadRequestError。
 
 | step | actor/loss | actor/grad_norm | actor/entropy | critic/score/mean | response_length/mean | max_memory_reserved_gb | timing_s/step |
 |---|---|---|---|---|---|---|---|
@@ -48,16 +59,26 @@
 | 4 | -0.516 | 1.22 | 0.570 | 0.195 | 30489 | 82.4 | 2707 |
 | 5 | -0.430 | 0.88 | 0.482 | 0.188 | 30457 | 82.4 | 2764 |
 
-最终验证（step 5 后跑的一次）：`val-core/sciaccel_rl/acc/mean@1 = 0.0`，`val-aux/sciaccel_rl/reward/mean@1 ≈ 0.029`，`val-aux/num_turns/mean ≈ 29.1`（接近 `max_turns=30` 上限，说明验证集大多数 episode 是靠 turns 耗尽结束，而不是主动 `finished`）。
+这里的长度指标统计轨迹 token 数。显存验收主要看 `max_memory_reserved_gb`，它是 PyTorch 分配器预留量，和整张卡的物理占用范围不同；其他训练指标用于保留五步运行的完整观察。
 
-显存从 step 1 的 76.5GB 涨到 step 2 起稳定在 82.4GB，此后不再增长——`ulysses_sequence_parallel_size=8` 分摊后峰值远低于 95GB/卡预算，说明这次的余量不是刚好卡线，还有继续加长 `max_response_length` 或扩大 batch 的空间。
+从第 2 步起，该显存指标保持 82.4 GB。步耗时则从 1811 到 4392 秒不等，说明这五步足以观察显存修复，但不足以建立稳定吞吐结论。原文据显存余量建议继续增大长度或 batch，证据尚不足，现改为按新验收目标重新估算。
 
-用 `scripts/parse_training_log.py` 对日志跑出的完整曲线图见 `examples/sciaccel_rl/training_metrics.png`（配套数据见同目录 `training_metrics.csv`）：
+最终验证记录 `val-core/sciaccel_rl/acc/mean@1=0.0`，辅助 reward 约 0.029，平均轮数约 29.1，接近 30 轮上限。该结果表明这次验证样本的准确率低、任务经常用尽轮次。下一步若研究效果，应另查任务难度、终止原因、奖励及输出，而显存问题的五步验收已经结束。
 
-- `actor/loss`、`critic/score/mean` 5 步内没有稳定下降趋势（score 从 0.29 掉到 0.19），在只有 3 个 warmup 步之后就进入正常 lr，5 步的样本量太小，波动幅度（尤其 step 4 的 grad_norm 冲到 1.22）看不出是收敛还是噪声。
-- `group/zero_variance_fraction` 在 step 3 降到 0.19 后 step 5 又冲到 0.375——四分之一到三分之一的 GRPO group 内奖励没有方差，贡献不了梯度，这和验证集 `acc/mean@1=0.0` 互相印证：这个任务在当前 checkpoint 下解出率非常低。
-- `perf/throughput` 和 `timing_s/step` 没有单调变化（step 3 最快，step 1 最慢），5 步样本太少，不能当作稳定的吞吐基线。
+## 怎样把这个经验用于新任务
 
-### 结论与下一步
+先定位报错阶段。生成时报错，检查推理上下文与 KV 缓存；反向传播时报错，检查单条总长度、打包预算、并行规模和共卡占用。重试应记录最长序列、每个微批的 token 数，以及显存峰值。
 
-这次跑要回答的问题只是「显存修复是否有效」——答案是肯定的，两次此前都死在第一步 backward 的 OOM 完全消失，5 步全部稳定跑完。但 `val-core/acc/mean@1=0.0` 说明当前配置下模型基本没能解出这个任务，这是训练效果 / 任务难度层面的问题，不是这份 OOM 分析要解决的范围，需要另外判断是延长训练步数、调整奖励/数据分布，还是检查任务本身对 4B 模型是否过难。
+随后做能够回答问题的有界验证。例如目标是确认短配方能完成一次更新，就执行一次并保留日志。处理超长序列时，结合任务需求选择长度限制、工具输出控制或并行配置，避免仅靠降低微批数量。
+
+## 证据范围与延伸阅读
+
+本页保留 2026-09-22 的数值与修复条件，本次文档整理没有重跑训练。原文提到的 `training_metrics.png`、CSV 和解析脚本目前未在仓库中找到，因此这些数值按既有报告转述，无法在本页完成原始日志逐项重算。
+
+当前脚本入口为 [fsdp_qwen35_4b.sh](../examples/sciaccel_rl/fsdp_qwen35_4b.sh#L68)。它将 `max_model_len` 与 prompt/response 预算关联，并对训练打包预算设置护栏。历史脚本的“额外增加 max_model_len 留余量”建议应结合当前接线重新判断。
+
+- [上下文长度怎样分配](psrl/hf-config-context-window.md)：三个长度参数及多轮累计。
+- [模型怎样调用工具](psrl/psrl-agent-loop-harbor-tool-calling.md)：工具结果为何进入训练序列。
+- [训练并行入门](psrl/vllm-and-training-parallelism/training-parallelism.md)：参数、激活与并行的关系。
+
+可继续问：“工具 token 不计算 loss，为什么还占激活显存？”或“序列并行从 4 增到 8 怎样改变单卡工作量？”

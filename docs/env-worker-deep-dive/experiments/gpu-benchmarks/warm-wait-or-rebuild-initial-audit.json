@@ -1,0 +1,189 @@
+{
+  "warm-router-20261113-r3": {
+    "short-off-blocker": {
+      "steps": 64,
+      "compute_s": 1.7719850726425648,
+      "sum_step_s": 1.6239417176693678,
+      "outside_step_s": 0.14804335497319698,
+      "outside_step_fraction": 0.08354661518249679,
+      "median": 0.025350923649966717,
+      "p90": 0.02542397379875183,
+      "p99": 0.025541892275214195,
+      "max": 0.026876796036958694,
+      "first_quarter_mean": 0.025455620954744518,
+      "last_quarter_mean": 0.02534666727297008
+    },
+    "short-off-target": {
+      "steps": 256,
+      "compute_s": 9.039852146059275,
+      "sum_step_s": 8.45376542955637,
+      "outside_step_s": 0.5860867165029049,
+      "outside_step_fraction": 0.06483366177160282,
+      "median": 0.03277201484888792,
+      "p90": 0.03447731398046017,
+      "p99": 0.035215891897678375,
+      "max": 0.03554121218621731,
+      "first_quarter_mean": 0.0328054572455585,
+      "last_quarter_mean": 0.033373259066138417
+    },
+    "short-on-blocker": {
+      "steps": 64,
+      "compute_s": 1.8536875043064356,
+      "sum_step_s": 1.6510133761912584,
+      "outside_step_s": 0.20267412811517715,
+      "outside_step_fraction": 0.1093356499649106,
+      "median": 0.02562039066106081,
+      "p90": 0.02637009508907795,
+      "p99": 0.027340829372406006,
+      "max": 0.027834143489599228,
+      "first_quarter_mean": 0.02604127931408584,
+      "last_quarter_mean": 0.02579076902475208
+    },
+    "short-on-target": {
+      "steps": 256,
+      "compute_s": 9.143171606585383,
+      "sum_step_s": 8.393053159117699,
+      "outside_step_s": 0.7501184474676847,
+      "outside_step_fraction": 0.08204138342185449,
+      "median": 0.03273036424070597,
+      "p90": 0.033177535980939865,
+      "p99": 0.03461552783846855,
+      "max": 0.035911934450268745,
+      "first_quarter_mean": 0.03304807178210467,
+      "last_quarter_mean": 0.03281355553190224
+    },
+    "long-on-blocker": {
+      "steps": 2048,
+      "compute_s": 71.27062226831913,
+      "sum_step_s": 53.116189032793045,
+      "outside_step_s": 18.154433235526085,
+      "outside_step_fraction": 0.2547253364391629,
+      "median": 0.025895114056766033,
+      "p90": 0.026328187435865402,
+      "p99": 0.028000740334391594,
+      "max": 0.031849805265665054,
+      "first_quarter_mean": 0.0257004640334344,
+      "last_quarter_mean": 0.026235951620037667
+    },
+    "long-on-target": {
+      "steps": 256,
+      "compute_s": 9.231092054396868,
+      "sum_step_s": 8.203768134117126,
+      "outside_step_s": 1.0273239202797413,
+      "outside_step_fraction": 0.11128953261715291,
+      "median": 0.03181020636111498,
+      "p90": 0.032427648082375526,
+      "p99": 0.033501867204904556,
+      "max": 0.06737007945775986,
+      "first_quarter_mean": 0.03241020764107816,
+      "last_quarter_mean": 0.032260911946650594
+    },
+    "long-off-blocker": {
+      "steps": 2048,
+      "compute_s": 77.7761839684099,
+      "sum_step_s": 53.65582079999149,
+      "outside_step_s": 24.120363168418407,
+      "outside_step_fraction": 0.3101253100591217,
+      "median": 0.026089856401085854,
+      "p90": 0.026562755927443504,
+      "p99": 0.02841123938560486,
+      "max": 0.0299338661134243,
+      "first_quarter_mean": 0.026220392439427087,
+      "last_quarter_mean": 0.026332817447837442
+    },
+    "long-off-target": {
+      "steps": 256,
+      "compute_s": 12.139445174485445,
+      "sum_step_s": 8.5642967838794,
+      "outside_step_s": 3.5751483906060457,
+      "outside_step_fraction": 0.294506737270024,
+      "median": 0.033379772678017616,
+      "p90": 0.03370174765586853,
+      "p99": 0.03539751656353474,
+      "max": 0.04005477391183376,
+      "first_quarter_mean": 0.03353876885375939,
+      "last_quarter_mean": 0.03353297302965075
+    }
+  },
+  "warm-baseline-20261113": {
+    "short-off-blocker": {
+      "steps": 64,
+      "compute_s": 1.76362238638103,
+      "sum_step_s": 1.6076774206012487,
+      "outside_step_s": 0.15594496577978134,
+      "outside_step_fraction": 0.08842310405221261,
+      "median": 0.025110448710620403,
+      "p90": 0.025235991925001144,
+      "p99": 0.02587275207042694,
+      "max": 0.026268724352121353,
+      "first_quarter_mean": 0.02522255468647927,
+      "last_quarter_mean": 0.025080350693315268
+    },
+    "short-off-target": {
+      "steps": 256,
+      "compute_s": 9.114161144942045,
+      "sum_step_s": 8.373233541846275,
+      "outside_step_s": 0.7409276030957699,
+      "outside_step_fraction": 0.08129410829069572,
+      "median": 0.03276270069181919,
+      "p90": 0.033056048676371574,
+      "p99": 0.03462550975382328,
+      "max": 0.03832275979220867,
+      "first_quarter_mean": 0.03222239628667012,
+      "last_quarter_mean": 0.032905505097005516
+    },
+    "long-off-blocker": {
+      "steps": 2048,
+      "compute_s": 57.64975140988827,
+      "sum_step_s": 52.3751690518111,
+      "outside_step_s": 5.2745823580771685,
+      "outside_step_fraction": 0.09149358373768209,
+      "median": 0.025527114048600197,
+      "p90": 0.025803446769714355,
+      "p99": 0.027418402954936028,
+      "max": 0.03011924773454666,
+      "first_quarter_mean": 0.025734741389896953,
+      "last_quarter_mean": 0.02553953608003212
+    },
+    "long-off-target": {
+      "steps": 256,
+      "compute_s": 8.900883302092552,
+      "sum_step_s": 8.271932506933808,
+      "outside_step_s": 0.6289507951587439,
+      "outside_step_fraction": 0.07066161568603879,
+      "median": 0.03225886449217796,
+      "p90": 0.03261876851320267,
+      "p99": 0.033076586201786995,
+      "max": 0.03419340029358864,
+      "first_quarter_mean": 0.03226166529930197,
+      "last_quarter_mean": 0.032133547705598176
+    }
+  },
+  "comparison": {
+    "blocker": {
+      "native_off_minus_old_compute_s": 20.12643255852163,
+      "native_off_minus_old_timed_steps_s": 1.2806517481803894,
+      "native_off_minus_old_outside_steps_s": 18.84578081034124,
+      "outside_steps_share_of_difference": 0.9363696599257401
+    },
+    "target": {
+      "native_off_minus_old_compute_s": 3.238561872392893,
+      "native_off_minus_old_timed_steps_s": 0.292364276945591,
+      "native_off_minus_old_outside_steps_s": 2.946197595447302,
+      "outside_steps_share_of_difference": 0.9097240415760313
+    }
+  },
+  "scope": "Read-only CPU audit of saved warm placement evidence. No GPU work was started.",
+  "proven_findings": [
+    "The native-versus-fixed long blocker discrepancy is overwhelmingly outside the recorded training step timings.",
+    "Each loop synchronizes CUDA before ending step_s, then synchronously formats and publishes a shared progress file outside step_s.",
+    "compute_s includes the publishing region, but the old predictor uses only step_s samples.",
+    "Both fixed and native runs use the same GPU UUIDs, image content, frozen policy, model/data/steps and equal training output hashes.",
+    "Only native actual HostConfig was saved. Historical generated Compose states equivalent CPU and memory requests, but the full actual historical HostConfig was not archived."
+  ],
+  "not_proven": [
+    "Exact time spent in write_text, replace, Python loop handling, or unrelated filesystem and CPU scheduling delays was not instrumented.",
+    "No contemporaneous cgroup throttling, GPU clock, power, temperature or storage telemetry identifies the upstream cause of publishing-region inflation.",
+    "The discrepancy is not proof of intrinsic EnvRouter GPU compute overhead or purely random GPU noise."
+  ]
+}

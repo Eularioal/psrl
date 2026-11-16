@@ -1,0 +1,2106 @@
+{
+  "verified_at": "2026-11-12T14:45:38.691614+08:00",
+  "basis": "6aa328d56eff746c2ae6d9fd766b2f3f76b4a670 plus uncommitted working directory changes",
+  "scope": "Saved bounded functional experiments. Local protocols, not official benchmark reproduction or learning-gain evidence.",
+  "counts": {
+    "base_tasks": 495,
+    "mlgym_local_tasks": 9,
+    "posttrain_upstream_combinations": 24,
+    "posttrain_local_verified": 9,
+    "mlgym_nlp_local_verified": 2,
+    "fastkernels_upstream_targets": 458,
+    "fastkernels_local_verified": 29,
+    "fastkernels_remaining_unverified": 429,
+    "swe_imported_gpu_tasks": 41,
+    "swe_original_test_passes": 12,
+    "swe_original_passes_gpu_observed": 9,
+    "swe_local_test_passes": 7,
+    "swe_local_passes_gpu_observed": 6,
+    "swe_original_or_local_passes": 18,
+    "swe_original_or_local_gpu_observed": 14,
+    "swe_local_policy_tasks": 1
+  },
+  "posttrain": [
+    {
+      "task": "posttrainbench-aime2025-qwen3-1.7b",
+      "file": "benchmark-runs/complete-onboarding-20261112/posttrain-verify/posttrainbench-aime2025-qwen3-1.7b/evidence.json",
+      "sha256": "3a4b4c55ef7d0e17333c260e931b2b10d5304be19f3496b415de6e52532064b3",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.00022701261797257788,
+        "answer_nll": 8.390504956245422,
+        "cuda": 1,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "examples": 4,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 4184
+      },
+      "error": false
+    },
+    {
+      "task": "posttrainbench-aime2025-qwen3-4b",
+      "file": "benchmark-runs/complete-onboarding-20261112/posttrain-verify/posttrainbench-aime2025-qwen3-4b/evidence.json",
+      "sha256": "9badf44c7d5daf0b50eb7fa5f424abd89cf1e3b8ef437ce22582a9b75261a081",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.00011464733838521502,
+        "answer_nll": 9.073649764060974,
+        "cuda": 1,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "examples": 4,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 5208
+      },
+      "error": false
+    },
+    {
+      "task": "posttrainbench-aime2025-smollm3-3b",
+      "file": "benchmark-runs/complete-onboarding-20261112/posttrain-verify/posttrainbench-aime2025-smollm3-3b/evidence.json",
+      "sha256": "18caf692a2276c30092433e2f229b2c794700c3e79aed21bbe16b80bec6b0709",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 2.859801886539094e-09,
+        "answer_nll": 19.672513484954834,
+        "cuda": 1,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "examples": 4,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 4184
+      },
+      "error": false
+    },
+    {
+      "task": "posttrainbench-gsm8k-qwen3-1.7b",
+      "file": "benchmark-runs/complete-onboarding-20261112/posttrain-verify/posttrainbench-gsm8k-qwen3-1.7b/evidence.json",
+      "sha256": "fe9843c55a89fac20a5c6ebbe8d667d11ef5b24c85f98f3a033b019ff67b17b1",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.3953370435934384,
+        "answer_nll": 0.9280166029930115,
+        "cuda": 1,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "examples": 4,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 4184
+      },
+      "error": false
+    },
+    {
+      "task": "posttrainbench-gsm8k-qwen3-4b",
+      "file": "benchmark-runs/complete-onboarding-20261112/posttrain-verify/posttrainbench-gsm8k-qwen3-4b/evidence.json",
+      "sha256": "eae089a0f7da2806e324884fdf84552d09a2b4187f5c1bf3e4ca7d472054ee5f",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.4361345379823047,
+        "answer_nll": 0.8298045098781586,
+        "cuda": 1,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "examples": 4,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 5208
+      },
+      "error": false
+    },
+    {
+      "task": "posttrainbench-gsm8k-smollm3-3b",
+      "file": "benchmark-runs/complete-onboarding-20261112/posttrain-verify/posttrainbench-gsm8k-smollm3-3b/evidence.json",
+      "sha256": "7158766060db1a2fe70c3eac1a7de8ae900c25cc022df3ee262bf9eb0489be71",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.24627378189868404,
+        "answer_nll": 1.4013114273548126,
+        "cuda": 1,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "examples": 4,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 4184
+      },
+      "error": false
+    },
+    {
+      "task": "posttrainbench-humaneval-qwen3-1.7b",
+      "file": "benchmark-runs/complete-onboarding-20261112/posttrain-verify/posttrainbench-humaneval-qwen3-1.7b/evidence.json",
+      "sha256": "0ab2f774aab0c7d95223b64c7ac3968c8953c0ec148d2276f298f86b8d801960",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.5705467317604825,
+        "answer_nll": 0.5611601993441582,
+        "cuda": 1,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "examples": 4,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 4184
+      },
+      "error": false
+    },
+    {
+      "task": "posttrainbench-humaneval-qwen3-4b",
+      "file": "benchmark-runs/complete-onboarding-20261112/posttrain-verify/posttrainbench-humaneval-qwen3-4b/evidence.json",
+      "sha256": "f11df8e4682b29bc2dc8bfb59f792b3824b0546c70d084871465567e639cec1a",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.61586192622749,
+        "answer_nll": 0.484732486307621,
+        "cuda": 1,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "examples": 4,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 5208
+      },
+      "error": false
+    },
+    {
+      "task": "posttrainbench-humaneval-smollm3-3b",
+      "file": "benchmark-runs/complete-onboarding-20261112/posttrain-verify/posttrainbench-humaneval-smollm3-3b/evidence.json",
+      "sha256": "a082c2fd5e3b392ad0ff68f1a54933163305ee7302eb98a76de927a8d371883d",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.5870336762506413,
+        "answer_nll": 0.5326730906963348,
+        "cuda": 1,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "examples": 4,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 4184
+      },
+      "error": false
+    }
+  ],
+  "mlgym_nlp": [
+    {
+      "task": "languageModelingFineWeb",
+      "file": "benchmark-runs/complete-onboarding-20261112/mlgym-nlp-verify/languageModelingFineWeb/evidence.json",
+      "sha256": "06f3fd19a14ea79fb62f865476fe8e7f1a0fc744110df6c19280a0e08b51015a",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.0040476444284901535,
+        "loss": 5.509620189666748,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "examples": 4,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 525640
+      },
+      "error": false
+    },
+    {
+      "task": "naturalLanguageInferenceMNLI",
+      "file": "benchmark-runs/complete-onboarding-20261112/mlgym-nlp-verify/naturalLanguageInferenceMNLI/evidence.json",
+      "sha256": "394a8faa96c05fb8ba38601215a6ea6da8faa8a4bd33a74139934211bb83e568",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.25,
+        "loss": 1.8749026507139206,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "eval_valid": 1,
+        "examples": 4,
+        "optimizer_updates": 0,
+        "checkpoint_bytes": 9388
+      },
+      "error": false
+    }
+  ],
+  "fastkernels": [
+    {
+      "task": "fastkernels-l1-conv2d-conv2d",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-conv-probe/evidence.json",
+      "sha256": "3712d9bf7f79c1234cc851c3e0d9e8a36011db562c1537239dbb6e4723b5cc28",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.4737573984375947,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-embedding-embedding",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-clip/fastkernels-l1-embedding-embedding/evidence.json",
+      "sha256": "afd19799cd4c5db467da075d455f57392432ba0b8ee941b47cb257f1c0c66bf6",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.4325016161191351,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-embedding_bag-embeddingbag",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v3/fastkernels-l1-embedding_bag-embeddingbag/evidence.json",
+      "sha256": "bbf6e649b4045b5ce4252f744c4f26e53cf760a201175ad125b9c0f03e2b3c20",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.6191868134574255,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-gelu-gelu",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l1-gelu-gelu/evidence.json",
+      "sha256": "305996e115e3ec47720c198a1e8b8b64431b55595f23e9a48c0353020db0f465",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.3267045344818196,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-global_avg_pool2d-globalavgpool2d",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l1-global_avg_pool2d-globalavgpool2d/evidence.json",
+      "sha256": "3566b152b475c85e402e907b433aa1ef43d42b92237c7dbc97b1a05b77eff289",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.5960130167297534,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-grn-grn",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l1-grn-grn/evidence.json",
+      "sha256": "754a5205d0afbdeba7c0046e3fb5edbd989cdf8c73e3a231161fff99f3f52bd5",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.8453608424176435,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-layer_norm-layernorm",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l1-layer_norm-layernorm/evidence.json",
+      "sha256": "fc7d0a4014b7cfa532f29426a7ec9a7537965437105bcba03fce5b926a9e90ac",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.4133790737050558,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-layer_norm2d-layernorm2d",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l1-layer_norm2d-layernorm2d/evidence.json",
+      "sha256": "7a5f19c25f835b1f67229e6d109034590604df1b6e6c6c18b3f7933fde0f7cd2",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.2468664810333988,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-linear-bmm",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l1-linear-bmm/evidence.json",
+      "sha256": "f79b5b6a2671462987936ede43d5d3760367d0e2e847fd2bac3cf875b3066eb8",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.6976532299761204,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-linear-linear",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l1-linear-linear/evidence.json",
+      "sha256": "71a5979aee7255d0d029f42ff361fc832250248e61648dd953c984f8c0e782ae",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.6591536391996837,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-linear-matmul",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l1-linear-matmul/evidence.json",
+      "sha256": "896f9b739ad31d05414d249f9d84ca7f77046d2449b5eee1146fecd97448e781",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.7087704851641544,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-quickgelu-quickgelu",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-clip/fastkernels-l1-quickgelu-quickgelu/evidence.json",
+      "sha256": "a52c8eadf876b5a4c5638c9dad2f52c7b3eeb4edc0dcc484f969e9c0ad76e367",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.5740092999625025,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-relu-relu",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l1-relu-relu/evidence.json",
+      "sha256": "8dcad0b167423bdb6a67be482362a94e4e92bcb563b30313769aaee74c42e387",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.2976461631030791,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-softmax-softmax",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-clip/fastkernels-l1-softmax-softmax/evidence.json",
+      "sha256": "677bab36aeb9c3ce05ea9e11ddac8f7f3281ab54c1f2279fbdaf8ba27c96bd52",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.4655999950081111,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l1-sparse_mm-sparsemm",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l1-sparse_mm-sparsemm/evidence.json",
+      "sha256": "7bfc7e1bf93cfe4edf8153c802f594923772945e77140970d067bfb4cdb5cbf4",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.7574447441713291,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l2-clip_attention-clipattention",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-clip-fixed/fastkernels-l2-clip_attention-clipattention/evidence.json",
+      "sha256": "3122be20ea8b53084ddbe871f24f51a2b5c401dee21cf62b9ef7c72fd42b0497",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.9312581864356971,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l2-clip_mlp-clipmlp",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-clip/fastkernels-l2-clip_mlp-clipmlp/evidence.json",
+      "sha256": "67edcf889be0d3c74bf61c0f0cda11d995adf99f2d8bebebc8b9f14d19263441",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.8247540164461983,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l2-clip_mlp-cliptextembeddings",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-clip/fastkernels-l2-clip_mlp-cliptextembeddings/evidence.json",
+      "sha256": "c927815cc76ca5d92fcd56d5e472689808a8d1a429d3a1d87708f23544bdd347",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.6941153181573947,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l2-convnextv2_block-convnextv2layer",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l2-convnextv2_block-convnextv2layer/evidence.json",
+      "sha256": "f15c3743c7efc4b0204a08f5617176bf54a22cbd4048a882dbfca3079a6041f7",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.9139712480135368,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l2-dlrm_interaction-dlrmfeatureinteraction",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l2-dlrm_interaction-dlrmfeatureinteraction/evidence.json",
+      "sha256": "cb19779308ce09f25f0d365674bbbe9d9f23e8b4b29ba2c31ca6d7a9e1dee2c6",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.7503669377173648,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l2-embedding_bag_collection-embeddingbagcollection",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v3/fastkernels-l2-embedding_bag_collection-embeddingbagcollection/evidence.json",
+      "sha256": "d1052bc6e11d04cd0a9d54d94869cb0ecab400c5641ba852d05ff58a59875763",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.8160000251074363,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l2-lightgcn_propagation-lightgcnpropagation",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l2-lightgcn_propagation-lightgcnpropagation/evidence.json",
+      "sha256": "7142b02144d81e4ebfcc3b0090871e9abd69c83c8ef4b577589d625f4676a8d7",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.7638798501222853,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l2-recsys_mlp-recsysmlp",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l2-recsys_mlp-recsysmlp/evidence.json",
+      "sha256": "7ff823270aded74c85ce417b86971ac93cd6ab6e04b2d3a28e0923db0dc41055",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.8328587336904746,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l3-clip_encoder_layer-clipencoderlayer",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-clip-fixed/fastkernels-l3-clip_encoder_layer-clipencoderlayer/evidence.json",
+      "sha256": "bf0a019d01ba85787483923268fe6ccd9783fbab68454e9df67248bdd3a24054",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.9425752607313777,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l3-convnextv2_stage-convnextv2stage",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l3-convnextv2_stage-convnextv2stage/evidence.json",
+      "sha256": "a041002b65bf7a8b31cf01fd330ca094a83174cdf48388c97f043fb1d031b7eb",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.9111206754680123,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l4-clip_text_model-cliptextmodel",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-clip/fastkernels-l4-clip_text_model-cliptextmodel/evidence.json",
+      "sha256": "c0d28edb66658a0d96b8b606adf61a154faf7e9a918faaec132a6a57693cf693",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.96290592551421,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l4-convnextv2-convnextv2forimageclassification",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v2/fastkernels-l4-convnextv2-convnextv2forimageclassification/evidence.json",
+      "sha256": "2d0990ac5f2529b08269bf7e1b6c9cb066124850a43e4a33e4ea5c0a41677908",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.9775462367607483,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l4-dlrmv2-dlrmv2",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v3/fastkernels-l4-dlrmv2-dlrmv2/evidence.json",
+      "sha256": "178f3ffc706da2a5a6c8a568a065dadff0137c05b544c2b424d4878ad3bda65e",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.9437031990993623,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    },
+    {
+      "task": "fastkernels-l4-lightgcn-lightgcn",
+      "file": "benchmark-runs/complete-onboarding-20261112/fast-verify-v3/fastkernels-l4-lightgcn-lightgcn/evidence.json",
+      "sha256": "db6d5947a547faf30eec1369f0013065b0657c9ac1b41080f8628f0a1c90b3f1",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.9392754567480663,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "cases": 1,
+        "skipped": 0
+      },
+      "error": false
+    }
+  ],
+  "swe_original": [
+    {
+      "task": "ss-sgl-cluster-gemma4-fused-ops",
+      "file": "benchmark-runs/heterogeneous-onboarding-20261112/swe-sweep/ss-sgl-cluster-gemma4-fused-ops/evidence.json",
+      "sha256": "94fbfb993bb5cb08939f17d97e5a0c90d14b80c7b6dae6bc3980682067c2a2da",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 51,
+        "f2p_total": 51,
+        "f2p_score": 1.0,
+        "p2p_passed": 1,
+        "p2p_total": 1,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 51,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 1
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-cluster-gpu-fused-kernels",
+      "file": "benchmark-runs/heterogeneous-onboarding-20261112/swe-sweep/ss-sgl-cluster-gpu-fused-kernels/evidence.json",
+      "sha256": "16473f6862a8e0fff57c77dc4ce52a9301c50c375ffafbcbb97a27abf0215b27",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 8,
+        "f2p_total": 8,
+        "f2p_score": 1.0,
+        "p2p_passed": 4,
+        "p2p_total": 4,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 8,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 4
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-cluster-hicache-evict-tombstone-4pr",
+      "file": "benchmark-runs/heterogeneous-onboarding-20261112/swe-sweep/ss-sgl-cluster-hicache-evict-tombstone-4pr/evidence.json",
+      "sha256": "f85ffd2e0f17204606df7426f6db974990b9a7ae274db410aff23324bbf12662",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 45,
+        "f2p_total": 45,
+        "f2p_score": 1.0,
+        "p2p_passed": 14,
+        "p2p_total": 14,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 45,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 14
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-cluster-hicache-framework-swa",
+      "file": "benchmark-runs/heterogeneous-onboarding-20261112/swe-sweep/ss-sgl-cluster-hicache-framework-swa/evidence.json",
+      "sha256": "617f8d9c66db0b791c534101464722f99fa71e201c3749d8c6c4268ca991dc4d",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 35,
+        "f2p_total": 35,
+        "f2p_score": 1.0,
+        "p2p_passed": 66,
+        "p2p_total": 66,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 35,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 66
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-cluster-spec-v2-maturation",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-sweep/ss-sgl-cluster-spec-v2-maturation/evidence.json",
+      "sha256": "f293e0531f666c80ac2d913ea930cbe5beaa3228853e3c854901832da9cd5576",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 17,
+        "f2p_total": 17,
+        "f2p_score": 1.0,
+        "p2p_passed": 28,
+        "p2p_total": 28,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 17,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 28,
+        "invocations_total": 45,
+        "invocations_nonzero": 0,
+        "invocations_failed": 0
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl20457",
+      "file": "benchmark-runs/heterogeneous-onboarding-20261112/swe-sweep/ss-sgl20457/evidence.json",
+      "sha256": "54dcd2558b5cdb82949ea24e1f3e8b57c53a47b5218f8dda4019a030c37908cf",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 9,
+        "f2p_total": 9,
+        "f2p_score": 1.0,
+        "p2p_passed": 15,
+        "p2p_total": 15,
+        "p2p_score": 1.0,
+        "pytest_exit_code": 0
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl22544-score-multi-item-delimiters",
+      "file": "benchmark-runs/heterogeneous-onboarding-20261112/verify-swe-score-v3/evidence.json",
+      "sha256": "9baef2142f011caf790a6375302044bcad41181dd68cb949a855c3f7b45d3dfe",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "f2p_passed": 18,
+        "f2p_score": 1.0,
+        "f2p_total": 18,
+        "invocations_failed": 0,
+        "invocations_total": 26,
+        "p2p_passed": 8,
+        "p2p_score": 1.0,
+        "p2p_total": 8,
+        "resolved": 1.0,
+        "reward": 1.0
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl25052",
+      "file": "benchmark-runs/heterogeneous-onboarding-20261112/swe-sweep/ss-sgl25052/evidence.json",
+      "sha256": "eaeeaadd272b745e638917a65d247dbb638c58a5cded84fb4fc3abede5e4c0eb",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 7,
+        "f2p_total": 7,
+        "f2p_score": 1.0,
+        "p2p_passed": 16,
+        "p2p_total": 16,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 7,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 16
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl25062-priority-scheduling-pd",
+      "file": "benchmark-runs/heterogeneous-onboarding-20261112/swe-sweep/ss-sgl25062-priority-scheduling-pd/evidence.json",
+      "sha256": "1d6fb49eb5bb2bcfc2910857847e2506edf23895082bc3d9277af4b88860bad3",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 6,
+        "f2p_total": 6,
+        "f2p_score": 1.0,
+        "p2p_passed": 7,
+        "p2p_total": 7,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 6,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 7
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl25265",
+      "file": "benchmark-runs/heterogeneous-onboarding-20261112/swe-sweep/ss-sgl25265/evidence.json",
+      "sha256": "e5f560562e77203b3fa04cc568c1df7224e0dd9ab5f2cfc77978475152b78a98",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 1,
+        "f2p_total": 1,
+        "f2p_score": 1.0,
+        "p2p_passed": 19,
+        "p2p_total": 19,
+        "p2p_score": 1.0,
+        "perf_ok": 1,
+        "tokenize_speedup": 2028.2653,
+        "speedup_threshold": 467.1,
+        "candidate_ms": 0.12452,
+        "slow_call_ms": 252.55897,
+        "correctness_ok": 1,
+        "encode_count": 24,
+        "call_count": 0,
+        "pytest_status": 0,
+        "profile_status": 0
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl25277",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-sweep/ss-sgl25277/evidence.json",
+      "sha256": "5c389a874231e55dd0170f4d932b7dc038a2d7f8b286131e6563b4018f4630cc",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "f2p_passed": 22,
+        "f2p_total": 22,
+        "f2p_score": 1.0,
+        "p2p_passed": 13,
+        "p2p_total": 13,
+        "p2p_score": 1.0,
+        "f2p_skipped": 0,
+        "f2p_total_before_skips": 22,
+        "p2p_skipped": 0,
+        "p2p_total_before_skips": 13
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl25311-perf-mla-tma-bulk-store-set-mla-kv-buffer-up",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-sweep/ss-sgl25311-perf-mla-tma-bulk-store-set-mla-kv-buffer-up/evidence.json",
+      "sha256": "4c69626be09a9764926895c280b3a3d57f910993bc5009878b0060247563c3a2",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "resolved": 1.0,
+        "adjudicable": 1.0,
+        "f2p_passed": 56,
+        "f2p_total": 56,
+        "f2p_score": 1.0,
+        "p2p_passed": 2,
+        "p2p_total": 2,
+        "p2p_score": 1.0,
+        "speedup_8192": 4.8269,
+        "speedup_16384": 5.97965,
+        "min_gate_speedup": 4.8269,
+        "profile_status": 0,
+        "profile_valid": 1.0,
+        "profile_processes": 10
+      },
+      "error": false
+    }
+  ],
+  "swe_local": [
+    {
+      "task": "ss-sgl-bcg-cuda-engine-storage",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-bcg-cuda-engine-storage/evidence.json",
+      "sha256": "7f9cc24aa05824cec2eae27d01869edd72e69ecabc29044af577c615ff809d25",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 4,
+        "selected_nodes": 4
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-cluster-radix-streaming-session",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-quick-verify/ss-sgl-cluster-radix-streaming-session/evidence.json",
+      "sha256": "49d7cfd40dc36f0619390025d4012aeaee8749af8f48d1ba7080429bc91c8bc6",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 4,
+        "selected_nodes": 4
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-dflash-v1-core-production",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-patch-verify/ss-sgl-dflash-v1-core-production/evidence.json",
+      "sha256": "e863ffefd10f67070596d8b61bb28e764e83dcd7d525561f4455c380bffdd1de",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "tests": 2,
+        "passed_tests": 2,
+        "selected_nodes": 2
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl20960-sparse-embed-overrides-v2",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl20960-sparse-embed-overrides-v2/evidence.json",
+      "sha256": "c7eb62c7b5779ff0beb6d656afa1b85c10e33bfcd0bdb7a55a1c00c9676e8457",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 4,
+        "selected_nodes": 4
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl21722-structural-tag-tool-calling",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl21722-structural-tag-tool-calling/evidence.json",
+      "sha256": "46f42566fc6239dce2aa8e24de9860d35933c52c58f802a1a65a9eb123a64d5d",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 1.0,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 4,
+        "selected_nodes": 4
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl22544-score-multi-item-delimiters",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-patch-verify/ss-sgl22544-score-multi-item-delimiters/evidence.json",
+      "sha256": "d9a77bc726f27d278b33feac8f76e480eee63fbfadb58d2f60053f6f32c6c015",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1.0,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "tests": 2,
+        "passed_tests": 2,
+        "selected_nodes": 2
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl23856-use-torch-torch-mm-for-deepseek-v3-2-indexer",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-patch-verify/ss-sgl23856-use-torch-torch-mm-for-deepseek-v3-2-indexer/evidence.json",
+      "sha256": "05553736a2f55ec07760bdbf9053f2fb7e3adbdcb33c5ac222349eabe9253278",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 1,
+        "eval_valid": 1,
+        "cuda": 1,
+        "local_evaluation": 1,
+        "tests": 3,
+        "passed_tests": 3
+      },
+      "error": false
+    }
+  ],
+  "swe_attempts_without_complete_pass": [
+    {
+      "task": "ss-sgl-cluster-dllm-serving-radix-graph",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-cluster-dllm-serving-radix-graph/evidence.json",
+      "sha256": "969d6a7d43db459b3c5ab69814a1ca301b65e2113164431f4115aa6e89076484",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.0,
+        "eval_valid": 0,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 0,
+        "selected_nodes": 4
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-cluster-dsv32-index-cache-primitives",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-cluster-dsv32-index-cache-primitives/evidence.json",
+      "sha256": "25cb35f6644ffa91e61ac0476a55571fd67fe37f5357adc11f22674c4a34420d",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.25,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 1,
+        "selected_nodes": 4
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-cluster-glmv-sampling-restore",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-cluster-glmv-sampling-restore/evidence.json",
+      "sha256": "d18dbad5a192641aa9692e6f012bbeed6d9d123621b19f8df058677ca952851d",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.0,
+        "eval_valid": 0,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 0,
+        "selected_nodes": 4
+      },
+      "error": false
+    },
+    {
+      "task": "unknown",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-cluster-hisparse-decode-lifecycle/evidence.json",
+      "sha256": "0358637445355e93993b4194f440177ac177e8c9479fd109291d9ffb1b025629",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "ExceptionGroup"
+    },
+    {
+      "task": "ss-sgl-cluster-ngram-sam-corpus",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-cluster-ngram-sam-corpus/evidence.json",
+      "sha256": "17e4be7e7b1bf00270994f2bd539868270e3daae64c236223e8b2e422c3b79d6",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.6666666666666666,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "tests": 3,
+        "passed_tests": 2,
+        "selected_nodes": 3
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-cluster-ngram-trie-refactor",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-cluster-ngram-trie-refactor/evidence.json",
+      "sha256": "a3ae7b21117ebe427fd90e9e8e4aa46033778fcbb0f7ded612ce440562cc15f5",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.0,
+        "eval_valid": 0,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 2,
+        "selected_nodes": 4
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-dflash-v1-core-production",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-dflash-v1-core-production/evidence.json",
+      "sha256": "7a1e6c9a9b614ec9c3763db114a5efe60e57c9f227c85fdb2e356e9237842b63",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "RewardFileNotFoundError"
+    },
+    {
+      "task": "ss-sgl-eagle-v2-tree-runtime",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-eagle-v2-tree-runtime/evidence.json",
+      "sha256": "600c829fcff794c81bf88fac76be7c4c47c9366cf2a2352f0e3d111fca2f6a70",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.5,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 2,
+        "selected_nodes": 4
+      },
+      "error": false
+    },
+    {
+      "task": "unknown",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-gemma4-moe-core-serving/evidence.json",
+      "sha256": "bea9aa18eee8ea34d3fdb0713dbc2ef913b0f21ebc08e09459d5f2f2a4bd8613",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "ExceptionGroup"
+    },
+    {
+      "task": "unknown",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-gemma4-pcg-execution/evidence.json",
+      "sha256": "2171796e94ddd6389bb8b568e84533f7778288e954755ad9568290f3cc1ea7f4",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "ExceptionGroup"
+    },
+    {
+      "task": "unknown",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-gemma4-speculative-execution/evidence.json",
+      "sha256": "1ecd87da4de9c0827fa676b3d14c69aacffae0f1d45ecde8d16ca2e8930a7944",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "ExceptionGroup"
+    },
+    {
+      "task": "unknown",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-moe-lora-kernel-correctness/evidence.json",
+      "sha256": "d8939f34ebf7d0d613b737f977b481ea9531d12cb59d9b88b9b26742c517ddb9",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "ExceptionGroup"
+    },
+    {
+      "task": "ss-sgl-pcg-mixed-flashinfer-replay",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-pcg-mixed-flashinfer-replay/evidence.json",
+      "sha256": "08350795b3fdb3f19be5e0e90b4739039a9a605c22301a9c1d198ec8fe325944",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {},
+      "error": "RewardFileNotFoundError"
+    },
+    {
+      "task": "unknown",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-qwen35-dense-moe-core-serving/evidence.json",
+      "sha256": "47fb9517ab05033cb20d0885b060dc90b8f26c2ae0f4c09e70505ee0aca64b1a",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "ExceptionGroup"
+    },
+    {
+      "task": "ss-sgl-runtime-metadata-lifecycle",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-runtime-metadata-lifecycle/evidence.json",
+      "sha256": "335b8f1b816e97eb47a21fdeed31c361fa5787874eff7c8e8f2850eed54f67c5",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.0,
+        "eval_valid": 0,
+        "local_evaluation": 1,
+        "tests": 3,
+        "passed_tests": 0,
+        "selected_nodes": 3
+      },
+      "error": false
+    },
+    {
+      "task": "unknown",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-transformers5-compute-runtime/evidence.json",
+      "sha256": "dcc066beccf1df6823a3b8963e6cf3f712379a126dcea5a76c45b66de448825b",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "ExceptionGroup"
+    },
+    {
+      "task": "unknown",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl-transformers5-moe-core-serving/evidence.json",
+      "sha256": "8535d9ef02ac465d2cd6076038de770c7e28e0b86dd86becefa6eba00b742a59",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "ExceptionGroup"
+    },
+    {
+      "task": "ss-sgl17780-embedding-lora",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl17780-embedding-lora/evidence.json",
+      "sha256": "d0ed88342fc92adffe10a462bf26496c4f8bab48b56232ce86088ab37d47409a",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.0,
+        "eval_valid": 0,
+        "local_evaluation": 1,
+        "tests": 3,
+        "passed_tests": 0,
+        "selected_nodes": 3
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl18760",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl18760/evidence.json",
+      "sha256": "3c5bb5a6bb3f89dffcbbe4545ab36eeebdffddc15a127913fb240ffb73bb0e7b",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "RewardFileNotFoundError"
+    },
+    {
+      "task": "ss-sgl19044-sdar-day0-production",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl19044-sdar-day0-production/evidence.json",
+      "sha256": "f3bce451f17244b9ac8f89401d96ab81b33164c22a229cdaa73ae0dbf9937852",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "RewardFileNotFoundError"
+    },
+    {
+      "task": "ss-sgl26972-spec-v2-paged-tree-drafting",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl26972-spec-v2-paged-tree-drafting/evidence.json",
+      "sha256": "6edcf2b7f2ed428d7f191e463c06c5530033f630a391a24391452d8344705cd7",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.0,
+        "eval_valid": 0,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 0,
+        "selected_nodes": 4
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl28754-spec-v2-session-commit",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-bounded-verify/ss-sgl28754-spec-v2-session-commit/evidence.json",
+      "sha256": "a601ae36dddeb2f6a8195e2c48f5939fcae5fec9fcdbb0e3e465f16cf813b16c",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.0,
+        "eval_valid": 0,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 3,
+        "selected_nodes": 4
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-cluster-dsv32-index-cache-primitives",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-patch-verify/ss-sgl-cluster-dsv32-index-cache-primitives/evidence.json",
+      "sha256": "b632be8d465cf1a7306c69c436b076ddfa2b6177f01db0294af5b1ae002684f6",
+      "runner_passed": true,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {
+        "reward": 0.5,
+        "eval_valid": 1,
+        "local_evaluation": 1,
+        "tests": 2,
+        "passed_tests": 1,
+        "selected_nodes": 2
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-cluster-glmv-sampling-restore",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-patch-verify/ss-sgl-cluster-glmv-sampling-restore/evidence.json",
+      "sha256": "fe92ac2858639628bd68075d902ed0b7acd4e30b3c5a6f3ae173b8fa9be24466",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": true,
+      "metrics": {},
+      "error": "RewardFileNotFoundError"
+    },
+    {
+      "task": "unknown",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-patch-verify/ss-sgl-cluster-hisparse-decode-lifecycle/evidence.json",
+      "sha256": "d17875c6bec5746f03b176d930808a18a8692a2a0efaecffcfeb5056c5ea0117",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "ExceptionGroup"
+    },
+    {
+      "task": "ss-sgl-cluster-ngram-sam-corpus",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-patch-verify/ss-sgl-cluster-ngram-sam-corpus/evidence.json",
+      "sha256": "3999ee35e0f4cae9ed7e18d97932d50e8c407a1f9bf84750b17aad28f885a628",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {},
+      "error": "RewardFileNotFoundError"
+    },
+    {
+      "task": "ss-sgl-cluster-ngram-trie-refactor",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-patch-verify/ss-sgl-cluster-ngram-trie-refactor/evidence.json",
+      "sha256": "706e3560a8ac860e782c25fa70ab1c1e7cf076558dd9c2ef4209c70edb888db6",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.0,
+        "eval_valid": 0,
+        "local_evaluation": 1,
+        "tests": 2,
+        "passed_tests": 1,
+        "selected_nodes": 2
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl28371-chunked-sgmv-cuda-graph-replay",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-patch-verify/ss-sgl28371-chunked-sgmv-cuda-graph-replay/evidence.json",
+      "sha256": "dd757ea7da2406a7c30b9d2071d9df30cc1426eef991347133f409cf0a4e5388",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.0,
+        "eval_valid": 0,
+        "local_evaluation": 1,
+        "tests": 2,
+        "passed_tests": 0,
+        "selected_nodes": 2
+      },
+      "error": false
+    },
+    {
+      "task": "ss-sgl-bcg-cuda-engine-storage",
+      "file": "benchmark-runs/complete-onboarding-20261112/swe-quick-verify/ss-sgl-bcg-cuda-engine-storage/evidence.json",
+      "sha256": "6ad99c4e279e86a5cf38350599e5c2134d21282b0bf3af5826cebb623a82c001",
+      "runner_passed": false,
+      "physical_cleanup": true,
+      "gpu_observed": false,
+      "metrics": {
+        "reward": 0.0,
+        "eval_valid": 0,
+        "local_evaluation": 1,
+        "tests": 4,
+        "passed_tests": 0,
+        "selected_nodes": 4
+      },
+      "error": false
+    }
+  ],
+  "policy_runs": {
+    "eleven_tasks": {
+      "file": "benchmark-runs/complete-onboarding-20261112/policy-functional-progress.json",
+      "sha256": "041cf8f8b9ef49140967e9897e0b5020d8c0fbc903c300490a81b33d530fdfee",
+      "passed": false,
+      "coverage": {
+        "0": [
+          "languageModelingFineWeb",
+          "naturalLanguageInferenceMNLI",
+          "posttrainbench-aime2025-qwen3-1.7b",
+          "posttrainbench-aime2025-qwen3-4b",
+          "posttrainbench-aime2025-smollm3-3b",
+          "posttrainbench-gsm8k-qwen3-1.7b",
+          "posttrainbench-gsm8k-qwen3-4b",
+          "posttrainbench-gsm8k-smollm3-3b",
+          "posttrainbench-humaneval-qwen3-1.7b",
+          "posttrainbench-humaneval-qwen3-4b",
+          "posttrainbench-humaneval-smollm3-3b"
+        ],
+        "1": [
+          "languageModelingFineWeb",
+          "naturalLanguageInferenceMNLI",
+          "posttrainbench-aime2025-qwen3-1.7b",
+          "posttrainbench-aime2025-smollm3-3b",
+          "posttrainbench-gsm8k-qwen3-1.7b",
+          "posttrainbench-gsm8k-qwen3-4b",
+          "posttrainbench-gsm8k-smollm3-3b",
+          "posttrainbench-humaneval-qwen3-1.7b",
+          "posttrainbench-humaneval-qwen3-4b",
+          "posttrainbench-humaneval-smollm3-3b"
+        ]
+      },
+      "optimizer_step": true,
+      "version_published": true,
+      "metrics": {
+        "actor/loss": 0.0,
+        "actor/grad_norm": 0.0,
+        "termination/trained_tokens": 19658.0,
+        "training/global_step": 1.0
+      },
+      "stop": "training_timeout",
+      "exit": -15,
+      "physical_cleanup": true,
+      "natural_finish_count": 15,
+      "budget_stop_count": 23
+    },
+    "two_task_completion": {
+      "file": "benchmark-runs/complete-onboarding-20261112/final-policy/policy-functional-progress.json",
+      "sha256": "821b6504bc8c7f33670f75444e6129f09b09b6f6e0e81b46912d6c8fc75ccbae",
+      "passed": true,
+      "coverage": {
+        "0": [
+          "fastkernels-l1-linear-linear",
+          "posttrainbench-aime2025-qwen3-4b"
+        ],
+        "1": [
+          "fastkernels-l1-linear-linear",
+          "posttrainbench-aime2025-qwen3-4b"
+        ]
+      },
+      "optimizer_step": true,
+      "version_published": true,
+      "metrics": {
+        "actor/loss": 0.0017368756234645844,
+        "actor/grad_norm": 0.34655147790908813,
+        "termination/trained_tokens": 3486.0,
+        "training/global_step": 1.0
+      },
+      "stop": {
+        "reason": "Every task completed scored v0 and v1 rollouts around one optimizer step.",
+        "coverage": {
+          "0": [
+            "fastkernels-l1-linear-linear",
+            "posttrainbench-aime2025-qwen3-4b"
+          ],
+          "1": [
+            "fastkernels-l1-linear-linear",
+            "posttrainbench-aime2025-qwen3-4b"
+          ]
+        },
+        "time": 1794464454.2736645
+      },
+      "exit": -15,
+      "physical_cleanup": true,
+      "natural_finish_count": 3,
+      "budget_stop_count": 5
+    }
+  },
+  "environment_isolation": {
+    "metadata_files_checked": 2540,
+    "metadata_files_changed_since_20261109": [],
+    "current_metadata_sha256": "d718280e70a91e86b77e1581bc9081ee2b6b69edafd786254228b1e9c7404c9f",
+    "conda_history_modified_at": "2026-08-27T14:43:59.971553",
+    "has_before_snapshot": false,
+    "mount_definitions_checked": 90,
+    "readonly_environment_mounts": true,
+    "mounts": [
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-rl-v3/rlMountainCarContinuous/tests/docker-compose.yaml",
+        "environment_mounts": 2,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-rl-v3/rlMountainCarContinuous/environment/docker-compose.yaml",
+        "environment_mounts": 2,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-rl-v3/rlBreakoutMinAtar/tests/docker-compose.yaml",
+        "environment_mounts": 2,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-rl-v3/rlBreakoutMinAtar/environment/docker-compose.yaml",
+        "environment_mounts": 2,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-rl-v3/rlMountainCarContinuousReinforce/tests/docker-compose.yaml",
+        "environment_mounts": 2,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-rl-v3/rlMountainCarContinuousReinforce/environment/docker-compose.yaml",
+        "environment_mounts": 2,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-rl-v3/rlMetaMazeMisc/tests/docker-compose.yaml",
+        "environment_mounts": 2,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-rl-v3/rlMetaMazeMisc/environment/docker-compose.yaml",
+        "environment_mounts": 2,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-vision/imageClassificationFMnist/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-vision/imageClassificationFMnist/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-vision/imageCaptioningCOCO/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-vision/imageCaptioningCOCO/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-vision/imageClassificationCifar10/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/heterogeneous-onboarding-20261112/mlgym-vision/imageClassificationCifar10/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/mlgym-nlp-tasks/languageModelingFineWeb/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/mlgym-nlp-tasks/languageModelingFineWeb/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/mlgym-nlp-tasks/naturalLanguageInferenceMNLI/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/mlgym-nlp-tasks/naturalLanguageInferenceMNLI/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-humaneval-smollm3-3b/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-humaneval-smollm3-3b/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-humaneval-qwen3-4b/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-humaneval-qwen3-4b/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-humaneval-qwen3-1.7b/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-humaneval-qwen3-1.7b/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-aime2025-qwen3-4b/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-aime2025-qwen3-4b/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-gsm8k-qwen3-1.7b/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-gsm8k-qwen3-1.7b/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-aime2025-smollm3-3b/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-aime2025-smollm3-3b/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-aime2025-qwen3-1.7b/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-aime2025-qwen3-1.7b/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-gsm8k-smollm3-3b/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-gsm8k-smollm3-3b/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-gsm8k-qwen3-4b/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/posttrain-tasks/posttrainbench-gsm8k-qwen3-4b/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l4-dlrmv2-dlrmv2/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l4-dlrmv2-dlrmv2/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l2-dlrm_interaction-dlrmfeatureinteraction/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l2-dlrm_interaction-dlrmfeatureinteraction/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-layer_norm-layernorm/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-layer_norm-layernorm/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l2-embedding_bag_collection-embeddingbagcollection/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l2-embedding_bag_collection-embeddingbagcollection/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-gelu-gelu/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-gelu-gelu/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-relu-relu/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-relu-relu/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-sparse_mm-sparsemm/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-sparse_mm-sparsemm/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l4-convnextv2-convnextv2forimageclassification/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l4-convnextv2-convnextv2forimageclassification/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-conv2d-conv2d/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-conv2d-conv2d/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l3-convnextv2_stage-convnextv2stage/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l3-convnextv2_stage-convnextv2stage/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-global_avg_pool2d-globalavgpool2d/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-global_avg_pool2d-globalavgpool2d/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-embedding_bag-embeddingbag/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-embedding_bag-embeddingbag/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l2-lightgcn_propagation-lightgcnpropagation/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l2-lightgcn_propagation-lightgcnpropagation/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-layer_norm2d-layernorm2d/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-layer_norm2d-layernorm2d/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l2-recsys_mlp-recsysmlp/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l2-recsys_mlp-recsysmlp/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-linear-linear/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-linear-linear/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-grn-grn/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-grn-grn/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l2-convnextv2_block-convnextv2layer/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l2-convnextv2_block-convnextv2layer/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-linear-matmul/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-linear-matmul/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l4-lightgcn-lightgcn/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l4-lightgcn-lightgcn/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-linear-bmm/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v2/fastkernels-l1-linear-bmm/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v3/fastkernels-l4-dlrmv2-dlrmv2/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v3/fastkernels-l4-dlrmv2-dlrmv2/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v3/fastkernels-l2-embedding_bag_collection-embeddingbagcollection/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v3/fastkernels-l2-embedding_bag_collection-embeddingbagcollection/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v3/fastkernels-l1-embedding_bag-embeddingbag/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v3/fastkernels-l1-embedding_bag-embeddingbag/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v3/fastkernels-l4-lightgcn-lightgcn/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-v3/fastkernels-l4-lightgcn-lightgcn/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-clip-fixed/fastkernels-l3-clip_encoder_layer-clipencoderlayer/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-clip-fixed/fastkernels-l3-clip_encoder_layer-clipencoderlayer/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-clip-fixed/fastkernels-l2-clip_attention-clipattention/tests/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      },
+      {
+        "file": "benchmark-runs/complete-onboarding-20261112/fast-tasks-clip-fixed/fastkernels-l2-clip_attention-clipattention/environment/docker-compose.yaml",
+        "environment_mounts": 1,
+        "all_readonly": true
+      }
+    ],
+    "jax_uses_system_site_packages": true,
+    "installation_targets": [
+      "benchmark-specific Docker image layers",
+      "benchmark-assets/mlgym-rl-env",
+      "benchmark-runs/full-onboarding-20261110/deps",
+      ".verification-deps"
+    ],
+    "download_targets": [
+      "benchmark-assets/swe-wheels",
+      "benchmark-assets/fastkernels-wheels",
+      "benchmark-assets/swe-complete-hf",
+      "benchmark-assets/posttrain-local",
+      "benchmark-assets/mlgym-nlp"
+    ],
+    "interpretation": "No recent package-metadata installation writes observed. Host Python is reused read-only by several tasks. This is not a historical byte-for-byte integrity proof or a VM security boundary."
+  },
+  "resource_release": {
+    "file": "benchmark-runs/complete-onboarding-20261112/resource-audit.json",
+    "sha256": "8f15bf971182125c8fd2b8a6b592433ddb515a0f61aa6a6784477227a59a6d28",
+    "docker_ps_empty": true,
+    "gpu_mib": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

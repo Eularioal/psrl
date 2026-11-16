@@ -1,11 +1,11 @@
 # GPU benchmark 导览：任务目标与 command 适用性
 
-> **核心结论**：写 GPU kernel 选 KernelBench 或 FlashInfer，做机器学习竞赛选 MLE，做自动训练实验选 autoresearch，优化推理服务选 InferenceBench，研究训练状态跨外部反馈等待驻留选 RE-Bench 聊天训练。MLE、Inference、RE 提供显式本地协议，完整 PSRL 策略闭环与独立 GPU 评分分别验收。默认 recipe 使用 episode，KernelBench 有显式 direct command verifier 入口，这个接入限制不等于任务天然不能使用 command。
+> **核心结论**：先按研究问题选报告，再看相应任务和执行路径。任务接入现状统一看[路线图](../../milestones/science-gpu-bench-status-and-roadmap.md)；本页重点解释“GPU在做什么、何时可以归还”，帮助选用整任务预约或按命令预约。
 
 ## 目录
 
 - [按任务目标选择](#按任务目标选择)
-- [图片中 high GPU 的新增候选](#图片中-high-gpu-的新增候选)
+- [更多任务与扩展方向](#更多任务与扩展方向)
 - [command 究竟要求什么](#command-究竟要求什么)
 - [推荐任务与真实执行路径](#推荐任务与真实执行路径)
 - [不占 GPU 的生命周期演示](#不占-gpu-的生命周期演示)
@@ -13,7 +13,18 @@
 
 对外交流与本地完整接入请读[阶段成果目录](../../milestones/README.md)和[完整接入报告](../../milestones/science-gpu-full-onboarding.md)，逐项验收见 [FINDINGS](FINDINGS.md#2026-11-10-本地完整接入验收)。
 
+扩展库的当前逐题状态见[固定状态审计](onboarding-status-audit-20261116.json)，包含 PostTrain、FastKernels、SWE 的通过题、失败尝试、所用任务协议与策略验证。任务介绍及可复用题库入口统一在[当前路线图](../../milestones/science-gpu-bench-status-and-roadmap.md)。
+
 ## 按任务目标选择
+
+| 想研究的问题 | 先读哪份报告 |
+|---|---|
+| 显存不够时，提前排队是否比失败重试更快？ | [常驻模型压力](resident-model-pressure.md)：相同7项任务、14请求，总时间减少10.6% |
+| 模型所在GPU忙时，等待还是换卡加载？ | [热卡等待与冷卡加载](warm-placement-matrix.md)：实测选择过程、时间和显存代价；[代码指南](../../knowledge/warm-placement-code-guide.md)讲实现 |
+| 在两张卡之间怎样兼顾模型复用和排队？ | [联合放置探索](joint-gpu-placement.md)：同执行器内比较策略 |
+| 评分是否能复用模型，省掉反复加载？ | [PostTrain评分复用](posttrain-verifier-reuse.md)：请求变快，但完整短批次还未胜过普通进程复用 |
+| 同卡竞争会不会让算子速度测错？ | [性能反馈压力](feedback-pressure.md)：解释如何误选更慢的候选及保护手段 |
+| 多个候选能否一起评估？ | [FlashInfer批量与分段](flashinfer-batching.md)：进程复用、筛选、分段分别测量 |
 
 这里的 benchmark 是给 agent 做的任务和验收规则。GPU 可能用来训练任务里的模型，也可能用来运行 agent 写的 kernel 或服务。**任务内训练模型，不等于训练 PSRL 中负责生成代码的 agent 模型。** 下面先看任务本身，接入路径在第三节串联。
 
@@ -21,6 +32,7 @@
 |---|---|---|---|
 | **KernelBench** | 给一个 PyTorch 计算程序，改写为结果相同、运行更快的 GPU kernel，即在 GPU 上执行的计算函数 | `submission.py` 的 `ModelNew`，检查随机输入结果及运行速度 | **适合按一次编译、正确性与性能评估来预约**。评估进程退出后通常无需保留 GPU 状态 |
 | **MLE-bench** | 给竞赛说明与公开训练数据，自行做数据处理、选模型、训练、验证、预测 | `submission.csv`，由独立验收器用隐藏标签评分 | **通常适合按训练或批量预测作业预约**。不是所有题或解法都必须用 GPU，需挑选实际使用 GPU 的训练方案 |
+| **AIRS-Bench 本地 GPU** | 真实 NLP、代码、分子与时间序列数据，训练或检索后预测 | CSV，由原生 sandbox 独立 verifier 评分；19/19 非 Kaggle 任务快检通过 | **当前按 episode 保留 GPU**。分阶段借还仍需接入，不属于 Harbor command 路径 |
 | **autoresearch** | 改训练代码里的模型结构、优化器或超参数，执行有固定预算的实验，按验证指标选择方案 | `train.py`，独立进程重新训练并调用官方验证函数 | **适合每次训练实验一条长 command**。一次训练持续数分钟，不代表两次实验之间必须保留显存 |
 | **InferenceBench 官方任务** | 给基础语言模型和请求场景，优化推理服务实现与启动配置，提高服务性能并保持回答质量 | 服务启动脚本，重新启动服务测速度、质量和方案合规性 | **取决于边界**。启动服务、跑完整批请求、停服务，可以整体是一条 command。单次请求结束通常不能归还后台服务的 GPU |
 | **本地常驻服务 workload** | 固定 InferenceBench 的服务和 Mistral 模型，让同一服务跨多条环境命令处理真实请求 | 请求输出、服务复用、显存、排队、失败及清理记录 | **不适合按每次请求借还，推荐 episode**。这是本地框架调度实验，不是第五个独立官方 benchmark |
@@ -31,17 +43,19 @@
 四个具体例子帮助区分它们：
 
 1. **KernelBench：矩阵乘法优化。** 输入是计算 `A @ B` 的参考实现，agent 写一个 Triton 实现。Triton 是编写 GPU 计算程序的一种语言与工具。验收器运行两种实现，先比较数值，再计时。当前 recipe 的 `reward` 取正确性，速度提升另存为指标，不能把 reward=1 解读成已经加速。见 [本地提交示例](../../../../examples/kernel_bench/solutions/matmul.py) 和 [evaluate](../../../../examples/gpu_benchmarks/evaluate.py#L10)。
-2. **MLE-bench：航拍图像是否含仙人掌。** `aerial-cactus-identification` 给公开图像与标签。agent 可以训练图像分类模型，对待预测图像输出概率 CSV。独立验收器读取隐藏标签评分，当前 recipe 的奖励为是否超过参考竞赛成绩中位数。训练结束且 GPU 进程退出后，可以释放资源，再用 CPU 分析错误。数据权限尚待配置，不把这个例子写成已运行成功。见 [任务准备](../../../../examples/gpu_benchmarks/prepare.py#L136) 与 [评分](../../../../examples/gpu_benchmarks/evaluate.py#L37)。
-3. **autoresearch：比较两种训练方案。** agent 改 `train.py`，训练一次，读取 `val_bpb`，再决定保留还是修改。BPB 是验证文本每字节的预测编码代价，越低越好。官方每次训练预算为 300 秒，不包含启动和编译。当前 recipe 限制一个 episode 内最多两次实验，最后独立重放提交，奖励为 `1 / (1 + val_bpb)`。它属于自动研究迭代场景，不能仅凭它就声称已经实现 agent 自身能力的递归提升。见 [准备指令](../../../../examples/gpu_benchmarks/prepare.py#L153) 和 [重放](../../../../examples/gpu_benchmarks/autoresearch_replay.py)。
-4. **InferenceBench：让同一语言模型更高效地回答请求。** 输入是模型与请求场景，产物是更好的服务方案，不是训练出新模型。它可以研究推理基础设施优化，较接近这里所说的 AI4Infra，即用 AI 改进计算基础设施。当前本地常驻实验固定服务实现和短请求，只测试 Env 的资源管理，不能当作完成了官方自由优化任务或质量评分。见 [官方任务导入](../../../../examples/gpu_benchmarks/prepare.py#L76) 与 [本地固定服务驱动](../../../../examples/inference_bench/resident_ab.py#L82)。
+2. **MLE-bench：航拍图像是否含仙人掌。** `aerial-cactus-identification` 给公开图像与标签。agent 可以训练图像分类模型，对待预测图像输出概率 CSV。独立验收器读取隐藏标签评分，当前 recipe 的奖励为是否超过参考竞赛成绩中位数。训练结束且 GPU 进程退出后，可以释放资源，再用 CPU 分析错误。数据权限尚待配置，不把这个例子写成已运行成功。见 [任务准备](../../../../examples/gpu_benchmarks/prepare.py#L147) 与 [评分](../../../../examples/gpu_benchmarks/evaluate.py#L37)。
+3. **autoresearch：比较两种训练方案。** agent 改 `train.py`，训练一次，读取 `val_bpb`，再决定保留还是修改。BPB 是验证文本每字节的预测编码代价，越低越好。官方每次训练预算为 300 秒，不包含启动和编译。当前 recipe 限制一个 episode 内最多两次实验，最后独立重放提交，奖励为 `1 / (1 + val_bpb)`。它属于自动研究迭代场景，不能仅凭它就声称已经实现 agent 自身能力的递归提升。见 [准备指令](../../../../examples/gpu_benchmarks/prepare.py#L175) 和 [重放](../../../../examples/gpu_benchmarks/autoresearch_replay.py)。
+4. **InferenceBench：让同一语言模型更高效地回答请求。** 输入是模型与请求场景，产物是更好的服务方案，不是训练出新模型。它可以研究推理基础设施优化，较接近这里所说的 AI4Infra，即用 AI 改进计算基础设施。当前本地常驻实验固定服务实现和短请求，只测试 Env 的资源管理，不能当作完成了官方自由优化任务或质量评分。见 [官方任务导入](../../../../examples/gpu_benchmarks/prepare.py#L77) 与 [本地固定服务驱动](../../../../examples/inference_bench/resident_ab.py#L82)。
 
-## 图片中 high GPU 的新增候选
+<a id="图片中-high-gpu-的新增候选"></a>
 
-**RE-Bench 的聊天模型训练任务已有原生 Env/PSRL 接线**，见 [运行 recipe](../../knowledge/re-bench-recipe.md)。其官方起始代码在 GPU 生成与训练之间等待外部裁判，期间仍持有 CUDA 模型。PostTrainBench 的 Qwen3-1.7B × GSM8K 保留为后续后训练候选。
+## 更多任务与扩展方向
 
-| 图片中的项目 | 选型用途与 command 边界 |
+**RE-Bench 的聊天模型训练任务已有原生 Env/PSRL 接线**，见 [运行 recipe](../../knowledge/re-bench-recipe.md)。其官方起始代码在 GPU 生成与训练之间等待外部裁判，期间仍持有 CUDA 模型。PostTrainBench 的 9 个公开本地组合已完成策略闭环，整库范围见[路线图](../../milestones/science-gpu-bench-status-and-roadmap.md#posttrainbench-与-fastkernels-任务协议)。
+
+| 任务项目 | 选型用途与 command 边界 |
 |---|---|
-| AIRS-Bench | 论文驱动的研究、训练与评估。按具体任务拆训练和预测作业 |
+| AIRS-Bench | 19 个非 Kaggle 任务已完成原生 GPU 快检，SICK 代表题完成 PSRL 策略闭环；按训练和预测拆作业仍是后续调度工作，见 [接入说明](../../knowledge/airs-gpu-recipe.md) |
 | Automated LLM Speedrunning | 优化达到目标损失的训练时间。官方配置 8 张 H100，完整训练可作为长 command |
 | MLE-bench | GPU 机器学习竞赛方案。官方 Kaggle 数据需凭据，本地真实 digits 竞赛提供不依赖 Kaggle 的入口 |
 | MLGym-Bench | 可选 FineWeb 语言模型训练，保存模型后能退出训练进程 |
@@ -69,7 +83,7 @@
 
 ## 推荐任务与真实执行路径
 
-**选 `examples/inference_bench/resident_ab.py` 对应的常驻 Mistral 服务 workload。** 它使用官方 Transformers 服务、真实模型和真实 MMLU-Pro 问题。同一个服务完成两次请求，中间另起 CPU 等待命令，模型在 GPU 上持续驻留。`resident_agent.py` 是固定动作 agent，不调用语言模型来优化代码。该路径已完成原生 Env 的真实验证，运行证据看 [FINDINGS](FINDINGS.md#episode-记账修复后的整卡压力对照)。
+**选 `examples/inference_bench/resident_ab.py` 对应的常驻 Mistral 服务 workload。** 它使用官方 Transformers 服务、真实模型和真实 MMLU-Pro 问题。同一个服务完成两次请求，中间另起 CPU 等待命令，模型在 GPU 上持续驻留。`resident_agent.py` 是固定动作 agent，不调用语言模型来优化代码。该路径已完成原生 Env 的真实验证，完整对照看[常驻模型压力报告](resident-model-pressure.md)。
 
 ```text
 [1] resident_ab 提交 episode → production runner 向 EnvRouter 申请 lease
@@ -127,3 +141,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/explain_reside
 | [Results 与验证边界](FINDINGS.md) | 查看实际工作量、ON/OFF 条件、失败、耗时和清理，不将功能验收分数当作官方成绩 |
 
 本导览按当前本地代码说明适用性。CPU 演示可直接运行，GPU 实验需先按 recipe 核对现场资源和官方资产，不会因阅读导览自动启动。
+
+AIRS 的非 Kaggle 任务已有 [19/19 原生 GPU 快检与运行入口](../../knowledge/airs-gpu-recipe.md)，GPU 配置、数据与奖励使用独立 recipe。MLGym 本地 GPU 范围为 4 个 RL、3 个视觉和 2 个 NLP 任务，均有闭环。SWE-Serve 41 题已导入，FastKernels 29 个目标及 PostTrain 9 个组合有快检。各层覆盖与整库缺口见[路线图](../../milestones/science-gpu-bench-status-and-roadmap.md#目前有哪些任务及可用边界)。不能将 AIRS 使用 MLGym agent 记作 MLGym-Bench 完整接入。
+
+性能反馈调度研究另见 [159 组压力实验](feedback-pressure.md)：官方算子与候选在当前 Env 中运行，比较测量保护、固定预算及自适应采样，不改变上述公共 recipe 的接入方式。

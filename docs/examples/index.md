@@ -1,6 +1,8 @@
 # Examples
 
-Production-ready training recipes demonstrating PSRL's capabilities across different RL paradigms.
+> **Start here:** choose a task by how its result is scored. RLVR checks answers or tests, while agentic recipes add tools and multiple turns. Planned judge/distillation pages describe intended work and are labeled separately.
+
+If you are new to RL training, [the worked flow](../overview/reading-guide.md) explains the shared steps before you choose a recipe.
 
 ---
 
@@ -40,13 +42,13 @@ LLM-derived reward signals for open-ended tasks: LLM-as-a-Judge scoring and On-P
 
 | Recipe | Task Domain | Reward Type | Training Backend | Status |
 |--------|------------|-------------|-----------------|--------|
-| [DAPO](rlvr/dapo) | Math / Reasoning | Verifiable (boxed answer) | FSDP / Megatron | Ready |
-| [PPO](rlvr/ppo) | General | Verifiable | FSDP / Megatron | TBD |
-| [GRPO](rlvr/grpo) | General | Verifiable | FSDP / Megatron | TBD |
-| [ReTool](agentic_rl/retool/index) | Math + Code Interpreter | Verifiable + tool-call shaping | FSDP / Megatron | Ready |
-| [SWE-agent](agentic_rl/swe/index) | Software Engineering | Test execution (F2P/P2P) | FSDP / Megatron | Ready |
-| [LLM-as-a-Judge](generative_reward_model/llm_as_a_judge) | General / Open-ended | Judge LLM score |, | TBD |
-| [On-Policy Distillation](generative_reward_model/on_policy_distillation) | General / Open-ended | Teacher LLM token-level supervision |, | TBD |
+| [DAPO](rlvr/dapo.md) | Math / Reasoning | Verifiable (boxed answer) | FSDP / Megatron | Ready |
+| [PPO](rlvr/ppo.md) | General | Verifiable | FSDP / Megatron | TBD |
+| [GRPO](rlvr/grpo.md) | General | Verifiable | FSDP / Megatron | TBD |
+| [ReTool](agentic_rl/retool/index.md) | Math + Code Interpreter | Verifiable + tool-call shaping | FSDP / Megatron | Ready |
+| [SWE-agent](agentic_rl/swe/index.md) | Software Engineering | Test execution (F2P/P2P) | FSDP / Megatron | Ready |
+| [LLM-as-a-Judge](generative_reward_model/index.md#llm-as-a-judge) | General / Open-ended | Judge LLM score | Planned | TBD |
+| [On-Policy Distillation](generative_reward_model/index.md#on-policy-distillation) | General / Open-ended | Teacher LLM token-level supervision | Planned | TBD |
 
 ```{toctree}
 :maxdepth: 2

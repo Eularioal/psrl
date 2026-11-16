@@ -7,7 +7,19 @@ focus on the bits that actually differ between recipes.
 
 ---
 
+## Contents
+
+- [Architecture](#architecture)
+- [Cluster Layout Parameters](#cluster-layout-parameters)
+- [Sequence Parameters](#sequence-parameters)
+- [Monitoring](#monitoring)
+
 ## Architecture
+
+For a beginner example and a verified source-by-source reading order, see
+[从一道题理解 PSRL](../../overview/reading-guide.md). The diagram below is a compact
+role overview; the training workers publish new weights to PS, and rollout replicas
+pull them. TransferQueue stores samples, while the trainer coordinates operations.
 
 Even single-turn RLVR runs through PSRL's decoupled online-serving path. A prompt is
 driven by an **AgentLoopWorker**, dispatched through the **SMG RolloutGateway** (PSRL
@@ -27,7 +39,7 @@ worker selection + gRPC proxy), and served by a **vLLM server replica**
         │   TrainWorker    │   │  (single-turn RLVR)│
         └──────────────────┘   └─────────┬─────────┘
                        ▲                  │ HTTP generate
-                       │ NIXL pull        ▼
+                       │ NIXL push        ▼
         ┌──────────────┴────────┐  ┌───────────────────┐
         │ Parameter Server (PS) │  │ SMG RolloutGateway │
         │  version + staleness  │◄─┤  (worker select +  │
@@ -91,6 +103,6 @@ Track training progress in WandB:
 | `critic/rewards/mean` | Mean shaped reward (raw score + overlong / format penalties) fed into advantage estimation |
 | `critic/advantages/mean` | Mean advantage used for the policy update (GAE for PPO, group-normalized for GRPO/DAPO) |
 | `val-core/<data_source>/acc/mean@N` | Validation accuracy on each data source (evaluated every `test_freq` steps, `N` = `val_kwargs.n`) |
-| `response_length/mean` | Mean generated response length, should stabilize as training converges |
-| `actor/entropy` | Policy entropy, a slow decrease indicates healthy exploration → exploitation |
+| `response_length/mean` | Mean generated length; read with task scores and truncation rate |
+| `actor/entropy` | Output-distribution diversity; falling entropy alone does not establish learning quality |
 | `actor/grad_norm` | Gradient norm, sudden spikes often signal an unstable update |

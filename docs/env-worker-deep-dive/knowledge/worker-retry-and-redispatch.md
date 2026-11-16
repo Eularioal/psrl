@@ -1,6 +1,11 @@
 # Worker 重试、整组补采与跨 worker 重派发
 
-> **核心结论**：PSRL 原来已经支持同 worker 重试、训练失败整组补采、重新选择 worker、连续失败熔断。固定 baseline `0eeead861ffafed6bf31c962d259fd847775dcf9` 中也能找到这些实现。此前把“跨 worker 重派发尚未完成”笼统理解成“框架没有失败恢复”是不准确的。缺的是原请求在失败 worker 清理完毕后、有身份和次数约束地转到另一 worker 重跑，以及运行中进程死亡的可靠监督。本轮补监督与现有重试链路的正确性，不新增原请求自动迁移。
+> **核心结论**：PSRL 已有同 worker 重试、失败整组补采、重新选择 worker 和连续失败熔断。worker 是实际执行采样任务的工作进程；rollout 是 Agent 从接题到提交的一条完整尝试。恢复时，框架可以重试或补出新的轨迹，原请求跨 worker 转移则还需要完整协议。
+
+例如一题需要 4 条轨迹，原工作进程只成功返回 3 条，框架可以按既有规则重新采样；若要把失败的那一个请求交给另一进程，必须先确认旧执行停止，避免两份结果同时返回。第 3 节用四条轨迹说明两种情况。
+
+固定 baseline `0eeead861ffafed6bf31c962d259fd847775dcf9` 已包含基本恢复链。本文记录执行监督与重试链路的正确性修复，并解释原请求迁移仍需补齐的身份、清理和次数约束。
+
 
 ## 目录
 
@@ -195,4 +200,4 @@ PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}" nohup timeout 300 python \
 
 后续若推进跨 worker 重派发，建议先限定为“已确认旧执行结束的、可从头重跑的任务”，复用现有整组处理与有界失败策略，再增加 attempt 身份、旧结果隔离、坏 worker 排除和物理清理确认。不要先全局调高 `retry_limit`，也不要把任意 OOM 或低奖励都当成换节点后必定成功。
 
-相关总审计与物理清理机制见[设计审视第 13 节](../experiments/router-paired-latency-and-design-review/remediation-and-handoff.md#13-物理资源遥测与清理交接确认)。
+相关总审计与物理清理机制见[设计审视第 13 节](../experiments/router-paired-latency-and-design-review.md#13-物理资源遥测与清理交接确认)。

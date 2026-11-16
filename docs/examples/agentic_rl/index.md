@@ -1,5 +1,7 @@
 # Agentic RL
 
+> **Core idea:** one training sample can include several model turns and tool actions. For example, an agent reads a test failure, edits a function, reruns the test, then submits a patch. PSRL records the interaction and uses the final feedback for policy training.
+
 Train language models to interact with external tools and environments across multiple turns, learning strategies for when and how to invoke tools to solve complex tasks.
 
 ---
@@ -25,6 +27,12 @@ Train models to solve real-world software engineering tasks via interactive bash
 
 ---
 
+## Contents
+
+- [What Makes Agentic RL Different?](#what-makes-agentic-rl-different)
+- [Common Infrastructure](#common-infrastructure)
+- [Common Launch-Script Knobs](#common-launch-script-knobs)
+
 ## What Makes Agentic RL Different?
 
 Unlike single-turn RLVR, agentic RL involves:
@@ -32,7 +40,7 @@ Unlike single-turn RLVR, agentic RL involves:
 - **Multi-turn interaction**: The model generates multiple responses, interleaved with environment observations (tool outputs, command results).
 - **Tool-use learning**: The model must learn *when* to call a tool, *what* arguments to pass, and *how* to interpret the result.
 - **Long-horizon credit assignment**: Rewards are sparse (end-of-episode), but the causal chain spans dozens of turns.
-- **Sandboxed execution**: Each episode runs in an isolated Docker container, ensuring reproducibility and safety.
+- **Execution environments**: Tool recipes use their configured execution service. Docker-backed SWE episodes receive a per-episode environment; file mounts, dependencies and resource limits determine the actual isolation. Containers alone do not establish reproducibility.
 
 PSRL handles these challenges through its `AgentLoop` abstraction, which manages the
 multi-turn conversation flow while integrating seamlessly with the asynchronous
@@ -83,15 +91,15 @@ To add a new agentic task you only implement and register a new `Environment` +
 `DataProto.non_tensor_batch["env_class"]` / `["data_class"]`. The loop, the rollout
 engine, and the rest of the training stack stay the same.
 
-The two recipes below, [ReTool](retool/index) (Python code interpreter) and
-[SWE-agent](swe/index) (Docker-sandboxed bash), are concrete instantiations of this
+The two recipes below, [ReTool](retool/index.md) (Python code interpreter) and
+[SWE-agent](swe/index.md) (Docker-sandboxed bash), are concrete instantiations of this
 pattern.
 
 ---
 
 ## Common Launch-Script Knobs
 
-Beyond the standard PSRL trainer flags (see [Configuration](../../tutorial/configuration)),
+Beyond the standard PSRL trainer flags (see [Configuration](../../tutorial/configuration.md)),
 every agentic launch script sets the same handful of `rollout` flags to switch from
 single-turn to multi-turn mode and bind the agent loop to a concrete environment.
 Individual recipes only override the **values** (`env.name` / `data.name`, and any

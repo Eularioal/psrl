@@ -1,5 +1,7 @@
 # Flexible Rollout Coordination
 
+> **Core idea:** prompts finish at different times. Routing chooses where they run, partial rollout preserves work across interruptions, and redundancy trades extra computation for less waiting on slow samples. Start with the workload problem, then enable only the mechanism that addresses it.
+
 PSRL employs several complementary techniques to maximize generation throughput and minimize idle GPU time during rollout. Each one targets a different source of imbalance in the rollout workload.
 
 ```{figure} /_static/img/rollout_techniques.svg
@@ -18,6 +20,26 @@ composed from six Hydra sub-groups: `partial_rollout`, `redundant_rollout`,
 {doc}`router_tito`).
 
 ---
+
+## Contents
+
+- [Partial Rollout](#partial-rollout)
+  - [Concept](#concept)
+  - [Configuration](#configuration)
+  - [When to Use](#when-to-use)
+- [Redundant Rollout](#redundant-rollout)
+  - [Concept](#concept-1)
+  - [Key Configuration](#key-configuration)
+  - [When to Use](#when-to-use-1)
+- [Routing Strategy](#routing-strategy)
+  - [Method Options](#method-options)
+  - [Cost Model (for throughput_optimal)](#cost-model-for-throughput_optimal)
+  - [Multi-Level Queue (MLQ)](#multi-level-queue-mlq)
+  - [KV Transfer](#kv-transfer)
+- [Sync & Migration Strategy](#sync--migration-strategy)
+  - [Sync Strategy](#sync-strategy)
+  - [Migration Strategy](#migration-strategy)
+- [Session Strategy (Hang / Continue)](#session-strategy-hang--continue)
 
 ## Partial Rollout
 
@@ -142,7 +164,7 @@ psrl:
 The cost model estimates the decoding throughput of each instance:
 
 $$
-T_i = \frac{n_i}{k_1 \cdot \text{kv\_cache} + \max(k_2, k_3 \cdot n) + k_4}
+T_i = \frac{n_i}{k_1 \cdot \text{kv\_cache} + \max(k_2, k_3 \cdot n_i) + k_4}
 $$
 
 Where:

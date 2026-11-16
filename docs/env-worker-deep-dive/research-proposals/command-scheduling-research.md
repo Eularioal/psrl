@@ -1,38 +1,134 @@
 # 面向 rollout 组完成时间与反馈保真的 GPU command 调度研究
 
-> **核心结论**：固定一组 rollout、要求全部完成时，目标是整组最后一个有效结果的返回时间。公平性不是独立优化目标。可做小规模可行性验证的候选是：利用组内反馈的精度需求，联合决定 GPU 测量批次、独占窗口和执行顺序，在限制反馈偏差的条件下缩短整组完成时间。该方向需要受控评分器配合，不能包装成通用黑盒 Docker 排队算法。当前不足以确定为独立研究主线，先验证测量成本占比和相对强基线的增益。 更一般的性能评估资源管理可作为上位问题，GRPO 组级精度是其特例。可复用流程不意味着所有时间指标共享同一误差模型或已有通用实现。
+> **核心结论**：研究目标是让同一道题的一组 Agent 尽快拿到可信反馈。GPU 工作既包括中途训练、推理和自测，也包括最终评分。调度先确认容量和代码版本，再决定共享、等待或重建模型；整组完成时间与反馈正确性一起衡量结果。
 >
-> **研究状态**：2026-11-05 检索原始论文，并局部核对 `cd09114` 加主目录未提交改动。组级策略、统计误差控制和分段 verifier 均未实现。已运行的只是 CPU 教学模拟，没有 GPU 性能收益证据。检索未发现完全相同的组级目标与机制组合，不等于已证明无人做过。KREX、GPU Forecasters 和自适应测量工作是必须正面对比的近邻。
+> 现有系统矩阵显示：热卡长时间繁忙时，在冷卡重建有收益；热卡很快空闲时，模型亲和更合算；边界场景尚无稳定增量。新增[可预测性门控](../knowledge/command-predictability.md)默认关闭，只有进度、校准、成本画像和可重建条件齐备时才允许自动使用预测。下面分别讨论反馈精度、命令放置和后续依赖，先给完整流程和手算例子，再列证据与下一步门槛。
+>
+> **研究状态**：2026-11-16 对 `6aa328d` 加主目录未提交内容核对可预测性模块、逐设备队列和提供者接线。[驻留与放置探索](../experiments/gpu-benchmarks/joint-gpu-placement.md)是独立命令原型，2026-11-13 的[等待或重建系统矩阵](../experiments/gpu-benchmarks/warm-placement-matrix.md)使用真实 EnvRouter / EnvWorker，四种核心工作量均有三次当前策略与固定 `0eeead8` 旧 runner 对照，完成 48 个核心区块和五个故障区块，整体为 53/57。两者均未执行完整 Agent 或 PSRL 策略训练，本次未重跑 GPU。组级精度策略、自动状态快照和生产分段 verifier 待实现，通用 shell 默认沿用原调度。已有文献分析保留其核对范围，本次未重做新颖性检索。
 
 阅读补充：[RollArt 与 DynaRL 精读](../literature-reviews/rollart-dynarl-deep-reading.md)解释阶段解耦、动态迁移及其与本地研究的边界。该精读已计入 2026-11-05 的同机 command 池与准备前移实现，不把这些已有能力重新作为创新主张。
 
 测量基础：[KREX 精读](../literature-reviews/krex-region-exclusivity.md)解释提交门、设备排空、CPU 保护与上下文复用。其目标是建立无竞争测量窗口，不是在任意持续竞争下反推独占时间。研究指标应分别报告候选耗时、隔离成本和结果返回时间。
 
+
 ## 目录
 
+- [先确定 GPU 工作在哪里以及覆盖多少](#先确定-gpu-工作在哪里以及覆盖多少)
 - [目标与全局流程](#目标与全局流程)
 - [为什么不把饥饿作为主课题](#为什么不把饥饿作为主课题)
 - [已有研究已经覆盖什么](#已有研究已经覆盖什么)
 - [建议验证的课题](#建议验证的课题)
 - [组级反馈需求的手算例子](#组级反馈需求的手算例子)
 - [方法与实现边界](#方法与实现边界)
-- [用现有-benchmark-做什么](#用现有-benchmark-做什么)
+- [用现有 benchmark 做什么](#用现有-benchmark-做什么)
 - [选题可行性与立项判断](#选题可行性与立项判断)
 - [测量可靠性的已有研究与通用边界](#测量可靠性的已有研究与通用边界)
 - [实验顺序与停止条件](#实验顺序与停止条件)
 - [可运行教学模拟](#可运行教学模拟)
 - [跟着图读源码](#跟着图读源码)
-
 - [2026-11-05 新颖性复核与实现取舍](#2026-11-05-新颖性复核与实现取舍)
   - [文献重叠比原先估计更大](#文献重叠比原先估计更大)
   - [KernelBench 是否值得保留](#kernelbench-是否值得保留)
   - [首期机制选独立执行器，不透明搬动任意终端](#首期机制选独立执行器不透明搬动任意终端)
   - [有界反例检查与 Results](#有界反例检查与-results)
   - [仍值得验证的研究假设与停止门槛](#仍值得验证的研究假设与停止门槛)
-
 - [显存时间与后续依赖的联合调度](#显存时间与后续依赖的联合调度)
+- [收窄候选新代码的验证校准与余量调度](#收窄候选新代码的验证校准与余量调度)
+
+## 先确定 GPU 工作在哪里以及覆盖多少
+
+**本节按实际执行阶段划定研究范围。** 一次 rollout 可在中途训练、推理或自测时多次使用 GPU，最终评分也可能使用 GPU。调度按这些实际计算区间管理资源，提交命令、运行计算与确认归还是分开的步骤。
+
+```text
+[V1] 接题、建立环境和资源账本
+              ↓
+[V2] 策略模型生成操作 → CPU 编辑代码、准备数据
+              ↓ 只有明确需要 GPU 的工作才走下一分支
+[V3] 提交 GPU 命令 → 等待准入 → 训练 / 推理 / 自测
+              │ 返回输出，物理归还完成后才释放 GPU 预算
+              └──── 反馈交给策略模型，回到 V2，可重复多轮
+              ↓ Agent 决定完成
+[V4] 提交当前版本，冻结本次评分对象
+              ↓
+[V5] 最终 verifier
+       ├ CPU 比较预测文件和隐藏答案：不申请环境 GPU
+       └ 需要运行模型或内核：申请 GPU，完成受保护的测试组
+              ↓
+[V6] 返回奖励、交付轨迹，清理本任务所属资源
+```
+
+这是机制图，V2 的策略模型通常也使用 GPU，但本节首先调度 V3/V5 的**环境 GPU 工作**。策略推理与训练卡只有满足既有余量共享条件才纳入，不能把它们的 GPU 任意借走。图中借还描述已接入 command 模式的路径，AIRS 当前使用整 episode 分配，并未自动获得这条借还链路。
+
+图例：图里每个部分对应的源码位置。
+
+| 编号 | 已核对入口与职责 |
+|---|---|
+| V1 | [run_harbor_episode](../../../examples/sciaccel_rl/runner.py#L275)，在创建 Harbor 作业前 [acquire](../../../examples/sciaccel_rl/runner.py#L372) 申请环境资源 |
+| V2 → V3 | [SciAccelAgent._execute_commands](../../../examples/sciaccel_rl/agent.py#L104) 识别显式 GPU 工具，[dispatch_gpu_tool](../../../examples/sciaccel_rl/gpu_tools.py#L32) 转发 start/wait 等操作 |
+| V3 执行 | [start_gpu_job](../../../psrl/workers/env_service/managed_execution.py#L137)、[GpuJobManager._run](../../../psrl/workers/env_service/gpu_jobs.py#L85) 异步执行，[acquire](../../../psrl/workers/env_service/command_gpu.py#L82) 选择可准入设备 |
+| V3 归还 | [_return](../../../psrl/workers/env_service/command_gpu.py#L259) 先撤销设备授权、核验物理状态，再修改账本。输出已返回不代表归还已完成 |
+| V4 → V5 GPU 分支 | [FlashInfer main](../../../examples/flashinfer_bench/verify.py#L9) 读取提交的候选，[run_all](../../../examples/flashinfer_bench/verify.py#L72) 完成评分集合。显式 command verifier 的现有例子是 [ManagedVerifierEnvironment.exec](../../../examples/kernel_bench/verifier.py#L34)，不是所有 recipe 通用能力 |
+| V5 CPU 分支 | AIRS 的 [build_verifier_spec](../../../examples/airs_bench/grading.py#L32) 创建独立 CPU 评分容器，完整不同入口见 [AIRS 流程](../knowledge/airs-gpu-recipe.md#任务怎样进入-psrl) |
+| V6 | [评分结果进入轨迹](../../../examples/sciaccel_rl/agent_loop.py#L262)，[runner 的 finally](../../../examples/sciaccel_rl/runner.py#L610) 清理容器后释放租约 |
+
+跟着图读源码：V1 创建环境资源，Harbor 作业由 [Job.create / job.run](../../../examples/sciaccel_rl/runner.py#L550) 驱动。作业中的 Agent 反复走 V2/V3，GPU start 是异步提交，依赖结果的后续动作要 wait，不能将其画成所有命令都并发。Agent 完成后进入 V4/V5，所选 benchmark 决定评分执行方式。V6 的清理在异常路径也运行。Harbor 内部 turn 循环属于外部依赖，不伪装成仓库里的调度代码。上述源码如果有理解上的问题，可以随时按编号追问。
+
+**三种“多轮”不能混淆。** Agent 改代码后再试一次，是新的反馈迭代。固定提交的 verifier 有几个测试组，是一次评分的内部组成。某个内核运行几百次以测准微秒级时间，是测量重复。这三者都可能用 GPU，但不是三个可以任意互换的调度单位。多个断言共用一个模型进程、缓存或并发场景时，必须把完整测试组作为单位。若拆开会改变检查对象或评分协议，就不能拆。
+
+**具体案例与覆盖范围。** 下表中的数量是题库或本地接入范围，不是“已证明可提速的任务数”。上游事实与本地实验分别列出。
+
+| Bench 与具体 case | GPU 实际用在哪里 | 覆盖依据与调度边界 |
+|---|---|---|
+| KernelBench：矩阵乘法、归约、融合算子的代码优化 | Agent 提交候选内核，运行正确性检查和测速，读取反馈后继续修改，最终再评分 | [原始论文](https://arxiv.org/abs/2502.10517) 为 250 个工作负载，[官方集成](https://github.com/ScalingIntelligence/KernelBench#-integration) 明确支持多轮执行反馈。本地 270 项中仅 22 项按原尺寸通过，248 项使用本地档位。适合研究多条轨迹之间的评估派发，不能把一次 kernel 的计时重复拆成远程任务 |
+| FlashInfer：RMSNorm、注意力等候选实现 | GPU 自测及最终算子评估 | 本地 190 个定义各取一条 workload，95 官方输入、95 本地协议。题目多不代表每题有许多可重排单元。另行分段小实验只覆盖 RMSNorm 两条 workload，不能外推全部定义 |
+| SWE-Serve：`ss-sgl22544-score-multi-item-delimiters` | 启动 SGLang 模型引擎，检查多条目打分是否与逐条打分一致，以及输入和并发行为 | [官方论文](https://arxiv.org/html/2609.26777v1) 共 53 题，其中 41 GPU、19 题具有严格服务端到端测试。19 是覆盖属性计数，不是额外题数。单 GPU 题也可能包含 CPU 测试。这个 case 本地完整评分已通过，不能将四项共用 Engine 的断言拆成四次重载 |
+| RE-Bench：修复 embedding、优化微调脚本 | 中途反复训练与评估模型，或重跑优化后的训练程序 | [官方任务说明](https://github.com/METR/RE-Bench#task-family-summaries) 含 7 类研究工程任务，不是全都具有相同 GPU 形态。本地 7 类为有界协议，Rust 等路径不能笼统当作 GPU 训练。重点筛查真实训练和模型执行阶段 |
+| autoresearch：修改 `train.py` 后训练、看验证损失、保留或撤回 | GPU 工作主要在反复训练实验，不要求最终评分器有多轮 GPU 检查 | [官方流程](https://github.com/karpathy/autoresearch#how-it-works) 每次训练预算 5 分钟，不含启动编译。适合在完整实验之间分配设备。并发争抢会让 5 分钟内完成的训练量改变，不能只比时间而忽略评分公平性 |
+| AIRS：SICK 文本关系分类、QM9 分子性质预测、代码检索 | 本地 Agent 程序做 CUDA 训练或向量检索，提交预测文件，最终 CPU 评分 | [本地 19 题 GPU 接入](../knowledge/airs-gpu-recipe.md) 使用有界真实数据。不是这 19 个任务都必须使用 GPU，当前轻量基线也不是重负载研究证据。它们说明“GPU 实验 + CPU 最终评分”的流程真实存在。当前走 Coordinator/EnvWorker，尚未接入 EnvRouter command 借还 |
+| MLE-bench：机器学习建模与提交预测 | GPU 可能用于反复训练，最终评分可以只比较预测文件 | [官方任务与评分入口](https://github.com/openai/mle-bench) 不能直接当作本地可跑资产。本地只有 4 个小数据集协议，官方 Kaggle 数据尚未准备，且不是所有算法都需要 GPU |
+
+本地总量是 Harbor 476 项加 AIRS 19 项，共 495 项，见[当前任务入口](../milestones/science-gpu-bench-status-and-roadmap.md)。这个分母混合了原始输入、本地缩放、不同入口和快速功能验收，不能据此报告调度覆盖率。目前尚未统计自然 Agent 轨迹中 GPU 自测次数、可安全归还点及其时间占比，因此无法诚实给出“多少百分比会获益”。SWE-Serve 的 GPU 题比例约 77%，只能说明设备需求普遍，不证明可拆分、可预测或能够加速。
+
+少数任务也可能值得研究，但应看成本占比。教学假设：90 题各耗 1 个 GPU 秒，另 10 题各耗 60 个 GPU 秒，后 10 题仅占题数的 10%，却占总 GPU 时间的 `600 / 690 ≈ 87%`。反过来，一条总耗时 100 秒的流程里，某个不可重叠评分阶段只有 2 秒，即使把它减半也只省 1 秒。这些数字不是本地测量，说明需要同时核查覆盖率、GPU 时间和整条任务的等待依赖，不能只数测试函数或只看某段加速比例。
+
+**Results：哪些证据支持，哪些不支持。**
+
+- [FlashInfer 分段](../experiments/gpu-benchmarks/flashinfer-batching.md#保留评估器分段的-results) 的首 workload 为 4.36 至 5.83 秒，剩余仅 0.33 至 0.38 秒。全部 16 项检查通过，只证明受控评估器分段的正确性，没有中途 GPU 交还、竞争任务或迁移。该子集没有支持复杂重排的证据。
+- [SWE-Serve 服务实测](non-timing-gpu-scheduling-scenarios.md#results真实-score-服务题与准备前移对照) 原始完整评分有 18 个 F2P 和 8 个 P2P 测试通过。F2P 是修复前失败、修复后应通过的新行为检查，P2P 是原来已通过、修改后不得破坏的回归检查。这些不是 26 个独立 GPU 作业。后续四项原始服务测试的准备前移对照，整组均值 63.456 → 63.567 秒，未获端到端收益。
+- [固定旧提交对照](../experiments/env-design-and-results-brief.md#固定基线的有效性能证据) 已有正结果。Science 人工压力总时间少 27.59%，真实常驻 Mistral 服务少 10.6%，低负载配对尚无稳定加速。这些实验没有启用预测放置或 verifier 分段，只能支持当时资源管理在特定压力下有用，不能将其收益归因于本次预测策略。
+
+**更有覆盖面的研究单位是一次已就绪的 GPU 工作阶段。** 例如 Agent 修正了分类代码，提交“一次训练并评估”的命令，此时代码版本、模型配置、数据量和步数已知。调度器可以估计这条命令的显存及耗时区间，却不需要知道 Agent 以后还会改几轮。执行完后把结果反馈给 Agent，下一条命令真正到来时再更新决策。最终 GPU verifier 是相同资源类型的另一种消费者，不再是唯一研究对象。
+
+“已就绪”表示命令代码和输入已准备好，前置依赖已完成。“显存需求”约束哪些作业能同时放下，不代表放得下就能高效并行。“时间区间”表示执行耗时存在误差，例如预计 8 至 12 秒，而非保证 10 秒。“状态成本”包含模型加载、编译、缓存有效性及换卡后的重建。“反馈依赖”表示这条命令结束才会产生下一轮 Agent 操作。未到来的下一轮不能作为已知任务加入队列，已知的多步作业计划则可显式登记。
+
+这与 PD 的可借鉴之处是利用**当前已知输入**决策。P 指 prefill，即先处理已给出的输入 token，D 指 decode，即逐个生成输出 token。GPU 程序的分支、编译、内存增长和执行错误比固定模型的输入处理更自由，不能直接借用同等预测精度。固定步数训练通常比任意新程序更容易建立估计，墙钟预算限制训练段不等于限制整个命令时长。首次调用应保守准入，后续按实际观测修正，不能拿点预测值作为显存安全保证。
+
+教学例子，一条 GPU 代码开发 rollout 经历：CPU 修改 → GPU 自测发现大输入错误 → CPU 再修改 → GPU 自测通过 → 提交 → 完整 GPU 评分。另一条 AIRS rollout 可以是：CPU 选特征 → GPU 训练 → CPU 查看指标 → GPU 重训 → 提交 CSV → CPU 评分。两者中间都存在环境 GPU 工作，但第二条根本没有“最终 GPU verify”可优化。常驻模型仍占显存时不能把 CPU 等待画成设备已空闲，也不能默认旧版会一直独占整卡。固定旧版本已有进程内并发限制和应用缓存，GPU 子进程退出也会自然释放显存。
+
+**可验证的小问题，不预先许诺创新。** 针对已经排队的请求，比较等已有模型与换卡重建的完整成本，持续登记驻留显存。[独立命令实验](../experiments/gpu-benchmarks/joint-gpu-placement.md)支持加载避免，但其点估计和复杂枚举没有稳定增量。[真实 PSRL 系统矩阵](../experiments/gpu-benchmarks/warm-placement-matrix.md)按近期分块墙钟速度估计剩余时间，用点估计加 2 秒切换门槛决策，保留经验区间作校准。每个核心场景完成三次配对，长阻塞受益，短目标或短等待时避免盲目复制，边界场景没有胜过简单策略。注入等待高估会错误复制并退化，过期回退和容量约束也有有界检查，整体仍缺四个故障区块。它是原两样本训练的固定步数扩展，不代表原始 benchmark 默认工作量或任意 command 可预测。成本感知放置、在线调度与缓存亲和已有大量研究，候选贡献仍须在自然轨迹、状态有效性和变化成本下超过强简单基线。
+
+**当前模块怎样限制预测的适用范围。** 结构化提供者登记固定步数及代码、模型、输入、设备和运行环境身份，`CommandRuntimePredictor` 核对近期分块波动、速度漂移、报告年龄和同类独立完成命令的预测误差。`PredictionAwareScheduler` 再检查排队成本、加载与执行画像及目标状态可重建性，`ManagedCommandDispatcher` 负责实际排队、调用提供者并回报完成结果。`off` 默认使用普通容量策略，`observe` 计算影子预测并积累完成校准，`auto` 逐命令通过检查后允许时间比较改变放置。未知工作量、过期或失准不会被填成零。固定步数真实服务已有专用适配器与显式入口，保持 episode 预算和本次资源清理所有权，源码与 CPU 协议验证完成，新入口尚未实机运行。通用 command 物理借还协议保留原有生命周期。具体数字、源码与运行方法见[命令可预测性教程](../knowledge/command-predictability.md)。
+
+这次模块化使“什么条件下可以预测”成为可验证行为。下一步收益实验需要另外衡量校准期、失准回退、变化后恢复和自然命令覆盖，原系统矩阵的收益百分比继续对应其冻结策略。
+
+一张卡 80 GiB，两个命令各需要 50 GiB，即使时长很好预测也不能同时准入。两个各需 20 GiB 也不意味着可以把计时评分并发，因为算力争抢会改变分数。优先使用未被训推占用且满足条件的其他设备。当前显式池只支持同机下一命令重新选卡，没有通用跨机器迁移，也不能承诺所有 GPU 空泡最少。
+
+**怎样比较才不混淆。** 固定基线必须是 `0eeead861ffafed6bf31c962d259fd847775dcf9`。它的静态 compose GPU 可见性不是整卡锁，不能把它人为弱化成全程串行。新 benchmark 需要接入补丁时，必须披露并保留原调度语义。第二个必要对照是当前 Env 加进程/缓存复用及静态代价放置。第三组才是新联合策略。第一、二组用于系统收益，第二、三组用于新增算法收益。相同任务、到达规则、有效显存容量、完整检查与计时边界都必须对齐。
+
+首个机会核查应只使用现有轨迹或有界代表任务，分别覆盖内核评估、真实模型服务和训练命令。记录排队、CPU 准备、GPU 执行、显存峰值、物理归还及下一次 GPU 请求到达，另标下一请求在决策时是否可知。用事后已知耗时构造可执行的理想信息参照，但不把它当作可部署预测器或严格数学上界。若连这种乐观参照都几乎不改善强基线，便不开发复杂控制器。覆盖率应同时统计任务占比和 GPU 时间占比，避免几百条短检查掩盖少量长训练。性能评分与定时训练保留原隔离和预算语义。
+
+**CPU 教学实验。** 复用以下自包含标准库脚本，不启动模型、容器或 GPU。
+
+```bash
+python docs/env-worker-deep-dive/env-service-verification/scripts/rollout_command_verifier_demo.py
+python docs/env-worker-deep-dive/env-service-verification/scripts/verifier_calibration_demo.py
+```
+
+第一个脚本按 V1 至 V6 展示两轮 GPU 自测之后才进入最终评分。第二个用两张卡和四个教学作业说明成本门槛：到达顺序调度完成时间 16，准确静态画像为 12，理想校准但有小交接成本为 12.4，交接昂贵时为 18。数字是模拟单位，不是实测秒数。它说明“预测准确”也不保证优于强基线，更不说明当前已有这种调度器。2026-11-12 实际运行两脚本，输出符合上述观察且内置断言通过，真实 GPU 证据仍为上面的固定实验。
 
 ## 目标与全局流程
+
+本节及后续测量精度讨论限于**运行时间参与评分**的子场景。它不能替代上一节对训练、服务和 CPU 最终评分任务的覆盖判断。
 
 rollout 是 agent 从接收题目、生成方案、调用工具到返回结果的一条尝试轨迹。同一道题可以同时生成 G 条轨迹。command 模式规定 GPU 的申请与归还边界，不自动规定优化目标。本研究采用用户指定的固定组目标，不把 PSRL 的所有异步训练路径都假设成整批同步。
 
@@ -64,7 +160,7 @@ rollout 是 agent 从接收题目、生成方案、调用工具到返回结果�
 |---|---|
 | 1 | 固定组是实验协议。训练中用 `parent_id` 标识同组的入口见 [PSRL_compute_advantage](../../../psrl/trainer/ppo/utils.py#L231)，不表示 Env 已按该 ID 调度 |
 | 2 | [evaluate](../../../examples/gpu_benchmarks/evaluate.py#L10) 调用上游评估并返回指标。阶段拆分、误差区间、精度契约尚未实现 |
-| 3 | 尚无本地实现。当前 [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L58) 是 unit 内 FIFO，不能声称已有组级策略 |
+| 3 | 尚无本地实现。当前 [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L82) 是 unit 内 FIFO，不能声称已有组级策略 |
 | 4 | [ManagedGpuExecution.exec_gpu](../../../psrl/workers/env_service/managed_execution.py#L53)、[GpuExecutionBackend.execute](../../../psrl/workers/env_service/gpu_execution.py#L102)、[grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L192) |
 | 5 | [GpuCommandScheduler._return](../../../psrl/workers/env_service/command_gpu.py#L215)、[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L207) 检查物理所有权释放 |
 | 6 | [compute_score](../../../examples/gpu_benchmarks/reward.py#L6) 读取奖励，[PSRL_compute_advantage](../../../psrl/trainer/ppo/utils.py#L182) 按实际算法配置计算优势。组级精度认证尚未实现 |
@@ -255,7 +351,7 @@ KernelBench 现状须特别注意：[evaluate](../../../examples/gpu_benchmarks/
 | 部分 | 对应关系 |
 |---|---|
 | 程序、输入与性能样本 | [evaluate](../../../examples/gpu_benchmarks/evaluate.py#L19) 已调用固定上游评估，通用目标条件声明尚未实现 |
-| 资源安排 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L58) 与 [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L207) 提供准入与归还，不估计测量偏差 |
+| 资源安排 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L82) 与 [revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L207) 提供准入与归还，不估计测量偏差 |
 | 评分与 RL 反馈 | [compute_score](../../../examples/gpu_benchmarks/reward.py#L6) 读取奖励，组优势入口见 [PSRL_compute_advantage](../../../psrl/trainer/ppo/utils.py#L231) |
 | 排序、阈值、置信停止与隔离选择 | 本图展示拟议的通用接口，不是现有 Env 功能。当前完整执行路径见[跟着图读源码](#跟着图读源码) |
 
@@ -374,7 +470,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/command_group_
 | 1 | 2 → 4 | [ManagedVerifierEnvironment.exec](../../../examples/kernel_bench/verifier.py#L35) | verifier shell 命令转换为显式 GPU 请求。当前没有分段测量与精度字段 |
 | 2 | 4 | [ManagedGpuExecution.exec_gpu](../../../psrl/workers/env_service/managed_execution.py#L53) | 根据实际后端进入执行路径。本篇 KernelBench 配置限定 direct，MPS 分支不能混作同一行为 |
 | 3 | 4 | [GpuExecutionBackend.execute](../../../psrl/workers/env_service/gpu_execution.py#L102) | 记录 requested，等待准入，执行命令，进入 returning 或异常清理 |
-| 4 | 3 → 4 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L58) | 当前按 unit 的 FIFO 选择，检查账本与物理容量。提案不能绕过这些检查 |
+| 4 | 3 → 4 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L82) | 当前按 unit 的 FIFO 选择，检查账本与物理容量。提案不能绕过这些检查 |
 | 5 | 4 | [grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L192) | 校验租约与 epoch，授予容器设备访问 |
 | 6 | 2 | [evaluate](../../../examples/gpu_benchmarks/evaluate.py#L10) | 在获准后的容器执行上游评估，输出 correctness、runtime_ms、speedup 和 reward |
 | 7 | 5 | [_return](../../../psrl/workers/env_service/command_gpu.py#L215)、[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L207) | 物理归还完成后更新账本。后台归还可与别的 host 工作交错，未确认不能复用预算 |
@@ -438,8 +534,8 @@ KernelBench 适合研究多轮独立执行、文件产物局部性，以及测�
 
 | 节点 | 当前可复用部分与缺口 |
 |---|---|
-| P1 | [EnvLease](../../../psrl/workers/env_service/types.py#L228) 当前同时携带主机和 GPU 绑定，独立主机会话租约待实现 |
-| P2 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L58) 当前按 lease.unit_id 排队，跨设备唯一队列与执行租约待实现 |
+| P1 | [EnvLease](../../../psrl/workers/env_service/types.py#L228) 保留主机会话归属，并记录兼容的同机 GPU 候选；独立远程执行器会话仍是提案 |
+| P2 | [GpuCommandScheduler.acquire](../../../psrl/workers/env_service/command_gpu.py#L82) 未配置池时按原 unit 排队；显式同机池已共用队列并分开登记实际 GPU 分配，跨节点池仍待实现 |
 | P3 | [KernelCommandVerifier](../../../examples/kernel_bench/verifier.py#L43) 已有显式 GPU verifier 入口，但不是新的可移动执行器池 |
 | P4 | [grant_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L192)、[revoke_gpu_command](../../../psrl/workers/env_service/command_gpu_node.py#L207) 提供授权与归还机制；新的执行身份需贯穿这些接口 |
 | P5 | [EnvRouterCore.release](../../../psrl/workers/env_service/router.py#L241) 是会话释放入口；按 invocation 提交产物的协议待实现 |
@@ -495,33 +591,47 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/placement_base
 
 ## 显存时间与后续依赖的联合调度
 
-2026-11-11 对照主目录 `ab74120` 加未提交实现复核。这里扩展 R5 队首阻塞的研究空间，与前文反馈精度分配是两个可分别验收的方向。以下预测器、时间窗口和组级决策是设计提案，没有加入生产调度器。已有目录迁移后，本节维护在 research-proposals 中。
+本节的通用联合调度仍是设计提案。2026-11-13 对照主目录 `6aa328d` 加未提交内容核对，固定步数进度预测和[类型化放置控制器](../../../psrl/workers/env_service/warm_dispatch.py#L226)已由真实 PSRL 研究驱动调用，统一比较模型亲和、始终复制和预测决策。[系统矩阵](../experiments/gpu-benchmarks/warm-placement-matrix.md)完成 53/57 个区块，48 个核心区块的工作量、输出与配对审计通过，故障检查仍缺四个，整体不完整。生产 Router 未接入这个研究控制器，显存峰值预测、未来阶段到达预测与组级依赖决策仍未实现。这里扩展 R5 队首阻塞，与前文反馈精度分配是两个分别验收的方向。
 
 **结论：存在联合优化空间，但当前策略不能保证多 GPU 或跨节点空泡最少。** 显存决定能否放下，持续时间决定能否放进空档，后续依赖决定先做谁更早得到完整 rollout。目标优先采用固定工作量、有效反馈不降低条件下的整组完成时间，空闲与利用率作为解释指标。
 
 ```text
 [1] 已就绪 GPU 命令 + 所属 rollout + 节点/文件位置
                 ↓
-[2 提案] 估计显存峰值、各设备执行时间区间、下一阶段到达区间
+[2 研究部分实现] 固定步数进度预测，通用显存与后续到达仍是提案
                 ↓
-[3 提案] 选择排队顺序、目标设备、并发组合和有限回填
+[3 研究部分实现] 三策略共用容量检查，再比较等待、重建和执行
                 ↓
-[4 现有] EnvRouter 准入 → 节点执行 → 物理归还确认
+[4 现有] Env 准入与执行 → 按 episode 或 command 完成清理
                 ↓                              │
-[5 提案] 用实际耗时、等待与后续到达更新预测 ←─────┘
+[5 研究部分实现] 近期进度更新，未来到达与生产接线待做 ←─┘
 ```
 
 图例：图里每个部分对应的源码位置。
 
 | 编号 | 本地对应与边界 |
 |---|---|
-| 1 上游派发 | [EnvAwareDispatcher.assign](../../../psrl/workers/env_service/placement.py#L111) 按容量与节点条件分派题目组，没有预测全组未来执行图 |
-| 2 | 预测器尚未实现。现有 [作业状态快照](../../../psrl/workers/env_service/gpu_jobs.py#L35) 和 [命令报告](../../../psrl/workers/env_service/command_gpu.py#L334) 可作数据入口，仍需补齐阶段身份与预测时刻 |
-| 3 | 现有 [acquire](../../../psrl/workers/env_service/command_gpu.py#L82) 先检查队首，再按当前显存占用比例等选择候选 GPU，没有时长与后续依赖优化 |
-| 4 | [MPS 准入](../../../psrl/workers/env_service/parallel_gpu.py#L208)、[direct 归还](../../../psrl/workers/env_service/command_gpu.py#L259) 保留容量和清理约束 |
-| 5 | 闭环预测更新尚未实现。实际运行与等待数据不能被事后当作发放前已知信息 |
+| 1 上游派发 | 生产 [EnvAwareDispatcher.assign](../../../psrl/workers/env_service/placement.py#L111) 按容量与节点条件分派题目组，没有预测全组未来执行图。研究驱动则由 [matrix.command](../env-service-verification/scripts/warm_router_study/matrix.py#L80)创建预先固定的模型命令，不是自然 Agent 到达流 |
+| 2 | [predict_remaining](../../../psrl/workers/env_service/step_predictor.py#L33) 已实现研究用固定步数预测，输入已完成块、步数和报告年龄，输出点估计及经验区间。通用显存峰值、未来到达及生产队列预测未实现。[作业快照](../../../psrl/workers/env_service/gpu_jobs.py#L35) 与 [命令报告](../../../psrl/workers/env_service/command_gpu.py#L334)仍需补齐通用阶段身份 |
+| 3 | [matrix 调用](../env-service-verification/scripts/warm_router_study/matrix.py#L231)将模型成本与队列快照交给 [WarmPlacementController.decide](../../../psrl/workers/env_service/warm_dispatch.py#L237)，保留点值、经验区间和决策理由。生产 [acquire](../../../psrl/workers/env_service/command_gpu.py#L82)仍先检查队首，再按当前显存占用比例等选卡，没有调用该时间模型或后续依赖优化 |
+| 4 | [研究 TaskGroup](../env-service-verification/scripts/warm_router_study/matrix.py#L185)汇合两条请求，[provider finally](../env-service-verification/scripts/warm_router_study/experiment.py#L366)处理取消、停止容器和租约释放，[父驱动](../env-service-verification/scripts/warm_router_study/matrix_suite.py#L62)检查物理清理证据。生产 [MPS 准入](../../../psrl/workers/env_service/parallel_gpu.py#L208)与 [direct command 归还](../../../psrl/workers/env_service/command_gpu.py#L259)保留各自容量和清理约束 |
+| 5 | [研究服务](../env-service-verification/scripts/warm_router_study/server.py#L129)按块发布进度，驱动只使用决策时已有的观察。生产闭环、未来命令到达预测仍未实现，禁止将事后实际耗时当成发放前已知信息 |
 
-这些代码如果有理解上的问题，可以随时追问。跟着图读源码时，先读 placement 的节点候选，再读 command_gpu 的队首和候选卡排序，分支阅读 parallel_gpu 的作业准入，最后读归还和报告。多个作业与清理回调交错执行，不能把图当成单线程流水线。
+这些代码如果有理解上的问题，可以随时追问。跟着图读生产路径时，先读 placement 的节点候选，再读 command_gpu 的队首和候选卡排序，分支阅读 parallel_gpu 的作业准入，最后读归还和报告。研究分支从 [matrix.study](../env-service-verification/scripts/warm_router_study/matrix.py#L108)读取固定画像，启动阻塞任务并等待进度，再调用预测器、控制器和环境请求。两条命令在任务组中汇合。它使用 episode 持续预约，不能在图 4 的 command 归还处保留活模型。[代码阅读指南](../knowledge/warm-placement-code-guide.md)按入口到物理清理展开真实执行路径，解释协程、线程与两卡计算并行的区别。多个请求与清理回调交错执行，不是单线程流水线。
+
+三种策略使用同一个 [fits_capacity](../../../psrl/workers/env_service/warm_dispatch.py#L147)。模型亲和优先复用已有模型。始终复制在冷卡容量合法且成本可用时选择冷卡。预测决策只有预计收益超过切换门槛才复制。容量的输入是扣除常驻模型和其他长期占用后的预约余量，尚未扣本次临时计算工作区。因此热卡需要 `workspace_bytes`，冷卡需要 `model_bytes + workspace_bytes`，不能只比较模型文件大小或设备瞬时空闲显存。控制器是纯计算函数，不创建容器、不预留预算。研究服务在真正执行前再次准入。
+
+“分块”指每 16 个训练更新步报告一次。预测器把每块真实墙钟时间除以步数，再取近期速度的中位数，即把样本排序后取中间值。块耗时包含前一次进度发布开销，避免只估 GPU 核心计算而漏掉 Python 和观测成本。在第 64 步到达时，丢掉首块热身后通常只有三个块可用，不是已有八块。样本不足或下一整块报告超期时保持未知并等待，不能把未知写成剩余零秒。
+
+教学假设：B 每 16 步用 0.4 秒，则每步约 0.025 秒，剩 1984 步约需 49.6 秒。A 执行 1024 步预计需 35.84 秒，另一卡重建需 12 秒。留在热卡从到达起约需 `49.6 + 35.84 = 85.44` 秒，换卡约需 `12 + 35.84 = 47.84` 秒，再加 2 秒切换门槛仍更早，就有复制的空间。这些数字不是实测。默认点模式保留经验上下区间作审计，只有显式区间模式才比较冷卡上界加门槛是否小于热卡下界。两种模式都没有统计置信度或完成保证。报告超期时预测未知，热卡仍满足容量等约束时预测策略回退亲和等待，不能把未知剩余时间当作零。
+
+可运行的 [CPU 协程教学脚本](../env-service-verification/scripts/warm_router_study/asyncio_warm_demo.py)对应图 2 至 5，用标准库任务组、每设备串行队列及小量模拟工作调用真实预测器和控制器，不启动 Env、Docker 或 GPU：
+
+```bash
+python docs/env-worker-deep-dive/env-service-verification/scripts/warm_router_study/asyncio_warm_demo.py
+```
+
+本次实际运行选择冷卡重建，最多同时出现两条模拟设备命令，正常和注入失败两条路径都完成清理。失败例中一张卡的异常触发任务组取消另一张卡的等待，服务的 `finally` 释放模拟工作区及模型。真实服务用串行 Unix socket 请求而非脚本里的 `asyncio.Queue`。取消客户端本身不能停止真实 GPU，仍需 provider 和父驱动按归属收尾。以上是教学脚本观察，不是 GPU 性能或物理释放的验证。
 
 **PD 类比成立的范围。** P 是 prefill，模型把已知输入文本处理成后续生成所需的状态。D 是 decode，模型逐步生成输出，结束长度事先未必知道。固定模型、设备、批大小与缓存条件下，prefill 输入长度可见，计算结构相对固定，因此通常比任意生成程序更容易估计。[DistServe 第 4.3 节](https://arxiv.org/html/2401.09670v3#S4.SS3) 使用先来先服务、最短 prefill 队列和较轻 decode 负载，并通过批次 token 工作量均衡减少流水线空泡。它不等于求解所有请求的全局最优排程。论文目标还包含响应时延要求内的有效吞吐。prefill 的纯执行时间也不等于含排队和状态传输的首次响应时间。
 
@@ -558,3 +668,78 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/joint_schedule
 ```
 
 [脚本](../env-service-verification/scripts/joint_schedule_demo.py)输出 FIFO 32 秒、后续依赖优先 22 秒、该小模型枚举最好值 22 秒、错误尾部预测 32 秒，以及短任务能回填、长任务不能回填、预测失准越界 3 秒。它不调用生产调度器，不模拟 MPS 减速或多机传输，不能作为真实性能结果。通用的显存与时间装箱已有广泛先例，这里的候选研究空间是任务后续依赖、预测不确定性与有效反馈完成时间的结合，尚未证明新颖性或收益。
+
+
+## 收窄候选新代码的验证校准与余量调度
+
+**当前定位：受限备选，不作为通用研究主线。** 2026-11-12 的[场景复核](#先确定-gpu-工作在哪里以及覆盖多少)确认，现有分段结果没有支持复杂调度的剩余工作量，GPU 自测与训练也不局限于最终评分。下面保留机制、反例和有条件的验证协议，只有找到天然可分、剩余工作足够长的任务才继续，不为符合方案而增加测试重复。
+
+该受限子场景只研究已提交的最终 verifier，不预测未来 token 数、下一条工具命令或整条 rollout 的剩余轮数。它是在信息较完整的边界上检验校准机制的假设，不再作为覆盖整个 GPU Agent 场景的首期建议。下面没有证明创新性、预测准确率或真实加速。
+
+**推荐的小问题：新代码候选的第一次必做验证，能否提供足够信息，在保留准备状态的成本约束下，改善剩余评估工作的 GPU 放置？** verifier 是检查提交物并计算奖励的评分程序。Agent 提交代码后，候选版本已经固定，要运行的输入案例与评分协议通常也已知，这个边界比尚未结束的自由交互 rollout 更适合建模。
+
+PD 的 D 阶段并非完全不能估计，它可以估计下一步成本、当前负载或输出长度分布，但终止时间不确定。只预测 prefill 是一种范围选择，不是所有 PD 系统的统一限制。这里借鉴“在信息已知的阶段决策”，不依赖 decode 或 rollout 结束时间的精确预测。已有多阶段异步架构如 [RollArt](https://arxiv.org/abs/2512.22560) 也不能自动提供新生成 GPU 程序的代价模型。
+
+```text
+[1 现有] 已提交并冻结的候选代码 + 固定 verifier 输入集合
+                            ↓
+[2 提案] 运行协议原本就要求的首个验证单元，记录分段耗时
+                            ↓
+[3 提案] 按候选版本更新剩余工作的预测区间，判断是否值得重排
+             ├ 证据弱或交接昂贵 → 保持整批执行/静态基线
+             └ 有可信增量信息 → 联合选择剩余批大小和目标 GPU
+                            ↓
+[4 现有接口 + 待接线] Env 申请、独占评估、物理归还
+                            ↓
+[5 现有] 完成同一套评分协议，返回每个候选的结果
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 编号 | 当前实现、输入输出与缺口 |
+|---|---|
+| 1 | [FlashInfer verifier.main](../../../examples/flashinfer_bench/verify.py#L9) 校验提交物，读取受保护的算子定义与 workloads |
+| 2 | [Benchmark.run_all 调用](../../../examples/flashinfer_bench/verify.py#L72) 当前整体执行，没有暴露“首个单元后暂停再派发”的公共调度接口，须先验证官方评估器能否安全分段 |
+| 3 | 新预测与选择策略尚未实现。[实验 worker](../env-service-verification/scripts/flashinfer_batch_worker.py#L9) 已有批量执行基础，不能因此宣称状态保留与跨卡迁移已完成 |
+| 4 | [命令准入](../../../psrl/workers/env_service/command_gpu.py#L82) 与 [归还](../../../psrl/workers/env_service/command_gpu.py#L259) 可复用。同机换卡有现成基础，活 CUDA 状态不能直接搬动 |
+| 5 | [结果完整性与评分](../../../examples/flashinfer_bench/verify.py#L52) 要求全部预期案例通过，不允许为了提速漏测或筛掉较慢候选 |
+
+跟着图读源码：先从 verify 的提交物解析读到 TraceSet 和 expected，再看 run_all 与结果完整性判断。对照 batch_worker 中单进程批量执行的成本，然后读 command_gpu 的设备准入与物理归还。提案只在受控验证边界重排，不抢占任意正在运行的程序。不同候选可并行，不同计时测量不能在同卡无保护重叠。源码问题可以按编号追问。
+
+**什么是“校准”。** 老数据只能给出先验估计，例如同一题的旧候选完成一套评估通常花 8 秒。新候选可能改了算法，不能直接沿用旧代码的耗时。第一次必做的正确性检查或测试单元提供实际观察，结合输入形状、代码指纹、编译缓存、GPU 型号等，更新剩余耗时区间。编译、GPU 本体执行、测试管理和归还必须分开记录，不能用某个 kernel 的微秒数直接代替整条 verifier 的秒数。
+
+这里不要求首个单元一定有代表性。若只观测小输入而大输入触发另一算法，或剩余工作要重新编译，预测可能完全失效。必须检查输入类别覆盖和区间校准，必要时不使用这次观测进行重排。代码指纹是代码内容的标识，用来避免把旧版本实测误当作新版本事实。它不能单独保证预测准确。
+
+**潜在差异是什么。** 普通时长排序、最短任务优先、最长任务优先、回填和性能预测都有大量已有研究。这里候选差异限定为：针对不断出现的新候选程序，利用不增加评分工作量的必做验证获得在线信息，并把该信息的收益与状态保留、重新准备、设备交接成本一起决策。真正要证明的是它优于“静态参考画像 + 成熟的负载均衡 + 进程复用”。如果只是在 FIFO 前加预测排序，不能据此主张独立创新。
+
+[KernelBrain](https://arxiv.org/abs/2608.02611) 已研究低成本筛选与更高精度的候选评估预算，不能把“先粗测再决定”单独称为创新。[Harness Engineering](https://arxiv.org/abs/2607.17979) 已强调评分协议、profiling 和候选控制的结合。本候选固定全部工作与评分协议，研究执行成本和放置，但这种范围差异仍不构成新颖性证明，需要继续与自适应 profiling、在线调度和状态复用方法逐项比较。
+
+**为什么有可能不需要预测未来也有收益。** 教学例子，两张相同 GPU，每卡一次运行一个评估。A/B/C/D 都已提交，第一次必做单元各 1 秒，剩余耗时分别为 3/7/3/7 秒。整项按到达顺序执行，四项时长为 4/8/4/8，最早空闲卡派发得到 16 秒完成。如果先花两轮共 2 秒执行四个首单元，恰好得到准确剩余信息，再将 B/D 优先分到两卡，剩余各卡 7+3 秒，理想总计 12 秒。若每次交接加 0.2 秒，总计 12.4 秒。所有候选仍完成同样的必做检查，没有预测未来 rollout。
+
+这个算例也暴露两条反例。若静态画像本来就知道 B/D 更长，直接执行 8+4 的平衡分配是 12 秒，反而优于新增交接的 12.4 秒。若每次交接或重建成本为 3 秒，校准策略变成 18 秒，慢于原来的 16 秒。这里准确的校准信息是教学假设，不能冒充训练好的预测器。
+
+**受限子场景的 bench 与限制。** FlashInfer-Bench 的候选源码、输入形状、官方 evaluator 和完整结果都可见，适合检查分段机制，但现有子集未证明值得重排。若发现天然足够长的剩余工作，可冻结候选及到达序列，比较固定工作量下的评估完成时间。当前公共 recipe 是整批 run_all。实验适配器已能保留评估器分两段，但还没有中途释放、迁移和重排的生产入口。只有一条输入或单次执行过短的任务不应人为扩增重复次数制造收益。KernelBench 可用于跨候选评估派发，优先使用原尺寸已经通过的子集。autoresearch 和多轮 GPU 工具是更广场景的候选，但不能直接套用最终评分分段方案。
+
+本地 FlashInfer 历史实验已经证明进程复用很重要：逐条 command 与批量评估的两轮均值约为 125.55 与 25.86 秒。见[原始对照](../experiments/gpu-benchmarks/flashinfer-batching.md)。这只是 2026-11-09 的小实验，不是本方案结果。任何新策略都必须与批量/缓存复用基线比较，不能重新制造进程启动开销来得到优势。另一个候选筛选实验中简单固定四轮已经选出相同赢家，也不能以少测一些候选保证本方案有收益。
+
+**满足上述机会门槛后才适用的有界验证计划，不预设正结果。**
+
+1. 从现成通过池选最多 6 个确有不同输入规模的定义、每个最多 4 个固定候选，先审核需要的全部资产是否就绪。使用一或两张专用 GPU，首轮不训练策略模型。
+2. 记录真实编译、首次测试、余下评估、状态保留显存和交接成本。两轮采样只用于机会判断，不用于宣称统计显著。不给新候选偷看它之后的结果。
+3. 先算理想信息下的调度空间，并与保留进程和缓存的静态代价调度比较。如果最大潜在收益连额外交接成本都抵不过，结束方向，不训练预测器。
+4. 若通过，再按候选代码版本隔离训练/验证，比较不校准、静态画像、强度相同的简单首样本更新、本方案和理想信息参照。必须报告预测过低造成的排队延误，不能只报告平均预测误差。
+5. 首轮验收完整结果集合、正确性奖励和原评估协议一致，报告整批评估完成时间、每候选反馈时间、GPU 秒与额外准备成本。计时用于奖励时还须独占审计，不能只保正确性。可预先采用超过 10% 的改善且收益超过运行波动作为继续投入门槛，这个数是研究决策阈值，不是已测收益。
+6. 冻结候选回放通过，只能证明评分服务收益。要声称完整 rollout 或训练加速，还需另做端到端验证，不能自动外推。
+
+[可运行教学脚本](../env-service-verification/scripts/verifier_calibration_demo.py)：
+
+```bash
+python docs/env-worker-deep-dive/env-service-verification/scripts/verifier_calibration_demo.py
+```
+
+脚本完全使用标准库和教学时长，输出整批 FIFO 16、正确静态画像 12、理想校准加低交接成本 12.4、无信息校准约 15.6、高交接成本 18。它没有调用官方 GPU evaluator，不能作为真实性能结果。本次应优先拿到真实成本分解与收益上界，不能提前承诺已经找到兼具创新和收益的论文课题。
+
+
+2026-11-11 的首轮实机探索见[保留评估器分段的 Results](../experiments/gpu-benchmarks/flashinfer-batching.md#保留评估器分段的-results)。同一子集整批与分段各两次，16 项结果完整且全部正确。首个 workload 用时 4.36 至 5.83 秒，剩余 workload 仅 0.33 至 0.38 秒，不支持在这个子集投入复杂重排。实验没有迁移、竞争任务或分段中途归还，不能作为新调度器收益。研究优先级转向整个 Agent 迭代中的 GPU 工作覆盖核查，不继续围绕这个短尾子集开发预测器。
+
+“第一次验证后”在本提案中专指最终 verifier 内第一个必做单元之后，Agent 此时已提交候选，但整套评分未完成。完整的 turn、command、自测和最终评分关系见[一条 rollout 的例子](../knowledge/router-configuration-and-recovery.md#10-一条-rollout-中的命令与最终评分)。保持评估对象存活不代表已实现 GPU 资源交还，状态保留与准入协议仍需设计。

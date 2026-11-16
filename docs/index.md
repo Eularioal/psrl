@@ -30,7 +30,7 @@ Project introduction, key features, and performance highlights.
 :link: tutorial/quickstart
 :link-type: doc
 
-Get PSRL running in minutes with a minimal DAPO training example.
+Prepare the environment and run the two-node, 16-GPU DAPO example.
 :::
 
 :::{grid-item-card} {octicon}`book;1.5em` Tutorial
@@ -44,7 +44,7 @@ Step-by-step guides for installation, configuration, and first training run.
 :link: examples/index
 :link-type: doc
 
-Production-ready recipes for RLVR, Agentic RL, and more.
+Training recipes for RLVR and Agentic RL, plus clearly marked planned recipes.
 :::
 
 :::{grid-item-card} {octicon}`gear;1.5em` Architecture
@@ -79,7 +79,7 @@ Push/Pull weights to/from CPU-side Parameter Server and P2P RDMA transfers.
 :::{grid-item-card} Fine-grained Staleness Control
 :class-card: psrl-feature-card
 
-Trajectory-level version binding with Reserve/Occupy/Consume protocol ensures data freshness without sacrificing throughput.
+Trajectory-level version binding with Reserve/Occupy/Consume protocol bounds accepted sample age while generation and training overlap.
 :::
 
 :::{grid-item-card} Flexible Rollout Coordination

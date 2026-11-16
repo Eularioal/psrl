@@ -1,6 +1,8 @@
 # ReTool Training
 
-Once the [data and SandboxFusion service](prepare) are in place, kick off training
+> **Goal:** launch the ReTool recipe after data and execution-service checks pass, then interpret its task reward and tool-use shaping separately.
+
+Once the [data and SandboxFusion service](prepare.md) are in place, kick off training
 with the smallest reference recipe, FSDP2 on Qwen2.5-7B, 4 nodes × 8 GPU:
 
 ```bash
@@ -16,7 +18,7 @@ checkpoint backend, not the agentic-RL knobs documented below.
 
 ## ReTool-specific knobs
 
-On top of the [common agentic-RL knobs](../index) (`multi_turn.enable`,
+On top of the [common agentic-RL knobs](../index.md) (`multi_turn.enable`,
 `multi_turn.max_turns`, `agent.env.name`, `agent.data.name`, `data.return_raw_chat`),
 the launch script pins the agent loop to ReTool's tool-using environment and tells
 vLLM to parse the model's output as Hermes-style tool calls.
@@ -42,11 +44,15 @@ shapes the reward:
 |---|---|
 | Correct `\boxed{answer}` | `+1.0` |
 | Wrong answer (no tool calls) | `-1.0` |
-| Wrong answer (with tool calls) | `-1.0` + `(num_turns - 2) / 2 * 0.1`, floored at `-0.6` |
+| Wrong answer (with tool calls) | `-1.0` + `(num_turns - 2) / 2 * 0.1`, capped at `-0.6` |
 | Malformed / no boxed answer | `0.0` |
 
-The tool-call bonus encourages the model to actually invoke the code interpreter when
-it would otherwise produce a wrong answer.
+The tool-call bonus increases a negative score toward `-0.6`; the source uses
+`min(-0.6, base_score + bonus)`. For a teaching example with base score `-1`,
+`num_turns=6` gives bonus `0.2` and score `-0.8`; `num_turns=14` gives bonus `0.6`
+and score `-0.6` after the cap. The exact base score and malformed-answer behavior
+come from the pinned veRL `math_dapo` checker. Read the local adapter at
+[compute_score](../../../../examples/retool/retool.py#L178) before changing shaping.
 
 ---
 

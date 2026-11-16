@@ -1,0 +1,1802 @@
+{
+  "date": "2026-11-11",
+  "base_head": "6aa328d",
+  "includes_preexisting_uncommitted_changes": true,
+  "method": "rg maintained Markdown inventory, experiment-section and supersession review. No new GPU runs. Historical snapshots and external product facts are not revalidated.",
+  "files": [
+    {
+      "original_path": "docs/index.md",
+      "current_path": "docs/index.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "6ad26129e9ef75fe56f01d433bb973fbc370a9cc7130f832defbf0baf1270fec",
+      "after_sha256": "6ad26129e9ef75fe56f01d433bb973fbc370a9cc7130f832defbf0baf1270fec"
+    },
+    {
+      "original_path": "docs/README.md",
+      "current_path": "docs/README.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "fed847aad58d4e7ce71b959e881fbd5a7e7cd7005ae0235e825749863e2ec357",
+      "after_sha256": "2439ab463bf65d404bcaab3367a26002d20fb5826dac9f14931075a30baf14b7"
+    },
+    {
+      "original_path": "docs/sciaccel-grpo-oom-analysis.md",
+      "current_path": "docs/sciaccel-grpo-oom-analysis.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "建议验证",
+        "验证结果：修复方案已确认有效（2026-09-22）",
+        "采用的修复"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "9c8916eb22aa6d3af68e69caf507f365810ee8f3ac347a18c88434c57091c1a2",
+      "after_sha256": "797364ae271bac8a8fd02efc432258c164edae98282e01c3ee022d9c117acd0f"
+    },
+    {
+      "original_path": "docs/site-maintenance.md",
+      "current_path": "docs/site-maintenance.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "ae122e2565d6a2c1bb3b87ed59b27dc56d85d7f15dfb24a1ab52fb3a8ee9fa56",
+      "after_sha256": "ae122e2565d6a2c1bb3b87ed59b27dc56d85d7f15dfb24a1ab52fb3a8ee9fa56"
+    },
+    {
+      "original_path": "docs/psrl/psrl-training-script-source-map.md",
+      "current_path": "docs/psrl/psrl-training-script-source-map.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "d13a5545c1c85f783a98e211cc904c30ee2ee2ef00e656529cab786f3abf3850",
+      "after_sha256": "d13a5545c1c85f783a98e211cc904c30ee2ee2ef00e656529cab786f3abf3850"
+    },
+    {
+      "original_path": "docs/psrl/dapo-training-collapse-diagnosis.md",
+      "current_path": "docs/psrl/dapo-training-collapse-diagnosis.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "6. GSM8K 验证准确率不可逆崩溃（0.85 → ~0）",
+        "补充：MFU 公式详解（对照 verl 源码）"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "ec70bc7cf3a1f3eac8a732a56638c34ad5eecba0ca0c67b2d340792577ae5c3a",
+      "after_sha256": "9e06d2440cf802b4c96539f6bb4e0e6d6637dd9ab60175fdb312667de695ad00"
+    },
+    {
+      "original_path": "docs/psrl/gae-bias-variance-tradeoff.md",
+      "current_path": "docs/psrl/gae-bias-variance-tradeoff.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "771e6d275a59eb298472e6aaf517671527389acb0c06ffc1f798e929e6642265",
+      "after_sha256": "771e6d275a59eb298472e6aaf517671527389acb0c06ffc1f798e929e6642265"
+    },
+    {
+      "original_path": "docs/psrl/hf-config-context-window.md",
+      "current_path": "docs/psrl/hf-config-context-window.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "e44f62d665dcb7f94808ec8aaa0ceddb55de7d9443d2336eefcc1f56eb901771",
+      "after_sha256": "e44f62d665dcb7f94808ec8aaa0ceddb55de7d9443d2336eefcc1f56eb901771"
+    },
+    {
+      "original_path": "docs/psrl/psrl-run-guide.md",
+      "current_path": "docs/psrl/psrl-run-guide.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "1decb308b120c7775609a47b1d8273d25131f3290a09263e1afdc142b0a4e093",
+      "after_sha256": "1decb308b120c7775609a47b1d8273d25131f3290a09263e1afdc142b0a4e093"
+    },
+    {
+      "original_path": "docs/psrl/nixl-explained.md",
+      "current_path": "docs/psrl/nixl-explained.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "feda0e67da5b39b1bd054a3d6faa63bed1128517f39c1fbfa7ed499f59533973",
+      "after_sha256": "feda0e67da5b39b1bd054a3d6faa63bed1128517f39c1fbfa7ed499f59533973"
+    },
+    {
+      "original_path": "docs/psrl/vllm-and-training-parallelism.md",
+      "current_path": "docs/psrl/vllm-and-training-parallelism.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "f6a915384c6241d7fcb39708ba8edb1d19b8a30e6977ac234a037d19358ca8d1",
+      "after_sha256": "f6a915384c6241d7fcb39708ba8edb1d19b8a30e6977ac234a037d19358ca8d1"
+    },
+    {
+      "original_path": "docs/tutorial/index.md",
+      "current_path": "docs/tutorial/index.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "9f9b7bee33e3720b07890c063d2aa8eab018225a24f90f0946925797b9eedbf9",
+      "after_sha256": "9f9b7bee33e3720b07890c063d2aa8eab018225a24f90f0946925797b9eedbf9"
+    },
+    {
+      "original_path": "docs/tutorial/performance_tuning.md",
+      "current_path": "docs/tutorial/performance_tuning.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "8209444af8db4dc0f78f91d0d41c3c37528ac39c02de1661f9093d359d9ce86d",
+      "after_sha256": "8209444af8db4dc0f78f91d0d41c3c37528ac39c02de1661f9093d359d9ce86d"
+    },
+    {
+      "original_path": "docs/tutorial/quickstart.md",
+      "current_path": "docs/tutorial/quickstart.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "3f55c81696ba26550f7c3afa1483deb05512f88f990d2e6184acc9a08876c460",
+      "after_sha256": "3f55c81696ba26550f7c3afa1483deb05512f88f990d2e6184acc9a08876c460"
+    },
+    {
+      "original_path": "docs/tutorial/installation.md",
+      "current_path": "docs/tutorial/installation.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "9c5e9a28ee679cc6f0155a8d0d41a5ae6e78a8a6ce3c3aea6cfb8f13e169921e",
+      "after_sha256": "9c5e9a28ee679cc6f0155a8d0d41a5ae6e78a8a6ce3c3aea6cfb8f13e169921e"
+    },
+    {
+      "original_path": "docs/tutorial/configuration.md",
+      "current_path": "docs/tutorial/configuration.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "bd16f53fb50b987a478334b52053d006eecd7156dc6540ceb6dbc50d84cb85bd",
+      "after_sha256": "bd16f53fb50b987a478334b52053d006eecd7156dc6540ceb6dbc50d84cb85bd"
+    },
+    {
+      "original_path": "docs/overview/index.md",
+      "current_path": "docs/overview/index.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "34a329cddc6de71d80f4f6fbfd18e737e51c54fda6a7e18ff88975514015f148",
+      "after_sha256": "34a329cddc6de71d80f4f6fbfd18e737e51c54fda6a7e18ff88975514015f148"
+    },
+    {
+      "original_path": "docs/psrl/README.md",
+      "current_path": "docs/psrl/README.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "98efa54c40fb9e43fb91ff0bb676ce0737f070eb7bc50a6fec80aedfb1c6920a",
+      "after_sha256": "98efa54c40fb9e43fb91ff0bb676ce0737f070eb7bc50a6fec80aedfb1c6920a"
+    },
+    {
+      "original_path": "docs/psrl/psrl-agent-loop-harbor-tool-calling.md",
+      "current_path": "docs/psrl/psrl-agent-loop-harbor-tool-calling.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "3aff464f463c08cc94734e19186b1916c441a4c70e26891ba055867fe165721c",
+      "after_sha256": "3aff464f463c08cc94734e19186b1916c441a4c70e26891ba055867fe165721c"
+    },
+    {
+      "original_path": "docs/psrl/psrl-env-service-envworker-design.md",
+      "current_path": "docs/psrl/psrl-env-service-envworker-design.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "想对照原提案"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "9be5e41122b3eb2bf2185a5aec4e4618c796ad96006cd4b301af7a6d36812e04",
+      "after_sha256": "9097a7ae847520d0e415a0beeba06726bf4475326b8c98a9aa7449ebbcf1d2d9"
+    },
+    {
+      "original_path": "docs/psrl/rlvr-explained.md",
+      "current_path": "docs/psrl/rlvr-explained.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "630c621a312691871ffa5528e4e72b054ef3f6f5eb57fc869638993a123d9a7e",
+      "after_sha256": "630c621a312691871ffa5528e4e72b054ef3f6f5eb57fc869638993a123d9a7e"
+    },
+    {
+      "original_path": "docs/psrl/ppo-grpo-dapo-sample-requirements.md",
+      "current_path": "docs/psrl/ppo-grpo-dapo-sample-requirements.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "93d5af464e3d4d5fec472f15ad47cf5fcf66a35a7998bfaf0bd1f2f53280cee1",
+      "after_sha256": "93d5af464e3d4d5fec472f15ad47cf5fcf66a35a7998bfaf0bd1f2f53280cee1"
+    },
+    {
+      "original_path": "docs/design/parameter_server.md",
+      "current_path": "docs/design/parameter_server.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "f04bff5b8ee32a99a15e207fda8a3e71572211f66396473290556c9893299fde",
+      "after_sha256": "f04bff5b8ee32a99a15e207fda8a3e71572211f66396473290556c9893299fde"
+    },
+    {
+      "original_path": "docs/design/resource_elasticity.md",
+      "current_path": "docs/design/resource_elasticity.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "8960083d2a7d72708025740fef4cafe62e81b6fccbe7eae5664926260666f4a7",
+      "after_sha256": "8960083d2a7d72708025740fef4cafe62e81b6fccbe7eae5664926260666f4a7"
+    },
+    {
+      "original_path": "docs/design/transfer_queue.md",
+      "current_path": "docs/design/transfer_queue.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "dbfe053adcd870a00038a2662604e2d85859052f4105599e374b1f95f07e255d",
+      "after_sha256": "dbfe053adcd870a00038a2662604e2d85859052f4105599e374b1f95f07e255d"
+    },
+    {
+      "original_path": "docs/design/index.md",
+      "current_path": "docs/design/index.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "b7e817d6d6b4b468bbfb5766ece22641e8afa01e251fcadb40a083429c55bce8",
+      "after_sha256": "b7e817d6d6b4b468bbfb5766ece22641e8afa01e251fcadb40a083429c55bce8"
+    },
+    {
+      "original_path": "docs/design/staleness_control.md",
+      "current_path": "docs/design/staleness_control.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "fe1fdadf64b6e13c255216e91b91ed5c67a81d1e422b7fa37c6f34b809cf6bbf",
+      "after_sha256": "fe1fdadf64b6e13c255216e91b91ed5c67a81d1e422b7fa37c6f34b809cf6bbf"
+    },
+    {
+      "original_path": "docs/design/flexible_rollout.md",
+      "current_path": "docs/design/flexible_rollout.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "18808346804d6401a67637b31909f546f34796f59f16bb4af6a39eece215a7fe",
+      "after_sha256": "18808346804d6401a67637b31909f546f34796f59f16bb4af6a39eece215a7fe"
+    },
+    {
+      "original_path": "docs/design/kv_cache.md",
+      "current_path": "docs/design/kv_cache.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "3ee362f505a8fef255964879ab4357fea7972af88c64924829e1d2747942765c",
+      "after_sha256": "3ee362f505a8fef255964879ab4357fea7972af88c64924829e1d2747942765c"
+    },
+    {
+      "original_path": "docs/design/router_tito.md",
+      "current_path": "docs/design/router_tito.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "789e1c040123b0e6b9f4aba4b2fa70c59dc023a06c052cfeb0afbd265e93f56a",
+      "after_sha256": "789e1c040123b0e6b9f4aba4b2fa70c59dc023a06c052cfeb0afbd265e93f56a"
+    },
+    {
+      "original_path": "docs/design/architecture.md",
+      "current_path": "docs/design/architecture.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "7172dc86a90066fcba95cacd39ff00502b77c95467689d9e147178cd320b8d96",
+      "after_sha256": "7172dc86a90066fcba95cacd39ff00502b77c95467689d9e147178cd320b8d96"
+    },
+    {
+      "original_path": "docs/design/env_worker.md",
+      "current_path": "docs/design/env_worker.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "7a30195bac406b1198b98bb4d81a257355c58fd8b77be5476d62f3f975eda47a",
+      "after_sha256": "7a30195bac406b1198b98bb4d81a257355c58fd8b77be5476d62f3f975eda47a"
+    },
+    {
+      "original_path": "docs/tools/README.md",
+      "current_path": "docs/tools/README.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "b7e353205da884dbf5e61095ff3b013f37b4b6c0a2cecc4b4fd4025d2203fa08",
+      "after_sha256": "b7e353205da884dbf5e61095ff3b013f37b4b6c0a2cecc4b4fd4025d2203fa08"
+    },
+    {
+      "original_path": "docs/examples/index.md",
+      "current_path": "docs/examples/index.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "0ff1c83ed35ff44b0cd44b1889d9a4a369025fa78d074855278ab105af708a45",
+      "after_sha256": "0ff1c83ed35ff44b0cd44b1889d9a4a369025fa78d074855278ab105af708a45"
+    },
+    {
+      "original_path": "docs/psrl/vllm-and-training-parallelism/experiments-and-reference.md",
+      "current_path": "docs/psrl/vllm-and-training-parallelism/experiments-and-reference.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "推理与训练并行：公式速查及实验记录",
+        "八、机制 → 实验验证设计",
+        "实验 1 实测结果(2026-09-11,H20,Qwen2.5-3B-Instruct)"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "f24111680d0bbac633729714be852c371951fafce17b878d683ff3b34fc759b1",
+      "after_sha256": "f24111680d0bbac633729714be852c371951fafce17b878d683ff3b34fc759b1"
+    },
+    {
+      "original_path": "docs/psrl/vllm-and-training-parallelism/rl-loss-and-sampling.md",
+      "current_path": "docs/psrl/vllm-and-training-parallelism/rl-loss-and-sampling.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "6.0e 输入输出的 label 设计与 `rollout_correction` 修正（附 PSRL 源码，对照 `fsdp_qwen2.5_3b_laps.sh`）"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "4ccd2fc04338626895b303ea0ac6567b22999fad7d0b53f9c665ee6b4de06f49",
+      "after_sha256": "4ccd2fc04338626895b303ea0ac6567b22999fad7d0b53f9c665ee6b4de06f49"
+    },
+    {
+      "original_path": "docs/psrl/vllm-and-training-parallelism/rl-training-workflow.md",
+      "current_path": "docs/psrl/vllm-and-training-parallelism/rl-training-workflow.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "486e26ff922c66c385fa842494aa8899630b729908b4bfe26abb4bf4ebd08dee",
+      "after_sha256": "486e26ff922c66c385fa842494aa8899630b729908b4bfe26abb4bf4ebd08dee"
+    },
+    {
+      "original_path": "docs/psrl/vllm-and-training-parallelism/training-parallelism.md",
+      "current_path": "docs/psrl/vllm-and-training-parallelism/training-parallelism.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "eda04701d01bb6664a6b70b8adfd58bfb1a6da7fbeebe31eb7cf2b64bd871e13",
+      "after_sha256": "eda04701d01bb6664a6b70b8adfd58bfb1a6da7fbeebe31eb7cf2b64bd871e13"
+    },
+    {
+      "original_path": "docs/psrl/vllm-and-training-parallelism/inference-mechanisms.md",
+      "current_path": "docs/psrl/vllm-and-training-parallelism/inference-mechanisms.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "56746f2e58d625adb8113669970afaedd3e1f6ba58675f438662cfd21e11718e",
+      "after_sha256": "56746f2e58d625adb8113669970afaedd3e1f6ba58675f438662cfd21e11718e"
+    },
+    {
+      "original_path": "docs/tools/docs-freshness-audit.md",
+      "current_path": "docs/tools/docs-freshness-audit.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "修订过时说明、历史适用范围或迁移后的引用",
+      "before_sha256": "13e2e90b5b77e8411e71c0798dbf5e609c55fd1f45c02260006068da033968d6",
+      "after_sha256": "34cb5ba56bf6ab0fb985358d170f271b4f95a9e3dfda3a84a07d23abe210f05b"
+    },
+    {
+      "original_path": "docs/tools/docs-organization-audit.md",
+      "current_path": "docs/tools/docs-organization-audit.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "d33e27ce19ad0cbdcfb46e045bb874096e3853378cfd78da39b1fd57b16fa858",
+      "after_sha256": "d33e27ce19ad0cbdcfb46e045bb874096e3853378cfd78da39b1fd57b16fa858"
+    },
+    {
+      "original_path": "docs/tools/claude-code/claude-code-run-terminal-commands.md",
+      "current_path": "docs/tools/claude-code/claude-code-run-terminal-commands.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "2d1cb3e2b9cdb05e77b5ba8a0979a120ad8293eb0687bb103f51691e8c8499f5",
+      "after_sha256": "2d1cb3e2b9cdb05e77b5ba8a0979a120ad8293eb0687bb103f51691e8c8499f5"
+    },
+    {
+      "original_path": "docs/tools/claude-code/claude-code-permission-modes.md",
+      "current_path": "docs/tools/claude-code/claude-code-permission-modes.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "9c0b8b47d9b0042bd33e6bd2d33c1b139f6d36fff6c342f5729db2d8a121af58",
+      "after_sha256": "9c0b8b47d9b0042bd33e6bd2d33c1b139f6d36fff6c342f5729db2d8a121af58"
+    },
+    {
+      "original_path": "docs/tutorial/configuration/transport-and-rollout.md",
+      "current_path": "docs/tutorial/configuration/transport-and-rollout.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "4b7ac6d3a4d4c9020d07a295f8cda33e4a207b101b28361bca3ec5d6ede7a8f9",
+      "after_sha256": "4b7ac6d3a4d4c9020d07a295f8cda33e4a207b101b28361bca3ec5d6ede7a8f9"
+    },
+    {
+      "original_path": "docs/tutorial/configuration/system-and-core.md",
+      "current_path": "docs/tutorial/configuration/system-and-core.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "272c90e833c0fb5ea3aa70b8259e0770d9815330915730dd86234af9d6e774e0",
+      "after_sha256": "272c90e833c0fb5ea3aa70b8259e0770d9815330915730dd86234af9d6e774e0"
+    },
+    {
+      "original_path": "docs/tutorial/configuration/monitoring-and-overrides.md",
+      "current_path": "docs/tutorial/configuration/monitoring-and-overrides.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "4f1884f9db708a17ca971f03e726e64ec71ee410cdba56c5bfa18ae52f8e2436",
+      "after_sha256": "4f1884f9db708a17ca971f03e726e64ec71ee410cdba56c5bfa18ae52f8e2436"
+    },
+    {
+      "original_path": "docs/tools/shell-python/python-import-persistence.md",
+      "current_path": "docs/tools/shell-python/python-import-persistence.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "89a04540307a4912646c6d5fc814dc2910bcfc7aec6a65f87f03e2aff7c0e129",
+      "after_sha256": "89a04540307a4912646c6d5fc814dc2910bcfc7aec6a65f87f03e2aff7c0e129"
+    },
+    {
+      "original_path": "docs/psrl/psrl-run-guide/getting-started.md",
+      "current_path": "docs/psrl/psrl-run-guide/getting-started.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "9ccc10481ca11be389fe888cd4b7001a72c8bced065d4013554765f093484d5a",
+      "after_sha256": "9ccc10481ca11be389fe888cd4b7001a72c8bced065d4013554765f093484d5a"
+    },
+    {
+      "original_path": "docs/tools/shell-python/activate-script-notes.md",
+      "current_path": "docs/tools/shell-python/activate-script-notes.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "生效和验证",
+        "本次验证范围"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "b7373a1f5e5fdb1662dcb9f954a821a15c525a845f8e29c260b39ae6094de3d9",
+      "after_sha256": "b7373a1f5e5fdb1662dcb9f954a821a15c525a845f8e29c260b39ae6094de3d9"
+    },
+    {
+      "original_path": "docs/psrl/psrl-run-guide/ray-and-rollout.md",
+      "current_path": "docs/psrl/psrl-run-guide/ray-and-rollout.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "6. 落到 `qwen2.5_3b_fsdp.sh` 的 2 节点实验上"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "fdf19d48239e87cd0d90100653acc3d0fc407881d7677872c1edb8b4735256c2",
+      "after_sha256": "fdf19d48239e87cd0d90100653acc3d0fc407881d7677872c1edb8b4735256c2"
+    },
+    {
+      "original_path": "docs/tools/shell-python/bash-source-command.md",
+      "current_path": "docs/tools/shell-python/bash-source-command.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "653ed191b9d5470cbc8009ac97e509ae4bdda53f906a2c8af61729905abe8233",
+      "after_sha256": "653ed191b9d5470cbc8009ac97e509ae4bdda53f906a2c8af61729905abe8233"
+    },
+    {
+      "original_path": "docs/psrl/psrl-run-guide/cluster-preflight.md",
+      "current_path": "docs/psrl/psrl-run-guide/cluster-preflight.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "16.15 短响应验证先核奖励配置",
+        "18. 跨任务池压力实验与事件循环归属",
+        "19.1 Results：日志与线程证据",
+        "19.5 修复方向与本轮停止条件",
+        "20.2 Results：新的数据目录与存储驱动测试",
+        "20.4 inode 概念与本故障的关系"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "4834279acf6c5fe5aace111b8beaa5a538a2732e633ceabcb9aac12b6a1b9768",
+      "after_sha256": "aceed68db61336e5a199fac4f4abdfab15e05378aeb6139e8611f879ad73e383"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/README.md",
+      "current_path": "docs/env-worker-deep-dive/README.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "dfe647660141d88723222a502a4a9aff5ffad100eeedb2b958660aa2bd1495cf",
+      "after_sha256": "839358406687bfe1fb9a3fb503c1c18abc08e6e99d4039bff18c9f17d945a42f"
+    },
+    {
+      "original_path": "docs/psrl/psrl-run-guide/startup-incident-reviews.md",
+      "current_path": "docs/psrl/psrl-run-guide/startup-incident-reviews.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "PSRL 单机与多机启动故障复盘",
+        "单机 Demo 踩坑记录：两处根因与修复",
+        "让 `qwen2.5_3b_fsdp.sh` 跑通 2 节点实验：脚本改了什么",
+        "验证"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "91fbc202f0b39e878811e57c40ef9bbae830f64ab784cc562cb5c2bafcdca34e",
+      "after_sha256": "91fbc202f0b39e878811e57c40ef9bbae830f64ab784cc562cb5c2bafcdca34e"
+    },
+    {
+      "original_path": "docs/psrl/psrl-run-guide/monitoring-and-batches.md",
+      "current_path": "docs/psrl/psrl-run-guide/monitoring-and-batches.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "a51e8c9e93719cdd856ab8d1a2cab222503306666a17779c49b0f79306ae31fb",
+      "after_sha256": "a51e8c9e93719cdd856ab8d1a2cab222503306666a17779c49b0f79306ae31fb"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/literature-reviews/rollart-dynarl-deep-reading.md",
+      "current_path": "docs/env-worker-deep-dive/literature-reviews/rollart-dynarl-deep-reading.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "13. 可运行教学实验"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "cfe6e5eae817724226a74994d650c68f7944c047ed2765c55ba15d8e03945763",
+      "after_sha256": "cfe6e5eae817724226a74994d650c68f7944c047ed2765c55ba15d8e03945763"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/literature-reviews/recent-top-conference-papers.md",
+      "current_path": "docs/env-worker-deep-dive/literature-reviews/recent-top-conference-papers.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "10. 阅读顺序与研究验证建议"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "86f19acde68252f5769caa437a2623f980a8d5f22d4a8d6722fb4e3d68dc4a4a",
+      "after_sha256": "86f19acde68252f5769caa437a2623f980a8d5f22d4a8d6722fb4e3d68dc4a4a"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/literature-reviews/yarn-inspired-gpu-feedback-scheduling.md",
+      "current_path": "docs/env-worker-deep-dive/literature-reviews/yarn-inspired-gpu-feedback-scheduling.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "如何用当前 benchmark 验证",
+        "教学实验与实际状态"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "a2c73779246ba1825ec5f19aea7a9865bf0f45aeea879847de46df23c9752d3b",
+      "after_sha256": "a2c73779246ba1825ec5f19aea7a9865bf0f45aeea879847de46df23c9752d3b"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/literature-reviews/gpu-workload-benchmark-survey.md",
+      "current_path": "docs/env-worker-deep-dive/literature-reviews/gpu-workload-benchmark-survey.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "候选对照表",
+        "验收与未验证事项"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "2b61bb6def96c05734fe607c948877aa0482541bdcc2c0cc4e7d023cb89d8fe8",
+      "after_sha256": "28d6736c4f0898186d5c6b3ff8b0526ad8bdf1e071251f673ccc28945e5296e3"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/literature-reviews/README.md",
+      "current_path": "docs/env-worker-deep-dive/literature-reviews/README.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "03bd8b7117fbb29def636575d32363289dfc30985f1ccee4b1994922d6c53a3c",
+      "after_sha256": "03bd8b7117fbb29def636575d32363289dfc30985f1ccee4b1994922d6c53a3c"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/literature-reviews/ai4infra-performance-benchmarks.md",
+      "current_path": "docs/env-worker-deep-dive/literature-reviews/ai4infra-performance-benchmarks.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "AI4Infra 性能反馈研究：benchmark 选择与最小验证",
+        "实验怎样开展",
+        "本次原生 Env 验证链路",
+        "Results 与验证边界"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "5de1d15c092d8a431f7692bd97964dad26e016f4dbad18aa8d72cc4c173cf058",
+      "after_sha256": "9da79e10cab34ef1f81de0838848c2c540e937b3b03583e6c6f70e51d78ec410"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/literature-reviews/krex-region-exclusivity.md",
+      "current_path": "docs/env-worker-deep-dive/literature-reviews/krex-region-exclusivity.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "6. Results：论文证据及不能外推的结论",
+        "9. 对研究选题和实验设计的指导",
+        "12. 可落地的测量协议与最小实验计划"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "1f95ee7481a52d17158e8a0b72c24729d4168726b1d7ea399a01a34de01f7c22",
+      "after_sha256": "1f95ee7481a52d17158e8a0b72c24729d4168726b1d7ea399a01a34de01f7c22"
+    },
+    {
+      "original_path": "docs/tools/codex/codex-agents-md-scope.md",
+      "current_path": "docs/tools/codex/codex-agents-md-scope.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "bb34bdcb50dc7907abf0947ac64a9fae54df49b0c69040e83530c6e3af8055f6",
+      "after_sha256": "bb34bdcb50dc7907abf0947ac64a9fae54df49b0c69040e83530c6e3af8055f6"
+    },
+    {
+      "original_path": "docs/tools/codex/codex-config-backup-restore.md",
+      "current_path": "docs/tools/codex/codex-config-backup-restore.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "5. 回退前后对照（具体例子）"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "e0f18b41c6c36fea5dcac0c032b91c96d10b2d2361b8890da8a9864fd83d144b",
+      "after_sha256": "e0f18b41c6c36fea5dcac0c032b91c96d10b2d2361b8890da8a9864fd83d144b"
+    },
+    {
+      "original_path": "docs/tools/codex/codex-session-management.md",
+      "current_path": "docs/tools/codex/codex-session-management.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "Codex 会话与故障排查导航",
+        "阅读顺序与验证边界"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "c3b2c0c84f8965e0faede89d31ead021c20027d81f5f0cb0be4790453cd509d8",
+      "after_sha256": "c3b2c0c84f8965e0faede89d31ead021c20027d81f5f0cb0be4790453cd509d8"
+    },
+    {
+      "original_path": "docs/tools/codex/rule-memory-skill.md",
+      "current_path": "docs/tools/codex/rule-memory-skill.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "e7f501619487ece03ecb7c059b3d32e9c26ad9af32a5d90e016802c78f560aaa",
+      "after_sha256": "e7f501619487ece03ecb7c059b3d32e9c26ad9af32a5d90e016802c78f560aaa"
+    },
+    {
+      "original_path": "docs/examples/rlvr/dapo.md",
+      "current_path": "docs/examples/rlvr/dapo.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "7aa11aff6d4e08fe8d3a54dcaf7a86ff1d9286ed64deb17e643a9d0371fc6e19",
+      "after_sha256": "7aa11aff6d4e08fe8d3a54dcaf7a86ff1d9286ed64deb17e643a9d0371fc6e19"
+    },
+    {
+      "original_path": "docs/examples/rlvr/common.md",
+      "current_path": "docs/examples/rlvr/common.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "1e5e3b3d402657546e1df36ea59766e9313cf6f84e96f8c9b84bd2c459a643d6",
+      "after_sha256": "1e5e3b3d402657546e1df36ea59766e9313cf6f84e96f8c9b84bd2c459a643d6"
+    },
+    {
+      "original_path": "docs/examples/rlvr/index.md",
+      "current_path": "docs/examples/rlvr/index.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "e9939a9ea15c5120b593eef524e150093ea795bf864457b1dcf4ad925b111cee",
+      "after_sha256": "e9939a9ea15c5120b593eef524e150093ea795bf864457b1dcf4ad925b111cee"
+    },
+    {
+      "original_path": "docs/examples/rlvr/ppo.md",
+      "current_path": "docs/examples/rlvr/ppo.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "1e4910e14bb17b68764bb9c38a8261f7a38e6463837f4a0028c9e93265d66671",
+      "after_sha256": "1e4910e14bb17b68764bb9c38a8261f7a38e6463837f4a0028c9e93265d66671"
+    },
+    {
+      "original_path": "docs/examples/rlvr/grpo.md",
+      "current_path": "docs/examples/rlvr/grpo.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "a91c87c1a6b1239d3d00a23b24db7f547b1ddadad9ad36c84944ec4f50f5ca17",
+      "after_sha256": "a91c87c1a6b1239d3d00a23b24db7f547b1ddadad9ad36c84944ec4f50f5ca17"
+    },
+    {
+      "original_path": "docs/tools/linux/mmap-sqlite-sigbus.md",
+      "current_path": "docs/tools/linux/mmap-sqlite-sigbus.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "8. 跟着图读源码与运行实验",
+        "10. 资料与验证范围"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "7dd6bdb07fd510d6363e05e573fb983d02559720a4981953942cadda80b18dd1",
+      "after_sha256": "7dd6bdb07fd510d6363e05e573fb983d02559720a4981953942cadda80b18dd1"
+    },
+    {
+      "original_path": "docs/tools/linux/inode-basics.md",
+      "current_path": "docs/tools/linux/inode-basics.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "4. 跟着图读实验源码",
+        "6. 与本机 Docker 故障的关系",
+        "7. 运行实验与验证边界"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "0c2b757035ae9af93e8b86dfaaf829feb8bf25547644f4f47a519d46a39388b1",
+      "after_sha256": "0c2b757035ae9af93e8b86dfaaf829feb8bf25547644f4f47a519d46a39388b1"
+    },
+    {
+      "original_path": "docs/examples/agentic_rl/index.md",
+      "current_path": "docs/examples/agentic_rl/index.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "20ecb60c38b1928c62f90bddb909adc1d327f2afb0d5d91f5b31145faa572aab",
+      "after_sha256": "20ecb60c38b1928c62f90bddb909adc1d327f2afb0d5d91f5b31145faa572aab"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/baseline-state-lifetimes.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/baseline-state-lifetimes.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "复现方法与验证边界"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "542cb6dcb06be90ae882087d972755ee6934f7f1933fbb6b06e10fa1a458a5a9",
+      "after_sha256": "542cb6dcb06be90ae882087d972755ee6934f7f1933fbb6b06e10fa1a458a5a9"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "6. 跟着图读源码与可运行实验",
+        "7. Results 与验证边界",
+        "11. Results：异步归还小实验",
+        "12. Results：A 下一条 GPU 调用在等什么",
+        "13. Results：慢查询定位与直接接口修复"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "3bb495ba694e655f38d678348a16c565d6b6095d707ea9461ff6f088e3ac8c0e",
+      "after_sha256": "956ef090e967cc28e858b428b1c55f5f27fccbc0ed9aaddcc07b940e70272b42"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/router-configuration-and-recovery.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/router-configuration-and-recovery.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "8. 运行教学实验与回归"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "5f7e2b2d373c112c2a50183ee34e1826a502ce2534f9f06732aae413582ae9e1",
+      "after_sha256": "fdbbd5945e81e20231a073892dd236d99fc26bb151a17b3f964a5596d95a7886"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "d18aa56940ba29ba3ebaf312babd9ae7ee2e069cefa52a2043c1dab0cd038c34",
+      "after_sha256": "d18aa56940ba29ba3ebaf312babd9ae7ee2e069cefa52a2043c1dab0cd038c34"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/re-bench-recipe.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/re-bench-recipe.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "对 Env 的研究价值与验证边界"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "213477f724246a320f165170a1dc42567dddc9b5a1ca75f1edc57b307155ea3f",
+      "after_sha256": "5c2e94bcd48806b9ceffd4f2d85a2d168d46249df8d7786fbdb3372581ea46a2"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/native-harbor-backend.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/native-harbor-backend.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "EnvWorker 与 Harbor 共用容器后端：实现、边界与真实验证",
+        "5. 可运行验证与 Results",
+        "7. 后续修复优先级与生命周期故障复现",
+        "7.1 第一优先：修复生命周期的就绪状态",
+        "7.5 Results 与可运行复现"
+      ],
+      "decision": "旧故障或提案段移出正文，改为已实现状态和有效证据",
+      "before_sha256": "776788066767ef9016694719ba0d9888849a4d0f66f7c5f213a4b7e3ef6cb514",
+      "after_sha256": "020023322e426819b43e7276c76b5b85e5d576507d12d812b336d803287bc034"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/gpu-benchmark-recipes.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/gpu-benchmark-recipes.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "H20 与框架内资源调度对照",
+        "episode 级任务与原生 Env 验证",
+        "真实环境验证"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "6850740bc602e687d76200f600ebd1e442923f446e870b01333d9708d2e86414",
+      "after_sha256": "da2a2a5e7a506bc94bdb18b8c30fa1ae8fa5abdeb30e984dd6cb45fe41d6900c"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/http-basics-for-gate-b.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/http-basics-for-gate-b.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "10. 可运行实验",
+        "11. 没有验证的部分与注意点"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "5a066fb771c4031cc126d53a3c2c2740c5fff2ed1a173b3ad580fa4de2cf65a0",
+      "after_sha256": "5a066fb771c4031cc126d53a3c2c2740c5fff2ed1a173b3ad580fa4de2cf65a0"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/inferencebench-scoring.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/inferencebench-scoring.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "InferenceBench 如何评分，以及 Env ON/OFF 实验验证了什么",
+        "PSRL 奖励和功能实验分数"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "cd34411068bf10e92103eae047438f07c24fc92d9199f28c7fd45dfcd407f500",
+      "after_sha256": "cd34411068bf10e92103eae047438f07c24fc92d9199f28c7fd45dfcd407f500"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/mps-parallel-execution.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/mps-parallel-execution.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "4. 独立取消与故障处理",
+        "5. Results 与复现实验",
+        "9. 收益条件与本次 Results 的解释"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "b2dcd996a95010eee740716dffa6f05a551d6f1f73c2e557878db455d5f2a7fd",
+      "after_sha256": "23816742e43b19416c607f9c4f8a6e44a7390e29b7a60589f5d7e29e7ce20743"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "5. Results 与复现",
+        "8.5 只读实验与 Results",
+        "8.8 Results：当前 procfs 报错与驱动能力的区别",
+        "8.9 设计要求、当前检查与修复边界"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "7facd8441b518d944c7f4ea8ccbee32f68068759d4b1dcdcbaba0c81d8c2caad",
+      "after_sha256": "0c3b5a65c0da88f714622658537f27d5a4d51e668510d5fdffa11708de474e4a"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/cuda-context-and-compute-contention.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/cuda-context-and-compute-contention.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "1. 从一组实测数字说起：64 MiB 申请为什么测出 380 MiB",
+        "7. 验证边界：已经证明了什么，还没证明什么"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "ea447759d148931787314aad05c3f79b1404730a432e6a84cfba269ac88ff7a3",
+      "after_sha256": "ea447759d148931787314aad05c3f79b1404730a432e6a84cfba269ac88ff7a3"
+    },
+    {
+      "original_path": "docs/examples/generative_reward_model/on_policy_distillation.md",
+      "current_path": "docs/examples/generative_reward_model/on_policy_distillation.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "2c714ae88ae572bb47d9db6dcb25df3e5c4f0bc9c38f2f4670753f6e4140bd8a",
+      "after_sha256": "2c714ae88ae572bb47d9db6dcb25df3e5c4f0bc9c38f2f4670753f6e4140bd8a"
+    },
+    {
+      "original_path": "docs/examples/generative_reward_model/index.md",
+      "current_path": "docs/examples/generative_reward_model/index.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "81599c86b1e9f79458676f86300e3a2457bf7b8c905ddd767f455db0c0cf724d",
+      "after_sha256": "81599c86b1e9f79458676f86300e3a2457bf7b8c905ddd767f455db0c0cf724d"
+    },
+    {
+      "original_path": "docs/examples/generative_reward_model/llm_as_a_judge.md",
+      "current_path": "docs/examples/generative_reward_model/llm_as_a_judge.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "26fcd1958fe51f13ccbd26445426f8a2eee4abc2d6245fff89dab41efd535469",
+      "after_sha256": "26fcd1958fe51f13ccbd26445426f8a2eee4abc2d6245fff89dab41efd535469"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/router-baseline-control-validation.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/router-baseline-control-validation.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "修复后的 EnvRouter 与固定 OFF 基线：单卡等完成量验证",
+        "3. Results：等完成量与开销",
+        "4. Results：账本与安全回填",
+        "8. Results：优化前后与复现",
+        "只读查询实验，不分配 CUDA 显存。",
+        "10. Results：私有节点预热与固定 OFF 复验",
+        "11. Results：低负载慢在哪里与优化优先级",
+        "12. Results：长尾复现与阻塞栈定位",
+        "13. Results：同步准备路径移出事件循环"
+      ],
+      "decision": "历史正文归档并重建有效入口",
+      "before_sha256": "cf475d5d16fb66c334a8986c093372ce42c773106db6e7ecf39943cdacfecb5a",
+      "after_sha256": "6980e05eedad915c2583d5fb0652d30caa54438832d4131409059f83086cca48"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/archive/env-service-implementation.md",
+      "current_path": "docs/env-worker-deep-dive/archive/env-service-implementation.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "2.1 一张对照表：这些词各自在解决什么问题",
+        "2.9 实验脚本：把这条链亲手跑一遍",
+        "5.2 \"有效占用\"取声明和实测的较大者",
+        "9. 测试与演示的实测输出",
+        "10. 没有验证的部分与已知风险"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "4fc009ddc46e2573cd913a20ada8fb61e1f6e23ff79ea251f6ba5486bd07d344",
+      "after_sha256": "4fc009ddc46e2573cd913a20ada8fb61e1f6e23ff79ea251f6ba5486bd07d344"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/archive/env-router-current-flow.md",
+      "current_path": "docs/env-worker-deep-dive/archive/env-router-current-flow.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "6. 当前限制与可复现实验",
+        "12. Results：持有范围的 CPU 教学验证"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "d0b3fff687eeb926591893a817fbb9408ef1af99b2e2926f59aedd2d3c6706ae",
+      "after_sha256": "2b5084b35ce828e84e138e5529f7eda93f3afae9a00aad2d3f74b6ac02564db0"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/archive/sciaccel-gpu-gate.md",
+      "current_path": "docs/env-worker-deep-dive/archive/sciaccel-gpu-gate.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "SciAccel 接入 EnvWorker 管理 GPU：Gate A/B 实测与部署",
+        "16. 追加问题（2026-09-27）：Science（SciAccel）任务接入 EnvWorker 管理 GPU 是否可行？Harbor 自己管理 Docker，能不能手动管理？GPU 抢占怎么实测",
+        "16.4 实测脚本：验证 GPU 调度确实会出现抢占",
+        "16.5 修复已部署：Gate A（设备互斥）+ Gate B（回复节流）代码位置与验证脚本",
+        "AFTER：单进程内验证（真实 import GpuDeviceGate）",
+        "AFTER：跨进程验证（真实起多个 OS 子进程，证明 fcntl 锁跨进程也生效——",
+        "在真正有 GPU 的服务器上实验：去掉 --num-gpus（或不设 PSRL_SCIACCEL_GPU_DEVICES",
+        "18. 追加问题（2026-10-08）：`env-service-design` 这份方案，能修复 §17.3 这两个问题吗"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "41d5538a5e165c0afe8e64897b7791cb23deeca640e17fc4afc6f3e151425065",
+      "after_sha256": "41d5538a5e165c0afe8e64897b7791cb23deeca640e17fc4afc6f3e151425065"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/archive/implementation-and-gaps.md",
+      "current_path": "docs/env-worker-deep-dive/archive/implementation-and-gaps.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "EnvWorker 历史实现与修复前审查：账本、回收和旧待办对照",
+        "15. 两份文档到底是什么关系：逐节对照，以及提案里没落地的部分现在该怎么看",
+        "15.1 逐节对照表：本文哪几节在讲 2026-09-21 提案的哪部分",
+        "17.9 可运行复现和验证边界"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "be42f8d31f4ab7e6b1138ed622893615fa3315f3612635ef11761458002eb749",
+      "after_sha256": "be42f8d31f4ab7e6b1138ed622893615fa3315f3612635ef11761458002eb749"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/archive/commit-72ca50c-gate-ab-walkthrough.md",
+      "current_path": "docs/env-worker-deep-dive/archive/commit-72ca50c-gate-ab-walkthrough.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "6. 与设计提案对照：做了什么，没做什么",
+        "9. 可运行实验与实测输出",
+        "10. 没有验证的部分"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "e06945557c2b9bc4cbcab62393de14ab07d023764f2a942d9371dd500fb9e320",
+      "after_sha256": "e06945557c2b9bc4cbcab62393de14ab07d023764f2a942d9371dd500fb9e320"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/archive/README.md",
+      "current_path": "docs/env-worker-deep-dive/archive/README.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "f6b1f14ca670a86d0cd0d120be96fa5b6905e21ea3af4a59cff1f0664d849049",
+      "after_sha256": "f6b1f14ca670a86d0cd0d120be96fa5b6905e21ea3af4a59cff1f0664d849049"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/science-gpu-pressure-ab.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/history/science-gpu-pressure-ab.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "Science 训练中的跨任务池 GPU 竞争与 Router 对照",
+        "1. 全局流程与对照变量",
+        "3. 实验配置与停止条件",
+        "4. 实测结果",
+        "7. 验证边界与资源回收",
+        "8. ON 段错误调查与 HTTP 连接池修复",
+        "11. 四题各四条 rollout 的等完成量对照"
+      ],
+      "decision": "移出主阅读路径，保留固定版本历史证据",
+      "before_sha256": "a1118f85bf2d531d42df4fd306e021743554d2ee56b0320c83c033e1f584dc1b",
+      "after_sha256": "03b2345e628f1773bc8da6ee72a3f5f15013e6448ae342aaa39fd7ebcfac8248"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/env-design-and-results-brief.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/env-design-and-results-brief.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "Results：已有收益"
+      ],
+      "decision": "历史正文归档并重建有效入口",
+      "before_sha256": "c4133eb4792a57f3671942f3ee0b92d00967e5c4950972284bb401dc71b1bfcd",
+      "after_sha256": "3c9114a72548bd7a5594a0f8f42044a1be64936a312c71ea07d41d3107b1c9ca"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/native-backend-fixes-and-science.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/native-backend-fixes-and-science.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "原生容器后端修复与真实 science 短验证",
+        "修复范围与调用链",
+        "实验设计与版本",
+        "Results 与收益边界",
+        "验证失败与未完成项"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "e8485832ea11349674d507a7d4b5e381643ca87b9b2b311a15fc8d65f641d92a",
+      "after_sha256": "4951ab969ce41007e8478a42754df8b4fa6e87837b3ba30bc332194bc3270272"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/README.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/README.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "EnvWorker 实验与验证",
+        "真实训练对照",
+        "调度与组件对照",
+        "故障与接入验证"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "74bdbf1cdfe3387fcae71da16e6dbd113f52345b40d89ec295344aacb043777c",
+      "after_sha256": "43bb3a0b075be23d5e1fb06c95b3206a1d409954e71a6b475e628a069f9587d2"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/host-proc-blocker.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/host-proc-blocker.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "GPU 进程归属的 procfs 挂载障碍与实验处理",
+        "实验如何继续",
+        "实现与验证"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "86f602946834f27c839916be8e882cc1bad3e618f59c9b708768ace7dfe53fb9",
+      "after_sha256": "328f329ae23be3f06f793b156601ad583af084b7d84c528e42fe1629aaf4b4b9"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/science-env-router-comparison.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/history/science-env-router-comparison.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "Science 资源账本对照：unit 余量、GPU 容器与训练验证边界",
+        "3. 实验设计与停止条件",
+        "4. 实测结果与图表"
+      ],
+      "decision": "移出主阅读路径，保留固定版本历史证据",
+      "before_sha256": "4d86832ee0926d7c10a3477c59ad8dfb0282b27a195620083666377ee2c7f825",
+      "after_sha256": "34b11f39e3639e5bc4f45c8747fde444b561f1a3dbbe1d28de7ec614a9457275"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "EnvRouter 低负载配对实验与 Gate A/B 设计审视"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "ade116d5a0a2a42e66664efd5ab1b26da6e83d338b48ca0091c728a21c4de937",
+      "after_sha256": "ade116d5a0a2a42e66664efd5ab1b26da6e83d338b48ca0091c728a21c4de937"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/science-single-gpu-training-control.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/science-single-gpu-training-control.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "Science 真实训练 OFF / ON 对照：显存压力与原生任务",
+        "2. 对照配置与停止条件",
+        "4. Results：训练与调度结果",
+        "6. 验证边界与资源清理",
+        "7. Results：十步扩展验证",
+        "8. 证据文件删除故障与修复",
+        "9. Results：不注入压力的原生任务对照",
+        "10. Results：无压力续跑与共同完成的两步",
+        "11. Results：常驻显存压力四组短测",
+        "公平对照条件与停止边界",
+        "实测结果与解释",
+        "12. Results：三步后台对照"
+      ],
+      "decision": "历史正文归档并重建有效入口",
+      "before_sha256": "1a944682044b9a4a171f200a64c4b0a9c91e62199fa2018d891a6d2e72d28a00",
+      "after_sha256": "c774083c1776092d9cbc1ebcaf6fdc5016f5bb1099ecaa44db3beaab60502b82"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/mps-training-comparison.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/mps-training-comparison.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "MPS 真实 GPU 训练并发对照",
+        "1. 验证问题和执行路径",
+        "2. 三组对照和计时方法",
+        "3. Results",
+        "4. 对 Router 的含义与验证边界",
+        "6. 控制通道故障定位与修复",
+        "7. 修复后的 MPS 开关速度对照"
+      ],
+      "decision": "历史正文归档并重建有效入口",
+      "before_sha256": "7d100d3f8f9b87aa79fbf50d618bf24ef264cea1e017c2f31c5d4ae8ee23a3f6",
+      "after_sha256": "6738ab12dd4eacd303b6d00452678bbc06c8d8e444a3c272ebd8a952a44941db"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/onboarding-and-gpu-validation.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/onboarding-and-gpu-validation.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "EnvWorker 接入实操：把现有实现接进 PSRL + 验证 GPU 真的分出去了",
+        "12. 构造 GPU 推理测试 case：验证 unit 真的用上了 GPU"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "5494d1ed48eb97d8481ff068615f65da36c6d8b0f448a1d0d064afc40993d6c4",
+      "after_sha256": "5494d1ed48eb97d8481ff068615f65da36c6d8b0f448a1d0d064afc40993d6c4"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/README.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/README.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "任务接入与验证"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "66a474ac25a52522c4a5ad0e98487c1eaddd6d587848d22e433d0c318bb45c54",
+      "after_sha256": "b52b6c4e7d86af70a38452a22b89a9e9ea9e8de760b546aed5dbaf7f1b97bd8f"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/gate-b-beginner-guide.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/gate-b-beginner-guide.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "11. 可运行实验",
+        "12. 容易误解的地方与没有验证的部分"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "0f575f11effb7de1ecc4e1ea7bd72b49372073e266e3a17315bb395527e9c3e1",
+      "after_sha256": "0f575f11effb7de1ecc4e1ea7bd72b49372073e266e3a17315bb395527e9c3e1"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/process-identity-without-procfs.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/process-identity-without-procfs.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "真实 CPU 验证与复现",
+        "统一后端的双容器实测"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "a9bdc6738f8fbffd21513d0d7543cad2a55dc93a9d183208e444c276a8ccfc9a",
+      "after_sha256": "a9bdc6738f8fbffd21513d0d7543cad2a55dc93a9d183208e444c276a8ccfc9a"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "2. 已有实验究竟证明了什么",
+        "14. 真实 GPU 验证结果（2026-10-15）"
+      ],
+      "decision": "旧故障或提案段移出正文，改为已实现状态和有效证据",
+      "before_sha256": "355ebe077fc8c1dd1de49b56f35a93dd884a968080952ec03829014db4f0723c",
+      "after_sha256": "b94ee97f29e1433ac9bb39eb9af21ab8fab7cb53aca97062cf38d28934bec6a7"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/current-design.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/current-design.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "6. 可运行例子与验证边界"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "0cff445895b96de847751e6cc437df0e4b5aad91c40cfd851b81c9a83d63a8ed",
+      "after_sha256": "39a86bced67e9ae099f694f235fdefd946c7931b2244caf255277efe139b30e5"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/worker-retry-and-redispatch.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/worker-retry-and-redispatch.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "5. 本轮修复了哪些确定问题",
+        "7. 可运行验证与 Results"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "9f677774846ae0a0814f050d24f08b102150a3b66b1914873cb3842991dd1a16",
+      "after_sha256": "9f677774846ae0a0814f050d24f08b102150a3b66b1914873cb3842991dd1a16"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/gpu-memory-admission.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/gpu-memory-admission.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "GPU 显存准入：实测占用与尚未兑现的预约",
+        "7. Results与验证边界",
+        "9. episode 归属记账修复"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "036c294b15d02ed393f204c6f3295ba0cbb296cde0964f1d68879aac068b7a39",
+      "after_sha256": "aab69eb078240193d610c316d3a53782c79da0bbe4ee62af3e983485414fd241"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/cpu-gpu-parallelism-architecture-comparison.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/cpu-gpu-parallelism-architecture-comparison.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "1. 先看结论：一张对照表"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "1458858a7fbfbf688914db7088b3b8a77cb39ec16a862917c1bd17cd5fdde135",
+      "after_sha256": "1458858a7fbfbf688914db7088b3b8a77cb39ec16a862917c1bd17cd5fdde135"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/unified-gpu-execution.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/unified-gpu-execution.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "4. 真实 Docker GPU 任务验证",
+        "10. 当前结构与前两阶段的对照"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "28fc91769e039574f7700e831a5538308b32b2f68349837ba5553e5440197d03",
+      "after_sha256": "28fc91769e039574f7700e831a5538308b32b2f68349837ba5553e5440197d03"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "8. 可运行教学模拟与验证边界",
+        "9. 独立 GPU 优先的实现与实机验证",
+        "11. 计算竞争与控制等待：已经验证到哪里",
+        "14. MPS 控制组件与统一执行器取消验证"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "9b1cb8354c4850d098f49a4bc14b8acf71397c7b35f3bdd91c191832f1ea311d",
+      "after_sha256": "9b1cb8354c4850d098f49a4bc14b8acf71397c7b35f3bdd91c191832f1ea311d"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/engineering-review.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/engineering-review.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "Env 工程问题审查与修复顺序",
+        "R4：MPS 服务故障与真实接入证明仍缺验收，P1 验证项",
+        "4. 后续能力与验证缺口",
+        "5. 建议修复包与验收条件",
+        "6. 跟着图读源码与 CPU 验证",
+        "8. 对照阶段路线图后的当前工作顺序"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "a86d2b9c99fc7389375ff1ac6b346ff21297f53ce668e129cfdcd56d5d6c3fd3",
+      "after_sha256": "a86d2b9c99fc7389375ff1ac6b346ff21297f53ce668e129cfdcd56d5d6c3fd3"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/env-service-verification/README.md",
+      "current_path": "docs/env-worker-deep-dive/env-service-verification/README.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "Env Service 设计与修复验证报告（补充验证至 2026-10-13）",
+        "1. 验证环境与方法",
+        "3. 前后对比实验",
+        "3.2 实测优先于声明：有陌生进程占了 80 GiB",
+        "6. 原先未覆盖项目的补测状态（修复前）",
+        "8.1 真正运行一个 science 修复任务",
+        "9. 如何从 results 理解设计验证（2026-10-13 解读）",
+        "9.1 本机 Docker 为什么没有用于真实容器实验",
+        "9.2 先弄清被验证的调用关系",
+        "9.4 用实测数字理解 Gate A 到底证明了什么",
+        "10. 继续在其他机器上做真实 Docker 实验（2026-10-13）",
+        "10.1 真实容器：分别验证显存、CPU、主机内存预算",
+        "11. 修复已复现的问题并继续训练验证（2026-10-13）",
+        "11.6 回归与应用范围",
+        "11.7 复现修复后的验证",
+        "11.11 验证范围收缩与停止额外训练"
+      ],
+      "decision": "历史正文归档并重建有效入口",
+      "before_sha256": "73c72485237934a310f7f61b1d0fa6047b049932dfdd1a6b6a10bdc381f8d060",
+      "after_sha256": "38a06cdebd90ebc4dcf118396910939d6dc8aad1402a3c3fc2aca85c2a7b2fc5"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios.md",
+      "current_path": "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "Results 与当前工作停点",
+        "最小研究验证与停止条件",
+        "Results：跨命令上下文复用实测",
+        "复现实验与证据边界",
+        "实验后调整的实现顺序与研究门槛",
+        "Results：准备并发窗口的增量收益验证",
+        "Results：score 服务题的资产核验与运行边界",
+        "Results：服务题收益实验的前置检查",
+        "Results：真实 score 服务题与准备前移对照",
+        "怎样理解本次实验与下一步探索"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "c7047a38105afa6af173496bf38997c54588c8728274c349c64e72b4aee20136",
+      "after_sha256": "c7047a38105afa6af173496bf38997c54588c8728274c349c64e72b4aee20136"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/research-proposals/dynamic-command-placement.md",
+      "current_path": "docs/env-worker-deep-dive/research-proposals/dynamic-command-placement.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "12. Results：真实换卡验证与复现",
+        "13. 验证边界与下一步验收",
+        "14. Results：真实 Ray 与相同工作量对照"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "9bcb775c4911c5d32b6a006677f7cc28174ab89e3b97894b4ede67886aaa69b5",
+      "after_sha256": "9bcb775c4911c5d32b6a006677f7cc28174ab89e3b97894b4ede67886aaa69b5"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/research-proposals/command-scheduling-research.md",
+      "current_path": "docs/env-worker-deep-dive/research-proposals/command-scheduling-research.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "建议验证的课题",
+        "实验顺序与停止条件",
+        "有界反例检查与 Results",
+        "仍值得验证的研究假设与停止门槛",
+        "收窄候选新代码的验证校准与余量调度"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "fd64e89a16cc5fbaddc1d64ef57ead95e9f54ad8e8c5c82327a730e987838054",
+      "after_sha256": "31a2a6b8aa2dc2fb74833bc1bcf249cc7fc996d52a093b965b7e8f9643839724"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/research-proposals/README.md",
+      "current_path": "docs/env-worker-deep-dive/research-proposals/README.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "917cbb4be2477c72f954c70e459932fa725f0d9d360c296342ae2f658a23fc89",
+      "after_sha256": "917cbb4be2477c72f954c70e459932fa725f0d9d360c296342ae2f658a23fc89"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/science-training-router-ab.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/history/science-training-router-ab.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "真实 LAPS 训练的 EnvRouter 开关对照",
+        "2. 对照配置与停止条件",
+        "3. 实测曲线与结果",
+        "5. 实验故障与修复",
+        "7. 验证边界和资源清理"
+      ],
+      "decision": "移出主阅读路径，保留固定版本历史证据",
+      "before_sha256": "4900ff9f984f2ccf17ea290f9746410bf4e2a2da9353a6bb9b3d5bc6d48b40a9",
+      "after_sha256": "1fa1d30fe2e49ba1dfbf11730e78a18d59261b0aa26d2d0b9187f65da171bf9d"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/airs-bench-audit/fixes-and-results.md",
+      "current_path": "docs/env-worker-deep-dive/airs-bench-audit/fixes-and-results.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "AIRS-Bench 已知问题修复与小实验对比",
+        "修复后的完整路径",
+        "问题与修复选择",
+        "修复前后实验对比",
+        "如何重跑小实验"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "0867bd83967310e5a50b463e7e9d6942a3972ea86bfd80b203047db54f1d1143",
+      "after_sha256": "a457c4e3bf834d684f362cc2a923f3c5b52202bfa6073f4a0452bd7574045911"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/milestones/science-gpu-full-onboarding.md",
+      "current_path": "docs/env-worker-deep-dive/milestones/science-gpu-full-onboarding.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "Results 与验证边界",
+        "本轮边界修复与回归"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "949a16f860bcbad6717bcc2f8b71b40ca87e159cf79f9037d7380015b1ca311f",
+      "after_sha256": "949a16f860bcbad6717bcc2f8b71b40ca87e159cf79f9037d7380015b1ca311f"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap.md",
+      "current_path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "Env 实现、实测收益与后续规划（2026-10-28 阶段报告）"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "094d54d11c451f5baba88da42bd2ceb5b09b5ea7f0a33720099875df1bbe36ad",
+      "after_sha256": "094d54d11c451f5baba88da42bd2ceb5b09b5ea7f0a33720099875df1bbe36ad"
+    },
+    {
+      "original_path": "docs/examples/agentic_rl/retool/prepare.md",
+      "current_path": "docs/examples/agentic_rl/retool/prepare.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "6f90b2d23ece68cce4e6772a1cb08e76cc8739dc48c5313aa9edd9ee9b7dadac",
+      "after_sha256": "6f90b2d23ece68cce4e6772a1cb08e76cc8739dc48c5313aa9edd9ee9b7dadac"
+    },
+    {
+      "original_path": "docs/examples/agentic_rl/retool/index.md",
+      "current_path": "docs/examples/agentic_rl/retool/index.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "d40a0f80ab21c75d034352178575585365f2e8ec2057d2c0c6a6146bc1b364c7",
+      "after_sha256": "d40a0f80ab21c75d034352178575585365f2e8ec2057d2c0c6a6146bc1b364c7"
+    },
+    {
+      "original_path": "docs/examples/agentic_rl/retool/training.md",
+      "current_path": "docs/examples/agentic_rl/retool/training.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "80878357fce1a493c12b80312f2189f07faa76bdf01fb96068b1e4ceef318e0e",
+      "after_sha256": "80878357fce1a493c12b80312f2189f07faa76bdf01fb96068b1e4ceef318e0e"
+    },
+    {
+      "original_path": "docs/tools/codex/session-management/session-usage.md",
+      "current_path": "docs/tools/codex/session-management/session-usage.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "Results：名称混乱的只读核查",
+        "Results：2026-11-11 核查与边界"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "d951fa732fd10ca100b896959c1279ac033e4e439f81a73d7a5c8842589bd80f",
+      "after_sha256": "d951fa732fd10ca100b896959c1279ac033e4e439f81a73d7a5c8842589bd80f"
+    },
+    {
+      "original_path": "docs/tools/codex/session-management/repair-map.md",
+      "current_path": "docs/tools/codex/session-management/repair-map.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "Codex 修复思路 Map",
+        "修复思路 Map：背景、证据与方法"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "5de687d33d0f883fe2fbfb358eff6e6d450ae20f1b8adfb84af305cb331ae02a",
+      "after_sha256": "5de687d33d0f883fe2fbfb358eff6e6d450ae20f1b8adfb84af305cb331ae02a"
+    },
+    {
+      "original_path": "docs/tools/codex/session-management/terminal-scrolling.md",
+      "current_path": "docs/tools/codex/session-management/terminal-scrolling.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "本次 tmux 滚轮修复的原理与实测",
+        "跟着图读配置与实验源码",
+        "可运行实验与本次结果"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "321e7f157623f9a37d913c80eda78ceb194651494abeb53abd6eb94459df6cf0",
+      "after_sha256": "321e7f157623f9a37d913c80eda78ceb194651494abeb53abd6eb94459df6cf0"
+    },
+    {
+      "original_path": "docs/tools/codex/session-management/log-repair.md",
+      "current_path": "docs/tools/codex/session-management/log-repair.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "Codex 日志数据库与剩余问题修复记录",
+        "Results：文件头与独立副本验证",
+        "Results：日志本地化与重建（2026-11-10）",
+        "Results：重启后复查的残留问题（2026-11-10 11:05）",
+        "剩余问题定位与修复"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "7ed661113eb4afa53a6199f11e2d79a1b879c9df279fdfa441230f5162f7e5c7",
+      "after_sha256": "7ed661113eb4afa53a6199f11e2d79a1b879c9df279fdfa441230f5162f7e5c7"
+    },
+    {
+      "original_path": "docs/tools/codex/session-management/goals.md",
+      "current_path": "docs/tools/codex/session-management/goals.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "具体例子：修复一组测试"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "85a63deef2d048d41df7fb78fe4cc61d1910e561947fc4d4ea25a43b0d0c5f62",
+      "after_sha256": "85a63deef2d048d41df7fb78fe4cc61d1910e561947fc4d4ea25a43b0d0c5f62"
+    },
+    {
+      "original_path": "docs/tools/codex/session-management/tcodex-setup.md",
+      "current_path": "docs/tools/codex/session-management/tcodex-setup.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "599c7b7ffb472bdb70f791a5ec3abed3fa3e0ac89f4decb0b34037bd324c5446",
+      "after_sha256": "599c7b7ffb472bdb70f791a5ec3abed3fa3e0ac89f4decb0b34037bd324c5446"
+    },
+    {
+      "original_path": "docs/tools/codex/session-management/bus-error.md",
+      "current_path": "docs/tools/codex/session-management/bus-error.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "Results：2026-11-09 崩溃转储核对",
+        "最小教学实验",
+        "处理建议与验证边界"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "beb2523e103b48e073fa93953ef01480ed4c7f3eb520496d707714cb2e6ccc4b",
+      "after_sha256": "beb2523e103b48e073fa93953ef01480ed4c7f3eb520496d707714cb2e6ccc4b"
+    },
+    {
+      "original_path": "docs/tools/codex/session-management/session-database-recovery.md",
+      "current_path": "docs/tools/codex/session-management/session-database-recovery.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "Results：恢复时报 bounded thread item page",
+        "Results：2026-11-09 只读排查",
+        "Results：从本地会话文件验证恢复",
+        "Results：恢复后的独立会话存档",
+        "Results：沙箱启动提示的再次核查"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "7d0be0e487053b3cc0f10092a87b81b9ea52ae7231b6b4de37e34c31501e0607",
+      "after_sha256": "7d0be0e487053b3cc0f10092a87b81b9ea52ae7231b6b4de37e34c31501e0607"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/airs-bench-audit/apps-isolation.md",
+      "current_path": "docs/env-worker-deep-dive/airs-bench-audit/apps-isolation.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "小实验结果与重跑",
+        "评分修复与正式镜像补验"
+      ],
+      "decision": "修订过时说明、历史适用范围或迁移后的引用",
+      "before_sha256": "b25c9d033d545c2ad26934e043c118707f956dde93880958182b490ffb9fea51",
+      "after_sha256": "9781e50946565eacafb824350b3b58374c98ad9058536b0d9eb2f982cb526a7e"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/milestones/science-gpu-bench-status-and-roadmap.md",
+      "current_path": "docs/env-worker-deep-dive/milestones/science-gpu-bench-status-and-roadmap.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "Results：扩题与快速 GPU 验证",
+        "Results：已完成的 PSRL 闭环验证",
+        "失败处理与本轮边界修复"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "8396fee9f477b2e08849309749c4bf30b6a966a14a36a922de7fdc7137418568",
+      "after_sha256": "8396fee9f477b2e08849309749c4bf30b6a966a14a36a922de7fdc7137418568"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/milestones/README.md",
+      "current_path": "docs/env-worker-deep-dive/milestones/README.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "a0f59c21c1c550e95bd2838ff332b7be5f8281837cfab012406c6cb807945227",
+      "after_sha256": "a0f59c21c1c550e95bd2838ff332b7be5f8281837cfab012406c6cb807945227"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/science-natural-gpu-concurrency.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/history/science-natural-gpu-concurrency.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "真实 GPU 工作负载的同任务多协程对照",
+        "2. 真实工作负载与公平对照",
+        "3. Results：实测结果",
+        "6. 验证边界与执行经验",
+        "7. 启动耗时定位与修复机制",
+        "8. Results：修复回归",
+        "10. 固定 OFF 与修复后 ON 的容量压力对照",
+        "11. Results：高低显存压力实测",
+        "12. 容量压力实验复现与边界",
+        "13. 实验层次与十步的含义"
+      ],
+      "decision": "移出主阅读路径，保留固定版本历史证据",
+      "before_sha256": "dfb80cf7fdd93fc8c330a4bd4943aeab3a049dc345d8c3018072c7d3f6f1b18f",
+      "after_sha256": "2a179ef14e2a5fec026c3a16c92a540266e1b21cf7ab6d234a33d5cee9cf6175"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/remediation-and-handoff.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/remediation-and-handoff.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "Router 修复、遥测与清理交接",
+        "11.1 已修复及不能继续使用的旧结论",
+        "11.2 仍存在的正确性与故障恢复问题",
+        "12. 2026-10-27 修复实现与验收边界",
+        "12.0 简明解释：sidecar 与四项修复",
+        "12.4 跟着图读源码与可运行验证",
+        "12.5 Results 与未覆盖边界",
+        "13.4 Results 与验证边界"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "69734f9c25bd76f130fa7e8bcd9a8ad82114fc6f63a8d0c22de9150e232493cc",
+      "after_sha256": "09015c0f11eacc6e204914ff1f485aeb665d54a15c568c3620b3145d611187d4"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/paired-results-and-review.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/paired-results-and-review.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "Router 配对实验与设计审查",
+        "2. Results：低负载同期配对",
+        "3. Gate A/B 的收益究竟验证了什么"
+      ],
+      "decision": "修订过时说明、导航或迁移后的引用",
+      "before_sha256": "dfd35a527e95803bb84dbbe33c714b26353c64c7e924cc300fefaf1e5b2f8ffd",
+      "after_sha256": "a5073cdbfb9b65a50dfb1a159a3d3cab8360c84a9897a16624abe52adce4aea3"
+    },
+    {
+      "original_path": "docs/tools/codex/session-archives/README.md",
+      "current_path": "docs/tools/codex/session-archives/README.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "b5f0ae2c03c3ff6f4d02c80df2860325b6dda60679687a114aa45ed1f26b1b1f",
+      "after_sha256": "b5f0ae2c03c3ff6f4d02c80df2860325b6dda60679687a114aa45ed1f26b1b1f"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/identity-and-accounting.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/identity-and-accounting.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "修订过时说明、历史适用范围或迁移后的引用",
+      "before_sha256": "2981f3e343a7bef4f9e9622f2f2b4104ad98b5c19c883e9692b0e21b65268e87",
+      "after_sha256": "687266796954c9c9ef3ae0e785163bdb65e17f25b06d1d58f4b1c1f83ecc290c"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/cancellation-and-experiment.md",
+      "current_path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/cancellation-and-experiment.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "取消安全与可运行实验",
+        "9. 可运行实验脚本"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "840b5937e1ea77738d48e4428ad5e13294c8691637486c1cce8fb0101d827a87",
+      "after_sha256": "840b5937e1ea77738d48e4428ad5e13294c8691637486c1cce8fb0101d827a87"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/FINDINGS.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/FINDINGS.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "GPU benchmark 接入验证",
+        "KernelBench Results",
+        "原生 Env 的 episode 长任务验证",
+        "InferenceBench 常驻服务 ON/OFF Results",
+        "episode 记账修复后的整卡压力对照",
+        "RE-Bench 原生接入验证",
+        "评分教学脚本验证",
+        "修复与验证边界",
+        "KernelBench command 接入验证",
+        "RE-Bench 本地 Qwen 裁判验证"
+      ],
+      "decision": "历史正文归档并重建有效入口",
+      "before_sha256": "6ea47103c09d1bc308ef17922c49836081b8754775068613152d40eeecf91b5c",
+      "after_sha256": "af4765b6f33f2bb496bac98c8b502d60ad741d2901e35935fd5d72da4d28f21e"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/flashinfer-batching.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/flashinfer-batching.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [
+        "FlashInfer 评估实验：进程复用成本与候选筛选",
+        "先看懂实验具体在做什么",
+        "协议与对照",
+        "Results",
+        "候选筛选后续实验",
+        "保留评估器分段的 Results"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "f00f834566112da3a66f55d1467106006ce12ce08764f6b855665a8a7d6fe901",
+      "after_sha256": "f00f834566112da3a66f55d1467106006ce12ce08764f6b855665a8a7d6fe901"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/README.md",
+      "current_path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/README.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "d84819a46fee16a47b9bc8cb37623547af6ed5b98e5fa1dca6243057f3461eb5",
+      "after_sha256": "d84819a46fee16a47b9bc8cb37623547af6ed5b98e5fa1dca6243057f3461eb5"
+    },
+    {
+      "original_path": "docs/examples/agentic_rl/swe/prepare.md",
+      "current_path": "docs/examples/agentic_rl/swe/prepare.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "8bb08061fa5ebbfd6ee7f6f8f73ae7e150933f2fbfafc957a05e163805ad84d3",
+      "after_sha256": "8bb08061fa5ebbfd6ee7f6f8f73ae7e150933f2fbfafc957a05e163805ad84d3"
+    },
+    {
+      "original_path": "docs/examples/agentic_rl/swe/index.md",
+      "current_path": "docs/examples/agentic_rl/swe/index.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "dce2debff4337db7f560a51c09c5dcf986e13f23531423f4d31d517c4e75b58a",
+      "after_sha256": "dce2debff4337db7f560a51c09c5dcf986e13f23531423f4d31d517c4e75b58a"
+    },
+    {
+      "original_path": "docs/examples/agentic_rl/swe/training.md",
+      "current_path": "docs/examples/agentic_rl/swe/training.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "7d5a0492f30906249c2e05b1c229ab414f5f06f7a349674f0e70872e1ea0b8b2",
+      "after_sha256": "7d5a0492f30906249c2e05b1c229ab414f5f06f7a349674f0e70872e1ea0b8b2"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/implementation-and-results.md",
+      "current_path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/implementation-and-results.md",
+      "category": "含实验或故障记录的专题",
+      "experiment_sections": [
+        "历史阶段：实现与实验结果",
+        "三种设计的能力对照",
+        "当前实现与验证程度",
+        "Results：已经拿到的收益"
+      ],
+      "decision": "保留有条件实验、教学/论文结果或固定日期记录，不扩张到当前性能",
+      "before_sha256": "8bdc6137071a93adf9dcb16dc82d65988dcbeb1821ab496a21145bf2eac2b3c4",
+      "after_sha256": "8bdc6137071a93adf9dcb16dc82d65988dcbeb1821ab496a21145bf2eac2b3c4"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/planning-and-lifecycle.md",
+      "current_path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/planning-and-lifecycle.md",
+      "category": "非实验正文或通用导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "79d9bd4021a529e57f5f1e8ac7ce9f86ec0c2daabca9608f8afcb117f1cbfc62",
+      "after_sha256": "79d9bd4021a529e57f5f1e8ac7ce9f86ec0c2daabca9608f8afcb117f1cbfc62"
+    },
+    {
+      "original_path": "docs/env-worker-deep-dive/airs-bench-audit/baseline/examples/airs_bench/README.md",
+      "current_path": "docs/env-worker-deep-dive/airs-bench-audit/baseline/examples/airs_bench/README.md",
+      "category": "独立实验报告或导航",
+      "experiment_sections": [],
+      "decision": "未发现本任务需迁移的实验结论，正文保留",
+      "before_sha256": "ba71600090c160b3565458b207cec3b8d948f3e45590c3c6248045f0bb14d338",
+      "after_sha256": "ba71600090c160b3565458b207cec3b8d948f3e45590c3c6248045f0bb14d338"
+    }
+  ],
+  "reviewed_original_count": 155,
+  "maintained_markdown_after": 164,
+  "changed_original_documents": 40,
+  "new_documents": [
+    "docs/env-worker-deep-dive/experiments/history/README.md",
+    "docs/env-worker-deep-dive/experiments/history/env-design-and-results-brief-chronology.md",
+    "docs/env-worker-deep-dive/experiments/history/env-service-verification-20261013.md",
+    "docs/env-worker-deep-dive/experiments/history/gpu-benchmark-onboarding-chronology.md",
+    "docs/env-worker-deep-dive/experiments/history/mps-training-comparison-chronology.md",
+    "docs/env-worker-deep-dive/experiments/history/native-lifecycle-before-fix.md",
+    "docs/env-worker-deep-dive/experiments/history/phase-backfill-before-command.md",
+    "docs/env-worker-deep-dive/experiments/history/router-baseline-control-validation-chronology.md",
+    "docs/env-worker-deep-dive/experiments/history/science-env-router-comparison.md",
+    "docs/env-worker-deep-dive/experiments/history/science-gpu-pressure-ab.md",
+    "docs/env-worker-deep-dive/experiments/history/science-natural-gpu-concurrency.md",
+    "docs/env-worker-deep-dive/experiments/history/science-single-gpu-training-control-chronology.md",
+    "docs/env-worker-deep-dive/experiments/history/science-training-router-ab.md"
+  ],
+  "verification": {
+    "local_links_checked": 5199,
+    "missing_paths": 0,
+    "invalid_anchors": 0,
+    "out_of_range_source_lines": 0,
+    "new_source_link_semantics": "Manually checked for cited fixes. Historical and unrelated links are not all re-proven.",
+    "precommit": "Failed on pre-existing code formatting and prose in isolated snapshot. No auto-fixes copied back.",
+    "gpu_runs": 0
+  }
+}

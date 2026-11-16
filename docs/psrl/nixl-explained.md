@@ -1,51 +1,58 @@
-# NIXL 是什么
+# NIXL：在训练与生成进程之间搬运大块内存
 
-## 一句话结论
+NIXL（NVIDIA Inference Xfer Library，面向推理系统的内存传输库）负责把模型权重、KV 缓存等数据从一个进程搬到另一个进程。PSRL 用它连接分开的训练服务和生成服务：训练更新权重，生成服务取得新权重后继续回答问题。
 
-NIXL（**NVIDIA Inference Xfer Library**）是 NVIDIA Dynamo 项目下的开源库（[github.com/ai-dynamo/nixl](https://github.com/ai-dynamo/nixl)），提供一套统一的点对点内存搬运 API，底层基于 UCX 自动挑选最快的传输方式（同节点共享内存 / GPU IPC / RDMA 网络等），最初为"拆开的推理服务"（prefill/decode 分离、KV cache 跨实例迁移）设计，psrl 用它做训练侧和 rollout 侧之间的权重同步、以及 rollout 实例间的 KV cache 迁移。
+## 目录
 
-## NIXL 本身解决什么问题
+- [为什么需要专门的数据通道](#为什么需要专门的数据通道)
+- [一次权重更新怎样传过去](#一次权重更新怎样传过去)
+- [KV 缓存为什么也需要搬运](#kv-缓存为什么也需要搬运)
+- [部署时需要什么](#部署时需要什么)
+- [进一步阅读](#进一步阅读)
 
-在分布式 GPU 系统里，经常需要把一大块内存（模型权重、KV cache block）从 A 搬到 B，但 A、B 的物理关系不确定：
+## 为什么需要专门的数据通道
 
-- 同一张卡内 → 直接指针
-- 同节点不同卡 → CUDA IPC / NVLink
-- 同节点 CPU↔GPU → pinned memory DMA
-- 跨节点 → RDMA（InfiniBand/RoCE）或退化成 TCP
+假设训练进程得到 4 GB 新权重，要交给两个生成进程。如果把这 4 GB 当作普通远程函数参数，系统还要处理对象序列化、传递和接收。NIXL 让应用先登记可访问的内存，再直接读写这些内存区域。
 
-如果每种情况都手写一套传输代码会很繁琐。NIXL 把这些抽象成统一的"注册内存 + 发起 read/write"API，具体走哪种传输由底层 UCX 在建连时根据双端硬件自动选择，调用者不需要关心。
+这里有两类消息：**控制消息**说明“版本 12 已准备好”；**数据传输**搬运真正的权重字节。小消息可以交给 Ray（分布式任务框架），大数据通过专门通道传递，方便分别优化。
 
-## psrl 里 NIXL 的两处用法
+底层使用哪条通道取决于硬件、后端和配置：同节点可能利用共享内存或 GPU 间互访，跨节点可能利用 RDMA。RDMA 是让网卡直接访问已登记内存的传输方式，可以减少主机 CPU 参与的数据复制。实际吞吐还受网络、内存带宽和两端负载影响。
 
-结合仓库 `psrl/docs/design/parameter_server.md` 和 `psrl/docs/design/kv_cache.md`：
+## 一次权重更新怎样传过去
 
-### 1. Parameter Server 权重同步（`psrl.ps_mode=nixl_cpu`）
+在 `psrl.ps_mode=nixl_cpu` 模式下，Parameter Server（参数服务器，简称 PS）在固定页的 CPU 内存中保存权重；“固定页”使这块内存适合设备直接传输。
 
-- 权重常驻在 **PS Worker** 的 pinned CPU 内存里（不占 GPU 显存，给 vLLM 的 KV cache 让路）。
-- **Push**：训练侧每个 rank 把自己那部分 sharded 权重通过 NIXL write 流式写进对应 PS Worker，写完后只用一次很轻的 Ray RPC 去 bump 版本号（控制面和数据面分离，字节流不经过 PS Manager）。
-- **Pull**：rollout 实例的每个 GPU rank 从（优先本地的）PS Worker NIXL read 自己的 shard，同节点走 DMA/共享内存，跨节点走 RDMA。
-- 效果：权重同步不占用 Ray 对象序列化/反序列化的 CPU 开销，也不用等一次全量 all-gather，训练和生成两个物理分离的集群可以异步往前跑，互不阻塞。详见 [psrl-run-guide.md](psrl-run-guide.md)。
+```text
+训练 GPU → PS Worker 的 CPU 权重缓冲区 → 生成 GPU
+                  ↑
+             版本与就绪通知
+```
 
-### 2. KV Cache 跨实例迁移（LMCache 的 `p2p_transfer_channel=nixl`）
+以前面的教学数字为例：4 GB 权重分为两个 2 GB 分片。训练侧将对应分片写入 PS Worker，完成后更新版本；生成侧各个 rank（参与并行计算的进程）读取自己所需的分片，再交给模型使用。协调器负责版本与位置，权重字节通过数据通道传递。
 
-- 当某个请求要从一个 rollout 实例迁移到另一个（比如做负载均衡/长尾调度），源实例把 KV cache blocks 通过 NIXL push 到目的实例，走同一套 UCX 传输选择逻辑；没有 NIXL/UCX 环境时会退化成 TCP。
+这种分工减少了大对象经过协调进程的开销。权重复制仍消耗带宽、缓冲区和执行时间，异步训练也仍需控制版本差距；这些成本应结合具体部署测量。
 
-**为什么负载均衡会牵扯到 KV cache 迁移**：LLM 推理请求的代价（生成长度）在到达时未知，且不是纯计算时间，而是"占着一块随生成长度线性增长的 KV cache 显存"直到结束——少数长请求会一直挤占某个实例的显存/batch 空间，拖慢同一实例上其他本该很快的短请求，形成长尾热点。路由层发现某实例过载后，必须能把一个**已经跑了一部分**的请求挪到别的实例，而不能只在请求到达时一次性静态分配。
+机制与源码入口见[参数服务器](../design/parameter_server.md)和 [NIXL 客户端的内存登记](../../psrl/utils/nixl/client.py#L301)。
 
-**为什么迁移必须搬 KV cache，而不是换个实例重新跑**：KV cache 是该请求到目前为止每层每个 head 上所有历史 token 的 K/V 张量，是自回归生成"记忆"的物理体现。不搬 KV cache 直接换实例，新实例就要对已生成的前缀重新做一次完整 prefill——不仅浪费已花掉的算力，长上下文场景下重算前缀的代价（$O(n^2)$ attention）可能比继续生成还大，用户会感知到明显的延迟突刺，等于把这条生成"重启"了一次。直接搬运 KV cache 张量则是把已经算好的数值原样拷贝过去（无精度漂移），目标实例可以从断点无感续写。
+## KV 缓存为什么也需要搬运
 
-迁移的目的可以归纳为：①消除长尾热点、把显存/算力挪给排队的其他请求；②避免重算前缀的高昂代价；③配合权重同步/扩缩容时的拓扑变化，让在飞请求能挪到新实例而不是被打断重启（对应 `kv_cache.md` 里 "sync-triggered re-routing"）。`psrl/docs/design/kv_cache.md` 的 P2P transfer 一节给了具体机制：Router/Coordinator 只决定"要不要搬、搬到哪"，源实例 LMCache worker 通过 NIXL 直接把 KV blocks 推给目标实例的 LMCache worker，Controller 仅在传输前查一次对端地址，不在数据路径上；`transfer_mode` 的 `async`/`sync`/`pin_sync` 三档，本质是在"传输延迟"和"重算前缀延迟"之间按前缀长短选更便宜的一边。
+KV 缓存保存模型已经处理过的历史 token 的注意力中间结果。token 是模型处理文字的基本片段；保留缓存后，下一次生成可以接着计算。
 
-## 为什么要单独装（`scripts/install_nixl.sh`）
+例如请求已经处理了 20,000 个 token，需要从繁忙实例 A 转到空闲实例 B。B 可以重新计算这 20,000 个 token，也可以接收 A 已算好的缓存。迁移缓存能省下重复计算，但也要付传输和协调成本；前缀很短时，重算可能更合适。
 
-NIXL 依赖特定版本的 UCX（脚本要求 ≥1.20.0，会检测已有安装或从源码编译，Mellanox 卡会额外加 `--with-rdmacm --with-mlx5` 之类选项），然后从 `github.com/ai-dynamo/nixl`（脚本锁定 `v1.2.0`）编译安装 C++ 库和 Python 绑定。这是可选依赖——`psrl.ps_mode` 还有不依赖 NIXL 的 `cpu`/`cpu_ref` 兜底模式，生产环境才推荐 `nixl_cpu`。
+PSRL 的 KV 迁移设计通过 LMCache 管理缓存、通过传输通道搬运数据。是否迁移、目的实例和等待方式由上层策略决定，详见 [KV 缓存设计](../design/kv_cache.md)。LMCache 的 NIXL 通道与 TCP 通道是配置选择，部署时应核实所选通道及其依赖。
 
-## 一句话记忆
+## 部署时需要什么
 
-NIXL 不是训练算法的一部分，是一层"跨进程/跨节点内存搬运"的基础设施；psrl 的异步架构（训练和生成物理分离）之所以能不互相阻塞，靠的就是 NIXL 把权重/KV cache 的搬运做得足够快且不占 GPU 资源。
+仓库的[安装脚本](../../scripts/install_nixl.sh)指定 NIXL `v1.2.0`，并检查 UCX 至少为 `1.20.0`。UCX 是底层通信库，用来对接共享内存、网络等传输能力。这是脚本的版本约定；安装前还要核对当前驱动、CUDA 和网络环境。
 
-## 延伸阅读
+PSRL 也提供 `cpu`、`cpu_ref` 等参数服务器模式。选择哪种模式，应先看部署依赖、权重规模和同步开销，再看是否需要 NIXL。
 
-- `psrl/docs/design/parameter_server.md`（权重同步的完整设计）
-- `psrl/docs/design/kv_cache.md`（KV cache 迁移）
-- [psrl-run-guide.md](psrl-run-guide.md)
+核对范围：2026-11-16 阅读本地安装脚本、NIXL 客户端及参数服务器设计；本次未执行安装或传输实验。
+
+## 进一步阅读
+
+- 想知道“训练更新后，生成进程什么时候切换版本”：读[参数服务器](../design/parameter_server.md)。
+- 想知道“换生成实例时怎样接着回答”：读 [KV 缓存设计](../design/kv_cache.md)。
+- 想从整条训练链路定位代码：读[训练脚本与源码地图](psrl-training-script-source-map.md)。
+- 库本身的接口和后端支持以 [NIXL 官方仓库](https://github.com/ai-dynamo/nixl)为准。

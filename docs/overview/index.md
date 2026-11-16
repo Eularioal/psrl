@@ -1,5 +1,15 @@
 # Overview
 
+> **Start here:** PSRL separates collecting model answers from updating model parameters, then coordinates sample data and model versions between them.
+
+第一次接触项目，可以先读[从一道题理解 PSRL](reading-guide.md)了解组件如何衔接，再按需查[系统与实验术语](glossary.md)。这两篇默认已有机器学习与 agent 基础。
+
+## Contents
+
+- [What is PSRL?](#what-is-psrl)
+- [Key Capabilities](#key-capabilities)
+- [Supported Backends](#supported-backends)
+
 ## What is PSRL?
 
 **PSRL** is a reinforcement learning (RL) framework for efficient large language
@@ -60,3 +70,11 @@ large and MoE models.
 ::::
 
 See {doc}`../design/architecture` for the detailed architecture.
+
+```{toctree}
+:maxdepth: 1
+:hidden:
+
+reading-guide
+glossary
+```

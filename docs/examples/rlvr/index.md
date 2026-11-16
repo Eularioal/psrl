@@ -1,6 +1,8 @@
 # RLVR: Reinforcement Learning from Verifiable Rewards
 
-RLVR trains language models on tasks where correctness can be verified programmatically, math problems with numeric answers, code with test suites, or logic puzzles with deterministic solutions. This eliminates the need for learned reward models and enables stable, high-signal training.
+> **Core idea:** choose a checker that scores the intended result, then choose the training recipe. For a math question, generation produces an answer, a checker compares it with the reference, and the algorithm converts that score into a parameter update.
+
+RLVR trains language models on tasks where correctness can be verified programmatically, math problems with numeric answers, code with test suites, or logic puzzles with deterministic solutions. A task-specific checker provides the reward signal. Its coverage and isolation still determine whether the score reflects the intended task.
 
 ---
 
@@ -12,11 +14,11 @@ extends GRPO with asymmetric clipping plus a dynamic sampling filter.
 
 | Algorithm | Key Idea | Status |
 |-----------|----------|--------|
-| [PPO](ppo) | Proximal Policy Optimization with GAE and a learned critic | Coming soon |
-| [GRPO](grpo) | Group Relative Policy Optimization, per-prompt advantage normalization, no critic | Coming soon |
-| [DAPO](dapo) | GRPO variant with asymmetric clipping + dynamic sampling filter | Ready |
+| [PPO](ppo.md) | Proximal Policy Optimization with GAE and a learned critic | Standalone walkthrough pending |
+| [GRPO](grpo.md) | Group Relative Policy Optimization, per-prompt advantage normalization, no critic | Standalone walkthrough pending |
+| [DAPO](dapo.md) | GRPO variant with asymmetric clipping + dynamic sampling filter | Ready |
 
-All algorithms support both FSDP and Megatron training backends, with vLLM rollout and NIXL-based GPU-direct model transfer.
+All algorithms support both FSDP and Megatron training backends, with vLLM rollout and configurable parameter transfer. The main examples use CPU-resident PS Workers with NIXL.
 
 ---
 

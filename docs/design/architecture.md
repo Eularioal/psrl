@@ -1,12 +1,24 @@
 # Overall System Architecture
 
-PSRL decouples LLM post-training into two independent compute phases, **training** and **generation**: connected through a central Parameter Server. This architecture eliminates the synchronization barrier that limits throughput in tightly-coupled systems, enabling training and generation to progress concurrently at their own optimal pace.
+> **Core idea:** generation uses the current model to collect answers, while training changes the model using scored answers. PSRL lets these jobs overlap. TransferQueue carries sample data, and the Parameter Server distributes updated model weights. Version checks bound how old a sample may be when training uses it.
+
+New to the project? [从一道题理解 PSRL](../overview/reading-guide.md) explains the complete flow in Chinese, with a worked example, source map and CPU exercise. The [glossary](../overview/glossary.md) is optional reference.
 
 ## Contents
 
 - [Module Overview](#module-overview)
+  - [Train Workers](#train-workers)
+  - [Parameter Server (PS Manager + PS Workers)](#parameter-server-ps-manager--ps-workers)
+  - [Agent Manager](#agent-manager)
+  - [Agent Workers](#agent-workers)
+  - [Rollout Coordinator](#rollout-coordinator)
+  - [Router (TITO Router, SMG)](#router-tito-router-smg)
+  - [Rollout Instances](#rollout-instances)
+  - [Reward Service](#reward-service)
 - [Training Iteration Sequence](#training-iteration-sequence)
 - [Deployment Topology](#deployment-topology)
+  - [Example: 4-Node Setup (2 Gen + 2 Train)](#example-4-node-setup-2-gen--2-train)
+  - [Configuration](#configuration)
 
 ```{figure} /_static/img/overview.svg
 :alt: PSRL System Architecture
@@ -96,27 +108,29 @@ sequenceDiagram
     AW->>Reward: compute_score(trajectory)
     Reward-->>TQ: write reward fields
     AW->>TQ: write trajectory fields
-    AW->>PS: occupy(buffer_entry)
+    AW->>AM: notify completed sample metadata
+    AM->>PS: occupy(buffer_entry)
     PS->>TW: buffer_ready signal
     TW->>TQ: read batch metadata (KVBatchMeta)
-    TW->>PS: pull(weights) → train → push(new_weights)
+    TW->>TW: train on the ready batch
+    TW->>PS: push(new_weights)
     PS->>SMG: weight-version update
     SMG->>RI: pause → pull(new_weights) → resume
 ```
 
 **Step-by-step:**
 
-1. **Dispatch**: Agent Manager assigns a prompt (with a reserved buffer slot) to an available Agent Worker.
+1. **Dispatch**: Agent Manager assigns a prompt to an Agent Worker, which can manage concurrent trajectory tasks.
 2. **Generation**: Agent Worker sends generation requests through the SMG Router, which checks version/admission with the Parameter Server, then dispatches to a vLLM replica over gRPC.
 3. **Multi-turn** (optional): For agentic tasks, the worker may execute tools and generate multiple turns (session/TITO capture).
-4. **Reward**: Completed trajectory is scored by the Reward Service, and reward fields land in TransferQueue.
-5. **Occupy**: The scored trajectory occupies its reserved slot in the staleness buffer, and trajectory fields are written to TransferQueue.
+4. **Reward**: The trajectory is scored through the configured reward path; reward fields are added to TransferQueue.
+5. **Occupy**: After trajectory fields are committed to TransferQueue, Agent Manager reports completion to PSManager, which places the finished group into an eligible buffer.
 6. **Training**: When a buffer is full (Ready state), the Train Worker reads the batch metadata from TransferQueue and consumes it for one gradient step.
 7. **Weight Push**: Updated weights are pushed to PS via RDMA.
 8. **Sync**: The RolloutCoordinator gates SMG on the new version, pausing dispatch, letting instances pull new weights, then resuming routing.
 
 :::{tip}
-Steps 1-5 (generation) and steps 6-8 (training) run **concurrently**: this is the core advantage of PSRL's decoupled design. The staleness system (see {doc}`staleness_control`) ensures bounded off-policy error.
+Across batches, steps 1-5 (generation) can overlap steps 6-8 (training). The staleness system (see {doc}`staleness_control`) bounds the model-version gap of accepted data. Training quality also depends on the algorithm and workload.
 :::
 
 ---
@@ -126,6 +140,8 @@ Steps 1-5 (generation) and steps 6-8 (training) run **concurrently**: this is th
 PSRL supports flexible node allocation between training and generation. The typical deployment separates GPU nodes by role:
 
 ### Example: 4-Node Setup (2 Gen + 2 Train)
+
+This is a deployment illustration, not a measured requirement or benchmark result.
 
 | Node | Role | GPU Usage | Co-located Services |
 |------|------|-----------|---------------------|
@@ -160,5 +176,5 @@ psrl:
 
 - For **compute-bound** workloads (short generations, large models): allocate more nodes to training.
 - For **generation-bound** workloads (long multi-turn trajectories, agentic RL): allocate more nodes to generation.
-- The Parameter Server overhead is **constant** regardless of cluster size: it scales via distributed PS Workers, not by adding coordinator logic.
+- PS Workers distribute parameter storage and transfer work. Measure transfer bandwidth and PS Manager coordination latency as the cluster grows.
 :::

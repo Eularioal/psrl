@@ -2,17 +2,29 @@
 
 ## TL;DR
 
-Reserve a remotely owned persistent sandbox with CPU and RAM admission. Poll outside the
-coordinator, heartbeat its reservation, and return capacity only after confirmed deletion.
-A command timeout invalidates the sandbox. AIRS grading uses a separate owned container.
+An agent may run several commands that depend on earlier files, working directories or
+installed packages. EnvWorker gives that episode a persistent container and shell. A
+coordinator admits it within resource budgets and returns the capacity after confirmed
+deletion. AIRS uses a separately owned grading container.
+
+For example, command 1 writes `data.csv`, command 2 trains from that file, and command 3
+submits the result. All three use the same sandbox. A command timeout invalidates it, so
+later commands cannot accidentally continue in an unknown execution state.
 
 ## Contents
 
 - [Motivation](#motivation)
 - [Component Triple](#component-triple)
+  - [EnvWorker (worker.py)](#envworker-workerpy)
+  - [EnvWorkerCoordinator (coordinator.py)](#envworkercoordinator-coordinatorpy)
+  - [EnvWorkerManager (manager.py)](#envworkermanager-managerpy)
 - [Placement Policies](#placement-policies)
+  - [colocated](#colocated)
+  - [dedicated](#dedicated)
 - [Sandbox Handle Lifecycle](#sandbox-handle-lifecycle)
 - [Persistent Shell Protocol](#persistent-shell-protocol)
+  - [Sentinel Design](#sentinel-design)
+  - [Timeout and Drain](#timeout-and-drain)
 - [Observation Truncation](#observation-truncation)
 - [GPU Passthrough](#gpu-passthrough)
 - [Configuration](#configuration)
@@ -90,7 +102,7 @@ request built from configuration.
 Each `EnvWorker` tracks:
 
 - The `CUDA_VISIBLE_DEVICES` range granted by Ray, from which it draws GPU indices for
-  sandboxes. This makes it impossible for a sandbox to touch a GPU Ray did not assign.
+  sandboxes. Sandbox device assignment is drawn from that configured set.
 - A `ContainerShell` per live sandbox, keyed by `sandbox_id`.
 - Owned verifier ids and deletion state for remote cleanup.
 
@@ -200,7 +212,7 @@ reply or repeated cleanup cannot decrement another episode's allocation. Always 
 ## Persistent Shell Protocol
 
 A sandbox container is started with `docker run -i ... /bin/bash -l`. The `-i` flag keeps
-stdin open, and `/bin/bash -l` starts a login shell. The shell never exits. Each command is
+stdin open, and `/bin/bash -l` starts a login shell. The shell stays alive across successful commands until the sandbox closes or fails. Each command is
 submitted by writing to its stdin and command completion is signaled by a sentinel line echoed
 immediately after the command.
 
@@ -267,9 +279,10 @@ The approach is:
 GPU containers receive a library search path containing the mounted driver libraries.
 
 The `EnvWorker` derives the allowed GPU indices from `CUDA_VISIBLE_DEVICES`, which Ray sets
-to exactly the GPUs it granted the worker actor. This partitions the physical GPUs safely:
-a worker with indices 4 and 5 can only assign those indices to sandboxes and cannot touch
-training GPUs 0 through 3.
+to exactly the GPUs it granted the worker actor. The worker
+selects sandbox devices from that set: a worker given indices 4 and 5 assigns from
+4 and 5. Deployment permissions, device mappings and mounts determine the actual
+isolation, so confirm them on the execution node.
 
 ---
 

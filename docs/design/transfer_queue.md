@@ -1,5 +1,7 @@
 # TransferQueue Integration
 
+> **Core idea:** store sample arrays once and pass their keys between stages. For example, generation writes an answer under sample `q1`, reward adds its score under `q1`, and training reads both to update the model. The metadata tells each stage which sample to fetch.
+
 TransferQueue is PSRL's asynchronous sample data plane. It stores the evolving fields
 of each rollout sample and lets distributed components exchange lightweight
 `KVBatchMeta` references instead of repeatedly serializing complete TensorDict
@@ -8,6 +10,13 @@ batches through Ray.
 It is unrelated to SMG's online routing queue: SMG dispatches live inference
 requests, while TransferQueue stores data used by rollout, reward, and training
 operators.
+
+## Contents
+
+- [Data Model](#data-model)
+- [Why PSRL Uses It](#why-psrl-uses-it)
+- [Backends](#backends)
+- [Operational Constraints](#operational-constraints)
 
 ## Data Model
 

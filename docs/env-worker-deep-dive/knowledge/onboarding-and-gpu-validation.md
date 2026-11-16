@@ -1,10 +1,11 @@
 # EnvWorker 接入实操：把现有实现接进 PSRL + 验证 GPU 真的分出去了
 
-## TL;DR
+> **核心结论**：自定义任务通常分三层接入：Environment 整理任务参数，AgentLoop 创建并使用 sandbox（任务容器），EnvWorker 分配资源并执行命令。本篇沿 AIRS 的 Coordinator 路径给出完整配置与教学代码，再用真实 CUDA 矩阵乘法检查设备是否可用。
 
-> 本文是 [`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md)（EnvWorker 设计详细版）原第 11、12 节拆分出来的独立文档。章节编号沿用原文档编号（11、12），没有从 1 重新编号，方便和速查表、其他文档里已经写好的"详细版 §11/§12"引用对应。
->
-> 读本文前建议先读完详细版的第 0-10 节（问题背景、角色分工、unit、流程、GPU 难点），了解"为什么需要 EnvWorker"；本文只讲"现在这份代码怎么接、怎么验证"，不重复讲设计动机。
+目前 Harbor 还可走 EnvRouter 管理的路径，见[当前设计](current-design.md)。选择 AIRS/MLGym 时继续读本文；接入公共 Harbor GPU benchmark 时先读[公共 recipe](gpu-benchmark-recipes.md)。章节编号沿原设计的 11、12 保留，便于已有链接定位。
+
+
+---
 
 ## 目录
 
@@ -22,11 +23,9 @@
   - [12.4 如果要接成真实的训练数据集：一条 GPU 推理任务的行长什么样](#124-如果要接成真实的训练数据集一条-gpu-推理任务的行长什么样)
 - [延伸阅读](#延伸阅读)
 
----
-
 ## 11. 现在就能落地：把现有 EnvWorker 接入 PSRL 的最短路径
 
-第 9 节说过，代码里现在能跑的只有"旧 EnvWorker"（`psrl/psrl/workers/env_worker/`），Env Service 提案里的 EnvRouter、Gate A、Gate B 都还没有实现。这一节不再讨论提案，只讲：照着现在这份代码，怎样把一个新任务接进去、真正跑起来一个用容器的 episode。全部步骤照抄的是 AIRS-Bench 配方（`examples/airs_bench/`）已经跑通的接入方式。
+这条路径由 `EnvWorkerManager → EnvWorkerCoordinator → EnvWorker → sandbox` 组织资源和执行。以下复用 AIRS-Bench 已有接线；新任务只需补任务参数、交互逻辑和奖励转换。GPU 任务的现有运行入口与 19 题证据见 [AIRS recipe](airs-gpu-recipe.md)。
 
 ### 第一步：打开开关，配置资源池
 
@@ -39,17 +38,17 @@ psrl:
     placement: colocated        # 或 dedicated + dedicated_node_ips
     workers_per_node: 1
     cpu_slots_per_worker: 8
-    gpu_slots_per_worker: 0     # 需要 GPU 沙箱时改成 >0，见第 13 节
+    gpu_slots_per_worker: 0     # 需要 GPU 沙箱时改为所需槽位数，见第 12 节
 ```
 
-`enable: True` 是唯一的开关；其余字段决定资源池的形状（第 4 节讲的 unit 概念，在这份实现里就是"一个 EnvWorker 管理的 CPU/GPU 额度"）。
+`enable: True` 启动这条 EnvWorker 池，其余字段决定放置位置和每个 worker 的 CPU/GPU 槽位。GPU sandbox 还需在任务需求中声明 `gpus`。
 
 ### 第二步：知道它在训练启动的哪一刻被创建
 
 PPO trainer 在拉起 rollout gateway 和 session router 之后、创建 agent loop worker 之前，检查这个开关：
 
 ```python
-# psrl/psrl/trainer/ppo/ray_trainer.py:1812-1817（可运行代码，非伪代码）
+# psrl/trainer/ppo/ray_trainer.py:1927（源码摘录）
 if self.config.psrl.env_worker.enable:
     from psrl.workers.env_worker import EnvWorkerManager
 
@@ -111,7 +110,7 @@ class YourAgentLoop(SessionAgentLoop):
             await handle.destroy()                                     # 还号：销毁容器 + 归还容量
 ```
 
-`coordinator.create_sandbox` 内部会重试一次、选一个有空位的 worker（[`coordinator.py:185-217`](../../../psrl/workers/env_worker/coordinator.py#L185)），`handle.destroy()` 销毁容器后自动调用 `coordinator.release`（[`coordinator.py:111-120`](../../../psrl/workers/env_worker/coordinator.py#L111)）归还名额——这一步放进 `finally`，是为了保证哪怕执行中抛异常，名额也不会被卡死不还。
+`coordinator.create_sandbox` 内部会重试一次、选一个有空位的 worker（[`coordinator.py:185-217`](../../../psrl/workers/env_worker/coordinator.py#L185)），`handle.destroy()` 销毁容器后自动调用 `coordinator.release`（[`coordinator.py:111-120`](../../../psrl/workers/env_worker/coordinator.py#L111)）归还名额——这一步放进 `finally`，使正常结束和异常路径都发起所属容器清理；实际释放需以清理结果为准。
 
 ### 第五步：dataset 行里指名用哪个 agent/env
 
@@ -159,7 +158,7 @@ class YourAgentLoop(SessionAgentLoop):
 | 集成（本次新增） | 需要真机 GPU + Docker | 容器里能看见分到的那张卡、能跑一次真实 CUDA 矩阵乘法、两个沙箱不会拿到同一张卡 | 新增 `tests/env_worker/test_worker_gpu_integration.py` |
 | 数据集层（本节给出设计，未落盘为真实训练数据） | 视你是否要接真训练 | 把"GPU 推理探针"包装成一条可被 `Environment.reset` 消费的 dataset 行 | 见 12.4 |
 
-单测那一层已经在仓库里（第一行列出的 4 个测试），不需要新写；本节新增的是集成层，因为原有的 `test_worker_integration.py` 全部用 `network="none"` + 任意本地镜像，从未真正请求 `gpus=1`，也没有在容器里跑过任何 CUDA 指令，所以现在这份实现的 GPU 直通路径其实还没有被任何测试跑过一次。
+三层检查分别回答“分配逻辑是否正确”“容器是否能执行 CUDA”和“任务是否能形成训练样本”。当前已有 AIRS 真实 GPU 任务证据，见[任务执行结果](airs-gpu-recipe.md#19-个任务的输入与结果)。下面的集成探针适合核查一个新节点或新镜像，按要验证的问题选择执行。
 
 ### 12.3 新增的集成测试怎么用
 
@@ -169,7 +168,7 @@ class YourAgentLoop(SessionAgentLoop):
 2. `test_gpu_inference_runs_on_the_assigned_device`：在容器里跑一段 `python -c "..."`，用 `torch.cuda.is_available()` + 一次 1024×1024 矩阵乘法作为最小的"GPU 推理"样例，脚本打印一行 `GPU_PROBE_RESULT cuda_ok=True matmul_sum=...`，测试断言这一行真的出现且 `cuda_ok=True`。这是最接近用户所说"使用 GPU 推理的那些任务"的一条测试。
 3. `test_two_gpu_sandboxes_never_share_a_device`：需要至少 2 张可见 GPU，验证两个并发沙箱各自拿到的设备号不同（对 `_allocate_gpu_indices` 互斥逻辑的真实容器级回归检查，单测层用的是假 shell，这里换成真容器）。
 
-这三个测试全部用 `pytest.mark.skipif` 做自动跳过，跳过条件是**同时**满足：宿主机没有 `docker`、没有 `nvidia-smi`、或者没有设置环境变量 `PSRL_GPU_PROBE_IMAGE`。也就是说没有 GPU 的机器上跑 `pytest` 完全不受影响，会自动跳过而不是报错。要真正跑起来，需要一台有 NVIDIA GPU、装好 Docker 的机器，并指定一个装有 CUDA 版 PyTorch 的本地镜像：
+这三个测试使用 `pytest.mark.skipif`：`docker`、`nvidia-smi` 和 `PSRL_GPU_PROBE_IMAGE` 三项前提中，缺少任意一项就跳过。也就是说没有 GPU 的机器上跑 `pytest` 完全不受影响，会自动跳过而不是报错。要真正跑起来，需要一台有 NVIDIA GPU、装好 Docker 的机器，并指定一个装有 CUDA 版 PyTorch 的本地镜像：
 
 ```bash
 # 可运行命令。镜像需要提前 docker pull，或换成你们自己已装 torch 的沙箱镜像。
@@ -205,10 +204,11 @@ def build_gpu_probe_row(task_id: str, image: str) -> dict:
 
 对应的 reward 函数只需要解析 `result.stdout` 里的 `GPU_PROBE_RESULT` 那一行：出现 `cuda_ok=True` 记 1 分，否则记 0 分或标记为基础设施错误（呼应第 6 节 `ROLLOUT_ERROR` 与真实任务失败的区分——探针失败大概率是环境问题，不该当成模型的错）。这只是把 12.3 的探针脚本套进了 dataset 行的壳子，`Environment.reset` 和 `AgentLoop.run` 仍是第 11 节第三、四步写的那两个类，没有新概念。
 
-需要强调：这里给出的是**设计和最小可运行示例**，用来验证"EnvWorker 能不能把 GPU 真正交给一个做推理的容器"；它不是一个已经验证过分数分布、可直接拿去训练出效果的正式任务，真实任务的 reward 通常要比"是否检测到 GPU"复杂得多（参考 AIRS-Bench 的归一化分数设计，[`reward.py`](../../../examples/airs_bench/reward.py)）。
+这里给出的是**教学数据行**，用来解释任务参数怎样到达执行层。正式任务还需设计与目标对应的奖励，例如正确率、损失或性能，并验证评分分布（参考 AIRS-Bench 的归一化分数设计，[`reward.py`](../../../examples/airs_bench/reward.py)）。
 
 ## 延伸阅读
 
 - 设计动机和角色分工：[`psrl-env-service-envworker-design.md`](../../psrl/psrl-env-service-envworker-design.md) 第 0-10 节。
-- 现状代码深读（账本结构、崩溃回收、Coordinator/Worker 为什么要拆）：[`implementation-and-gaps.md`](../archive/implementation-and-gaps.md)。
+- 当前架构与边界：[当前设计](current-design.md)；Coordinator 路径：[AIRS recipe](airs-gpu-recipe.md)。
+- 早期账本与恢复讨论：[历史实现](../archive/implementation-and-gaps.md)，按当时版本阅读。
 - SciAccel 接 GPU Gate 的实测与部署：[`sciaccel-gpu-gate.md`](../archive/sciaccel-gpu-gate.md)。

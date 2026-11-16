@@ -1,10 +1,11 @@
 # 环境执行与 GPU 资源调度：五篇近期顶会论文
 
-> **核心结论**：优先读 RollArt 和 DynaRL，确定 Agent 强化学习环境调度已有工作的覆盖范围；再读 Murakkab、Prism、Weave，分别学习工作流优化、显存弹性与空闲窗口复用。五篇均已核对为 **OSDI 2026 正式论文**，不是仅有 arXiv 的预印本。课题可重点考察“有状态环境会话中的 GPU 命令调度，以及它与模型推理的资源竞争”；这是本次调研提出的定位建议，不是已经证实的新颖性结论。
+> **核心结论**：优先读 RollArt 和 DynaRL，确定 Agent 强化学习环境调度已有工作的覆盖范围；再读 Murakkab、Prism、Weave，分别学习工作流优化、显存弹性与空闲窗口复用。五篇均已核对为 **OSDI 2026 正式论文**。课题可重点考察“有状态环境会话中的 GPU 命令调度，以及它与模型推理的资源竞争”；该定位仍需结合已有工作和实验进一步检验新颖性。
 
 检索日期：2026-11-02。按近期性、课题相关性和正式发表三项筛选，最终五篇均来自 2026 年 7 月 13–15 日举办的 OSDI（操作系统设计与实现研讨会，系统领域顶会）。这是一份相关论文精选，不声称穷尽全领域最新五篇。已核对官方出版条目并查阅论文问题定义与相关机制；未复现论文实验，也未完成各论文实现的逐项审计。
 
 阅读补充：[RollArt 与 DynaRL 精读](rollart-dynarl-deep-reading.md)解释阶段解耦、动态迁移及其与本地研究的边界。该精读已计入 2026-11-05 的同机 command 池与准备前移实现，不把这些已有能力重新作为创新主张。
+
 
 ## 目录
 
@@ -49,11 +50,11 @@ Weave → 不同作业如何利用彼此等待形成的窗口
 |---|---|---|
 | 1 | `run_harbor_episode` 申请环境资源，外部 Harbor 负责具体任务编排 | [runner.py:372](../../../examples/sciaccel_rl/runner.py#L372)；完整背景见[当前设计](../knowledge/current-design.md) |
 | 2 | `start_gpu_job` 提交，`_execute_gpu_job` 选择执行分支 | [managed_execution.py:130](../../../psrl/workers/env_service/managed_execution.py#L130)、[执行分支:168](../../../psrl/workers/env_service/managed_execution.py#L168) |
-| 3a | `GpuCommandScheduler.acquire` 按 `lease.unit_id` 排队；`_return` 等物理撤权后更新账本 | [command_gpu.py:58](../../../psrl/workers/env_service/command_gpu.py#L58)、[归还:215](../../../psrl/workers/env_service/command_gpu.py#L215) |
+| 3a | `GpuCommandScheduler.acquire` 按 `lease.unit_id` 排队；`_return` 等物理撤权后更新账本 | [command_gpu.py:82](../../../psrl/workers/env_service/command_gpu.py#L82)、[归还:215](../../../psrl/workers/env_service/command_gpu.py#L215) |
 | 3b | `MpsDomain.admit` 结合实测显存、预约和作业状态准入 | [parallel_gpu.py:208](../../../psrl/workers/env_service/parallel_gpu.py#L208) |
 | 4 | runner 的 `finally` 汇合 MPS 租约、清理容器，再释放会话 | [runner.py:605](../../../examples/sciaccel_rl/runner.py#L605) |
 
-因此，本次把课题理解为：**Agent 强化学习（模型通过与环境交互和奖励来学习）中的环境执行基础设施，尤其是 GPU 命令的细粒度资源调度。** 一条 rollout 是采集到的交互轨迹，episode 是一次完整环境任务，command 是其中一次具体命令。三者不是同一个调度粒度。
+因此，本次把课题理解为：**Agent 强化学习中的环境执行基础设施，尤其是 GPU 命令的细粒度资源调度。** 本文关注的调度粒度分别是 rollout 轨迹、episode 环境会话和具体 command；一次会话可包含多条命令，GPU 授权与归还可以发生在命令边界。
 
 本地对应专题是[命令阶段配额](../knowledge/command-gpu-reservations.md)、[MPS 并发](../knowledge/mps-parallel-execution.md)、[动态放置提案](../research-proposals/dynamic-command-placement.md)及[模型与环境共享](../knowledge/vllm-env-opportunistic-sharing.md)。MPS 是 NVIDIA 的多进程 GPU 服务；它提供并发执行基础，但不能仅凭启用 MPS 就断定总任务耗时降低。这些代码如果有理解上的问题，可以随时追问。
 
@@ -136,7 +137,7 @@ Weave → 不同作业如何利用彼此等待形成的窗口
 |---|---|---|---|
 | 会话准入 | 1 | [runner.py:372](../../../examples/sciaccel_rl/runner.py#L372)，`run_harbor_episode` | 资源需求进入 `acquire`，得到会话租约 |
 | 命令提交 | 2 | [managed_execution.py:130](../../../psrl/workers/env_service/managed_execution.py#L130)，`start_gpu_job` | 命令变成可查询、等待或取消的作业 |
-| direct 分支 | 3a | [command_gpu.py:58](../../../psrl/workers/env_service/command_gpu.py#L58)，`acquire` | 请求在既有 unit 内等待或获准；本处没有跨 unit 自动改派 |
+| direct 分支 | 3a | [command_gpu.py:82](../../../psrl/workers/env_service/command_gpu.py#L82)，`acquire` | 未配置池时按原 unit 等待；显式同机池可在兼容 GPU unit 之间重新选卡 |
 | MPS 分支 | 3b | [parallel_gpu.py:208](../../../psrl/workers/env_service/parallel_gpu.py#L208)，`admit` | 结合已批准作业与遥测判断能否接纳新作业 |
 | direct 归还 | 3a | [command_gpu.py:215](../../../psrl/workers/env_service/command_gpu.py#L215)，`_return` | 完成撤权与模型侧释放后，清除活动 GPU 记账；失败则隔离 |
 | 任务结束 | 4 | [runner.py:605](../../../examples/sciaccel_rl/runner.py#L605)，`finally` | 汇合、清理所属资源，最后释放会话 |
@@ -149,7 +150,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/dynamic_comman
 
 这是仅用 Python 标准库的 **CPU 教学模拟**，不调用 CUDA、不创建容器、不复现论文。脚本注释里的 C/P 编号对应[原动态放置文档](../research-proposals/dynamic-command-placement.md)的现状与提案图。它演示本图 3a 的固定绑定和未来动态选择之间的区别：GPU0 被 B 占到第 22 秒，GPU1 第 5 秒空闲，A2 第 4 秒就绪、需 3 秒。固定 GPU0 时 A2 在第 25 秒完成；换卡成本为 0.2 秒时，A2 在第 8.2 秒完成，而全组仍需到第 22 秒。换卡成本为 20 秒时应继续留在 GPU0。
 
-它假设预先知道作业耗时，并在结束时立即完成物理归还，没有模拟模型、缓存、实际并发干扰或故障。它说明调度与切换成本的关系，不能证明本地已实现动态改派。
+它假设预先知道作业耗时，并在结束时立即完成物理归还，没有模拟模型、缓存、实际并发干扰或故障。它说明调度与切换成本的关系，用于解释切换取舍；本地已实现的同机池见[动态放置](../research-proposals/dynamic-command-placement.md#11-已实现的同机命令池与资源账本)。
 
 本次已实际运行该脚本，固定绑定、低切换成本和高切换成本三组全组完成时间分别为 25、22、25 秒，与上述教学推导一致。文档与两个索引的 132 个本地链接路径检查通过，新文档目录锚点及源码链接行号检查通过。
 

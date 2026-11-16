@@ -1,9 +1,11 @@
-# -- PSRL Documentation Configuration ------------------------------------
-# Built with Sphinx using pydata-sphinx-theme (Ray-style).
-# Supports both Markdown (.md) and reStructuredText (.rst).
+# Sphinx configuration for Markdown and reStructuredText documentation.
+# Uses the `pydata-sphinx-theme` theme.
 
 import os
+import re
 import sys
+from pathlib import Path
+from urllib.parse import quote, unquote, urlsplit
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -44,6 +46,7 @@ myst_enable_extensions = [
     "amsmath",
 ]
 myst_heading_anchors = 3
+myst_fence_as_directive = ["mermaid"]
 
 # -- Source file suffixes -------------------------------------------------
 
@@ -54,9 +57,52 @@ source_suffix = {
 
 master_doc = "index"
 
-# README.md is the maintainer build guide, not a site page, so keep it out of the
-# toctree to avoid an "isn't included in any toctree" warning.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "README.md", "superpowers", "psrl", "env-worker-deep-dive", "tools", "sciaccel-grpo-oom-analysis.md"]
+# README.md is the repository knowledge index. The public site has its own
+# navigation and excludes the internal knowledge directories below.
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    "README.md",
+    "superpowers",
+    "psrl",
+    "env-worker-deep-dive",
+    "tools",
+    "sciaccel-grpo-oom-analysis.md",
+]
+
+
+def _link_repository_markdown(app, docname, source):
+    """Keep local Markdown links usable when their targets are outside the site."""
+    docs_root = Path(app.srcdir).resolve()
+    repo_root = docs_root.parent
+    page_dir = (docs_root / docname).parent
+    repo_url = app.config.html_theme_options["github_url"].rstrip("/")
+    revision = app.config.html_context.get("github_version", "main")
+
+    def replace_link(match):
+        href = match.group(1)
+        parsed = urlsplit(href)
+        if parsed.scheme or parsed.netloc or not parsed.path:
+            return match.group(0)
+        target = (page_dir / unquote(parsed.path)).resolve()
+        if target.suffix != ".md" or not target.is_file() or not target.is_relative_to(repo_root):
+            return match.group(0)
+        if target.is_relative_to(docs_root):
+            target_doc = target.relative_to(docs_root).with_suffix("").as_posix()
+            if target_doc in app.env.found_docs:
+                return match.group(0)
+        target_url = f"{repo_url}/blob/{revision}/{quote(target.relative_to(repo_root).as_posix())}"
+        if parsed.fragment:
+            target_url += f"#{parsed.fragment}"
+        return f"]({target_url})"
+
+    source[0] = re.sub(r"\]\(([^\s)]+)\)", replace_link, source[0])
+
+
+def setup(app):
+    app.connect("source-read", _link_repository_markdown)
+
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -103,13 +149,7 @@ html_sidebars = {
 copybutton_prompt_text = r">>> |\.\.\. |\$ |> "
 copybutton_prompt_is_regexp = True
 
-# -- Intersphinx mapping --------------------------------------------------
-# Disabled: intersphinx is unavailable in restricted-network environments.
-# Re-enable by adding "sphinx.ext.intersphinx" to extensions and uncommenting below.
-# intersphinx_mapping = {
-#     "python": ("https://docs.python.org/3/", None),
-#     "torch": ("https://pytorch.org/docs/stable/", None),
-# }
+# Intersphinx is disabled for restricted network environments.
 
 # -- Napoleon settings (Google/NumPy docstrings) --------------------------
 

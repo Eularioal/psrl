@@ -1,13 +1,20 @@
 # 配置系统与核心训练参数
 
-> **核心结论**：本篇聚焦「配置系统与核心训练参数」及其相邻完整章节。原文的例子、推导和证据保留，历史条件不代表当前部署。
+> **核心结论**：先弄清一次运行需要多少训练和生成资源，再查对应参数。这里是字段手册，适合按目录查找；首次接触项目可先读[完整流程](../../overview/reading-guide.md)。示例值与实际默认值分别标注。
 
 ## 目录
 
 - [Configuration System](#configuration-system)
+  - [File Layout of the psrl Group](#file-layout-of-the-psrl-group)
 - [Top-Level Config](#top-level-config)
 - [veRL-Managed Configuration](#verl-managed-configuration)
 - [PSRL Config Reference](#psrl-config-reference)
+  - [Core Settings](#core-settings)
+  - [Fine-Grain Overlap](#fine-grain-overlap)
+  - [Deployment](#deployment)
+  - [Colocate & Fuse Settings](#colocate--fuse-settings)
+  - [Status Collection](#status-collection)
+  - [Rollout Coordination](#rollout-coordination)
 
 [返回专题索引](../configuration.md)
 
@@ -136,9 +143,9 @@ categorized reference of all parameter groups.
   **Default:** `~/psrl_logs`
 
 `staleness`
-: Maximum version gap between generation and training. `0` = fully synchronous
-  (generation blocks until training consumes). Values `>0` allow that many rollout
-  buffers to be generated ahead of training consumption.
+: Maximum accepted model-version age of generated data when training consumes it.
+  With a bound of `3`, generation version 10 may be used at training version 13,
+  but not version 14. `0` requires matching versions.
   **Default:** `0`
 
 `staleness_buffer_entries`
@@ -154,7 +161,7 @@ categorized reference of all parameter groups.
 `ps_mode`
 : Parameter server weight synchronization mode.
   - `cpu_ref`: CPU-based reference model (simpler setup, no NIXL required)
-  - `nixl_cpu`: GPU-direct RDMA via NIXL (recommended for production)
+  - `nixl_cpu`: NIXL transfer via CPU-resident PS Workers; local or cross-node transport depends on placement
 
   **Default:** `cpu_ref`
 
@@ -410,7 +417,7 @@ requests are dispatched, when weights are synced, how stragglers and over-capaci
 sessions are handled, and how much work is over-provisioned.
 
 ```{seealso}
-{doc}`../design/flexible_rollout` covers the design of partial rollout, redundant
+{doc}`../../design/flexible_rollout` covers the design of partial rollout, redundant
 rollout, intelligent routing, and migration, and how they interact with the staleness
 system.
 ```
@@ -672,7 +679,7 @@ straggling.
   **Default:** `0`
 
 ```{seealso}
-{doc}`../design/staleness_control`, How proactive filtering integrates with the
+{doc}`../../design/staleness_control`, How proactive filtering integrates with the
 Reserve/Occupy/Consume staleness protocol.
 ```
 
@@ -728,6 +735,6 @@ pause/resume design in the
 `continue_scope` and `continue_force_pin` are independent, giving four combinations.
 
 ```{seealso}
-{doc}`../design/router_tito`, SessionRouter, TITO session capture, and how hang/continue
+{doc}`../../design/router_tito`, SessionRouter, TITO session capture, and how hang/continue
 interacts with sticky routing.
 ```

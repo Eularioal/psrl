@@ -1,6 +1,6 @@
 # 从 Codex Bus error 理解进程、文件映射与 SQLite
 
-> **核心结论**：文件映射让程序通过内存地址访问文件，底层文件失去对映射的支撑时可能触发 SIGBUS。致命信号会终止整个进程，因此数据库线程出错也能让终端客户端退出。`deleted` 只说明目录名字已删除，不足以证明映射为何失效。本教程解释机制，具体事故证据保留在 [Codex Bus error 排查](../codex/session-management/bus-error.md#bus-error-导致会话退出)。
+> **核心结论**：文件映射让程序通过内存地址访问文件，底层文件失去对映射的支撑时可能触发 SIGBUS。致命信号会终止整个进程，因此数据库线程出错也能让终端客户端退出。`deleted` 只说明目录名字已删除，不足以证明映射为何失效。本教程解释机制，具体事故证据保留在 [Codex Bus error 排查](../codex/session-management/session-recovery.md#bus-error-导致会话退出)。
 
 ## 目录
 
@@ -228,6 +228,6 @@ Return code: -7.
 - [Linux signal 手册](https://man7.org/linux/man-pages/man7/signal.7.html)：信号递送、默认行为及平台差异。
 - [SQLite WAL 官方文档](https://www.sqlite.org/wal.html)：WAL、检查点、共享索引和同机限制。
 - [已有 inode 教程](inode-basics.md)：文件身份、名字和打开引用。
-- [Codex 事故章节](../codex/session-management/bus-error.md#bus-error-导致会话退出)：本次直接故障证据与未验证原因。
+- [Codex 事故章节](../codex/session-management/session-recovery.md#bus-error-导致会话退出)：本次直接故障证据与未验证原因。
 
 本教程基于 PSRL `ab74120` 的未提交工作区新增文档和教学脚本，不改变 PSRL 实现或 Codex 配置。实验结果是本次新运行结果，Codex 转储证据沿用前一轮排查，不声称重新检查活动数据库。未取得相应外部实现源码，因此源码阅读路径限于教学脚本。

@@ -1,10 +1,20 @@
 # 传输、生成与环境配置
 
-> **核心结论**：本篇聚焦「传输、生成与环境配置」及其相邻完整章节。原文的例子、推导和证据保留，历史条件不代表当前部署。
+> **核心结论**：按需要搬运的内容查参数：模型参数用 NIXL，生成中间结果用 LMCache，训练样本用 TransferQueue。其余章节说明运行生命周期与故障处理。先看[术语速查](../../overview/glossary.md)可帮助区分这些数据。
 
 ## 目录
 
-
+- [NIXL](#nixl)
+- [Checkpoint](#checkpoint)
+- [LMCache](#lmcache)
+- [TMS (torch_memory_saver)](#tms-torch_memory_saver)
+- [Agentic RL](#agentic-rl)
+- [Broadcast Init](#broadcast-init)
+- [Group & Buffer Post-Processing](#group--buffer-post-processing)
+- [Log Probability](#log-probability)
+- [Server Rollout](#server-rollout)
+- [Rollout Gateway (SMG)](#rollout-gateway-smg)
+- [TransferQueue](#transferqueue)
 
 [返回专题索引](../configuration.md)
 
@@ -200,14 +210,15 @@ in multi-turn workloads.
   **Default:** `0`
 
 ```{seealso}
-{doc}`../design/kv_cache`, KV cache management architecture, LMCache Controller
+{doc}`../../design/kv_cache`, KV cache management architecture, LMCache Controller
 process, and cache eviction behavior.
 ```
 
 ### TMS (torch_memory_saver)
 
-GPU memory management that transparently swaps idle tensors to CPU, enabling colocated
-workloads to share GPU memory.
+Memory pause/resume for supported workers. The training/validation switch uses
+sleep/wake and weight restoration as needed. `range` selects managed workers; it
+does not select GPU placement. See [the lifecycle and source map](../../design/resource_elasticity.md).
 
 `tms.range`
 : Scope of TMS management.
@@ -373,7 +384,7 @@ starts SMG and SessionRouter subprocesses, and rollout replicas register as gRPC
   zero-overlap indexing bug under investigation.
 
 SMG uses `worker_selection_strategy=psrl`, gRPC worker connections, the
-routing loop, and TITO. See {doc}`../design/router_tito`.
+routing loop, and TITO. See {doc}`../../design/router_tito`.
 
 ### TransferQueue
 
@@ -416,4 +427,4 @@ TransferQueue configuration is a top-level block in `ppo_trainer.yaml`.
 
 `transfer_queue.backend.MooncakeStore.*`
 : Experimental Mooncake metadata/master addresses, local host, TCP/RDMA protocol,
-  memory sizes, and NIC selection. See {doc}`../design/transfer_queue`.
+  memory sizes, and NIC selection. See {doc}`../../design/transfer_queue`.

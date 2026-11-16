@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-11-13T01:14:16.831272+08:00",
+  "kind": "CPU teaching simulation. No Docker, package installation or GPU validation.",
+  "script": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/scripts/bench_environment_layers_demo.py",
+  "script_sha256": "2d331da41b05261480525d2d3817a492189c65d8f032e5de902e20279154a7a7",
+  "passed_observations": 11,
+  "exit_code": 0,
+  "stdout": "Teaching simulation only. No Docker, package installation or GPU calls.\nPASS agent edit stays in its own upper layer\nPASS verifier still sees clean image\nPASS shared image is unchanged\nPASS read-only mount rejects writes in this simulation\nPASS main Python files are unchanged\nPASS private input is absent from the agent view\nPASS artifact reaches the host directory\nPASS verifier receives an explicit snapshot\nPASS independent verifier can score the submission\n{\"image\": \"image-version\", \"agent\": \"agent-version\", \"verifier\": \"image-version\"}\nPASS container removal keeps image and artifact\nPASS all demonstration files are cleaned up\n"
+}

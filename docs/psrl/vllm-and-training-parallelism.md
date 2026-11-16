@@ -1,6 +1,6 @@
 # vLLM 推理与训练并行专题索引
 
-> **核心结论**：原 1848 行长文已拆分为 5 篇，分别覆盖推理机制、训练并行、PSRL 训推流程、训练损失与实验速查。
+> **核心结论**：专题按 5 个阅读任务组织：推理机制、训练并行、PSRL 训推流程、训练损失与实验速查。缓存的解释和算例集中在推理机制一篇中。
 
 ## 目录
 
@@ -10,19 +10,19 @@
 
 ## 阅读路径
 
-先读推理机制与训练并行，再进入 PSRL 训推流程和损失细节；查公式或历史实验时直接进入速查专题。
+想理解 PSRL 的进程分工、数据流和版本协调，直接读训推流程；遇到显存、合批或通信问题，再查推理机制与训练并行。PPO、GRPO 与损失推导供需要核对算法细节时选读，历史测量集中在速查专题。
 
 ## 专题文档
 
-- [vLLM 推理机制：缓存、调度与合批](vllm-and-training-parallelism/inference-mechanisms.md)：从 prefill/decode 的计算差异出发，理解 KV 缓存、PagedAttention、前缀复用、连续合批和选择性合批；原有算例与性能边界保留。
+- [vLLM 推理机制：缓存、调度与合批](vllm-and-training-parallelism/inference-mechanisms.md)：从 prefill/decode 的计算差异出发，解释 KV 缓存、PagedAttention、连续合批，并用三分支例子展开块表、写时复制与缓存回收。
 - [训练并行、通信量与带宽分析](vllm-and-training-parallelism/training-parallelism.md)：按切分对象理解训练并行，再用每卡通信量和互联带宽判断并行策略应如何排布。
-- [PSRL 训推协作与 PPO、GRPO 基础](vllm-and-training-parallelism/rl-training-workflow.md)：串联轨迹生成、概率重算、优势估计、参数更新与权重同步，并保留 PPO/GRPO 的逐步推导和长尾分析。
+- [PSRL 训推协作与版本协调](vllm-and-training-parallelism/rl-training-workflow.md)：串联轨迹生成、概率重算、优势估计、参数更新与权重同步，并保留 PPO/GRPO 的逐步推导和长尾分析。
 - [PSRL 分组采样、DAPO 与训练损失](vllm-and-training-parallelism/rl-loss-and-sampling.md)：解释同一 prompt 的分组采样、DAPO 改动、熵与 KL 项，以及多轮 response_mask、奖励标签和 rollout correction。
 - [推理与训练并行：公式速查及实验记录](vllm-and-training-parallelism/experiments-and-reference.md)：集中查阅符号、公式、机制对应的实验脚本与历史测量条件；历史结果不代表当前环境的重新验证。
 
 ## 迁移说明
 
-2026-10-14 已按主题拆分为 5 篇子文档；本文件保留为索引。原有正文、例子、公式、代码块和历史实验记录已迁入对应专题，避免在索引中重复。已修复工作区内的章节引用；旧章节位置可通过下列对照表查找。
+本页提供 5 个用途明确的专题入口，正文、例子、公式、代码块和历史实验各随所属主题维护。缓存管理与推理机制合并，避免理解同一问题时切换文件。旧章节位置可通过下列对照表查找。
 
 | 原章节 | 新位置 |
 |---|---|
@@ -39,4 +39,4 @@
 | 相关文档 | [阅读章节](vllm-and-training-parallelism/experiments-and-reference.md#相关文档) |
 | 参考 | [阅读章节](vllm-and-training-parallelism/experiments-and-reference.md#参考) |
 
-本次为文档结构整理，不将历史实验视为当前验证，也未启动训练或集群实验。
+推理正文按生成过程解释，公式与实现细节留在对应专题。2026-11-16 核对部分本地源码与官方说明，历史测量保留原条件，未启动训练或 GPU 实验。

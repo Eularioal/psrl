@@ -1,8 +1,11 @@
 # Env 环境执行：当前设计与阅读入口
 
-> **核心结论**：了解现状先读本文。当前受管理路径由 EnvRouter 决定资源准入，Harbor 组织任务，原生 EnvWorker 或 Compose 创建容器，两者共用 GPU 作业执行接口。`episode` / `command` 决定预算持有多久，`direct` / `mps` 决定作业如何执行。这是两组不同的选择，不能混为一谈。
->
-> **核对范围**：2026-11-05 对照主目录 `0326d46` 复核第 1、2 节的 runner 接线、提供者、执行后端和默认开关，并修正收尾源码定位。MPS 控制通道修复已包含在该提交中。开始前已有文档与实验未提交改动，第 4 节的局部验证仍按各自日期和范围阅读，未重新运行其中实验。本文不代表远端已合并版本或集群已部署状态。默认配置仍关闭 Env Service。[MPS 真实训练性能验证](../experiments/mps-training-comparison.md)单独记录实验条件和结果，不能从架构图推断吞吐收益。
+> **核心结论**：Env Service 把“运行一个任务”和“分配 GPU”分开管理。Harbor 负责把题目做完，EnvRouter 负责判断资源是否够用，EnvWorker 或 Compose 负责创建容器，公共执行层负责运行、取消和清理 GPU 命令。这样，容器里的文件可以保留，而 GPU 可以在命令之间交给其他任务。
+
+例如，一个任务先用 GPU 训练 20 秒，再等 Agent 思考 10 秒，最后继续训练。采用逐命令借还时，20 秒训练结束并确认资源释放后，其他任务可以使用这张 GPU；原任务的文件仍留在容器里。Agent 发出下一条 GPU 命令时，再重新申请资源。这里的数字是教学假设，具体任务能否归还取决于后台进程是否仍持有 GPU。
+
+本文先串起调用流程，再解释配置、资源记账与当前能力。需要看某个函数的细节时，可沿源码表和最后的专题入口继续阅读。版本和实验核对范围集中放在第 6 节。
+
 
 ## 目录
 
@@ -10,13 +13,16 @@
 - [2. 四个容易混淆的选择](#2-四个容易混淆的选择)
 - [3. 资源如何计算与归还](#3-资源如何计算与归还)
 - [4. 已实现与尚未完成的边界](#4-已实现与尚未完成的边界)
+  - [任务接入：哪些可以开始使用](#任务接入哪些可以开始使用)
+  - [固定工作量服务：等待热卡，还是在冷卡重建模型](#固定工作量服务等待热卡还是在冷卡重建模型)
 - [5. 跟着图读源码](#5-跟着图读源码)
 - [6. 可运行例子与验证边界](#6-可运行例子与验证边界)
+  - [核对记录](#核对记录)
 - [7. 接下来按问题阅读](#7-接下来按问题阅读)
 
 ## 1. 现在的完整结构
 
-下面是已启用 Env Service 时的源码结构图。箭头表示调用或数据传递，不表示所有环节都在同一个进程里顺序执行。
+下面是已启用 Env Service 时的源码结构图。容器提供任务的文件和进程视图，命令进程在其中按需启动、退出。容器可以跨命令保留；后台模型进程仍存活时，命令返回后显存也可能继续被占用。箭头表示调用或数据传递，不表示所有环节都在同一个进程里顺序执行。
 
 ```text
 [1] Science runner：读取任务资源需求
@@ -57,9 +63,9 @@
 | 4 → 5 | direct 路径先设置输出可读，再完成持有策略收尾 | [gpu_execution.py](../../../psrl/workers/env_service/gpu_execution.py#L151) |
 | 6 | 原生后端 `stop` 清理作业和容器，runner 的 `finally` 完成外层资源释放 | [harbor.py](../../../psrl/workers/env_worker/harbor.py#L182)、[runner.py](../../../examples/sciaccel_rl/runner.py#L610) |
 
-Harbor 是任务编排框架，负责执行任务、调用评分器并收集产物。EnvWorker 是容器执行实现。EnvRouter 是资源调度入口，Ledger 是它维护的资源账本。统一 GPU 执行层让两个容器提供者使用同一套作业协议，没有把它们的构建、网络和全部生命周期实现合并成一个提供者。
+Harbor 是任务编排框架，负责执行任务、调用评分器并收集产物。EnvWorker 是容器执行实现。EnvRouter 是资源调度入口，Ledger 是它维护的资源账本。两个容器提供者保留各自的构建和网络管理，共用提交、查询、等待、取消 GPU 作业的协议。
 
-这些代码如果有理解上的问题，可以随时追问。
+AIRS 目前走另一条路径：`MLGymAgentLoop → EnvWorkerCoordinator → GPU sandbox → 独立 verifier`。其中 sandbox 是任务执行容器，verifier 是独立评分程序。GPU recipe（接入配置与运行脚本）申请一个由 Ray 分配的独立 GPU 槽位，CPU recipe 申请零 GPU；逐命令借还尚待接入。调用图与 19 题验证情况见 [AIRS GPU recipe](airs-gpu-recipe.md#任务怎样进入-psrl)和[接入审计](../airs-bench-audit/fixes-and-results.md)。
 
 ## 2. 四个容易混淆的选择
 
@@ -70,9 +76,9 @@ Harbor 是任务编排框架，负责执行任务、调用评分器并收集产�
 | episode / command | GPU 预算持有多久 | 前者贯穿环境会话，后者在每条 GPU 命令获得准入后持有，确认物理归还再释放 |
 | direct / mps | 作业怎样执行 | direct 在同环境串行，mps 支持受管的同容器和跨容器作业并发 |
 
-MPS 是 NVIDIA 的多进程服务。这里的 MPS 后端还有逐作业预算、身份和清理管理，不能把安装 MPS 服务等同于完成调度接入。当前后端面向环境专用单卡、cgroup v1 和同一可信实验域，不能直接推导为 vLLM 同卡 MPS 共享已完成。具体条件见 [MPS 专题](mps-parallel-execution.md)。
+MPS 是 NVIDIA 的多进程服务，让多个程序共享 GPU 执行。这里在 MPS 外加了逐作业预算、身份和清理管理。当前接入要求环境专用单卡、cgroup v1（Linux 的进程资源管理机制）和同一可信实验域；vLLM 与环境共卡走单独的共享协议。具体条件见 [MPS 专题](mps-parallel-execution.md)。
 
-`episode` 不等于固定 OFF baseline。它仍然可以经过 EnvRouter 准入，只是持有期更长。固定历史 baseline 是提交 `0eeead861ffafed6bf31c962d259fd847775dcf9`，也不能用当前代码关掉开关替代。
+`episode` 指一次完整环境会话：例如 Agent 从接题、修改代码到最终评分的全过程。它可以经过 EnvRouter 准入，并在整个会话持有预算。实验所说的固定历史 baseline（对照版本）则是提交 `0eeead861ffafed6bf31c962d259fd847775dcf9`，应使用该版本运行。
 
 ## 3. 资源如何计算与归还
 
@@ -90,38 +96,39 @@ GiB 是显存容量单位，1 GiB 等于 1024 MiB。unit 配额是调度容量�
 
 ## 4. 已实现与尚未完成的边界
 
-2026-11-11 对 `ab74120` 加未提交改动的扩题能力局部核对：KernelBench 270 道源题已准备，快速 GPU 检查原尺寸通过 22 题、本地小输入档通过 193 题；新增 `kernel_bench_local` 独立评分身份与验证标记，不修改上游题库或原尺寸任务协议。FlashInfer 公共 recipe 已解除单一 RMSNorm 限制，30 个定义各一条原始随机 workload 经官方 evaluator 通过；MLE 本地数据扩为 digits、Iris、Wine、乳腺癌四题，CUDA 训练与隐藏评分通过。249 个通过项已写入统一 PSRL 任务池。当前策略更新闭环仍为六类各一个历史代表题，不能将本轮快速验证写成新增题目的策略训练完成。其他 bench 的官方题数、本地题目身份、数据缺口与路径见[逐题覆盖统计](../milestones/science-gpu-bench-status-and-roadmap.md#题库数量位置与逐题覆盖)。其余架构核对范围不变。
+先按使用场景看能力。表中的“已实现”说明本地代码具备相应机制；是否适合某次实验，还要满足链接里的配置和验证条件。
 
-2026-11-10 局部更新：本地主目录已增加 Router 启动契约核对，以及节点 `node_diagnostics` / `recover_node` 接口。恢复不清空租约、不解除 GPU 隔离，真实 Ray/GPU 故障部署验收未执行。见[初学者讲解与修复边界](router-configuration-and-recovery.md)。其余章节仍按各自核对范围阅读。
-
-2026-11-10 本地 GPU 任务接入新增 MLE 真实数字分类、InferenceBench 固定输出服务协议、RE-Bench 有界本地裁判模式，以及 FlashInfer 公共 Harbor 准备/验收入口。代码接线与已经通过的本地策略闭环验收记录在[本地完整接入报告](../milestones/science-gpu-full-onboarding.md)，不能继续将 FlashInfer 一概描述为只有探针，完整通过的结论只适用于报告列出的本地代表题，不外推到官方全题库。其余架构核对日期保持各节原范围。
-
-2026-11-10 对 `bc5665f` 加本轮未提交修改的 benchmark 接线局部核对：公共训练 recipe 包含 KernelBench、MLE-bench、InferenceBench、autoresearch、RE-Bench、FlashInfer。MLE、Inference 与 RE 可显式选择本地协议，独立 GPU verifier 均已有代表任务证据，六类代表题均已完成真实策略采样、一次优化器更新、版本 1 参数回传及后续独立 GPU 评分，资源已经回收。AIRS 使用独立接线，其 GPU 子集未包含在本轮保证范围。当前任务边界与后续工作见[路线图](../milestones/science-gpu-bench-status-and-roadmap.md)，历史实测条件保留在完整接入报告与原始证据中，不据此刷新本篇其余架构核验日期。
-
-同日针对 `ab74120` 加未提交改动补充局部边界修复：RE 缺失提交明确零分，MLE 拒绝格式损坏与超额 CSV，混合准备器拒绝显式来源身份冲突，Inference verifier 清理所属服务进程组。30 项 CPU 回归通过；未重新启动 GPU 训练，旧任务资产与镜像需重新准备才携带修复。具体行为及保留的 agent 生命周期限制见[边界修复与回归](../milestones/science-gpu-full-onboarding.md#本轮边界修复与回归)。
-
-RE-Bench 本地裁判于 2026-11-05 对照 `cd09114` 加本次未提交修改局部核对，实机运行发生于 11-04。command 的组级测量预算与反馈保真调度仍是[研究提案](../research-proposals/command-scheduling-research.md)，不属于已实现能力。其文献与接口边界于 2026-11-05 局部核对，目标为固定 rollout 组全部有效反馈的完成时间，不另设公平性优化目标。现有 KernelBench 默认奖励仍为正确性，组反馈精度候选仅适合先做成本与误差验证，未确认独立研究收益。跨指标的评估契约与误差模型也仅为研究设计，未提供通用可靠性保证。
-
-KernelBench command 于 2026-11-04 对照 `cd09114` 加未提交代码局部核对，见[接入与性能测量](gpu-benchmark-recipes.md#kernelbench-command-与性能测量)。其余章节保留原核对范围。
-
-FlashInfer-Bench 于 2026-11-05 在 `0326d466` 加未提交修改的固定快照上完成三个官方 workload 的原生 EnvWorker command 探针，正确性、命令归还及物理清理通过，见[验证边界](../literature-reviews/ai4infra-performance-benchmarks.md#results-与验证边界)。这是已有执行接口的任务验证，没有新增生产调度策略，也没有扩大公共 benchmark runner 的 command 白名单或完成 agent 训练接入。这一句仅描述 11-05 固定探针；11-10 的公共 episode recipe 已完成前述本地策略闭环，不能用旧探针边界否定该结果。
-
-本节动态放置与 benchmark 接入条件于 2026-11-03 对照 `96acfcc` 主目录源码局部复核，包含工作区文档修改。其余章节保留原核对范围，不表示全文重新验收或集群已部署。具体任务排序见[必要性评估](../research-proposals/dynamic-command-placement.md#9-已接入-benchmark-的必要性评估)。
-
-command 放置边界于 2026-11-05 对照 `0326d466` 加本次未提交实现复核：显式同机 `command_gpu_pool` 已支持下一条 direct 命令重新选卡，主机归属与 GPU 分配分别记账。真实 EnvWorker 容器与 EnvRouterCore 验证了 GPU0 被占用时转到 GPU1，见[实现与实测](../research-proposals/dynamic-command-placement.md#11-已实现的同机命令池与资源账本)。2026-11-06 已补真实 Ray Router/节点 actor、固定工作量及已有 CPU prepare 对照，六组 288 次正确性测试执行通过，见[实测边界](../research-proposals/dynamic-command-placement.md#14-results真实-ray-与相同工作量对照)。仍未验证完整 Harbor episode runner、跨节点或训练收益，也未部署共享服务。版本有效准备与联合调度仍是研究提案。 2026-11-09 的[准备窗口增量试验](../research-proposals/non-timing-gpu-scheduling-scenarios.md#results准备并发窗口的增量收益验证)未提供足够收益证据，尚未新增生产控制策略。
-
-| 问题 | 当前结论 | 深入入口 |
+| 你想做什么 | 当前能做到哪里 | 深入阅读 |
 |---|---|---|
-| 两种容器创建方式是否统一 GPU 作业接口 | 已共用提交、等待、取消和执行实现，创建层仍不同 | [统一执行层第 10 节](unified-gpu-execution.md#10-当前结构与前两阶段的对照) |
-| 同容器能否同时运行多条受管 GPU 作业 | direct 串行，显式 MPS 后端支持并行 | [MPS 后端](mps-parallel-execution.md) |
-| 命令归还可否与模型规划重叠 | direct command 支持异步归还，下一条 GPU 命令仍须通过准入 | [命令配额第 8 节](command-gpu-reservations.md#8-异步归还与模型规划并行) |
-| 下一条命令能否自动换卡或跨节点迁移 | 显式同机池支持单卡 direct command 自动重新选卡。会话仍保留主机 unit；未配置池仍固定绑定。跨节点、MPS、模型共享卡与活 CUDA 状态迁移未支持 | [动态放置实现](../research-proposals/dynamic-command-placement.md#11-已实现的同机命令池与资源账本) |
-| 等待模型时能否自动卸载任意 GPU 状态 | 未完成通用自动卸载与恢复，常驻模型需显式管理生命周期 | [接入 recipe](gpu-benchmark-recipes.md) |
-| 是否能使用模型 GPU | 有独立 GPU 优先与显式共享路径，需遵守共享配置和模型余量边界 | [vLLM 共享第 10 节](vllm-env-opportunistic-sharing.md#10-常驻共享kv-上限与已睡眠窗口) |
-| RE-Bench 训练任务是否接入原生 Env | 已有任务、独立 verifier、裁判请求桥接和 PSRL 接线。已支持独立卡本地 Qwen 裁判，真实小样本反馈验证通过，完整 512 条本地评分未验证。训练命令内部等待不会触发 command 归还，也不表示任务只能使用 episode，自动卸载仍未实现 | [RE-Bench recipe](re-bench-recipe.md) |
-| 失败是否等于没有恢复能力 | 已有重试、补采与监督，不等于原请求能自动迁移到另一 worker | [重试与重派发](worker-retry-and-redispatch.md) |
-| MPS 控制通道收尾错误是否已修复 | 已按服务串行管理连接，原失败训练组定向复测通过，长期稳定性未验收 | [故障定位与修复](../experiments/mps-training-comparison.md#6-控制通道故障定位与修复) |
-| 功能通过是否代表训练更快 | 不能，性能结论需匹配版本、工作量和计时边界 | [实验索引](../experiments/README.md) |
+| 在两种容器后端运行 GPU 命令 | native EnvWorker 与 Compose 共用作业提交、等待、取消及执行层 | [统一执行层](unified-gpu-execution.md#10-当前结构与前两阶段的对照) |
+| 命令之间让出 GPU | direct command 支持借还，物理归还可与 Agent 思考重叠；常驻后台模型需要显式结束或管理 | [命令阶段配额](command-gpu-reservations.md#8-异步归还与模型规划并行) |
+| 同一容器同时跑多条 GPU 作业 | direct 串行；显式 MPS 后端支持受管并发与单独取消 | [MPS 后端](mps-parallel-execution.md) |
+| 下一条命令换到同机空闲卡 | 显式 `command_gpu_pool` 支持专用单卡 direct command 重新选卡，保留原容器、主机资源和文件 | [动态放置](../research-proposals/dynamic-command-placement.md#11-已实现的同机命令池与资源账本) |
+| 使用训练或推理所在的 GPU | 优先选独立 GPU；vLLM 有显式共享与睡眠借卡分支。Megatron 峰值协调和按推理需求主动退卡仍待实现 | [vLLM 共享](vllm-env-opportunistic-sharing.md#10-常驻共享kv-上限与已睡眠窗口)、[退卡提案](../research-proposals/reclaim-aware-env-sharing.md) |
+| 长命令中途让出计算后继续 | 图像研究适配器可在完整更新后暂停，保留显存与票据。真实对照通过正确性，但未胜过现有共享；通用自动策略未接入生产 | [常驻模型计算对照](../experiments/resident-compute-sharing.md) |
+| 复用跨命令的模型和准备状态 | 文件、应用自己保留的进程可以延续；生产尚无通用的代码版本检查、模型卸载恢复与 GPU 缓存管理 | [状态生命周期](baseline-state-lifetimes.md)、[真实任务核查](../research-proposals/benchmark-state-reuse-audit.md) |
+| 服务配置变更或节点故障后继续工作 | 已实现同名 Router 配置核对、节点诊断和受控重新探测；隔离 Ray/Docker 链路已有验证 | [配置与恢复](router-configuration-and-recovery.md#8-运行教学实验与回归) |
+| 任务失败后继续采样 | 已有重试、补采与执行监督；原请求自动跨 worker 转移仍需单独协议 | [重试与重派发](worker-retry-and-redispatch.md) |
+
+**同机换卡保留的是容器和文件。** 正在运行的 CUDA 进程所持有的显存、上下文和模型状态，仍留在原 GPU。跨节点执行、MPS 池改派和活 GPU 状态迁移属于后续能力。
+
+### 任务接入：哪些可以开始使用
+
+当前基础范围包含 Harbor 六类 476 题、AIRS 原生 sandbox 19 题，以及独立 MLGym 9 个 GPU 任务。基础库已有逐题快检和代表题策略闭环，MLGym 的 9 题均有策略闭环。任务执行与独立评分构成环境链路，策略闭环还要求优化器更新、版本发布与新版本后续评分。
+
+扩展库按各自完成范围使用：PostTrain 的 15/24 个组合、FastKernels 的 74/458 个目标已有独立 GPU 快检；SWE 导入 41 题，原测试与本地快速协议去重后 21 题全过，其中 17 题观察到 GPU 工作。策略闭环的逐组合与代表题覆盖、隔离情况和剩余工作统一维护在[接入状态与路线图](../milestones/science-gpu-bench-status-and-roadmap.md)，避免在架构入口重复全套验收表。
+
+RE-Bench 已有任务、独立 verifier 和本地 Qwen 裁判桥接，小样本真实反馈验证通过，完整 512 条本地评分待验证。训练命令内部等待裁判时，当前仍由应用负责 GPU 生命周期，见 [RE-Bench recipe](re-bench-recipe.md)。
+
+### 固定工作量服务：等待热卡，还是在冷卡重建模型
+
+已有[类型化放置控制器](warm-placement-code-guide.md)比较三种策略：等待有模型的热卡、始终在另一张卡重建、按预计完成时间选择。新增[命令可预测性模块](command-predictability.md)和受管理队列执行器，把“何时允许使用时间预测”变成显式条件。调用者登记固定工作量、模型与代码版本、输入和可重建性，服务报告进度。系统先检查分块稳定性、报告新鲜度和近期独立完成命令的预测误差，再核对加载与执行画像及排队成本。
+
+默认 `off` 沿用普通容量放置。`observe` 额外计算影子预测并积累完成校准，实际仍走普通策略。`auto` 逐命令通过检查后，才允许预计完成时间改变设备选择。普通放置优先复用可行的热副本，没有副本时仍允许按容量首次加载。容量检查同时计入模型和本次计算的临时显存，时间未知保留为未知。
+
+[系统对照矩阵](../experiments/gpu-benchmarks/warm-placement-matrix.md)完成 48 个核心区块和 5 个故障区块，总计 53/57。主要结果是：热卡长时间繁忙时，冷卡重建可以缩短等待；热卡很快空闲时，保留模型更合算；接近分界点时，预测策略尚无稳定优势。该 GPU 实验采用 2026-11-13 冻结的研究策略。本次新增门控、受管理队列及固定步数 GPU 服务适配器，提供默认 off 的[专用入口](command-predictability.md#92-固定步数-gpu-服务接入)，已做 CPU 协议验证，尚未实机重跑。生产 Router 的通用 shell 路径未默认启用预测。
+
+受管理服务通过 episode 会话租约登记常驻显存，结束时依次汇合请求、停止容器、释放租约并核对物理资源。普通 `command_gpu` 逐命令归还协议仍要求 GPU 状态真实退出，不在后台留下未记账模型。当前模块覆盖愿意提供可核验进度的结构化程序，任意 shell 时长预测、活 CUDA 状态迁移和全局最优调度仍是后续问题。调用关系和取消路径见[代码指南](warm-placement-code-guide.md)，门控原理、完整数字例子和 CPU 演示见[命令可预测性](command-predictability.md)，适用任务与历史收益的区别见[逐 benchmark 判断](command-predictability.md#11-当前-benchmark-中哪些值得使用这套机制)。其他研究结果与工程缺口分别查[研究索引](../research-proposals/README.md)和[工程审查](engineering-review.md)，性能结果查[实验结论入口](../experiments/env-design-and-results-brief.md)。
 
 ## 5. 跟着图读源码
 
@@ -142,11 +149,19 @@ command 放置边界于 2026-11-05 对照 `0326d466` 加本次未提交实现复
 PYTHONPATH=. python docs/env-worker-deep-dive/env-service-verification/scripts/explain_unit_capacity.py
 ```
 
-这是图中 **2 的准入与 6 的账本释放**的 CPU 教学例子，调用真实账本与显存计算函数，以模拟遥测代替 GPU，不创建容器。它没有模拟 Harbor、远程调用、CUDA 执行或物理回收协议，脚本中的释放前提由教学代码直接提供。
+这是图中 **2 的准入与 6 的账本释放**的 CPU 教学例子：它调用真实账本与显存计算函数，以模拟遥测代替 GPU。运行前激活项目环境。脚本直接提供“资源已释放”的教学前提，适合观察记账逻辑；真实容器和物理回收需查看对应实验。
 
 预期观察：24 GiB 配额只接纳第一项任务，96 GiB 配额在没有可信归属时接纳前三项，提供可信归属后四项均获准。三项任务的保守占用为 102 GiB，可信归属下为 60 GiB。释放后新的申请可以获准，重复声明同一设备的两个 unit 会被拒绝。这些观察用于理解准入，不能作为本次 GPU 性能结果。
 
-2026-11-02 建立本入口时已实际运行上述 CPU 脚本，断言全部通过，输出与上述数字及准入顺序一致。2026-11-05 文档审计未重跑此实验。该教学脚本不运行 GPU 任务。
+### 核对记录
+
+- 结构与默认开关：2026-11-05 对照 `0326d46` 核对 runner、容器提供者及执行后端；本轮文档整理复读相关入口，默认仍为 `enable: False`。
+- 任务接入和研究状态：分别使用 2026-11-12/13 对 `6aa328d` 加工作区未提交内容的局部核查及链接中的固定实验。RE 候选源码三个直接入口已修复旧字节码问题，10 项 CPU 回归通过，新生成任务资产才携带修复，详见[真实任务核查](../research-proposals/benchmark-state-reuse-audit.md#results真实入口的旧字节码问题与修复)。
+- 容量教学脚本：2026-11-02 实际运行，断言通过，本轮未重跑该脚本，历史训练和性能结果保持各自条件。
+- 合作式计算让出：2026-11-16 在 `6aa328d` 加未提交内容上完成真实 vLLM、command 租约与 Docker 图像任务的 36 个对照区块，3 项针对性 CPU 回归通过，资源已清理。只增加研究适配器和可选更新钩子，生产调用图与默认策略未改变，详见[实验报告](../experiments/resident-compute-sharing.md)。
+- 命令可预测性：2026-11-16 在 `6aa328d` 加主目录未提交内容上核对固定工作量门控、匹配成本画像、受管理队列及专用 GPU 服务接线。两批 CPU 回归共 325 项通过，实际范围维护在[对应教程](command-predictability.md#10-已验证范围与后续研究)，新入口未实机运行，历史 GPU 矩阵未重跑。
+
+以上记录描述本地主目录与各报告的证据范围。运行中服务的版本、远端合并和部署状态需在部署时另行核实。
 
 ## 7. 接下来按问题阅读
 
@@ -160,9 +175,3 @@ PYTHONPATH=. python docs/env-worker-deep-dive/env-service-verification/scripts/e
 - **要追溯设计理由或旧阶段**：从[分类索引](README.md)进入提案、背景知识或历史实现。旧总览里的阶段性限制不能覆盖本文明确区分的当前分支。
 
 维护约定：已实现能力变化时先更新本文的结构和边界，再更新专题细节。实验数据留在对应报告，提案保留明确标签，避免在本文连续追加互相覆盖的进度通知。
-
-
-R5 的[显存、时长与后续依赖联合调度](../research-proposals/command-scheduling-research.md#显存时间与后续依赖的联合调度)于 2026-11-11 补充研究分析与教学模拟。生产策略没有加入预测器或跨节点命令迁移，不能保证多 GPU 空泡最少。
-
-
-R1/R2 于 2026-11-11 补充[隔离实机验证](router-configuration-and-recovery.md#8-运行教学实验与回归)：真实 Ray 复用契约和真实 Docker 探测链路通过，节点故障为专属 actor 注入。仍不覆盖双 driver、活动资源故障清理或 MPS 服务失联，未更新共享服务部署。

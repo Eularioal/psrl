@@ -1,8 +1,9 @@
 # Tutorial
 
 This section walks you through setting up PSRL with Docker or from source and running
-your first asynchronous RL training job. By the end of these guides you will have a
-working multi-node DAPO training run with staleness-bounded asynchronous rollout.
+your first asynchronous RL training job. The reference quickstart uses two nodes and 16 GPUs. Read its prerequisites before
+reserving resources. For an introduction that requires no cluster, start with
+[从一道题理解 PSRL](../overview/reading-guide.md).
 
 ## Guides
 

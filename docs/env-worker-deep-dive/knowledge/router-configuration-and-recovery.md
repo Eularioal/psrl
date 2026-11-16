@@ -1,8 +1,11 @@
 # 从零理解 Router 配置复用与节点恢复
 
-> **核心结论**：找到同名服务，不代表它使用你这次提交的配置。节点恢复响应，也不代表旧资源已经释放。本地实现分别增加启动契约核对，以及只读诊断和有界的人工恢复入口。恢复仍保留租约、预算和隔离保护。
->
-> 核对范围：R1/R2 实现与回归按 2026-11-10 记录。2026-11-11 另对照基准 `ab74120` 加主目录未提交实现，核对第 1.1 至 1.3 节的训练初始化、rollout 派发、协程创建和环境申请链路。只验证 CPU 测试和教学模型，未启动真实 Ray 集群、Docker 或 GPU，也未部署共享服务。本文补充[工程审查](engineering-review.md)的 R1、R2 背景，不替代[当前设计](current-design.md)。
+> **核心结论**：复用 Router 前先核对配置，恢复节点前先核实资源。配置契约把本次预期的预算、设备和后端与现有服务比较；诊断与人工恢复入口则重新探测节点，并保留尚未确认清理的资源记录。
+
+例如第一次启动允许同时运行 4 个容器，第二次配置改成 8 个。如果第二次只是找到同名服务，它可能仍按 4 个运行。启动核对会把这个差异直接报出来，避免任务按错误预算继续执行。第 3、4 节展开完整过程。
+
+本文从训练怎样发起环境任务讲起，再解释服务对象、远程调用、配置比较和故障恢复。R1/R2 实现与 CPU 回归为 2026-11-10 记录；11-11 对 `ab74120` 加工作区内容核对训练链，并补隔离真实 Ray/Docker 探测验证，范围集中在第 8、9 节。本文提供机制解释；总体能力见[当前设计](current-design.md)，工程优先级见[工程审查](engineering-review.md)。
+
 
 ## 目录
 
@@ -18,6 +21,8 @@
 - [7. 跟着图读源码](#7-跟着图读源码)
 - [8. 运行教学实验与回归](#8-运行教学实验与回归)
 - [9. 本次完成与剩余边界](#9-本次完成与剩余边界)
+- [10. 一条 rollout 中的命令与最终评分](#10-一条-rollout-中的命令与最终评分)
+- [11. 当前方案是否必然快于固定基线](#11-当前方案是否必然快于固定基线)
 
 ## 1. 先把整个过程连起来
 
@@ -333,3 +338,86 @@ R1 已实现启动契约核对，R2 已实现节点只读诊断及受控重新�
 旧 actor 没有契约接口时明确拒绝复用。应先通过旧版本管理流程结束任务并确认清理，再停止旧 actor、用新代码创建。不能仅为了升级而全局停止共享 Ray 或 Docker。
 
 仍待完成的 R3 是 Router 重启后恢复完整状态、跨 Router 设备唯一所有权，以及旧控制器失权后的授权阻断。它要求更多持久化和所有权协议，本次人工重新探测不等于已经解决这些问题。
+
+
+## 10. 一条 rollout 中的命令与最终评分
+
+本节于 2026-11-11 核对主目录源码，完成核对时 HEAD 为 `6aa328d`，包含本次未提交文档和实验脚本。范围是 FlashInfer 的普通算子子集、单任务单最终评分模式，不涵盖 sampling 特殊评分或 Harbor 多阶段任务。此前章节的验证日期和范围保持独立。
+
+```text
+[V1] 一道题 → 创建一次 rollout 的环境
+                  ↓
+[V2] 模型生成本轮动作（使用模型推理服务）
+       ├─ CPU command：读文件、改代码 ───────────┐
+       └─ [V3] psrl-gpu：申请 GPU → 自测 → 归还 ─┤
+                  ↑                             │
+                  └──── 工具输出反馈给下一轮 ────┘
+                  │ Agent 宣告完成或到达结束条件
+                  ↓
+[V4] 收集提交文件，结束 Agent 环境
+                  ↓
+[V5] 独立 verifier 环境，读取提交与受保护的测试
+     一个评分过程：准备 → 必做测试单元 1 → 单元 2 … → 汇总
+                                  ↑
+                     提案的观测点在这里，尚未完成评分
+                  ↓
+[V6] 最终 reward → 清理资源 → 已评分轨迹交付训练
+```
+
+图例：图里每个部分对应的源码位置。
+
+| 节点或箭头 | 职责与函数 | 源码 |
+|---|---|---|
+| V1 | `run_harbor_episode` 先申请环境，再创建 Harbor Job | [runner.py:372](../../../examples/sciaccel_rl/runner.py#L372)、[runner.py:550](../../../examples/sciaccel_rl/runner.py#L550) |
+| V2 | `_query_llm` 调用父类模型交互，`_execute_commands` 区分普通命令与 GPU 工具 | [agent.py:125](../../../examples/sciaccel_rl/agent.py#L125)、[agent.py:104](../../../examples/sciaccel_rl/agent.py#L104) |
+| V3 | `dispatch_gpu_tool` 将 start、wait 等操作交给环境，`exec_gpu` 进入统一执行层 | [gpu_tools.py:32](../../../examples/sciaccel_rl/gpu_tools.py#L32)、[managed_execution.py:53](../../../psrl/workers/env_service/managed_execution.py#L53) |
+| V4 → V5 | `prepare` 指定 separate 模式与提交位置，`job.run` 调用 Harbor 编排 | [prepare.py:37](../../../examples/flashinfer_bench/prepare.py#L37)、[prepare.py:72](../../../examples/flashinfer_bench/prepare.py#L72)、[runner.py:551](../../../examples/sciaccel_rl/runner.py#L551) |
+| V5 GPU 授权 | 选用 `KernelCommandVerifier` 时，将评分 shell 调用包装为 `exec_gpu` | [verifier.py:34](../../../examples/kernel_bench/verifier.py#L34)、[verifier.py:43](../../../examples/kernel_bench/verifier.py#L43) |
+| V5 测试和 V6 奖励 | `main` 调用官方 `Benchmark.run_all`，完整通过才写奖励 1 | [verify.py:70](../../../examples/flashinfer_bench/verify.py#L70)、[verify.py:79](../../../examples/flashinfer_bench/verify.py#L79) |
+| V6 清理与训练数据 | runner 先清容器再释放租约，agent loop 将评分附到采样输出 | [runner.py:625](../../../examples/sciaccel_rl/runner.py#L625)、[runner.py:635](../../../examples/sciaccel_rl/runner.py#L635)、[agent_loop.py:262](../../../examples/sciaccel_rl/agent_loop.py#L262) |
+
+V4 到 V5 的具体编排在已安装的外部 Harbor 依赖中。本次实际读取其 `harbor/trial/single_step.py`，`SingleStepTrial._run` 第 41 行调用 `_run_agent`，第 52 行调用 `_run_verifier`。separate 模式先收集产物并停止 Agent 环境，再评分。依赖源码不在本仓库，因此表中给出本地调用入口和配置，不伪造仓库内实现。Agent 超时或异常后的评分与恢复另有分支，不能将图中的正常完成路径当作所有异常路径。
+
+**先区分层次。** rollout 是针对一道题的一次完整尝试，里面可以有许多 turn。turn 是一次模型生成动作并获得工具反馈的交互轮次。command 是动作里的具体命令，一轮可以发多个命令。一个 GPU command 又可以运行许多 GPU kernel，即真正交给 GPU 并行执行的计算函数。它们没有一一对应关系。这里把最终评分也计入交付训练的一条完整 rollout，若只说“生成结束”，则可能尚未评分。
+
+**用一条实际任务类型举例。** 题目要求优化 RMSNorm，即用一行数字的均方根调整数值尺度的运算。输入每行 2048 个数，受保护测试有 1 行和 16254 行两种大小。下面的 Agent 修改和成败顺序是教学假设，这次实验没有调用模型生成代码。
+
+1. 第一轮，模型决定查看函数定义，用普通 command 读文件。CPU 执行读取，环境 GPU 不需要参与。模型产生这条回复通常仍使用推理服务的 GPU，不能把“环境没用 GPU”理解为整个系统没有 GPU 工作。
+2. 第二轮，模型生成候选实现，用普通命令写入文件。候选就是本次准备提交、可能对也可能错的程序版本。
+3. 第三轮，模型通过 `psrl-gpu` 的 start 操作启动自测。start 返回作业编号，任务可能仍在排队或运行。wait 操作取得状态和输出，等待超时本身不取消计算。假设小输入通过、大输入失败，错误成为下一轮模型输入。自测没有生成训练使用的最终分数。
+4. 第四轮，模型根据失败修改实现，再发 GPU 自测。假设两种输入通过，完成后确认 GPU 归还。在 command 模式，后续模型思考和 CPU 修改期间可让其他任务申请环境 GPU。episode 模式则可能保留整次会话的预约，不能混为一谈。
+5. Agent 提交最终文件并结束生成。Harbor 收集文件，单独启动 verifier，即可信的最终评分程序。它读提交代码和受保护的题目测试，不信任 Agent 自称“全部通过”的文本。
+6. verifier 调用官方 evaluator，即实际生成测试输入、执行候选、比较参考结果和测量耗时的评估库。必须完成整个子集，且所有结果通过，当前普通算子 recipe 才写 reward=1，否则为 0。reward 是训练使用的数值奖励，本 recipe 的奖励是正确性，记录了速度不等于速度已经进入奖励。
+7. 等结果和资源清理完成，带奖励的轨迹才供训练使用。得到一条奖励不是立即完成一次模型参数更新，训练还需要收集相应样本并按训练配置处理。
+
+**verify 究竟在哪里。** Agent 可以主动运行一个自测脚本，文件名即使叫 verify.py，也不代表框架在每条 command 后自动执行最终 verifier。此处的官方 verifier 在 Agent 阶段结束后运行一次，但它内部会跑多项测试。别的多阶段任务可以每阶段评分，本文不将单阶段规则推广到所有任务。
+
+**研究建议的准确位置。** 候选代码提交后，未来还会改什么代码这一不确定性消失了，已知测试列表也已经固定。让最终 verifier 完成第一个必做单元后，可用观察更新其余单元的成本估计，再决定如何安排剩余工作。这里是“一次最终评分内部的中间点”，不是“最终评分结束以后”，更不是“每个 Agent command 之后”。第一项测试包括哪些准备、是否代表后续输入，都必须核验。暂停 Python 循环也不等于已经释放 GPU，进程可能仍持有显存和 CUDA 状态，实际让其他任务使用还需要资源协议。
+
+跟着图读源码：V1 的 runner 创建 Job → V2 的 Agent 父类交互循环反复生成命令 → `_execute_commands` 普通分支或 V3 的 `dispatch_gpu_tool` → `start_gpu_job` 异步执行，wait 观察状态 → Agent 结束后由 Harbor 依赖执行 V4、V5 → `verify.main` 的 `run_all` 和汇总 → V6 的 runner 清理、lease 释放及 agent loop 评分输出。V3 的 GPU 作业与独立 CPU 操作可并发，多个 rollout 也可交错。这个阅读顺序是控制依赖，不代表全系统单线程。上述代码如果有不清楚的地方，可以随时追问。
+
+运行 [CPU 教学脚本](../env-service-verification/scripts/rollout_command_verifier_demo.py)：
+
+```bash
+python docs/env-worker-deep-dive/env-service-verification/scripts/rollout_command_verifier_demo.py
+```
+
+脚本模拟两轮“改代码加自测”，最终提交后再运行两项评分测试，打印 V1 至 V6，最终 reward=1。它用字典真假值替代真实候选，用打印替代模型、容器和 GPU，目的是分清顺序，不是验证真实吞吐。本次已实际运行并通过断言。真实 GPU 的分段可行性结果见[实验报告](../experiments/gpu-benchmarks/flashinfer-batching.md#保留评估器分段的-results)。
+
+## 11. 当前方案是否必然快于固定基线
+
+当前已经有修复后的正收益证据。固定 Env OFF 基线为 `0eeead861ffafed6bf31c962d259fd847775dcf9`，不能用当前代码关闭开关替代。2026-11-11 对照保存的 JSON 复核后，应采用以下结果，而不是早期整任务占卡与修复前慢查询反例。
+
+| 场景 | 固定 OFF | 修复后 ON | 解释 |
+|---|---:|---:|---|
+| Science 人工高压力，3 步、12 条接受轨迹，完整驱动时间 | 1954.11 秒，18 次 OOM | 1415.01 秒，0 次 OOM | 少 27.59%，主要减少失败补采 |
+| 真实常驻模型整卡压力，7 项任务、14 请求 | 158.48 秒，1 次 OOM | 141.73 秒，0 次 OOM | 少 10.6%，无人工降低 ON 容量 |
+| 修复后低负载同期配对，两对总时间 | 213.96 秒 | 217.15 秒 | 接近，尚未证明稳定提速 |
+
+OOM 是显存不足导致分配失败。前两项说明 Env 在明确压力条件下已经超过固定旧版。它们来自各自冻结版本，不是今天 HEAD 重跑，也不支持所有负载都必然更快。具体配置、计时口径和机器证据统一见[有效实验结论](../experiments/env-design-and-results-brief.md)。
+
+此前本节列出的早期整任务保留、ON 慢 64.3% 的结果已经移除。该执行模式的缺口后来由 command 借还与相关修复处理，不能继续当作当前方案的性能反例。同样，最早低负载开销已有同步准备与连接路径优化和后续配对，不能跨版本挑选旧慢值代表现状。
+
+教学例子：同样成功计算需要 100 秒，旧版失败重试另花 40 秒，Env 管理花 10 秒，则 140 秒变成 110 秒。若本来不失败，管理成本仍需与实际省下的等待比较。这个算例解释收益机制，不替代上表的实测。
+
+新增预测策略还要与当前已有的批量执行、进程复用、command 借还比较。旧版对照证明系统已有价值，新策略对照证明额外增量，两者应分别报告。本次分段探索属于后者的前置可行性，不能倒过来说当前 Env 尚无任何性能收益。

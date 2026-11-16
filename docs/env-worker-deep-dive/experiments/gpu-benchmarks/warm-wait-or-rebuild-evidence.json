@@ -1,0 +1,1352 @@
+{
+  "schema_version": 1,
+  "scope": "Real PSRL service placement with a controlled local PostTrain variant.",
+  "analysis_source_sha256": "17ac0acd85044881a6892a6af8eedcae35be7b049c69eaa7fa7a8f0b34073d95",
+  "router": {
+    "raw_status": "passed",
+    "raw_status_sha256": "1e119bc9e3f312ca4f38f4f0d12f8e99b0c2ac8f99e2f9fb60a3cfac95c32923",
+    "raw_error_present": false,
+    "environment_backend": "env_worker",
+    "git_commit": "6aa328d56eff746c2ae6d9fd766b2f3f76b4a670",
+    "source_hashes": {
+      "joint_gpu_study/worker.py": "ed7fa4c22f10f4eb3fb9d6f476f3706db1f24d55d0fa5fc8b73f963d5cf0c946",
+      "warm_router_study/analyze.py": "14e0e6510d33dff25f0dd897a3fd74f9995811f0a6ae1983299bf33f43963591",
+      "warm_router_study/baseline.py": "e6b75c699e35dbce2ad37a1459ae10421b8adf938e08d375fafc6d03073d89f8",
+      "warm_router_study/client.py": "2ddcec9c2af459c02eca69b53bde6329fa7045f69cc59eb0e069983202c70515",
+      "warm_router_study/experiment.py": "9cd73dfb5a5d2fe28ea46edcf7b28c54b3ffda9e0affe0b96fcf8b3068660e83",
+      "warm_router_study/main.py": "b3e7af656078feedc0bcfe3cc18c1589d2fe7aada08eb5474847d0c166314039",
+      "warm_router_study/server.py": "b4eee484ad23e5b708fa5355eea55d72d87b50755c897c8adab738889e245b4e",
+      "psrl/workers/env_service/warm_placement.py": "4369184ae8e75226d7c9ed23996aa92524151419149f401181c467326762fb77"
+    },
+    "budgets": {
+      "budget_s": 540.0,
+      "cleanup_budget_s": 180,
+      "per_gpu_reserved_mb": 20480
+    },
+    "timing_s": {
+      "setup_s": 52.57014243490994,
+      "elapsed_s": 281.0854658558965
+    },
+    "cleanup": {
+      "passed": true,
+      "cleanup_errors_empty": true,
+      "cleanup_error_count": 0,
+      "owned_containers_empty": true,
+      "gpu_after": [
+        {
+          "device_ordinal": 0,
+          "used_mb": 0.1875,
+          "compute_process_count": 0,
+          "released": true
+        },
+        {
+          "device_ordinal": 1,
+          "used_mb": 0.1875,
+          "compute_process_count": 0,
+          "released": true
+        }
+      ],
+      "router_ledger": [
+        {
+          "leases_active": 0,
+          "declared_gpu_memory_mb": 0,
+          "gpu_commands_active": 0,
+          "gpu_commands_waiting": 0,
+          "containers_running": 1,
+          "containers_total": 1
+        },
+        {
+          "leases_active": 0,
+          "declared_gpu_memory_mb": 0,
+          "gpu_commands_active": 0,
+          "gpu_commands_waiting": 0,
+          "containers_running": 1,
+          "containers_total": 1
+        }
+      ],
+      "all_router_leases_zero": true
+    },
+    "blocks": [
+      {
+        "scenario": "short",
+        "enabled": false,
+        "selected_device": "hot",
+        "complete": true,
+        "decision": {
+          "action": "wait",
+          "device": "hot",
+          "estimates": [
+            {
+              "device": "hot",
+              "resident": true,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 0.9644281275570393,
+                "upper_s": 1.8288315124809742
+              },
+              "rebuild": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "execution": {
+                "lower_s": 6.582744216918946,
+                "upper_s": 13.2212233543396
+              },
+              "completion": {
+                "lower_s": 7.547172344475985,
+                "upper_s": 15.050054866820574
+              }
+            },
+            {
+              "device": "cold",
+              "resident": false,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "rebuild": {
+                "lower_s": 9.29710091650486,
+                "upper_s": 19.790988016873598
+              },
+              "execution": {
+                "lower_s": 6.582744216918946,
+                "upper_s": 13.2212233543396
+              },
+              "completion": {
+                "lower_s": 15.879845133423807,
+                "upper_s": 33.0122113712132
+              }
+            }
+          ]
+        },
+        "target": {
+          "steps": 256,
+          "optimizer_updates": 256,
+          "load_s": 0.0026563871651887894,
+          "compute_s": 9.039852146059275,
+          "total_s": 9.046838693320751,
+          "first_loss": 0.3810495138168335,
+          "last_loss": 0.6798901557922363,
+          "model_bytes": 8044936704,
+          "peak_allocated_mb": 11243.5361328125,
+          "cache_bytes": 11486087168,
+          "model": "Qwen3-4B-Base",
+          "status": "passed",
+          "cache_hit": true,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "e276ab6cedd424563c77a54345f660f3b217d3d84da585a49b5b4359afb9058d",
+          "losses_sha256": "fcfa70090150d6e97c521d2bb2f486837f57d274b12c3c6fb9a8db24683ab606",
+          "step_duration_s": {
+            "count": 256,
+            "minimum": 0.03233092650771141,
+            "maximum": 0.03554121218621731,
+            "mean": 0.03302252120920457,
+            "median": 0.03277266398072243
+          }
+        },
+        "blocker": {
+          "steps": 64,
+          "optimizer_updates": 64,
+          "load_s": 0.0029513780027627945,
+          "compute_s": 1.7719850726425648,
+          "total_s": 1.7793015036731958,
+          "first_loss": 0.5396704077720642,
+          "last_loss": 0.874701976776123,
+          "model_bytes": 3441150464,
+          "peak_allocated_mb": 11243.4384765625,
+          "cache_bytes": 11486087168,
+          "model": "Qwen3-1.7B-Base",
+          "status": "passed",
+          "cache_hit": true,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "c50aecae36fc3379839f40b1affa2f5c7e3856610e02a1d10be13118c3ddb242",
+          "losses_sha256": "df88ae1324a7aec4b2807939af834ce71cf234e3b91de3110814724ce2d8dc0e",
+          "step_duration_s": {
+            "count": 64,
+            "minimum": 0.025178898125886917,
+            "maximum": 0.026876796036958694,
+            "mean": 0.02537408933858387,
+            "median": 0.025351328775286674
+          }
+        },
+        "decision_overhead_s": 9.128078818321228e-05,
+        "target_latency_s": 10.370935333892703,
+        "target_wait_s": 1.3240976221859455,
+        "tail_makespan_s": 10.370935333892703,
+        "blocker_remaining_actual_s": 1.3215032387524843,
+        "driver_join_both_s": 10.390429101884365,
+        "remaining_forecast": {
+          "completed_steps": 16,
+          "total_steps": 64,
+          "status": "estimated",
+          "remaining": {
+            "lower_s": 0.9644281275570393,
+            "upper_s": 1.8288315124809742
+          },
+          "per_step": {
+            "lower_s": 0.020213471353054048,
+            "upper_s": 0.038221875205636024
+          },
+          "actual_s": 1.3215032387524843,
+          "covered": true,
+          "statistical_guarantee": false
+        },
+        "timing_s": {
+          "wait": 1.3240976221859455,
+          "load": 0.0026563871651887894,
+          "compute": 9.039852146059275,
+          "target_latency": 10.370935333892703,
+          "tail_makespan": 10.370935333892703
+        },
+        "target_rpc_wall_s": 10.383201349526644
+      },
+      {
+        "scenario": "short",
+        "enabled": true,
+        "selected_device": "hot",
+        "complete": true,
+        "decision": {
+          "action": "wait",
+          "device": "hot",
+          "estimates": [
+            {
+              "device": "hot",
+              "resident": true,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 0.972434162721038,
+                "upper_s": 1.9566332455724478
+              },
+              "rebuild": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "execution": {
+                "lower_s": 6.582744216918946,
+                "upper_s": 13.2212233543396
+              },
+              "completion": {
+                "lower_s": 7.555178379639984,
+                "upper_s": 15.177856599912047
+              }
+            },
+            {
+              "device": "cold",
+              "resident": false,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "rebuild": {
+                "lower_s": 9.29710091650486,
+                "upper_s": 19.790988016873598
+              },
+              "execution": {
+                "lower_s": 6.582744216918946,
+                "upper_s": 13.2212233543396
+              },
+              "completion": {
+                "lower_s": 15.879845133423807,
+                "upper_s": 33.0122113712132
+              }
+            }
+          ]
+        },
+        "target": {
+          "steps": 256,
+          "optimizer_updates": 256,
+          "load_s": 0.003781339153647423,
+          "compute_s": 9.143171606585383,
+          "total_s": 9.151425624266267,
+          "first_loss": 0.3810495138168335,
+          "last_loss": 0.6798901557922363,
+          "model_bytes": 8044936704,
+          "peak_allocated_mb": 11243.5361328125,
+          "cache_bytes": 11486087168,
+          "model": "Qwen3-4B-Base",
+          "status": "passed",
+          "cache_hit": true,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "e276ab6cedd424563c77a54345f660f3b217d3d84da585a49b5b4359afb9058d",
+          "losses_sha256": "fcfa70090150d6e97c521d2bb2f486837f57d274b12c3c6fb9a8db24683ab606",
+          "step_duration_s": {
+            "count": 256,
+            "minimum": 0.032165564596652985,
+            "maximum": 0.035911934450268745,
+            "mean": 0.03278536390280351,
+            "median": 0.032731739804148674
+          }
+        },
+        "blocker": {
+          "steps": 64,
+          "optimizer_updates": 64,
+          "load_s": 0.0024468880146741867,
+          "compute_s": 1.8536875043064356,
+          "total_s": 1.8609644155949354,
+          "first_loss": 0.5396704077720642,
+          "last_loss": 0.874701976776123,
+          "model_bytes": 3441150464,
+          "peak_allocated_mb": 11243.4384765625,
+          "cache_bytes": 11486087168,
+          "model": "Qwen3-1.7B-Base",
+          "status": "passed",
+          "cache_hit": true,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "c50aecae36fc3379839f40b1affa2f5c7e3856610e02a1d10be13118c3ddb242",
+          "losses_sha256": "df88ae1324a7aec4b2807939af834ce71cf234e3b91de3110814724ce2d8dc0e",
+          "step_duration_s": {
+            "count": 64,
+            "minimum": 0.025274639949202538,
+            "maximum": 0.027834143489599228,
+            "mean": 0.025797084002988413,
+            "median": 0.02562212385237217
+          }
+        },
+        "decision_overhead_s": 8.294172585010529e-05,
+        "target_latency_s": 10.549517273902893,
+        "target_wait_s": 1.3980925418436527,
+        "tail_makespan_s": 10.549517273902893,
+        "blocker_remaining_actual_s": 1.395189467817545,
+        "driver_join_both_s": 10.568483781069517,
+        "remaining_forecast": {
+          "completed_steps": 16,
+          "total_steps": 64,
+          "status": "estimated",
+          "remaining": {
+            "lower_s": 0.972434162721038,
+            "upper_s": 1.9566332455724478
+          },
+          "per_step": {
+            "lower_s": 0.020384575426578525,
+            "upper_s": 0.040888722985982895
+          },
+          "actual_s": 1.395189467817545,
+          "covered": true,
+          "statistical_guarantee": false
+        },
+        "timing_s": {
+          "wait": 1.3980925418436527,
+          "load": 0.003781339153647423,
+          "compute": 9.143171606585383,
+          "target_latency": 10.549517273902893,
+          "tail_makespan": 10.549517273902893
+        },
+        "target_rpc_wall_s": 10.559953924268484
+      },
+      {
+        "scenario": "long",
+        "enabled": true,
+        "selected_device": "cold",
+        "complete": true,
+        "decision": {
+          "action": "rebuild",
+          "device": "cold",
+          "estimates": [
+            {
+              "device": "hot",
+              "resident": true,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 41.08809324167669,
+                "upper_s": 78.67403410933912
+              },
+              "rebuild": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "execution": {
+                "lower_s": 6.582744216918946,
+                "upper_s": 13.2212233543396
+              },
+              "completion": {
+                "lower_s": 47.670837458595635,
+                "upper_s": 91.89525746367872
+              }
+            },
+            {
+              "device": "cold",
+              "resident": false,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "rebuild": {
+                "lower_s": 9.29710091650486,
+                "upper_s": 19.790988016873598
+              },
+              "execution": {
+                "lower_s": 6.582744216918946,
+                "upper_s": 13.2212233543396
+              },
+              "completion": {
+                "lower_s": 15.879845133423807,
+                "upper_s": 33.0122113712132
+              }
+            }
+          ]
+        },
+        "target": {
+          "steps": 256,
+          "optimizer_updates": 256,
+          "load_s": 11.336360992863774,
+          "compute_s": 9.231092054396868,
+          "total_s": 20.57348595187068,
+          "first_loss": 0.3810495138168335,
+          "last_loss": 0.6798901557922363,
+          "model_bytes": 8044936704,
+          "peak_allocated_mb": 7962.28515625,
+          "cache_bytes": 8044936704,
+          "model": "Qwen3-4B-Base",
+          "status": "passed",
+          "cache_hit": false,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "e276ab6cedd424563c77a54345f660f3b217d3d84da585a49b5b4359afb9058d",
+          "losses_sha256": "fcfa70090150d6e97c521d2bb2f486837f57d274b12c3c6fb9a8db24683ab606",
+          "step_duration_s": {
+            "count": 256,
+            "minimum": 0.031318074092268944,
+            "maximum": 0.06737007945775986,
+            "mean": 0.032045969273895025,
+            "median": 0.03181132674217224
+          }
+        },
+        "blocker": {
+          "steps": 2048,
+          "optimizer_updates": 2048,
+          "load_s": 0.0024780556559562683,
+          "compute_s": 71.27062226831913,
+          "total_s": 71.2780196275562,
+          "first_loss": 0.5396704077720642,
+          "last_loss": 0.8685478568077087,
+          "model_bytes": 3441150464,
+          "peak_allocated_mb": 11243.4384765625,
+          "cache_bytes": 11486087168,
+          "model": "Qwen3-1.7B-Base",
+          "status": "passed",
+          "cache_hit": true,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "3fd6867a197f5acbb8f98a6280ecfc2596681c532359b15aa2928e44c3c42f37",
+          "losses_sha256": "124110d61dd33d1c5f0be2d38b6f57f6c621ca572c8531df135f2e4f98364d80",
+          "step_duration_s": {
+            "count": 2048,
+            "minimum": 0.025183875113725662,
+            "maximum": 0.031849805265665054,
+            "mean": 0.02593563917616848,
+            "median": 0.025895239785313606
+          }
+        },
+        "decision_overhead_s": 7.862411439418793e-05,
+        "target_latency_s": 20.728548554703593,
+        "target_wait_s": 0.15506351552903652,
+        "tail_makespan_s": 70.81320440769196,
+        "blocker_remaining_actual_s": 70.81320440769196,
+        "driver_join_both_s": 70.86792006716132,
+        "remaining_forecast": {
+          "completed_steps": 16,
+          "total_steps": 2048,
+          "status": "estimated",
+          "remaining": {
+            "lower_s": 41.08809324167669,
+            "upper_s": 78.67403410933912
+          },
+          "per_step": {
+            "lower_s": 0.020223647356033325,
+            "upper_s": 0.038720665499567986
+          },
+          "actual_s": 70.81320440769196,
+          "covered": true,
+          "statistical_guarantee": false
+        },
+        "timing_s": {
+          "wait": 0.15506351552903652,
+          "load": 11.336360992863774,
+          "compute": 9.231092054396868,
+          "target_latency": 20.728548554703593,
+          "tail_makespan": 70.81320440769196
+        },
+        "target_rpc_wall_s": 20.767768187448382,
+        "subsequent_cold_replica_clear": {
+          "clear_s": 0.18298167176544666,
+          "rpc_wall_s": 0.3914137240499258,
+          "excluded_from_block_latency": true
+        }
+      },
+      {
+        "scenario": "long",
+        "enabled": false,
+        "selected_device": "hot",
+        "complete": true,
+        "decision": {
+          "action": "rebuild",
+          "device": "cold",
+          "estimates": [
+            {
+              "device": "hot",
+              "resident": true,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 42.168168742954734,
+                "upper_s": 80.01244899630547
+              },
+              "rebuild": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "execution": {
+                "lower_s": 6.582744216918946,
+                "upper_s": 13.2212233543396
+              },
+              "completion": {
+                "lower_s": 48.75091295987368,
+                "upper_s": 93.23367235064507
+              }
+            },
+            {
+              "device": "cold",
+              "resident": false,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "rebuild": {
+                "lower_s": 9.29710091650486,
+                "upper_s": 19.790988016873598
+              },
+              "execution": {
+                "lower_s": 6.582744216918946,
+                "upper_s": 13.2212233543396
+              },
+              "completion": {
+                "lower_s": 15.879845133423807,
+                "upper_s": 33.0122113712132
+              }
+            }
+          ]
+        },
+        "target": {
+          "steps": 256,
+          "optimizer_updates": 256,
+          "load_s": 0.01322370395064354,
+          "compute_s": 12.139445174485445,
+          "total_s": 12.168291984125972,
+          "first_loss": 0.3810495138168335,
+          "last_loss": 0.6798901557922363,
+          "model_bytes": 8044936704,
+          "peak_allocated_mb": 11243.5361328125,
+          "cache_bytes": 11486087168,
+          "model": "Qwen3-4B-Base",
+          "status": "passed",
+          "cache_hit": true,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "e276ab6cedd424563c77a54345f660f3b217d3d84da585a49b5b4359afb9058d",
+          "losses_sha256": "fcfa70090150d6e97c521d2bb2f486837f57d274b12c3c6fb9a8db24683ab606",
+          "step_duration_s": {
+            "count": 256,
+            "minimum": 0.03290986083447933,
+            "maximum": 0.04005477391183376,
+            "mean": 0.033454284312028904,
+            "median": 0.03338240832090378
+          }
+        },
+        "blocker": {
+          "steps": 2048,
+          "optimizer_updates": 2048,
+          "load_s": 0.015293927863240242,
+          "compute_s": 77.7761839684099,
+          "total_s": 77.80405708961189,
+          "first_loss": 0.5396704077720642,
+          "last_loss": 0.8685478568077087,
+          "model_bytes": 3441150464,
+          "peak_allocated_mb": 11243.4384765625,
+          "cache_bytes": 11486087168,
+          "model": "Qwen3-1.7B-Base",
+          "status": "passed",
+          "cache_hit": true,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "3fd6867a197f5acbb8f98a6280ecfc2596681c532359b15aa2928e44c3c42f37",
+          "losses_sha256": "124110d61dd33d1c5f0be2d38b6f57f6c621ca572c8531df135f2e4f98364d80",
+          "step_duration_s": {
+            "count": 2048,
+            "minimum": 0.025189224630594254,
+            "maximum": 0.0299338661134243,
+            "mean": 0.026199131249995844,
+            "median": 0.026089979335665703
+          }
+        },
+        "decision_overhead_s": 7.586181163787842e-05,
+        "target_latency_s": 89.30483922362328,
+        "target_wait_s": 77.13654834777117,
+        "tail_makespan_s": 89.30483922362328,
+        "blocker_remaining_actual_s": 77.12173457629979,
+        "driver_join_both_s": 89.36069100536406,
+        "remaining_forecast": {
+          "completed_steps": 16,
+          "total_steps": 2048,
+          "status": "estimated",
+          "remaining": {
+            "lower_s": 42.168168742954734,
+            "upper_s": 80.01244899630547
+          },
+          "per_step": {
+            "lower_s": 0.0207622691988945,
+            "upper_s": 0.03938809968531132
+          },
+          "actual_s": 77.12173457629979,
+          "covered": true,
+          "statistical_guarantee": false
+        },
+        "timing_s": {
+          "wait": 77.13654834777117,
+          "load": 0.01322370395064354,
+          "compute": 12.139445174485445,
+          "target_latency": 89.30483922362328,
+          "tail_makespan": 89.30483922362328
+        },
+        "target_rpc_wall_s": 89.32343911752105
+      }
+    ],
+    "profiles": [
+      {
+        "steps": 48,
+        "optimizer_updates": 48,
+        "load_s": 13.193992011249065,
+        "compute_s": 1.9990547839552164,
+        "total_s": 15.20595750771463,
+        "first_loss": 0.3810495138168335,
+        "last_loss": 0.6794448494911194,
+        "model_bytes": 8044936704,
+        "peak_allocated_mb": 7961.28515625,
+        "cache_bytes": 8044936704,
+        "model": "Qwen3-4B-Base",
+        "status": "passed",
+        "cache_hit": false,
+        "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+        "norm_sha256": "133dc5e6cc8e04c316d1038038470a10102b420d28e0d680d4c58ff675f29f7a",
+        "losses_sha256": "cff090d37957902940a16dbfed16a2b611c153205ad4d42212b7488be851f5c8",
+        "step_duration_s": {
+          "count": 48,
+          "minimum": 0.03125060722231865,
+          "maximum": 0.3559174984693527,
+          "mean": 0.038947329429599144,
+          "median": 0.03164925426244736
+        }
+      },
+      {
+        "steps": 48,
+        "optimizer_updates": 48,
+        "load_s": 11.621376145631075,
+        "compute_s": 2.4957597330212593,
+        "total_s": 15.216527502983809,
+        "first_loss": 0.3810495138168335,
+        "last_loss": 0.6794448494911194,
+        "model_bytes": 8044936704,
+        "peak_allocated_mb": 7961.28515625,
+        "cache_bytes": 8044936704,
+        "model": "Qwen3-4B-Base",
+        "status": "passed",
+        "cache_hit": false,
+        "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+        "norm_sha256": "133dc5e6cc8e04c316d1038038470a10102b420d28e0d680d4c58ff675f29f7a",
+        "losses_sha256": "cff090d37957902940a16dbfed16a2b611c153205ad4d42212b7488be851f5c8",
+        "step_duration_s": {
+          "count": 48,
+          "minimum": 0.03214230574667454,
+          "maximum": 0.8146813716739416,
+          "mean": 0.04971694992855191,
+          "median": 0.03241590969264507
+        }
+      },
+      {
+        "steps": 64,
+        "optimizer_updates": 64,
+        "load_s": 5.7430858220905066,
+        "compute_s": 1.8080560136586428,
+        "total_s": 7.55673529393971,
+        "first_loss": 0.5396704077720642,
+        "last_loss": 0.874701976776123,
+        "model_bytes": 3441150464,
+        "peak_allocated_mb": 11243.4384765625,
+        "cache_bytes": 11486087168,
+        "model": "Qwen3-1.7B-Base",
+        "status": "passed",
+        "cache_hit": false,
+        "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+        "norm_sha256": "c50aecae36fc3379839f40b1affa2f5c7e3856610e02a1d10be13118c3ddb242",
+        "losses_sha256": "df88ae1324a7aec4b2807939af834ce71cf234e3b91de3110814724ce2d8dc0e",
+        "step_duration_s": {
+          "count": 64,
+          "minimum": 0.025221532210707664,
+          "maximum": 0.038490891456604004,
+          "mean": 0.025915195932611823,
+          "median": 0.02551131322979927
+        }
+      }
+    ],
+    "predictor": {
+      "rebuild": {
+        "lower_s": 9.29710091650486,
+        "upper_s": 19.790988016873598
+      },
+      "execution": {
+        "lower_s": 6.582744216918946,
+        "upper_s": 13.2212233543396
+      }
+    },
+    "placement_policy": {
+      "recorded_sha256": "4369184ae8e75226d7c9ed23996aa92524151419149f401181c467326762fb77",
+      "frozen_file_sha256": "4369184ae8e75226d7c9ed23996aa92524151419149f401181c467326762fb77",
+      "frozen_file_present": true,
+      "frozen_file_matches": true
+    },
+    "container_runtime": {
+      "image_sha256": "7bc1d634d9c2ae8989728d17a0072587f2dc978f5f27f3857e9763a32cea7e9c",
+      "python_source": "image",
+      "versions": [
+        {
+          "torch": "2.9.1+cu128",
+          "transformers": "5.2.0"
+        },
+        {
+          "torch": "2.9.1+cu128",
+          "transformers": "5.2.0"
+        }
+      ]
+    },
+    "protocol": {
+      "kind": "controlled PostTrain fixed-step extension",
+      "official_benchmark_score": false,
+      "target_model": "Qwen3-4B-Base",
+      "blocker_model": "Qwen3-1.7B-Base",
+      "target_steps": 256,
+      "public_examples": 2,
+      "arrival_after_completed_steps": 16
+    },
+    "timing_boundaries": {
+      "target_latency_s": "Driver arrival to server completion, excluding client return.",
+      "target_rpc_wall_s": "Approximate RPC submission to client return, with its own submission boundary.",
+      "driver_join_both_s": "Driver arrival to joining both target and blocker requests.",
+      "excluded_from_block_latency": [
+        "service setup",
+        "profiles",
+        "subsequent cold-replica clearing",
+        "final cleanup"
+      ]
+    },
+    "counts": {
+      "blocks": 4,
+      "complete_blocks": 4,
+      "profiles": 3,
+      "requests": 19,
+      "training_updates": 5408
+    }
+  },
+  "baseline": {
+    "raw_status": "passed",
+    "raw_status_sha256": "93cdcad65dfd50a2384c5f6b0002d41ccf9104f333e6741b2ca6e2201caa9f8c",
+    "raw_error_present": false,
+    "environment_backend": "fixed_psrl_harbor_docker",
+    "git_commit": "0eeead861ffafed6bf31c962d259fd847775dcf9",
+    "source_hashes": {
+      "joint_gpu_study/worker.py": "ed7fa4c22f10f4eb3fb9d6f476f3706db1f24d55d0fa5fc8b73f963d5cf0c946",
+      "warm_router_study/analyze.py": "8086c689bca27739326a485a3cb61bc804e53c2a45978c6b08f8e0d06016bf44",
+      "warm_router_study/baseline.py": "e6b75c699e35dbce2ad37a1459ae10421b8adf938e08d375fafc6d03073d89f8",
+      "warm_router_study/client.py": "2ddcec9c2af459c02eca69b53bde6329fa7045f69cc59eb0e069983202c70515",
+      "warm_router_study/experiment.py": "9cd73dfb5a5d2fe28ea46edcf7b28c54b3ffda9e0affe0b96fcf8b3068660e83",
+      "warm_router_study/main.py": "b3e7af656078feedc0bcfe3cc18c1589d2fe7aada08eb5474847d0c166314039",
+      "warm_router_study/server.py": "b4eee484ad23e5b708fa5355eea55d72d87b50755c897c8adab738889e245b4e",
+      "psrl/workers/env_service/warm_placement.py": "4369184ae8e75226d7c9ed23996aa92524151419149f401181c467326762fb77"
+    },
+    "budgets": {
+      "budget_s": 360.0,
+      "cleanup_budget_s": 150,
+      "declared_service_gpu_budget_mb": 20480
+    },
+    "timing_s": {
+      "setup_s": 31.93221610970795,
+      "elapsed_s": 162.6907710786909
+    },
+    "cleanup": {
+      "passed": true,
+      "cleanup_errors_empty": true,
+      "cleanup_error_count": 0,
+      "owned_containers_empty": true,
+      "gpu_after": [
+        {
+          "device_ordinal": 0,
+          "used_mb": 0.1875,
+          "compute_process_count": 0,
+          "released": true
+        },
+        {
+          "device_ordinal": 1,
+          "used_mb": 0.1875,
+          "compute_process_count": 0,
+          "released": true
+        }
+      ],
+      "router_ledger": null,
+      "all_router_leases_zero": null
+    },
+    "blocks": [
+      {
+        "scenario": "short",
+        "enabled": false,
+        "selected_device": "hot",
+        "complete": true,
+        "decision": {
+          "action": "wait",
+          "device": "hot",
+          "estimates": [
+            {
+              "device": "hot",
+              "resident": true,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 0.9564657244831325,
+                "upper_s": 1.8208035919815302
+              },
+              "rebuild": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "execution": {
+                "lower_s": 6.524644088745117,
+                "upper_s": 13.135429859161377
+              },
+              "completion": {
+                "lower_s": 7.48110981322825,
+                "upper_s": 14.956233451142907
+              }
+            },
+            {
+              "device": "cold",
+              "resident": false,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "rebuild": {
+                "lower_s": 9.011645053327085,
+                "upper_s": 17.333200260065496
+              },
+              "execution": {
+                "lower_s": 6.524644088745117,
+                "upper_s": 13.135429859161377
+              },
+              "completion": {
+                "lower_s": 15.536289142072203,
+                "upper_s": 30.468630119226873
+              }
+            }
+          ]
+        },
+        "target": {
+          "steps": 256,
+          "optimizer_updates": 256,
+          "load_s": 0.0031979642808437347,
+          "compute_s": 9.114161144942045,
+          "total_s": 9.121827317401767,
+          "first_loss": 0.3810495138168335,
+          "last_loss": 0.6798901557922363,
+          "model_bytes": 8044936704,
+          "peak_allocated_mb": 11243.5361328125,
+          "cache_bytes": 11486087168,
+          "model": "Qwen3-4B-Base",
+          "status": "passed",
+          "cache_hit": true,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "e276ab6cedd424563c77a54345f660f3b217d3d84da585a49b5b4359afb9058d",
+          "losses_sha256": "fcfa70090150d6e97c521d2bb2f486837f57d274b12c3c6fb9a8db24683ab606",
+          "step_duration_s": {
+            "count": 256,
+            "minimum": 0.0318486113101244,
+            "maximum": 0.03832275979220867,
+            "mean": 0.03270794352283701,
+            "median": 0.03276781551539898
+          }
+        },
+        "blocker": {
+          "steps": 64,
+          "optimizer_updates": 64,
+          "load_s": 0.002120867371559143,
+          "compute_s": 1.76362238638103,
+          "total_s": 1.7701014503836632,
+          "first_loss": 0.5396704077720642,
+          "last_loss": 0.874701976776123,
+          "model_bytes": 3441150464,
+          "peak_allocated_mb": 11243.4384765625,
+          "cache_bytes": 11486087168,
+          "model": "Qwen3-1.7B-Base",
+          "status": "passed",
+          "cache_hit": true,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "c50aecae36fc3379839f40b1affa2f5c7e3856610e02a1d10be13118c3ddb242",
+          "losses_sha256": "df88ae1324a7aec4b2807939af834ce71cf234e3b91de3110814724ce2d8dc0e",
+          "step_duration_s": {
+            "count": 64,
+            "minimum": 0.024836566299200058,
+            "maximum": 0.026268724352121353,
+            "mean": 0.02511995969689451,
+            "median": 0.025112204253673553
+          }
+        },
+        "decision_overhead_s": 0.000156523659825325,
+        "target_latency_s": 10.445402609184384,
+        "target_wait_s": 1.323576683178544,
+        "tail_makespan_s": 10.445402609184384,
+        "blocker_remaining_actual_s": 1.3202832359820604,
+        "driver_join_both_s": 10.466648420318961,
+        "remaining_forecast": {
+          "completed_steps": 16,
+          "total_steps": 64,
+          "status": "estimated",
+          "remaining": {
+            "lower_s": 0.9564657244831325,
+            "upper_s": 1.8208035919815302
+          },
+          "per_step": {
+            "lower_s": 0.020012217760086062,
+            "upper_s": 0.03801925666630268
+          },
+          "actual_s": 1.3202832359820604,
+          "covered": true,
+          "statistical_guarantee": false
+        },
+        "timing_s": {
+          "wait": 1.323576683178544,
+          "load": 0.0031979642808437347,
+          "compute": 9.114161144942045,
+          "target_latency": 10.445402609184384,
+          "tail_makespan": 10.445402609184384
+        },
+        "target_rpc_wall_s": 10.460282208397985
+      },
+      {
+        "scenario": "long",
+        "enabled": false,
+        "selected_device": "hot",
+        "complete": true,
+        "decision": {
+          "action": "rebuild",
+          "device": "cold",
+          "estimates": [
+            {
+              "device": "hot",
+              "resident": true,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 41.376472876966005,
+                "upper_s": 85.69325176626444
+              },
+              "rebuild": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "execution": {
+                "lower_s": 6.524644088745117,
+                "upper_s": 13.135429859161377
+              },
+              "completion": {
+                "lower_s": 47.901116965711125,
+                "upper_s": 98.82868162542582
+              }
+            },
+            {
+              "device": "cold",
+              "resident": false,
+              "memory_fits": true,
+              "waiting": {
+                "lower_s": 0,
+                "upper_s": 0
+              },
+              "rebuild": {
+                "lower_s": 9.011645053327085,
+                "upper_s": 17.333200260065496
+              },
+              "execution": {
+                "lower_s": 6.524644088745117,
+                "upper_s": 13.135429859161377
+              },
+              "completion": {
+                "lower_s": 15.536289142072203,
+                "upper_s": 30.468630119226873
+              }
+            }
+          ]
+        },
+        "target": {
+          "steps": 256,
+          "optimizer_updates": 256,
+          "load_s": 0.0027710385620594025,
+          "compute_s": 8.900883302092552,
+          "total_s": 8.908572882413864,
+          "first_loss": 0.3810495138168335,
+          "last_loss": 0.6798901557922363,
+          "model_bytes": 8044936704,
+          "peak_allocated_mb": 11243.5361328125,
+          "cache_bytes": 11486087168,
+          "model": "Qwen3-4B-Base",
+          "status": "passed",
+          "cache_hit": true,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "e276ab6cedd424563c77a54345f660f3b217d3d84da585a49b5b4359afb9058d",
+          "losses_sha256": "fcfa70090150d6e97c521d2bb2f486837f57d274b12c3c6fb9a8db24683ab606",
+          "step_duration_s": {
+            "count": 256,
+            "minimum": 0.03175520524382591,
+            "maximum": 0.03419340029358864,
+            "mean": 0.03231223635521019,
+            "median": 0.032261865213513374
+          }
+        },
+        "blocker": {
+          "steps": 2048,
+          "optimizer_updates": 2048,
+          "load_s": 0.0024989210069179535,
+          "compute_s": 57.64975140988827,
+          "total_s": 57.657448787242174,
+          "first_loss": 0.5396704077720642,
+          "last_loss": 0.8685478568077087,
+          "model_bytes": 3441150464,
+          "peak_allocated_mb": 11243.4384765625,
+          "cache_bytes": 11486087168,
+          "model": "Qwen3-1.7B-Base",
+          "status": "passed",
+          "cache_hit": true,
+          "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+          "norm_sha256": "3fd6867a197f5acbb8f98a6280ecfc2596681c532359b15aa2928e44c3c42f37",
+          "losses_sha256": "124110d61dd33d1c5f0be2d38b6f57f6c621ca572c8531df135f2e4f98364d80",
+          "step_duration_s": {
+            "count": 2048,
+            "minimum": 0.02499454654753208,
+            "maximum": 0.03011924773454666,
+            "mean": 0.025573813013579638,
+            "median": 0.025527143850922585
+          }
+        },
+        "decision_overhead_s": 8.695200085639954e-05,
+        "target_latency_s": 66.10138095542789,
+        "target_wait_s": 57.19280935265124,
+        "tail_makespan_s": 66.10138095542789,
+        "blocker_remaining_actual_s": 57.18711558356881,
+        "driver_join_both_s": 66.12438500858843,
+        "remaining_forecast": {
+          "completed_steps": 16,
+          "total_steps": 2048,
+          "status": "estimated",
+          "remaining": {
+            "lower_s": 41.376472876966005,
+            "upper_s": 85.69325176626444
+          },
+          "per_step": {
+            "lower_s": 0.020365384221076966,
+            "upper_s": 0.04217482265084982
+          },
+          "actual_s": 57.18711558356881,
+          "covered": true,
+          "statistical_guarantee": false
+        },
+        "timing_s": {
+          "wait": 57.19280935265124,
+          "load": 0.0027710385620594025,
+          "compute": 8.900883302092552,
+          "target_latency": 66.10138095542789,
+          "tail_makespan": 66.10138095542789
+        },
+        "target_rpc_wall_s": 66.11592411063612
+      }
+    ],
+    "profiles": [
+      {
+        "steps": 48,
+        "optimizer_updates": 48,
+        "load_s": 11.264556316658854,
+        "compute_s": 2.0451690908521414,
+        "total_s": 13.320635849609971,
+        "first_loss": 0.3810495138168335,
+        "last_loss": 0.6794448494911194,
+        "model_bytes": 8044936704,
+        "peak_allocated_mb": 7961.28515625,
+        "cache_bytes": 8044936704,
+        "model": "Qwen3-4B-Base",
+        "status": "passed",
+        "cache_hit": false,
+        "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+        "norm_sha256": "133dc5e6cc8e04c316d1038038470a10102b420d28e0d680d4c58ff675f29f7a",
+        "losses_sha256": "cff090d37957902940a16dbfed16a2b611c153205ad4d42212b7488be851f5c8",
+        "step_duration_s": {
+          "count": 48,
+          "minimum": 0.03193821385502815,
+          "maximum": 0.38883353024721146,
+          "mean": 0.04003396890281389,
+          "median": 0.032177671790122986
+        }
+      },
+      {
+        "steps": 48,
+        "optimizer_updates": 48,
+        "load_s": 11.555466840043664,
+        "compute_s": 2.012918123975396,
+        "total_s": 13.579160261899233,
+        "first_loss": 0.3810495138168335,
+        "last_loss": 0.6794448494911194,
+        "model_bytes": 8044936704,
+        "peak_allocated_mb": 7961.28515625,
+        "cache_bytes": 8044936704,
+        "model": "Qwen3-4B-Base",
+        "status": "passed",
+        "cache_hit": false,
+        "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+        "norm_sha256": "133dc5e6cc8e04c316d1038038470a10102b420d28e0d680d4c58ff675f29f7a",
+        "losses_sha256": "cff090d37957902940a16dbfed16a2b611c153205ad4d42212b7488be851f5c8",
+        "step_duration_s": {
+          "count": 48,
+          "minimum": 0.03185861371457577,
+          "maximum": 0.3607746474444866,
+          "mean": 0.039611281865897276,
+          "median": 0.03223375789821148
+        }
+      },
+      {
+        "steps": 64,
+        "optimizer_updates": 64,
+        "load_s": 5.343811687082052,
+        "compute_s": 1.780402572825551,
+        "total_s": 7.129240257665515,
+        "first_loss": 0.5396704077720642,
+        "last_loss": 0.874701976776123,
+        "model_bytes": 3441150464,
+        "peak_allocated_mb": 11243.4384765625,
+        "cache_bytes": 11486087168,
+        "model": "Qwen3-1.7B-Base",
+        "status": "passed",
+        "cache_hit": false,
+        "data_sha256": "4c985c51caa3ecfa939ce8e71d765b72724e767db95ece477203ef492dd0fad5",
+        "norm_sha256": "c50aecae36fc3379839f40b1affa2f5c7e3856610e02a1d10be13118c3ddb242",
+        "losses_sha256": "df88ae1324a7aec4b2807939af834ce71cf234e3b91de3110814724ce2d8dc0e",
+        "step_duration_s": {
+          "count": 64,
+          "minimum": 0.024809472262859344,
+          "maximum": 0.0373305045068264,
+          "mean": 0.025498698552837595,
+          "median": 0.02512890286743641
+        }
+      }
+    ],
+    "predictor": {
+      "rebuild": {
+        "lower_s": 9.011645053327085,
+        "upper_s": 17.333200260065496
+      },
+      "execution": {
+        "lower_s": 6.524644088745117,
+        "upper_s": 13.135429859161377
+      }
+    },
+    "placement_policy": {
+      "recorded_sha256": "4369184ae8e75226d7c9ed23996aa92524151419149f401181c467326762fb77",
+      "frozen_file_sha256": "4369184ae8e75226d7c9ed23996aa92524151419149f401181c467326762fb77",
+      "frozen_file_present": true,
+      "frozen_file_matches": true
+    },
+    "container_runtime": {
+      "image_sha256": "7bc1d634d9c2ae8989728d17a0072587f2dc978f5f27f3857e9763a32cea7e9c",
+      "python_source": "image",
+      "versions": [
+        {
+          "torch": "2.9.1+cu128",
+          "transformers": "5.2.0"
+        },
+        {
+          "torch": "2.9.1+cu128",
+          "transformers": "5.2.0"
+        }
+      ]
+    },
+    "protocol": {
+      "kind": "controlled PostTrain fixed-step extension",
+      "official_benchmark_score": false,
+      "target_model": "Qwen3-4B-Base",
+      "blocker_model": "Qwen3-1.7B-Base",
+      "target_steps": 256,
+      "public_examples": 2,
+      "arrival_after_completed_steps": 16
+    },
+    "timing_boundaries": {
+      "target_latency_s": "Driver arrival to server completion, excluding client return.",
+      "target_rpc_wall_s": "Approximate RPC submission to client return, with its own submission boundary.",
+      "driver_join_both_s": "Driver arrival to joining both target and blocker requests.",
+      "excluded_from_block_latency": [
+        "service setup",
+        "profiles",
+        "subsequent cold-replica clearing",
+        "final cleanup"
+      ]
+    },
+    "counts": {
+      "blocks": 2,
+      "complete_blocks": 2,
+      "profiles": 3,
+      "requests": 13,
+      "training_updates": 2784
+    },
+    "required_fixed_commit": "0eeead861ffafed6bf31c962d259fd847775dcf9",
+    "fixed_commit_matches": true,
+    "runner_sha256": "223c67cd3511fecba5735a5db0fdfca13d9a2b892733712e18539edce766a89d",
+    "runner_worktree_patch_sha256": "a58fb2911e42225390f82ff9df17d321e3a13ae814f53ee945e2cb40099e16a5"
+  },
+  "audit": {
+    "status": "passed",
+    "raw_statuses_preserved": true,
+    "work_equivalence": [
+      {
+        "scenario": "short",
+        "complete": true,
+        "outputs": {
+          "target": {
+            "passed": true,
+            "fields": {
+              "model": true,
+              "steps": true,
+              "data_sha256": true,
+              "norm_sha256": true,
+              "losses_sha256": true
+            }
+          },
+          "blocker": {
+            "passed": true,
+            "fields": {
+              "model": true,
+              "steps": true,
+              "data_sha256": true,
+              "norm_sha256": true,
+              "losses_sha256": true
+            }
+          }
+        },
+        "passed": true
+      },
+      {
+        "scenario": "short",
+        "comparison": "fixed baseline OFF versus Router OFF",
+        "complete": true,
+        "outputs": {
+          "target": {
+            "passed": true,
+            "fields": {
+              "model": true,
+              "steps": true,
+              "data_sha256": true,
+              "norm_sha256": true,
+              "losses_sha256": true
+            }
+          },
+          "blocker": {
+            "passed": true,
+            "fields": {
+              "model": true,
+              "steps": true,
+              "data_sha256": true,
+              "norm_sha256": true,
+              "losses_sha256": true
+            }
+          }
+        },
+        "passed": true
+      },
+      {
+        "scenario": "long",
+        "complete": true,
+        "outputs": {
+          "target": {
+            "passed": true,
+            "fields": {
+              "model": true,
+              "steps": true,
+              "data_sha256": true,
+              "norm_sha256": true,
+              "losses_sha256": true
+            }
+          },
+          "blocker": {
+            "passed": true,
+            "fields": {
+              "model": true,
+              "steps": true,
+              "data_sha256": true,
+              "norm_sha256": true,
+              "losses_sha256": true
+            }
+          }
+        },
+        "passed": true
+      },
+      {
+        "scenario": "long",
+        "comparison": "fixed baseline OFF versus Router OFF",
+        "complete": true,
+        "outputs": {
+          "target": {
+            "passed": true,
+            "fields": {
+              "model": true,
+              "steps": true,
+              "data_sha256": true,
+              "norm_sha256": true,
+              "losses_sha256": true
+            }
+          },
+          "blocker": {
+            "passed": true,
+            "fields": {
+              "model": true,
+              "steps": true,
+              "data_sha256": true,
+              "norm_sha256": true,
+              "losses_sha256": true
+            }
+          }
+        },
+        "passed": true
+      }
+    ],
+    "summary": {
+      "short": {
+        "target_latency_s": {
+          "on": 10.549517273902893,
+          "off": 10.370935333892703,
+          "improvement_pct": -1.7219463265437218
+        },
+        "tail_makespan_s": {
+          "on": 10.549517273902893,
+          "off": 10.370935333892703,
+          "improvement_pct": -1.7219463265437218
+        }
+      },
+      "long": {
+        "target_latency_s": {
+          "on": 20.728548554703593,
+          "off": 89.30483922362328,
+          "improvement_pct": 76.78899739934766
+        },
+        "tail_makespan_s": {
+          "on": 70.81320440769196,
+          "off": 89.30483922362328,
+          "improvement_pct": 20.70619574111482
+        }
+      }
+    },
+    "baseline_supplied": true,
+    "backend_identity": {
+      "image_identical": true,
+      "frozen_policy_identical": true,
+      "library_versions_identical": true
+    },
+    "limitation": "Empirical padded intervals have no statistical coverage or global optimality guarantee."
+  }
+}

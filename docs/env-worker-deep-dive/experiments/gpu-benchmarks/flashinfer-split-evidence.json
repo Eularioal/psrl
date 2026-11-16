@@ -1,0 +1,767 @@
+{
+  "status": "passed",
+  "budget_s": 360,
+  "environment_backend": "env_worker",
+  "gpu_reservation": "command",
+  "scope": "Real Ray EnvRouter and native EnvWorker; no agent rollout or PSRL training step.",
+  "image_id": "sha256:3341a92392a9a69d712773e35d9f33837b4fb31b3a2c2382e4bf7bd2cf1eb4ed",
+  "cleanup_errors": [],
+  "date": "2026-11-11",
+  "snapshot_note": "Main workspace with concurrent changes. HEAD at launch was ab74120, at report time 6aa328d. No immutable full source snapshot was captured.",
+  "elapsed_s": 173.49760627746582,
+  "gpu_model": "NVIDIA H20",
+  "gpu_pids_after": [],
+  "gpu_used_mb_after": 0.1875,
+  "containers_remaining": "",
+  "worker_sha256": "43c7eb6f819c7ee1743969833ada4744f10c699e690f47cfaa86acdcfdbe8219",
+  "runs": [
+    {
+      "mode": "whole",
+      "import_s": 11.453494813293219,
+      "total_s": 32.09586293250322,
+      "boundaries": [
+        {
+          "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc",
+          "seconds": 5.83446910046041
+        },
+        {
+          "uuid": "932f75f9-e29a-4502-8794-68347b591fd5",
+          "seconds": 0.38498421758413315
+        }
+      ],
+      "command_with_return_s": 33.39031109586358,
+      "passed": true,
+      "rows": [
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 1
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+          },
+          "solution": "flashinfer_wrapper_0af255",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:56:41.015912",
+            "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.00554133338543276,
+              "reference_latency_ms": 0.035263999675711,
+              "speedup_factor": 6.363811238719937
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 1
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+          },
+          "solution": "torch_reference",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:56:41.167900",
+            "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.03778666630387306,
+              "reference_latency_ms": 0.035263999675711,
+              "speedup_factor": 0.9332392382044167
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 16254
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+          },
+          "solution": "flashinfer_wrapper_0af255",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:56:41.397822",
+            "log": "",
+            "correctness": {
+              "max_relative_error": 0.0078125,
+              "max_absolute_error": 0.03125,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.04408000037074089,
+              "reference_latency_ms": 0.6794933378696442,
+              "speedup_factor": 15.415002998064251
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 16254
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+          },
+          "solution": "torch_reference",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:56:41.552970",
+            "log": "",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.6783466736475626,
+              "reference_latency_ms": 0.6794933378696442,
+              "speedup_factor": 1.0016903808430515
+            }
+          }
+        }
+      ]
+    },
+    {
+      "mode": "split",
+      "import_s": 10.079453909769654,
+      "total_s": 34.60884136706591,
+      "boundaries": [
+        {
+          "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc",
+          "seconds": 5.550539869815111
+        },
+        {
+          "uuid": "932f75f9-e29a-4502-8794-68347b591fd5",
+          "seconds": 0.3338747750967741
+        }
+      ],
+      "command_with_return_s": 35.76044896803796,
+      "passed": true,
+      "rows": [
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 1
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+          },
+          "solution": "flashinfer_wrapper_0af255",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:57:16.619503",
+            "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.005530666559934616,
+              "reference_latency_ms": 0.034394667173425354,
+              "speedup_factor": 6.21890088666491
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 1
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+          },
+          "solution": "torch_reference",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:57:16.779275",
+            "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.04478400076429049,
+              "reference_latency_ms": 0.034394667173425354,
+              "speedup_factor": 0.7680123835843335
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 16254
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+          },
+          "solution": "flashinfer_wrapper_0af255",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:57:16.959565",
+            "log": "",
+            "correctness": {
+              "max_relative_error": 0.0078125,
+              "max_absolute_error": 0.03125,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.044122666120529175,
+              "reference_latency_ms": 0.6783786714076996,
+              "speedup_factor": 15.374834094444418
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 16254
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+          },
+          "solution": "torch_reference",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:57:17.113331",
+            "log": "",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.6787679890791575,
+              "reference_latency_ms": 0.6783786714076996,
+              "speedup_factor": 0.9994264348382338
+            }
+          }
+        }
+      ]
+    },
+    {
+      "mode": "split",
+      "import_s": 10.971257768571377,
+      "total_s": 29.48248660005629,
+      "boundaries": [
+        {
+          "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc",
+          "seconds": 4.9092152919620275
+        },
+        {
+          "uuid": "932f75f9-e29a-4502-8794-68347b591fd5",
+          "seconds": 0.33109560795128345
+        }
+      ],
+      "command_with_return_s": 30.597438719123602,
+      "passed": true,
+      "rows": [
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 1
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+          },
+          "solution": "flashinfer_wrapper_0af255",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:57:47.783438",
+            "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.005653333229323228,
+              "reference_latency_ms": 0.03778666630387306,
+              "speedup_factor": 6.683962322949179
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 1
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+          },
+          "solution": "torch_reference",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:57:47.860498",
+            "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.03777066618204117,
+              "reference_latency_ms": 0.03778666630387306,
+              "speedup_factor": 1.000423612380962
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 16254
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+          },
+          "solution": "flashinfer_wrapper_0af255",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:57:48.038020",
+            "log": "",
+            "correctness": {
+              "max_relative_error": 0.0078125,
+              "max_absolute_error": 0.03125,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.04413333348929882,
+              "reference_latency_ms": 0.678762674331665,
+              "speedup_factor": 15.379818850444353
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 16254
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+          },
+          "solution": "torch_reference",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:57:48.191729",
+            "log": "",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.6797226667404175,
+              "reference_latency_ms": 0.678762674331665,
+              "speedup_factor": 0.9985876704489552
+            }
+          }
+        }
+      ]
+    },
+    {
+      "mode": "whole",
+      "import_s": 17.796050552278757,
+      "total_s": 34.08772688731551,
+      "boundaries": [
+        {
+          "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc",
+          "seconds": 4.358649456873536
+        },
+        {
+          "uuid": "932f75f9-e29a-4502-8794-68347b591fd5",
+          "seconds": 0.329880191013217
+        }
+      ],
+      "command_with_return_s": 35.011425122618675,
+      "passed": true,
+      "rows": [
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 1
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+          },
+          "solution": "flashinfer_wrapper_0af255",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:58:23.664384",
+            "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.005770666679988305,
+              "reference_latency_ms": 0.03282666765153408,
+              "speedup_factor": 5.688539898755789
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 1
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+          },
+          "solution": "torch_reference",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:58:23.738590",
+            "log": "/opt/fi/flashinfer_bench/bench/timing.py:74: UserWarning: CUPTI is not installed. Try 'pip install -U cupti-python'. Falling back to CUDA events for benchmarking.\n  times = bench_gpu_time_with_cupti(\n",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.036293333396315575,
+              "reference_latency_ms": 0.03282666765153408,
+              "speedup_factor": 0.9044820240972018
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 16254
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+          },
+          "solution": "flashinfer_wrapper_0af255",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:58:23.914729",
+            "log": "",
+            "correctness": {
+              "max_relative_error": 0.0078125,
+              "max_absolute_error": 0.0625,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.044394666949907936,
+              "reference_latency_ms": 0.6795466542243958,
+              "speedup_factor": 15.306943399105846
+            }
+          }
+        },
+        {
+          "definition": "rmsnorm_h2048",
+          "workload": {
+            "axes": {
+              "batch_size": 16254
+            },
+            "inputs": {
+              "hidden_states": {
+                "type": "random"
+              },
+              "weight": {
+                "type": "random"
+              }
+            },
+            "uuid": "932f75f9-e29a-4502-8794-68347b591fd5"
+          },
+          "solution": "torch_reference",
+          "evaluation": {
+            "status": "PASSED",
+            "environment": {
+              "hardware": "NVIDIA H20",
+              "libs": {
+                "torch": "2.11.0+cu128",
+                "triton": "3.6.0",
+                "tilelang": "0.1.9",
+                "cuda": "12.8"
+              }
+            },
+            "timestamp": "2026-11-11T10:58:24.068483",
+            "log": "",
+            "correctness": {
+              "max_relative_error": 0.0,
+              "max_absolute_error": 0.0,
+              "extra": null
+            },
+            "performance": {
+              "latency_ms": 0.6798346738020579,
+              "reference_latency_ms": 0.6795466542243958,
+              "speedup_factor": 0.9995763387941787
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

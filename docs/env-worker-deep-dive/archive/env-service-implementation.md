@@ -1,23 +1,38 @@
-# Env Service 实现讲解：一卡多容器、EnvRouter、训推节点策略（2026-10-12 改动）
+# Env Service 早期实现：资源单元、租约与一卡多容器（2026-10-12）
 
-## TL;DR
+**这一阶段把“一张卡只给一个任务”改成了“容量够就让多个任务共用”。** 资源单元 `unit` 是某个节点上的一组 GPU、CPU、主机内存和容器名额。EnvRouter 维护共享账本，任务先申请，再由 Harbor 创建实际容器。
 
-- **看不懂租约（lease）、overlay、槽位 TTL 这些词？直接看 [§2 基础概念](#2-基础概念unitslot-槽位demand租约-lease心跳ttloverlay)**：租约 = 一张"有有效期的门禁卡"，申请成功就发、定期心跳续期、没心跳超过 TTL（默认 1800 秒）就作废回收；overlay = 运行时生成的、追加在任务原 compose 之后的"备注贴纸"，写这次容器具体挂哪几张卡；slot 槽位 = unit 的容器名额（`max_containers`）。配可运行脚本 `scripts/lease_ttl_demo.py`。
-- 这次在 `psrl/` 仓库里把 Env Service 设计提案（本地资料，未随仓库发布） 的核心部分真正写了出来：**`EnvUnit`（一张卡多个容器）、`EnvRouter`（Ray actor）、资源加权的 Gate A、每租约 compose overlay（运行时解析驱动库）、TTL 回收、单元感知派发**，外加提案里没有的**训推节点策略**（容器能不能和训练/推理共用节点）。代码在 `psrl/psrl/workers/env_service/`（10 个文件），接入点改了 7 个已有文件。
-- **默认关闭**（`psrl.env_service.enable: False`）。关闭时 SciAccel 仍走旧路径（进程信号量 + `GpuDeviceGate`），派发也与旧的轮转算法**逐字等价**（有差分测试证明）。
-- 一卡多容器的规则：一个 unit 独占若干整卡，容器共享这些卡；SM 算力靠驱动时间片，**显存是相加的**，所以准入时对显存求和（取"声明值"与"实测值"的较大者），而不是按卡排队。80 GB 的卡、每个任务 24 GB，可以同时跑 3 个容器。
-- 训推节点策略 `node_policy` 有四档：`any` / `cpu_only`（默认）/ `avoid` / `prefer_other`。它同时管两件事：哪些节点能放 agent worker（容器落在启动它的 worker 所在节点），以及 router 能给哪些 unit 发租约。
-- **验证情况要说清楚**：本机没有 Ray、Harbor、torch、GPU、Docker，所以真实训练、真实容器、真实 `nvidia-smi` 都**没跑过**。能跑的都跑了：新增 7 个测试文件共 **136 个测试全过**；`ledger.py` 做了变异检查（故意改坏 3 处，都被测试抓到）；演示脚本全部期望成立。`ray_trainer.py` 的接入只做了语法检查，没有运行过。
-- **没有做的**：借还协议（`LEASE_PENDING`/`RETURNING` 状态、"验证卡已空"后置条件）、Phase 0（合并 Path A 执行后端）、容器复用（L2）、远程代理（L3）、按进程的 `pmon` 遥测、注册时健康探测。见 [§8](#8-没有实现的部分)。
+教学例子：一张卡有 80 GiB 预算，三个任务各申请 24 GiB，总共 72 GiB，可以一起进入；第 4 个会让总量达到 96 GiB，因此排队。申请成功时发放 **租约**，也就是记录“谁占用哪些资源、占多久”的凭证。任务定期用心跳续期，结束后归还。
+
+本文保存 2026-10-12 实现及当次 136 项 CPU 测试。早期显存公式、过期租约清理方式和训推节点规则，后来都有改进；现行机制见[当前设计](../knowledge/current-design.md)，显存例子见[预约与实测如何合并](../knowledge/current-design.md#3-资源如何计算与归还)。源码摘录、行号和输出属于当时版本，本地文件链接用于查找同名模块。
+
+从第 2 节可以顺着一个申请过程理解术语；第 3 至 7 节解释执行流程与配置；第 8 至 10 节保存当时的交付和验证范围。
 
 ## 目录
 
 - [1. 先回答：这次实现了提案的哪些部分](#1-先回答这次实现了提案的哪些部分)
 - [2. 基础概念：unit、slot 槽位、demand、租约 lease、心跳、TTL、overlay](#2-基础概念unitslot-槽位demand租约-lease心跳ttloverlay)
+  - [2.1 一张对照表：这些词各自在解决什么问题](#21-一张对照表这些词各自在解决什么问题)
+  - [2.2 unit 和 slot 槽位](#22-unit-和-slot-槽位)
+  - [2.3 demand 需求：申请单](#23-demand-需求申请单)
+  - [2.4 租约 lease：一次成功申请的凭证](#24-租约-lease一次成功申请的凭证)
+  - [2.5 心跳 heartbeat 和 TTL：有效期的判定与回收的动作](#25-心跳-heartbeat-和-ttl有效期的判定与回收的动作)
+  - [2.6 overlay：把"这次用哪几张卡"变成一份运行时文件](#26-overlay把这次用哪几张卡变成一份运行时文件)
+  - [2.7 Gate A 和 Gate B：两道闸门各管什么](#27-gate-a-和-gate-b两道闸门各管什么)
+  - [2.8 一条最短的因果链](#28-一条最短的因果链)
+  - [2.9 实验脚本：把这条链亲手跑一遍](#29-实验脚本把这条链亲手跑一遍)
 - [3. 一张图：一个 GPU episode 现在怎么走](#3-一张图一个-gpu-episode-现在怎么走)
 - [4. 图例：每个部分对应的源码位置](#4-图例每个部分对应的源码位置)
 - [5. 一卡多容器：账本怎么算](#5-一卡多容器账本怎么算)
+  - [5.1 规则](#51-规则)
+  - [5.2 "有效占用"取声明和实测的较大者](#52-有效占用取声明和实测的较大者)
+  - [5.3 手算一个例子](#53-手算一个例子)
+  - [5.4 其他几条规则](#54-其他几条规则)
 - [6. 训推节点策略：容器要不要和训练、推理共用节点](#6-训推节点策略容器要不要和训练推理共用节点)
+  - [6.1 为什么需要它](#61-为什么需要它)
+  - [6.2 四档](#62-四档)
+  - [6.3 "训推节点"怎么确定](#63-训推节点怎么确定)
+  - [6.4 两个容易忽略的约束](#64-两个容易忽略的约束)
 - [7. 怎么打开，以及打开后行为有什么变化](#7-怎么打开以及打开后行为有什么变化)
 - [8. 没有实现的部分](#8-没有实现的部分)
 - [9. 测试与演示的实测输出](#9-测试与演示的实测输出)
@@ -25,6 +40,8 @@
 - [相关文档](#相关文档)
 
 ## 1. 先回答：这次实现了提案的哪些部分
+
+下表的状态限定为 2026-10-12；后续实现由现状入口维护。
 
 | 提案里的内容 | 状态 | 说明 |
 |---|---|---|
@@ -64,7 +81,8 @@
 
 **是什么。** `EnvUnit` 一次声明一整套资源：
 
-```19:45:psrl/psrl/workers/env_service/types.py
+```python
+# 历史摘录：2026-10-12，psrl/workers/env_service/types.py
 @dataclass(frozen=True)
 class EnvUnit:
     """
@@ -108,7 +126,8 @@ class EnvUnit:
 
 ### 2.3 demand 需求：申请单
 
-```110:126:psrl/psrl/workers/env_service/types.py
+```python
+# 历史摘录：2026-10-12，psrl/workers/env_service/types.py
 @dataclass(frozen=True)
 class EnvDemand:
     """
@@ -128,13 +147,14 @@ class EnvDemand:
     gpu_memory_mb: int = 0
 ```
 
-这些数字从哪来？从任务自己的 `task.toml`：`[environment]` 段里的 `cpus`、`memory_mb`、`gpus`，由 [`demand_from_task`](../../../psrl/workers/env_service/harbor_resources.py#L22) 读出来。**注意一个缺口**：Harbor 没有"需要多少显存"这个字段，所以 `gpu_memory_mb` 常常是 0，表示"用 router 配的默认值"（`default_gpu_memory_mb`，默认 24000 MB）。这也是为什么它会以 24 GB 这个数字反复出现在例子和演示里。
+这些数字从哪来？从任务自己的 `task.toml`：`[environment]` 段里的 `cpus`、`memory_mb`、`gpus`，由 [`demand_from_task`](../../../psrl/workers/env_service/harbor_resources.py) 读出来。**注意一个缺口**：Harbor 没有"需要多少显存"这个字段，所以 `gpu_memory_mb` 常常是 0，表示"用 router 配的默认值"（`default_gpu_memory_mb`，默认 24000 MB）。这也是为什么它会以 24 GB 这个数字反复出现在例子和演示里。
 
 ### 2.4 租约 lease：一次成功申请的凭证
 
 **是什么。** 申请成功不是返回一个"OK"，而是返回一张凭证：
 
-```135:162:psrl/psrl/workers/env_service/types.py
+```python
+# 历史摘录：2026-10-12，psrl/workers/env_service/types.py
 @dataclass
 class EnvLease:
     """
@@ -169,7 +189,7 @@ class EnvLease:
 
 | 字段 | 实际作用 | 去掉会怎样 |
 |---|---|---|
-| `lease_id` | 会作为 Docker 标签 `psrl.env_lease=<id>` 打在容器上（[`overlay.py:35`](../../../psrl/workers/env_service/overlay.py#L35)）。**这是"账本里的租约"和"现实里的容器"之间唯一的绳子** | 超出 TTL 的残留容器没法按标签找到并删掉 |
+| `lease_id` | 会作为 Docker 标签 `psrl.env_lease=<id>` 打在容器上（[`overlay.py:35`](../../../psrl/workers/env_service/overlay.py)）。**这是"账本里的租约"和"现实里的容器"之间唯一的绳子** | 超出 TTL 的残留容器没法按标签找到并删掉 |
 | `session_id` | 把租约对回 episode；同一个 session 重复申请时直接返回已有租约 | 重复申请会重复占名额 |
 | `unit_id` / `node_ip` | 告诉调用方（以及 Gate B）容器将出现在哪个节点的哪张卡上 | 无法正确挂载设备、无法回收 |
 | `gpu_indices` | 这份租约能用的卡号，例如 `(0, 1)` | 容器只能挂到写死的卡上 |
@@ -179,13 +199,14 @@ class EnvLease:
 
 `lease_id` 的形状是 `{unit_id}-{序号}-{随机串}`，例如演示脚本里出现的 `g0-1-5c1dd22f`：
 
-```165:165:psrl/psrl/workers/env_service/ledger.py
+```python
+# 历史摘录：2026-10-12，psrl/workers/env_service/ledger.py
                 lease_id=f"{unit.unit_id}-{next(self._counter)}-{self._id_factory()}",
 ```
 
 - `g0` 是 unit 名，方便人一眼看出是哪台机器上的哪块资源；
 - `1` 是该进程内的递增序号，看到跳号就知道中间发生过别的申请；
-- 随机串是 [`id_factory`](../../../psrl/workers/env_service/ledger.py#L89) 生成的，避免 router 重启后序号从 1 重来、与残留容器的旧标签撞车。
+- 随机串是 [`id_factory`](../../../psrl/workers/env_service/ledger.py) 生成的，避免 router 重启后序号从 1 重来、与残留容器的旧标签撞车。
 
 **为什么叫"租约"而不是"锁"。** 这是个有意的区分，也是这个词唯一的难点：
 
@@ -209,7 +230,8 @@ class EnvLease:
 
 判定条件写在一行里：
 
-```231:238:psrl/psrl/workers/env_service/ledger.py
+```python
+# 历史摘录：2026-10-12，psrl/workers/env_service/ledger.py
     def _reap(self, now: float) -> list[EnvLease]:
         expired = [lease for lease in self._leases.values() if now - lease.last_seen > self._lease_ttl_s]
         for lease in expired:
@@ -222,14 +244,15 @@ class EnvLease:
 
 谁能触发它？两条路，都在 [`router.py`](../../../psrl/workers/env_service/router.py)：
 
-1. **后台循环**：actor 启动后在它自己的事件循环里跑 `_reap_forever`，间隔是 `TTL/10`（默认 1800/10 = 180 秒），所以实际回收发生在 1800~1980 秒之间。这一段在 [`router.py:76`](../../../psrl/workers/env_service/router.py#L76) 和 [`router.py:84`](../../../psrl/workers/env_service/router.py#L84)。
-2. **顺带检查**：每次 `try_admit` / `heartbeat` / `release` 进来时先跑一次 `_reap`（[`ledger.py:127`](../../../psrl/workers/env_service/ledger.py#L127)），所以只要有人在申请，过期租约就不会多停留。
+1. **后台循环**：actor 启动后在它自己的事件循环里跑 `_reap_forever`，间隔是 `TTL/10`（默认 1800/10 = 180 秒），所以实际回收发生在 1800~1980 秒之间。这一段在 [`router.py:76`](../../../psrl/workers/env_service/router.py) 和 [`router.py:84`](../../../psrl/workers/env_service/router.py)。
+2. **顺带检查**：每次 `try_admit` / `heartbeat` / `release` 进来时先跑一次 `_reap`（[`ledger.py:127`](../../../psrl/workers/env_service/ledger.py)），所以只要有人在申请，过期租约就不会多停留。
 
 所以"TTL 1800 秒"要理解成**上界**：最坏情况多占 1800 秒多一点，而不是精确在 1800 秒那一刻归还。
 
 心跳本身很简单，就是刷新时间戳：
 
-```189:201:psrl/psrl/workers/env_service/ledger.py
+```python
+# 历史摘录：2026-10-12，psrl/workers/env_service/ledger.py
     def heartbeat(self, lease_id: str) -> bool:
         """
         Refresh a lease's TTL.
@@ -245,9 +268,9 @@ class EnvLease:
         return True
 ```
 
-**为什么心跳周期必须远小于 TTL。** 这两者的关系是启动时强校验的：`heartbeat_interval_s` 必须 ≤ `slot_ttl_s` 的一半（[`config_check.py:49`](../../../psrl/workers/env_service/config_check.py#L49)）。默认 60 秒 vs 1800 秒，留了 30 倍余量。原因是漏掉一次心跳不能有事——网络抖动、GC 停顿、事件循环短暂阻塞都可能让某次心跳迟到，只要下一个周期能补上，租约就不该被判死。
+**为什么心跳周期必须远小于 TTL。** 这两者的关系是启动时强校验的：`heartbeat_interval_s` 必须 ≤ `slot_ttl_s` 的一半（[`config_check.py:49`](../../../psrl/workers/env_service/config_check.py)）。默认 60 秒 vs 1800 秒，留了 30 倍余量。原因是漏掉一次心跳不能有事——网络抖动、GC 停顿、事件循环短暂阻塞都可能让某次心跳迟到，只要下一个周期能补上，租约就不该被判死。
 
-**心跳失败时会发生什么？** 这里有一个刻意的取舍（[`client.py:55`](../../../psrl/workers/env_service/client.py#L55)）：如果心跳返回"这个租约已经不存在了"，客户端**只是打个 warning 继续跑**，不会去杀掉正在运行的 episode。理由是账本出错不该毁掉几小时的工作；代价是这一刻可能出现两个 episode 用同一张卡（旧的那个还在跑，新的已经被批准）。这是已知风险之一，见 [§10](#10-没有验证的部分与已知风险)。
+**心跳失败时会发生什么？** 这里有一个刻意的取舍（[`client.py:55`](../../../psrl/workers/env_service/client.py)）：如果心跳返回"这个租约已经不存在了"，客户端**只是打个 warning 继续跑**，不会去杀掉正在运行的 episode。理由是账本出错不该毁掉几小时的工作；代价是这一刻可能出现两个 episode 用同一张卡（旧的那个还在跑，新的已经被批准）。这是已知风险之一，见 [§10](#10-没有验证的部分与已知风险)。
 
 **为什么阈值取 1800 秒。** 它要覆盖"一次正常的 env 调用"，又不能长到让死掉的 episode 占卡太久。演示脚本的第一个场景就是给你看这个量级：每隔 60 秒刷一次卡，跑 4 小时也没问题。
 
@@ -255,7 +278,7 @@ class EnvLease:
 
 **是什么。** Docker Compose 允许用多个文件叠加（`-f base.yaml -f extra.yaml`），后者覆盖前者。Harbor 的任务镜像自带一份标准 compose 文件，里面写死了 GPU 段；overlay 就是**运行时生成的那份追加文件**，只写这次租约要改的部分。
 
-生成的函数在 [`overlay.py:145`](../../../psrl/workers/env_service/overlay.py#L145)，产物形状是：
+生成的函数在 [`overlay.py:145`](../../../psrl/workers/env_service/overlay.py)，产物形状是：
 
 ```yaml
 services:
@@ -270,11 +293,11 @@ services:
 
 | 旧写法的问题 | 具体后果 | overlay 怎么解决 |
 |---|---|---|
-| 写死 `/dev/nvidia0` | N 个并发 GPU episode 全挂到 0 号卡，1 号卡空着 | `devices` 由 `lease.gpu_indices` 生成，见 [`overlay.py:185`](../../../psrl/workers/env_service/overlay.py#L185) |
-| 写死驱动库版本（如 535） | 节点换了驱动版本后，容器加载到不匹配的 `libcuda`，报错难查 | 先读 `/proc/driver/nvidia/version`（[`overlay.py:76`](../../../psrl/workers/env_service/overlay.py#L76)），再按版本号拼挂载路径 |
+| 写死 `/dev/nvidia0` | N 个并发 GPU episode 全挂到 0 号卡，1 号卡空着 | `devices` 由 `lease.gpu_indices` 生成，见 [`overlay.py:185`](../../../psrl/workers/env_service/overlay.py) |
+| 写死驱动库版本（如 535） | 节点换了驱动版本后，容器加载到不匹配的 `libcuda`，报错难查 | 先读 `/proc/driver/nvidia/version`（[`overlay.py:76`](../../../psrl/workers/env_service/overlay.py)），再按版本号拼挂载路径 |
 | 不标容器是谁的 | 残留容器没有任何线索能定位 | 打上 `psrl.env_lease` 标签，TTL 回收就靠它按标签删容器 |
 
-**为什么文件要临时创建、用完删掉。** 每次申请的卡号、驱动库、租约 id 都不同，所以不能预先生成一份长期文件；而且如果按 `session_id` 命名留一堆文件，多机部署时目录会越积越多。实现用的是 `NamedTemporaryFile(delete=False)` 拿一个原子创建的唯一路径（[`overlay.py:197`](../../../psrl/workers/env_service/overlay.py#L197)），episode 结束的 `finally` 里删掉（[`runner.py:521`](../../../examples/sciaccel_rl/runner.py#L521)）。这里不能用 `tempfile.mktemp`，它只发明一个名字、不创建文件，在多进程环境里存在竞态。
+**为什么文件要临时创建、用完删掉。** 每次申请的卡号、驱动库、租约 id 都不同，所以不能预先生成一份长期文件；而且如果按 `session_id` 命名留一堆文件，多机部署时目录会越积越多。实现用的是 `NamedTemporaryFile(delete=False)` 拿一个原子创建的唯一路径（[`overlay.py:197`](../../../psrl/workers/env_service/overlay.py)），episode 结束的 `finally` 里删掉（[`runner.py:521`](../../../examples/sciaccel_rl/runner.py)）。这里不能用 `tempfile.mktemp`，它只发明一个名字、不创建文件，在多进程环境里存在竞态。
 
 **一个反直觉的地方**：overlay 里没有一行是"给这个容器几张卡"的算力限制。`devices` 只是把设备节点暴露进容器，能同时用多少 SM 由**驱动的时间片**决定，账本管不到。账本能管的只有"什么可以放进来"，管不了"进来之后各占多少算力"——所以准入时对显存求和（不可回收、会硬失败），对算力则不做限制（可被调度）。
 
@@ -284,7 +307,7 @@ services:
 |---|---|---|
 | 管什么 | 开始干活**之前**有没有位置 | 回复模型**之前**卡有没有算完 |
 | 谁在等 | 新的 episode（还没有容器） | 已经在跑、马上要发起下一轮对话的 episode |
-| 等在哪里 | 账本准入函数里轮询（[`client.py:156`](../../../psrl/workers/env_service/client.py#L156)） | SessionRouter 的回复出口（[`session_router.py:120`](../../../psrl/workers/gen/session_router.py#L120)） |
+| 等在哪里 | 账本准入函数里轮询（[`client.py:156`](../../../psrl/workers/env_service/client.py)） | SessionRouter 的回复出口（[`session_router.py:120`](../../../psrl/workers/gen/session_router.py)） |
 | 判据 | 容器数、CPU、内存、显存四条加起来放不放得下 | `nvidia-smi` 显示的利用率（共享卡只看利用率） |
 | 超时 | 默认无限等（等待期间不占资源） | 默认 600 秒后放行 |
 
@@ -363,23 +386,25 @@ cd psrl && PYTHONPATH=. python3 ../docs/psrl/scripts/lease_ttl_demo.py
 
 | 图上 | 内容 | 源码 |
 |---|---|---|
-| 建 router、节点集合 | `_init_env_service` | [`ray_trainer.py:549`](../../../psrl/trainer/ppo/ray_trainer.py#L549) |
-| 筛选 worker 节点 | `select_worker_nodes` + `restrict_to_unit_nodes` | [`ray_trainer.py:1907`](../../../psrl/trainer/ppo/ray_trainer.py#L1907)、[`node_policy.py`](../../../psrl/workers/env_service/node_policy.py) |
-| 派发 | `get_dispatch_plan` / `_refresh_env_capacity` | [`manager.py:947`](../../../psrl/workers/agent_loop/manager.py#L947)、[`:909`](../../../psrl/workers/agent_loop/manager.py#L909) |
-| demand | `demand_from_task` | [`env_demand.py:23`](../../../psrl/workers/env_service/harbor_resources.py#L22) |
-| ① Gate A（客户端） | `EnvServiceClient.acquire` | [`client.py:156`](../../../psrl/workers/env_service/client.py#L156) |
-| ① Gate A（账本） | `EnvUnitLedger.try_admit` | [`ledger.py:102`](../../../psrl/workers/env_service/ledger.py#L102) |
-| ① 接入 runner | env_client 分支 | [`runner.py:305-321`](../../../examples/sciaccel_rl/runner.py#L305) |
-| ② overlay | `resolve_driver_libs` / `build_lease_overlay` | [`overlay.py:99`](../../../psrl/workers/env_service/overlay.py#L99)、[`:145`](../../../psrl/workers/env_service/overlay.py#L145) |
-| ② 实现租约 | `_apply_env_lease` | [`runner.py:84`](../../../examples/sciaccel_rl/runner.py#L84) |
-| Gate B | `_wait_for_gpu_idle` / `_parse_gpu_indices` | [`session_router.py:120`](../../../psrl/workers/gen/session_router.py#L120)、[`:110`](../../../psrl/workers/gen/session_router.py#L110) |
-| ④ 释放 | `finally` 末尾 | [`runner.py:514-522`](../../../examples/sciaccel_rl/runner.py#L514) |
-| TTL 回收 | `_reap` / `pop_reaped` / `reap_local` | [`ledger.py:231`](../../../psrl/workers/env_service/ledger.py#L231)、[`:221`](../../../psrl/workers/env_service/ledger.py#L221)、[`client.py:213`](../../../psrl/workers/env_service/client.py#L213) |
-| 启动校验 | `validate_env_service_config` | [`config_check.py:15`](../../../psrl/workers/env_service/config_check.py#L15)，由 [`config.py:490`](../../../psrl/utils/config.py#L490) 调用 |
+| 建 router、节点集合 | `_init_env_service` | [`ray_trainer.py:549`](../../../psrl/trainer/ppo/ray_trainer.py) |
+| 筛选 worker 节点 | `select_worker_nodes` + `restrict_to_unit_nodes` | [`ray_trainer.py:1907`](../../../psrl/trainer/ppo/ray_trainer.py)、[`node_policy.py`](../../../psrl/workers/env_service/node_policy.py) |
+| 派发 | `get_dispatch_plan` / `_refresh_env_capacity` | [`manager.py:947`](../../../psrl/workers/agent_loop/manager.py)、[`:909`](../../../psrl/workers/agent_loop/manager.py) |
+| demand | `demand_from_task` | [`env_demand.py:23`](../../../psrl/workers/env_service/harbor_resources.py) |
+| ① Gate A（客户端） | `EnvServiceClient.acquire` | [`client.py:156`](../../../psrl/workers/env_service/client.py) |
+| ① Gate A（账本） | `EnvUnitLedger.try_admit` | [`ledger.py:102`](../../../psrl/workers/env_service/ledger.py) |
+| ① 接入 runner | env_client 分支 | [`runner.py:305-321`](../../../examples/sciaccel_rl/runner.py) |
+| ② overlay | `resolve_driver_libs` / `build_lease_overlay` | [`overlay.py:99`](../../../psrl/workers/env_service/overlay.py)、[`:145`](../../../psrl/workers/env_service/overlay.py) |
+| ② 实现租约 | `_apply_env_lease` | [`runner.py:84`](../../../examples/sciaccel_rl/runner.py) |
+| Gate B | `_wait_for_gpu_idle` / `_parse_gpu_indices` | [`session_router.py:120`](../../../psrl/workers/gen/session_router.py)、[`:110`](../../../psrl/workers/gen/session_router.py) |
+| ④ 释放 | `finally` 末尾 | [`runner.py:514-522`](../../../examples/sciaccel_rl/runner.py) |
+| TTL 回收 | `_reap` / `pop_reaped` / `reap_local` | [`ledger.py:231`](../../../psrl/workers/env_service/ledger.py)、[`:221`](../../../psrl/workers/env_service/ledger.py)、[`client.py:213`](../../../psrl/workers/env_service/client.py) |
+| 启动校验 | `validate_env_service_config` | [`config_check.py:15`](../../../psrl/workers/env_service/config_check.py)，由 [`config.py:490`](../../../psrl/utils/config.py) 调用 |
 
 这些代码如果有理解上的疑问，可以随时追问。
 
 ## 5. 一卡多容器：账本怎么算
+
+本节保留早期账本。重点先理解多个申请怎样累加；第 5.2 节说明早期公式为什么后来需要修改。
 
 ### 5.1 规则
 
@@ -392,7 +417,8 @@ cd psrl && PYTHONPATH=. python3 ../docs/psrl/scripts/lease_ttl_demo.py
 | 主机内存 | 已用 + 本次 ≤ `memory_mb` | 同上 |
 | 设备显存 | **有效占用** + 本次 ≤ `gpu_memory_mb` | 显存相加且无法靠调度回收（设计 §5.3） |
 
-```342:352:psrl/psrl/workers/env_service/ledger.py
+```python
+# 历史摘录：2026-10-12，psrl/workers/env_service/ledger.py
     def _fits_now(self, unit: EnvUnit, demand: EnvDemand, now: float) -> bool:
         leases = self._unit_leases(unit.unit_id)
         if len(leases) + 1 > unit.max_containers:
@@ -408,21 +434,24 @@ cd psrl && PYTHONPATH=. python3 ../docs/psrl/scripts/lease_ttl_demo.py
 
 ### 5.2 "有效占用"取声明和实测的较大者
 
-```333:334:psrl/psrl/workers/env_service/ledger.py
+```python
+# 历史摘录：2026-10-12，psrl/workers/env_service/ledger.py
         measured = self._measured_gpu_mb(unit, now)
         return max(float(self._declared_gpu_mb(unit)), measured if measured is not None else 0.0)
 ```
 
-两个方向各有一个反例，所以取较大者：
+早期实现取两者的较大值，试图同时覆盖以下情况：
 
 - **实测比声明大**：邻居（某个后台 solver、甚至 vLLM）占了没人声明的显存。只信声明会超订。
 - **实测比声明小**：一个容器刚声明了 24 GB、还在加载模型，只用了 1 GB。只信实测，等它加载完就超订了。
 
-实测值超过 `measurement_ttl_s`（60 秒）就作废，否则一个过期的高读数能把 unit 永远堵死。实测要覆盖 unit 的**每一张**卡才算数，缺一张就当未知，不拿部分和去猜。
+早期还要求读数在 `measurement_ttl_s`（60 秒）内、覆盖 unit 的每张卡，才用它更新判断。
+
+**后来发现，仅取较大值会漏算“已经承诺、尚未分配”的显存。** 教学例子：卡预算 80 GiB，外部进程实占 50 GiB，任务 A 已获批 20 GiB、尚在加载前。早期公式只看到 `max(20, 50) = 50`，再放入申请 20 GiB 的 B，会误以为总量 70 GiB；等 A、B 真正分配，总量达到 90 GiB。现行账本将实测占用和未兑现预约一起计入，并在有可信归属时消除重复计费，详见[当前设计](../knowledge/current-design.md#3-资源如何计算与归还)。
 
 ### 5.3 手算一个例子
 
-教学数字，和 `env_service_demo.py` 的输出一致：一张 80 GB 的卡，换算成 81920 MB；每个 GPU 任务记 24 GB，即 24576 MB。
+教学数字，和早期 `env_service_demo.py` 的输出一致：一张卡按 80 GiB（81920 MiB）预算，每个任务申请 24 GiB（24576 MiB）。GiB / MiB 按 1024 换算；代码字段沿用 `_mb` 命名。
 
 | 已有容器数 | 已声明显存 | 再来一个 24576 MB 后 | 判定 |
 |---|---|---|---|
@@ -443,6 +472,8 @@ cd psrl && PYTHONPATH=. python3 ../docs/psrl/scripts/lease_ttl_demo.py
 - **负载按"最紧的那个资源"算**，不是容器个数（设计 §4.5：env 调用从几秒到几小时，个数是糟糕的负载代理）。
 
 ## 6. 训推节点策略：容器要不要和训练、推理共用节点
+
+这是早期按节点排除的策略。现行策略能结合实际训练、推理 GPU 集合区分同机独立设备，见[现行节点规则](../knowledge/router-configuration-and-recovery.md)。
 
 ### 6.1 为什么需要它
 
@@ -473,7 +504,7 @@ Harbor 容器对 Ray 不可见，Ray 的 GPU 记账也只是 `CUDA_VISIBLE_DEVIC
 
 ### 6.3 "训推节点"怎么确定
 
-`train_rollout_node_ips` 配了就用配置的；留空就在启动时从各 worker group 的 **placement group 元数据**里读（不调用 actor，所以 worker 还没初始化完也能读），**跳过 PS 组**，因为它是纯 CPU 存储。逻辑在 [`node_ips_from_worker_groups`](../../../psrl/workers/env_service/node_policy.py#L220)，已用假 placement 表测过"PS 组被忽略"。
+`train_rollout_node_ips` 配了就用配置的；留空就在启动时从各 worker group 的 **placement group 元数据**里读（不调用 actor，所以 worker 还没初始化完也能读），**跳过 PS 组**，因为它是纯 CPU 存储。逻辑在 [`node_ips_from_worker_groups`](../../../psrl/workers/env_service/node_policy.py)，已用假 placement 表测过"PS 组被忽略"。
 
 ### 6.4 两个容易忽略的约束
 
@@ -481,6 +512,8 @@ Harbor 容器对 Ray 不可见，Ray 的 GPU 记账也只是 `CUDA_VISIBLE_DEVIC
 2. **GPU unit 声明在训推节点上会打警告**（`lint_units`）。`cpu_only` 下它只能承载 CPU episode，`any` 下则明确警告"没有东西阻止容器打开 vLLM 正在用的卡"。它是警告不是错误，因为也可能是 `train_rollout_node_ips` 写错了。
 
 ## 7. 怎么打开，以及打开后行为有什么变化
+
+以下配置用于理解当时的启用方式。部署现有版本请按[当前配置参考](../knowledge/router-configuration-and-recovery.md)核对字段与默认值。
 
 最小配置（教学数字；节点 IP 和显存按你的集群改）：
 
@@ -496,7 +529,7 @@ psrl:
       - {unit_id: env-cpu, node_ip: 10.0.0.1, cpu_quota: 32, memory_mb: 131072, max_containers: 8}
 ```
 
-启动时 [`validate_env_service_config`](../../../psrl/workers/env_service/config_check.py#L15) 会拦下这些错：没有 unit、unit 字段缺失（报第几个、缺哪个键）、两个 unit 抢同一张卡、心跳间隔超过 TTL 的一半（否则活的租约会在两次心跳之间被回收）、GPU unit 小到连一个默认任务都放不下。
+启动时 [`validate_env_service_config`](../../../psrl/workers/env_service/config_check.py) 会拦下这些错：没有 unit、unit 字段缺失（报第几个、缺哪个键）、两个 unit 抢同一张卡、心跳间隔超过 TTL 的一半（否则活的租约会在两次心跳之间被回收）、GPU unit 小到连一个默认任务都放不下。
 
 **打开后和关闭时的差别**（这些是行为变化，不是纯加法）：
 
@@ -510,6 +543,8 @@ psrl:
 | 准入失败 | 无此概念 | episode 以 `env_admission_failed` / `env_lease_setup_failed` 结束，**不启动 Harbor**，租约会释放 |
 
 ## 8. 没有实现的部分
+
+以下是 2026-10-12 的能力边界，后续借还协议、统一作业层和健康派发见[当前设计](../knowledge/current-design.md)。
 
 逐条对照设计提案，没做的和原因：
 
@@ -525,7 +560,7 @@ psrl:
 
 ## 9. 测试与演示的实测输出
 
-我在本机运行的结果（没有 pytest，所以测试写成既能被 pytest 收集、也能 `python` 直接跑的纯断言形式）：
+2026-10-12 的 CPU 测试输出如下。当时以可直接运行的断言脚本执行，同时保留 pytest 收集方式：
 
 ```
 test_ledger                             36 passed, 0 failed
@@ -563,13 +598,13 @@ RESULT: all expectations held
 
 **没有验证（本机缺依赖）：**
 
-- **没有真实运行过任何东西**：没有 Ray、Harbor、torch、GPU、Docker。真实训练、真实容器启动、真实 `nvidia-smi` 输出、真实 `/proc/driver/nvidia/version` 与驱动库都没跑过。
+- **当次运行范围为 CPU 控制逻辑与教学脚本**。环境未提供 Ray、Harbor、torch、GPU 或 Docker，真实 actor、容器、GPU 遥测和训练链路留待后续验证。
 - **`ray_trainer.py` 的接入（`_init_env_service`、节点筛选、传参给 manager）只做了语法检查**，没有运行。它依赖 Ray 的 placement group 与节点表，这部分逻辑我只是读代码写出来的。
 - **`EnvRouter` 作为真实 Ray actor 没有跑过**。测试里用本地适配器（`handle.method.remote(...)` 变成直接的协程调用）代替 Ray 句柄，所以"Ray 对 `Admission`/`EnvLease` 这些 dataclass 的序列化""在 Harbor 线程的事件循环里 await Ray 的返回值"都没有被真实验证。
 - **Harbor 的行为按设计提案转述**：`extra_docker_compose` 叠加在任务自己的 compose 之后；`override_gpus: 0` 能绕过 GPU 校验；多个 compose 文件里的 `labels` 如何合并（新 overlay 与 runner 里已有的 `psrl.actor_id` overlay 各写一份 `labels`）。Harbor 源码不在工作区，我没读过。
 - **整套逻辑在 Python 3.14 下跑的**，仓库的目标版本我没有核对。
 
-**已知风险，打开前应该知道：**
+**早期实现的风险分析：**
 
 1. **打开会绕过 `max_concurrent_episodes`**。并发上限从"每进程 N 个"变成"每 unit 的 `max_containers`"，如果 unit 配得宽，容器总数可能比以前多；该配置值需要按节点容量重新估。
 2. **心跳跑在 Harbor 事件循环线程上**，如果那条循环被阻塞很久，租约可能因漏心跳被回收。默认 TTL 1800 秒、心跳 60 秒留了很大余量，但没有压测。

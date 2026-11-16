@@ -1,0 +1,3558 @@
+{
+  "date": "2026-11-16",
+  "base_head": "6aa328d56eff746c2ae6d9fd766b2f3f76b4a670",
+  "includes_preexisting_uncommitted_changes": true,
+  "scope": "可见 Markdown 正文与索引；不包含 results/、baseline/、_build/、原始数据和隐藏运行产物。",
+  "review_boundary": "逐篇检查阅读主线和文档用途；关键过时说法按相关源码或官方资料核对。保留完整实例、独有历史失败与原始证据。逐篇 action 不表示每段均重写，也不表示已验证所有外部依赖或性能结论。",
+  "action_meanings": {
+    "rewritten": "重写主要叙述、结论或因果解释",
+    "restructured": "修整结构、目录、链接、术语或相关事实，保留有用正文",
+    "retained": "已有清楚解释，保留主要内容，按需维护目录或引用",
+    "new": "新增阅读入口或教学说明",
+    "merged": "同一阅读任务的碎片迁入完整专题，保留有效内容、代码和证据。",
+    "linked_only": "并行开发新增，本轮仅检查链接与导航。"
+  },
+  "summary": {
+    "current_documents": 170,
+    "documents_reviewed": 166,
+    "documents_before_consolidation": 191,
+    "consolidation_groups": 15,
+    "retired_files": 28,
+    "new_consolidated_filenames": 3,
+    "net_reduction_by_consolidation": 25,
+    "concurrent_new_documents": 4,
+    "action_counts": {
+      "rewritten": 53,
+      "restructured": 73,
+      "retained": 23,
+      "linked_only": 4,
+      "merged": 15,
+      "new": 2
+    },
+    "maximum_document_lines": 869,
+    "note": "数量为本次核对快照。合并净减少 25 篇；并行开发新增另列，不计为本次合并成果。旧审阅统计保存在 prior_review_summary。"
+  },
+  "verification": {
+    "local_links": {
+      "documents": 170,
+      "local_links": 6809,
+      "heading_links": 2125,
+      "line_links": 2400,
+      "implicit_md_suffix": 26
+    },
+    "local_link_errors": 0,
+    "navigation": {
+      "documents": 170,
+      "reachable": 170,
+      "orphans": []
+    },
+    "public_site": "独立临时环境运行 sphinx-build -E -b html -W --keep-going，构建通过。",
+    "content_preservation": "对照合并前备份检查正文、实验条件与代码示例；检查迁移后的章节引用。",
+    "whitespace": "git diff --check -- docs AGENTS.md .claude/readme-style.md 通过。",
+    "not_rerun": "本次仅文档合并，没有重新运行 CPU 教学示例、GPU、训练或性能实验。前序示例验证保存在 prior_review_verification。源码行号检查只验证基础范围，语义核对范围见各篇说明。"
+  },
+  "documents": [
+    {
+      "path": "docs/README.md",
+      "action": "rewritten",
+      "reason": "按新人路径、分享材料和主题分类重写总索引。",
+      "lines_before": 56,
+      "lines_after": 68,
+      "sha256_before": "dd44372d6cb931b933b4addee8e24caf081697313b3de17438376fc6e281d3a5",
+      "sha256_after": "faeb8aea80cec055f9ae0f4ff94073f63c276df20144d742ba43c72dd19b11a1",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 65
+    },
+    {
+      "path": "docs/design/architecture.md",
+      "action": "restructured",
+      "reason": "用样本流/参数流讲清角色，纠正训练推拉和版本界限等绝对结论，补目录。",
+      "lines_before": 164,
+      "lines_after": 180,
+      "sha256_before": "7172dc86a90066fcba95cacd39ff00502b77c95467689d9e147178cd320b8d96",
+      "sha256_after": "25b5eaeb9ab45264392cf140ae0bf66427e8980e6a136e23ad843bb8deb161be",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 180
+    },
+    {
+      "path": "docs/design/env_worker.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 373,
+      "lines_after": 386,
+      "sha256_before": "7a30195bac406b1198b98bb4d81a257355c58fd8b77be5476d62f3f975eda47a",
+      "sha256_after": "6378b58fa25e07a86812ac3b56aae91907752a38b54fa09f7d18aa1d14216815",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 386
+    },
+    {
+      "path": "docs/design/flexible_rollout.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 310,
+      "lines_after": 332,
+      "sha256_before": "18808346804d6401a67637b31909f546f34796f59f16bb4af6a39eece215a7fe",
+      "sha256_after": "1aaeabd1864a61e6f9c419d84836685dbe9563185bb09d1d485496450e18206d",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 332
+    },
+    {
+      "path": "docs/design/index.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 89,
+      "lines_after": 92,
+      "sha256_before": "b7e817d6d6b4b468bbfb5766ece22641e8afa01e251fcadb40a083429c55bce8",
+      "sha256_after": "16da457322cc9c79b7953cd755b99fa67ae75a5b6e51fe181fae39ca12038c1b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 92
+    },
+    {
+      "path": "docs/design/kv_cache.md",
+      "action": "restructured",
+      "reason": "解释缓存复用与版本条件，修正KV容量公式和原算术错误。",
+      "lines_before": 202,
+      "lines_after": 214,
+      "sha256_before": "3ee362f505a8fef255964879ab4357fea7972af88c64924829e1d2747942765c",
+      "sha256_after": "0d5af6b01094919d4b23a665a8e5aefa70140fb1c8ed55c22f49298b05422121",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 214
+    },
+    {
+      "path": "docs/design/parameter_server.md",
+      "action": "restructured",
+      "reason": "区分CPU/NIXL存储路径、读写锁和真实搬运成本，取消零拷贝与永不阻塞的保证。",
+      "lines_before": 239,
+      "lines_after": 262,
+      "sha256_before": "f04bff5b8ee32a99a15e207fda8a3e71572211f66396473290556c9893299fde",
+      "sha256_after": "6a829be474919dd65ca04dbdf17ba1eb2fa0f57786bedd77b36fa48cfd784cf4",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 262
+    },
+    {
+      "path": "docs/design/resource_elasticity.md",
+      "action": "rewritten",
+      "reason": "按源码重写训练/验证切换和TMS边界，区分独立生成池，提供CPU容量例子。",
+      "lines_before": 91,
+      "lines_after": 105,
+      "sha256_before": "8960083d2a7d72708025740fef4cafe62e81b6fccbe7eae5664926260666f4a7",
+      "sha256_after": "90d00caa09924ac631c6bef3301af0c703e535130d63a4c3a85acb1ed29a940e",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 105
+    },
+    {
+      "path": "docs/design/router_tito.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 169,
+      "lines_after": 181,
+      "sha256_before": "789e1c040123b0e6b9f4aba4b2fa70c59dc023a06c052cfeb0afbd265e93f56a",
+      "sha256_after": "55a951ae5fd87450b92bec5f83aef0c1e9f9121fd2de01edb59ee2fdcb85e7b9",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 181
+    },
+    {
+      "path": "docs/design/staleness_control.md",
+      "action": "restructured",
+      "reason": "修正版本方向和多版本轨迹含义，改正配置层级，区分版本界限与质量。",
+      "lines_before": 199,
+      "lines_after": 218,
+      "sha256_before": "fe1fdadf64b6e13c255216e91b91ed5c67a81d1e422b7fa37c6f34b809cf6bbf",
+      "sha256_after": "7be07656cbc075aded5c06042233906523bc6e62f67aa0137705ccbc84890053",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 218
+    },
+    {
+      "path": "docs/design/transfer_queue.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 112,
+      "lines_after": 121,
+      "sha256_before": "dbfe053adcd870a00038a2662604e2d85859052f4105599e374b1f95f07e255d",
+      "sha256_after": "6d04d856cc97750c91ce013a378882d0eab7f66bdd7c0387bb26bcbe6fb4f950",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 121
+    },
+    {
+      "path": "docs/env-worker-deep-dive/README.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 45,
+      "lines_after": 50,
+      "sha256_before": "16a391d58f2dd6c5923a4030e0a4527cb429045c0caff32aca52cf44a7b6c763",
+      "sha256_after": "b389f3eab1dd92d659b3162ca92b27406e0acb0c0b7725717fd6615ac03bb349",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 50
+    },
+    {
+      "path": "docs/env-worker-deep-dive/airs-bench-audit/apps-isolation.md",
+      "action": "restructured",
+      "reason": "先解释候选容器为何与隐藏judge分开，补Pass@5定义，合并重复源码阅读表，保留隔离限制和真实失败。",
+      "lines_before": 240,
+      "lines_after": 235,
+      "sha256_before": "c637b0bce9b3d06eab3c2b60c2b2ce854340a35829a98304159d0f36f34a0494",
+      "sha256_after": "3968fd3ef952c818509e2972940c6651360508e7bce552f092583b86c52bd8aa",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 235
+    },
+    {
+      "path": "docs/env-worker-deep-dive/airs-bench-audit/fixes-and-results.md",
+      "action": "restructured",
+      "reason": "减少重复审计源码表，按现有能力、两个真实机制例子、证据和缺口组织；明确11-13 CPU/源码核对与11-11 GPU历史。",
+      "lines_before": 209,
+      "lines_after": 197,
+      "sha256_before": "3e0181d0b02e3300120ecc33f2ce0bf5cd128068ab9753c5b698d01a3bdf591c",
+      "sha256_after": "027fe95ac038d50b27d8429c53e2f695047a12c30f78b5354f6624f9ab5764bd",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 197
+    },
+    {
+      "path": "docs/env-worker-deep-dive/archive/README.md",
+      "action": "restructured",
+      "reason": "按历史问题、版本与证据价值导航，清楚指向现状入口。",
+      "lines_before": 15,
+      "lines_after": 20,
+      "sha256_before": "f6b1f14ca670a86d0cd0d120be96fa5b6905e21ea3af4a59cff1f0664d849049",
+      "sha256_after": "6f8fb09d1ca21c5c2ffa61e5b64da820140b659b0be8f9060df66cc6e698266a",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 20
+    },
+    {
+      "path": "docs/env-worker-deep-dive/archive/commit-72ca50c-gate-ab-walkthrough.md",
+      "action": "rewritten",
+      "reason": "冻结提交72ca50c；用三卡四任务解释闸门，修正全仓零命中的旧现状，汇总验证范围，保留源码摘录和CPU输出。",
+      "lines_before": 377,
+      "lines_after": 400,
+      "sha256_before": "e06945557c2b9bc4cbcab62393de14ab07d023764f2a942d9371dd500fb9e320",
+      "sha256_after": "fbf5b2fa252dddaf634c235c9a8db0c7c4588d7764970e12dff97d18e53c8fc6",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 400
+    },
+    {
+      "path": "docs/env-worker-deep-dive/archive/env-router-current-flow.md",
+      "action": "restructured",
+      "reason": "以40秒和25秒完整时间线串联命令持有范围；区分历史实现、MPS入口和提案；删除重复会话检查日志并保留原始结果入口。",
+      "lines_before": 729,
+      "lines_after": 746,
+      "sha256_before": "2b5084b35ce828e84e138e5529f7eda93f3afae9a00aad2d3f74b6ac02564db0",
+      "sha256_after": "c0a02c3828ceb2be0e66940e1b638a08fd85288353ed088185bf40ddb0837a29",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 746
+    },
+    {
+      "path": "docs/env-worker-deep-dive/archive/env-service-implementation.md",
+      "action": "rewritten",
+      "reason": "解释资源单元、租约与容量准入；保留10-12公式并用明确反例解释后续修复；纠正容量单位并注明历史部署和测试范围。",
+      "lines_before": 585,
+      "lines_after": 620,
+      "sha256_before": "4fc009ddc46e2573cd913a20ada8fb61e1f6e23ff79ea251f6ba5486bd07d344",
+      "sha256_after": "9f53e4fba124d9eb1441a9cffae72dafaf582b36a6b4cb2b586ddb9e899addef",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 620
+    },
+    {
+      "path": "docs/env-worker-deep-dive/archive/implementation-and-gaps.md",
+      "action": "restructured",
+      "reason": "以超时串线与回收缺口为主线，修复前快照和当时建议单独定位，现状通过主题入口维护。",
+      "lines_before": 444,
+      "lines_after": 455,
+      "sha256_before": "be42f8d31f4ab7e6b1138ed622893615fa3315f3612635ef11761458002eb749",
+      "sha256_after": "e181817327a591839e83e9e6c88a70dd1b976e622015691eb2794a4813763dd7",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 455
+    },
+    {
+      "path": "docs/env-worker-deep-dive/archive/sciaccel-gpu-gate.md",
+      "action": "rewritten",
+      "reason": "按静态映射、跨进程锁、设备账本、容量提案组织；纠正软节流能保证评分、Ray逻辑分配天然硬隔离等旧断言，保留实验数据与旧锚点。",
+      "lines_before": 693,
+      "lines_after": 711,
+      "sha256_before": "41d5538a5e165c0afe8e64897b7791cb23deeca640e17fc4afc6f3e151425065",
+      "sha256_after": "685bab7aad8496f5ddb16d38b481f83c01642de2f961b586acd1dda837971941",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 711
+    },
+    {
+      "path": "docs/env-worker-deep-dive/env-service-verification/README.md",
+      "action": "restructured",
+      "reason": "区分脚本、教学演示和原始实测，按目的链接报告，现场运行条件仍以当前预检为准。",
+      "lines_before": 23,
+      "lines_after": 23,
+      "sha256_before": "137d7a59d5720c168ada45a83400965a3134bd89b00e2a329f392b8e7e654a86",
+      "sha256_after": "1279afc43ba0b8e7b5c4e82801f61a8609fd39564301c1573c41937730152d3a",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 23
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/README.md",
+      "action": "restructured",
+      "reason": "按固定基线、功能、研究、历史分流，任务数字由路线图维护，常驻模型性能指向独立报告。",
+      "lines_before": 48,
+      "lines_after": 49,
+      "sha256_before": "39594767fb281e27f365309a298e9db8c4eafeeb3e6012d2cf438cfc7bb14ecb",
+      "sha256_after": "bbf121b00f648c99bff5c6d5c976fbf35f82a2423eb1720865cbf6e3c9747870",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 48
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/env-design-and-results-brief.md",
+      "action": "rewritten",
+      "reason": "重写为按研究问题阅读的实验结论；性能、功能和历史替代关系分别列清工作量、版本及计时范围。",
+      "lines_before": 65,
+      "lines_after": 68,
+      "sha256_before": "9f5c4cd217cef31c0c8146410bce1988416423fa8cfe08e56a2fdbc48dd33431",
+      "sha256_after": "8600434162439ba736cd840a865e957feef98dfc3083445bf295561657c20a06",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 68
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/FINDINGS.md",
+      "action": "rewritten",
+      "reason": "从混合长叙述改为按验收问题定位证据的导航；保留全部15个旧章节入口，重复历史正文指向已有chronology，整卡压力另成报告。",
+      "lines_before": 374,
+      "lines_after": 105,
+      "sha256_before": "d2be1031b7399e0d0b9b0df4fb84a0777ba82502d10a53d3ce1256cfe4ca924e",
+      "sha256_after": "6cbbd615aadeb86b037dedbfaa76848b01e931eb043c76978e5f08731d509984",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 105
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/README.md",
+      "action": "restructured",
+      "reason": "增加研究问题到报告的选择表，解释GPU工作与资源归还；旧high-GPU章节改主题名并保留别名锚点。",
+      "lines_before": 140,
+      "lines_after": 145,
+      "sha256_before": "71143e5cd8becf921cd60c5e867a747b66310fcf9f1fee1e6fb3ac0462cc9f3d",
+      "sha256_after": "c116d1504a01122519effd77b29cb9a18958428d51113edfdbd4ac625976f012",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 145
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/feedback-pressure.md",
+      "action": "restructured",
+      "reason": "将真实误选慢候选算例前置，就地解释P95、选优损失与计时，避免读者先看密集矩阵才理解问题。",
+      "lines_before": 151,
+      "lines_after": 153,
+      "sha256_before": "5feb3c066d364425b4e5bbc27506e1b8c1135d2e0154545e53e601afe5eeaef1",
+      "sha256_after": "a71e7540af9d9b3ac5f086f13a48d24cfefc4b3706e1c988aa691f3f34131fdc",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 153
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/flashinfer-batching.md",
+      "action": "rewritten",
+      "reason": "依次解释进程复用、候选筛选和保留评估器分段；保留不同实验的工作量、数值及边界，移除重复源码地图。",
+      "lines_before": 280,
+      "lines_after": 154,
+      "sha256_before": "f00f834566112da3a66f55d1467106006ce12ce08764f6b855665a8a7d6fe901",
+      "sha256_after": "6cebde8d86affd5813b11a476c0f939b76a546c29c0aaa2962991539a8359c7b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 154
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/joint-gpu-placement.md",
+      "action": "restructured",
+      "reason": "补六条命令/两张卡的完整场景及affinity/cache/LRU中文解释，直接串起结果与预算，收短重复的成熟度声明。",
+      "lines_before": 158,
+      "lines_after": 162,
+      "sha256_before": "7e4a7932db59ee68818d436bb95e891cab9c521328bb874a6bf6eeb5b689dc5b",
+      "sha256_after": "c5a60acb772e43359310d8e4543b4241e7b6cb04b331db9a20293d3b762c1e4b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 162
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/posttrain-verifier-reuse.md",
+      "action": "rewritten",
+      "reason": "解释进程复用与模型驻留分别节省什么；按请求与整组计时对照，用A/B/A解释版本正确性，保留旧锚点。",
+      "lines_before": 179,
+      "lines_after": 144,
+      "sha256_before": "488959550c05215512edac0b98516f7618b260cd01c05d0e87501ce3852e8a67",
+      "sha256_after": "8fa18539227648bb354ea307e8a4bb2b75c4a0e8ae43bd2d7ed2082cb2612d60",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 144
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/resident-model-pressure.md",
+      "action": "rewritten",
+      "reason": "从原FINDINGS提取独立研究报告：7项14请求、OOM原因、20GiB预算并发和可信抵扣算例、完整计时及失败证据。",
+      "lines_before": null,
+      "lines_after": 113,
+      "sha256_before": null,
+      "sha256_after": "9f1c776fe152412695897c7245ece9b02afe72b6ce8397b481d0d699b0fedfe5",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/FINDINGS.md",
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 113
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/warm-placement-matrix.md",
+      "action": "restructured",
+      "reason": "采用用户指定方向的现有清晰版本：三策略、48组核心结果、真实选择算例和5/9边界；保留原始未提交成果。 补齐H2/H3可点击目录，正文与旧锚点保留。",
+      "lines_before": 289,
+      "lines_after": 300,
+      "sha256_before": "f610d7ae20c35cdd3881e3cdadfe447d8e9786f3fbc03a416ff81460de3a125f",
+      "sha256_after": "d4749a5f90ce0ae25a7a759a372655bc481a9e73e3afb5bbeeb3e2ac1e30bfa7",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 300
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/warm-wait-or-rebuild.md",
+      "action": "rewritten",
+      "reason": "重写前期长命令实验，主线聚焦等/加载的对照与完整计时；保留初始负面结果、Ray未启动及5/9预算条件。",
+      "lines_before": 410,
+      "lines_after": 161,
+      "sha256_before": "3d36a4533a850575f574263b58723c2b1512cbb784c6bd7181c1831119ce3276",
+      "sha256_after": "222daf6c06e0c911e765b627d175ae48221aa6f7c9406d4b9f151b19d717f4eb",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 161
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/README.md",
+      "action": "rewritten",
+      "reason": "历史索引从同质化归档表改成具体追溯问题、独立证据价值及后续阅读入口；给出相同ON标签随版本变化的例子。",
+      "lines_before": 31,
+      "lines_after": 33,
+      "sha256_before": "ce512727697f0b8793d517c375b727bf2740ecf65eb9fbe1e5158c18de871725",
+      "sha256_after": "edb9c999ec861923216c5829f8ab3b1684d04c23ace7b398a19beb663f25d064",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 33
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/env-design-and-results-brief-chronology.md",
+      "action": "restructured",
+      "reason": "修复返回自身的实验结论链接，删除重复历史声明，将旧可转发声明改为历史用途及当前分享入口。",
+      "lines_before": 161,
+      "lines_after": 159,
+      "sha256_before": "3add436e5685195d2128e957b0ce4eb056544f3ec5d817d0953635d10205bac4",
+      "sha256_after": "d850240ac3104b4d34018652a6f80a14eaf3ac967c63fc36c9c3bf98066512b6",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 159
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/env-service-verification-20261013.md",
+      "action": "restructured",
+      "reason": "保留真实多节点、Docker、GPU身份、worker死亡回收和早期零梯度训练的唯一历史证据；由历史索引提供清晰入口。 补齐H2/H3可点击目录，正文与旧锚点保留。",
+      "lines_before": 695,
+      "lines_after": 734,
+      "sha256_before": "691ec9fbe008a8362851c5daf0f99767f9afb574ceb1bced2a6d8f42cd52d92d",
+      "sha256_after": "c59f1ecb4c49650e35c82725e654e650ad952b5c148f95424a57557dd2ec6ba7",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 734
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/gpu-benchmark-onboarding-chronology.md",
+      "action": "retained",
+      "reason": "保留资产、长命令、RE裁判、容量不对称和早期失败原条件；FINDINGS去重后由本文件承担历史追溯。",
+      "lines_before": 532,
+      "lines_after": 532,
+      "sha256_before": "9d1778fc033be70d977b7de2d7dfa38696482ee7b59907bb665b8f62bc311bb0",
+      "sha256_after": "9d1778fc033be70d977b7de2d7dfa38696482ee7b59907bb665b8f62bc311bb0",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": false,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 532
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/mps-training-comparison-chronology.md",
+      "action": "retained",
+      "reason": "保留串行/普通并发/MPS初次对照、管理连接断连及定向修复记录；当前主报告引用修复后新配对。",
+      "lines_before": 230,
+      "lines_after": 230,
+      "sha256_before": "08d739058ecdfdf8a969fb2554e739d574b279b2c999f064b8b83a58c02ca2f5",
+      "sha256_after": "08d739058ecdfdf8a969fb2554e739d574b279b2c999f064b8b83a58c02ca2f5",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": false,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 230
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/native-lifecycle-before-fix.md",
+      "action": "restructured",
+      "reason": "解释提前ready故障，旧逻辑源码链接改为保存的修复补丁，避免现代源码冒充旧缺陷；原注入输出完整保留。 补齐H2/H3可点击目录，正文与旧锚点保留。",
+      "lines_before": 97,
+      "lines_after": 101,
+      "sha256_before": "167298e96746904aa1736fecbfe125af38bb420d79c540dd2a36a7cff2b9a5c5",
+      "sha256_after": "8bc854aa0169914bae2e5fbfbbbc87fe51aefb211e5475053e034dc36819732b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 101
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/phase-backfill-before-command.md",
+      "action": "restructured",
+      "reason": "用资源已空闲但租约仍持有的问题说明历史提案价值，明确command后来落地；保留旧时间线与教学协议。",
+      "lines_before": 109,
+      "lines_after": 109,
+      "sha256_before": "bef136c34250e6da3c6d62f80028d47b25a24e6bc701a026bd1c3cb812b92009",
+      "sha256_after": "671d031bdfdb49b3bf9daf809a91b86e58e9c9b87f26cbafd92416920fd52d69",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 109
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/router-baseline-control-validation-chronology.md",
+      "action": "retained",
+      "reason": "保留同步Docker、连接池、预热、事件循环阻塞的定位过程和失败；现行简报使用同期配对。",
+      "lines_before": 753,
+      "lines_after": 753,
+      "sha256_before": "241421231897f7c4b8b1978e4be3cd3384e90702e847cce437574921634e961a",
+      "sha256_after": "241421231897f7c4b8b1978e4be3cd3384e90702e847cce437574921634e961a",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": false,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 753
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/science-env-router-comparison.md",
+      "action": "restructured",
+      "reason": "把开头整卡锁OFF明确为该实验历史版本，与用户指定0eeead8分开，独立容器装箱与失败证据保留。",
+      "lines_before": 216,
+      "lines_after": 216,
+      "sha256_before": "34b11f39e3639e5bc4f45c8747fde444b561f1a3dbbe1d28de7ec614a9457275",
+      "sha256_after": "d4817c556d27492b72b17928df90490f2141b575222b9e77ac7be53c1c1ef59e",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 216
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/science-gpu-pressure-ab.md",
+      "action": "retained",
+      "reason": "整任务保留预算造成负面性能和真实空档是独立证据，按历史OFF版本及人工压力保留，不能按日期删除。",
+      "lines_before": 546,
+      "lines_after": 546,
+      "sha256_before": "03b2345e628f1773bc8da6ee72a3f5f15013e6448ae342aaa39fd7ebcfac8248",
+      "sha256_after": "03b2345e628f1773bc8da6ee72a3f5f15013e6448ae342aaa39fd7ebcfac8248",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": false,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 546
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/science-natural-gpu-concurrency.md",
+      "action": "restructured",
+      "reason": "修正正文仍把同容器多命令说成覆盖用户原始多rollout目标的矛盾；容量压力和串行限制独立证据保留。",
+      "lines_before": 544,
+      "lines_after": 544,
+      "sha256_before": "2a179ef14e2a5fec026c3a16c92a540266e1b21cf7ab6d234a33d5cee9cf6175",
+      "sha256_after": "751a0940b012497439d9cc3c36dd3e09c733271265049ac5ee0ff2b2cbd8ae9f",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 544
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/science-single-gpu-training-control-chronology.md",
+      "action": "restructured",
+      "reason": "修正重复节点措辞；保留采集文件被删除、镜像EOF、预约公式缺口及完整修复前后条件。 补齐H2/H3可点击目录，正文与旧锚点保留。",
+      "lines_before": 762,
+      "lines_after": 785,
+      "sha256_before": "4e81db897266bfd3670e82bc53c0abeb4b4f0d9f25ffbee1aa2c880e1caaa328",
+      "sha256_after": "d339d5eaaece8cae32323d300c4a43af2d6af8243d803ab77ce121b43a03bd17",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 785
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/history/science-training-router-ab.md",
+      "action": "retained",
+      "reason": "原始CPU LAPS真实两步策略训练、零奖励及失败排查独立保留；避免把它改写成GPU容器性能收益。",
+      "lines_before": 389,
+      "lines_after": 389,
+      "sha256_before": "1fa1d30fe2e49ba1dfbf11730e78a18d59261b0aa26d2d0b9187f65da171bf9d",
+      "sha256_after": "1fa1d30fe2e49ba1dfbf11730e78a18d59261b0aa26d2d0b9187f65da171bf9d",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": false,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 389
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/host-proc-blocker.md",
+      "action": "restructured",
+      "reason": "先解释进程归属问题及procfs/NVML/eBPF术语；将原节点observe选择还原为历史条件，保留部署与评分边界。",
+      "lines_before": 73,
+      "lines_after": 75,
+      "sha256_before": "328f329ae23be3f06f793b156601ad583af084b7d84c528e42fe1629aaf4b4b9",
+      "sha256_after": "7bcbc062b2604e322741bc46d16aa93cd0d83f5192f93b45014baea10c89182c",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 75
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/mps-training-comparison.md",
+      "action": "restructured",
+      "reason": "解释MPS与Router各自职责，直接呈现持续训练和完整短流程的不同结果；保留唯一修复后配对及原失败入口。",
+      "lines_before": 43,
+      "lines_after": 45,
+      "sha256_before": "6738ab12dd4eacd303b6d00452678bbc06c8d8e444a3c272ebd8a952a44941db",
+      "sha256_after": "d720df1b50682ab52aa2d2171813c52e00ca7a6455b3edda6e740ebd473faf6c",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 45
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/native-backend-fixes-and-science.md",
+      "action": "restructured",
+      "reason": "明确2026-10-29 CPU历史实验，解释oracle/verifier，旧未接入项改为当时范围，修正当前组件源码入口。",
+      "lines_before": 105,
+      "lines_after": 103,
+      "sha256_before": "4951ab969ce41007e8478a42754df8b4fa6e87837b3ba30bc332194bc3270272",
+      "sha256_after": "6f2c03906628d78453f2a16fb457220df7aaea0d5a1d5e166b8430900bb4af53",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 103
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/resident-compute-sharing.md",
+      "action": "linked_only",
+      "reason": "其他并行开发新增，本轮仅纳入本地链接与导航检查，不作为本次新建或全文事实审阅成果。",
+      "lines_before": null,
+      "sha256_before": null,
+      "changed_by_consolidation": false,
+      "lines_after": 111,
+      "sha256_after": "d5c166d5ac99de6ef0c997e090959bae76b7fb235efbc18e5529658ada41722f"
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/router-baseline-control-validation.md",
+      "action": "restructured",
+      "reason": "补OFF/ON和CPU-GPU-等待-GPU具体工作流，保留两对完整时间与修复证据。",
+      "lines_before": 39,
+      "lines_after": 41,
+      "sha256_before": "6980e05eedad915c2583d5fb0652d30caa54438832d4131409059f83086cca48",
+      "sha256_after": "f4c159279cad8df5a377ffe5aeb1a5105c61ba8d9db215a5d97c88293ff0b3ef",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 41
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 14,
+      "lines_after": 837,
+      "sha256_before": "ade116d5a0a2a42e66664efd5ab1b26da6e83d338b48ca0091c728a21c4de937",
+      "sha256_after": "47119979a2d2a83071da329d092a6af6f8aaeb23ebfb1b8aacaac4ef12b2ef39",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "rewritten",
+      "prior_reason": "改为有明确日期的历史审阅导航，解释Gate A/B并指向现在的设计与低负载主报告。",
+      "merged_from": [
+        "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/paired-results-and-review.md",
+        "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/remediation-and-handoff.md"
+      ],
+      "consolidation_lines_before": 16,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/science-single-gpu-training-control.md",
+      "action": "retained",
+      "reason": "保留已收敛的三步主报告：结果表、每步四条成功轨迹的重试解释、70/15/90可手算示例及真实失败边界齐全。",
+      "lines_before": 67,
+      "lines_after": 67,
+      "sha256_before": "c774083c1776092d9cbc1ebcaf6fdc5016f5bb1099ecaa44db3beaab60502b82",
+      "sha256_after": "c774083c1776092d9cbc1ebcaf6fdc5016f5bb1099ecaa44db3beaab60502b82",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": false,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 67
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/README.md",
+      "action": "restructured",
+      "reason": "按初读、机制、接入、基础与研究入口重排，减少跨类重复清单。",
+      "lines_before": 114,
+      "lines_after": 85,
+      "sha256_before": "b2c8d125e0557585f1a5592c4bdff1503b8a642c0bda94e08bba612daa47810a",
+      "sha256_after": "f81fbfacf33ae47c72be4665003c417e4b675bd116d87bb488a44914ccdc4109",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 84
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/airs-gpu-recipe.md",
+      "action": "retained",
+      "reason": "已有SICK完整例子、任务输入结果表和分层证据；保留正文，同步目录。",
+      "lines_before": 202,
+      "lines_after": 203,
+      "sha256_before": "ca200ba0fe87971a7b14621716c67ea5aab5a5c1bf266d9f33510153cbd556c9",
+      "sha256_after": "de56d98d7e0fa41d8773522996b5e04d5f4d3916bbda42563f094141852c77db",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 203
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/baseline-state-lifetimes.md",
+      "action": "rewritten",
+      "reason": "用代码修改案例区分自然保留、版本正确性与复用成本；实读 digest / capture / publish / model_process，正面解释文件指纹、可信身份范围及生产接入条件。",
+      "lines_before": 306,
+      "lines_after": 310,
+      "sha256_before": "a8bc52da003725660e23a7dc48ca94e34ce6074a896a97fc1b9f121bc11758b2",
+      "sha256_after": "a3307966a18dfd755e282d0497c6123047f9e26788a1dc8c1da61c9c9b16312b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 310
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 784,
+      "lines_after": 775,
+      "sha256_before": "956ef090e967cc28e858b428b1c55f5f27fccbc0ed9aaddcc07b940e70272b42",
+      "sha256_after": "23ea1e7bd48f1dd15acd11031fa547d039e90ea3ec744e84fc4f4214239df2f3",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "restructured",
+      "prior_reason": "当前借还机制、固定实验诊断与跨节点提案拆成三篇，保留原入口。",
+      "merged_from": [
+        "docs/env-worker-deep-dive/knowledge/command-gpu-reservations/experiments-and-diagnostics.md",
+        "docs/env-worker-deep-dive/knowledge/command-gpu-reservations/scheduling-proposal.md"
+      ],
+      "consolidation_lines_before": 326,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/command-predictability.md",
+      "action": "retained",
+      "reason": "已有完整输入、校准和决策例子；保留讲解，核对目录、链接及导航。该页由并行开发加入，未将其创建归于本次重整。",
+      "lines_before": null,
+      "lines_after": 497,
+      "sha256_before": null,
+      "sha256_after": "16be1535bb4688b6c8810ce31d869e94b893004833a9316563c05b200bd27c2f",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 497
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/cpu-gpu-parallelism-architecture-comparison.md",
+      "action": "rewritten",
+      "reason": "重写CPU/SM/MPS/MIG因果与数字例子，纠正Volta+ MPS共享上下文错误。",
+      "lines_before": 76,
+      "lines_after": 79,
+      "sha256_before": "1458858a7fbfbf688914db7088b3b8a77cb39ec16a862917c1bd17cd5fdde135",
+      "sha256_after": "63374ed7990ac9b460059816a48dd0d1d956f41042e7e556e080897ff2b12f72",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 79
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/cuda-context-and-compute-contention.md",
+      "action": "rewritten",
+      "reason": "纠正上下文额外成本、Volta+ MPS、已接入环境专用MPS的事实，集中验证表。",
+      "lines_before": 201,
+      "lines_after": 154,
+      "sha256_before": "ea447759d148931787314aad05c3f79b1404730a432e6a84cfba269ac88ff7a3",
+      "sha256_after": "febb894cea4b640abfac99f31af83af2ed29053978b904c677350f97fb8dfa09",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 154
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/current-design.md",
+      "action": "rewritten",
+      "reason": "用完整任务例子讲职责，合并能力表并集中证据范围，区分接入与研究。",
+      "lines_before": 165,
+      "lines_after": 175,
+      "sha256_before": "7542bdd5b5225b52ebea3d3d73c9bc484da747b06a0c453647be57069319d82a",
+      "sha256_after": "7529b560d2e035812f2887e5698a917eb99448822eb79a50c91eeb09dce5c1ac",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 175
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/engineering-review.md",
+      "action": "rewritten",
+      "reason": "去掉连续追加的重复待办与更正，按风险原因/例子/验收重写。",
+      "lines_before": 229,
+      "lines_after": 207,
+      "sha256_before": "a86d2b9c99fc7389375ff1ac6b346ff21297f53ce668e129cfdcd56d5d6c3fd3",
+      "sha256_after": "55cc33f81571df6d78a5a22d3775af0c449c27a0be7344687e61158554a9e134",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 207
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/gate-b-beginner-guide.md",
+      "action": "rewritten",
+      "reason": "用绑定与回复例子介绍软节流，并明确历史路径与当前准入区别。",
+      "lines_before": 469,
+      "lines_after": 474,
+      "sha256_before": "0f575f11effb7de1ecc4e1ea7bd72b49372073e266e3a17315bb395527e9c3e1",
+      "sha256_after": "a8e75092e2aa6053451888ff3a91afa29ce7484ef7d4834f02871d9bba10b4cd",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 474
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 15,
+      "lines_after": 815,
+      "sha256_before": "d18aa56940ba29ba3ebaf312babd9ae7ee2e069cefa52a2043c1dab0cd038c34",
+      "sha256_after": "bd38b4647dc3cd7a5f7bf929fe8d4be9317012410bce3435a1f2e9dafc63dc6e",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "rewritten",
+      "prior_reason": "用一个PID视图例子串联两篇专题，解释首次术语。",
+      "merged_from": [
+        "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/identity-and-accounting.md",
+        "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/cancellation-and-experiment.md"
+      ],
+      "consolidation_lines_before": 14,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/gpu-benchmark-recipes.md",
+      "action": "rewritten",
+      "reason": "沿准备→任务→执行→评分接线解释recipe，移除开头按日期堆叠。",
+      "lines_before": 479,
+      "lines_after": 472,
+      "sha256_before": "934d121e4a3eabe0534c03224169ff3d78f4b8261e876c5b6a2fb6debaedd3b2",
+      "sha256_after": "070bd85b8833f2c6f62109b0d0cb72bb5c87355c09941b6b92761a06926fd0a2",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 472
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 798,
+      "lines_after": 774,
+      "sha256_before": "0c3b5a65c0da88f714622658537f27d5a4d51e668510d5fdffa11708de474e4a",
+      "sha256_after": "bf8d152b019307ccae61e1a80161870a50f73b50f601820595c106a0df413e65",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "restructured",
+      "prior_reason": "作业和遥测主线、procfs部署排障、早期并发提案拆成三篇。",
+      "merged_from": [
+        "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry/procfs-and-deployment.md",
+        "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry/concurrency-design.md"
+      ],
+      "consolidation_lines_before": 283,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/gpu-memory-admission.md",
+      "action": "retained",
+      "reason": "已有完整预约手算与故障解释，当前公式已复读；保留推导，同步目录。",
+      "lines_before": 300,
+      "lines_after": 301,
+      "sha256_before": "aab69eb078240193d610c316d3a53782c79da0bbe4ee62af3e983485414fd241",
+      "sha256_after": "5b56c16932e939ec7e3d24cf74f754ec23d53475464cd309d9f4a6d5ed65573a",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 301
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/http-basics-for-gate-b.md",
+      "action": "rewritten",
+      "reason": "用具体URL说明IP/端口/路径/请求与响应，保留网络推导。",
+      "lines_before": 430,
+      "lines_after": 446,
+      "sha256_before": "5a066fb771c4031cc126d53a3c2c2740c5fff2ed1a173b3ad580fa4de2cf65a0",
+      "sha256_after": "348b8d281992b8a522cdc516a43ff4466dfe8554e2f5f6523667e5df883a99bd",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 446
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/inferencebench-scoring.md",
+      "action": "retained",
+      "reason": "质量门槛与分数手算完整，官方/本地范围清楚；保留正文，同步目录。",
+      "lines_before": 140,
+      "lines_after": 141,
+      "sha256_before": "cd34411068bf10e92103eae047438f07c24fc92d9199f28c7fd45dfcd407f500",
+      "sha256_after": "275fa6b065f1aae548f523c9be6721568d8d6dcbe64a4a73ee5399f8e7b4747f",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 141
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/mlgym-swe-serve-recipes.md",
+      "action": "retained",
+      "reason": "已有两层训练关系、交付契约和接入步骤；保留正文，同步目录。",
+      "lines_before": 130,
+      "lines_after": 133,
+      "sha256_before": "476f2182027fd26772894ce7f3a25bcdb1ebe87b6f85f8c48c31385a21f8578c",
+      "sha256_after": "57e168cc519d6bf35478a48f0ed5bd9c471cf37f1264bf4a7cb4e3c11465b06b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 131
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/mlgym-weight-scoring-and-agent-dapo.md",
+      "action": "linked_only",
+      "reason": "其他并行开发新增，本轮仅纳入本地链接与导航检查，不作为本次新建或全文事实审阅成果。",
+      "lines_before": null,
+      "sha256_before": null,
+      "changed_by_consolidation": false,
+      "lines_after": 212,
+      "sha256_after": "ed83f7549d1912176b2e892c026fc44d9404837dbd2e7932824b4cddfa2cfc4c"
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/mps-parallel-execution.md",
+      "action": "rewritten",
+      "reason": "先解释MPS及并发/排队/取消例子，再给当前条件和性能入口。",
+      "lines_before": 336,
+      "lines_after": 337,
+      "sha256_before": "23816742e43b19416c607f9c4f8a6e44a7390e29b7a60589f5d7e29e7ce20743",
+      "sha256_after": "a9819de6ecbbaf52cf73ddb096b12b0953b8b1b938fdf19c19e9044488d8f1dc",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 337
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/native-harbor-backend.md",
+      "action": "retained",
+      "reason": "提供者契约、实际命令差异和失败生命周期已讲清；保留正文，同步目录。",
+      "lines_before": 168,
+      "lines_after": 169,
+      "sha256_before": "020023322e426819b43e7276c76b5b85e5d576507d12d812b336d803287bc034",
+      "sha256_after": "5c147316335a8338660a593a68394f4b0d500996603553175e4c7904bfe1a17c",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 169
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/onboarding-and-gpu-validation.md",
+      "action": "rewritten",
+      "reason": "修复Router尚未实现/GPU从未验证等过期叙述及pytest跳过条件。",
+      "lines_before": 214,
+      "lines_after": 214,
+      "sha256_before": "5494d1ed48eb97d8481ff068615f65da36c6d8b0f448a1d0d064afc40993d6c4",
+      "sha256_after": "b540b7221f8c54e9e3f10f5f699a0ae79436836c72c6fb9ad17d8c747e596779",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 214
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/process-identity-without-procfs.md",
+      "action": "retained",
+      "reason": "PID分层、出生身份和真实探针链完整；保留正文，同步目录。",
+      "lines_before": 464,
+      "lines_after": 465,
+      "sha256_before": "a9bdc6738f8fbffd21513d0d7543cad2a55dc93a9d183208e444c276a8ccfc9a",
+      "sha256_after": "f91f7a7a9ca72cbeb83514540fb2185d95a185e3d752917008c9feca4c9014a5",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 465
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/re-bench-recipe.md",
+      "action": "retained",
+      "reason": "裁判等待/卸载成本例子与复现条件完整；保留正文，同步目录。",
+      "lines_before": 355,
+      "lines_after": 356,
+      "sha256_before": "5c2e94bcd48806b9ceffd4f2d85a2d168d46249df8d7786fbdb3372581ea46a2",
+      "sha256_after": "12769f90f5e2823ac0501b7b14efdf02711e47faa53d0d07372fd538342689b8",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 356
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 654,
+      "lines_after": 661,
+      "sha256_before": "b94ee97f29e1433ac9bb39eb9af21ab8fab7cb53aca97062cf38d28934bec6a7",
+      "sha256_after": "01397bc7b9092178b3c21ccefb15dd47049f45419de12adb01a59f09a9b18b79",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "restructured",
+      "prior_reason": "借还主线与Ray/unit/逐卡容量专题拆分。",
+      "merged_from": [
+        "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending/unit-capacity.md"
+      ],
+      "consolidation_lines_before": 493,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/router-configuration-and-recovery.md",
+      "action": "rewritten",
+      "reason": "以4/8容器配置例子引入契约与恢复，把核查范围集中说明。",
+      "lines_before": 420,
+      "lines_after": 423,
+      "sha256_before": "fdbbd5945e81e20231a073892dd236d99fc26bb151a17b3f964a5596d95a7886",
+      "sha256_after": "8b62a3fea7e6c1aedc70f3cec0c5c7d43a93276f8675cf069a81d11c893d22d4",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 423
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/unified-gpu-execution.md",
+      "action": "rewritten",
+      "reason": "先讲创建和执行分工，修正cpu_only逐设备判断的旧描述。",
+      "lines_before": 455,
+      "lines_after": 456,
+      "sha256_before": "28fc91769e039574f7700e831a5538308b32b2f68349837ba5553e5440197d03",
+      "sha256_after": "d3a6ae33c3508ed60d76778a834509de5dc068e593ea67d29971c5f27541d704",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 456
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 743,
+      "lines_after": 745,
+      "sha256_before": "6b714864b1265dba1d9827847159c8332bc2164faaa076a444420f7da4521cb4",
+      "sha256_after": "bf9572ddd9d15d91f47f1d718e7de0bea6eb1a215ebed0e75b667e8978787819",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "restructured",
+      "prior_reason": "共享主线与计算竞争/MPS早期实验拆分，明确当前实现阅读入口。",
+      "merged_from": [
+        "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing/compute-and-mps-studies.md"
+      ],
+      "consolidation_lines_before": 449,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/warm-placement-code-guide.md",
+      "action": "retained",
+      "reason": "已有等待/重建全流程、完整数字与CPU演示；保留并行任务新增门控内容，同步目录。",
+      "lines_before": 387,
+      "lines_after": 394,
+      "sha256_before": "dc38191326bdba113b317524e8120cee8ebaa1c180615e544d2cc70ca4e6bf88",
+      "sha256_after": "e940b42fb2b9d271fcaae1e74657973d969747a5e16d5ff7f4e12b6b92259855",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 394
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/worker-retry-and-redispatch.md",
+      "action": "rewritten",
+      "reason": "用4条轨迹解释补采与原请求转移，减少反复纠错措辞。",
+      "lines_before": 198,
+      "lines_after": 203,
+      "sha256_before": "9f677774846ae0a0814f050d24f08b102150a3b66b1914873cb3842991dd1a16",
+      "sha256_after": "cfc881586a1f4457cc0dc54fbf765de575ebe20b009db9a0445bbd017aa44861",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 203
+    },
+    {
+      "path": "docs/env-worker-deep-dive/literature-reviews/README.md",
+      "action": "restructured",
+      "reason": "按要解决的问题提供论文阅读路径与重点。",
+      "lines_before": 23,
+      "lines_after": 29,
+      "sha256_before": "21e208e42e08f167948a36a2000bd049c639fce585db77c63eb095a1fb503da0",
+      "sha256_after": "28f1e04e8fc5ce007fe7629f920adac3a1207a2b96f90b7d7f58ddf0cea6ed65",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 29
+    },
+    {
+      "path": "docs/env-worker-deep-dive/literature-reviews/ai4infra-performance-benchmarks.md",
+      "action": "rewritten",
+      "reason": "按反馈问题、实验设计和接入范围组织；将历史三工作负载探针、当前公共接入和待研究的性能问题分开讲清，删除过期白名单与追加更正叙事。",
+      "lines_before": 192,
+      "lines_after": 195,
+      "sha256_before": "9da79e10cab34ef1f81de0838848c2c540e937b3b03583e6c6f70e51d78ec410",
+      "sha256_after": "baea3c330286b5e1daf85344307a8ad9581195b554522bd631780e55c9b82049",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 195
+    },
+    {
+      "path": "docs/env-worker-deep-dive/literature-reviews/gpu-workload-benchmark-survey.md",
+      "action": "rewritten",
+      "reason": "收拢非计时任务优先级与后续服务/缓存实测，移除session式追加叙述。",
+      "lines_before": 222,
+      "lines_after": 222,
+      "sha256_before": "69ae91bdaeb0c80c6f77002f9b245fc025c7fdf781bbafd0346f54370f060968",
+      "sha256_after": "0703545531d06ae03f31a8cbcf4b72709d2886f730e6d1ed5fb95904b8ee76be",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 222
+    },
+    {
+      "path": "docs/env-worker-deep-dive/literature-reviews/krex-region-exclusivity.md",
+      "action": "retained",
+      "reason": "已有测量误差例子、逐步隔离机制和论文定位；保留，同步目录。",
+      "lines_before": 365,
+      "lines_after": 366,
+      "sha256_before": "1f95ee7481a52d17158e8a0b72c24729d4168726b1d7ea399a01a34de01f7c22",
+      "sha256_after": "e5aea62640b45b52a4350dec736c711efd996598e0ab21ee3b03c80ea7e70cf4",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 366
+    },
+    {
+      "path": "docs/env-worker-deep-dive/literature-reviews/llm-agent-scheduling-brain.md",
+      "action": "retained",
+      "reason": "已有模型调度三路线、完整数字例子和来源边界；保留，同步目录。",
+      "lines_before": 225,
+      "lines_after": 233,
+      "sha256_before": "24cd54a0f73ac89ca47ba5bfb559b8a0d011b089a620cca097d99ecf0431a1e0",
+      "sha256_after": "23ccbe5d8a14cc1f0c7154f574ca4d49e5c99c8a8631ba3ba5ed7cfa24f0c1d5",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 233
+    },
+    {
+      "path": "docs/env-worker-deep-dive/literature-reviews/recent-top-conference-papers.md",
+      "action": "rewritten",
+      "reason": "核对调度机制映射，修正同机命令池的旧限制；直接说明正式发表身份，保留贯穿五篇论文的教学例子。",
+      "lines_before": 179,
+      "lines_after": 180,
+      "sha256_before": "86f19acde68252f5769caa437a2623f980a8d5f22d4a8d6722fb4e3d68dc4a4a",
+      "sha256_after": "f8330a7bd5e864684c3743382e5bb2d5a2e27a2d1688c8dda17fe377d4d884b2",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 180
+    },
+    {
+      "path": "docs/env-worker-deep-dive/literature-reviews/rollart-dynarl-deep-reading.md",
+      "action": "retained",
+      "reason": "已有从场景到机制的完整论文讲解、六个例子和原文定位；保留，同步目录。",
+      "lines_before": 343,
+      "lines_after": 340,
+      "sha256_before": "cfe6e5eae817724226a74994d650c68f7944c047ed2765c55ba15d8e03945763",
+      "sha256_after": "6004afe8ded0c03fa03fe8a9407d5b92483c7769baf155d0d3a6b20def7e490d",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 340
+    },
+    {
+      "path": "docs/env-worker-deep-dive/literature-reviews/yarn-inspired-gpu-feedback-scheduling.md",
+      "action": "rewritten",
+      "reason": "用候选比较例子讲分层协调，保留压力结果和研究边界。",
+      "lines_before": 201,
+      "lines_after": 203,
+      "sha256_before": "b32bac744666969935f3fdb4cafafe38825f4774aae6b657ab948c3d3ed0e0d4",
+      "sha256_after": "1a8b2426f2726bf6207e3271cfcdce7d4320e6d64ffe83804685c196c8230bef",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 203
+    },
+    {
+      "path": "docs/env-worker-deep-dive/milestones/README.md",
+      "action": "restructured",
+      "reason": "三篇分享文档分为简版介绍、任务路线图、接入验收详情，更新标题与阅读目的。",
+      "lines_before": 16,
+      "lines_after": 76,
+      "sha256_before": "71b4f9503d3d77c69e047ef97303d551a2cc006284dd6e0d7115332557d1ae58",
+      "sha256_after": "3b7e40fd5718469e8cbafb84aad859a5221fb24d738956e9eb596a9a22a7ce8a",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 74
+    },
+    {
+      "path": "docs/env-worker-deep-dive/milestones/env-scheduling-big-map-brief.md",
+      "action": "linked_only",
+      "reason": "其他并行开发新增，本轮仅纳入本地链接与导航检查，不作为本次新建或全文事实审阅成果。",
+      "lines_before": null,
+      "sha256_before": null,
+      "changed_by_consolidation": false,
+      "lines_after": 73,
+      "sha256_after": "16e9a25a3e8c4861541f0a606354ec704264a04c06ad52d3657d575df4f0ec9e"
+    },
+    {
+      "path": "docs/env-worker-deep-dive/milestones/env-scheduling-big-map.md",
+      "action": "linked_only",
+      "reason": "其他并行开发新增，本轮仅纳入本地链接与导航检查，不作为本次新建或全文事实审阅成果。",
+      "lines_before": null,
+      "sha256_before": null,
+      "changed_by_consolidation": false,
+      "lines_after": 201,
+      "sha256_after": "32adc5afa80a20575f0d9036139bc014ed57094bfb83d6ed7553835c62f9b500"
+    },
+    {
+      "path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 22,
+      "lines_after": 869,
+      "sha256_before": "094d54d11c451f5baba88da42bd2ceb5b09b5ea7f0a33720099875df1bbe36ad",
+      "sha256_after": "39e551971f8c705d41630ac9f470dc23985a41e496e74b04bc39ce9e0a521aba",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "rewritten",
+      "prior_reason": "将空泛转发说明改成减少失败的结果和因果；明确10-28阶段与两篇阅读路径，指向现状简报。",
+      "merged_from": [
+        "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/implementation-and-results.md",
+        "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/planning-and-lifecycle.md"
+      ],
+      "consolidation_lines_before": 16,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/env-worker-deep-dive/milestones/science-gpu-bench-brief.md",
+      "action": "rewritten",
+      "reason": "按可转发介绍重写：任务场景、digits完整例子、现有覆盖与研究问题；解释agent、任务内模型、验收器和策略链路。",
+      "lines_before": 81,
+      "lines_after": 84,
+      "sha256_before": "ab05b5ec021737dec54e7f693828e6f70f411aa640f07bf81496ac0463a6d383",
+      "sha256_after": "733a90accedd9aa1c4af7e2f9b79b0610b879bbc371d73cc696fcd8fe891f677",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 84
+    },
+    {
+      "path": "docs/env-worker-deep-dive/milestones/science-gpu-bench-status-and-roadmap.md",
+      "action": "rewritten",
+      "reason": "按任务库/协议/证据/缺口组织，核对495基础任务、MLGym9、PostTrain9组合、FastKernels29/458和SWE覆盖；去除重复环境叙述。",
+      "lines_before": 574,
+      "lines_after": 224,
+      "sha256_before": "82bc9f74f9604c583d1d348b8399fefae66a88cf08e48dca9bd3802c9b450d42",
+      "sha256_after": "5f55e4953eb0b90ed7d03a98ebcac6b9dd7d54745e2d72563f7dfb669ca0541a",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 224
+    },
+    {
+      "path": "docs/env-worker-deep-dive/milestones/science-gpu-full-onboarding.md",
+      "action": "rewritten",
+      "reason": "按接入与验收流程重写，保留独立运行条件及失败；补真实环境和数据隔离例子；修复相关章节按主题组织并保留旧锚点。",
+      "lines_before": 206,
+      "lines_after": 302,
+      "sha256_before": "8634623cc9273180eea24c2cdf8e9090639d21b01bf8313661e7bab1f852317e",
+      "sha256_after": "46232543dd40dac91bdc85f575110dd0a7ea03cc56b55bb91405f63572dab7c5",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 302
+    },
+    {
+      "path": "docs/env-worker-deep-dive/research-proposals/README.md",
+      "action": "restructured",
+      "reason": "按真实任务、已实现基础与受控研究状态分类。",
+      "lines_before": 20,
+      "lines_after": 34,
+      "sha256_before": "2ac256e7f8c9af5b7c390b0dc4f0ff8c54db4429a4c302116154c67ec8a1afbc",
+      "sha256_after": "9913900d0c21a0a41b85b8cd5a0fc5c905ec5f9f6665020150412012c0b15803",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 34
+    },
+    {
+      "path": "docs/env-worker-deep-dive/research-proposals/benchmark-state-reuse-audit.md",
+      "action": "rewritten",
+      "reason": "按真实变更对象解释复用条件，区分RE故障修复与PostTrain批次计时。",
+      "lines_before": 245,
+      "lines_after": 248,
+      "sha256_before": "1b3fe01b9720d96d5a07471da05137eed18febb211b213c676b607febd1401e1",
+      "sha256_after": "4ff1f14494ac14feed0c2036abbfd46537c81806e6bf3dd0db8ce18a316804e8",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 248
+    },
+    {
+      "path": "docs/env-worker-deep-dive/research-proposals/command-scheduling-research.md",
+      "action": "rewritten",
+      "reason": "重写组反馈主线，保留11-16门控内容，并纠正同机池仍待实现的旧表述。",
+      "lines_before": 741,
+      "lines_after": 745,
+      "sha256_before": "46003400e5e3d83a9cf422276c31d88e13d6bc642f6acdad5a55fc3dc24d5a7d",
+      "sha256_after": "67e8ef0fdce47b54cd012192cad76c42790395431579681078a37e04c9085821",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 745
+    },
+    {
+      "path": "docs/env-worker-deep-dive/research-proposals/dynamic-command-placement.md",
+      "action": "rewritten",
+      "reason": "用12秒等待/5秒准备/2秒执行例子讲同机池，分开实现和研究。",
+      "lines_before": 466,
+      "lines_after": 468,
+      "sha256_before": "9bcb775c4911c5d32b6a006677f7cc28174ab89e3b97894b4ede67886aaa69b5",
+      "sha256_after": "73f810dc4d37baa7e498925f23b892417a93b1c3bc9ed16a9338eb9f9e4f9213",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 468
+    },
+    {
+      "path": "docs/env-worker-deep-dive/research-proposals/memory-bounded-state-scheduling.md",
+      "action": "rewritten",
+      "reason": "先解释3.91GiB CPU缓存例子，突出受控原型与真实任务适用性。",
+      "lines_before": 447,
+      "lines_after": 448,
+      "sha256_before": "17c0de8220077791834ff488d5abed1d9979876c6f9ea2ee5a2dbbaaf6c19367",
+      "sha256_after": "f40a0e756b3c8e5eb31a25a78c9e10079130c569d84a2c5f6a8f497f920d2210",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 448
+    },
+    {
+      "path": "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 710,
+      "lines_after": 721,
+      "sha256_before": "833ee20e7cc58bf73d52355bcea6bc93491d4e5e6d606e160e093243ae70413f",
+      "sha256_after": "1e0999e56be06332db50fafa803ca139372c2825f4212b390d392db6cb089bde",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "restructured",
+      "prior_reason": "以五项实验结论和取舍统领，连续研究详录移子文档。",
+      "merged_from": [
+        "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios/experiments-and-findings.md"
+      ],
+      "consolidation_lines_before": 325,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/env-worker-deep-dive/research-proposals/reclaim-aware-env-sharing.md",
+      "action": "retained",
+      "reason": "建议路线、具体退卡场景、控制协议和停止条件已完整；保留，同步目录。",
+      "lines_before": 279,
+      "lines_after": 280,
+      "sha256_before": "fce9a903880e16e599890eb32eba91ec1f40422024dae671f2085e7ffc683adf",
+      "sha256_after": "c9fe19199c910a0c61c1301d16c085f15333316d065e1847f3290ca488051dde",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 280
+    },
+    {
+      "path": "docs/examples/agentic_rl/index.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 125,
+      "lines_after": 133,
+      "sha256_before": "20ecb60c38b1928c62f90bddb909adc1d327f2afb0d5d91f5b31145faa572aab",
+      "sha256_after": "1bb44d1ecd512bbd56b2c48f12f590693681560ca02fca517878194f9c24ef89",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 133
+    },
+    {
+      "path": "docs/examples/agentic_rl/retool/index.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 73,
+      "lines_after": 98,
+      "sha256_before": "d40a0f80ab21c75d034352178575585365f2e8ec2057d2c0c6a6146bc1b364c7",
+      "sha256_after": "601392702743b846bbd9838cdfb055f158c7d847bf8a52097d29e4362ed9ee59",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 98
+    },
+    {
+      "path": "docs/examples/agentic_rl/retool/prepare.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 91,
+      "lines_after": 109,
+      "sha256_before": "6f90b2d23ece68cce4e6772a1cb08e76cc8739dc48c5313aa9edd9ee9b7dadac",
+      "sha256_after": "fdfc6c00fba11249528418efc7e21020afebf6f0122fdb32c072762bf9e0ef89",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 109
+    },
+    {
+      "path": "docs/examples/agentic_rl/retool/training.md",
+      "action": "restructured",
+      "reason": "用可手算数字解释源码min(-0.6)的上限，保留配方参数。",
+      "lines_before": 56,
+      "lines_after": 62,
+      "sha256_before": "80878357fce1a493c12b80312f2189f07faa76bdf01fb96068b1e4ceef318e0e",
+      "sha256_after": "43ed7a11244a376590458d4ea5fa31970572bd9fc91fcbc11ad99b9eae8b096a",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 62
+    },
+    {
+      "path": "docs/examples/agentic_rl/swe/index.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 116,
+      "lines_after": 125,
+      "sha256_before": "dce2debff4337db7f560a51c09c5dcf986e13f23531423f4d31d517c4e75b58a",
+      "sha256_after": "2607ae3682348696926e972f3562b956f7cfffb43793c20348c6d170c656fc76",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 125
+    },
+    {
+      "path": "docs/examples/agentic_rl/swe/prepare.md",
+      "action": "restructured",
+      "reason": "将toy标明为不满足现行元数据契约的开发材料，保留可用数据路径。",
+      "lines_before": 98,
+      "lines_after": 108,
+      "sha256_before": "8bb08061fa5ebbfd6ee7f6f8f73ae7e150933f2fbfafc957a05e163805ad84d3",
+      "sha256_after": "731af88056dcfb8957143c7424bb16c9e1e20f5b158558f467d3bb3fbdb5ad5b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 108
+    },
+    {
+      "path": "docs/examples/agentic_rl/swe/training.md",
+      "action": "rewritten",
+      "reason": "用有效SWE-smith路径替代失效toy启动指引，核实模型/规模/奖励模式与源码。",
+      "lines_before": 67,
+      "lines_after": 89,
+      "sha256_before": "7d5a0492f30906249c2e05b1c229ab414f5f06f7a349674f0e70872e1ea0b8b2",
+      "sha256_after": "0e44ab97879c365df1b43278c6adadfc24d9d8401578d5afa0ff9c41bd3e76c0",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 89
+    },
+    {
+      "path": "docs/examples/generative_reward_model/index.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 33,
+      "lines_after": 74,
+      "sha256_before": "81599c86b1e9f79458676f86300e3a2457bf7b8c905ddd767f455db0c0cf724d",
+      "sha256_after": "f5534d33f4923a7be7592da24a7e53214b0728f0dca43862610f88272b6a5dcf",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "restructured",
+      "prior_reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "merged_from": [
+        "docs/examples/generative_reward_model/llm_as_a_judge.md",
+        "docs/examples/generative_reward_model/on_policy_distillation.md"
+      ],
+      "consolidation_lines_before": 35,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/examples/index.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 58,
+      "lines_after": 60,
+      "sha256_before": "0ff1c83ed35ff44b0cd44b1889d9a4a369025fa78d074855278ab105af708a45",
+      "sha256_after": "3a50fbbee27ce4768bd01277f38e88ab7ed1a33e3f5c45a4cf375b638204768d",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 60
+    },
+    {
+      "path": "docs/examples/rlvr/common.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 96,
+      "lines_after": 108,
+      "sha256_before": "1e5e3b3d402657546e1df36ea59766e9313cf6f84e96f8c9b84bd2c459a643d6",
+      "sha256_after": "4eb88b5808314a2f88f5286279f332aa52125af6315aef2aef748a2377bdc1ae",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 108
+    },
+    {
+      "path": "docs/examples/rlvr/dapo.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 78,
+      "lines_after": 91,
+      "sha256_before": "7aa11aff6d4e08fe8d3a54dcaf7a86ff1d9286ed64deb17e643a9d0371fc6e19",
+      "sha256_after": "0c218a6cf19bdd13b18aacfe1a99c4267ddd2a05e932fe87ffdfb4415f7c58e5",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 91
+    },
+    {
+      "path": "docs/examples/rlvr/grpo.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 40,
+      "lines_after": 42,
+      "sha256_before": "a91c87c1a6b1239d3d00a23b24db7f547b1ddadad9ad36c84944ec4f50f5ca17",
+      "sha256_after": "86540068a0149373ba788101d05b847125662e06ed3e1e77b5aa253dab1f2f65",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 42
+    },
+    {
+      "path": "docs/examples/rlvr/index.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 42,
+      "lines_after": 44,
+      "sha256_before": "e9939a9ea15c5120b593eef524e150093ea795bf864457b1dcf4ad925b111cee",
+      "sha256_after": "b1acc54853c5427aefad2d452c4176e139ba3ae215ccd15094dacb31caa79615",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 44
+    },
+    {
+      "path": "docs/examples/rlvr/ppo.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 38,
+      "lines_after": 40,
+      "sha256_before": "1e4910e14bb17b68764bb9c38a8261f7a38e6463837f4a0028c9e93265d66671",
+      "sha256_after": "ecf73abc2ba67d8025a1fbc1e26835b85d907c27601940d4a3b770e82e0250aa",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 40
+    },
+    {
+      "path": "docs/index.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 121,
+      "lines_after": 121,
+      "sha256_before": "6ad26129e9ef75fe56f01d433bb973fbc370a9cc7130f832defbf0baf1270fec",
+      "sha256_after": "a2797e4208827c8ace659e11b32c046cc527700cbcb4046a6234010af4d4d73b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 121
+    },
+    {
+      "path": "docs/overview/glossary.md",
+      "action": "new",
+      "reason": "新增按问题查询的中文术语解释、例子和可选深入入口。",
+      "lines_before": null,
+      "lines_after": 62,
+      "sha256_before": null,
+      "sha256_after": "ccf5cd00320bc67cffcca3d5e9414e0c029052fda35ca98850d187055a296f9f",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 62
+    },
+    {
+      "path": "docs/overview/index.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 62,
+      "lines_after": 80,
+      "sha256_before": "34a329cddc6de71d80f4f6fbfd18e737e51c54fda6a7e18ff88975514015f148",
+      "sha256_after": "ee8c43d039e2db94d4607b1ac2b7d90f26b90af775a7f24c462b130eba6ff263",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 80
+    },
+    {
+      "path": "docs/overview/reading-guide.md",
+      "action": "new",
+      "reason": "新增自包含中文入门：完整例子、全局流程、源码阅读路径与已运行CPU例子。",
+      "lines_before": null,
+      "lines_after": 120,
+      "sha256_before": null,
+      "sha256_after": "225538caa29bd7ea9d87a759815f1a46757b099bd9d3493513b2812cca32a947",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 120
+    },
+    {
+      "path": "docs/psrl/README.md",
+      "action": "restructured",
+      "reason": "按新手阅读路径、机制、运行和历史证据分类；登记缓存深读与 DAPO 分篇，连到总阅读指南。",
+      "lines_before": 53,
+      "lines_after": 57,
+      "sha256_before": "98efa54c40fb9e43fb91ff0bb676ce0737f070eb7bc50a6fec80aedfb1c6920a",
+      "sha256_after": "d73c7b0bc8b49f2339ba199a7d5c0cd26a81e92c4e935793ae76ea4f50e4376b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 57
+    },
+    {
+      "path": "docs/psrl/dapo-training-collapse-diagnosis.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 476,
+      "lines_after": 474,
+      "sha256_before": "9e06d2440cf802b4c96539f6bb4e0e6d6637dd9ab60175fdb312667de695ad00",
+      "sha256_after": "ff10364fb74934b4f5908986008a7d02627d7ecb9f0fe78b32787ce82569fd87",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "restructured",
+      "prior_reason": "以观测现象、指标联合解释和有界排查重组；保留两组历史数字，将独立公式和数值推导移到同名目录两篇。原图、完整日志与 CSV 未随仓库保存，明确证据缺口；删除曲线足以证明不可逆因果的断言。",
+      "merged_from": [
+        "docs/psrl/dapo-training-collapse-diagnosis/metrics-and-losses.md",
+        "docs/psrl/dapo-training-collapse-diagnosis/numerical-stability.md"
+      ],
+      "consolidation_lines_before": 74,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/psrl/gae-bias-variance-tradeoff.md",
+      "action": "rewritten",
+      "reason": "用三个时间步的可手算 GAE 例子讲清奖励、价值、TD 与 lambda，说明估计误差和截断条件。",
+      "lines_before": 78,
+      "lines_after": 84,
+      "sha256_before": "771e6d275a59eb298472e6aaf517671527389acb0c06ffc1f798e929e6642265",
+      "sha256_after": "a8536344a6d8c260c1af23a020fe12dcde8e678856776c8fafb3be45bebd0b5f",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 84
+    },
+    {
+      "path": "docs/psrl/hf-config-context-window.md",
+      "action": "rewritten",
+      "reason": "用累计多轮 token 数解释窗口；保留完整 Qwen 配置和历史越界，按源码修正 Science 窗口等于 prompt+response 及显式 guard，修正 RoPE 与预训练长度混同。",
+      "lines_before": 217,
+      "lines_after": 140,
+      "sha256_before": "e44f62d665dcb7f94808ec8aaa0ceddb55de7d9443d2336eefcc1f56eb901771",
+      "sha256_after": "6d05c29c96a20c98c4323645de9df188fb71447f8db917fe7e236b11a0a54e9e",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 140
+    },
+    {
+      "path": "docs/psrl/nixl-explained.md",
+      "action": "rewritten",
+      "reason": "用两片权重解释注册内存、控制与数据传输；核对 nixl_cpu 的 CPU 驻留 PSWorker，移除 GPU 直达、零复制和自动 fallback 的无依据保证。",
+      "lines_before": 51,
+      "lines_after": 58,
+      "sha256_before": "feda0e67da5b39b1bd054a3d6faa63bed1128517f39c1fbfa7ed499f59533973",
+      "sha256_after": "944c8d4294d7da0ca928f21eab1d9b5b46f7e2817484ce4ed497fa99e788b375",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 58
+    },
+    {
+      "path": "docs/psrl/ppo-grpo-dapo-sample-requirements.md",
+      "action": "rewritten",
+      "reason": "用同题四条回答说明组内统计、零方差和动态补采；修正算法分组与梯度 micro-batch 不可拆分的混淆，补采预算单列。",
+      "lines_before": 40,
+      "lines_after": 71,
+      "sha256_before": "93d5af464e3d4d5fec472f15ad47cf5fcf66a35a7998bfaf0bd1f2f53280cee1",
+      "sha256_after": "20ebe06a9b4e26b1c2fcb9225dfe6b3de51949de2d874775ba701a269e15ea99",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 71
+    },
+    {
+      "path": "docs/psrl/psrl-agent-loop-harbor-tool-calling.md",
+      "action": "restructured",
+      "reason": "完整修代码例子前置，移除章节倒序编号，保留架构、TITO、多轮及 RPC 深读；明确做题容器可运行其自己的模型任务，主策略训练由训练 worker 完成；旧大节锚点保留。",
+      "lines_before": 521,
+      "lines_after": 555,
+      "sha256_before": "3aff464f463c08cc94734e19186b1916c441a4c70e26891ba055867fe165721c",
+      "sha256_after": "6354894ecd28a06ae68ae661553450b215847eea63c1e4b888bcae1ce583032b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 555
+    },
+    {
+      "path": "docs/psrl/psrl-env-service-envworker-design.md",
+      "action": "restructured",
+      "reason": "保留初学者友好的任务和容量例子，明确 2026-09 提案/源码审查历史身份，删除已实现能力的活动待办，给出当前设计和原生路径，补完整目录。",
+      "lines_before": 542,
+      "lines_after": 565,
+      "sha256_before": "9097a7ae847520d0e415a0beeba06726bf4475326b8c98a9aa7449ebbcf1d2d9",
+      "sha256_after": "62dbd4c5db0a33902ea024fc2edbc83cd89415beeb6b30d86381888a14878c52",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 565
+    },
+    {
+      "path": "docs/psrl/psrl-run-guide.md",
+      "action": "restructured",
+      "reason": "维护用途导航与 Docker 历史事件入口，迁移表保留。",
+      "lines_before": 49,
+      "lines_after": 51,
+      "sha256_before": "1decb308b120c7775609a47b1d8273d25131f3290a09263e1afdc142b0a4e093",
+      "sha256_after": "cdffc352db7d5b4c89ba2d470e566ffbefa7dab82714f96520fd977e52484c93",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 51
+    },
+    {
+      "path": "docs/psrl/psrl-run-guide/cluster-preflight.md",
+      "action": "restructured",
+      "reason": "先列最小五项预检，区分历史故障与当前资源状态；固定私有节点优先及 0eeead baseline，删共享 editable 的错误绝对判断。将独立 Docker 存储故障两节迁入 incidents，原锚点保留摘要入口。",
+      "lines_before": 502,
+      "lines_after": 391,
+      "sha256_before": "aceed68db61336e5a199fac4f4abdfab15e05378aeb6139e8611f879ad73e383",
+      "sha256_after": "bd7d7990c43a63ef2575e61e9dc15fa6bb9477e272bc94aee9f9d24218d626f1",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 391
+    },
+    {
+      "path": "docs/psrl/psrl-run-guide/getting-started.md",
+      "action": "rewritten",
+      "reason": "按现存 DAPO 脚本重新组织运行准备、批量和产物；明确脚本 source/PSRL_PATH/LOCAL_IP/HOME 现状，移除失效 Demo 路径和默认全局 Ray stop 指令，保留历史入口锚点。",
+      "lines_before": 228,
+      "lines_after": 124,
+      "sha256_before": "9ccc10481ca11be389fe888cd4b7001a72c8bced065d4013554765f093484d5a",
+      "sha256_after": "2f8ca926f8bbb3d3c8f576c39a72eafb7c4f3f226440026bfba394322e5299a4",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 124
+    },
+    {
+      "path": "docs/psrl/psrl-run-guide/incidents/docker-storage-hang-20261020.md",
+      "action": "restructured",
+      "reason": "迁移 cluster-preflight 的19/20节完整现场取证和独立 overlay2 恢复测试，保留失败/修正/清理及原始JSON链接，原入口留摘要。",
+      "lines_before": null,
+      "lines_after": 140,
+      "sha256_before": null,
+      "sha256_after": "d8febf2f9d5922083e81a62a63a5a7bf6c4e256911257f7b1f21ec2a4cf74ee6",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/psrl/psrl-run-guide/cluster-preflight.md",
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 140
+    },
+    {
+      "path": "docs/psrl/psrl-run-guide/monitoring-and-batches.md",
+      "action": "rewritten",
+      "reason": "以进展、质量、耗时三问题串起指标，用 64×8 的算例解释批量；新增可运行标准库日志解析，分离缺失遥测与训练故障。",
+      "lines_before": 165,
+      "lines_after": 101,
+      "sha256_before": "a51e8c9e93719cdd856ab8d1a2cab222503306666a17779c49b0f79306ae31fb",
+      "sha256_after": "27d35a417cee3224daf87d33156e68e8086024041812f52ba1a0dcbdb5ed833f",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 101
+    },
+    {
+      "path": "docs/psrl/psrl-run-guide/ray-and-rollout.md",
+      "action": "rewritten",
+      "reason": "按角色落位、逻辑资源、控制/数据路径和长尾例子解释 Ray；修正 cpu_ref 零复制、固定 PSManager 落点、所有 Demo 禁保存等旧概括，路由预测列为需核实方向。",
+      "lines_before": 189,
+      "lines_after": 111,
+      "sha256_before": "fdf19d48239e87cd0d90100653acc3d0fc407881d7677872c1edb8b4735256c2",
+      "sha256_after": "96177a89b828dae16d39212f38bb7f396e84cb889aa42e9b78c65ccd58f19b09",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 111
+    },
+    {
+      "path": "docs/psrl/psrl-run-guide/startup-incident-reviews.md",
+      "action": "restructured",
+      "reason": "保留独立历史错误与退出证据；明确旧 laps 脚本及旧修复不代表当前部署，修正参数字节接收角色、LOCAL_IP 现状和熵退化因果措辞。",
+      "lines_before": 131,
+      "lines_after": 131,
+      "sha256_before": "91fbc202f0b39e878811e57c40ef9bbae830f64ab784cc562cb5c2bafcdca34e",
+      "sha256_after": "dfee545b0298159baeca0817ae8e3456d209c85c2bb7166d28a90244b0f5058d",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 131
+    },
+    {
+      "path": "docs/psrl/psrl-training-script-source-map.md",
+      "action": "rewritten",
+      "reason": "从一道修代码题串联当前 Science 脚本、TaskRunner、步骤策略、Agent、评分和 PS；全部新增本地入口实际读取，旧缺失脚本改为历史材料入口。",
+      "lines_before": 133,
+      "lines_after": 113,
+      "sha256_before": "d13a5545c1c85f783a98e211cc904c30ee2ee2ef00e656529cab786f3abf3850",
+      "sha256_after": "8450408fb98569815138ee83b374de3aa8a2cfc5019cca73357982f8ad85a602",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 113
+    },
+    {
+      "path": "docs/psrl/rlvr-explained.md",
+      "action": "rewritten",
+      "reason": "以算术和代码测试说明可验证奖励、验证器及算法的关系，去掉奖励绝对可靠断言，给出实际 Science reward_key 阅读入口。",
+      "lines_before": 44,
+      "lines_after": 53,
+      "sha256_before": "630c621a312691871ffa5528e4e72b054ef3f6f5eb57fc869638993a123d9a7e",
+      "sha256_after": "271833c3e3deca4b7ff6f35a05a247a7d96fa2d3b30b6601e1a749f9aee4acb1",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 53
+    },
+    {
+      "path": "docs/psrl/vllm-and-training-parallelism.md",
+      "action": "restructured",
+      "reason": "六篇专题按任务组织，新增缓存深入解释，并维护旧章节映射。",
+      "lines_before": 42,
+      "lines_after": 42,
+      "sha256_before": "f6a915384c6241d7fcb39708ba8edb1d19b8a30e6977ac234a037d19358ca8d1",
+      "sha256_after": "e104103c211fff8d56bd2aa9c25973d0b49a1363db7d64a60e68d95340074208",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 44
+    },
+    {
+      "path": "docs/psrl/vllm-and-training-parallelism/experiments-and-reference.md",
+      "action": "restructured",
+      "reason": "保留全部历史实验表和配套版本，修正 326→8896 倍率、耗时变化及注意力 FLOPs；删单变量归因、免费扩容与通用吞吐饱和断言，未随仓库脚本标明。",
+      "lines_before": 137,
+      "lines_after": 136,
+      "sha256_before": "f24111680d0bbac633729714be852c371951fafce17b878d683ff3b34fc759b1",
+      "sha256_after": "f02076d7fc76071b26c9db246cd47edfceb937f63848e9e29bd638db756fd4bf",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 136
+    },
+    {
+      "path": "docs/psrl/vllm-and-training-parallelism/inference-mechanisms.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 680,
+      "lines_after": 310,
+      "sha256_before": "56746f2e58d625adb8113669970afaedd3e1f6ba58675f438662cfd21e11718e",
+      "sha256_after": "42d740a3a04d863c339918b65c6d2623256ec306ae46ad067d1e3cf33a7b212e",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "restructured",
+      "prior_reason": "从请求、缓存、批处理展开完整例子，合并重复 COW 推导；独立块表/逐层容量/在线 softmax/三分支细节移到 cache-memory-management。保留固定版本状态缓存说明；修正满批优势、默认块大小及 CP 能力绝对判断。",
+      "merged_from": [
+        "docs/psrl/vllm-and-training-parallelism/cache-memory-management.md"
+      ],
+      "consolidation_lines_before": 219,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/psrl/vllm-and-training-parallelism/rl-loss-and-sampling.md",
+      "action": "restructured",
+      "reason": "保留完整损失与采样解释，新增四回答主线和当前源码入口；修正 dual-clip 损失上限、裁剪不是 ratio 硬约束、零优势范围、labels、reward 最后槽位、重要性修正与 KL 假设。",
+      "lines_before": 354,
+      "lines_after": 368,
+      "sha256_before": "4ccd2fc04338626895b303ea0ac6567b22999fad7d0b53f9c665ee6b4de06f49",
+      "sha256_after": "df28f44c48edca3bd10425fcbf83dd2df14db901d419517af1d76f68a2c25346",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 368
+    },
+    {
+      "path": "docs/psrl/vllm-and-training-parallelism/rl-training-workflow.md",
+      "action": "rewritten",
+      "reason": "用 1+1 题及版本 10→12→13 解释采样到更新与异步缓冲，说明生成和训练各角色；修正 NIXL CPU 路径、TMS 训练/验证切换、概率比裁剪含义，保留完整资源并行例子。",
+      "lines_before": 341,
+      "lines_after": 128,
+      "sha256_before": "486e26ff922c66c385fa842494aa8899630b729908b4bfe26abb4bf4ebd08dee",
+      "sha256_after": "141b36d3e7736895aaab9ed8357f5d4b9c51f6ed4b3db980c60dd90281dcb1ed",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 128
+    },
+    {
+      "path": "docs/psrl/vllm-and-training-parallelism/training-parallelism.md",
+      "action": "restructured",
+      "reason": "保留并行和通信推导，以层和样本的简单分配起步；修正 PP 空闲比例、HSDP 通信量、DP 数字和注意力 FLOPs，硬件表无来源数值改为有条件教学比较。",
+      "lines_before": 383,
+      "lines_after": 373,
+      "sha256_before": "eda04701d01bb6664a6b70b8adfd58bfb1a6da7fbeebe31eb7cf2b64bd871e13",
+      "sha256_after": "ef54d6d15799a3443b79153b4694ef6a128dc706274ed0af2a8a7a6f9f216e0e",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 373
+    },
+    {
+      "path": "docs/sciaccel-grpo-oom-analysis.md",
+      "action": "rewritten",
+      "reason": "按历史问题、证据、长序列机制和联合修复结果重组，保留五步指标和 OOM 容量数字；明确缺少原始图/CSV，联合改动不作单变量收益结论。",
+      "lines_before": 65,
+      "lines_after": 84,
+      "sha256_before": "797364ae271bac8a8fd02efc432258c164edae98282e01c3ee022d9c117acd0f",
+      "sha256_after": "3e035f3bdd77932c20a94c264234e69d35726c09785a50f6e485c4c7a387381a",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 84
+    },
+    {
+      "path": "docs/site-maintenance.md",
+      "action": "rewritten",
+      "reason": "区分本地导航与公开站点，给隔离构建方法和链接维护步骤。",
+      "lines_before": 196,
+      "lines_after": 88,
+      "sha256_before": "ae122e2565d6a2c1bb3b87ed59b27dc56d85d7f15dfb24a1ab52fb3a8ee9fa56",
+      "sha256_after": "ab7c331eba95ba2d5aac71519f64bdcdf629a9e0b0e22eccd9e374896ed26d0d",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 88
+    },
+    {
+      "path": "docs/tools/README.md",
+      "action": "restructured",
+      "reason": "修正六种权限模式、CODEX_HOME 默认和 Python 搜索路径摘要，区分历史时效检查与本次维护入口。",
+      "lines_before": 59,
+      "lines_after": 53,
+      "sha256_before": "b7e353205da884dbf5e61095ff3b013f37b4b6c0a2cecc4b4fd4025d2203fa08",
+      "sha256_after": "280c56b1ee87f84ed952d74791cc679a61fb33d1456bf78ef8559902d755d188",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 60
+    },
+    {
+      "path": "docs/tools/claude-code/claude-code-usage.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "merged_from": [
+        "docs/tools/claude-code/claude-code-run-terminal-commands.md",
+        "docs/tools/claude-code/claude-code-permission-modes.md"
+      ],
+      "consolidation_lines_before": null,
+      "changed_by_consolidation": true,
+      "lines_after": 76,
+      "sha256_after": "4660625b3947bb40a8cbf1fc14665afb72b456b2db7d4ac3266dfc9953e6a398"
+    },
+    {
+      "path": "docs/tools/codex/codex-agents-md-scope.md",
+      "action": "rewritten",
+      "reason": "核官方 Git 根到 cwd 的发现范围、同目录 override、CODEX_HOME 与容量限制；用真实工作区层级区分已提供外层规则与一般启动行为。",
+      "lines_before": 62,
+      "lines_after": 53,
+      "sha256_before": "bb34bdcb50dc7907abf0947ac64a9fae54df49b0c69040e83530c6e3af8055f6",
+      "sha256_after": "c07d3af605f9ce41898e318ef1b23704cd858dd8c6f073a618bc601c059ee3d8",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 53
+    },
+    {
+      "path": "docs/tools/codex/codex-config-backup-restore.md",
+      "action": "rewritten",
+      "reason": "以备份、差异、选择字段、恢复后验证展开；修正 CODEX_HOME fallback，命令路径加引号，删除私人网关值和无证据责任归因，保留固定日期事故。",
+      "lines_before": 163,
+      "lines_after": 71,
+      "sha256_before": "e0f18b41c6c36fea5dcac0c032b91c96d10b2d2361b8890da8a9864fd83d144b",
+      "sha256_after": "7f265bb65045c70243e111d910e5c6c6fdaade1838f6804c25ee21cc589b7b18",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 71
+    },
+    {
+      "path": "docs/tools/codex/codex-session-management.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "lines_before": 36,
+      "lines_after": 268,
+      "sha256_before": "c3b2c0c84f8965e0faede89d31ead021c20027d81f5f0cb0be4790453cd509d8",
+      "sha256_after": "f61de6087c018ad2aa17479c1e043b3c31059d48b218794e84b38f6904d95122",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "prior_action": "restructured",
+      "prior_reason": "保留八篇用途分工，明确固定版本安装和历史故障的阅读顺序。",
+      "merged_from": [
+        "docs/tools/codex/session-management/session-usage.md"
+      ],
+      "consolidation_lines_before": 36,
+      "changed_by_consolidation": true
+    },
+    {
+      "path": "docs/tools/codex/rule-memory-skill.md",
+      "action": "retained",
+      "reason": "原文已用工作规范/交接笔记/操作手册和同一任务解释三者，关键术语与官方日期齐全；仅统一可点击目录，无需再写重复教程。",
+      "lines_before": 67,
+      "lines_after": 67,
+      "sha256_before": "e7f501619487ece03ecb7c059b3d32e9c26ad9af32a5d90e016802c78f560aaa",
+      "sha256_after": "d4ffb810972d94c6d05790c69389c2c5639bbdd7ab0b9c6beeaf6a75aa8269cd",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 67
+    },
+    {
+      "path": "docs/tools/codex/session-archives/README.md",
+      "action": "retained",
+      "reason": "短索引已说明 2026-11-09 的 54 份会话、校验与独立解压边界；归档包和校验文件均是现存 tracked 目标，保留独立恢复证据，不读取或改写聊天内容。",
+      "lines_before": 9,
+      "lines_after": 9,
+      "sha256_before": "b5f0ae2c03c3ff6f4d02c80df2860325b6dda60679687a114aa45ed1f26b1b1f",
+      "sha256_after": "b5f0ae2c03c3ff6f4d02c80df2860325b6dda60679687a114aa45ed1f26b1b1f",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": false,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 9
+    },
+    {
+      "path": "docs/tools/codex/session-management/goals.md",
+      "action": "rewritten",
+      "reason": "用 100 项检查、12 项失败的过程解释目标、停止条件、预算与会话，删用户不需要的内部工具名，保留官方用法入口。",
+      "lines_before": 77,
+      "lines_after": 58,
+      "sha256_before": "85a63deef2d048d41df7fb78fe4cc61d1910e561947fc4d4ea25a43b0d0c5f62",
+      "sha256_after": "b72771ecdbdebbc4462b3bd0e924c53861ef4f18d324dd57f573bcd80860ade9",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 58
+    },
+    {
+      "path": "docs/tools/codex/session-management/session-recovery.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "merged_from": [
+        "docs/tools/codex/session-management/repair-map.md",
+        "docs/tools/codex/session-management/session-database-recovery.md",
+        "docs/tools/codex/session-management/bus-error.md",
+        "docs/tools/codex/session-management/log-repair.md"
+      ],
+      "consolidation_lines_before": null,
+      "changed_by_consolidation": true,
+      "lines_after": 336,
+      "sha256_after": "98564d0ad701f9d4ce689728ad69e4ffb25aa57ca91094f70ec5212875398ca5"
+    },
+    {
+      "path": "docs/tools/codex/session-management/tcodex-setup.md",
+      "action": "restructured",
+      "reason": "保留私有启动器0.1.4/实际运行时0.163.0 的唯一安装证据和35会话读取结果，明确固定版本历史记录；不将本地读取当认证或模型请求成功。",
+      "lines_before": 60,
+      "lines_after": 60,
+      "sha256_before": "599c7b7ffb472bdb70f791a5ec3abed3fa3e0ac89f4decb0b34037bd324c5446",
+      "sha256_after": "320067f0abb1b79f31c375729db072676079772fb411f5a14240f21bcc9b31bb",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 60
+    },
+    {
+      "path": "docs/tools/codex/session-management/terminal-scrolling.md",
+      "action": "restructured",
+      "reason": "分开独立VS Code与tmux路径，保留100行视口、配置逐行说明和真实隔离注入结果；合并两张重复源码表与授权时间线，将最后前台状态明确为2026-11-09，删除未发布脚本的活动命令。",
+      "lines_before": 300,
+      "lines_after": 273,
+      "sha256_before": "321e7f157623f9a37d913c80eda78ceb194651494abeb53abd6eb94459df6cf0",
+      "sha256_after": "095ba170108c56cd4f074f221f323ab0cfdad6fa4e2c85e69abd2810e6a1e495",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 273
+    },
+    {
+      "path": "docs/tools/docs-freshness-audit.md",
+      "action": "restructured",
+      "reason": "三轮历史巡检合成日期/版本/范围总表与主题归类，独立21篇处置清单链接原始 inventory，删除重复现状审计字段与已失效行号，当前成果指向本轮审查。",
+      "lines_before": 163,
+      "lines_after": 86,
+      "sha256_before": "34cb5ba56bf6ab0fb985358d170f271b4f95a9e3dfda3a84a07d23abe210f05b",
+      "sha256_after": "23bc58a91a3f71c756158911237f97bbc44ffed4dd0887cae42592c4c45106fa",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 86
+    },
+    {
+      "path": "docs/tools/docs-organization-audit.md",
+      "action": "rewritten",
+      "reason": "以最终结构与事实修正重写维护说明，记录覆盖及验证边界。",
+      "lines_before": 34,
+      "lines_after": 97,
+      "sha256_before": "d33e27ce19ad0cbdcfb46e045bb874096e3853378cfd78da39b1fd57b16fa858",
+      "sha256_after": "c99f5a1dfe7d31554dd9e0a26b469d7eb77822de8d21191eaa83738f6e92ec61",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 94
+    },
+    {
+      "path": "docs/tools/linux/inode-basics.md",
+      "action": "retained",
+      "reason": "6字节真实文件例子已讲 inode、硬链接、重命名和打开引用，Docker历史联系有日期与原始CPU结果；仅完善可点击目录，保留教学数据。",
+      "lines_before": 137,
+      "lines_after": 137,
+      "sha256_before": "0c2b757035ae9af93e8b86dfaaf829feb8bf25547644f4f47a519d46a39388b1",
+      "sha256_after": "0c2b757035ae9af93e8b86dfaaf829feb8bf25547644f4f47a519d46a39388b1",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": false,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 137
+    },
+    {
+      "path": "docs/tools/linux/mmap-sqlite-sigbus.md",
+      "action": "retained",
+      "reason": "按新手基础→文件映射→删除/截断例子→WAL→SIGBUS组织完整，配标准库 CPU 教学脚本且界限准确；仅统一目录，不删机制。",
+      "lines_before": 233,
+      "lines_after": 233,
+      "sha256_before": "7dd6bdb07fd510d6363e05e573fb983d02559720a4981953942cadda80b18dd1",
+      "sha256_after": "ea1f7384371526343c4545c4dceb29fcdcb5cd508aad67d71aefd426d69b28c6",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": true,
+      "consolidation_lines_before": 233
+    },
+    {
+      "path": "docs/tools/shell-python/python-environments.md",
+      "action": "merged",
+      "reason": "同一阅读任务的机制、例子和直接相关结果合并，用目录定位。",
+      "merged_from": [
+        "docs/tools/shell-python/bash-source-command.md",
+        "docs/tools/shell-python/python-import-persistence.md",
+        "docs/tools/shell-python/activate-script-notes.md"
+      ],
+      "consolidation_lines_before": null,
+      "changed_by_consolidation": true,
+      "lines_after": 426,
+      "sha256_after": "76431963f35576d897c8475735b4f4f08c0a0210342581718f2f7e6736baf12a"
+    },
+    {
+      "path": "docs/tutorial/configuration.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 12,
+      "lines_after": 21,
+      "sha256_before": "bd16f53fb50b987a478334b52053d006eecd7156dc6540ceb6dbc50d84cb85bd",
+      "sha256_after": "029eae9060eb3434cf511516b4d98da68f31e655073d7255c9dd36e94b69fe9b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 21
+    },
+    {
+      "path": "docs/tutorial/configuration/monitoring-and-overrides.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 125,
+      "lines_after": 128,
+      "sha256_before": "4f1884f9db708a17ca971f03e726e64ec71ee410cdba56c5bfa18ae52f8e2436",
+      "sha256_after": "58f7d452f30dfbddf40056d76cd148a004805bed8b9e5705af597affae38d3a7",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 128
+    },
+    {
+      "path": "docs/tutorial/configuration/system-and-core.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 733,
+      "lines_after": 740,
+      "sha256_before": "272c90e833c0fb5ea3aa70b8259e0770d9815330915730dd86234af9d6e774e0",
+      "sha256_after": "7448654417fbc074e54099e32d638af31e1447b2ced8c4906cbbc051a59f718e",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 740
+    },
+    {
+      "path": "docs/tutorial/configuration/transport-and-rollout.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 419,
+      "lines_after": 430,
+      "sha256_before": "4b7ac6d3a4d4c9020d07a295f8cda33e4a207b101b28361bca3ec5d6ede7a8f9",
+      "sha256_after": "b972e9e26e9f0d3dec70f40542781642a2e125da30fd5a9de8102c8ecb4d05b8",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 430
+    },
+    {
+      "path": "docs/tutorial/index.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 16,
+      "lines_after": 17,
+      "sha256_before": "9f9b7bee33e3720b07890c063d2aa8eab018225a24f90f0946925797b9eedbf9",
+      "sha256_after": "325fcc0e62a8b7fa78b976a50165d257e3c52a949827245604a989dc1314349b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 17
+    },
+    {
+      "path": "docs/tutorial/installation.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 235,
+      "lines_after": 250,
+      "sha256_before": "9c5e9a28ee679cc6f0155a8d0d41a5ae6e78a8a6ce3c3aea6cfb8f13e169921e",
+      "sha256_after": "ad163be1f89a4249c2707e098a693f49896d846f0a9635fb1bb66b0c1a883850",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 250
+    },
+    {
+      "path": "docs/tutorial/performance_tuning.md",
+      "action": "restructured",
+      "reason": "纠正陈旧度、TMS、粒度上调方向等误导，补按问题查阅的目录。",
+      "lines_before": 405,
+      "lines_after": 419,
+      "sha256_before": "8209444af8db4dc0f78f91d0d41c3c37528ac39c02de1661f9093d359d9ce86d",
+      "sha256_after": "4b11f35e0dee047030fbf111a632875c11702a30b8847344683f760ff9903c06",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 419
+    },
+    {
+      "path": "docs/tutorial/quickstart.md",
+      "action": "restructured",
+      "reason": "补真实前置条件，纠正陈旧度方向和指标解读，注明Ray辅助脚本实际清理行为。",
+      "lines_before": 184,
+      "lines_after": 213,
+      "sha256_before": "3f55c81696ba26550f7c3afa1483deb05512f88f990d2e6184acc9a08876c460",
+      "sha256_after": "27d0ceb86c15a1040bbe3a1af50d606f9a868f94253983d82ada65eb04537de4",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "changed_by_consolidation": false,
+      "consolidation_lines_before": 213
+    }
+  ],
+  "reader_profile": {
+    "background": "具备常见机器学习、大模型与 agent 概念基础，计算机系统知识相对欠缺。",
+    "explanation_depth": "常用 ML 概念直接使用；系统机制和项目特有用法解释到足以理解当前问题，深入实现按需查阅。"
+  },
+  "audience_review": {
+    "date": "2026-11-16",
+    "method": "对全部可见正文定向检索，并重点复核分享稿、导读与原专题范围；本轮仅调整讲解深度，不重做所有技术事实审查。",
+    "changed_document_count": 30,
+    "changed_documents": [
+      {
+        "path": "docs/README.md",
+        "reason": "阅读入口改为系统与实验术语，省去通用 ML 词汇学习路线。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/archive/implementation-and-gaps.md",
+        "reason": "修改：删除 token 和 episode 常识释义，保留 Ray Actor、训练记录与物理资源回收的职责关系。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/joint-gpu-placement.md",
+        "reason": "按指定补充删去Agent、模型参数量单位与token的常识解释，保持六请求回放、真实训练负载、缓存容量和跨卡放置的系统机制。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/warm-placement-matrix.md",
+        "reason": "减少loss、优化器、中位数、误差指标和token的基础定义，直接说明模型训练状态复位、进度预测与计时协议；保留热冷卡、等待与加载的因果解释、真实算例、48组核心结果和故障覆盖边界。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/command-predictability.md",
+        "reason": "修改：删除 token、agent、rollout、step 的常识定义，直接说明已提交工作量与未来未知命令的预测边界；保留阶段时长条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/current-design.md",
+        "reason": "修改：区分容器、命令与后台模型进程的生命周期，解释命令返回后显存仍可能占用。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/inferencebench-scoring.md",
+        "reason": "修改：删除通用 token 定义，直接进入服务时延与吞吐指标；保留 TTFT/TPOT 及手算例子。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/mlgym-swe-serve-recipes.md",
+        "reason": "修改：去掉 agent 和双模型常识性重述，按权重或补丁的交付路径进入接入图；保留真实环境与评分边界。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/native-harbor-backend.md",
+        "reason": "修改：删除 agent/verifier 角色常识，直接说明 Harbor 任务编排与可替换容器后端的职责。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/warm-placement-code-guide.md",
+        "reason": "修改：去掉 norm 基础解释和双模型重复说明，保留固定任务内工作量与放置成本的关系。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/literature-reviews/krex-region-exclusivity.md",
+        "reason": "修改：删除 kernel agent 的一般定义，保留 GPU 计算核与操作系统内核的系统术语区别。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/literature-reviews/recent-top-conference-papers.md",
+        "reason": "修改：删除 RL 概念括注，直接说明轨迹、会话、命令与 GPU 授权边界的系统关系。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/literature-reviews/rollart-dynarl-deep-reading.md",
+        "reason": "修改：将通用 RL、rollout、生成训练和 token 释义收束为异步版本关系；保留参数陈旧度、计算与带宽瓶颈、缓存驻留等系统分析。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/README.md",
+        "reason": "bench 目录导览直接说明代码与运行资产位置，删除 agent 和 benchmark 基础定义。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/implementation-and-results.md",
+        "reason": "修改：历史报告跳过通用 Agent/RL 流程与 token 定义，直接进入独立会话、容器与命令并发的比较层；实验数字不变。",
+        "merged_into": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap.md"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/science-gpu-bench-brief.md",
+        "reason": "移除agent、benchmark和优化器步骤的基础定义，直接说明PSRL接入的场景与结果；保留两份模型、两种训练和GPU任务协议的具体区别，系统概念延伸入口更聚焦。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/science-gpu-bench-status-and-roadmap.md",
+        "reason": "省去agent、CUDA、强化学习和零梯度的入门释义，保留各题库的本地协议、覆盖计数、训练边界与路线图；资源使用差异继续解释。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/science-gpu-full-onboarding.md",
+        "reason": "删除agent、rollout、token、归一化层及loss/grad_norm的基础释义；保留oracle与TITO的项目用途、两种训练的对应关系，以及只读权重、容器可写层、挂载、独立评分进程和依赖复用机制。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/research-proposals/command-scheduling-research.md",
+        "reason": "修改：删除 agent/rollout/turn/verifier 基础定义，直接按中途计算、最终评分与资源交接步骤划定调度范围。"
+      },
+      {
+        "path": "docs/overview/glossary.md",
+        "reason": "收掉 LLM、RL、agent 等基础词条，集中进程、并发、主存/显存、容器、租约及项目验收口径。"
+      },
+      {
+        "path": "docs/overview/index.md",
+        "reason": "明确已有机器学习和 agent 基础，导读聚焦组件衔接。"
+      },
+      {
+        "path": "docs/overview/reading-guide.md",
+        "reason": "去掉 RL、训练、token 和轨迹的常识定义，保留样本键传递、异步执行与参数版本算例。"
+      },
+      {
+        "path": "docs/psrl/README.md",
+        "reason": "精修：集中注明已有 ML/Agent 基础，阅读路线改为组件分工、TITO、版本同步和资源生命周期；算法专题保持按需查阅。"
+      },
+      {
+        "path": "docs/psrl/dapo-training-collapse-diagnosis.md",
+        "reason": "精修：删通用熵与梯度定义和初学者阅读指令，聚焦联合退化信号。保留四回答同分算例，因为它直接解释本次 zero_variance 指标与更新信号。"
+      },
+      {
+        "path": "docs/psrl/psrl-agent-loop-harbor-tool-calling.md",
+        "reason": "精修：删反复解释做题/学习、JSON格式、消息角色、tokenization和对数概率的基础段落及独立GRPO小算例。保留真实命令、duration含义、执行组件、TITO对齐、进程/HTTP/gRPC/asyncio及上下文内存解释。"
+      },
+      {
+        "path": "docs/psrl/psrl-training-script-source-map.md",
+        "reason": "精修：删 rollout 的通用定义和得分1/0的优势示例，改为实际 worker 进程分工及 reward_key 到 advantage 的字段链路。"
+      },
+      {
+        "path": "docs/psrl/vllm-and-training-parallelism.md",
+        "reason": "精修：读者按数据流/版本、显存/合批、并行/通信问题进入，PPO/GRPO推导明确选读，避免一律先补ML基础。"
+      },
+      {
+        "path": "docs/sciaccel-grpo-oom-analysis.md",
+        "reason": "精修：删 token、熵和梯度的常识定义，突出工具上下文也占激活、分配器预留与物理显存的计量差别。保留多轮累计长度和micro-batch=1仍OOM的系统算例。"
+      },
+      {
+        "path": "docs/tools/docs-freshness-audit.md",
+        "reason": "精修：将本轮整理定位从面向初学者改为可读性与组织整理，历史核验范围及证据不变。"
+      },
+      {
+        "path": "docs/tools/docs-organization-audit.md",
+        "reason": "按用户实际知识背景更新讲解深度和复核范围，不新增零基础教学要求。"
+      }
+    ],
+    "review_records": [
+      {
+        "path": "docs/README.md",
+        "reason": "阅读入口改为系统与实验术语，省去通用 ML 词汇学习路线。"
+      },
+      {
+        "path": "docs/overview/index.md",
+        "reason": "明确已有机器学习和 agent 基础，导读聚焦组件衔接。"
+      },
+      {
+        "path": "docs/overview/reading-guide.md",
+        "reason": "去掉 RL、训练、token 和轨迹的常识定义，保留样本键传递、异步执行与参数版本算例。"
+      },
+      {
+        "path": "docs/overview/glossary.md",
+        "reason": "收掉 LLM、RL、agent 等基础词条，集中进程、并发、主存/显存、容器、租约及项目验收口径。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/README.md",
+        "reason": "bench 目录导览直接说明代码与运行资产位置，删除 agent 和 benchmark 基础定义。"
+      },
+      {
+        "path": "docs/tools/docs-organization-audit.md",
+        "reason": "按用户实际知识背景更新讲解深度和复核范围，不新增零基础教学要求。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/science-gpu-bench-brief.md",
+        "reason": "移除agent、benchmark和优化器步骤的基础定义，直接说明PSRL接入的场景与结果；保留两份模型、两种训练和GPU任务协议的具体区别，系统概念延伸入口更聚焦。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/science-gpu-bench-status-and-roadmap.md",
+        "reason": "省去agent、CUDA、强化学习和零梯度的入门释义，保留各题库的本地协议、覆盖计数、训练边界与路线图；资源使用差异继续解释。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/science-gpu-full-onboarding.md",
+        "reason": "删除agent、rollout、token、归一化层及loss/grad_norm的基础释义；保留oracle与TITO的项目用途、两种训练的对应关系，以及只读权重、容器可写层、挂载、独立评分进程和依赖复用机制。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/warm-placement-matrix.md",
+        "reason": "减少loss、优化器、中位数、误差指标和token的基础定义，直接说明模型训练状态复位、进度预测与计时协议；保留热冷卡、等待与加载的因果解释、真实算例、48组核心结果和故障覆盖边界。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/joint-gpu-placement.md",
+        "reason": "按指定补充删去Agent、模型参数量单位与token的常识解释，保持六请求回放、真实训练负载、缓存容量和跨卡放置的系统机制。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/README.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/airs-gpu-recipe.md",
+        "reason": "重点复读保留：两层训练区分用于解释 SICK 三次内部更新与外层 PSRL 验收的实际边界，TITO 是本地会话机制；没有再补通用 ML 教程。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/baseline-state-lifetimes.md",
+        "reason": "重点复读保留：Python 进程、容器、模块、文件快照与可信版本关系都是本篇研究主题，未删减关键生命周期解释。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations/experiments-and-diagnostics.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations/scheduling-proposal.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations.md",
+        "reason": "重点复读保留：主机内存与显存、容器保留与阶段借还、cgroup 设备控制在首次需要时已经说明。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/command-predictability.md",
+        "reason": "修改：删除 token、agent、rollout、step 的常识定义，直接说明已提交工作量与未来未知命令的预测边界；保留阶段时长条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/cpu-gpu-parallelism-architecture-comparison.md",
+        "reason": "重点复读保留：本文专门解释 CPU/GPU 并发与硬件执行，属于读者欠缺的系统基础。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/cuda-context-and-compute-contention.md",
+        "reason": "重点复读保留：进程、CUDA 上下文、显存与计算共享是本篇主题，完整算例仍必要。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/current-design.md",
+        "reason": "修改：区分容器、命令与后台模型进程的生命周期，解释命令返回后显存仍可能占用。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/engineering-review.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/gate-b-beginner-guide.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/cancellation-and-experiment.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/identity-and-accounting.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/gpu-benchmark-recipes.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry/concurrency-design.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry/procfs-and-deployment.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/gpu-memory-admission.md",
+        "reason": "重点复读保留：预约、实测、进程身份和抵扣公式是准入正确性的主线，保持系统术语与数字解释。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/http-basics-for-gate-b.md",
+        "reason": "重点复读保留：HTTP、跨进程请求与回复路径属于专门系统教程，解释深度符合本次读者背景。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/inferencebench-scoring.md",
+        "reason": "修改：删除通用 token 定义，直接进入服务时延与吞吐指标；保留 TTFT/TPOT 及手算例子。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/mlgym-swe-serve-recipes.md",
+        "reason": "修改：去掉 agent 和双模型常识性重述，按权重或补丁的交付路径进入接入图；保留真实环境与评分边界。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/mps-parallel-execution.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/native-harbor-backend.md",
+        "reason": "修改：删除 agent/verifier 角色常识，直接说明 Harbor 任务编排与可替换容器后端的职责。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/onboarding-and-gpu-validation.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/process-identity-without-procfs.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/re-bench-recipe.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending/unit-capacity.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/router-configuration-and-recovery.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/unified-gpu-execution.md",
+        "reason": "重点复读保留：以提交、排队、执行、物理归还和容器销毁串联后端，系统术语用于解释执行职责。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing/compute-and-mps-studies.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/warm-placement-code-guide.md",
+        "reason": "修改：去掉 norm 基础解释和双模型重复说明，保留固定任务内工作量与放置成本的关系。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/knowledge/worker-retry-and-redispatch.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/literature-reviews/README.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/literature-reviews/ai4infra-performance-benchmarks.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/literature-reviews/gpu-workload-benchmark-survey.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/literature-reviews/krex-region-exclusivity.md",
+        "reason": "修改：删除 kernel agent 的一般定义，保留 GPU 计算核与操作系统内核的系统术语区别。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/literature-reviews/llm-agent-scheduling-brain.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/literature-reviews/recent-top-conference-papers.md",
+        "reason": "修改：删除 RL 概念括注，直接说明轨迹、会话、命令与 GPU 授权边界的系统关系。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/literature-reviews/rollart-dynarl-deep-reading.md",
+        "reason": "修改：将通用 RL、rollout、生成训练和 token 释义收束为异步版本关系；保留参数陈旧度、计算与带宽瓶颈、缓存驻留等系统分析。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/literature-reviews/yarn-inspired-gpu-feedback-scheduling.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/research-proposals/README.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/research-proposals/benchmark-state-reuse-audit.md",
+        "reason": "重点复读保留：文件、进程和模型状态的真实交付与复用条件是核心，任务内模型范围说明直接限定研究对象。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/research-proposals/command-scheduling-research.md",
+        "reason": "修改：删除 agent/rollout/turn/verifier 基础定义，直接按中途计算、最终评分与资源交接步骤划定调度范围。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/research-proposals/dynamic-command-placement.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/research-proposals/memory-bounded-state-scheduling.md",
+        "reason": "重点复读保留：开头已区分 CPU 主存缓存与 GPU 显存，进程内准备状态是方案核心。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios/experiments-and-findings.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/research-proposals/reclaim-aware-env-sharing.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/archive/README.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/archive/commit-72ca50c-gate-ab-walkthrough.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/archive/env-service-implementation.md",
+        "reason": "重点复读保留：unit、租约、心跳、TTL、挂载和容量预算正是历史机制主题，术语说明必要。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/archive/implementation-and-gaps.md",
+        "reason": "修改：删除 token 和 episode 常识释义，保留 Ray Actor、训练记录与物理资源回收的职责关系。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/archive/sciaccel-gpu-gate.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/archive/env-router-current-flow.md",
+        "reason": "重点复读保留：独立 rollout 与同容器命令的区分用于解释不同资源申请结构，保存恢复成本例子属于系统机制。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/implementation-and-results.md",
+        "reason": "修改：历史报告跳过通用 Agent/RL 流程与 token 定义，直接进入独立会话、容器与命令并发的比较层；实验数字不变。"
+      },
+      {
+        "path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/planning-and-lifecycle.md",
+        "reason": "定向检索保留：未发现需要删减的通用 ML/agent 基础重述，保留现有系统机制、任务协议与实验条件。"
+      },
+      {
+        "path": "docs/psrl/README.md",
+        "reason": "精修：集中注明已有 ML/Agent 基础，阅读路线改为组件分工、TITO、版本同步和资源生命周期；算法专题保持按需查阅。"
+      },
+      {
+        "path": "docs/psrl/dapo-training-collapse-diagnosis.md",
+        "reason": "精修：删通用熵与梯度定义和初学者阅读指令，聚焦联合退化信号。保留四回答同分算例，因为它直接解释本次 zero_variance 指标与更新信号。"
+      },
+      {
+        "path": "docs/psrl/gae-bias-variance-tradeoff.md",
+        "reason": "保留：主题就是GAE估计机制，TD、lambda与可手算三步例子用于回答偏差/方差问题，属于必要推导。"
+      },
+      {
+        "path": "docs/psrl/hf-config-context-window.md",
+        "reason": "保留：多轮上下文、模型窗口、预算和训练激活属于本轮要补的系统能力，长度算例与配置字段不可省略。"
+      },
+      {
+        "path": "docs/psrl/nixl-explained.md",
+        "reason": "保留：注册内存、CPU驻留PS、控制/数据通道及分片传输属于计算机系统背景，4GB例子用于说明实际数据移动。"
+      },
+      {
+        "path": "docs/psrl/ppo-grpo-dapo-sample-requirements.md",
+        "reason": "保留：问题是采样分组与训练批量，四回答优势和同分算例直接解释组统计、过滤和micro-batch边界，具ML基础仍需核对这些条件。"
+      },
+      {
+        "path": "docs/psrl/psrl-agent-loop-harbor-tool-calling.md",
+        "reason": "精修：删反复解释做题/学习、JSON格式、消息角色、tokenization和对数概率的基础段落及独立GRPO小算例。保留真实命令、duration含义、执行组件、TITO对齐、进程/HTTP/gRPC/asyncio及上下文内存解释。"
+      },
+      {
+        "path": "docs/psrl/psrl-env-service-envworker-design.md",
+        "reason": "保留：固定历史提案沿容器任务解释全局准入、账本和资源释放，代码题例子用于串联系统角色，后续容量数字与并发边界仍必要。"
+      },
+      {
+        "path": "docs/psrl/psrl-run-guide/cluster-preflight.md",
+        "reason": "保留：依赖来源、节点身份、容器、设备、掩码和评分键的解释用于预检和避免误判，验收边界及具体故障例子不可删。"
+      },
+      {
+        "path": "docs/psrl/psrl-run-guide/getting-started.md",
+        "reason": "保留：围绕模型/数据路径、运行参数和进程约束，都是执行当前配方需要的背景。"
+      },
+      {
+        "path": "docs/psrl/psrl-run-guide/monitoring-and-batches.md",
+        "reason": "保留：指标短释与批量算例用于对应真实日志及配置；主要讲PID/节点/设备/计时范围，未展开通用ML课程。"
+      },
+      {
+        "path": "docs/psrl/psrl-run-guide/ray-and-rollout.md",
+        "reason": "保留：Actor、资源池、对象引用、进程落点和长尾属于分布式系统知识，相关定义与例子直接支撑主线。"
+      },
+      {
+        "path": "docs/psrl/psrl-run-guide/startup-incident-reviews.md",
+        "reason": "保留：固定历史运行故障按报错/机制/修复组织，未引入无关算法基础课。"
+      },
+      {
+        "path": "docs/psrl/psrl-run-guide.md",
+        "reason": "保留：按运行步骤、Ray、监控和历史故障提供任务入口，没有额外ML基础铺垫。"
+      },
+      {
+        "path": "docs/psrl/psrl-training-script-source-map.md",
+        "reason": "精修：删 rollout 的通用定义和得分1/0的优势示例，改为实际 worker 进程分工及 reward_key 到 advantage 的字段链路。"
+      },
+      {
+        "path": "docs/psrl/rlvr-explained.md",
+        "reason": "保留：专门讲可验证奖励及评分可信条件，算术/代码校验例子属于主题主体，算法与评分源的区别仍有必要。"
+      },
+      {
+        "path": "docs/psrl/vllm-and-training-parallelism/experiments-and-reference.md",
+        "reason": "保留：公式速查与固定硬件实验条件，未扩展ML入门叙述。"
+      },
+      {
+        "path": "docs/psrl/vllm-and-training-parallelism/inference-mechanisms.md",
+        "reason": "保留：推理系统教程，prefill/decode、缓存、合批和等待过程需要机制和数字解释。"
+      },
+      {
+        "path": "docs/psrl/vllm-and-training-parallelism/rl-loss-and-sampling.md",
+        "reason": "保留：算法与损失专题，DAPO、dual-clip、KL和mask的公式及例子是独立深入内容，导读已提供可选入口。"
+      },
+      {
+        "path": "docs/psrl/vllm-and-training-parallelism/rl-training-workflow.md",
+        "reason": "保留：专门解释采样到更新的数据流，版本10/12/13、old-policy重算和PPO/GRPO例子用于区分版本控制与损失约束，不机械删RL前提。"
+      },
+      {
+        "path": "docs/psrl/vllm-and-training-parallelism/training-parallelism.md",
+        "reason": "保留：重点是GPU资源分摊、进程通信、带宽和气泡，基础ML知识不替代这些分布式系统知识，矩阵与数字推导保留。"
+      },
+      {
+        "path": "docs/psrl/vllm-and-training-parallelism.md",
+        "reason": "精修：读者按数据流/版本、显存/合批、并行/通信问题进入，PPO/GRPO推导明确选读，避免一律先补ML基础。"
+      },
+      {
+        "path": "docs/sciaccel-grpo-oom-analysis.md",
+        "reason": "精修：删 token、熵和梯度的常识定义，突出工具上下文也占激活、分配器预留与物理显存的计量差别。保留多轮累计长度和micro-batch=1仍OOM的系统算例。"
+      },
+      {
+        "path": "docs/tools/README.md",
+        "reason": "保留：按操作工具、Shell/Python和Linux问题导航，没有要求重学ML/Agent基础。"
+      },
+      {
+        "path": "docs/tools/claude-code/claude-code-permission-modes.md",
+        "reason": "保留：该页讲具体开发工具的规则、使用或故障；术语与例子用于理解配置生效、进程状态、文件/索引和操作条件，没有重复ML基础解释。"
+      },
+      {
+        "path": "docs/tools/claude-code/claude-code-run-terminal-commands.md",
+        "reason": "保留：该页讲具体开发工具的规则、使用或故障；术语与例子用于理解配置生效、进程状态、文件/索引和操作条件，没有重复ML基础解释。"
+      },
+      {
+        "path": "docs/tools/codex/codex-agents-md-scope.md",
+        "reason": "保留：该页讲具体开发工具的规则、使用或故障；术语与例子用于理解配置生效、进程状态、文件/索引和操作条件，没有重复ML基础解释。"
+      },
+      {
+        "path": "docs/tools/codex/codex-config-backup-restore.md",
+        "reason": "保留：该页讲具体开发工具的规则、使用或故障；术语与例子用于理解配置生效、进程状态、文件/索引和操作条件，没有重复ML基础解释。"
+      },
+      {
+        "path": "docs/tools/codex/codex-session-management.md",
+        "reason": "保留：会话使用与故障处理导航，操作入口清楚，无重复ML概念。"
+      },
+      {
+        "path": "docs/tools/codex/rule-memory-skill.md",
+        "reason": "保留：该页讲具体开发工具的规则、使用或故障；术语与例子用于理解配置生效、进程状态、文件/索引和操作条件，没有重复ML基础解释。"
+      },
+      {
+        "path": "docs/tools/codex/session-archives/README.md",
+        "reason": "保留：极短固定日期存档入口与解压/校验条件，没有读者基础假设。"
+      },
+      {
+        "path": "docs/tools/codex/session-management/bus-error.md",
+        "reason": "保留：历史崩溃证据及文件映射机制解释直接对应故障，基础教程已单独链接。"
+      },
+      {
+        "path": "docs/tools/codex/session-management/goals.md",
+        "reason": "保留：该页讲具体开发工具的规则、使用或故障；术语与例子用于理解配置生效、进程状态、文件/索引和操作条件，没有重复ML基础解释。"
+      },
+      {
+        "path": "docs/tools/codex/session-management/log-repair.md",
+        "reason": "保留：该页讲具体开发工具的规则、使用或故障；术语与例子用于理解配置生效、进程状态、文件/索引和操作条件，没有重复ML基础解释。"
+      },
+      {
+        "path": "docs/tools/codex/session-management/repair-map.md",
+        "reason": "保留：用数据库/启动/索引四条故障链梳理排查，必要系统概念服务证据解释。"
+      },
+      {
+        "path": "docs/tools/codex/session-management/session-database-recovery.md",
+        "reason": "保留：该页讲具体开发工具的规则、使用或故障；术语与例子用于理解配置生效、进程状态、文件/索引和操作条件，没有重复ML基础解释。"
+      },
+      {
+        "path": "docs/tools/codex/session-management/session-usage.md",
+        "reason": "保留：该页讲具体开发工具的规则、使用或故障；术语与例子用于理解配置生效、进程状态、文件/索引和操作条件，没有重复ML基础解释。"
+      },
+      {
+        "path": "docs/tools/codex/session-management/tcodex-setup.md",
+        "reason": "保留：该页讲具体开发工具的规则、使用或故障；术语与例子用于理解配置生效、进程状态、文件/索引和操作条件，没有重复ML基础解释。"
+      },
+      {
+        "path": "docs/tools/codex/session-management/terminal-scrolling.md",
+        "reason": "保留：终端、tmux、备用屏幕和事件路由属于系统机制，视口例子与真实隔离测试支持判断实际路径。"
+      },
+      {
+        "path": "docs/tools/docs-freshness-audit.md",
+        "reason": "精修：将本轮整理定位从面向初学者改为可读性与组织整理，历史核验范围及证据不变。"
+      },
+      {
+        "path": "docs/tools/linux/inode-basics.md",
+        "reason": "保留：系统基础专题，文件身份、目录、硬链接和打开引用需要完整六字节文件例子。"
+      },
+      {
+        "path": "docs/tools/linux/mmap-sqlite-sigbus.md",
+        "reason": "保留：用户主要欠缺的进程/线程/虚拟内存/文件映射知识，删除与截断、WAL及SIGBUS例子保持完整。"
+      },
+      {
+        "path": "docs/tools/shell-python/activate-script-notes.md",
+        "reason": "保留：source、Shell初始化、PATH和Conda接管均属系统/操作背景，逐段解释帮助理解真实环境覆盖。"
+      },
+      {
+        "path": "docs/tools/shell-python/bash-source-command.md",
+        "reason": "保留：Shell与父子进程环境机制是明确主题，两种执行方式的变量例子不可只剩命令。"
+      },
+      {
+        "path": "docs/tools/shell-python/python-import-persistence.md",
+        "reason": "保留：区分磁盘安装、独立进程内存和模块搜索路径，直接服务依赖排查，两个进程例子完整保留。"
+      },
+      {
+        "path": "docs/psrl/vllm-and-training-parallelism/cache-memory-management.md",
+        "reason": "保留：分页块表、写时复制、引用计数和在线累计是内存管理主体，完整三分支与容量例子仍保留。"
+      },
+      {
+        "path": "docs/psrl/dapo-training-collapse-diagnosis/metrics-and-losses.md",
+        "reason": "保留：历史报告的可选指标/公式附录，用于核对具体日志字段怎样算出，无需在正文再重复。"
+      },
+      {
+        "path": "docs/psrl/dapo-training-collapse-diagnosis/numerical-stability.md",
+        "reason": "保留：可选数值专题，softmax、概率比、dual-clip和共享参数的完整数字推导直接回答稳定性问题。"
+      },
+      {
+        "path": "docs/psrl/psrl-run-guide/incidents/docker-storage-hang-20261020.md",
+        "reason": "保留：固定历史存储线程、FUSE挂载与独立Docker恢复，系统术语和现场证据直接支撑结论。"
+      }
+    ],
+    "rules_updated": [
+      "../AGENTS.md",
+      "AGENTS.md",
+      ".claude/readme-style.md"
+    ],
+    "verification": "本地路径、章节锚点及源码行号范围检查通过，公开站点严格构建通过。未运行训练、GPU或历史性能实验。"
+  },
+  "prior_review_summary": {
+    "documents_reviewed": 191,
+    "documents_before": 176,
+    "documents_added_since_snapshot": 15,
+    "documents_changed_since_snapshot": 182,
+    "action_counts": {
+      "rewritten": 65,
+      "restructured": 99,
+      "retained": 25,
+      "new": 2
+    },
+    "maximum_document_lines": 785,
+    "removed_documents_this_review": [],
+    "note": "新增统计包含一篇并行开发加入的命令可预测性文档。开始时工作区已有的删除和归档不计作本次删除。"
+  },
+  "prior_review_verification": {
+    "local_links": {
+      "documents": 191,
+      "local_links": 6865,
+      "heading_links": 2164,
+      "line_links": 2363,
+      "implicit_md_suffix": 26
+    },
+    "local_link_errors": 0,
+    "navigation": "从 docs/README.md 经本地链接、MyST 引用和公开 toctree 可达 191/191 篇，孤立页 0。",
+    "public_site": "独立临时环境运行 sphinx-build -E -b html -W --keep-going，构建通过。",
+    "source_configuration": "docs/conf.py 的 Ruff、格式和项目 prose-style 检查通过。",
+    "examples": "实际运行入门版本判断、训练/验证内存切换及工具文档的自包含 CPU/Bash 小例子；具体范围见所属文档。",
+    "not_rerun": "历史 GPU、策略训练、性能测量及部署环境未重新运行。源码行号检查只验证基础范围，语义核对范围见各篇说明。"
+  },
+  "retired_documents": [
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations/experiments-and-diagnostics.md",
+      "action": "restructured",
+      "reason": "新增拆分子文档：保留完整原条件、代码和证据，校正相对链接并生成目录。",
+      "lines_before": null,
+      "lines_after": 441,
+      "sha256_before": null,
+      "sha256_after": "a0ba07edc21cb192d7caaac44f2879c1e9bc9cfc9ac791203cb1801b07cc1bb3",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations.md",
+      "merged_into": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 441
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations/scheduling-proposal.md",
+      "action": "restructured",
+      "reason": "新增拆分子文档：保留完整原条件、代码和证据，校正相对链接并生成目录。",
+      "lines_before": null,
+      "lines_after": 61,
+      "sha256_before": null,
+      "sha256_after": "0e27b8f9452c852a01fdb99ae3de8c833a29b7af3ab53cda5ee0b98946a85d7b",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations.md",
+      "merged_into": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 61
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry/procfs-and-deployment.md",
+      "action": "restructured",
+      "reason": "新增拆分子文档：保留完整原条件、代码和证据，校正相对链接并生成目录。",
+      "lines_before": null,
+      "lines_after": 317,
+      "sha256_before": null,
+      "sha256_after": "b06377a21b0afc2e7041545070c1119b39a89896d74afc2c8631f64251824837",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md",
+      "merged_into": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 317
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry/concurrency-design.md",
+      "action": "restructured",
+      "reason": "新增拆分子文档：保留完整原条件、代码和证据，校正相对链接并生成目录。",
+      "lines_before": null,
+      "lines_after": 236,
+      "sha256_before": null,
+      "sha256_after": "dcc75af058d8a7bed4fb192977183f8d404618959f07665ed16799c65586594f",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md",
+      "merged_into": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 236
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending/unit-capacity.md",
+      "action": "restructured",
+      "reason": "新增拆分子文档：保留完整原条件、代码和证据，校正相对链接并生成目录。",
+      "lines_before": null,
+      "lines_after": 182,
+      "sha256_before": null,
+      "sha256_after": "1180e4b28fc99059c78a7266a4683b3a04e398416d85606c9d04f2896c8d3964",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending.md",
+      "merged_into": "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 182
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing/compute-and-mps-studies.md",
+      "action": "restructured",
+      "reason": "新增拆分子文档：保留完整原条件、代码和证据，校正相对链接并生成目录。",
+      "lines_before": null,
+      "lines_after": 324,
+      "sha256_before": null,
+      "sha256_after": "27eeae084abb220d8fd2c0932053682ab92df4307619ab64329f13836225e44d",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md",
+      "merged_into": "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 324
+    },
+    {
+      "path": "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios/experiments-and-findings.md",
+      "action": "restructured",
+      "reason": "新增实验详录，保留准备窗口、服务题、缓存和版本研究的完整条件。",
+      "lines_before": null,
+      "lines_after": 445,
+      "sha256_before": null,
+      "sha256_after": "f3728b3ffa299ce99b75ffe9fc4697bd0423d6284ea33cc15ff901766cf012dc",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios.md",
+      "merged_into": "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 445
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/identity-and-accounting.md",
+      "action": "rewritten",
+      "reason": "明确身份→预算→恢复主线，删依赖未收录笔记的前置讲解。",
+      "lines_before": 433,
+      "lines_after": 444,
+      "sha256_before": "687266796954c9c9ef3ae0e785163bdb65e17f25b06d1d58f4b1c1f83ecc290c",
+      "sha256_after": "c5ee0362918cdbda9afe24204ca2264910daeb09ff1d90b573e3ae1058b5dac4",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 444
+    },
+    {
+      "path": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/cancellation-and-experiment.md",
+      "action": "rewritten",
+      "reason": "解释双持有者例子，修正清理保证与追加式自我更正。",
+      "lines_before": 375,
+      "lines_after": 377,
+      "sha256_before": "840b5937e1ea77738d48e4428ad5e13294c8691637486c1cce8fb0101d827a87",
+      "sha256_after": "a9e88bb0f9f9cd4e3fd8492430600c62423231747e13557d76dc61ee1b49cfe0",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 377
+    },
+    {
+      "path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/implementation-and-results.md",
+      "action": "restructured",
+      "reason": "开篇说明高压力来源、工作量和收益；实现表和能力边界限定到10-28，保留固定baseline、逐步数据和完整图示。",
+      "lines_before": 528,
+      "lines_after": 538,
+      "sha256_before": "8bdc6137071a93adf9dcb16dc82d65988dcbeb1821ab496a21145bf2eac2b3c4",
+      "sha256_after": "f94b7d46e16d72d0d46363f41919374d114899c8fa51df7600efcbaf63dd466b",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 538
+    },
+    {
+      "path": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/planning-and-lifecycle.md",
+      "action": "rewritten",
+      "reason": "用60秒空档示例引入状态保存与归还；当时规划与现状分开，改写密集否定和重复边界，保留公式、代码和完整时间线。",
+      "lines_before": 322,
+      "lines_after": 324,
+      "sha256_before": "79d9bd4021a529e57f5f1e8ac7ce9f86ec0c2daabca9608f8afcb117f1cbfc62",
+      "sha256_after": "914d904149ac157c29f518cdfd6dbd68ee600bd55996cfae991589b6ac682024",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 324
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/paired-results-and-review.md",
+      "action": "restructured",
+      "reason": "用真实两对结果替代泛化摘要；Gate B/command组合固定到2026-10-20的37a06ea加补丁；旧审计表按日期解释，移除上一轮/当前接线的含混口径并保留旧锚点。",
+      "lines_before": 422,
+      "lines_after": 426,
+      "sha256_before": "a5073cdbfb9b65a50dfb1a159a3d3cab8360c84a9897a16624abe52adce4aea3",
+      "sha256_after": "e3cd569d5a62f380fa94751954b31d02b391c808be9ecb07aad68a8a2d8f9145",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 426
+    },
+    {
+      "path": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/remediation-and-handoff.md",
+      "action": "restructured",
+      "reason": "用四容器节点接手清理的真实结果解释报告价值；B7、TTL、平台身份、逐卡预算和sidecar按主题合并发现与最终处理，旧故障输出/版本独立保留，旧锚点继续可达。 补齐H2/H3可点击目录，正文与旧锚点保留。",
+      "lines_before": 403,
+      "lines_after": 419,
+      "sha256_before": "09015c0f11eacc6e204914ff1f485aeb665d54a15c568c3620b3145d611187d4",
+      "sha256_after": "311ffaafeea8a88c30ab82f16b678ddaa7a505f10a9c488eb945eb40d219f01a",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 419
+    },
+    {
+      "path": "docs/psrl/dapo-training-collapse-diagnosis/metrics-and-losses.md",
+      "action": "restructured",
+      "reason": "从 DAPO 历史主报告抽出各指标、奖励/优势及损失代码；保留历史依赖身份，纠正最后槽位、KL假设和仅凭曲线因果断言。",
+      "lines_before": null,
+      "lines_after": 219,
+      "sha256_before": null,
+      "sha256_after": "45ab9500bb1615ac3ca03d127b4a5bbce12da5fa7eb9e37d6512dac4d60cc1ff",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/psrl/dapo-training-collapse-diagnosis.md",
+      "merged_into": "docs/psrl/dapo-training-collapse-diagnosis.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 219
+    },
+    {
+      "path": "docs/psrl/dapo-training-collapse-diagnosis/numerical-stability.md",
+      "action": "restructured",
+      "reason": "从 DAPO 抽出稳定softmax、ratio、dual-clip、共享参数完整数字推导及KL控制；保存独有公式，明确教学机制与历史尖峰待核证据。",
+      "lines_before": null,
+      "lines_after": 201,
+      "sha256_before": null,
+      "sha256_after": "9d1bc343d820f01bc803dd6a07b4bd316a408c188e30ca299883f45ad2d2001d",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/psrl/dapo-training-collapse-diagnosis.md",
+      "merged_into": "docs/psrl/dapo-training-collapse-diagnosis.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 201
+    },
+    {
+      "path": "docs/psrl/vllm-and-training-parallelism/cache-memory-management.md",
+      "action": "restructured",
+      "reason": "从 inference-mechanisms 抽出块表/槽位、三分支写时复制、每层容量、在线softmax与哈希回收，保留完整教学数字，登记专题索引。",
+      "lines_before": null,
+      "lines_after": 93,
+      "sha256_before": null,
+      "sha256_after": "4d2c7e3fa5c434f7ebe84a1fa6611b54dd89fb9693fa2a7d08fc76dbf7cf3439",
+      "added_since_snapshot": true,
+      "content_changed_since_snapshot": true,
+      "split_from": "docs/psrl/vllm-and-training-parallelism/inference-mechanisms.md",
+      "merged_into": "docs/psrl/vllm-and-training-parallelism/inference-mechanisms.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 93
+    },
+    {
+      "path": "docs/tools/shell-python/bash-source-command.md",
+      "action": "rewritten",
+      "reason": "用父子进程变量示例解释 source，补磁盘副作用及 POSIX 写法，临时文件示例可直接运行并清理。",
+      "lines_before": 30,
+      "lines_after": 53,
+      "sha256_before": "653ed191b9d5470cbc8009ac97e509ae4bdda53f906a2c8af61729905abe8233",
+      "sha256_after": "93e2c549a3597546f5f9def85bab1f41d60a242c8f0178422ae394b45f0cf88e",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/tools/shell-python/python-environments.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 53
+    },
+    {
+      "path": "docs/tools/shell-python/python-import-persistence.md",
+      "action": "rewritten",
+      "reason": "以两个独立进程的 fractions 例子解释安装/导入持久性，修正仅 site-packages 决定可导入的旧断言，给实际搜索路径和来源检查。",
+      "lines_before": 22,
+      "lines_after": 49,
+      "sha256_before": "89a04540307a4912646c6d5fc814dc2910bcfc7aec6a65f87f03e2aff7c0e129",
+      "sha256_after": "96a3b4d94ee27a4d6e752233697f70620fbf4d40b5eb39c309cfd2e1282ac653",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/tools/shell-python/python-environments.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 49
+    },
+    {
+      "path": "docs/tools/shell-python/activate-script-notes.md",
+      "action": "restructured",
+      "reason": "保留逐行与新tunnel完整复现解释，注明脚本固定布局、引用路径加引号，删除脱敏后同名路径对照的无意义结论，补全H2/H3目录。",
+      "lines_before": 319,
+      "lines_after": 332,
+      "sha256_before": "b7373a1f5e5fdb1662dcb9f954a821a15c525a845f8e29c260b39ae6094de3d9",
+      "sha256_after": "41bb9005d28cd319b5049002fdc8c964c0fea90e1611a821eb2c99fbe7af6e48",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/tools/shell-python/python-environments.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 332
+    },
+    {
+      "path": "docs/tools/codex/session-management/repair-map.md",
+      "action": "retained",
+      "reason": "短图已用现象→证据→对照→修复串联案例，提供最代表性旧路径例子；保留作为故障长文导航，仅规范目录位置。",
+      "lines_before": 44,
+      "lines_after": 44,
+      "sha256_before": "5de687d33d0f883fe2fbfb358eff6e6d450ae20f1b8adfb84af305cb331ae02a",
+      "sha256_after": "e71e74d423575cafbc4668c152213c3b771e50480b4d7ce27a8b03d1570e9868",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/tools/codex/session-management/session-recovery.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 44
+    },
+    {
+      "path": "docs/tools/codex/session-management/session-database-recovery.md",
+      "action": "rewritten",
+      "reason": "先呈现已确认恢复，随后讲存储角色和只读诊断，保留 53/46/7 与归档54 数字；去掉已完成的切库待办，保留外部引用锚点。",
+      "lines_before": 138,
+      "lines_after": 105,
+      "sha256_before": "7d0be0e487053b3cc0f10092a87b81b9ea52ae7231b6b4de37e34c31501e0607",
+      "sha256_after": "37aa6a349f7a561f311a51e1cf8e7e99764dd3186bcd4b182a5d1810f0158045",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/tools/codex/session-management/session-recovery.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 105
+    },
+    {
+      "path": "docs/tools/codex/session-management/bus-error.md",
+      "action": "retained",
+      "reason": "两次 core、映射地址、SIGBUS 和未定触发者已分层说明，配通俗 mmap 教程及 CPU 脚本；历史定位证据独立且未被完整根因替代，仅统一目录。",
+      "lines_before": 107,
+      "lines_after": 107,
+      "sha256_before": "beb2523e103b48e073fa93953ef01480ed4c7f3eb520496d707714cb2e6ccc4b",
+      "sha256_after": "a2c27848d226799f4778ec1ebf9619f4417f57b1d1e0fa976ca32c758ed5fb0d",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/tools/codex/session-management/session-recovery.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 107
+    },
+    {
+      "path": "docs/tools/codex/session-management/log-repair.md",
+      "action": "rewritten",
+      "reason": "按最终可用状态和日志/维护旧库/启动/索引四条因果重组，保留 hash、545 日志、6.5→0.7 秒与 7 索引数字，合并重复边界和阶段性未完成叙述。",
+      "lines_before": 145,
+      "lines_after": 88,
+      "sha256_before": "7ed661113eb4afa53a6199f11e2d79a1b879c9df279fdfa441230f5162f7e5c7",
+      "sha256_after": "0a2c6d5cdd385beb2c6ae9f696fe62ee3e59c05187d24807536969cf56425ba8",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/tools/codex/session-management/session-recovery.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 88
+    },
+    {
+      "path": "docs/tools/codex/session-management/session-usage.md",
+      "action": "restructured",
+      "reason": "核官方当前 /rename，旧 0.154 限制改历史；会话 ID 改占位、入口和目录统一，保留标签/终端标题/图片等独立说明。",
+      "lines_before": 274,
+      "lines_after": 245,
+      "sha256_before": "d951fa732fd10ca100b896959c1279ac033e4e439f81a73d7a5c8842589bd80f",
+      "sha256_after": "032911a466abfe60056290b6e817d06e30e81579aa528ff23058dd124ed5f358",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/tools/codex/codex-session-management.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 245
+    },
+    {
+      "path": "docs/tools/claude-code/claude-code-run-terminal-commands.md",
+      "action": "rewritten",
+      "reason": "用 python --version 对照 !前缀、复制输出和委托 Bash 三条路径，官方核对当前语法，移除无依据技能建议。",
+      "lines_before": 24,
+      "lines_after": 26,
+      "sha256_before": "2d1cb3e2b9cdb05e77b5ba8a0979a120ad8293eb0687bb103f51691e8c8499f5",
+      "sha256_after": "8a68f0f5a4a9d1200329f26a100d731eb445fd1a03f023f62dc29ced841d5ecb",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/tools/claude-code/claude-code-usage.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 26
+    },
+    {
+      "path": "docs/tools/claude-code/claude-code-permission-modes.md",
+      "action": "rewritten",
+      "reason": "核官方六模式，删除 auto 不存在等旧断言；用编辑/命令例子说明模式及规则，版本和账号条件集中说明。",
+      "lines_before": 40,
+      "lines_after": 45,
+      "sha256_before": "9c0b8b47d9b0042bd33e6bd2d33c1b139f6d36fff6c342f5729db2d8a121af58",
+      "sha256_after": "0a47f2a914449dc4e78aa1dac8429ce793cff89a651ed3141db270aa88ccc5cb",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/tools/claude-code/claude-code-usage.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 45
+    },
+    {
+      "path": "docs/examples/generative_reward_model/llm_as_a_judge.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 22,
+      "lines_after": 26,
+      "sha256_before": "26fcd1958fe51f13ccbd26445426f8a2eee4abc2d6245fff89dab41efd535469",
+      "sha256_after": "621489f94f91d686cb7e0a657323dbe9f1984bef23474342e2c8f9998aa2c2ef",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/examples/generative_reward_model/index.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 26
+    },
+    {
+      "path": "docs/examples/generative_reward_model/on_policy_distillation.md",
+      "action": "restructured",
+      "reason": "保留原主题内容，补充读者目的、具体例子或目录/链接，按需纠正运行口径。",
+      "lines_before": 24,
+      "lines_after": 28,
+      "sha256_before": "2c714ae88ae572bb47d9db6dcb25df3e5c4f0bc9c38f2f4670753f6e4140bd8a",
+      "sha256_after": "774e0b9fb92fe180b4c9183c046eefc3d8b81333d0c571b4e9ad00839e8e0f88",
+      "added_since_snapshot": false,
+      "content_changed_since_snapshot": true,
+      "merged_into": "docs/examples/generative_reward_model/index.md",
+      "retirement_reason": "有效正文、示例与证据迁入同一阅读任务的专题，移除多余文件。",
+      "content_preserved": true,
+      "lines_at_consolidation": 28
+    }
+  ],
+  "consolidation": {
+    "date": "2026-11-16",
+    "policy": "按完整阅读任务组织，没有固定行数上限；保留有效内容，用目录定位。",
+    "merged_files": {
+      "docs/env-worker-deep-dive/knowledge/command-gpu-reservations/experiments-and-diagnostics.md": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations.md",
+      "docs/env-worker-deep-dive/knowledge/command-gpu-reservations/scheduling-proposal.md": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations.md",
+      "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry/procfs-and-deployment.md": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md",
+      "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry/concurrency-design.md": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md",
+      "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending/unit-capacity.md": "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending.md",
+      "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing/compute-and-mps-studies.md": "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md",
+      "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios/experiments-and-findings.md": "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios.md",
+      "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/identity-and-accounting.md": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md",
+      "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/cancellation-and-experiment.md": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md",
+      "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/implementation-and-results.md": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap.md",
+      "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/planning-and-lifecycle.md": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap.md",
+      "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/paired-results-and-review.md": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review.md",
+      "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/remediation-and-handoff.md": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review.md",
+      "docs/psrl/dapo-training-collapse-diagnosis/metrics-and-losses.md": "docs/psrl/dapo-training-collapse-diagnosis.md",
+      "docs/psrl/dapo-training-collapse-diagnosis/numerical-stability.md": "docs/psrl/dapo-training-collapse-diagnosis.md",
+      "docs/psrl/vllm-and-training-parallelism/cache-memory-management.md": "docs/psrl/vllm-and-training-parallelism/inference-mechanisms.md",
+      "docs/tools/shell-python/bash-source-command.md": "docs/tools/shell-python/python-environments.md",
+      "docs/tools/shell-python/python-import-persistence.md": "docs/tools/shell-python/python-environments.md",
+      "docs/tools/shell-python/activate-script-notes.md": "docs/tools/shell-python/python-environments.md",
+      "docs/tools/codex/session-management/repair-map.md": "docs/tools/codex/session-management/session-recovery.md",
+      "docs/tools/codex/session-management/session-database-recovery.md": "docs/tools/codex/session-management/session-recovery.md",
+      "docs/tools/codex/session-management/bus-error.md": "docs/tools/codex/session-management/session-recovery.md",
+      "docs/tools/codex/session-management/log-repair.md": "docs/tools/codex/session-management/session-recovery.md",
+      "docs/tools/codex/session-management/session-usage.md": "docs/tools/codex/codex-session-management.md",
+      "docs/tools/claude-code/claude-code-run-terminal-commands.md": "docs/tools/claude-code/claude-code-usage.md",
+      "docs/tools/claude-code/claude-code-permission-modes.md": "docs/tools/claude-code/claude-code-usage.md",
+      "docs/examples/generative_reward_model/llm_as_a_judge.md": "docs/examples/generative_reward_model/index.md",
+      "docs/examples/generative_reward_model/on_policy_distillation.md": "docs/examples/generative_reward_model/index.md"
+    },
+    "groups": [
+      {
+        "destination": "docs/env-worker-deep-dive/knowledge/command-gpu-reservations.md",
+        "merged_from": [
+          "docs/env-worker-deep-dive/knowledge/command-gpu-reservations/experiments-and-diagnostics.md",
+          "docs/env-worker-deep-dive/knowledge/command-gpu-reservations/scheduling-proposal.md"
+        ]
+      },
+      {
+        "destination": "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry.md",
+        "merged_from": [
+          "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry/procfs-and-deployment.md",
+          "docs/env-worker-deep-dive/knowledge/gpu-jobs-and-task-telemetry/concurrency-design.md"
+        ]
+      },
+      {
+        "destination": "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending.md",
+        "merged_from": [
+          "docs/env-worker-deep-dive/knowledge/rollout-gpu-lending/unit-capacity.md"
+        ]
+      },
+      {
+        "destination": "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing.md",
+        "merged_from": [
+          "docs/env-worker-deep-dive/knowledge/vllm-env-opportunistic-sharing/compute-and-mps-studies.md"
+        ]
+      },
+      {
+        "destination": "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios.md",
+        "merged_from": [
+          "docs/env-worker-deep-dive/research-proposals/non-timing-gpu-scheduling-scenarios/experiments-and-findings.md"
+        ]
+      },
+      {
+        "destination": "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md",
+        "merged_from": [
+          "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/identity-and-accounting.md",
+          "docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity/cancellation-and-experiment.md"
+        ]
+      },
+      {
+        "destination": "docs/env-worker-deep-dive/milestones/env-status-and-roadmap.md",
+        "merged_from": [
+          "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/implementation-and-results.md",
+          "docs/env-worker-deep-dive/milestones/env-status-and-roadmap/planning-and-lifecycle.md"
+        ]
+      },
+      {
+        "destination": "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review.md",
+        "merged_from": [
+          "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/paired-results-and-review.md",
+          "docs/env-worker-deep-dive/experiments/router-paired-latency-and-design-review/remediation-and-handoff.md"
+        ]
+      },
+      {
+        "destination": "docs/psrl/dapo-training-collapse-diagnosis.md",
+        "merged_from": [
+          "docs/psrl/dapo-training-collapse-diagnosis/metrics-and-losses.md",
+          "docs/psrl/dapo-training-collapse-diagnosis/numerical-stability.md"
+        ]
+      },
+      {
+        "destination": "docs/psrl/vllm-and-training-parallelism/inference-mechanisms.md",
+        "merged_from": [
+          "docs/psrl/vllm-and-training-parallelism/cache-memory-management.md"
+        ]
+      },
+      {
+        "destination": "docs/tools/shell-python/python-environments.md",
+        "merged_from": [
+          "docs/tools/shell-python/bash-source-command.md",
+          "docs/tools/shell-python/python-import-persistence.md",
+          "docs/tools/shell-python/activate-script-notes.md"
+        ]
+      },
+      {
+        "destination": "docs/tools/codex/session-management/session-recovery.md",
+        "merged_from": [
+          "docs/tools/codex/session-management/repair-map.md",
+          "docs/tools/codex/session-management/session-database-recovery.md",
+          "docs/tools/codex/session-management/bus-error.md",
+          "docs/tools/codex/session-management/log-repair.md"
+        ]
+      },
+      {
+        "destination": "docs/tools/codex/codex-session-management.md",
+        "merged_from": [
+          "docs/tools/codex/session-management/session-usage.md"
+        ]
+      },
+      {
+        "destination": "docs/tools/claude-code/claude-code-usage.md",
+        "merged_from": [
+          "docs/tools/claude-code/claude-code-run-terminal-commands.md",
+          "docs/tools/claude-code/claude-code-permission-modes.md"
+        ]
+      },
+      {
+        "destination": "docs/examples/generative_reward_model/index.md",
+        "merged_from": [
+          "docs/examples/generative_reward_model/llm_as_a_judge.md",
+          "docs/examples/generative_reward_model/on_policy_distillation.md"
+        ]
+      }
+    ],
+    "concurrent_new_documents": [
+      "docs/env-worker-deep-dive/experiments/resident-compute-sharing.md",
+      "docs/env-worker-deep-dive/knowledge/mlgym-weight-scoring-and-agent-dapo.md",
+      "docs/env-worker-deep-dive/milestones/env-scheduling-big-map-brief.md",
+      "docs/env-worker-deep-dive/milestones/env-scheduling-big-map.md"
+    ],
+    "preservation_check": "对照整理前备份核对代码块与长段落；恢复审阅报告 11.1 至 11.4 的完整证据，删去重复状态提示及转发文字。原始数据与脚本未因合并删除。"
+  }
+}

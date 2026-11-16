@@ -1,0 +1,4867 @@
+{
+  "scope": "Research controller inside one real Env command. No new production Env policy or historical OFF run. Supplemental sustained competition, separate device and increased CPU quota.",
+  "portability": [
+    {
+      "case": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "flashinfer_wrapper_0af255",
+      "declared_hardware": [
+        "NVIDIA GeForce RTX 4090",
+        "NVIDIA A100",
+        "NVIDIA H20",
+        "NVIDIA H100",
+        "NVIDIA H200",
+        "NVIDIA B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.005642666559045513,
+      "passed": true
+    },
+    {
+      "case": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "gemini-2.5-pro_triton_uc5ufi",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.005808000064765413,
+      "passed": true
+    },
+    {
+      "case": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "gpt-5_triton_2f0daa",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.012282666905472675,
+      "passed": true
+    },
+    {
+      "case": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "gpt-o3_triton_38f281",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.012426666760196289,
+      "passed": true
+    },
+    {
+      "case": "74280ca1-cb97-433d-b8a9-c2aec2ae560c",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 64
+      },
+      "solution": "flashinfer_wrapper_0af255",
+      "declared_hardware": [
+        "NVIDIA GeForce RTX 4090",
+        "NVIDIA A100",
+        "NVIDIA H20",
+        "NVIDIA H100",
+        "NVIDIA H200",
+        "NVIDIA B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.003952569328248501,
+        "max_absolute_error": 0.001953125,
+        "extra": null
+      },
+      "warmup_ms": 0.006138666688154141,
+      "passed": true
+    },
+    {
+      "case": "74280ca1-cb97-433d-b8a9-c2aec2ae560c",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 64
+      },
+      "solution": "gemini-2.5-pro_triton_uc5ufi",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.005839999920378129,
+      "passed": true
+    },
+    {
+      "case": "74280ca1-cb97-433d-b8a9-c2aec2ae560c",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 64
+      },
+      "solution": "gpt-5_triton_2f0daa",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.006896551698446274,
+        "max_absolute_error": 0.001953125,
+        "extra": null
+      },
+      "warmup_ms": 0.011440000031143427,
+      "passed": true
+    },
+    {
+      "case": "74280ca1-cb97-433d-b8a9-c2aec2ae560c",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 64
+      },
+      "solution": "gpt-o3_triton_38f281",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.004926108289510012,
+        "max_absolute_error": 0.001953125,
+        "extra": null
+      },
+      "warmup_ms": 0.011610666910807291,
+      "passed": true
+    },
+    {
+      "case": "932f75f9-e29a-4502-8794-68347b591fd5",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 16254
+      },
+      "solution": "flashinfer_wrapper_0af255",
+      "declared_hardware": [
+        "NVIDIA GeForce RTX 4090",
+        "NVIDIA A100",
+        "NVIDIA H20",
+        "NVIDIA H100",
+        "NVIDIA H200",
+        "NVIDIA B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.007812499068677425,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.04374933366974195,
+      "passed": true
+    },
+    {
+      "case": "932f75f9-e29a-4502-8794-68347b591fd5",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 16254
+      },
+      "solution": "gemini-2.5-pro_triton_uc5ufi",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0078125,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.05143999929229418,
+      "passed": true
+    },
+    {
+      "case": "932f75f9-e29a-4502-8794-68347b591fd5",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 16254
+      },
+      "solution": "gpt-5_triton_2f0daa",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0078125,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.10062399879097939,
+      "passed": true
+    },
+    {
+      "case": "932f75f9-e29a-4502-8794-68347b591fd5",
+      "definition": "rmsnorm_h2048",
+      "axes": {
+        "batch_size": 16254
+      },
+      "solution": "gpt-o3_triton_38f281",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.007751937955617905,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.17625066389640173,
+      "passed": true
+    },
+    {
+      "case": "864d596c-a930-4fc4-b241-02e6a06e92cb",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "flashinfer_wrapper_2e27cd",
+      "declared_hardware": [
+        "NVIDIA GeForce RTX 4090",
+        "NVIDIA A100",
+        "NVIDIA H20",
+        "NVIDIA H100",
+        "NVIDIA H200",
+        "NVIDIA B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0066666631028056145,
+        "max_absolute_error": 0.0078125,
+        "extra": null
+      },
+      "warmup_ms": 0.005797333316877484,
+      "passed": true
+    },
+    {
+      "case": "864d596c-a930-4fc4-b241-02e6a06e92cb",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "gemini-2.5-pro_triton_0owo26",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.017013333427409332,
+      "passed": true
+    },
+    {
+      "case": "864d596c-a930-4fc4-b241-02e6a06e92cb",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "gpt-5_triton_21bcc2",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.008943999962260326,
+      "passed": true
+    },
+    {
+      "case": "864d596c-a930-4fc4-b241-02e6a06e92cb",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "gpt-o3_triton_793f87",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.008890666688481966,
+      "passed": true
+    },
+    {
+      "case": "818219cc-f770-4957-84cd-cafdfb53e64b",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 79
+      },
+      "solution": "flashinfer_wrapper_2e27cd",
+      "declared_hardware": [
+        "NVIDIA GeForce RTX 4090",
+        "NVIDIA A100",
+        "NVIDIA H20",
+        "NVIDIA H100",
+        "NVIDIA H200",
+        "NVIDIA B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0078125,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.0065546666737645864,
+      "passed": true
+    },
+    {
+      "case": "818219cc-f770-4957-84cd-cafdfb53e64b",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 79
+      },
+      "solution": "gemini-2.5-pro_triton_0owo26",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.004854368511587381,
+        "max_absolute_error": 0.00048828125,
+        "extra": null
+      },
+      "warmup_ms": 0.02799466686944167,
+      "passed": true
+    },
+    {
+      "case": "818219cc-f770-4957-84cd-cafdfb53e64b",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 79
+      },
+      "solution": "gpt-5_triton_21bcc2",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.004878048785030842,
+        "max_absolute_error": 0.00390625,
+        "extra": null
+      },
+      "warmup_ms": 0.008880000251034895,
+      "passed": true
+    },
+    {
+      "case": "818219cc-f770-4957-84cd-cafdfb53e64b",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 79
+      },
+      "solution": "gpt-o3_triton_793f87",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.004878048785030842,
+        "max_absolute_error": 0.00390625,
+        "extra": null
+      },
+      "warmup_ms": 0.008800000262757143,
+      "passed": true
+    },
+    {
+      "case": "841b0afa-80fa-449a-9e1d-f294da92d02f",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 14509
+      },
+      "solution": "flashinfer_wrapper_2e27cd",
+      "declared_hardware": [
+        "NVIDIA GeForce RTX 4090",
+        "NVIDIA A100",
+        "NVIDIA H20",
+        "NVIDIA H100",
+        "NVIDIA H200",
+        "NVIDIA B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0078125,
+        "max_absolute_error": 0.0625,
+        "extra": null
+      },
+      "warmup_ms": 0.07406400019923846,
+      "passed": true
+    },
+    {
+      "case": "841b0afa-80fa-449a-9e1d-f294da92d02f",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 14509
+      },
+      "solution": "gemini-2.5-pro_triton_0owo26",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0078125,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.0743199996650219,
+      "passed": true
+    },
+    {
+      "case": "841b0afa-80fa-449a-9e1d-f294da92d02f",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 14509
+      },
+      "solution": "gpt-5_triton_21bcc2",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0078125,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.11852800101041794,
+      "passed": true
+    },
+    {
+      "case": "841b0afa-80fa-449a-9e1d-f294da92d02f",
+      "definition": "rmsnorm_h4096",
+      "axes": {
+        "batch_size": 14509
+      },
+      "solution": "gpt-o3_triton_793f87",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0078125,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.11855466788013776,
+      "passed": true
+    },
+    {
+      "case": "1526086b-0c06-41a1-b7b9-47b5cfc830d7",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "flashinfer_wrapper_74a870",
+      "declared_hardware": [
+        "NVIDIA GeForce RTX 4090",
+        "NVIDIA A100",
+        "NVIDIA H20",
+        "NVIDIA H100",
+        "NVIDIA H200",
+        "NVIDIA B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.0057920000205437345,
+      "passed": true
+    },
+    {
+      "case": "1526086b-0c06-41a1-b7b9-47b5cfc830d7",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "gemini-2.5-pro_triton_xtl8hx",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.006128000017876427,
+      "passed": true
+    },
+    {
+      "case": "1526086b-0c06-41a1-b7b9-47b5cfc830d7",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "gpt-5_triton_679e13",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.012858666790028414,
+      "passed": true
+    },
+    {
+      "case": "1526086b-0c06-41a1-b7b9-47b5cfc830d7",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 1
+      },
+      "solution": "gpt-o3_triton_2e18c2",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.005904000097264846,
+      "passed": true
+    },
+    {
+      "case": "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 64
+      },
+      "solution": "flashinfer_wrapper_74a870",
+      "declared_hardware": [
+        "NVIDIA GeForce RTX 4090",
+        "NVIDIA A100",
+        "NVIDIA H20",
+        "NVIDIA H100",
+        "NVIDIA H200",
+        "NVIDIA B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.006849315017461777,
+        "max_absolute_error": 0.0078125,
+        "extra": null
+      },
+      "warmup_ms": 0.006447999893377225,
+      "passed": true
+    },
+    {
+      "case": "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 64
+      },
+      "solution": "gemini-2.5-pro_triton_xtl8hx",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.005025125574320555,
+        "max_absolute_error": 0.00390625,
+        "extra": null
+      },
+      "warmup_ms": 0.006282666542877753,
+      "passed": true
+    },
+    {
+      "case": "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 64
+      },
+      "solution": "gpt-5_triton_679e13",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.01236266673853,
+      "passed": true
+    },
+    {
+      "case": "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 64
+      },
+      "solution": "gpt-o3_triton_2e18c2",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.005025125574320555,
+        "max_absolute_error": 0.00390625,
+        "extra": null
+      },
+      "warmup_ms": 0.006010666722431779,
+      "passed": true
+    },
+    {
+      "case": "724a6dfa-06ff-45b7-9972-d174a0e23737",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 16254
+      },
+      "solution": "flashinfer_wrapper_74a870",
+      "declared_hardware": [
+        "NVIDIA GeForce RTX 4090",
+        "NVIDIA A100",
+        "NVIDIA H20",
+        "NVIDIA H100",
+        "NVIDIA H200",
+        "NVIDIA B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0078125,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.0823626679678758,
+      "passed": true
+    },
+    {
+      "case": "724a6dfa-06ff-45b7-9972-d174a0e23737",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 16254
+      },
+      "solution": "gemini-2.5-pro_triton_xtl8hx",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0078125,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.06667200103402138,
+      "passed": true
+    },
+    {
+      "case": "724a6dfa-06ff-45b7-9972-d174a0e23737",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 16254
+      },
+      "solution": "gpt-5_triton_679e13",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0078125,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.20308266828457514,
+      "passed": true
+    },
+    {
+      "case": "724a6dfa-06ff-45b7-9972-d174a0e23737",
+      "definition": "fused_add_rmsnorm_h2048",
+      "axes": {
+        "batch_size": 16254
+      },
+      "solution": "gpt-o3_triton_2e18c2",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0078125,
+        "max_absolute_error": 0.03125,
+        "extra": null
+      },
+      "warmup_ms": 0.06659733379880588,
+      "passed": true
+    },
+    {
+      "case": "91e43228-c0a7-457e-9424-1d3461621362",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 1
+      },
+      "solution": "gemini-2.5-pro_triton_kmw3sz",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.023573333397507668,
+      "passed": true
+    },
+    {
+      "case": "91e43228-c0a7-457e-9424-1d3461621362",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 1
+      },
+      "solution": "gpt-5-2025-08-07_triton_82d3cf",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.02415466619034608,
+      "passed": true
+    },
+    {
+      "case": "91e43228-c0a7-457e-9424-1d3461621362",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 1
+      },
+      "solution": "gpt-o3_triton_a796ab",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.08713600039482117,
+      "passed": true
+    },
+    {
+      "case": "91e43228-c0a7-457e-9424-1d3461621362",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 1
+      },
+      "solution": "torch_matmul_317103",
+      "declared_hardware": [
+        "NVIDIA_B200",
+        "NVIDIA_H100",
+        "NVIDIA_A100",
+        "CPU"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.008746666833758354,
+      "passed": true
+    },
+    {
+      "case": "9c00593a-4795-4e11-880b-b382efd55be9",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 64
+      },
+      "solution": "gemini-2.5-pro_triton_kmw3sz",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.023391999925176304,
+      "passed": true
+    },
+    {
+      "case": "9c00593a-4795-4e11-880b-b382efd55be9",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 64
+      },
+      "solution": "gpt-5-2025-08-07_triton_82d3cf",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.024298666665951412,
+      "passed": true
+    },
+    {
+      "case": "9c00593a-4795-4e11-880b-b382efd55be9",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 64
+      },
+      "solution": "gpt-o3_triton_a796ab",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.08754666770497958,
+      "passed": true
+    },
+    {
+      "case": "9c00593a-4795-4e11-880b-b382efd55be9",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 64
+      },
+      "solution": "torch_matmul_317103",
+      "declared_hardware": [
+        "NVIDIA_B200",
+        "NVIDIA_H100",
+        "NVIDIA_A100",
+        "CPU"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.009135999872038761,
+      "passed": true
+    },
+    {
+      "case": "c49c96bd-bee4-479b-8000-3e6bf297aef1",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 16294
+      },
+      "solution": "gemini-2.5-pro_triton_kmw3sz",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.08076799909273784,
+      "passed": true
+    },
+    {
+      "case": "c49c96bd-bee4-479b-8000-3e6bf297aef1",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 16294
+      },
+      "solution": "gpt-5-2025-08-07_triton_82d3cf",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.08452266454696655,
+      "passed": true
+    },
+    {
+      "case": "c49c96bd-bee4-479b-8000-3e6bf297aef1",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 16294
+      },
+      "solution": "gpt-o3_triton_a796ab",
+      "declared_hardware": [
+        "B200"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.2115466669201851,
+      "passed": true
+    },
+    {
+      "case": "c49c96bd-bee4-479b-8000-3e6bf297aef1",
+      "definition": "gemm_n128_k2048",
+      "axes": {
+        "M": 16294
+      },
+      "solution": "torch_matmul_317103",
+      "declared_hardware": [
+        "NVIDIA_B200",
+        "NVIDIA_H100",
+        "NVIDIA_A100",
+        "CPU"
+      ],
+      "correctness": {
+        "max_relative_error": 0.0,
+        "max_absolute_error": 0.0,
+        "extra": null
+      },
+      "warmup_ms": 0.07058133433262508,
+      "passed": true
+    }
+  ],
+  "groups": [
+    {
+      "block": 0,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 1,
+      "policy": "adaptive",
+      "cases": {
+        "74280ca1-cb97-433d-b8a9-c2aec2ae560c": {
+          "flashinfer_wrapper_0af255": [
+            0.006042666655654709,
+            0.006074666744098067,
+            0.006080000040431817,
+            0.006080000040431817,
+            0.0061440000620981055
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.005887999975432952,
+            0.005941333326821526,
+            0.005888000053043167,
+            0.005920000063876311,
+            0.005904000019654632
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.011354666668921709,
+            0.011349333139757315,
+            0.01135466651370128,
+            0.011338666547089815,
+            0.011370666790753603
+          ],
+          "gpt-o3_triton_38f281": [
+            0.01163200025136272,
+            0.011610666755586863,
+            0.011594666788975397,
+            0.011632000096142292,
+            0.011621333658695221
+          ]
+        },
+        "818219cc-f770-4957-84cd-cafdfb53e64b": {
+          "flashinfer_wrapper_2e27cd": [
+            0.006367999905099471,
+            0.006367999982709686
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.01505600024635593,
+            0.01517333323135972
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.008837333259483179,
+            0.008821333137651285
+          ],
+          "gpt-o3_triton_793f87": [
+            0.008789333359648785,
+            0.008783999985704819
+          ]
+        },
+        "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc": {
+          "flashinfer_wrapper_74a870": [
+            0.006458666641265154,
+            0.006432000081986189,
+            0.006437333300709724,
+            0.00643733322309951,
+            0.006442666674653689
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.006341333268210292,
+            0.006303999883433183,
+            0.006346666486933827,
+            0.0063146665537108975,
+            0.006298666664709647
+          ],
+          "gpt-5_triton_679e13": [
+            0.01262399988869826,
+            0.012597333329419294,
+            0.012607999766866365,
+            0.01260266670336326,
+            0.01259199995547533
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.006058666699876388,
+            0.006090666710709532,
+            0.006106666677320997,
+            0.0060533333259324236,
+            0.0060693334477643175
+          ]
+        },
+        "9c00593a-4795-4e11-880b-b382efd55be9": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.02354133315384388,
+            0.023472000223894913
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.024320000782608986,
+            0.024282667165001232
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.08753600095709164,
+            0.08755733196934064
+          ],
+          "torch_matmul_317103": [
+            0.009098666564871868,
+            0.009109333157539368
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 56,
+      "correctness_s": 2.8676644284278154,
+      "feedback_s": 3.5820272117853165,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.68080221861601,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.678383868187666,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.679533367976546,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.675788056105375,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.68180411309004,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.683095600456,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.6744075845927,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.67691213823855,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 59.68385937809944,
+      "switch_wait_s": 0.00985744222998619,
+      "protected_entries": 1,
+      "adaptive_unresolved": [
+        "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc",
+        "74280ca1-cb97-433d-b8a9-c2aec2ae560c"
+      ],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 3665821696
+    },
+    {
+      "block": 0,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 1,
+      "policy": "shared",
+      "cases": {
+        "74280ca1-cb97-433d-b8a9-c2aec2ae560c": {
+          "flashinfer_wrapper_0af255": [
+            0.006016000096375744,
+            0.006064000151430567,
+            0.006058666699876388,
+            0.006021333315099279,
+            0.006047999951988459
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.005642666636655728,
+            0.005658666603267193,
+            0.0056319998887677985,
+            0.005658666680877407,
+            0.005648000010599692
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.01124800027658542,
+            0.011253333340088526,
+            0.011263999777535597,
+            0.011216000032921633,
+            0.011231999844312668
+          ],
+          "gpt-o3_triton_38f281": [
+            0.01148800008619825,
+            0.01148800024141868,
+            0.011514666955918074,
+            0.011472000119586786,
+            0.011514666645477215
+          ]
+        },
+        "818219cc-f770-4957-84cd-cafdfb53e64b": {
+          "flashinfer_wrapper_2e27cd": [
+            0.006325333223988612,
+            0.006351999938488007,
+            0.006341333345820506,
+            0.006362666686375936,
+            0.0063680000603199005
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.006133333469430606,
+            0.006160000028709571,
+            0.006117333347598712,
+            0.006138666765764356,
+            0.006149333358431856
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.008704000152647495,
+            0.0086666668454806,
+            0.008613333416481813,
+            0.008666666690260172,
+            0.008693333559979996
+          ],
+          "gpt-o3_triton_793f87": [
+            0.008650667034089565,
+            0.00872000027447939,
+            0.0086666668454806,
+            0.00867733359336853,
+            0.008661333471536636
+          ]
+        },
+        "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc": {
+          "flashinfer_wrapper_74a870": [
+            0.00642133333409826,
+            0.00642133333409826,
+            0.0063999999935428304,
+            0.0064053333674867945,
+            0.006415999960154295
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.006021333392709494,
+            0.006016000173985958,
+            0.006021333470319708,
+            0.006010666722431779,
+            0.006031999985376994
+          ],
+          "gpt-5_triton_679e13": [
+            0.012341333242754141,
+            0.012378666705141464,
+            0.012336000024030605,
+            0.01233066680530707,
+            0.012341333242754141
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.0058666666348775225,
+            0.005877333382765452,
+            0.0058666666348775225,
+            0.005882666601488988,
+            0.005872000008821487
+          ]
+        },
+        "9c00593a-4795-4e11-880b-b382efd55be9": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.023258666818340618,
+            0.02324800007045269,
+            0.02317866651962201,
+            0.023231999948620796,
+            0.023221333200732868
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.024005333582560223,
+            0.02395733321706454,
+            0.024000000208616257,
+            0.024016000020007294,
+            0.024053333327174187
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.08763199920455615,
+            0.08757333209117253,
+            0.08749866982301076,
+            0.08755199859539668,
+            0.08762133245666821
+          ],
+          "torch_matmul_317103": [
+            0.009119999594986439,
+            0.009077333534757296,
+            0.009093333190927902,
+            0.009088000282645226,
+            0.009093333190927902
+          ]
+        }
+      },
+      "background_active_at_samples": 80,
+      "evaluations": 80,
+      "correctness_s": 2.867705527693033,
+      "feedback_s": 16.791079878807068,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.963698763400316,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.98236603103578,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.97221819497645,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.98469222150743,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.96479214169085,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.978473260998726,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.96712950989604,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.98093105480075,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 59.985662357881665,
+      "switch_wait_s": 0,
+      "protected_entries": 0,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 3665821696
+    },
+    {
+      "block": 0,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 1,
+      "policy": "group5",
+      "cases": {
+        "74280ca1-cb97-433d-b8a9-c2aec2ae560c": {
+          "flashinfer_wrapper_0af255": [
+            0.006085333414375782,
+            0.0060640000738203526,
+            0.006090666710709532,
+            0.006085333336765568,
+            0.006080000040431817
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.005882666756709416,
+            0.005909333315988381,
+            0.005818666735043128,
+            0.005909333315988381,
+            0.005813333283488949
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.011397333505252997,
+            0.011317333516975244,
+            0.011365333416809639,
+            0.011328000109642744,
+            0.011381333538641533
+          ],
+          "gpt-o3_triton_38f281": [
+            0.011605333381642899,
+            0.011600000162919363,
+            0.011647999907533327,
+            0.011642666844030222,
+            0.011610666755586863
+          ]
+        },
+        "818219cc-f770-4957-84cd-cafdfb53e64b": {
+          "flashinfer_wrapper_2e27cd": [
+            0.006352000016098221,
+            0.006373333279043436,
+            0.006378666652987401,
+            0.006346666564544042,
+            0.00638933340087533
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.01534933348496755,
+            0.015466666780412197,
+            0.01536000007763505,
+            0.016127999871969223,
+            0.015792000107467175
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.008837333414703608,
+            0.008757333271205425,
+            0.008858666755259037,
+            0.008858666910479466,
+            0.008858666444818178
+          ],
+          "gpt-o3_triton_793f87": [
+            0.008736000085870424,
+            0.008826666666815678,
+            0.00876266664514939,
+            0.008810667010645071,
+            0.00875200005248189
+          ]
+        },
+        "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc": {
+          "flashinfer_wrapper_74a870": [
+            0.006442666674653689,
+            0.006432000004375975,
+            0.006447999893377225,
+            0.006447999970987439,
+            0.006463999859988689
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.006314666631321113,
+            0.006335999971876542,
+            0.006319999850044648,
+            0.006309333257377148,
+            0.006287999916821718
+          ],
+          "gpt-5_triton_679e13": [
+            0.012608000077307224,
+            0.012650666758418083,
+            0.012645333384474119,
+            0.012591999800254902,
+            0.01258133336280783
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.0060266666890432434,
+            0.006048000107208888,
+            0.006053333403542638,
+            0.006026666766653459,
+            0.0060533333259324236
+          ]
+        },
+        "9c00593a-4795-4e11-880b-b382efd55be9": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.02354133315384388,
+            0.023514666905005772,
+            0.023551999901731808,
+            0.023498666783173878,
+            0.023535999779899914
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.0243306669096152,
+            0.024288000538945198,
+            0.024255999674399693,
+            0.024357333158453304,
+            0.024346666721006233
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.08750933408737183,
+            0.08747733632723491,
+            0.0875786654651165,
+            0.08755733321110408,
+            0.08755200107892354
+          ],
+          "torch_matmul_317103": [
+            0.009168000115702549,
+            0.009210666486372551,
+            0.009082666598260403,
+            0.009109333467980226,
+            0.009093333346148333
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 80,
+      "correctness_s": 2.8641028497368097,
+      "feedback_s": 3.9268009029328823,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.96000982634723,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.95760748721659,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.9587274286896,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.95504435710609,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.9512501899153,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.961096584796906,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.95364363305271,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.95617069117725,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 59.961714424192905,
+      "switch_wait_s": 0.009762411937117577,
+      "protected_entries": 1,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 3665821696
+    },
+    {
+      "block": 0,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 1,
+      "policy": "exclusive",
+      "cases": {
+        "74280ca1-cb97-433d-b8a9-c2aec2ae560c": {
+          "flashinfer_wrapper_0af255": [
+            0.0060906666330993176,
+            0.006053333403542638,
+            0.006090666788319747,
+            0.006064000151430567,
+            0.0060693334477643175
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.005866666712487738,
+            0.005904000019654632,
+            0.005818666735043128,
+            0.00597333333765467,
+            0.005872000008821487
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.011391999820868174,
+            0.01130133339514335,
+            0.011397333505252997,
+            0.011306666769087315,
+            0.011391999820868174
+          ],
+          "gpt-o3_triton_38f281": [
+            0.01159466647853454,
+            0.011637333314865828,
+            0.011568000074476004,
+            0.011600000318139791,
+            0.011584000041087469
+          ]
+        },
+        "818219cc-f770-4957-84cd-cafdfb53e64b": {
+          "flashinfer_wrapper_2e27cd": [
+            0.006399999915932615,
+            0.006362666608765721,
+            0.0063839998717109365,
+            0.006373333279043436,
+            0.006389333245654901
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.014885333366692066,
+            0.015322666615247726,
+            0.014624000216523806,
+            0.015584000075856844,
+            0.015311999867359797
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.008831999885539213,
+            0.008826666822036108,
+            0.008874666721870502,
+            0.008821333137651285,
+            0.008864000129203001
+          ],
+          "gpt-o3_triton_793f87": [
+            0.008768000019093355,
+            0.008789333204428354,
+            0.008768000019093355,
+            0.008805333481480679,
+            0.008725333337982496
+          ]
+        },
+        "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc": {
+          "flashinfer_wrapper_74a870": [
+            0.006485333355764548,
+            0.006496000103652477,
+            0.006442666674653689,
+            0.006474666607876618,
+            0.006448000048597653
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.006325333379209042,
+            0.006314666631321113,
+            0.006362666531155507,
+            0.006319999927654862,
+            0.006330666597932577
+          ],
+          "gpt-5_triton_679e13": [
+            0.012586666581531366,
+            0.012629333262642225,
+            0.01265599982192119,
+            0.01261333329603076,
+            0.01260266654814283
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.006053333403542638,
+            0.0061013333809872465,
+            0.0060533333259324236,
+            0.0060906666330993176,
+            0.0060906666330993176
+          ]
+        },
+        "9c00593a-4795-4e11-880b-b382efd55be9": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.02356266664961974,
+            0.023514666905005772,
+            0.02351999965806802,
+            0.023504000157117844,
+            0.023514666284124058
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.02432000016172727,
+            0.02431999985128641,
+            0.024293333292007446,
+            0.024346666410565376,
+            0.024378666654229164
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.08753599971532822,
+            0.08753599971532822,
+            0.0875626653432846,
+            0.08752533669273059,
+            0.08752533172567685
+          ],
+          "torch_matmul_317103": [
+            0.009093333035707474,
+            0.009119999905427298,
+            0.009109333157539368,
+            0.009130666342874369,
+            0.009103999938815832
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 80,
+      "correctness_s": 0.01719096675515175,
+      "feedback_s": 1.0805534906685352,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.93122063204646,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.93990134820342,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.92991837859154,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.9348112847656,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.93228479474783,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.94224824756384,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.92488454841077,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.93601216003299,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 59.94314083084464,
+      "switch_wait_s": 0.009811246767640114,
+      "protected_entries": 1,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 3665821696
+    },
+    {
+      "block": 0,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 1,
+      "policy": "group2",
+      "cases": {
+        "74280ca1-cb97-433d-b8a9-c2aec2ae560c": {
+          "flashinfer_wrapper_0af255": [
+            0.006031999985376994,
+            0.0060746668217082815
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.005903999942044417,
+            0.005925333360210061
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.011413333316644033,
+            0.011370666325092316
+          ],
+          "gpt-o3_triton_38f281": [
+            0.011562666855752468,
+            0.011600000162919363
+          ]
+        },
+        "818219cc-f770-4957-84cd-cafdfb53e64b": {
+          "flashinfer_wrapper_2e27cd": [
+            0.006383999949321151,
+            0.00640533328987658
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.015322666615247726,
+            0.015210666693747044
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.008821333448092142,
+            0.008789333359648785
+          ],
+          "gpt-o3_triton_793f87": [
+            0.00880533317103982,
+            0.008832000195980072
+          ]
+        },
+        "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc": {
+          "flashinfer_wrapper_74a870": [
+            0.006415999960154295,
+            0.006447999893377225
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.006309333257377148,
+            0.006314666631321113
+          ],
+          "gpt-5_triton_679e13": [
+            0.012645333384474119,
+            0.012650666447977224
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.006042666733264923,
+            0.006053333481152852
+          ]
+        },
+        "9c00593a-4795-4e11-880b-b382efd55be9": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.023551999901731808,
+            0.023472000534335773
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.024288000538945198,
+            0.024293333912889164
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.08753066758314769,
+            0.08754666770497958
+          ],
+          "torch_matmul_317103": [
+            0.009130666342874369,
+            0.009125332968930403
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 32,
+      "correctness_s": 2.8841006476432085,
+      "feedback_s": 3.325963692739606,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.30505462735891,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.33881906978786,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.303764251992106,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.342536102980375,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.30611986853182,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.334977922961116,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.31474278867245,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.34121108055115,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 59.343453116714954,
+      "switch_wait_s": 0.0097710732370615,
+      "protected_entries": 1,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 3665821696
+    },
+    {
+      "block": 1,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 2,
+      "policy": "group5",
+      "cases": {
+        "932f75f9-e29a-4502-8794-68347b591fd5": {
+          "flashinfer_wrapper_0af255": [
+            0.04385599990685781,
+            0.04375999917586645,
+            0.043909333646297455,
+            0.043829333037137985,
+            0.04386133328080177
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.05150933315356573,
+            0.05137066667278608,
+            0.05150400102138519,
+            0.05153066664934158,
+            0.05159999926884969
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.10060266529520352,
+            0.10062933216492335,
+            0.10060799866914749,
+            0.10063999891281128,
+            0.10068799927830696
+          ],
+          "gpt-o3_triton_38f281": [
+            0.1760800008972486,
+            0.17613333215316138,
+            0.1761226678888003,
+            0.17610133439302444,
+            0.1761013319094976
+          ]
+        },
+        "841b0afa-80fa-449a-9e1d-f294da92d02f": {
+          "flashinfer_wrapper_2e27cd": [
+            0.0737813338637352,
+            0.0738453318675359,
+            0.07385066524147987,
+            0.07385599861542384,
+            0.07392533247669537
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.07423466568191846,
+            0.07419199869036674,
+            0.07420799881219864,
+            0.07423466568191846,
+            0.0742453324298064
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.11859733487168948,
+            0.11857600137591362,
+            0.11859733487168948,
+            0.11862933511535327,
+            0.11848533401886623
+          ],
+          "gpt-o3_triton_793f87": [
+            0.11856000125408173,
+            0.1185493345061938,
+            0.11853333438436191,
+            0.11859200149774551,
+            0.11853333438436191
+          ]
+        },
+        "724a6dfa-06ff-45b7-9972-d174a0e23737": {
+          "flashinfer_wrapper_74a870": [
+            0.08221866438786189,
+            0.08240533247590065,
+            0.08231999849279721,
+            0.08236799885829289,
+            0.08232533186674118
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.06653866668542226,
+            0.06653866668542226,
+            0.06652799993753433,
+            0.06659200042486191,
+            0.06660266717274983
+          ],
+          "gpt-5_triton_679e13": [
+            0.20327999939521155,
+            0.20350400110085806,
+            0.20334932953119278,
+            0.20345599949359894,
+            0.20339733610550562
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.0664106657107671,
+            0.06638399884104729,
+            0.0664106657107671,
+            0.06638933221499126,
+            0.06648533294598262
+          ]
+        },
+        "c49c96bd-bee4-479b-8000-3e6bf297aef1": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.0804906686147054,
+            0.08073066547513008,
+            0.08062933633724849,
+            0.08079466596245766,
+            0.08052800223231316
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.08410666634639104,
+            0.08428800106048584,
+            0.08432000130414963,
+            0.08424000069499016,
+            0.084111999720335
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.21096533040205637,
+            0.21115199973185858,
+            0.21138666570186615,
+            0.2108906681338946,
+            0.2112319990992546
+          ],
+          "torch_matmul_317103": [
+            0.07031466563542683,
+            0.07052266721924146,
+            0.07053866734107335,
+            0.07053866734107335,
+            0.07046400010585785
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 80,
+      "correctness_s": 2.9403195716440678,
+      "feedback_s": 5.382779777050018,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.47508864663541,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.47268628701568,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.47380264289677,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.4787510111928,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.47616703622043,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.477381721138954,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.46875612065196,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.47985611483455,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 61.48060638457537,
+      "switch_wait_s": 0.009775660932064056,
+      "protected_entries": 1,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 4380950528
+    },
+    {
+      "block": 1,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 2,
+      "policy": "shared",
+      "cases": {
+        "932f75f9-e29a-4502-8794-68347b591fd5": {
+          "flashinfer_wrapper_0af255": [
+            0.04393066714207331,
+            0.04385066653291384,
+            0.04372800017396609,
+            0.043909333646297455,
+            0.04375999917586645
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.05155200014511744,
+            0.05156800026694933,
+            0.051434667160113655,
+            0.05144533390800158,
+            0.051552001386880875
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.10078400000929832,
+            0.10077866663535436,
+            0.10076799988746643,
+            0.10075199976563454,
+            0.10067733253041904
+          ],
+          "gpt-o3_triton_38f281": [
+            0.17622933288415274,
+            0.17617066701253256,
+            0.17620265980561575,
+            0.17618133127689362,
+            0.17620799938837686
+          ]
+        },
+        "841b0afa-80fa-449a-9e1d-f294da92d02f": {
+          "flashinfer_wrapper_2e27cd": [
+            0.07376000036795934,
+            0.07387733211119969,
+            0.0738613319893678,
+            0.07381866748134296,
+            0.07382399837176006
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.07421866556008656,
+            0.0742293323079745,
+            0.07426133255163829,
+            0.07427199929952621,
+            0.0742453324298064
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.11876266822218895,
+            0.1185493345061938,
+            0.11859733487168948,
+            0.11873600259423256,
+            0.11869333560268085
+          ],
+          "gpt-o3_triton_793f87": [
+            0.11870933572451274,
+            0.11865600198507309,
+            0.1187146690984567,
+            0.11877866834402084,
+            0.11873600259423256
+          ]
+        },
+        "724a6dfa-06ff-45b7-9972-d174a0e23737": {
+          "flashinfer_wrapper_74a870": [
+            0.08229333162307739,
+            0.08234666536251704,
+            0.08229333162307739,
+            0.08238933235406876,
+            0.08234666536251704
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.06652799993753433,
+            0.06647999957203865,
+            0.06650133306781451,
+            0.06660266717274983,
+            0.06646399945020676
+          ],
+          "gpt-5_triton_679e13": [
+            0.20348266760508218,
+            0.20354133596022925,
+            0.20361066609621048,
+            0.20349866648515066,
+            0.20357333620389303
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.06653866668542226,
+            0.06650133306781451,
+            0.06646933282415073,
+            0.06646933282415073,
+            0.06652799993753433
+          ]
+        },
+        "c49c96bd-bee4-479b-8000-3e6bf297aef1": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.0809599980711937,
+            0.08091200018922488,
+            0.0808639998237292,
+            0.08105066542824109,
+            0.08089066420992215
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.08450133353471756,
+            0.08446933329105377,
+            0.08442666629950206,
+            0.08431466793020566,
+            0.08460266763965289
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.21199466536442438,
+            0.21222933381795883,
+            0.2120373323559761,
+            0.21206933011611304,
+            0.21198933074871698
+          ],
+          "torch_matmul_317103": [
+            0.07070400193333626,
+            0.07065600156784058,
+            0.07056533421079318,
+            0.0706506681938966,
+            0.07061333457628886
+          ]
+        }
+      },
+      "background_active_at_samples": 80,
+      "evaluations": 80,
+      "correctness_s": 2.9414143208414316,
+      "feedback_s": 22.91760030388832,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.566522436216474,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.56411201506853,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.56523756869137,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.56154525838792,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.557749912142754,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.559022730216384,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.5601547434926,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.56268856301904,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 61.56738596595824,
+      "switch_wait_s": 0,
+      "protected_entries": 0,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 4380950528
+    },
+    {
+      "block": 1,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 2,
+      "policy": "adaptive",
+      "cases": {
+        "932f75f9-e29a-4502-8794-68347b591fd5": {
+          "flashinfer_wrapper_0af255": [
+            0.04387733340263367,
+            0.04389866689840952
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.0515893337627252,
+            0.051536000023285546
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.1006666657825311,
+            0.10068799927830696
+          ],
+          "gpt-o3_triton_38f281": [
+            0.17643733322620392,
+            0.17617066701253256
+          ]
+        },
+        "841b0afa-80fa-449a-9e1d-f294da92d02f": {
+          "flashinfer_wrapper_2e27cd": [
+            0.07373333225647609,
+            0.0738613319893678,
+            0.07387733211119969,
+            0.07392533247669537,
+            0.0738453318675359
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.07429333279530208,
+            0.07429333279530208,
+            0.0742453324298064,
+            0.07423999905586243,
+            0.07428799942135811
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.11864533523718516,
+            0.11855466788013776,
+            0.11856000125408173,
+            0.11861333499352138,
+            0.11857066800196965
+          ],
+          "gpt-o3_triton_793f87": [
+            0.11861866836746533,
+            0.11858133474985759,
+            0.1184586671491464,
+            0.11858666812380154,
+            0.11859733487168948
+          ]
+        },
+        "724a6dfa-06ff-45b7-9972-d174a0e23737": {
+          "flashinfer_wrapper_74a870": [
+            0.08236799885829289,
+            0.08241599922378857,
+            0.08238933235406876,
+            0.08236799885829289,
+            0.0823359986146291
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.06661333392063777,
+            0.06657066692908604,
+            0.06657600030303001,
+            0.06664000079035759,
+            0.06661866729458173
+          ],
+          "gpt-5_triton_679e13": [
+            0.2036960000793139,
+            0.20333866775035858,
+            0.2034560019771258,
+            0.20347200085719427,
+            0.20337066799402237
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.06652799993753433,
+            0.06642133245865504,
+            0.0665333333114783,
+            0.06646933282415073,
+            0.06641599908471107
+          ]
+        },
+        "c49c96bd-bee4-479b-8000-3e6bf297aef1": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.08076799660921097,
+            0.08049600198864937
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.08427200093865395,
+            0.0840373324851195
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.21128533283869425,
+            0.21131733059883118
+          ],
+          "torch_matmul_317103": [
+            0.07037866612275441,
+            0.07032533238331477
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 56,
+      "correctness_s": 2.9422920271754265,
+      "feedback_s": 4.658083867281675,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.74399151839316,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.75139436684549,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.74271492101252,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.7488132994622,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.74507699534297,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.74631818942726,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.75242676585913,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.74997209943831,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 60.75316611677408,
+      "switch_wait_s": 0.009754862636327744,
+      "protected_entries": 1,
+      "adaptive_unresolved": [
+        "724a6dfa-06ff-45b7-9972-d174a0e23737",
+        "841b0afa-80fa-449a-9e1d-f294da92d02f"
+      ],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 4380950528
+    },
+    {
+      "block": 1,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 2,
+      "policy": "group2",
+      "cases": {
+        "932f75f9-e29a-4502-8794-68347b591fd5": {
+          "flashinfer_wrapper_0af255": [
+            0.04381333291530609,
+            0.04384533315896988
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.0515733336408933,
+            0.05156800026694933
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.10070399940013885,
+            0.10073066626985867
+          ],
+          "gpt-o3_triton_38f281": [
+            0.17617066701253256,
+            0.17620799690485
+          ]
+        },
+        "841b0afa-80fa-449a-9e1d-f294da92d02f": {
+          "flashinfer_wrapper_2e27cd": [
+            0.07385066524147987,
+            0.07394666597247124
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.07429333279530208,
+            0.0743199996650219
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.11852800101041794,
+            0.11859200149774551
+          ],
+          "gpt-o3_triton_793f87": [
+            0.11856000125408173,
+            0.1185493345061938
+          ]
+        },
+        "724a6dfa-06ff-45b7-9972-d174a0e23737": {
+          "flashinfer_wrapper_74a870": [
+            0.08238933235406876,
+            0.082351998736461
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.06657600030303001,
+            0.0665333333114783
+          ],
+          "gpt-5_triton_679e13": [
+            0.2034133349855741,
+            0.2033013328909874
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.06648533294598262,
+            0.06651733318964641
+          ]
+        },
+        "c49c96bd-bee4-479b-8000-3e6bf297aef1": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.08109866579373677,
+            0.08052266885836919
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.08443733553091685,
+            0.08410133297244708
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.2115359976887703,
+            0.211386668185393
+          ],
+          "torch_matmul_317103": [
+            0.0709440012772878,
+            0.07036799937486649
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 32,
+      "correctness_s": 2.933811482042074,
+      "feedback_s": 3.9273218754678965,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.023761397227645,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.021391389891505,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.02252689190209,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.02860802412033,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.02487251162529,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.026107251644135,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.02727796137333,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.0297763440758,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 60.03061516396701,
+      "switch_wait_s": 0.009766623377799988,
+      "protected_entries": 1,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 4380950528
+    },
+    {
+      "block": 1,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 2,
+      "policy": "exclusive",
+      "cases": {
+        "932f75f9-e29a-4502-8794-68347b591fd5": {
+          "flashinfer_wrapper_0af255": [
+            0.043872000028689705,
+            0.043872000028689705,
+            0.04370666605730852,
+            0.04376533254981041,
+            0.04385599990685781
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.05151999990145365,
+            0.051536000023285546,
+            0.051455999414126076,
+            0.0515253326545159,
+            0.051642666260401406
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.10069866602619489,
+            0.10063466553886731,
+            0.10069866602619489,
+            0.10062933216492335,
+            0.1005919985473156
+          ],
+          "gpt-o3_triton_38f281": [
+            0.17615999778111777,
+            0.17618133127689362,
+            0.17616533488035202,
+            0.1761333371202151,
+            0.1762293353676796
+          ]
+        },
+        "841b0afa-80fa-449a-9e1d-f294da92d02f": {
+          "flashinfer_wrapper_2e27cd": [
+            0.07388799885908763,
+            0.0738560010989507,
+            0.0739679994682471,
+            0.07378133138020833,
+            0.0738453318675359
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.07426133255163829,
+            0.07431466629107793,
+            0.07427733267347018,
+            0.0742453324298064,
+            0.07427733267347018
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.11865066861112912,
+            0.11852266763647397,
+            0.11876266946395238,
+            0.11851200088858604,
+            0.11855466788013776
+          ],
+          "gpt-o3_triton_793f87": [
+            0.1186240017414093,
+            0.11857066800196965,
+            0.11866133535901706,
+            0.11852800101041794,
+            0.11859733487168948
+          ]
+        },
+        "724a6dfa-06ff-45b7-9972-d174a0e23737": {
+          "flashinfer_wrapper_74a870": [
+            0.08229866499702136,
+            0.082351998736461,
+            0.08237333223223686,
+            0.08229333162307739,
+            0.08231999849279721
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.06662933404246967,
+            0.06655466680725415,
+            0.06659200042486191,
+            0.06667733440796535,
+            0.06657066692908604
+          ],
+          "gpt-5_triton_679e13": [
+            0.2033919965227445,
+            0.20342933386564255,
+            0.2034400006135305,
+            0.2034080003698667,
+            0.20338133225838342
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.06653866668542226,
+            0.06638933221499126,
+            0.06653866668542226,
+            0.0665493334333102,
+            0.06642133245865504
+          ]
+        },
+        "c49c96bd-bee4-479b-8000-3e6bf297aef1": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.08104533205429713,
+            0.08077866832415263,
+            0.08105066542824109,
+            0.08082133283217748,
+            0.08062933385372162
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.08450133353471756,
+            0.08451200028260548,
+            0.08445866778492928,
+            0.08423466732104619,
+            0.084111999720335
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.21155733118454614,
+            0.21174399803082147,
+            0.21088000138600668,
+            0.21145600080490112,
+            0.2115146666765213
+          ],
+          "torch_matmul_317103": [
+            0.07087466741601627,
+            0.07055466746290524,
+            0.07020799815654755,
+            0.07061333457628886,
+            0.07059733445445697
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 80,
+      "correctness_s": 0.08571958169341087,
+      "feedback_s": 2.53393991664052,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.45579099282622,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.45337946154177,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.4569272454828,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.4507943354547,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.44706392288208,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.44828840717673,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 61.44947177730501,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 61.451990723609924,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 61.457553735002875,
+      "switch_wait_s": 0.009800847619771957,
+      "protected_entries": 1,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 4380950528
+    },
+    {
+      "block": 2,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 0,
+      "policy": "group5",
+      "cases": {
+        "b8b3dda7-8959-4a11-bd6a-59863bc6fffc": {
+          "flashinfer_wrapper_0af255": [
+            0.005637333185101549,
+            0.005626666670044263,
+            0.005642666481435299,
+            0.005637333262711763,
+            0.005631999811157584
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.005744000043099125,
+            0.005818666657432914,
+            0.005856000042210023,
+            0.00579733323926727,
+            0.00578133335026602
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.012074666873862347,
+            0.012160000080863634,
+            0.012085333466529846,
+            0.012160000080863634,
+            0.012080000092585882
+          ],
+          "gpt-o3_triton_38f281": [
+            0.01233066680530707,
+            0.012336000024030605,
+            0.012303999935587248,
+            0.012325333431363106,
+            0.012373333486417929
+          ]
+        },
+        "864d596c-a930-4fc4-b241-02e6a06e92cb": {
+          "flashinfer_wrapper_2e27cd": [
+            0.00578666664659977,
+            0.0058613332609335584,
+            0.005770666679988305,
+            0.0057920000205437345,
+            0.005807999987155199
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.01628799984852473,
+            0.015946666710078716,
+            0.015701333216081064,
+            0.015738666833688814,
+            0.015519999898970127
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.008789333204428354,
+            0.008874666566650072,
+            0.00897066667675972,
+            0.008922666621704897,
+            0.008831999885539213
+          ],
+          "gpt-o3_triton_793f87": [
+            0.008821333292871714,
+            0.008831999885539213,
+            0.008885333004097143,
+            0.008789333514869213,
+            0.008848000162591537
+          ]
+        },
+        "1526086b-0c06-41a1-b7b9-47b5cfc830d7": {
+          "flashinfer_wrapper_74a870": [
+            0.005759999932100375,
+            0.005754666558156411,
+            0.005754666558156411,
+            0.0058346667016545934,
+            0.00576533330604434
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.006117333347598712,
+            0.0061013333809872465,
+            0.006138666610543926,
+            0.012213333354641994,
+            0.0060906666330993176
+          ],
+          "gpt-5_triton_679e13": [
+            0.01300800017391642,
+            0.013002666644752026,
+            0.012954666589697203,
+            0.018090666582187016,
+            0.013013333392639955
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.005813333283488949,
+            0.005893333426987131,
+            0.0058346667016545934,
+            0.007184000064929326,
+            0.005813333283488949
+          ]
+        },
+        "91e43228-c0a7-457e-9424-1d3461621362": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.03145066648721695,
+            0.023552000522613525,
+            0.023541333464284737,
+            0.023551999901731808,
+            0.02350933353106181
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.039093333606918655,
+            0.024058666701118153,
+            0.024181333060065906,
+            0.024159999564290047,
+            0.02418666643400987
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.087312001734972,
+            0.08726400136947632,
+            0.08736000210046768,
+            0.08728000149130821,
+            0.08728533486525218
+          ],
+          "torch_matmul_317103": [
+            0.008810667010645071,
+            0.008799999952316284,
+            0.00885333369175593,
+            0.008831999885539213,
+            0.008810666700204214
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 80,
+      "correctness_s": 2.866209728643298,
+      "feedback_s": 3.949765020981431,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.03348873369396,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.04453154280782,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.032235553488135,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.038306534290314,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.046750491485,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.03581144101918,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.04314032383263,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.039473881945014,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 60.04776750318706,
+      "switch_wait_s": 0.009756870567798615,
+      "protected_entries": 1,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 4380950528
+    },
+    {
+      "block": 2,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 0,
+      "policy": "adaptive",
+      "cases": {
+        "b8b3dda7-8959-4a11-bd6a-59863bc6fffc": {
+          "flashinfer_wrapper_0af255": [
+            0.005631999966378014,
+            0.005669333273544908,
+            0.00559466650399069,
+            0.005647999855379264,
+            0.005669333273544908
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.005749333339432876,
+            0.005759999932100375,
+            0.005749333339432876,
+            0.005781333272655805,
+            0.005781333272655805
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.012090666530032953,
+            0.012127999992420277,
+            0.012133333211143812,
+            0.012127999992420277,
+            0.012112000025808811
+          ],
+          "gpt-o3_triton_38f281": [
+            0.012335999868810177,
+            0.012229333476473888,
+            0.01236266673853,
+            0.01236266658330957,
+            0.01236266658330957
+          ]
+        },
+        "864d596c-a930-4fc4-b241-02e6a06e92cb": {
+          "flashinfer_wrapper_2e27cd": [
+            0.0058293333277106285,
+            0.00578666664659977
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.014234666712582111,
+            0.014858666652192673
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.008847999852150679,
+            0.008869333347926537
+          ],
+          "gpt-o3_triton_793f87": [
+            0.008848000162591537,
+            0.008853333381315073
+          ]
+        },
+        "1526086b-0c06-41a1-b7b9-47b5cfc830d7": {
+          "flashinfer_wrapper_74a870": [
+            0.005786666568989555,
+            0.005823999953766664,
+            0.005733333295211196,
+            0.005770666679988305,
+            0.005781333427876234
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.007962666762371859,
+            0.006138666765764356,
+            0.006138666688154141,
+            0.006074666744098067,
+            0.0060906666330993176
+          ],
+          "gpt-5_triton_679e13": [
+            0.014464000084747871,
+            0.012981333459417025,
+            0.01299733342602849,
+            0.012992000052084526,
+            0.012959999963641167
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.005850666668266058,
+            0.0058293333277106285,
+            0.005845333449542522,
+            0.005823999953766664,
+            0.005839999920378129
+          ]
+        },
+        "91e43228-c0a7-457e-9424-1d3461621362": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.023530667026837666,
+            0.023557333275675774,
+            0.023514666905005772
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.024101332450906437,
+            0.03732266649603844,
+            0.024138666068514187
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.08730666836102803,
+            0.08726400136947632,
+            0.08734933535257976
+          ],
+          "torch_matmul_317103": [
+            0.008805333481480679,
+            0.008885333314538002,
+            0.008805333636701107
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 60,
+      "correctness_s": 2.866316730156541,
+      "feedback_s": 3.6567435897886753,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.75098640844226,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.752226719632745,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.75338478013873,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.746005959808826,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.74228043295443,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.74348810873926,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.74466876685619,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.747158482670784,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 59.754061633720994,
+      "switch_wait_s": 0.009828515350818634,
+      "protected_entries": 1,
+      "adaptive_unresolved": [
+        "1526086b-0c06-41a1-b7b9-47b5cfc830d7",
+        "b8b3dda7-8959-4a11-bd6a-59863bc6fffc"
+      ],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 4380950528
+    },
+    {
+      "block": 2,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 0,
+      "policy": "shared",
+      "cases": {
+        "b8b3dda7-8959-4a11-bd6a-59863bc6fffc": {
+          "flashinfer_wrapper_0af255": [
+            0.005599999877934654,
+            0.005648000010599692,
+            0.0056053333294888335,
+            0.0055893332076569395,
+            0.0055946665816009045
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.005530666559934616,
+            0.005509333296989401,
+            0.005509333374599616,
+            0.005504000000655651,
+            0.005503999923045437
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.012042666630198559,
+            0.01198933320119977,
+            0.012042666785418987,
+            0.012000000104308128,
+            0.012000000104308128
+          ],
+          "gpt-o3_triton_38f281": [
+            0.01228800043463707,
+            0.012234666695197424,
+            0.012224000257750353,
+            0.012202666761974493,
+            0.012202666761974493
+          ]
+        },
+        "864d596c-a930-4fc4-b241-02e6a06e92cb": {
+          "flashinfer_wrapper_2e27cd": [
+            0.00575466671337684,
+            0.005733333295211196,
+            0.005802666613211234,
+            0.005743999887878696,
+            0.00576000000971059
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.005871999931211273,
+            0.005872000008821487,
+            0.005850666590655844,
+            0.005850666745876272,
+            0.005845333371932308
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.008682666812092066,
+            0.008677333438148102,
+            0.008714666745314995,
+            0.008693333404759565,
+            0.008693333404759565
+          ],
+          "gpt-o3_triton_793f87": [
+            0.008703999997427067,
+            0.008704000152647495,
+            0.008682666967312494,
+            0.00867733359336853,
+            0.008698666778703531
+          ]
+        },
+        "1526086b-0c06-41a1-b7b9-47b5cfc830d7": {
+          "flashinfer_wrapper_74a870": [
+            0.005717333406209946,
+            0.005701333284378052,
+            0.005717333250989516,
+            0.005744000043099125,
+            0.005712000032265981
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.005839999997988343,
+            0.005770666524767876,
+            0.005802666613211234,
+            0.005775999976322055,
+            0.00578666664659977
+          ],
+          "gpt-5_triton_679e13": [
+            0.012645333229253689,
+            0.012714666624863943,
+            0.012693333439528942,
+            0.012688000065584978,
+            0.012650666758418083
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.005637333262711763,
+            0.005637333262711763,
+            0.005647999932989478,
+            0.005637333185101549,
+            0.005663999977211158
+          ]
+        },
+        "91e43228-c0a7-457e-9424-1d3461621362": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.023242666696508724,
+            0.023258666818340618,
+            0.023231999948620796,
+            0.023231999948620796,
+            0.023237333322564762
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.023744000121951103,
+            0.023744000121951103,
+            0.02375466686983903,
+            0.02380799998839696,
+            0.023760000243782997
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.08726933474342029,
+            0.0873706688483556,
+            0.0872373344997565,
+            0.08724266787370046,
+            0.08724266787370046
+          ],
+          "torch_matmul_317103": [
+            0.00878399983048439,
+            0.008746666833758354,
+            0.008736000396311283,
+            0.00876266664514939,
+            0.008789333204428354
+          ]
+        }
+      },
+      "background_active_at_samples": 80,
+      "evaluations": 80,
+      "correctness_s": 2.8692379016429186,
+      "feedback_s": 16.78135142289102,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.006120232865214,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.01350460201502,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.01469671726227,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.010929226875305,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.007190799340606,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.008425751701,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.00960384309292,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.012110313400626,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 60.015245635062456,
+      "switch_wait_s": 0,
+      "protected_entries": 0,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 4380950528
+    },
+    {
+      "block": 2,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 0,
+      "policy": "exclusive",
+      "cases": {
+        "b8b3dda7-8959-4a11-bd6a-59863bc6fffc": {
+          "flashinfer_wrapper_0af255": [
+            0.005621333296100299,
+            0.005605333251878619,
+            0.005605333251878619,
+            0.005605333174268405,
+            0.005626666592434049
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.005786666568989555,
+            0.005711999877045552,
+            0.00577066660237809,
+            0.005754666635766625,
+            0.006645333332320054
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.012053333222866058,
+            0.0122079998254776,
+            0.012090666530032953,
+            0.01212266661847631,
+            0.012485333252698183
+          ],
+          "gpt-o3_triton_38f281": [
+            0.0123520001458625,
+            0.012319999746978283,
+            0.012357333364586035,
+            0.012277333531528711,
+            0.012250666661808888
+          ]
+        },
+        "864d596c-a930-4fc4-b241-02e6a06e92cb": {
+          "flashinfer_wrapper_2e27cd": [
+            0.00579733323926727,
+            0.005813333283488949,
+            0.00578666664659977,
+            0.0057920000205437345,
+            0.00578666664659977
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.014981333321581284,
+            0.015050666717191538,
+            0.01555733336135745,
+            0.015600000197688738,
+            0.01495466660708189
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.008773333548257748,
+            0.008858666444818178,
+            0.008842666633427143,
+            0.008879999940594038,
+            0.008842666633427143
+          ],
+          "gpt-o3_triton_793f87": [
+            0.008810666389763355,
+            0.008757333426425854,
+            0.008826666666815678,
+            0.008837333414703608,
+            0.008794666733592749
+          ]
+        },
+        "1526086b-0c06-41a1-b7b9-47b5cfc830d7": {
+          "flashinfer_wrapper_74a870": [
+            0.005754666635766625,
+            0.005754666635766625,
+            0.005802666613211234,
+            0.005733333295211196,
+            0.005738666591544946
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.006122666721542676,
+            0.006122666799152891,
+            0.0061066667549312115,
+            0.006128000095486641,
+            0.006117333347598712
+          ],
+          "gpt-5_triton_679e13": [
+            0.012928000030418238,
+            0.012922666811694702,
+            0.012965333492805561,
+            0.013013333392639955,
+            0.014165333161751429
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.005807999909544985,
+            0.005824000108987093,
+            0.005818666657432914,
+            0.005856000042210023,
+            0.005887999975432952
+          ]
+        },
+        "91e43228-c0a7-457e-9424-1d3461621362": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.023546666527787845,
+            0.02351999965806802,
+            0.02354133315384388,
+            0.023562667270501454,
+            0.023573333397507668
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.024111999509235222,
+            0.024085332949956257,
+            0.02414933281640212,
+            0.02410666613529126,
+            0.024122665946682293
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.087312001734972,
+            0.08721600100398064,
+            0.08729066823919614,
+            0.08723200112581253,
+            0.08735466872652371
+          ],
+          "torch_matmul_317103": [
+            0.008789333204428354,
+            0.00876266664514939,
+            0.008778666456540426,
+            0.00876266648992896,
+            0.00877333308259646
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 80,
+      "correctness_s": 0.015417475253343582,
+      "feedback_s": 1.0817878525704145,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.995300421491265,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.00273228622973,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 60.00387865677476,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.000133933499455,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.996393809095025,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.00506758131087,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.99880706705153,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 60.00127691216767,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 60.00583027116954,
+      "switch_wait_s": 0.00982285663485527,
+      "protected_entries": 1,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 4380950528
+    },
+    {
+      "block": 2,
+      "pressure": "mixed8",
+      "size": 4,
+      "repeat": 0,
+      "policy": "group2",
+      "cases": {
+        "b8b3dda7-8959-4a11-bd6a-59863bc6fffc": {
+          "flashinfer_wrapper_0af255": [
+            0.005583999988933404,
+            0.005599999877934654
+          ],
+          "gemini-2.5-pro_triton_uc5ufi": [
+            0.00576000000971059,
+            0.005695999910434087
+          ],
+          "gpt-5_triton_2f0daa": [
+            0.012090666530032953,
+            0.01214399995903174
+          ],
+          "gpt-o3_triton_38f281": [
+            0.012325333276142677,
+            0.012298666561643282
+          ]
+        },
+        "864d596c-a930-4fc4-b241-02e6a06e92cb": {
+          "flashinfer_wrapper_2e27cd": [
+            0.005802666690821449,
+            0.005786666724209984
+          ],
+          "gemini-2.5-pro_triton_0owo26": [
+            0.01428799998636047,
+            0.01510933352013429
+          ],
+          "gpt-5_triton_21bcc2": [
+            0.008805333481480679,
+            0.008858666600038608
+          ],
+          "gpt-o3_triton_793f87": [
+            0.008789333514869213,
+            0.008789333204428354
+          ]
+        },
+        "1526086b-0c06-41a1-b7b9-47b5cfc830d7": {
+          "flashinfer_wrapper_74a870": [
+            0.005791999942933519,
+            0.005754666635766625
+          ],
+          "gemini-2.5-pro_triton_xtl8hx": [
+            0.0061013333809872465,
+            0.006112000128875176
+          ],
+          "gpt-5_triton_679e13": [
+            0.013002666955192884,
+            0.012954666744917631
+          ],
+          "gpt-o3_triton_2e18c2": [
+            0.005797333316877484,
+            0.005797333316877484
+          ]
+        },
+        "91e43228-c0a7-457e-9424-1d3461621362": {
+          "gemini-2.5-pro_triton_kmw3sz": [
+            0.02350933322062095,
+            0.023567999402681988
+          ],
+          "gpt-5-2025-08-07_triton_82d3cf": [
+            0.024111999509235222,
+            0.024032000452280045
+          ],
+          "gpt-o3_triton_a796ab": [
+            0.08730666836102803,
+            0.0872533346215884
+          ],
+          "torch_matmul_317103": [
+            0.00877333339303732,
+            0.00882666651159525
+          ]
+        }
+      },
+      "background_active_at_samples": 0,
+      "evaluations": 32,
+      "correctness_s": 2.8662943430244923,
+      "feedback_s": 3.3071241062134504,
+      "background": [
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.39661743491888,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.40399313531816,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.395360397174954,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.40142780914903,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.39768460392952,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.39894228801131,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "memory",
+          "elapsed_s": 59.40008788742125,
+          "peak_bytes": 327155712
+        },
+        {
+          "units": 6000,
+          "kind": "compute",
+          "elapsed_s": 59.40256427042186,
+          "peak_bytes": 327155712
+        }
+      ],
+      "makespan_s": 59.40477625094354,
+      "switch_wait_s": 0.00977444276213646,
+      "protected_entries": 1,
+      "adaptive_unresolved": [],
+      "gpu_allocated_bytes": 1971722240,
+      "gpu_reserved_bytes": 4380950528
+    }
+  ],
+  "references": {
+    "before": {
+      "b8b3dda7-8959-4a11-bd6a-59863bc6fffc": {
+        "flashinfer_wrapper_0af255": [
+          0.005674666569878657,
+          0.005658666603267193,
+          0.005647999932989478,
+          0.005669333273544908,
+          0.0057013332067678375,
+          0.005658666603267193,
+          0.005647999932989478
+        ],
+        "gemini-2.5-pro_triton_uc5ufi": [
+          0.005829333250100414,
+          0.005797333394487699,
+          0.00578133335026602,
+          0.005743999965488911,
+          0.005791999942933519,
+          0.005749333339432876,
+          0.005775999976322055
+        ],
+        "gpt-5_triton_2f0daa": [
+          0.012170666828751564,
+          0.012133333211143812,
+          0.012106666651864847,
+          0.0121866666401426,
+          0.012133333211143812,
+          0.012144000269472599,
+          0.012138666585087776
+        ],
+        "gpt-o3_triton_38f281": [
+          0.012309333309531212,
+          0.012277333376308283,
+          0.012309333309531212,
+          0.012250666817029318,
+          0.012272000002364317,
+          0.012266666628420353,
+          0.012303999935587248
+        ]
+      },
+      "74280ca1-cb97-433d-b8a9-c2aec2ae560c": {
+        "flashinfer_wrapper_0af255": [
+          0.006133333391820391,
+          0.006090666788319747,
+          0.0061333333142101765,
+          0.006170666698987286,
+          0.006080000040431817,
+          0.006080000040431817,
+          0.006154666654765606
+        ],
+        "gemini-2.5-pro_triton_uc5ufi": [
+          0.005941333404431741,
+          0.005839999997988343,
+          0.005904000019654632,
+          0.005834666546434164,
+          0.005893333349376917,
+          0.005925333360210061,
+          0.005904000097264846
+        ],
+        "gpt-5_triton_2f0daa": [
+          0.011407999942700068,
+          0.011423999754091104,
+          0.011386666602144638,
+          0.011440000186363855,
+          0.011349333139757315,
+          0.011365333261589209,
+          0.011391999976088604
+        ],
+        "gpt-o3_triton_38f281": [
+          0.011637333159645399,
+          0.011584000041087469,
+          0.011674666777253151,
+          0.011557333481808504,
+          0.011658666655421257,
+          0.01165333359191815,
+          0.011807999884088835
+        ]
+      },
+      "932f75f9-e29a-4502-8794-68347b591fd5": {
+        "flashinfer_wrapper_0af255": [
+          0.04409599987169107,
+          0.04404799950619539,
+          0.04409599925080935,
+          0.04399999976158142,
+          0.044079999749859176,
+          0.044079999749859176,
+          0.04402666725218296
+        ],
+        "gemini-2.5-pro_triton_uc5ufi": [
+          0.052127999564011894,
+          0.05215466767549515,
+          0.05214933305978775,
+          0.052133332937955856,
+          0.052165333181619644,
+          0.05219200005133947,
+          0.05212800080577532
+        ],
+        "gpt-5_triton_2f0daa": [
+          0.10067199915647507,
+          0.10073599964380264,
+          0.10064533228675525,
+          0.10064533228675525,
+          0.10060799866914749,
+          0.10071466614802678,
+          0.10071999952197075
+        ],
+        "gpt-o3_triton_38f281": [
+          0.17626666774352392,
+          0.17625599602858225,
+          0.17632000148296356,
+          0.17633066326379776,
+          0.17628266910711923,
+          0.17630399763584137,
+          0.17627732952435812
+        ]
+      },
+      "864d596c-a930-4fc4-b241-02e6a06e92cb": {
+        "flashinfer_wrapper_2e27cd": [
+          0.005845333294322093,
+          0.005850666668266058,
+          0.005856000042210023,
+          0.005861333416153987,
+          0.005850666668266058,
+          0.005845333294322093,
+          0.005871999931211273
+        ],
+        "gemini-2.5-pro_triton_0owo26": [
+          0.014623999906082949,
+          0.014591999972860018,
+          0.014832000248134136,
+          0.014688000082969666,
+          0.01494400001441439,
+          0.01453866654386123,
+          0.015199999945859114
+        ],
+        "gpt-5_triton_21bcc2": [
+          0.00896000008409222,
+          0.008927999995648861,
+          0.008954666554927826,
+          0.00899200001731515,
+          0.008869333192706108,
+          0.00901333304742972,
+          0.00893866674353679
+        ],
+        "gpt-o3_triton_793f87": [
+          0.008954666554927826,
+          0.008890666378041109,
+          0.008917333247760931,
+          0.008896000062425932,
+          0.008896000062425932,
+          0.008842666943868002,
+          0.00893866674353679
+        ]
+      },
+      "818219cc-f770-4957-84cd-cafdfb53e64b": {
+        "flashinfer_wrapper_2e27cd": [
+          0.006416000037764509,
+          0.006415999960154295,
+          0.0063946666195988655,
+          0.0063946666195988655,
+          0.006389333245654901,
+          0.006448000048597653,
+          0.0064319999267657595
+        ],
+        "gemini-2.5-pro_triton_0owo26": [
+          0.014261333427081505,
+          0.014874666774024567,
+          0.015440000065912804,
+          0.015184000289688507,
+          0.01537066682552298,
+          0.014991999914248785,
+          0.015354666548470655
+        ],
+        "gpt-5_triton_21bcc2": [
+          0.008821333292871714,
+          0.008842666788647572,
+          0.008832000195980072,
+          0.008890666688481966,
+          0.008869333347926537,
+          0.008896000062425932,
+          0.008800000107536713
+        ],
+        "gpt-o3_triton_793f87": [
+          0.008821333137651285,
+          0.008837333259483179,
+          0.008837333259483179,
+          0.008778666456540426,
+          0.008826666822036108,
+          0.008799999952316284,
+          0.008816000074148178
+        ]
+      },
+      "841b0afa-80fa-449a-9e1d-f294da92d02f": {
+        "flashinfer_wrapper_2e27cd": [
+          0.07432533303896587,
+          0.07430933291713397,
+          0.07427733267347018,
+          0.07429866616924603,
+          0.07428799942135811,
+          0.07426133255163829,
+          0.07441599791248639
+        ],
+        "gemini-2.5-pro_triton_0owo26": [
+          0.0742453324298064,
+          0.07422399893403053,
+          0.07426133255163829,
+          0.07423999905586243,
+          0.07425066580375035,
+          0.07418666531642278,
+          0.07429333279530208
+        ],
+        "gpt-5_triton_21bcc2": [
+          0.11843733365337054,
+          0.118367999792099,
+          0.11861333499352138,
+          0.11858666812380154,
+          0.11848000064492226,
+          0.1183519996702671,
+          0.11846933389703433
+        ],
+        "gpt-o3_triton_793f87": [
+          0.11846933389703433,
+          0.11830933267871539,
+          0.11851733426253001,
+          0.11847466727097829,
+          0.11845333377520244,
+          0.11834666629632314,
+          0.11845333377520244
+        ]
+      },
+      "1526086b-0c06-41a1-b7b9-47b5cfc830d7": {
+        "flashinfer_wrapper_74a870": [
+          0.005797333394487699,
+          0.005786666568989555,
+          0.00577066660237809,
+          0.0057920000205437345,
+          0.005770666679988305,
+          0.005759999932100375,
+          0.0058186665798226995
+        ],
+        "gemini-2.5-pro_triton_xtl8hx": [
+          0.006165333325043321,
+          0.006191999884322286,
+          0.006143999906877677,
+          0.006170666698987286,
+          0.006181333214044571,
+          0.0062133333800981445,
+          0.0061973331806560355
+        ],
+        "gpt-5_triton_679e13": [
+          0.012917333282530308,
+          0.012906666534642378,
+          0.012858666790028414,
+          0.012901333471139273,
+          0.01284266666819652,
+          0.012879999975363413,
+          0.012991999896864096
+        ],
+        "gpt-o3_triton_2e18c2": [
+          0.005823999953766664,
+          0.005866666790097952,
+          0.005845333449542522,
+          0.005813333361099164,
+          0.005872000086431702,
+          0.005829333405320843,
+          0.005856000042210023
+        ]
+      },
+      "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc": {
+        "flashinfer_wrapper_74a870": [
+          0.006464000015209119,
+          0.006442666597043474,
+          0.0064319999267657595,
+          0.00645866656365494,
+          0.006474666607876618,
+          0.00642666663043201,
+          0.006495999948432048
+        ],
+        "gemini-2.5-pro_triton_xtl8hx": [
+          0.006319999927654862,
+          0.006351999860877792,
+          0.006330666597932577,
+          0.006325333223988612,
+          0.006346666564544042,
+          0.006341333268210292,
+          0.006335999971876542
+        ],
+        "gpt-5_triton_679e13": [
+          0.012682666691641012,
+          0.012618666669974724,
+          0.012640000010530153,
+          0.013594666651139656,
+          0.012650666603197655,
+          0.01262399988869826,
+          0.012629333262642225
+        ],
+        "gpt-o3_triton_2e18c2": [
+          0.0060746668217082815,
+          0.006064000151430567,
+          0.006037333359320958,
+          0.006058666699876388,
+          0.006080000040431817,
+          0.006016000173985958,
+          0.006090666710709532
+        ]
+      },
+      "724a6dfa-06ff-45b7-9972-d174a0e23737": {
+        "flashinfer_wrapper_74a870": [
+          0.0820853350063165,
+          0.08201600114504497,
+          0.08213333413004875,
+          0.0822133334974448,
+          0.08218133573730786,
+          0.08214933301011722,
+          0.08214933301011722
+        ],
+        "gemini-2.5-pro_triton_xtl8hx": [
+          0.06683199976881345,
+          0.06683733562628429,
+          0.06686400001247723,
+          0.06692266712586085,
+          0.06680000200867653,
+          0.06686400001247723,
+          0.06689066688219707
+        ],
+        "gpt-5_triton_679e13": [
+          0.20280533532301584,
+          0.20307200153668722,
+          0.20273600021998087,
+          0.2028746654589971,
+          0.20279466609160104,
+          0.2030453309416771,
+          0.20268800109624863
+        ],
+        "gpt-o3_triton_2e18c2": [
+          0.06664000079035759,
+          0.06667200103402138,
+          0.06679466863473256,
+          0.06673066814740498,
+          0.06659733379880588,
+          0.06673600152134895,
+          0.06672533477346103
+        ]
+      },
+      "91e43228-c0a7-457e-9424-1d3461621362": {
+        "gemini-2.5-pro_triton_kmw3sz": [
+          0.02353066640595595,
+          0.02359466627240181,
+          0.023514666905005772,
+          0.023605333641171455,
+          0.023551999901731808,
+          0.023578666771451633,
+          0.023557333275675774
+        ],
+        "gpt-5-2025-08-07_triton_82d3cf": [
+          0.02418666643400987,
+          0.024117333193620045,
+          0.02402666707833608,
+          0.024143999442458153,
+          0.024159999564290047,
+          0.024138666068514187,
+          0.02407466620206833
+        ],
+        "gpt-o3_triton_a796ab": [
+          0.08725866799553235,
+          0.08728533486525218,
+          0.0872960016131401,
+          0.08726400136947632,
+          0.08726400136947632,
+          0.08736000210046768,
+          0.0872533346215884
+        ],
+        "torch_matmul_317103": [
+          0.008789333514869213,
+          0.00878399983048439,
+          0.008789333514869213,
+          0.00876266664514939,
+          0.008789333204428354,
+          0.00876266648992896,
+          0.008837333569924036
+        ]
+      },
+      "9c00593a-4795-4e11-880b-b382efd55be9": {
+        "gemini-2.5-pro_triton_kmw3sz": [
+          0.02346666684995095,
+          0.023551999901731808,
+          0.023535999779899914,
+          0.02354133315384388,
+          0.023504000157117844,
+          0.02348800003528595,
+          0.023791999866565067
+        ],
+        "gpt-5-2025-08-07_triton_82d3cf": [
+          0.02432000016172727,
+          0.02425600029528141,
+          0.02427733379105727,
+          0.02430933341383934,
+          0.024288000538945198,
+          0.02430933341383934,
+          0.024314667098224163
+        ],
+        "gpt-o3_triton_a796ab": [
+          0.08752533172567685,
+          0.08761599659919739,
+          0.08761599908272426,
+          0.08755199859539668,
+          0.08752533420920372,
+          0.08756799871722858,
+          0.08760532985130946
+        ],
+        "torch_matmul_317103": [
+          0.009130666653315226,
+          0.009141333401203156,
+          0.009125333279371262,
+          0.009125333279371262,
+          0.009130666342874369,
+          0.00912533343459169,
+          0.009125333279371262
+        ]
+      },
+      "c49c96bd-bee4-479b-8000-3e6bf297aef1": {
+        "gemini-2.5-pro_triton_kmw3sz": [
+          0.0806879997253418,
+          0.0805866668621699,
+          0.08068266759316127,
+          0.08048533524076144,
+          0.08106666555007298,
+          0.08090133095781009,
+          0.08068800096710523
+        ],
+        "gpt-5-2025-08-07_triton_82d3cf": [
+          0.0842026670773824,
+          0.08443733553091685,
+          0.08397866537173589,
+          0.08407466610272725,
+          0.08441066866119702,
+          0.08422400057315826,
+          0.08443200215697289
+        ],
+        "gpt-o3_triton_a796ab": [
+          0.21156799793243408,
+          0.2116426626841227,
+          0.21156266331672668,
+          0.2116213341554006,
+          0.21181333313385645,
+          0.21162666628758112,
+          0.21146666755278906
+        ],
+        "torch_matmul_317103": [
+          0.07101333017150561,
+          0.07067733506361644,
+          0.0706080012023449,
+          0.07038399949669838,
+          0.07064000144600868,
+          0.07089066877961159,
+          0.07061333457628886
+        ]
+      }
+    },
+    "after": {
+      "b8b3dda7-8959-4a11-bd6a-59863bc6fffc": {
+        "flashinfer_wrapper_0af255": [
+          0.005696000065654516,
+          0.005637333262711763,
+          0.005653333306933443,
+          0.00558399991132319,
+          0.005621333296100299,
+          0.005621333218490084,
+          0.005685333317766587
+        ],
+        "gemini-2.5-pro_triton_uc5ufi": [
+          0.005823999953766664,
+          0.005765333383654554,
+          0.005786666568989555,
+          0.005722666547323267,
+          0.00578133319504559,
+          0.005690666614100337,
+          0.005781333272655805
+        ],
+        "gpt-5_triton_2f0daa": [
+          0.012095999903976917,
+          0.012159999925643206,
+          0.012090666685253382,
+          0.012133333211143812,
+          0.01214399995903174,
+          0.01214399995903174,
+          0.012133333211143812
+        ],
+        "gpt-o3_triton_38f281": [
+          0.012357333519806465,
+          0.012261333409696817,
+          0.01236266689375043,
+          0.01233066680530707,
+          0.012303999935587248,
+          0.012314666528254747,
+          0.012346666616698107
+        ]
+      },
+      "74280ca1-cb97-433d-b8a9-c2aec2ae560c": {
+        "flashinfer_wrapper_0af255": [
+          0.0060640000738203526,
+          0.006069333292543888,
+          0.006080000040431817,
+          0.006096000084653497,
+          0.0060640000738203526,
+          0.0060693334477643175,
+          0.006080000040431817
+        ],
+        "gemini-2.5-pro_triton_uc5ufi": [
+          0.005882666679099202,
+          0.005871999931211273,
+          0.005898666568100452,
+          0.005850666668266058,
+          0.005941333404431741,
+          0.005845333294322093,
+          0.005914666689932346
+        ],
+        "gpt-5_triton_2f0daa": [
+          0.011312000143031279,
+          0.011370666635533174,
+          0.011306666769087315,
+          0.011381333383421103,
+          0.011338667012751102,
+          0.011359999887645245,
+          0.011317333206534386
+        ],
+        "gpt-o3_triton_38f281": [
+          0.011637333159645399,
+          0.011642666688809792,
+          0.011669333403309187,
+          0.011727999895811081,
+          0.01165333359191815,
+          0.01168533336992065,
+          0.011711999929199616
+        ]
+      },
+      "932f75f9-e29a-4502-8794-68347b591fd5": {
+        "flashinfer_wrapper_0af255": [
+          0.043882666155695915,
+          0.04383999978502592,
+          0.04380799954136213,
+          0.04393066714207331,
+          0.043813333536187805,
+          0.043935999274253845,
+          0.0437973327934742
+        ],
+        "gemini-2.5-pro_triton_uc5ufi": [
+          0.051514667769273124,
+          0.051552001386880875,
+          0.05146666678289572,
+          0.05147733415166537,
+          0.05155733351906141,
+          0.05145600065588951,
+          0.051578667014837265
+        ],
+        "gpt-5_triton_2f0daa": [
+          0.10084266712268193,
+          0.10086933399240176,
+          0.10076799988746643,
+          0.10061866541703542,
+          0.10063466553886731,
+          0.10065599903464317,
+          0.10070933277408282
+        ],
+        "gpt-o3_triton_38f281": [
+          0.1766026665767034,
+          0.17647999773422876,
+          0.17612800002098083,
+          0.17600533366203308,
+          0.17615999778111777,
+          0.17614400386810303,
+          0.17618133624394736
+        ]
+      },
+      "864d596c-a930-4fc4-b241-02e6a06e92cb": {
+        "flashinfer_wrapper_2e27cd": [
+          0.005791999865323305,
+          0.005839999920378129,
+          0.005813333283488949,
+          0.005824000031376879,
+          0.005807999909544985,
+          0.005824000031376879,
+          0.005808000064765413
+        ],
+        "gemini-2.5-pro_triton_0owo26": [
+          0.01556800010924538,
+          0.015610666635135809,
+          0.015130666550248861,
+          0.01898133351157109,
+          0.015440000065912804,
+          0.015503999932358662,
+          0.01555733336135745
+        ],
+        "gpt-5_triton_21bcc2": [
+          0.00881599991892775,
+          0.008863999818762144,
+          0.008810666544983784,
+          0.010869333365311226,
+          0.008799999952316284,
+          0.008879999785373608,
+          0.008842666633427143
+        ],
+        "gpt-o3_triton_793f87": [
+          0.008821333292871714,
+          0.008821333448092142,
+          0.008810666700204214,
+          0.008805333326260248,
+          0.008831999885539213,
+          0.008821333292871714,
+          0.008879999940594038
+        ]
+      },
+      "818219cc-f770-4957-84cd-cafdfb53e64b": {
+        "flashinfer_wrapper_2e27cd": [
+          0.006399999915932615,
+          0.00642666663043201,
+          0.00637333335665365,
+          0.006378666652987401,
+          0.006384000026931365,
+          0.006399999838322401,
+          0.0063946666195988655
+        ],
+        "gemini-2.5-pro_triton_0owo26": [
+          0.015301333274692297,
+          0.016053333568076294,
+          0.015717333648353815,
+          0.015173333386580149,
+          0.015248000156134367,
+          0.015919999840358894,
+          0.015903999718527
+        ],
+        "gpt-5_triton_21bcc2": [
+          0.008768000019093355,
+          0.008816000074148178,
+          0.008783999985704819,
+          0.008816000074148178,
+          0.008778666766981283,
+          0.008789333514869213,
+          0.00877333339303732
+        ],
+        "gpt-o3_triton_793f87": [
+          0.008746666523317495,
+          0.00876266664514939,
+          0.008767999863872925,
+          0.008725333337982496,
+          0.008778666766981283,
+          0.008810666389763355,
+          0.00876266664514939
+        ]
+      },
+      "841b0afa-80fa-449a-9e1d-f294da92d02f": {
+        "flashinfer_wrapper_2e27cd": [
+          0.07387199873725574,
+          0.07380266611774762,
+          0.07382933174570401,
+          0.07388266548514366,
+          0.07389866560697556,
+          0.07385599861542384,
+          0.07389333223303159
+        ],
+        "gemini-2.5-pro_triton_0owo26": [
+          0.07423466568191846,
+          0.07429866616924603,
+          0.07429333279530208,
+          0.07427733267347018,
+          0.07429866616924603,
+          0.07428266604741414,
+          0.07421333218614261
+        ],
+        "gpt-5_triton_21bcc2": [
+          0.11857066800196965,
+          0.11860266824563344,
+          0.1186240017414093,
+          0.11865600198507309,
+          0.11859200149774551,
+          0.11861866836746533,
+          0.11860800161957741
+        ],
+        "gpt-o3_triton_793f87": [
+          0.11860266824563344,
+          0.11858133474985759,
+          0.11874133596817653,
+          0.11863466848929723,
+          0.11854400113224983,
+          0.11857066800196965,
+          0.1185493345061938
+        ]
+      },
+      "1526086b-0c06-41a1-b7b9-47b5cfc830d7": {
+        "flashinfer_wrapper_74a870": [
+          0.005733333295211196,
+          0.005775999976322055,
+          0.00576533330604434,
+          0.005749333339432876,
+          0.005738666591544946,
+          0.005749333184212446,
+          0.005738666746765375
+        ],
+        "gemini-2.5-pro_triton_xtl8hx": [
+          0.006111999973654747,
+          0.0061066667549312115,
+          0.010746666851143042,
+          0.0061173335028191405,
+          0.0061173335028191405,
+          0.006149333513652285,
+          0.0061066667549312115
+        ],
+        "gpt-5_triton_679e13": [
+          0.01303999995191892,
+          0.012992000207304955,
+          0.012970666711529097,
+          0.01296533333758513,
+          0.012975999930252632,
+          0.012949333526194096,
+          0.012975999775032202
+        ],
+        "gpt-o3_triton_2e18c2": [
+          0.005855999964599808,
+          0.005802666690821449,
+          0.005818666735043128,
+          0.005802666613211234,
+          0.005786666568989555,
+          0.005839999920378129,
+          0.005845333294322093
+        ]
+      },
+      "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc": {
+        "flashinfer_wrapper_74a870": [
+          0.006447999893377225,
+          0.006442666674653689,
+          0.006496000103652477,
+          0.006458666718875368,
+          0.006426666708042224,
+          0.00642133333409826,
+          0.006453333267321189
+        ],
+        "gemini-2.5-pro_triton_xtl8hx": [
+          0.006389333245654901,
+          0.006320000005265077,
+          0.013962666659305492,
+          0.006314666631321113,
+          0.006330666520322363,
+          0.006330666675542791,
+          0.006298666587099433
+        ],
+        "gpt-5_triton_679e13": [
+          0.01284266666819652,
+          0.012826666856805483,
+          0.017461333113412063,
+          0.012794666613141695,
+          0.012789333239197731,
+          0.012784000175694624,
+          0.012762666679918766
+        ],
+        "gpt-o3_triton_2e18c2": [
+          0.006016000018765529,
+          0.006042666733264923,
+          0.008687999875595173,
+          0.006058666699876388,
+          0.006053333481152852,
+          0.006053333403542638,
+          0.006048000107208888
+        ]
+      },
+      "724a6dfa-06ff-45b7-9972-d174a0e23737": {
+        "flashinfer_wrapper_74a870": [
+          0.08228799824913342,
+          0.08237333223223686,
+          0.08234666536251704,
+          0.08234666536251704,
+          0.08239999910195668,
+          0.0823359986146291,
+          0.08235733211040497
+        ],
+        "gemini-2.5-pro_triton_xtl8hx": [
+          0.06655466680725415,
+          0.06651199981570244,
+          0.0665333333114783,
+          0.06665066753824551,
+          0.06663466741641362,
+          0.06659200042486191,
+          0.06665600091218948
+        ],
+        "gpt-5_triton_679e13": [
+          0.20375466843446097,
+          0.20347733547290167,
+          0.20378666619459787,
+          0.20335999627908072,
+          0.20338666439056396,
+          0.20338666687409082,
+          0.2034026657541593
+        ],
+        "gpt-o3_triton_2e18c2": [
+          0.06643733258048694,
+          0.06642133245865504,
+          0.06647999957203865,
+          0.06644799932837486,
+          0.0665333333114783,
+          0.06640533233682315,
+          0.06645333270231883
+        ]
+      },
+      "91e43228-c0a7-457e-9424-1d3461621362": {
+        "gemini-2.5-pro_triton_kmw3sz": [
+          0.023461333165566128,
+          0.02355200021217267,
+          0.023541333774725597,
+          0.023504000157117844,
+          0.02353066640595595,
+          0.023557333275675774,
+          0.02356266664961974
+        ],
+        "gpt-5-2025-08-07_triton_82d3cf": [
+          0.024159999564290047,
+          0.03831466721991698,
+          0.024069332828124363,
+          0.02404799995323022,
+          0.02412799932062626,
+          0.02410133307178815,
+          0.024069332828124363
+        ],
+        "gpt-o3_triton_a796ab": [
+          0.08725866799553235,
+          0.08732266848285992,
+          0.08726933474342029,
+          0.08721066763003667,
+          0.087312001734972,
+          0.08725866799553235,
+          0.0872533346215884
+        ],
+        "torch_matmul_317103": [
+          0.00879466657837232,
+          0.008799999952316284,
+          0.00876266664514939,
+          0.008842666633427143,
+          0.008799999952316284,
+          0.00878399983048439,
+          0.00878399983048439
+        ]
+      },
+      "9c00593a-4795-4e11-880b-b382efd55be9": {
+        "gemini-2.5-pro_triton_kmw3sz": [
+          0.023504000157117844,
+          0.03370666690170765,
+          0.023520000278949738,
+          0.023546666527787845,
+          0.023493333409229916,
+          0.023535999779899914,
+          0.023498666783173878
+        ],
+        "gpt-5-2025-08-07_triton_82d3cf": [
+          0.024218666988114517,
+          0.024288000538945198,
+          0.024288000538945198,
+          0.024325333535671234,
+          0.024346666410565376,
+          0.02438399971773227,
+          0.02436266653239727
+        ],
+        "gpt-o3_triton_a796ab": [
+          0.087567999958992,
+          0.08753066882491112,
+          0.08748800059159596,
+          0.08743466933568318,
+          0.08745066945751508,
+          0.0875786654651165,
+          0.08756799871722858
+        ],
+        "torch_matmul_317103": [
+          0.009130666653315226,
+          0.009258666696647802,
+          0.009135999716818333,
+          0.009125333124150833,
+          0.009103999783595404,
+          0.009135999872038761,
+          0.009146666464706263
+        ]
+      },
+      "c49c96bd-bee4-479b-8000-3e6bf297aef1": {
+        "gemini-2.5-pro_triton_kmw3sz": [
+          0.08084266508618991,
+          0.08073066795865695,
+          0.08078399921456973,
+          0.0806826651096344,
+          0.08070933197935422,
+          0.08094933132330577,
+          0.08097066481908162
+        ],
+        "gpt-5-2025-08-07_triton_82d3cf": [
+          0.08444266642133395,
+          0.08446933329105377,
+          0.08424533406893413,
+          0.08420800045132637,
+          0.08441599955161412,
+          0.08433066805203755,
+          0.08451200028260548
+        ],
+        "gpt-o3_triton_a796ab": [
+          0.21105599900086722,
+          0.21177066614230475,
+          0.21132266521453857,
+          0.21105066438515982,
+          0.21193600197633108,
+          0.2113333319624265,
+          0.21146666506926218
+        ],
+        "torch_matmul_317103": [
+          0.07059733445445697,
+          0.07083733628193538,
+          0.07052266721924146,
+          0.07059733445445697,
+          0.07089600091179211,
+          0.0706080012023449,
+          0.07088533540566762
+        ]
+      }
+    }
+  },
+  "passed": true,
+  "preparation_s": 105.13259093090892,
+  "configs": {
+    "rmsnorm_h2048": {
+      "warmup_runs": 10,
+      "iterations": 50,
+      "num_trials": 3,
+      "rtol": 0.01,
+      "atol": 0.01,
+      "required_matched_ratio": null,
+      "profile_baseline": true,
+      "extra": {}
+    },
+    "rmsnorm_h4096": {
+      "warmup_runs": 10,
+      "iterations": 50,
+      "num_trials": 3,
+      "rtol": 0.01,
+      "atol": 0.01,
+      "required_matched_ratio": null,
+      "profile_baseline": true,
+      "extra": {}
+    },
+    "fused_add_rmsnorm_h2048": {
+      "warmup_runs": 10,
+      "iterations": 50,
+      "num_trials": 3,
+      "rtol": 0.01,
+      "atol": 0.01,
+      "required_matched_ratio": null,
+      "profile_baseline": true,
+      "extra": {}
+    },
+    "gemm_n128_k2048": {
+      "warmup_runs": 10,
+      "iterations": 50,
+      "num_trials": 3,
+      "rtol": 0.01,
+      "atol": 0.01,
+      "required_matched_ratio": null,
+      "profile_baseline": true,
+      "extra": {}
+    }
+  },
+  "pressure_startup_s": 20.769369481131434,
+  "experiment_metadata": {
+    "date": "2026-11-12",
+    "protocol": {
+      "harness_patch": "16 CPU quota, 32768 MiB RAM, 49152 MiB declared GPU memory.",
+      "scope": "Research controller inside one real Env command. No new production Env policy or historical OFF run. Supplemental sustained competition, separate device and increased CPU quota.",
+      "inventory": [
+        {
+          "definition": "rmsnorm_h2048",
+          "workloads": [
+            {
+              "uuid": "b8b3dda7-8959-4a11-bd6a-59863bc6fffc",
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              }
+            },
+            {
+              "uuid": "74280ca1-cb97-433d-b8a9-c2aec2ae560c",
+              "axes": {
+                "batch_size": 64
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              }
+            },
+            {
+              "uuid": "932f75f9-e29a-4502-8794-68347b591fd5",
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              }
+            }
+          ],
+          "solutions": [
+            "flashinfer_wrapper_0af255",
+            "gemini-2.5-pro_triton_uc5ufi",
+            "gpt-o3_triton_38f281",
+            "gpt-5_triton_2f0daa"
+          ]
+        },
+        {
+          "definition": "rmsnorm_h4096",
+          "workloads": [
+            {
+              "uuid": "864d596c-a930-4fc4-b241-02e6a06e92cb",
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              }
+            },
+            {
+              "uuid": "818219cc-f770-4957-84cd-cafdfb53e64b",
+              "axes": {
+                "batch_size": 79
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              }
+            },
+            {
+              "uuid": "841b0afa-80fa-449a-9e1d-f294da92d02f",
+              "axes": {
+                "batch_size": 14509
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              }
+            }
+          ],
+          "solutions": [
+            "flashinfer_wrapper_2e27cd",
+            "gemini-2.5-pro_triton_0owo26",
+            "gpt-o3_triton_793f87",
+            "gpt-5_triton_21bcc2"
+          ]
+        },
+        {
+          "definition": "fused_add_rmsnorm_h2048",
+          "workloads": [
+            {
+              "uuid": "1526086b-0c06-41a1-b7b9-47b5cfc830d7",
+              "axes": {
+                "batch_size": 1
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "residual": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              }
+            },
+            {
+              "uuid": "1602b8db-16e2-4d3f-b63d-68d4ee32e2cc",
+              "axes": {
+                "batch_size": 64
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "residual": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              }
+            },
+            {
+              "uuid": "724a6dfa-06ff-45b7-9972-d174a0e23737",
+              "axes": {
+                "batch_size": 16254
+              },
+              "inputs": {
+                "hidden_states": {
+                  "type": "random"
+                },
+                "residual": {
+                  "type": "random"
+                },
+                "weight": {
+                  "type": "random"
+                }
+              }
+            }
+          ],
+          "solutions": [
+            "flashinfer_wrapper_74a870",
+            "gemini-2.5-pro_triton_xtl8hx",
+            "gpt-o3_triton_2e18c2",
+            "gpt-5_triton_679e13"
+          ]
+        },
+        {
+          "definition": "gemm_n128_k2048",
+          "workloads": [
+            {
+              "uuid": "91e43228-c0a7-457e-9424-1d3461621362",
+              "axes": {
+                "M": 1
+              },
+              "inputs": {
+                "A": {
+                  "type": "random"
+                },
+                "B": {
+                  "type": "random"
+                }
+              }
+            },
+            {
+              "uuid": "9c00593a-4795-4e11-880b-b382efd55be9",
+              "axes": {
+                "M": 64
+              },
+              "inputs": {
+                "A": {
+                  "type": "random"
+                },
+                "B": {
+                  "type": "random"
+                }
+              }
+            },
+            {
+              "uuid": "c49c96bd-bee4-479b-8000-3e6bf297aef1",
+              "axes": {
+                "M": 16294
+              },
+              "inputs": {
+                "A": {
+                  "type": "random"
+                },
+                "B": {
+                  "type": "random"
+                }
+              }
+            }
+          ],
+          "solutions": [
+            "torch_matmul_317103",
+            "gemini-2.5-pro_triton_kmw3sz",
+            "gpt-o3_triton_a796ab",
+            "gpt-5-2025-08-07_triton_82d3cf"
+          ]
+        }
+      ],
+      "policies": [
+        "shared",
+        "exclusive",
+        "group5",
+        "group2",
+        "adaptive"
+      ],
+      "pressures": {
+        "mixed8": [
+          "memory",
+          "compute",
+          "memory",
+          "compute",
+          "memory",
+          "compute",
+          "memory",
+          "compute"
+        ]
+      },
+      "group_sizes": [
+        4
+      ],
+      "repeats": 3,
+      "fixed_rounds": 5,
+      "reference_rounds": 7,
+      "adaptive": {
+        "min_rounds": 2,
+        "max_rounds": 5,
+        "relative_gap": 0.05,
+        "mad_multiplier": 4
+      },
+      "background": {
+        "units": 6000,
+        "operations_per_unit": 8,
+        "matrix_size": 2048,
+        "vector_elements": 33554432,
+        "synthetic_stress": true
+      },
+      "limits": {
+        "command_s": 1800,
+        "env_s": 2000,
+        "supervisor_s": 2200,
+        "gpu_memory_mb": 49152,
+        "max_gpus": 1,
+        "portability_exclusions": "Record failures before comparisons, require at least two candidates per case."
+      },
+      "timing": "Official DefaultEvaluator and default config, CUDA events fallback if CUPTI unavailable. References before and after.",
+      "decision": "Select fastest correct candidate. Adaptive early stopping is a heuristic, not a statistical guarantee.",
+      "ordering": "Seeded shuffle of scenario blocks and policy order. Rotate candidate order per measurement round.",
+      "psrl_head": "6aa328d56eff746c2ae6d9fd766b2f3f76b4a670",
+      "upstream_head": "15618a67e8d7b7f49ca61b5ba3b9f26a876d0bee",
+      "trace_head": "da915083d4c7c5e61aa3005e3d17ae488e0fc71c",
+      "profile": "sustained",
+      "expected_groups": 15,
+      "asset_sha256": {
+        "subset/solutions/fused_add_rmsnorm_h2048__flashinfer_wrapper_74a870.json": "d7fc778bfc483218e6695febff60f13294e296223a373efa039b033693b90f03",
+        "subset/solutions/fused_add_rmsnorm_h2048__gemini-2.5-pro_triton_xtl8hx.json": "e1940358b6cf58c3d194031119d9d563717d3098802715b4baac6749504dfe72",
+        "subset/solutions/rmsnorm_h4096__flashinfer_wrapper_2e27cd.json": "adcc521c4a50df0b4b6a6d0fc547fb7c4512ad273d590ac3cd38bbb184fddf5a",
+        "subset/solutions/rmsnorm_h4096__gemini-2.5-pro_triton_0owo26.json": "c6b7394992032d8df61d130f2125bf398e96e4f20db08c2cc6dafda476467966",
+        "subset/solutions/fused_add_rmsnorm_h2048__gpt-o3_triton_2e18c2.json": "c8c1784e4855917c7fcb792ea731c7bee82124cf6facba8b2d8c86c92b9c0ec2",
+        "subset/solutions/rmsnorm_h2048__gemini-2.5-pro_triton_uc5ufi.json": "f3adc4b6cf0960bde9c8d3bbc627ac49e3d6fe4958823668604b60f83794a7db",
+        "subset/solutions/gemm_n128_k2048__torch_matmul_317103.json": "4cf1e5b7c9fe5f11b5ed1b3aeb6ae844ce51f0da1435aa8f6f5145375722dbdb",
+        "subset/solutions/rmsnorm_h4096__gpt-5_triton_21bcc2.json": "dd0943995e1cd312a752bef1fee475f6c7b66abad38f87978e477de3431c6bd1",
+        "subset/solutions/rmsnorm_h2048__gpt-5_triton_2f0daa.json": "e46392926efaa52218023970b9fe5443ea77500da74a4f924eed28a847a3715e",
+        "subset/solutions/rmsnorm_h2048__gpt-o3_triton_38f281.json": "d06a2751b306c5162ad4670474272b8a7d9c4f45366eff4c37eb0667fa1e7c24",
+        "subset/solutions/fused_add_rmsnorm_h2048__gpt-5_triton_679e13.json": "1e69bf806249a9d1cb1723ff616a0fee6552f810458e9ec54c3bef9869319a00",
+        "subset/solutions/rmsnorm_h4096__gpt-o3_triton_793f87.json": "61c1ddd58e33b6416eb9c0dc46da24018ac4573f9925f4980778ff3bf5ee5aae",
+        "subset/solutions/rmsnorm_h2048__flashinfer_wrapper_0af255.json": "332c31e222e4cb949a03a2109309c6d9688b9153801338e06a983252aca2fd4c",
+        "subset/solutions/gemm_n128_k2048__gpt-o3_triton_a796ab.json": "5ef1c74326e5e55b4a5c225ff943188e799794a8109366803526f72fd7c61597",
+        "subset/solutions/gemm_n128_k2048__gpt-5-2025-08-07_triton_82d3cf.json": "d58aec48eab3f543cd3c31ae1269f6fbafa30c5b37a6c6a580710e4da81ce773",
+        "subset/solutions/gemm_n128_k2048__gemini-2.5-pro_triton_kmw3sz.json": "c728e24ff13dfcf924f49384560418efedd96fb5cf13bc811786acce6aa25a26",
+        "subset/definitions/fused_add_rmsnorm_h2048.json": "e4c15c26a374cfb35e5f2cbe8eb0281812c53b17f2b046aa05f4d8802b42a53c",
+        "subset/definitions/rmsnorm_h4096.json": "f324390b3894b83e428b9d7b64077bd9d94e93aee6b261771afcc21e003f49be",
+        "subset/definitions/gemm_n128_k2048.json": "624942b213954da7eb0aab2c577d8c84b19c06cbd4631932cf45bf0d27902b49",
+        "subset/definitions/rmsnorm_h2048.json": "e67415d84b97cde71cc8ccc9faf41fe80cf3106cdab10c309e0b3e8f666b6842",
+        "subset/workloads/rmsnorm_h2048.jsonl": "6e7fd23421eec59c6aced4b67fa4f06b8da9a18064de8074907e183331e2a5f0",
+        "subset/workloads/gemm_n128_k2048.jsonl": "995a10c1d28f3d1eab1c5323861f9346968bdad8eae1149c642ecd4407b03de1",
+        "subset/workloads/rmsnorm_h4096.jsonl": "f36bc9c8d5cc3942f67813dd4481708236d8ac796e27cc3992f716d8e9deca49",
+        "subset/workloads/fused_add_rmsnorm_h2048.jsonl": "37ee780bad6c3b0d6d85c8127444c12cb6b091a33ed3507a735f8f8023ac7463"
+      }
+    },
+    "image_id": "sha256:3341a92392a9a69d712773e35d9f33837b4fb31b3a2c2382e4bf7bd2cf1eb4ed",
+    "hardware": "NVIDIA H20",
+    "cuda_timing": "CUDA events fallback, verified from worker.stderr",
+    "job_s": 1097.6001567840576,
+    "command_s": 1052.9028960056603,
+    "cleaned": true,
+    "gpu_after_used_mb": 0.1875,
+    "gpu_after_process_count": 0,
+    "command_ledger_returned": true,
+    "telemetry": {
+      "samples": 104,
+      "missing": 0,
+      "sampled_peak_memory_mb": 10783.0,
+      "sampled_peak_utilization_pct": 100.0,
+      "sampled_peak_gpu_processes": 9
+    },
+    "cpu_snapshot": [
+      {
+        "cpu_period": 0,
+        "cpu_quota": 0,
+        "nano_cpus": 16000000000,
+        "cpu_stat": "nr_periods 7712\nnr_throttled 0\nthrottled_time 0\nnr_burst 0\nburst_time 0\n"
+      }
+    ],
+    "runtime_hash_manifest_sha256": "35cfeca33b1fafdd0c1877d8827e2d3ffda11cc9f678be61fae51b2a2350c578",
+    "executed_script_sha256": {
+      "driver.py": "c54cb2c57faa1c393663a89b644918c71a3ff675d820381a1bcc7562b92a9310",
+      "analyze.py": "e76bf7aff56562d95318ffd183b7ad74498c92ebd0806d7ec2d07ede29833c96",
+      "supervise.py": "afff60d022ada39196b441501a761b4c98d4e89d0c252a7b69839e05bf65a7f3",
+      "prepare.py": "ddb0344ace6d7fa81dda71125217dc509e5dbb1c9a40629a0485172ffd3777de",
+      "monitor.py": "d4ccdc609bd18f2b6f64a81f4f16e5a8ef0d5d67b4c1231fe71a359bb8b315e8",
+      "flashinfer_env_probe.py": "0dca892ffb4d834e008f7140bfa36e91f9faf7c9b6c64d9fdde68314638e9cbd",
+      "worker.py": "3184df2d4898170aca520d2a816f7692c48cb7961d00bd79864b6b95c3905482"
+    },
+    "raw_measurements_sha256": "5612693df6832a3f69d16241b62dbd4c2ec8f13881a0ad9d515fbc58c75be46f",
+    "field_note": "pressure_startup_s includes clean before references and pressure worker startup. Source now names it reference_and_pressure_startup_s.",
+    "validation": "Scoped Ruff passes. Full repository pre-commit fails on pre-existing unrelated style violations."
+  }
+}

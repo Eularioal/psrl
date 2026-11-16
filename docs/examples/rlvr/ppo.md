@@ -1,5 +1,7 @@
 # PPO: Proximal Policy Optimization
 
+> **Core idea:** PPO updates the answering model using feedback relative to a learned value estimate. In a teaching example, a result scores 1 while the value model expected 0.4, giving a positive difference of 0.6. GAE combines such differences over steps. The policy is the actor; the value estimator is the critic.
+
 ```{admonition} Coming Soon
 :class: tip
 
@@ -15,7 +17,7 @@ PSRL. It trains an **actor** alongside a learned **critic** (value function) and
 optimizes the policy with a clipped surrogate objective. Key ingredients:
 
 - **Generalized Advantage Estimation (GAE)** with a learned value function
-- **Clipped surrogate objective** to prevent large policy updates
+- **Clipped surrogate objective** to limit the incentive for large probability-ratio changes
 - **KL divergence control** (fixed or adaptive) against a reference policy
 
 The clipped surrogate loss for token $t$ is

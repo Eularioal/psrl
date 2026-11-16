@@ -6,6 +6,20 @@ PSRL supports two installation paths:
   dependencies already installed.
 - **From source:** a conda-based setup for development or custom dependency versions.
 
+## Contents
+
+- [Install with Docker](#install-with-docker)
+  - [Prerequisites](#prerequisites)
+  - [Build the image](#build-the-image)
+  - [Start the container](#start-the-container)
+- [Install from source](#install-from-source)
+  - [Prerequisites](#prerequisites-1)
+  - [Create the Environment](#create-the-environment)
+  - [Core Installation](#core-installation)
+  - [SMG Requirements](#smg-requirements)
+  - [Optional Performance Components](#optional-performance-components)
+  - [Verification](#verification)
+
 ## Install with Docker
 
 The Docker build context is the repository root. Build the image that matches your
@@ -171,7 +185,7 @@ Required for Megatron actor/critic training with TP, PP, CP, or EP.
 :sync: lmcache
 
 Installs LMCache for KV cache offloading to CPU/disk and cross-instance P2P KV
-transfer. Dramatically reduces re-prefill cost in multi-turn agentic RL workloads.
+transfer. Reuse can reduce repeated prefix processing when requests hit compatible cache blocks.
 
 ```bash
 bash scripts/install_lmcache.sh
@@ -231,5 +245,6 @@ python -c "import megatron; print('Megatron:', megatron.__file__)"
 python -c "import lmcache; print('LMCache:', lmcache.__file__)"
 ```
 
-If all commands succeed without errors, your installation is ready. Proceed to the
+These are import and initialization checks. GPU execution, task data and multi-node
+connectivity still need the checks for your chosen recipe. Proceed to the
 {doc}`quickstart` to run your first training job.

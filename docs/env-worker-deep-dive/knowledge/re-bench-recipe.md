@@ -2,7 +2,10 @@
 
 > **核心结论**：`examples/re_bench/` 接入 `ai_rd_nanogpt_chat_rl/main`，使用真实 GPT-2 XL 和官方 Alpaca 划分，复用 EnvRouter、原生 EnvWorker、Harbor 和 PSRL 会话奖励链。模型在生成、裁判反馈、训练之间可持续驻留。当前 Replicate 适配的正式评分需要宿主侧 `REPLICATE_API_TOKEN`，缺失时在启动 GPU 前拒绝正式任务。已支持独立卡上的本地 Qwen 裁判及多端点分发，不需要 Replicate 凭据。无凭据的 CUDA smoke 是单独的验证模式，永远不产生训练奖励。
 >
-> 核对范围为 2026-11-02，PSRL 基准提交 `affe7c2` 加本次未提交接入代码。RE-Bench 固定为 `a0cc6d4a91b20f84ebef505d5c72358f88b3b389`。这是本地适配，不等于原版两张 H100、完整研究时长和中间评分协议的复现。实机结果与未验证项见 [FINDINGS](../experiments/gpu-benchmarks/FINDINGS.md#re-bench-原生接入验证)。
+> 核对范围为 2026-11-02，PSRL 基准提交 `affe7c2` 加本次未提交接入代码。RE-Bench 固定为 `a0cc6d4a91b20f84ebef505d5c72358f88b3b389`。这是本地适配，不等于原版两张 H100、完整研究时长和中间评分协议的复现。实机结果与未验证项见 [FINDINGS](../experiments/history/gpu-benchmark-onboarding-chronology.md#re-bench-原生接入验证)。
+
+本篇专门维护聊天偏好训练路径。2026-11-11 新增的条件累加、受限 MLM、embedding 修复、缩放规律、训练流水线与 Rust 脚手架六种本地协议，入口见[公共 GPU recipe](gpu-benchmark-recipes.md#入口与边界)，逐项范围与快速验证见[当前任务路线图](../milestones/science-gpu-bench-status-and-roadmap.md#题库数量位置与逐题覆盖)。这些任务不依赖 Replicate；本篇的裁判要求只作用于聊天任务对应分支。
+
 
 ## 目录
 
@@ -132,7 +135,7 @@ PYTHONPATH=. python -m pytest tests/examples/gpu_benchmarks/test_re_bench.py \
   tests/examples/gpu_benchmarks/test_recipes.py -q
 ```
 
-真实验证只要求单次任务执行、独立 verifier、Env 记账和物理清理的必要证据。数据和模型下载不占 GPU，Replicate 模式缺凭据时在 GPU 启动前停止，本地模式先检查服务与模型身份。smoke 完成后不增加训练步数追求效果，也不据此声称已验证外部裁判等待时的 GPU 借还收益。失败日志和资源清理结果见 [接入验证记录](../experiments/gpu-benchmarks/FINDINGS.md#re-bench-原生接入验证)。
+真实验证只要求单次任务执行、独立 verifier、Env 记账和物理清理的必要证据。数据和模型下载不占 GPU，Replicate 模式缺凭据时在 GPU 启动前停止，本地模式先检查服务与模型身份。smoke 完成后不增加训练步数追求效果，也不据此声称已验证外部裁判等待时的 GPU 借还收益。失败日志和资源清理结果见 [接入验证记录](../experiments/history/gpu-benchmark-onboarding-chronology.md#re-bench-原生接入验证)。
 
 ## API token 与命令边界
 
@@ -296,7 +299,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/command_gap_co
 
 ## 部署独立 Qwen 裁判并运行
 
-2026-11-05 交付核对，基于 `cd09114` 加本次未提交代码。实机执行发生于 2026-11-04，结果见 [本地裁判验证](../experiments/gpu-benchmarks/FINDINGS.md#re-bench-本地-qwen-裁判验证)。这是独立裁判卡加环境任务卡的配置，没有修改 Env 调度策略。
+2026-11-05 交付核对，基于 `cd09114` 加本次未提交代码。实机执行发生于 2026-11-04，结果见 [本地裁判验证](../experiments/history/gpu-benchmark-onboarding-chronology.md#re-bench-本地-qwen-裁判验证)。这是独立裁判卡加环境任务卡的配置，没有修改 Env 调度策略。
 
 先激活执行节点的既有 vLLM 环境。设置 `JUDGE_MODEL_PATH` 为本地 Qwen 权重目录，`JUDGE_GPU_UUIDS` 为现场核实的独立空闲 GPU UUID，`JUDGE_SERVED_MODEL` 为服务模型名。该名称必须与任务配置一致。启动命令如下：
 

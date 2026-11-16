@@ -4,7 +4,9 @@ This section describes the current PSRL architecture: SMG-based online request
 routing, metadata-only sample flow through TransferQueue, asynchronous weight
 transfer, and hierarchical KV cache management.
 
-Each subsection covers one major design component, including motivation, architecture, configuration reference, and practical guidance.
+Read [the beginner workflow](../overview/reading-guide.md) first if the roles are new.
+Then choose one subsystem below. The pages explain motivation, mechanisms, examples
+and configuration rather than requiring you to understand every component at once.
 
 ---
 
@@ -86,4 +88,5 @@ flexible_rollout
 staleness_control
 kv_cache
 resource_elasticity
+env_worker
 ```

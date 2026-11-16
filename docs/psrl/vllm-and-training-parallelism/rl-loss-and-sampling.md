@@ -1,6 +1,12 @@
 # PSRL 分组采样、DAPO 与训练损失
 
-> **核心结论**：解释同一 prompt 的分组采样、DAPO 改动、熵与 KL 项，以及多轮 response_mask、奖励标签和 rollout correction。
+同一道题采样多次后，系统根据组内奖励判断哪些回答值得鼓励，再把这种比较变成逐 token 的训练损失。正文依次解释分组、DAPO 四项改动、额外约束与多轮数据标记；公式推导供需要深入时继续阅读。
+
+证据范围：原 `staleness_3` demo 与 `fsdp_qwen2.5_3b_laps.sh` 均为历史配置，后者已不在当前仓库。相关参数和外部 veRL 摘录按当时记录保存，当前行为须核对实际依赖。2026-11-16 核对本地分组、mask、奖励组装及概率重算入口，补充单样本载荷约定，两项 CPU 回归通过。Science 策略实测的范围统一见[当前路线图](../../env-worker-deep-dive/milestones/science-gpu-bench-status-and-roadmap.md)。
+
+[返回专题索引](../vllm-and-training-parallelism.md)
+
+阅读顺序：本篇承接[PSRL 训推协作与 PPO、GRPO 基础](rl-training-workflow.md)，其中给出了轨迹处理步骤与优势估计公式。
 
 ## 目录
 
@@ -8,16 +14,11 @@
 - [6.0c DAPO 在 GRPO 基础上的四个改进（附 PSRL 源码）](#60c-dapo-在-grpo-基础上的四个改进附-psrl-源码)
 - [6.0d 熵奖励 `H` 与 KL 惩罚 `D_KL(π‖π_ref)`（附 PSRL/verl 源码）](#60d-熵奖励-h-与-kl-惩罚-d_klππ_ref附-psrlverl-源码)
 - [6.0e 输入输出的 label 设计与 `rollout_correction` 修正（附 PSRL 源码，对照 `fsdp_qwen2.5_3b_laps.sh`）](#60e-输入输出的-label-设计与-rollout_correction-修正附-psrl-源码对照-fsdp_qwen25_3b_lapssh)
-
-本篇由原长文按章节迁移，保留原有例子、推导和历史证据。本次仅整理结构，未重新验证技术结论或重跑实验。原文整理日期为 2026-09-10，后续追加内容的日期以各节记载为准；保留章节编号以便对照旧引用。
-
-[返回专题索引](../vllm-and-training-parallelism.md)
-
-阅读顺序：本篇承接[PSRL 训推协作与 PPO、GRPO 基础](rl-training-workflow.md)，其中给出了轨迹处理步骤与优势估计公式。
+- [当前源码入口与继续阅读](#当前源码入口与继续阅读)
 
 ## 6.0b Group Rollout 的工程实现：uid / parent_id 与磁盘上的重复 prompt
 
-**现象**：打开 `psrl_demo/logs/.../trajectories/v{version}/` 会发现大量文件名是连续整数（如 `80.txt 81.txt 82.txt 83.txt`），内容里的 prompt 完全一样，只有生成结果不同——这正是前篇 [§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例) 提到的 GRPO"对同一个 prompt 一次采样 G 条 response"在系统层面的落地方式，不是 bug。
+**现象**：打开 `psrl_demo/logs/.../trajectories/v{version}/` 会发现大量文件名是连续整数（如 `80.txt 81.txt 82.txt 83.txt`），内容里的 prompt 完全一样，只有生成结果不同——这是前篇 [§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例) 提到的 GRPO"对同一个 prompt 一次采样 G 条 response"在系统层面的落地方式。
 
 **怎么实现的（PSRL 源码）**：
 
@@ -27,9 +28,9 @@
    这 `rollout_n` 个请求是**各自独立、异步调度**的生成任务，而不是一次 vLLM 调用里 `n=4` 的批量采样——所以它们可能被不同的 vLLM 副本接住、在不同时刻完成，磁盘上不一定连续写入（这也是为什么同一次快照里，有的组已经凑齐 4 条，大多数组还只有 1 条：generation 还在飞）。
    - `uid` 最终原样传进 `_dump_trajectory_text`（`psrl/workers/agent_loop/loops/base_agent_loop.py:1144-1158`），变成轨迹文件名 `{uid}.txt`——这就是我们在目录里直接看到 `80/81/82/83.txt` 四个文件、prompt 一模一样的原因。
 
-2. **为什么必须是"同一个 prompt 采多条"**：GRPO 不训 critic，用组内 reward 的均值/方差直接当 baseline（[§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例) 已详述公式）。`compute_grpo_outcome_advantage` 在 `psrl/trainer/ppo/utils.py:181-192` 按 `data.non_tensor_batch["parent_id"]` 分组算 advantage——没有并行采出的这组"重复 prompt"，GRPO 就没有基线可减，advantage 无从算起。这也解释了为什么 DAPO/GRPO 类算法天然需要"并行采样同一个问题 G 次"，而 PPO+critic 不需要（critic 给单条轨迹就能估值）。
+2. **为什么必须是"同一个 prompt 采多条"**：GRPO 不训 critic，用组内 reward 的均值/方差直接当 baseline（[§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例) 已详述公式）。`compute_grpo_outcome_advantage` 在 `psrl/trainer/ppo/utils.py:181-192` 按 `data.non_tensor_batch["parent_id"]` 分组算 advantage——组内比较需要同一道题的多条样本；这些样本可以并发生成，也可以先后生成，生成调度与组内统计是两个层次。PPO 配 critic 时可以为单条轨迹估值。
 
-3. **DAPO 的 dynamic sampling 理论上会反过来丢掉某些组**：`DynamicSamplingFilterProcessor`（`psrl/utils/post_processor/buffer_post_process/filter.py:31-95`）按 `pid = uid // rollout_n` 把同组样本的 reward 收集起来算方差，`std == 0`（一组里全对或全错，组内没有优劣之分，GRPO advantage 恒为 0，没有梯度信号）的组会被整体丢弃、不进训练 buffer。**但要注意**：这份 `staleness_3` demo 跑的日志里 `group_post_process.enable=False` 且 `buffer_post_process.enable=False`（下面 [§6.0c](#60c-dapo-在-grpo-基础上的四个改进附-psrl-源码) 有原文引用），也就是说这个过滤器在这次跑的实验里实际是关着的——磁盘上看到的重复 prompt 组，不管组内是否有区分度都会原样进入训练。DAPO 四个改进点的完整讲解和是否启用的核对见 [§6.0c](#60c-dapo-在-grpo-基础上的四个改进附-psrl-源码)。
+3. **DAPO 的 dynamic sampling 理论上会反过来丢掉某些组**：`DynamicSamplingFilterProcessor`（`psrl/utils/post_processor/buffer_post_process/filter.py:31-95`）按 `pid = uid // rollout_n` 把同组样本的 reward 收集起来算方差，`std == 0`（一组里全对或全错，组内没有优劣之分，组内归一化 advantage 为 0，这一奖励驱动的策略梯度项为零）的组会被整体丢弃、不进训练 buffer。**但要注意**：这份 `staleness_3` demo 跑的日志里 `group_post_process.enable=False` 且 `buffer_post_process.enable=False`（下面 [§6.0c](#60c-dapo-在-grpo-基础上的四个改进附-psrl-源码) 有原文引用），也就是说这个过滤器在这次跑的实验里实际是关着的——磁盘上看到的重复 prompt 组，不管组内是否有区分度都会原样进入训练。DAPO 四个改进点的完整讲解和是否启用的核对见 [§6.0c](#60c-dapo-在-grpo-基础上的四个改进附-psrl-源码)。
 
 | 概念 | 对应字段/代码 | 作用 |
 |---|---|---|
@@ -39,9 +40,13 @@
 | 组大小 | `rollout_n`（`gen_actor_rollout_ref.rollout.n`） | 一个 prompt 并行采多少条 response（GRPO 的 "G"） |
 | 组过滤 | `DynamicSamplingFilterProcessor` | reward 方差为 0 的组整体丢弃（DAPO dynamic sampling） |
 
+训练载荷中的 `parent_id` 始终存在。输入端在 `rollout_n=1` 时只提供 `uid`，输出 [worker](../../../psrl/workers/agent_loop/worker.py#L574) 将它写为自己的组编号；多样本请求则保留输入的 `parent_id`。例如题目 7 只采一次，输出为 `uid=7、parent_id=7`；题目 3 采四次，则四条 `uid` 为 12 至 15，`parent_id` 均为 3。随后 [优势计算](../../../psrl/trainer/ppo/ray_trainer.py#L3026) 读取每行组编号，按最终轨迹选择样本并计算优势。这保证单样本任务也有长度与批次一致的分组数组，相关 [CPU 回归](../../../tests/agent_loop/test_training_group_metadata.py) 覆盖两种输入。
+
+本地固定 veRL 的单样本分支采用组均值 0、标准差 1，因此单样本优势约等于该样本奖励。这个分支用于快速验证训练链路；研究标准 GRPO 的组内相对学习时，需要另配同题多样本。实际依赖来源应按启动预检确认。
+
 ## 6.0c DAPO 在 GRPO 基础上的四个改进（附 PSRL 源码）
 
-**一句话结论**：DAPO（Decoupled Clip and Dynamic sAmpling Policy Optimization）不是一种新的 advantage 估计方式——这次 demo 用的 `algorithm.adv_estimator=grpo`，advantage 仍然是 [§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例) 那套组内归一化公式（`compute_grpo_outcome_advantage`）。DAPO 是在 GRPO 之上打的四个训练稳定性/效率补丁，四个补丁相互独立、可单独开关：**Clip-Higher、Dynamic Sampling、Token-level Policy Gradient Loss、Overlong Reward Shaping**。下面逐个讲原理、配 PSRL/verl 源码，并核对这次 `DAPO-Qwen2.5-3B-fsdp-singlenode-demo-staleness_3` 跑的实际配置里哪些真正开着。
+DAPO（解耦裁剪与动态采样策略优化）在组内相对优势之外，还调整更新幅度、有效样本、损失权重和长度反馈。这次历史 demo 用的 `algorithm.adv_estimator=grpo`，advantage 仍然是 [§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例) 那套组内归一化公式（`compute_grpo_outcome_advantage`）。DAPO 是在 GRPO 之上打的四个训练稳定性/效率补丁，四个补丁相互独立、可单独开关：**Clip-Higher、Dynamic Sampling、Token-level Policy Gradient Loss、Overlong Reward Shaping**。下面逐个讲原理、配 PSRL/verl 源码，并核对这次 `DAPO-Qwen2.5-3B-fsdp-singlenode-demo-staleness_3` 跑的实际配置里哪些真正开着。
 
 **1. Clip-Higher（非对称 clip range）**
 
@@ -55,18 +60,19 @@
   pg_losses2 = -advantages * torch.clamp(ratio, 1 - cliprange_low, 1 + cliprange_high)
   clip_pg_losses1 = torch.maximum(pg_losses1, pg_losses2)
   ```
-- 本次 demo 实际配置（`examples/dapo_trainer/qwen2.5_3b_fsdp.sh:47-48,133-134`，日志同步确认）：`clip_ratio_low=0.2`，`clip_ratio_high=0.28`——正 advantage 时 ratio 最多涨到 1.28，负 advantage 时最多跌到 0.8，非对称就体现在这里。
-- 顺带一提 **Dual-Clip**（`clip_ratio_c=10.0`，同一脚本第 135 行）：这是另一篇论文的技巧（arXiv:1912.09729），不是 DAPO 本身提出的，但和 Clip-Higher 用在同一个 loss 函数里。当 advantage 为负、ratio 很小时，无 clip 的 `-ratio·A` 会变成一个很大的正 loss，反而鼓励把这个该被抑制的动作概率抬回去；`pg_losses3 = -advantages * clip_ratio_c` 给负 advantage 场景的 loss 加了个下限，防止这种情况把训练打飞：
+- 本次 demo 实际配置（`examples/dapo_trainer/qwen2.5_3b_fsdp.sh:47-48,133-134`，日志同步确认）：`clip_ratio_low=0.2`，`clip_ratio_high=0.28`——正优势的目标在 ratio 超过 1.28 后停止增加该方向收益，负优势的对应边界为 0.8，非对称就体现在这里。
+- **Dual-Clip（双重裁剪）**为负优势的损失增加额外上限。设 `A=-1`、ratio=20，则未裁剪的最小化损失 `-ratio·A=20`；标准 PPO 的负优势分支仍可取得这个大值。若 `clip_ratio_c=10`，`min(10,20)=10`，将这一项限制为 10。对应历史代码：
   ```python
   pg_losses3 = -advantages * clip_ratio_c
   clip_pg_losses2 = torch.min(pg_losses3, clip_pg_losses1)
   pg_losses = torch.where(advantages < 0, clip_pg_losses2, clip_pg_losses1)
   ```
+  这里讨论的是**最小化损失的上限**。它截住某一损失方向，实际参数移动仍由全部样本和优化器共同决定。
 
 **2. Dynamic Sampling（过滤零方差组）**
 
-- 问题：GRPO advantage 公式的分母是组内 reward 的 std。一组 `rollout_n` 条 response 如果全对或全错，std=0，这组所有 token 的 advantage 恒为 0——这批生成和这批梯度全部浪费。
-- 做法：按组算 reward 方差，方差为 0 的组整体丢弃，不断从数据集里补采新 prompt，直到凑够 batch size 个"组内有区分度"的组再进训练。
+- 问题：GRPO advantage 公式的分母是组内 reward 的 std。一组 `rollout_n` 条 response 如果全对或全错，std=0，减去组均值后优势为 0，这一奖励驱动的策略梯度项无法区分组内优劣；熵或 KL 等其他项仍可能产生梯度。
+- 做法：按组算 reward 方差，方差为 0 的组整体丢弃，在有界预算内补采新 prompt，收集组内有区分度的样本；不足时记录原因并退出，避免无限补采。
 - 源码（`psrl/utils/post_processor/buffer_post_process/filter.py:31-95`，`DynamicSamplingFilterProcessor`）：
   ```python
   pid = uid // self.rollout_n
@@ -113,12 +119,12 @@
 | | PPO | GRPO | DAPO |
 |---|---|---|---|
 | advantage 估计 | critic（GAE，逐 token） | 组内归一化 reward（标量广播） | 同 GRPO，不变 |
-| clip range | 对称 `[1-ε,1+ε]` | 对称 `[1-ε,1+ε]` | 非对称 `high>low`（Clip-Higher）+ 可选 dual-clip 下限 |
+| clip range | 对称 `[1-ε,1+ε]` | 对称 `[1-ε,1+ε]` | 非对称 `high>low`（Clip-Higher）+ 可选 dual-clip 损失上限 |
 | 组/样本过滤 | 无 | 无 | 可选：reward 方差为 0 的组整体丢弃、补采新 prompt（本次 demo **关闭**，实际靠 `redundant_rollout` 补冗余样本） |
 | loss 聚合 | 逐 token | 通常 sample-level（条内先平均） | token-level：整个 global batch 的 token 一起平均（本次 demo **开启**） |
 | 超长惩罚 | 视实现而定，常见硬截断 0 分 | 同左 | 软惩罚，缓冲区内线性扣分（本次 demo **开启**） |
 
-一句话记忆：DAPO = GRPO 的 advantage 公式不变 + 四个"防止训练因工程细节而失真/失效"的补丁；四个补丁可独立开关，本次 demo 实际开了 Clip-Higher（含 dual-clip）、Token-level Loss、Overlong Reward Shaping 三项，Dynamic Sampling 那一项虽然写进了脚本参数但 `enable=False`，并未真正生效。
+一句话记忆：DAPO = GRPO 的 advantage 公式不变 + 围绕更新范围、样本筛选、损失聚合和长度反馈的四项改动；四个补丁可独立开关，本次 demo 实际开了 Clip-Higher（含 dual-clip）、Token-level Loss、Overlong Reward Shaping 三项，Dynamic Sampling 那一项虽然写进了脚本参数但 `enable=False`，并未真正生效。
 
 ## 6.0d 熵奖励 `H` 与 KL 惩罚 `D_KL(π‖π_ref)`（附 PSRL/verl 源码）
 
@@ -210,7 +216,7 @@ def kl_penalty_forward(logprob, ref_logprob, kl_penalty) -> torch.FloatTensor:
 
 $$\rho(x) = \frac{\pi_{ref}(x)}{\pi(x)}$$
 
-对应代码：`kl = ref_logprob - logprob` $= \log\pi_{ref}-\log\pi = \log\rho$，`ratio = exp(kl)` $=\rho$。样本 $x$ 是训练时从当前策略 $\pi$ 采样出来的（rollout 引擎按 $\pi$ 生成轨迹），要估计的目标是
+对应代码：`kl = ref_logprob - logprob` $= \log\pi_{ref}-\log\pi = \log\rho$，`ratio = exp(kl)` $=\rho$。以下先假设样本 $x$ 来自当前策略 $\pi$；这是推导无偏性的条件。实际 rollout 来自旧策略时，还需分析相应分布修正。要估计的目标是
 
 $$D_{KL}(\pi\|\pi_{ref}) = \mathbb{E}_{x\sim\pi}\Big[\log\frac{\pi(x)}{\pi_{ref}(x)}\Big] = \mathbb{E}_{x\sim\pi}[-\log\rho(x)]$$
 
@@ -269,13 +275,13 @@ def kl_penalty(logprob, ref_logprob, kl_penalty) -> torch.FloatTensor:
     return backward_score - backward_score.detach() + forward_score.detach()
 ```
 
-比如配置成 `"k3+"`：前向数值上用的是 `k3`（无偏、低方差，数值本身更准），但反向传播时梯度用的是 `k2`（`0.5*r^2`）的梯度——因为 `k2` 的梯度形式在数学上被证明是"正确"的（无偏梯度估计），而 `k1`/`k3` 数值上更准但梯度方向有偏。`backward_score - backward_score.detach() + forward_score.detach()` 是标准的直通估计（straight-through estimator）写法：前向传播时 `backward_score - backward_score.detach() = 0`，所以数值上等于 `forward_score`；反向传播时 `forward_score.detach()` 不产生梯度，梯度全部来自 `backward_score`。这样就把"数值用 k3，梯度用 k2"缝合到了一次计算里。
+比如配置成 `"k3+"`：前向数值上用的是 `k3`（无偏、低方差，数值本身更准），但反向传播时梯度用的是 `k2`（`0.5*r^2`）的梯度——该写法显式选择另一种反向代理，梯度性质要结合采样分布、概率是否参与求导与完整目标推导判断。`backward_score - backward_score.detach() + forward_score.detach()` 是标准的直通估计（straight-through estimator）写法：前向传播时 `backward_score - backward_score.detach() = 0`，所以数值上等于 `forward_score`；反向传播时 `forward_score.detach()` 不产生梯度，梯度全部来自 `backward_score`。这样就把"数值用 k3，梯度用 k2"缝合到了一次计算里。
 
-**这次训练里的实际取值**：`fsdp_qwen2.5_3b_laps.sh` 里 `use_kl_loss=False`、`kl_loss_coef=0.0`、`algorithm.use_kl_in_reward=False`——KL 惩罚在 loss 和 reward 两条路径上都被关掉了。这也是 DAPO 论文的典型选择：GRPO/DAPO 本身用组内相对 reward 做 advantage，没有像 PPO 那样一个容易被过度优化的 critic，训练更依赖 clip 机制（Clip-Higher）而非 KL 约束来控制更新幅度，所以经常直接关闭 KL 惩罚，省掉维护参考模型前向计算的开销。
+**这次训练里的实际取值**：`fsdp_qwen2.5_3b_laps.sh` 里 `use_kl_loss=False`、`kl_loss_coef=0.0`、`algorithm.use_kl_in_reward=False`——KL 惩罚在 loss 和 reward 两条路径上都被关掉了。这也是 DAPO 论文的历史配置选择；是否启用参考模型约束，应结合任务与稳定性目标判断，组内优势并不会自动替代 KL 的作用。关闭后可省去相应参考前向开销。
 
 ## 6.0e 输入输出的 label 设计与 `rollout_correction` 修正（附 PSRL 源码，对照 `fsdp_qwen2.5_3b_laps.sh`）
 
-**一句话结论**：训练用的"标签"不是 token id 本身（那是自回归交叉熵天然自带的），而是一条 `response_mask`——它决定哪些 token 参与 loss；reward 是一个标量，只贴在 response 的最后一个 token 上；这次脚本没有走 [§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例) 说的 bypass 捷径，而是真正重算 `old_log_probs`，并且额外打开了 `algorithm.rollout_correction.rollout_is=token` 这层修正——用重算出来的 `old_log_probs` 和 vLLM 生成时的 `rollout_log_probs` 的差距，反过来给 pg_loss 加一个逐 token 的重要性权重。
+**一句话结论**：训练用的"标签"同时需要目标 token id 和一条 `response_mask`——它决定哪些 token 参与 loss；reward 是一个标量，只贴在 response 的最后一个 token 上；这次脚本没有走 [§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例) 说的 bypass 捷径，而是真正重算 `old_log_probs`，并且额外打开了 `algorithm.rollout_correction.rollout_is=token` 这层修正——用重算出来的 `old_log_probs` 和 vLLM 生成时的 `rollout_log_probs` 的差距，反过来给 pg_loss 加一个逐 token 的重要性权重。
 
 **1. 多轮 agentic rollout 怎么变成 `(prompt_ids, response_ids, response_mask)`**
 
@@ -295,7 +301,7 @@ all_response_mask.extend([1] * len(output_ids))       # 参与 loss
 
 对应到这次 `fsdp_qwen2.5_3b_laps.sh` 的 `gen_actor_rollout_ref.rollout.multi_turn.max_turns=50`：一条轨迹可能有 50 轮工具调用，`response_ids` 是"模型输出"和"工具输出"交替拼接的一条长序列，但 loss 只在 `response_mask=1`（模型自己吐出来的 token）的位置计算——这就是 [§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例) 步骤⑧"只在 response_mask=1 的位置求和"背后的具体构造方式。
 
-**2. reward 怎么变成一个 token 级张量：只贴最后一个 token**
+**2. reward 怎么变成一个 token 级张量：在组装张量的末列保存**
 
 `DAPORewardManager.run_single`（`psrl/workers/reward/reward_loop/dapo.py:42-98`）算出标量 `reward_score` 后，`psrl/workers/reward/reward_manager.py::normalize_reward()`（348-355 行）把它写回 `rm_scores`：
 
@@ -305,7 +311,7 @@ rm_scores[:, -1] = torch.as_tensor(reward_scores, ...)   # 只有最后一个 to
 data["rm_scores"] = rm_scores
 ```
 
-即整条 response 只有最后一个有效 token 拿到非零 reward，其余位置全是 0——这是 GRPO/DAPO 这类 outcome-reward 场景的标准做法，`compute_grpo_outcome_advantage`（[§6.0b](#60b-group-rollout-的工程实现uid--parent_id-与磁盘上的重复-prompt)）里 `scores = token_level_rewards.sum(dim=-1)` 也印证了"reward 只集中在最后一个位置，sum 等价于取那一个值"。
+这段组装代码把标量写到张量末列，其余位置为 0；“末列”与“最后一个有效模型 token”的关系还取决于布局和 padding——这是 GRPO/DAPO 这类 outcome-reward 场景的标准做法，`compute_grpo_outcome_advantage`（[§6.0b](#60b-group-rollout-的工程实现uid--parent_id-与磁盘上的重复-prompt)）里 `scores = token_level_rewards.sum(dim=-1)` 也印证了"reward 只集中在最后一个位置，sum 等价于取那一个值"。
 
 **3. `old_log_probs` 这次走的是哪条路**
 
@@ -324,7 +330,7 @@ else:                                          # 默认：训练侧重新做一�
 
 **4. `rollout_correction`：拿 vLLM 的 log prob 和重算的 log prob 做逐 token 重要性修正**
 
-正因为①重算出的 `old_log_probs` 和②vLLM 采样时的 `rollout_log_probs` 是两套引擎、两个时间点算出来的（[§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例) 已经讲过为什么两者会有数值差），`rollout_is=token` 这条路径把这个差距本身当作一次额外的重要性采样修正，而不是简单信任重算结果。核心公式（`third_party/verl/verl/trainer/ppo/rollout_corr_helper.py::compute_rollout_correction_weights()`，520-594 行）：
+正因为①重算出的 `old_log_probs` 和②vLLM 采样时的 `rollout_log_probs` 是两套引擎、两个时间点算出来的（[§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例) 已经讲过为什么两者会有数值差），`rollout_is=token` 这条路径把这个差距本身当作一次额外的重要性采样修正，并与重算得到的训练锚点配合。核心公式（`third_party/verl/verl/trainer/ppo/rollout_corr_helper.py::compute_rollout_correction_weights()`，520-594 行）：
 
 $$
 w_t=\min\!\Big(\exp\big(\operatorname{clip}(\log\pi_{\text{old}}(a_t)-\log\pi_{\text{rollout}}(a_t),\,-B,\,B)\big),\ \tau\Big),\qquad \tau=\texttt{rollout\_is\_threshold}=2.0
@@ -336,7 +342,7 @@ raw_rollout_is_weights = raw_rollout_is_weights * response_mask
 rollout_is_weights = raw_rollout_is_weights.clamp(max=rollout_is_threshold_upper)   # 这里 =2.0
 ```
 
-这个逐 token 权重 `w_t` 被直接乘进 [§6.0c](#60c-dapo-在-grpo-基础上的四个改进附-psrl-源码) 的 clip 目标（`core_algos.py:1363-1364`）：`pg_losses = pg_losses * rollout_is_weights`，再走 `agg_loss`（token-mean）聚合。直觉：如果某个 token 位置 vLLM 采样时的概率和训练侧重算的概率差得很远（两套引擎数值不一致，或者这批数据消费时权重已经漂移了几步），这个 token 对最终 pg_loss 的贡献会被按比例调低（封顶在 `τ=2.0`，防止个别 token 的权重把梯度带飞）——是在 [§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例)"为什么不能直接复用 rollout_log_probs"那段讨论的数值差距/staleness 问题上，追加的一层运行时补偿，而不是替代重算。
+这个逐 token 权重 `w_t` 被直接乘进 [§6.0c](#60c-dapo-在-grpo-基础上的四个改进附-psrl-源码) 的 clip 目标（`core_algos.py:1363-1364`）：`pg_losses = pg_losses * rollout_is_weights`，再走 `agg_loss`（token-mean）聚合。直觉：如果某个 token 位置 vLLM 采样时的概率和训练侧重算的概率差得很远（两套引擎数值不一致，或者这批数据消费时权重已经漂移了几步），该 token 的贡献按概率比重新加权：比值小于 1 时降低，大于 1 时提高，并在本例 `τ=2.0` 处封顶——是在 [§6.0](rl-training-workflow.md#60-同时在线具体怎么理解以-psrl-为例)"为什么不能直接复用 rollout_log_probs"那段讨论的数值差距/staleness 问题上，追加的一层运行时补偿，而不是替代重算。
 
 ---
 
@@ -352,3 +358,15 @@ rollout_is_weights = raw_rollout_is_weights.clamp(max=rollout_is_threshold_upper
 6. `third_party/verl/verl/trainer/ppo/core_algos.py` — GRPO advantage、PPO clip loss、`agg_loss`
 7. `third_party/verl/verl/workers/utils/losses.py`（`ppo_loss`） — 最终标量 loss 组装
 8. `third_party/verl/verl/trainer/ppo/rollout_corr_helper.py` — `rollout_is` 权重计算
+
+## 当前源码入口与继续阅读
+
+| 想核对的问题 | 当前入口 |
+|---|---|
+| 组标识怎样生成 | [Agent Loop Manager](../../../psrl/workers/agent_loop/manager.py#L1381) |
+| 工具与模型 token 怎样打标 | [TITO 数据组装](../../../psrl/utils/tito/training_data.py#L42) |
+| 标量奖励怎样写入张量 | [Reward Manager](../../../psrl/workers/reward/reward_manager.py#L353) |
+| 直接使用采样概率还是重算 | [训练器概率分支](../../../psrl/trainer/ppo/ray_trainer.py#L3117) |
+| 零方差过滤代码 | [动态采样过滤器](../../../psrl/utils/post_processor/buffer_post_process/filter.py#L32) |
+
+若公式较多，可先读[四条回答的分组例子](../ppo-grpo-dapo-sample-requirements.md)，再回来看“每条奖励如何变成 token 损失”。关于 KL 无偏估计的讨论，始终保留本节的采样分布假设。

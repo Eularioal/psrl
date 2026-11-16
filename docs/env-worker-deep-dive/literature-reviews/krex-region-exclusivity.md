@@ -4,6 +4,7 @@
 >
 > **阅读与核对范围**：2026-11-09 阅读 [arXiv:2609.30057v1 正文](https://arxiv.org/html/2609.30057v1)与 [PDF](https://arxiv.org/pdf/2609.30057)，版本日期为 2026-09-24。本文按预印本介绍，不认定已被顶会录用。本地实现映射核对主目录提交 `0326d46694bdc372560e535069d3db0f7f48bd4b` 及已有未提交改动，仅涉及文中列出的执行接口，没有重跑 GPU 实验。论文结果、解释性推断、研究建议和 CPU 教学模拟分别标明。
 
+
 ## 目录
 
 - [1. 从完整流程理解论文](#1-从完整流程理解论文)
@@ -21,7 +22,7 @@
 
 ## 1. 从完整流程理解论文
 
-论文标题是 **KREX: Concurrent Kernel Benchmarking on Shared GPUs via Region-Granular Exclusivity**，可译为“通过区域级独占，在共享 GPU 上并发评测计算内核”。kernel 在这里是 GPU 上执行的计算程序，例如矩阵乘法或归一化，不是操作系统内核。kernel agent 是用大语言模型编写这些程序、运行评测、依据结果继续修改程序的智能体。
+论文标题是 **KREX: Concurrent Kernel Benchmarking on Shared GPUs via Region-Granular Exclusivity**，可译为“通过区域级独占，在共享 GPU 上并发评测计算内核”。kernel 在这里是 GPU 上执行的计算程序，例如矩阵乘法或归一化，不是操作系统内核。
 
 以下是依据论文 §3、§4 重画的概念图，主要展开 NVIDIA 路径。它不是 PSRL 已有调用链，也不是从作者开源代码绘制的图。
 

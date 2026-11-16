@@ -1,0 +1,64 @@
+{
+  "scope": "Startup failures before any benchmark profile or timed training block; raw statuses retained.",
+  "attempts": [
+    {
+      "status": "failed",
+      "error": "EnvAdmissionTimeout(\"no capacity for session 'warm-router-0a158a812c-0' within 30s\")",
+      "elapsed_s": 59.06028445251286,
+      "ready_services": 0,
+      "profiles": 0,
+      "blocks": 0,
+      "cleanup_errors": [],
+      "containers_remaining": false,
+      "ledger_leases_after": [
+        0,
+        0
+      ],
+      "physical_gpu_checks": []
+    },
+    {
+      "status": "failed",
+      "error": "TimeoutError('Service 0 did not create its socket within 90 seconds.')",
+      "elapsed_s": 135.13240296207368,
+      "ready_services": 0,
+      "profiles": 0,
+      "blocks": 0,
+      "cleanup_errors": [],
+      "containers_remaining": false,
+      "ledger_leases_after": [
+        0,
+        0
+      ],
+      "physical_gpu_checks": [
+        {
+          "used_mb": 0.1875,
+          "compute_process_count": 0
+        }
+      ]
+    },
+    {
+      "status": "failed",
+      "error": "TimeoutError('Service 1 did not create its socket within 150 seconds.')",
+      "elapsed_s": 235.45022446662188,
+      "ready_services": 1,
+      "profiles": 0,
+      "blocks": 0,
+      "cleanup_errors": [],
+      "containers_remaining": false,
+      "ledger_leases_after": [
+        0,
+        0
+      ],
+      "physical_gpu_checks": [
+        {
+          "used_mb": 0.1875,
+          "compute_process_count": 0
+        },
+        {
+          "used_mb": 0.1875,
+          "compute_process_count": 0
+        }
+      ]
+    }
+  ]
+}

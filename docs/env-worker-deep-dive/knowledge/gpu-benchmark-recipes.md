@@ -1,30 +1,28 @@
 # GPU benchmark 的 Env 与 PSRL recipe
 
-> **核心结论**：GPU recipe 共用 `GpuBenchmarkAgentLoop`，强制通过 EnvRouter 准入，默认支持 Docker 与原生 Env 后端的 episode GPU 持有，KernelBench 另有显式 direct command verifier 入口，见末节。准备器生成 Harbor 任务与 PSRL Parquet。长训练可以包装为一条 command，跨请求常驻模型才更直接体现持续持有的必要性。InferenceBench 提供固定真实请求协议，RE-Bench 提供 CUDA smoke 与显式有界本地评分，均与官方完整协议区分。
+> **核心结论**：recipe 是把 benchmark 接进 PSRL 的准备器、配置与运行脚本。共同流程是：准备数据和镜像，生成 Harbor 任务与 Parquet 数据行，Agent 执行任务，独立 verifier 评分，最后把结果交回训练链。verifier 是重新检查提交物的程序，Parquet 是存储结构化任务行的文件格式。
 
-先读 [README 导览](../experiments/gpu-benchmarks/README.md) 了解任务目标、具体例子与 command 适用性。验证结果见 [GPU benchmark 接入验证](../experiments/gpu-benchmarks/FINDINGS.md)。官方性能分、质量门槛与本地功能分的区别见 [InferenceBench 评分说明](inferencebench-scoring.md)。
+例如接入一个 GPU 算子题：准备器保存题目与参考实现，Agent 修改候选源码，环境运行 GPU 检查，verifier 从独立环境读取候选并评分。`GpuBenchmarkAgentLoop` 串起这条流程，GPU 任务须通过 EnvRouter 准入。默认使用会话持有预算，KernelBench 另有显式逐命令 verifier 入口。
 
-新增的 RE-Bench 聊天模型训练使用原生 Env，镜像、裁判桥接和正式评分准备步骤见 [RE-Bench recipe](re-bench-recipe.md)。下文四类准备命令保留各自入口，不使用通用准备器的 autoresearch 分支处理 RE-Bench。
+**按任务选择路径：** 公共 Harbor 六类共 476 题，使用下方准备命令；[AIRS 的 19 题](airs-gpu-recipe.md)走独立 Coordinator/sandbox；[RE 聊天训练](re-bench-recipe.md)另需裁判桥接；[MLGym / SWE-Serve](mlgym-swe-serve-recipes.md)分别交付模型权重和推理代码。完整题目数量、逐题快检与代表题训练闭环统一维护在[当前路线图](../milestones/science-gpu-bench-status-and-roadmap.md)。
 
-2026-11-10 对 `bc5665f` 加未提交代码局部核对：六类代表任务均已通过真实 PSRL rollout、一次策略更新及版本 1 后续独立 GPU 评分。本地资源下的 MLE、InferenceBench、RE-Bench 与新增 FlashInfer 接入入口见[完整接入与本地验收](../milestones/science-gpu-full-onboarding.md)。本页原官方协议保持独立，不能用 local 数据源生成官方评分标记。
+实测结论看[接入验证](../experiments/gpu-benchmarks/FINDINGS.md)，六类代表任务的策略更新与后续评分看[完整接入](../milestones/science-gpu-full-onboarding.md)。11-10 后的提交物、CSV、来源和清理修复经过针对性 CPU 回归；新准备资产及相应 RE verifier 镜像才携带这些修复，详见[回归与产物边界](../milestones/science-gpu-full-onboarding.md#本轮边界修复与回归)。官方协议与本地小样本协议按各命令的标记分别使用。
 
-本轮快速扩题已发布 249 题统一任务池：Kernel 原尺寸 22、本地小输入档 193、FlashInfer 定义 30、本地 MLE 4。FlashInfer 使用 [prepare_suite](../../../examples/flashinfer_bench/prepare_suite.py#L12) 按有原始随机输入的定义准备有界子集；MLE 的 `--dataset` 可选择 `digits`、`iris`、`wine`、`breast-cancer`。具体资源、运行方式、失败边界与数据入口见[快速验证结果](../milestones/science-gpu-bench-status-and-roadmap.md#results扩题与快速-gpu-验证)。
-
-2026-11-10 验收后边界修复经 30 项 CPU 回归：缺少提交物明确零分，MLE 检查损坏和超额 CSV，混合准备器核对显式来源标记，Inference verifier 清理完整服务进程组。六类修复尚未重跑混合策略训练，11-11 快速 GPU 复验仅覆盖上方列出的扩题路径。使用修复需重新准备任务，RE 还需重建 verifier 镜像，见[回归与产物边界](../milestones/science-gpu-full-onboarding.md#本轮边界修复与回归)。
 
 ## 目录
 
-- [KernelBench command 与性能测量](#kernelbench-command-与性能测量)
 - [入口与边界](#入口与边界)
 - [下载官方资产](#下载官方资产)
 - [H20 与框架内资源调度对照](#h20-与框架内资源调度对照)
 - [Kaggle 下载权限配置](#kaggle-下载权限配置)
 - [准备任务](#准备任务)
+- [PostTrain 裁判任务与 FastKernels 输入](#posttrain-裁判任务与-fastkernels-输入)
 - [episode 级任务与原生 Env 验证](#episode-级任务与原生-env-验证)
 - [command 与常驻推理服务](#command-与常驻推理服务)
 - [真实环境验证](#真实环境验证)
 - [接入训练](#接入训练)
 - [评分与数据隔离](#评分与数据隔离)
+- [KernelBench command 与性能测量](#kernelbench-command-与性能测量)
 
 ## 入口与边界
 
@@ -35,9 +33,16 @@
 | InferenceBench | [prepare.py](../../../examples/inference_bench/prepare.py) | 导入上游生成的 Harbor 任务，将 Modal handoff 改为本地 Docker bind |
 | autoresearch | [prepare.py](../../../examples/autoresearch/prepare.py) | 使用固定数据缓存，提交训练脚本，独立容器重放 |
 | RE-Bench | [prepare.py](../../../examples/re_bench/prepare.py) | GPT-2 XL 聊天训练，原生 Env、宿主裁判请求桥接与独立官方评分 |
-| MLE 本地协议 | [local.py](../../../examples/mle_bench/local.py) | 真实 digits 数据、CUDA 分类器、隐藏测试标签独立评分 |
-| Inference 本地协议 | [local.py](../../../examples/inference_bench/local.py) | 固定真实请求、冻结参考输出、独立服务重启与评分 |
-| FlashInfer-Bench | [prepare.py](../../../examples/flashinfer_bench/prepare.py) | 官方 Solution 格式和 RMSNorm 子集，独立 evaluator |
+| MLE 本地协议 | [local.py](../../../examples/mle_bench/local.py) | digits、Iris、Wine、乳腺癌四种真实数据、CUDA 分类器、隐藏标签评分 |
+| Inference 本地协议 | [scenarios.py](../../../examples/inference_bench/scenarios.py) | 四种小规模场景，真实服务、冻结参考、独立重启与评分；原两请求入口仍保留 |
+| FlashInfer-Bench | [prepare_suite.py](../../../examples/flashinfer_bench/prepare_suite.py) | 逐定义准备，支持实体张量、本地 trace 和独立采样快速协议 |
+| RE 扫描与受限训练 | [cumsum.py](../../../examples/re_bench/cumsum.py)、[restricted_mlm.py](../../../examples/re_bench/restricted_mlm.py) | 提交 GPU 实现或受限模型，隐藏输入独立评分 |
+| RE 模型与流水线 | [bounded.py](../../../examples/re_bench/bounded.py) | `--task embedding/scaling/foundry`，显式有界模型、训练曲线、权重比较协议 |
+| RE Rust 脚手架 | [rust.py](../../../examples/re_bench/rust.py) | 本地 GPU 候选打分和原始 Rust 隐藏测试 |
+| MLGym RL / 视觉 | [prepare.py](../../../examples/mlgym_bench/prepare.py)、[prepare_vision.py](../../../examples/mlgym_bench/prepare_vision.py) | JAX 与 PyTorch GPU 训练，独立权重评分 |
+| SWE-Serve | [prepare.py](../../../examples/swe_serve/prepare.py) | 全部 GPU 题封装，私有测试隔离与资产校验，导入不代表运行通过 |
+| PostTrainBench | [prepare.py](../../../examples/posttrain_bench/prepare.py)、[prepare_judge_data.py](../../../examples/posttrain_bench/prepare_judge_data.py) | 真实模型更新、答案概率评分或生成后独立裁判评分 |
+| FastKernels | [capture_cases.py](../../../examples/fastkernels_bench/capture_cases.py)、[prepare.py](../../../examples/fastkernels_bench/prepare.py) | 真实 CUDA 输入捕获，显式目标子集，两轮正确性与 GPU 计时 |
 | 公共准备器 | [prepare.py](../../../examples/gpu_benchmarks/prepare.py) | 记录源码版本、生成任务与 Parquet |
 | PSRL 循环 | [agent_loop.py](../../../examples/gpu_benchmarks/agent_loop.py) | 复用会话轨迹收集，强制 EnvRouter，不允许本地无准入回退 |
 | 环境验证 | [run.py](../../../examples/gpu_benchmarks/run.py) | 私有 Ray、EnvRouter、任务执行、清理证据 |
@@ -92,9 +97,9 @@ timeout 1800 python "$BENCH_REPO/containers/download_hf_cache/download_resources
 
 ## H20 与框架内资源调度对照
 
-本节针对框架内资源调度实验。正式 recipe 导入官方任务，保留官方评分条件。另一个入口 [resident_ab.py](../../../examples/inference_bench/resident_ab.py) 使用官方服务、模型和真实请求，专门比较资源准入。它不产生官方质量或 judge 分数，实机结果见 [FINDINGS](../experiments/gpu-benchmarks/FINDINGS.md#inferencebench-常驻服务-onoff-results)。
+本节针对框架内资源调度实验。正式 recipe 导入官方任务，保留官方评分条件。另一个入口 [resident_ab.py](../../../examples/inference_bench/resident_ab.py) 使用官方服务、模型和真实请求，专门比较资源准入。它不产生官方质量或 judge 分数，实机结果见 [FINDINGS](../experiments/history/gpu-benchmark-onboarding-chronology.md#inferencebench-常驻服务-onoff-results)。
 
-两个未通过的 benchmark 都停在准备阶段。MLE-bench 缺少 Kaggle 账户凭据。InferenceBench 的官方任务生成器因缺质量和速度基线而退出，后续还要求 judge 凭据及 H100。此前将这些条件概括为 H20 无法继续的阻塞过于宽泛，它们不是框架调度实验全部必需的条件。
+以下保留早期官方完整协议的准备边界，不表示当前本地协议不可用。MLE-bench 官方竞赛缺少 Kaggle 账户凭据。InferenceBench 的官方任务生成器当时因缺质量和速度基线而退出，后续还要求 judge 凭据及 H100。此前将这些条件概括为 H20 无法继续的阻塞过于宽泛，它们不是框架调度实验全部必需的条件。
 
 | 名称 | 作用 | 框架内实验如何处理 |
 |---|---|---|
@@ -134,9 +139,9 @@ PYEXAMPLE
 
 ## Kaggle 下载权限配置
 
-SDK 是调用 Kaggle 服务的软件，安装 SDK 不会获得数据下载权限。需要两层条件：账户 API 凭据证明身份，目标竞赛的规则接受状态允许该账户访问数据。当前实测只确定缺少凭据，尚未验证账户是否已接受规则。
+SDK 是调用 Kaggle 服务的软件，安装 SDK 不会获得数据下载权限。需要两层条件：账户 API 凭据证明身份，目标竞赛的规则接受状态允许该账户访问数据。当前尚未收到用户指定的凭据路径，也未验证账户对目标竞赛的访问权限。
 
-本次 MLE-bench 固定依赖 Kaggle 1.6.17，因此采用旧版可识别的 `kaggle.json`。新 CLI 支持的 OAuth 或单字符串 token 不能直接当作旧版 SDK 已兼容的凭据。
+2026-11-12 核对本地 MLE-bench 的 [依赖声明](../../../../benchmark-sources/mle-bench/pyproject.toml#L14) 为 `kaggle>=1.6,<1.7`，前次准备环境固定为 1.6.17，因此采用旧版可识别的 `kaggle.json`。新 CLI 支持的 OAuth 或单字符串 token 不能直接当作旧版 SDK 已兼容的凭据。
 
 1. 登录 Kaggle，打开 [API 设置](https://www.kaggle.com/settings/api)。
 2. 在 **Legacy API Credentials** 下选择 **Create Legacy API Key**，取得 `kaggle.json`。它含用户名与密钥，不要写入仓库或聊天。
@@ -150,7 +155,7 @@ chmod 600 "$KAGGLE_CONFIG_DIR/kaggle.json"
 kaggle competitions files -c aerial-cactus-identification
 ```
 
-第一行限制凭据文件读取权限，第二行只列出竞赛文件，用于先检查身份和访问权限。通过后再运行本文的 `mlebench prepare`，执行正式下载、校验与公开/隐藏数据划分。凭据只用于准备数据，不应挂入 agent 任务容器。后续只需要提供本机文件路径，无需发送密钥内容。
+第一行限制凭据文件读取权限，第二行只列出竞赛文件，用于先检查身份和访问权限。通过后再运行本文的 `mlebench prepare`，执行正式下载、校验与公开/隐藏数据划分。凭据只用于准备数据，不应挂入 agent 任务容器。后续只需要提供本机文件路径及已接受规则的竞赛名称，无需发送密钥内容。目录权限建议为 `700`，凭据文件权限为 `600`，且执行任务的账户必须能够读取。可使用自己控制的 `~/.kaggle/kaggle.json`，然后告知它的绝对路径。数据输出目录和预算可以另外说明。提供凭据不代表全部竞赛已接受规则，遇到 403 时先核对对应竞赛访问资格。
 
 参考：[官方认证说明](https://github.com/Kaggle/kaggle-cli/blob/main/docs/README.md#authentication)、[官方 API 入门中的竞赛规则要求](https://www.kaggle.com/getting-started/524433)。
 
@@ -214,6 +219,24 @@ python -m examples.autoresearch.prepare \
 保留上游单次 300 秒训练预算和固定评估。任务外层有超时，指令要求最多两次开发实验。实验次数本身不是后端强制配额。离线容器需要提前缓存所需数据和第三方 kernel。
 
 这个 recipe 自带 oracle，将未修改的上游 `train.py` 交给独立 verifier 实际训练和评估。这里的 65536 MiB 是该基线的预留配置，实际需求还受候选脚本影响。不要对它套用下文 KernelBench 的 600 秒外层示例，应给运行器 1200 秒预算，并保持同一 GPU 申请量。
+
+## PostTrain 裁判任务与 FastKernels 输入
+
+使用写作或健康问答任务前，`POSTTRAIN_ASSETS` 须已有 `models.json`，列出三个真实基础模型的本地路径。`POSTTRAIN_REPO` 指向固定上游源码，`POSTTRAIN_JUDGE_MODEL` 指向已缓存的 Qwen3.5-4B 裁判。确认磁盘余量后才准备缺少的模型，以下命令本身不下载模型，也不安装包。
+
+```bash
+python -m examples.posttrain_bench.prepare_judge_data \
+  --repo "$POSTTRAIN_REPO" --assets "$POSTTRAIN_ASSETS" \
+  --judge-model "$POSTTRAIN_JUDGE_MODEL"
+python -m examples.posttrain_bench.prepare \
+  --repo "$POSTTRAIN_REPO" --assets "$POSTTRAIN_ASSETS" \
+  --output "$POSTTRAIN_TASKS" --python "$TASK_PYTHON" --image "$TASK_IMAGE" \
+  --benchmarks arenahardwriting healthbench --guided-baseline
+```
+
+第一条固定两条公开和两条隐藏数据、原始评分标准及冻结裁判信息。派生数据目录须尚不存在，已经准备好时直接使用第二条。第二条生成六个任务，公开训练数据只交给 agent，隐藏数据与 `/judge` 只读挂入独立 verifier。指定的 Python 前缀也只读挂载。`--guided-baseline` 公开受管 GPU 工具的参考操作，用于功能验收。准备器默认选择五个已支持目标，共十五个公开模型组合，数学和代码目标仍采用答案概率评分，详见[协议说明](../milestones/science-gpu-bench-status-and-roadmap.md#posttrainbench-与-fastkernels-任务协议)。
+
+FastKernels 的 [capture_cases](../../../examples/fastkernels_bench/capture_cases.py) 在 CUDA 上运行合法小输入，记录实际构造参数和前向调用。准备器的 `--captures` 必须指向这些真实执行记录，`--targets` 显式列出采用的算子身份。没有捕获的目标会被拒绝，不能仅生成清单就算通过。现有可复用任务清单、数据与 agent 配置集中在[路线图的题库入口](../milestones/science-gpu-bench-status-and-roadmap.md#题库数量位置与逐题覆盖)。
 
 ## episode 级任务与原生 Env 验证
 
@@ -391,6 +414,8 @@ CPU 与主存需求包含主容器、独立 verifier 和预留 sidecar，不能�
 为了避免题目元数据和预算脱节，准备的 task 路径必须可被实际环境 worker 访问。若调整任务的 agent/verifier 时限，同步调整对应 `agent_config.yaml`，否则外层 runner 预算可能更早结束任务。只用一题做集成检查时不要把同题 train/val 写成独立泛化评测。
 
 ## 评分与数据隔离
+
+本节候选源码读取边界于 2026-11-13 对照主目录 `6aa328d` 加未提交改动局部核对。RE 的 [restricted_mlm_verify.load](../../../examples/re_bench/restricted_mlm_verify.py#L10)、[cumsum_verify.main](../../../examples/re_bench/cumsum_verify.py#L16) 和 [rust_verify.evaluate](../../../examples/re_bench/rust_verify.py#L31) 直接读取并编译候选入口源码，避免旧 `.pyc` 掩盖新源码。10 项 CPU 故障回归通过，未重新执行 GPU 评分。需重新生成任务才能更新已复制的 verifier。此保证不覆盖间接导入、常驻服务和 checkpoint 快照，也不表示固定旧 baseline 出现过同一故障，详见[真实复现与范围](../research-proposals/benchmark-state-reuse-audit.md#results真实入口的旧字节码问题与修复)。其余历史评分验证条件保持原记录。
 
 KernelBench 使用上游 `eval_kernel_against_ref`，3 次随机正确性检查与 10 次性能测量，保留完整 kernel 结果。训练默认奖励为正确性，速度另存，未声称这个工程检查等同完整 `fast_p` 排行榜。
 

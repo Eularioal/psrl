@@ -1,40 +1,71 @@
-# PPO / GRPO / DAPO：一个更新 step 需要多少样本
+# PPO、GRPO、DAPO：一轮更新需要收集多少回答
 
-**核心结论**：三者的核心区别在于 **advantage 怎么算**，这决定了"凑齐多少样本才能做一次更新"：PPO 用 critic 给每条独立轨迹算 baseline，理论上 1 条轨迹就能更新；GRPO/DAPO 没有 critic，baseline 是组内统计量，必须凑齐一个 prompt 的完整 `n` 条 response（一个 group）才能算 advantage。
+**核心结论**：PPO 通常用价值网络判断一次回答是否好于预期；GRPO 用同一道题多份回答的分数作比较，所以计算优势时需要同题的一组样本。DAPO 的动态采样还会过滤缺少奖励差异的组，因此实际采样量可能超过最终训练使用量。
 
 ## 目录
 
-- [两种"step"的区分](#两种step的区分)
+- [先分清问题、回答和更新](#先分清问题回答和更新)
+- [用两个问题、每题四份回答手算](#用两个问题每题四份回答手算)
 - [对比表](#对比表)
-- [关于"GRPO 一个 prompt rollout 出 n 个 response 得到 n 个 advantage"](#关于grpo-一个-prompt-rollout-出-n-个-response-得到-n-个-advantage)
+- [两种“step”的区分](#两种step的区分)
 - [与 psrl 配置的对应](#与-psrl-配置的对应)
 - [延伸阅读](#延伸阅读)
 
-## 两种"step"的区分
+## 先分清问题、回答和更新
 
-日志里的 `training/global_step` 指**一整轮**：rollout 一批 prompt → 算 advantage → 用这批数据做若干次梯度更新 → global_step+1。这一轮内部按 `ppo_mini_batch_size` 切成若干 mini-batch，每个 mini-batch 对应一次真正的梯度下降（可能还会重复 `ppo_epochs` 遍）。下面讨论的是"凑够一轮 rollout 需要多少样本"，不是单次梯度下降需要多少样本。
+**prompt** 是交给模型的问题或初始上下文。模型生成的一次完整尝试叫 **trajectory（轨迹）**，在多轮工具任务里，它包含多次模型回答与工具结果。同一道题采样的多条轨迹构成一个 **group（组）**。
+
+**advantage（优势）** 表示一次尝试比比较基准好多少。PPO 通常由 critic（价值网络）提供基准，GRPO 则从同题回答的奖励中计算基准。优势值算好后，训练程序用它决定各段模型输出应提高还是降低概率。
+
+## 用两个问题、每题四份回答手算
+
+以下是教学数据。设训练需要两个有效组，每组四条轨迹。
+
+| 组 | 四份回答的奖励 | 平均奖励 | 减去平均值后的相对分数 |
+|---|---|---:|---|
+| 题目 A | 1、1、0、0 | 0.5 | +0.5、+0.5、−0.5、−0.5 |
+| 题目 B | 0、0、0、0 | 0 | 0、0、0、0 |
+
+GRPO 利用 A 组的差异加强较好回答。B 组的这部分相对奖励信号为 0。常见 GRPO 实现还除以组内标准差，让各题的分数尺度更接近；标准差为 0 时由实现作特殊处理。
+
+启用 DAPO 动态采样时，B 组会被过滤。如果随后补采的题目 C 形成了有奖励差异的组，最终用 A、C 两组共 8 条轨迹训练，但采样已经花掉 A、B、C 三组共 12 条轨迹。这样就能理解“训练批量为 8”和“实际生成了 12 条”同时出现的原因。实际补采应受时间、样本数及重试预算限制。
 
 ## 对比表
 
-| 算法 | Rollout 的最小可用单元 | Advantage 怎么算 | 凑够一轮需要多少样本 |
-|---|---|---|---|
-| **PPO** | 1 条 trajectory（1 个 prompt + 1 个 response） | 用 critic（value 网络）估计 $V(s_t)$，配合 GAE($\lambda$) 逐 token 算 advantage：<br>$$\hat{A}_t = \sum_{k=0}^{\infty}(\gamma\lambda)^k \delta_{t+k}, \quad \delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)$$<br>不依赖同一 prompt 的其他 response | `train_batch_size`(prompt 数) $\times$ `rollout.n`（**理论上 n=1 即可**，n>1 只是为了降方差，不是算法硬要求） |
-| **GRPO** | 1 个 **group** = 1 个 prompt 的 `n` 条 response（$n\geq2$，常见 4~16） | 没有 critic，用组内统计量做 baseline：<br>$$\hat{A}_i = \frac{r_i - \text{mean}(r_1,\dots,r_n)}{\text{std}(r_1,\dots,r_n)}$$<br>必须等这个 prompt 的 n 条全部生成完才能算，缺一条都不行 | `train_batch_size`(prompt/group 数) $\times$ `n` |
-| **DAPO** | 同 GRPO，1 group = 1 prompt $\times$ n response | 组内相对 baseline 计算方式跟 GRPO 一样，但加了 **dynamic sampling**：如果一组 n 条 response 的 reward 全相同（方差为 0，即全对或全错），这组 advantage 全为 0，等于白采，会被过滤掉并重新采样补足 | 名义上同 GRPO：`train_batch_size` $\times$ `n`；但因为要过滤退化组再补采，实际消耗的 rollout 数会 $\geq$ 这个值（对应指标 `group/zero_variance_fraction`，量化这个浪费比例） |
+| 算法 | 计算优势所需信息 | 样本量怎样理解 |
+|---|---|---|
+| PPO | 单条轨迹的奖励及价值预测，常配合 GAE | 算法不要求同题多份回答，实际训练仍按批收集以降低噪声 |
+| GRPO | 同题一组回答的奖励统计量 | 若有 $B$ 个问题、每题 $n$ 条轨迹，名义样本数为 $B\times n$ |
+| DAPO | 分组相对优势，加上启用的动态采样等机制 | 最终训练量仍按有效组计算，过滤和补采使实际生成量增加 |
 
-## 关于"GRPO 一个 prompt rollout 出 n 个 response 得到 n 个 advantage"
+组内统计的常见形式为：
 
-这个理解是对的，补充两点：
+$$
+\hat A_i=\frac{r_i-\bar r}{\operatorname{std}(r_1,\ldots,r_n)+\epsilon}.
+$$
 
-1. n 个 advantage 不是独立算的，是**同一个 group 内互相依赖**——每个 $\hat{A}_i$ 都要用到全组的 mean/std，所以这 n 条必须打包在一起，不能拆散成单条样本去更新。这也是为什么很多实现里会校验"chunk 必须能被 `rollout_n` 整除"，本质是保证 group 不被切散。
-2. DAPO 在此基础上多了一层"这个 group 是否有效"的判断（方差是否为 0），本质上是 GRPO + 过滤机制，不是重新定义了 advantage 公式。DAPO 论文里另外的改动——非对称 clip（`clip_ratio_low`/`clip_ratio_high`）、超长回复惩罚、token-level loss 聚合——影响的是 loss 怎么聚合，不影响"需要多少样本"这个问题。
+$r_i$ 是第 $i$ 次回答的奖励，$\bar r$ 是同题平均奖励，$\epsilon$ 是避免除零的小量。具体实现可能关闭标准差归一化，或对零方差组作单独处理。
+
+**需要整组信息的是优势计算。** 优势已经算好后，前向和反向传播可以按显存预算切成更小的 micro-batch（微批）。PSRL 的部分流水线仍要求分组对齐，这是该调度路径的数据约定，需与算法的信息依赖分开理解。
+
+## 两种“step”的区分
+
+日志里的 `training/global_step` 通常表示一轮训练进度：取得采样数据、计算学习信号、执行更新并记日志。这一轮内可能包含多个 **optimizer step（优化器参数更新）**。把 8 条轨迹分成两个训练小批量，或用梯度累积处理它们，都可能使二者数量不同。
+
+PSRL 当前由[训练主循环](../../psrl/trainer/ppo/ray_trainer.py#L3361)选择步骤策略，具体批次获取和重叠方式随配置分支变化。
 
 ## 与 psrl 配置的对应
 
-结合 [批量配置的含义](psrl-run-guide/monitoring-and-batches.md#train_prompt_bsz-对应哪个配置是什么意思)：`train_prompt_bsz`（对应 `data.train_batch_size`）就是上表里的"group 数"，`n_resp_per_prompt`（对应 `rollout.n`）就是"n"，两者相乘就是一轮实际用到的样本总数——GRPO/DAPO 场景下这两个数缺一不可，PPO 场景下 `rollout.n` 理论上可以设成 1。
+- `data.train_batch_size` 表示训练使用的问题数，启动脚本常把变量命名为 `train_prompt_bsz`。
+- `gen_actor_rollout_ref.rollout.n` 指每题生成的回答数。冗余采样和过滤会进一步改变实际生成量。
+- `ppo_mini_batch_size` 决定训练时的批次划分，micro-batch 与 token 预算决定一次前反向传播处理多少数据。
+
+例如 `train_prompt_bsz=16`、每题 4 份回答，对应名义 64 条轨迹。[批量配置说明](psrl-run-guide/monitoring-and-batches.md#train_prompt_bsz-对应哪个配置是什么意思)继续解释这些数怎样映射到脚本。源码中的[优势计算](../../psrl/trainer/ppo/ray_trainer.py#L3011)读取分组标识和奖励，[分块配置校验](../../psrl/utils/config.py#L21)则检查流水线要求的分组对齐。
 
 ## 延伸阅读
 
-- GRPO 原始论文：DeepSeekMath（组内相对 baseline，去掉 critic）
-- DAPO 原始论文：字节 DAPO（decoupled clip + dynamic sampling + overlong reward shaping + token-level loss）
-- [生成长尾](psrl-run-guide/ray-and-rollout.md#为什么-rl-rollout-会有生成耗时不均long-tail-latency)：为什么 RL rollout 会有长尾延迟（与 dynamic sampling / redundant rollout 相关）
+- [GAE 的完整算例](gae-bias-variance-tradeoff.md)：PPO 怎样利用价值预测。
+- [DAPO 与训练损失](vllm-and-training-parallelism/rl-loss-and-sampling.md)：动态采样之外的裁剪、长度处理与损失聚合。
+- [生成长尾](psrl-run-guide/ray-and-rollout.md#为什么-rl-rollout-会有生成耗时不均long-tail-latency)：为什么同题回答的完成时间差很多。
+
+可继续问：“全零优势时其他损失项还会更新吗？”或“梯度累积与训练 batch 数量有什么关系？”

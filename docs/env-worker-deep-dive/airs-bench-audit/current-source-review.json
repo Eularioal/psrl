@@ -1,0 +1,541 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-13",
+  "review_kind": "Historical evidence and current source verification; no GPU, Docker, model, training, or CPU regression rerun by this review.",
+  "head": "6aa328d56eff746c2ae6d9fd766b2f3f76b4a670",
+  "dirty": true,
+  "includes_uncommitted_changes": true,
+  "historical_evidence": {
+    "path": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/airs-gpu-validation-20261111.json",
+    "sha256": "b40eca7237f20b9030644fa4eb7e569f49aa1102dd4d0ddd4cd001709af27dcb",
+    "run_date": "2026-11-11",
+    "base_commit": "6aa328d56eff746c2ae6d9fd766b2f3f76b4a670",
+    "included_uncommitted_changes": true
+  },
+  "this_review": {
+    "source_files_hashed": 14,
+    "all_source_hashes_match": true,
+    "historical_quick_task_count": 19,
+    "historical_all_quick_checks_passed": true,
+    "reran_gpu": false,
+    "reran_docker": false,
+    "reran_policy_training": false,
+    "reran_cpu_regressions": false,
+    "modified_implementation_files": false,
+    "created_only_this_evidence_artifact": true
+  },
+  "source_sha256_comparison": [
+    {
+      "path": "examples/airs_bench/config.py",
+      "historical_sha256": "777e6bd30531c1ad59fa40032b8adbeeacbec2f6721dac9d9a12faea9b046784",
+      "current_sha256": "777e6bd30531c1ad59fa40032b8adbeeacbec2f6721dac9d9a12faea9b046784",
+      "matches": true
+    },
+    {
+      "path": "examples/airs_bench/gpu_baseline.py",
+      "historical_sha256": "4106a9c57a98b60bef517bdd8bd9225eb188c1e90b0c22c348a12275cf6f7fd0",
+      "current_sha256": "4106a9c57a98b60bef517bdd8bd9225eb188c1e90b0c22c348a12275cf6f7fd0",
+      "matches": true
+    },
+    {
+      "path": "examples/airs_bench/gpu_quick_check.py",
+      "historical_sha256": "a18dfed8d29c36079d8e1c9d611fea374144eefa9f200c99f4df7dfe8213a9e2",
+      "current_sha256": "a18dfed8d29c36079d8e1c9d611fea374144eefa9f200c99f4df7dfe8213a9e2",
+      "matches": true
+    },
+    {
+      "path": "examples/airs_bench/prepare/prepare_gpu_suite.py",
+      "historical_sha256": "0bc96b0721144c995cd3ccf9d171d00ba91c5f6282891895899b3087082012e5",
+      "current_sha256": "0bc96b0721144c995cd3ccf9d171d00ba91c5f6282891895899b3087082012e5",
+      "matches": true
+    },
+    {
+      "path": "examples/airs_bench/grading.py",
+      "historical_sha256": "1a2b45a963a6e19fc1de11bff223e108bc439f7c9cc65521aff095a7eccd72d9",
+      "current_sha256": "1a2b45a963a6e19fc1de11bff223e108bc439f7c9cc65521aff095a7eccd72d9",
+      "matches": true
+    },
+    {
+      "path": "examples/airs_bench/reward.py",
+      "historical_sha256": "82248bcf0b2e013102c67d010ed619415c92d54a84a8b739da296e822410af5e",
+      "current_sha256": "82248bcf0b2e013102c67d010ed619415c92d54a84a8b739da296e822410af5e",
+      "matches": true
+    },
+    {
+      "path": "examples/airs_bench/runner.py",
+      "historical_sha256": "aef8b3a7cf6b5f37439464e93fb666113c8b293dad3f5c3a295fcce624c44d40",
+      "current_sha256": "aef8b3a7cf6b5f37439464e93fb666113c8b293dad3f5c3a295fcce624c44d40",
+      "matches": true
+    },
+    {
+      "path": "psrl/environments/mlgym_env.py",
+      "historical_sha256": "97b571f54a1b0e4b0bce03d80bec4f3e5f5c258704921f297936e6be070cb9ee",
+      "current_sha256": "97b571f54a1b0e4b0bce03d80bec4f3e5f5c258704921f297936e6be070cb9ee",
+      "matches": true
+    },
+    {
+      "path": "psrl/workers/agent_loop/loops/mlgym_agent_loop.py",
+      "historical_sha256": "853506204843cdc5a9b440240ea28651d1d63ef0bbb9a54b9362c84d60f6b64b",
+      "current_sha256": "853506204843cdc5a9b440240ea28651d1d63ef0bbb9a54b9362c84d60f6b64b",
+      "matches": true
+    },
+    {
+      "path": "examples/airs_bench/gpu_train.sh",
+      "historical_sha256": "6a9556e8d2ebd02f4884f0e92f89c4d566dadd1a82565bc1049b20ec48e49fa9",
+      "current_sha256": "6a9556e8d2ebd02f4884f0e92f89c4d566dadd1a82565bc1049b20ec48e49fa9",
+      "matches": true
+    },
+    {
+      "path": "examples/airs_bench/config/gpu_agent_config.yaml",
+      "historical_sha256": "6ff703af8ed7b508b314424ea9eaeec2beaf360164c267af4d3d3db6af91ce6d",
+      "current_sha256": "6ff703af8ed7b508b314424ea9eaeec2beaf360164c267af4d3d3db6af91ce6d",
+      "matches": true
+    },
+    {
+      "path": "examples/airs_bench/config/mlgym_agent_config.yaml",
+      "historical_sha256": "7ae23b23e54b24dd03495c8e20b1c4644d36c393c78363fbc45eccc4f3abde0f",
+      "current_sha256": "7ae23b23e54b24dd03495c8e20b1c4644d36c393c78363fbc45eccc4f3abde0f",
+      "matches": true
+    },
+    {
+      "path": "examples/airs_bench/prepare/audit_gpu_suite.py",
+      "historical_sha256": "2d4d5a54c9709bc75b9738b863240f46d0321b47cb5cfa150b2a1f096758301c",
+      "current_sha256": "2d4d5a54c9709bc75b9738b863240f46d0321b47cb5cfa150b2a1f096758301c",
+      "matches": true
+    },
+    {
+      "path": "examples/airs_bench/acceptance_agent_config.yaml",
+      "historical_sha256": "db0abe04f03702636bffc7509aec7510fed59641261e689d1336ff15ab6c4648",
+      "current_sha256": "db0abe04f03702636bffc7509aec7510fed59641261e689d1336ff15ab6c4648",
+      "matches": true
+    }
+  ],
+  "historical_gpu_quick_validation": {
+    "scope": "All 19 non-Kaggle AIRS task identities using bounded real data, actual CUDA task baselines, independent scoring and reward conversion.",
+    "official_full_score": false,
+    "elapsed_s": 365.68350100517273,
+    "ordinary_task_limits": {
+      "max_public_training_records": 64,
+      "test_inputs": 8
+    },
+    "exceptions": {
+      "APPS": {
+        "problems": 2,
+        "hidden_cases_per_problem": 2,
+        "candidates_per_problem": 5
+      },
+      "CodeRetrieval": {
+        "queries": 8,
+        "full_public_search_corpus_records": 19210,
+        "public_training_queries": 64
+      },
+      "Rideshare": {
+        "test_inputs": 8,
+        "series_per_input": 15,
+        "prediction_csv_rows": 120,
+        "forecast_values_per_row": 48,
+        "expanded_valid_training_series": 945
+      }
+    },
+    "per_task_agent_interaction_boundary": "Quick checks directly submit and invoke the independent scorer; all recorded validate_count values are 0 and submit_count values are 1. LLM-driven validate and submit interaction is covered by the representative SICK policy run, not by 19 separate policy-training runs.",
+    "tasks": [
+      {
+        "task": "CodeGenerationAPPSPassAt5",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 33589760,
+        "train_rows": 64,
+        "prediction_rows": 2,
+        "task_baseline_optimizer_steps": 0,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "Pass@5": 0.0
+        },
+        "reward_score": 0.0,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "CodeRetrievalCodeXGlueMRR",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 44009984,
+        "train_rows": 19210,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 0,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "MRR": 0.0
+        },
+        "reward_score": 0.0,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "CoreferenceResolutionSuperGLUEWSCAccuracy",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 68199936,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "Accuracy": 0.5
+        },
+        "reward_score": 0.08468005689665767,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "CoreferenceResolutionWinograndeAccuracy",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 68199936,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "Accuracy": 0.625
+        },
+        "reward_score": 0.2720933260895178,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "CvMolecularPropertyPredictionQm9MeanAbsoluteError",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 67151872,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "MeanAbsoluteError": 3.862074851989746
+        },
+        "reward_score": 0.4041201537595487,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "GMolecularPropertyPredictionQm9MeanAbsoluteError",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 67151872,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "MeanAbsoluteError": 624129250.0
+        },
+        "reward_score": 0.0,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "GraphRegressionZincMae",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 67151872,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "MAE": 1.428567672148347
+        },
+        "reward_score": 0.3018037425052693,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "MathQuestionAnsweringSVAMPAccuracy",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 33594368,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 0,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "Accuracy": 0.0
+        },
+        "reward_score": 0.0,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "QuestionAnsweringDuoRCAccuracy",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 33594368,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 0,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "Accuracy": 0.5
+        },
+        "reward_score": 1.0,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "QuestionAnsweringEli5RougeL",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 33594368,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 0,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "RougeL": 0.08817717480107157
+        },
+        "reward_score": 0.28902771480460193,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "QuestionAnsweringFinqaAccuracy",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 33594368,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 0,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "Accuracy": 0.0
+        },
+        "reward_score": 0.0,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "R2AbsMolecularPropertyPredictionQm9MeanAbsoluteError",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 67151872,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "MeanAbsoluteError": 176.2069091796875
+        },
+        "reward_score": 0.2962762769552658,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "ReadingComprehensionSquadExactMatch",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 33594368,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 0,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "ExactMatch": 0.0
+        },
+        "reward_score": 0.0,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "SentimentAnalysisYelpReviewFullAccuracy",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 68205056,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "Accuracy": 0.25
+        },
+        "reward_score": 0.06647663520775329,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "TextualClassificationSickAccuracy",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 68201984,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "Accuracy": 0.75
+        },
+        "reward_score": 0.5596034297279355,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "TextualSimilaritySickSpearmanCorrelation",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 67151872,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "SpearmanCorrelation": -0.047905050476530354
+        },
+        "reward_score": 0.173970828644716,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "TimeSeriesForecastingRideshareMAE",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 69637632,
+        "train_rows": 945,
+        "prediction_rows": 120,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "MAE": 9.091476668440414
+        },
+        "reward_score": 0.3709037315705179,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "TimeSeriesForecastingSolarWeeklyMAE",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 68208128,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "MAE": 2575.227117919922
+        },
+        "reward_score": 0.6348446724684728,
+        "submit_count": 1,
+        "validate_count": 0
+      },
+      {
+        "task": "U0MolecularPropertyPredictionQm9MeanAbsoluteError",
+        "passed": true,
+        "gpu_device": "NVIDIA H20",
+        "peak_cuda_bytes": 67151872,
+        "train_rows": 64,
+        "prediction_rows": 8,
+        "task_baseline_optimizer_steps": 3,
+        "baseline_exit_code": 0,
+        "baseline_timed_out": false,
+        "metrics": {
+          "MeanAbsoluteError": 624100500.0
+        },
+        "reward_score": 0.0,
+        "submit_count": 1,
+        "validate_count": 0
+      }
+    ],
+    "owned_container_cleanup_recorded": true,
+    "cleanup_scope": "Historical run cleanup record, not a current node inspection."
+  },
+  "historical_representative_policy_validation": {
+    "status": "passed",
+    "task": "TextualClassificationSickAccuracy",
+    "model": "Qwen3.5-4B",
+    "completed_episodes_by_version": {
+      "v0": 2,
+      "v1": 1
+    },
+    "optimizer_steps": 1,
+    "metrics": [
+      {
+        "step": 1,
+        "actor/loss": 0.0,
+        "actor/grad_norm": 0.0,
+        "actor/lr": 1e-06,
+        "critic/rewards/mean": 0.5596034526824951,
+        "critic/rewards/min": 0.5596034526824951,
+        "critic/rewards/max": 0.5596034526824951,
+        "termination/trained_tokens": 672.0,
+        "termination/masked_sample_fraction": 0.0,
+        "group/zero_variance_fraction": 1.0,
+        "termination/finished/fraction": 1.0,
+        "termination/finished/score_mean": 0.5596034526824951,
+        "timing_s/update_actor": 17.393031494691968,
+        "timing_s/step": 212.1302218362689
+      }
+    ],
+    "version_1_published": true,
+    "version_1_pulled": true,
+    "elapsed_s_including_initialization": 931.8169059753418,
+    "cleanup_passed": true,
+    "acceptance_prompt": "Dedicated three-action public CUDA baseline, validate, submit prompt. Ordinary research prompts remain separate.",
+    "termination": "Controlled SIGTERM after one optimizer step and a successful updated-version CUDA/validation/submission episode; process exit -15 is not natural completion of the full launch budget.",
+    "interpretation": "The common PSRL policy path ran with 672 effective generated training tokens and version publication/pull. Equal group rewards produced zero loss and gradient; this proves optimizer execution and the rollout/score path, not nonzero parameter change or learning improvement."
+  },
+  "historical_cpu_regressions": {
+    "distinct_cases_reported": 123,
+    "rerun_in_this_review": false,
+    "interpretation": "Historical 119-case suite had 116 pass and 3 fixture failures, then affected fixtures passed targeted retesting; acceptance configuration added 4 distinct cases. Counts must not be added as if they were one clean full-suite run."
+  },
+  "local_upstream_source_location": {
+    "mlgym_repo": "/apdcephfs_zwfy10/share_303541817/lhy/science_infra/MLGym",
+    "mlgym_module": "/apdcephfs_zwfy10/share_303541817/lhy/science_infra/MLGym/mlgym/__init__.py",
+    "mlgym_repo_and_module_exist": true,
+    "airs_repo": "/apdcephfs_zwfy10/share_303541817/lhy/science_infra/airs-bench",
+    "airs_repo_exists": true,
+    "path_evidence": "../benchmark-runs/airs-gpu-20261111/policy-acceptance.sh:13",
+    "mlgym_location_check": "Filesystem existence and importlib.machinery.PathFinder spec lookup only; no upstream package import or dependency install.",
+    "isolated_cpu_dependency_path": "../benchmark-assets/airs-psrl-deps"
+  },
+  "remaining_boundaries": [
+    "Kaggle Web Traffic task requires credentials and is deferred.",
+    "Task identities are covered; full original training/test datasets and strong baselines are not validated.",
+    "Only SICK has this recorded representative LLM/post-training/updated-version rollout validation; the other task identities have separate CUDA/scorer quick checks.",
+    "Full 5000-problem APPS correctness-equivalence and throughput within the default deadline are not validated; bounded candidate-container measurements indicate a capacity risk.",
+    "AIRS uses native EnvWorker and Ray GPU allocation, holds the GPU for an episode, and does not use the Harbor/EnvRouter psrl-gpu command lease path.",
+    "AIRS and Harbor mixed-policy training, control-plane fault recovery, and prolonged production operation are not validated.",
+    "Episode timeout includes queueing; successful acceptance prompt execution does not guarantee autonomous research-prompt completion.",
+    "The 14 matching fingerprints cover saved AIRS integration files, not every shared backend, worker, external dependency, container image, or deployment state.",
+    "Zero or poor benchmark metric values can be valid task results. Passing interface checks does not imply optimization quality or policy learning improvement."
+  ],
+  "documentation_consistency_findings": [
+    {
+      "path": "docs/env-worker-deep-dive/airs-bench-audit/fixes-and-results.md",
+      "issue": "Current-boundary sections still classify real Ray/TITO training and all AIRS assets as unverified without the later 19-task/SICK bounded scope; historical experiment conditions should remain historical."
+    },
+    {
+      "path": "docs/env-worker-deep-dive/airs-bench-audit/apps-isolation.md",
+      "issue": "Current-boundary paragraphs still classify the TITO path and all offline assets as unverified; preserve full APPS, long-run throughput and fault-recovery limits."
+    }
+  ],
+  "conclusion": "Known repaired AIRS functionality has bounded real-GPU and representative PSRL policy-loop evidence consistent with all 14 saved current integration fingerprints. This does not certify all tasks at full scale, all operating conditions, or all future deployments."
+}

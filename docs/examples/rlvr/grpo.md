@@ -1,5 +1,7 @@
 # GRPO: Group Relative Policy Optimization
 
+> **Core idea:** compare multiple answers to the same question, rather than train a separate value model. With rewards `[1, 0]`, the mean is 0.5, so the successful answer is above average and the failed answer below it. Dividing by the group standard deviation scales that relative signal. These are teaching numbers.
+
 ```{admonition} Coming Soon
 :class: tip
 
@@ -27,7 +29,7 @@ $$
 
 ## GRPO vs. PPO
 
-| Aspect | [PPO](ppo) | GRPO |
+| Aspect | [PPO](ppo.md) | GRPO |
 |---|---|---|
 | Critic / value model | Required (GAE) | Not used |
 | Advantage estimate | $\hat{A}_t$ from GAE on critic values | Group-normalized score $(r_i-\mu)/\sigma$ |

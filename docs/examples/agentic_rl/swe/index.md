@@ -1,5 +1,7 @@
 # SWE Agentic RL
 
+> **Core idea:** an agent changes a repository in one container, and a fresh grader checks the submitted patch. A teaching example is fixing a broken sum function: the agent inspects code and runs tests, then the grader applies only the patch and reruns the required tests.
+
 This recipe trains a policy to solve software-engineering tasks with
 [mini-SWE-agent](https://github.com/SWE-agent/mini-SWE-agent), Docker sandboxes,
 fresh-container grading, and PSRL's asynchronous GRPO/DAPO training path.
@@ -9,6 +11,13 @@ bindings and OpenAI-compatible model client, which talks to PSRL through a
 session-scoped OpenAI endpoint served by SessionRouter.
 
 ---
+
+## Contents
+
+- [Current Runtime Path](#current-runtime-path)
+- [Supported Data Paths](#supported-data-paths)
+- [Main Components](#main-components)
+- [Reward Semantics](#reward-semantics)
 
 ## Current Runtime Path
 

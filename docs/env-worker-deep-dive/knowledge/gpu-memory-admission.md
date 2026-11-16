@@ -2,6 +2,7 @@
 
 > **核心结论**：unit 的配置容量与实时准入余量是两层。独立环境 GPU 应按整卡允许使用的容量建池，实时占用不能自动扩大显式低配的池。当前记账为 `实测总占用 + Σ max(每任务预约 − 已核实的当前任务显存, 0)`，command 与普通 episode 路径均支持可信归属抵扣。无法确认归属时仍保守叠加实测与预约。episode 的整卡压力验证见第 9 节，历史验证与 CPU 教学模拟分别标注。
 
+
 ## 目录
 
 - [1. 全局流程与源码](#1-全局流程与源码)
@@ -16,7 +17,7 @@
 
 ## 1. 全局流程与源码
 
-本文补充[命令级预约](command-gpu-reservations.md)，修复触发条件来自[science 常驻压力短测](../experiments/science-single-gpu-training-control.md#11-results常驻显存压力四组短测)。原实验结果保留为修复前数据。
+本文补充[命令级预约](command-gpu-reservations.md)，修复触发条件来自[science 常驻压力短测](../experiments/history/science-single-gpu-training-control-chronology.md#11-results常驻显存压力四组短测)。原实验结果保留为修复前数据。
 
 ```text
 [1] GPU 命令请求 → 调度器锁住该 unit，检查队首与已有预约

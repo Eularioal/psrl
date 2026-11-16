@@ -1,15 +1,20 @@
 # 历史实现与阶段分析
 
-> **核心结论**：保留固定阶段的证据，现状以当前设计为准。
+这些文档回答“当时为什么这样设计、修复前发生了什么”。早期方案从一张卡只给一个任务，逐步发展到按显存预算放行多个任务；修复前日志和代码摘录保留了这条演进过程。
+
+了解现在怎样运行，请先读[当前设计](../knowledge/current-design.md)；按问题选择教程可看[知识文档索引](../knowledge/README.md)。历史实验的条件和结果仍有参考价值，部署与待办以现状入口为准。
 
 ## 阅读入口
 
-[当前设计](../knowledge/current-design.md) · [环境专题总览](../README.md)
+| 想了解的问题 | 文档 | 保存的阶段与价值 |
+|---|---|---|
+| 为什么最早需要整卡互斥锁？ | [Science GPU Gate 的设计与验证](sciaccel-gpu-gate.md) | 2026-09 至 10 月：静态设备映射、跨进程锁、训练与环境的两套设备账本 |
+| 提交 `72ca50c` 实际改了什么？ | [Gate A / Gate B 逐段讲解](commit-72ca50c-gate-ab-walkthrough.md) | 固定提交：一张卡给一个 episode、模型回复前的软节流，以及 CPU 诊断输出 |
+| 一卡多容器和租约最初如何实现？ | [Env Service 早期实现](env-service-implementation.md) | 2026-10-12：资源单元、租约、心跳、容量准入与当次测试 |
+| 旧 EnvWorker 的资源回收与 AIRS 接入出了什么问题？ | [修复前审查与最小复现](implementation-and-gaps.md) | 2026-10-13：冻结源码、真实 Bash 重放、继承契约与回收缺口 |
+| 为什么将 GPU 持有范围缩短到命令阶段？ | [命令生命周期与通用接入的阶段讨论](env-router-current-flow.md) | 2026-10 至 11 月：预热、异步作业、完整教学时间线、常驻状态的保存恢复成本 |
+| 当时训练对照的收益是什么？ | [2026-10-28 阶段报告](../milestones/env-status-and-roadmap.md) | 固定 baseline 下的高压力与低压力结果，以及当时的研发计划 |
 
 ## 文档
 
-- [Env Service 实现讲解：一卡多容器、EnvRouter、训推节点策略（2026-10-12 改动）](env-service-implementation.md)
-- [SciAccel 接入 EnvWorker 管理 GPU：Gate A/B 实测与部署](sciaccel-gpu-gate.md)
-- [EnvWorker 历史实现与修复前审查：账本、回收和旧待办对照](implementation-and-gaps.md)
-- [提交 72ca50c 代码讲解：Gate A / Gate B 到底实现了什么（以及它没有实现什么）](commit-72ca50c-gate-ab-walkthrough.md)
-- [EnvRouter 流程与通用接入设计讨论](env-router-current-flow.md)
+原有章节编号和跳转保留，便于追溯旧引用。源码模块后续可能变化；查看历史行为时，以文内注明的提交、冻结快照和原始结果为依据。

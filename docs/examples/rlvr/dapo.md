@@ -1,7 +1,7 @@
-# DAPO: Dynamic Sampling Aligned Policy Optimization
+# DAPO: Decoupled Clip and Dynamic Sampling Policy Optimization
 
-DAPO (Dynamic sampling Aligned Policy Optimization) is the third entry in the
-[PPO](ppo) → [GRPO](grpo) → DAPO progression: it keeps GRPO's per-prompt
+DAPO (Decoupled Clip and Dynamic sAmpling Policy Optimization) is the third entry in the
+[PPO](ppo.md) → [GRPO](grpo.md) → DAPO progression: it keeps GRPO's per-prompt
 group-relative advantages (no critic) and adds **asymmetric clipping** plus a
 **dynamic sampling filter** for more stable RL training. Concretely, it groups rollouts
 by prompt, normalizes advantages within each group, and uses different clip bounds for
@@ -15,14 +15,27 @@ see {doc}`common`.
 
 ---
 
+## Contents
+
+- [DAPO vs. GRPO](#dapo-vs-grpo)
+- [Training Paths](#training-paths)
+- [Quick Launch](#quick-launch)
+- [DAPO-specific Parameters](#dapo-specific-parameters)
+
 ## DAPO vs. GRPO
 
-DAPO inherits everything from [GRPO](grpo) and changes two things:
+This page focuses on asymmetric clipping and group filtering. The [DAPO paper](https://arxiv.org/abs/2503.14476) also describes token-level loss aggregation and overlong reward shaping. A launch script determines which features are enabled:
 
-| Aspect | [GRPO](grpo) | DAPO |
+| Aspect | [GRPO](grpo.md) | DAPO |
 |---|---|---|
 | PPO clip bounds | Symmetric: `clip_ratio` | Asymmetric: `clip_ratio_low` < `clip_ratio_high` |
 | Group filtering | All groups used | Dynamic sampling filter drops uninformative groups (all-correct / all-wrong) |
+
+For example, rewards `[1, 1, 1, 1]` give no within-group distinction, while
+`[1, 0, 0, 0]` distinguishes the successful response. This is a teaching example.
+The basic 3B launch script currently sets `psrl.group_post_process.enable=False`;
+its group filter is configured by name but disabled. Enable it explicitly when
+that mechanism is part of the intended experiment.
 
 Both extensions aim to keep training on informative, exploratory updates: the
 asymmetric upper clip lets the policy push more aggressively on under-probable but

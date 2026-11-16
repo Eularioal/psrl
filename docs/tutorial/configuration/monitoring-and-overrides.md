@@ -1,9 +1,11 @@
 # 监控配置与覆盖示例
 
-> **核心结论**：本篇聚焦「监控配置与覆盖示例」及其相邻完整章节。原文的例子、推导和证据保留，历史条件不代表当前部署。
+> **核心结论**：本篇用于开启观测和覆盖配置。先区分“只记录指标”的开关与“故意改变计算”的性能分析开关，再复制示例。命令行覆盖只对本次运行生效。
 
 ## 目录
 
+  - [Memory Logger](#memory-logger)
+  - [Profile](#profile)
 - [Overrides](#overrides)
 - [Example: Advanced 7B FSDP Config](#example-advanced-7b-fsdp-config)
 
@@ -64,7 +66,7 @@ Override any parameter from the command line using Hydra syntax:
 
 ```bash
 python -m psrl.trainer.main_ppo \
-    +psrl.staleness=3 \
+    psrl.staleness=3 \
     psrl.rollout_coordination.routing_strategy.method=throughput_optimal \
     psrl.deployment.n_rollout_instances=4 \
     psrl.lmcache.enable=True \
@@ -80,7 +82,8 @@ Key syntax rules:
 
 :::{tip}
 For complex experiments, create a separate YAML file with your overrides and pass it
-with `--config-path`:
+with `--config-path` and `--config-name`. That YAML must compose the required
+base configuration; pointing at a file of overrides alone does not supply all defaults:
 
 ```bash
 python -m psrl.trainer.main_ppo \
@@ -116,10 +119,10 @@ python -m psrl.trainer.main_ppo \
 ```
 
 ```{seealso}
-- {doc}`quickstart`: Minimal working example with DAPO
-- {doc}`../design/staleness_control`: Staleness control design
-- {doc}`../design/flexible_rollout`: Routing and rollout coordination
-- {doc}`../design/kv_cache`: KV cache management
-- {doc}`../design/router_tito`: SMG, SessionRouter, and TITO
-- {doc}`../design/transfer_queue`: sample data plane
+- {doc}`../quickstart`: Minimal working example with DAPO
+- {doc}`../../design/staleness_control`: Staleness control design
+- {doc}`../../design/flexible_rollout`: Routing and rollout coordination
+- {doc}`../../design/kv_cache`: KV cache management
+- {doc}`../../design/router_tito`: SMG, SessionRouter, and TITO
+- {doc}`../../design/transfer_queue`: sample data plane
 ```

@@ -5,13 +5,27 @@ assumes you are already familiar with the config groups introduced in
 {doc}`configuration`, and it focuses on *how to set* the knobs rather than repeating
 every field's full reference entry.
 
+## Contents
+
+- [Staleness](#staleness)
+- [Fine-Grain Overlap](#fine-grain-overlap)
+  - [What cannot be combined, and why](#what-cannot-be-combined-and-why)
+- [Rollout Coordination](#rollout-coordination)
+  - [Baseline settings](#baseline-settings)
+  - [Reasoning workloads (single turn, short prefill, long decode)](#reasoning-workloads-single-turn-short-prefill-long-decode)
+  - [Agentic workloads (multi turn, prefill dominated)](#agentic-workloads-multi-turn-prefill-dominated)
+- [LMCache](#lmcache)
+  - [Cache versioning: multi_version_kv and clear_on_weight_update](#cache-versioning-multi_version_kv-and-clear_on_weight_update)
+  - [P2P transfer](#p2p-transfer)
+- [Torch Memory Saver](#torch-memory-saver)
+
 ## Staleness
 
 **Config**: `psrl.staleness`
 
 `psrl.staleness` is the maximum version gap allowed between the rollout side and the
-training side. A larger staleness lets rollout run further ahead of training, which
-hides more of the rollout long tail behind ongoing training compute.
+training side. A larger value lets training accept samples from older generation
+versions, allowing more overlap between the two pipelines.
 
 It is important to understand what staleness does **not** change. Rollout and training
 still overlap at the granularity of one staleness buffer against one staleness buffer.
@@ -19,8 +33,9 @@ Raising `staleness` lets more buffers be in flight at once, it does not make tha
 per-buffer overlap any finer grained. For finer-grained overlap within a single buffer,
 see the next section.
 
-In practice, a value between `1` and `3` gets close to peak throughput while keeping
-the accuracy impact small.
+Compare small values such as `1`, `2`, and `3` on the same workload. Choose using
+both throughput and held-out task quality; the version bound alone does not predict
+the accuracy impact.
 
 ```bash
 psrl.staleness=2 \
@@ -92,8 +107,8 @@ psrl:
   gradient accumulation, with the optimizer step deferred until a mini-batch boundary
   is reached. That needs new gradient-accumulation RPCs on the training worker and a
   shared loss denominator across chunks, neither of which is implemented yet. Use
-  `overlap_scope: recompute` with `micro_batch`, or reduce `multiplier` so the chunk
-  clamps up to `mini_batch`.
+  `overlap_scope: recompute` with `micro_batch`, or increase `multiplier` enough for the effective chunk
+  to clamp up to `mini_batch`.
 - `pre_step` requires `ppo_epochs: 1`, because a streaming, per-chunk update cannot
   revisit a chunk that has already been consumed by a previous epoch.
 - `micro_batch` is incompatible with `use_dynamic_bsz: True`, because the chunk size is
@@ -143,8 +158,9 @@ is documented in full, with its concept and every field, in
 ### Baseline settings
 
 Partial rollout can simply be turned on. It interrupts a generation at a version
-boundary instead of waiting for it to finish, which removes most of the rollout long
-tail with no downside for asynchronous training.
+boundary instead of waiting for it to finish, which preserves completed tokens while allowing weight synchronization to proceed.
+Its effect on throughput and training quality depends on interruption frequency and
+the configured correction method.
 
 ```bash
 psrl.rollout_coordination.partial_rollout.enable=True
@@ -380,11 +396,11 @@ LMCache section of {doc}`configuration` for every individual switch.
 
 **Config**: `psrl.tms.*`
 
-Torch Memory Saver (TMS) manages GPU memory so that idle workers can release it and
-active workers can reclaim it, letting training and rollout share the same GPUs
-without both needing to be resident at once. It is off by default. Enable it when GPU
-memory is not the constraint and the priority instead is minimizing the latency of
-switching between training and rollout phases.
+Torch Memory Saver (TMS) supports memory pause/resume for covered worker lifecycles.
+It is off by default. The explicit colocated path switches **training and validation**
+workers on the training allocation. The regular asynchronous generation pool has its
+own allocation. `tms.range=all` selects managed workers; placement and switching are
+configured separately. See [the checked lifecycle](../design/resource_elasticity.md).
 
 ```bash
 psrl.tms.range=all \
@@ -392,12 +408,10 @@ psrl.tms.enable_nixl=True \
 psrl.tms.enable_cuda_graph=True
 ```
 
-The reason `enable_nixl` speeds up the switch is that TMS keeps a worker's virtual
-address range stable across a pause and resume cycle. Because the addresses do not
-move, NIXL does not need to acquire fresh buffer addresses and redo full registration
-from scratch when a worker wakes up, it can reuse its previous addresses and only
-refresh the physical pages and rkeys behind it. The trade-off is extra GPU
-memory overhead.
+The integration manages eligible NIXL buffers across memory transitions. The current
+training/validation switch explicitly exchanges updated client information and
+registers tensors after wakeup. Measure pause, reload and registration time on the
+actual backend before attributing a speedup to TMS.
 
 ```{seealso}
 {doc}`../design/resource_elasticity` for the full TMS lifecycle, and the TMS section

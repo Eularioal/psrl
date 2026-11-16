@@ -1,6 +1,6 @@
-# PSRL 基础运行与示例脚本
+# PSRL 基础运行：先理解示例，再准备一次有界任务
 
-> **核心结论**：以 DAPO 示例说明安装、模型与数据准备、启动参数和单机 Demo；执行前先核对集群检查专题中的环境约束。
+一个 PSRL 训练任务需要模型、题目数据、生成服务、训练进程和评分逻辑共同工作。先确认这些角色及路径，再按目标选择最小运行规模。本页以仓库 DAPO 脚本解释参数；Science 的当前源码链路另见[训练源码地图](../psrl-training-script-source-map.md)。
 
 ## 目录
 
@@ -17,212 +17,108 @@
 - [实操建议](#实操建议)
 - [延伸阅读](#延伸阅读)
 - [单机 Demo 脚本与常用 bash 语法：`qwen2.5_3b_fsdp_singlenode_demo.sh`](#单机-demo-脚本与常用-bash-语法qwen25_3b_fsdp_singlenode_demosh)
-  - [脚本做了什么](#脚本做了什么)
-  - [涉及的 bash 语法](#涉及的-bash-语法)
-
-本篇由原长文按章节迁移，保留原有例子、推导和历史证据。本次仅整理结构，未重新验证技术结论或重跑实验。旧的中文章节编号已改为主题标题，正文引用已改为可点击链接。
-
-[返回专题索引](../psrl-run-guide.md)
-
-运行前先阅读[共享环境与集群检查](cluster-preflight.md)；文中的历史地址、依赖和机器状态需要重新核对。
 
 ## 项目结构速览
 
-- 代码位于 `psrl/`（本仓库根目录下的 `psrl/psrl` 才是 Python 包 `import psrl` 对应的目录，`psrl/` 顶层是仓库）。
-- 训练入口是 `python -m psrl.trainer.main_ppo`，用 **Hydra** 管理配置，配置基类在 `psrl/trainer/config/ppo_trainer.yaml`（FSDP）和 `ppo_megatron_trainer.yaml`（Megatron）。
-- `examples/` 下按算法/任务分目录（`dapo_trainer`、`ppo_trainer`、`grpo_trainer`、`retool`、`mini_swe` 等），每个目录里是拼好命令行参数的 shell 脚本，直接 `bash` 运行即可。
-- `examples/ray/ray_start.sh` 是拉起多机 Ray 集群的辅助脚本。
+| 位置 | 用途 |
+|---|---|
+| `examples/` | 各类任务的启动脚本与配置 |
+| `psrl/trainer/main_ppo.py` | 解析配置、连接 Ray、创建训练任务 |
+| `psrl/trainer/ppo/` | 调度采样与训练阶段 |
+| `psrl/workers/` | 生成、训练、评分、参数服务器等执行角色 |
+| `docs/` | 使用说明、机制解释与历史证据 |
+
+Ray 是跨进程、跨机器的任务管理框架；Hydra 是把默认配置与命令行覆盖项合并的工具。先知道它们分别管执行位置和运行参数即可，后面再按问题深入。
 
 ## 安装
 
-**Docker（推荐，省去环境搭建）：**
+新环境的安装与版本要求统一读[安装说明](../../tutorial/installation.md)。本工作区使用共享环境时，先按[集群检查](cluster-preflight.md)激活指定环境、确认实际导入路径，依赖修复放到本次隔离副本。
 
-```bash
-docker build --progress=plain -f docker/Dockerfile -t psrl:latest .
-
-docker run --rm --gpus all --ipc=host --shm-size=16g \
-  --ulimit memlock=-1 --ulimit stack=67108864 \
-  -v "$PWD:/home/psrl" \
-  -it psrl:latest
-```
-
-**源码安装：**
-
-```bash
-# Rust（编译 SMG 的 gRPC gateway 需要）
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source "$HOME/.cargo/env"
-
-conda create -n psrl python=3.12
-conda activate psrl
-
-bash scripts/install_basic.sh      # PyTorch/vLLM/veRL/SMG 等核心依赖
-bash scripts/install_nixl.sh       # 可选：RDMA 权重同步
-bash scripts/install_megatron.sh   # 可选：Megatron 训练后端
-bash scripts/install_lmcache.sh    # 可选：KV cache 多实例复用
-
-python -m pip install -e .
-```
-
-安装完成后可用下面的命令逐项验证（PyTorch/CUDA、`psrl`、`vllm`、`ray`、`verl` 等能否正常 import），装完确认无报错再进入下一步。
+`pip install -e` 会改变所用 Python 环境的源码指向，适合个人新环境；共享环境应沿用已经约定的导入与隔离方法。原文中的重复安装命令移除，避免和安装入口维护两份版本要求。
 
 ## 运行前准备
 
-0. **`PSRL_WORKSPACE`**：跑任何示例脚本前必须自己 `export` 好这个变量，脚本不会替你猜。它指向的目录要同时包含三样东西：
-   - `env/`：一般是软链接，指向团队共享的环境激活脚本所在目录（见下方「`env/psrl.sh` 是什么」）；
-   - `models/<模型名>`：本地模型权重；
-   - `data/<数据集>/{train,test}.parquet`：训练/验证数据。
+先确认下面五件事：
 
-   `checkpoint/`、`logs/` 这两个子目录不需要预先创建，脚本运行时会自动 `mkdir -p`。
+1. 验收目标：只查配置、验证容器，还是确实需要训练更新；写清时间、GPU、步骤与重试上限。
+2. 文件：目标模型目录、训练/验证 Parquet、输出目录都由本次任务明确指定。
+3. 环境：source 后检查 `PSRL_WORKSPACE`，再确认 driver 与 worker 的 PSRL、veRL 等导入来源。
+4. 节点：核对路由地址、Ray 节点和目标 GPU UUID，确认实际占用与 Docker 能力。
+5. 收尾：明确本次进程、容器、租约和日志归属，结束后核实物理释放。
 
-   **为什么不直接在脚本里写死这个路径**：`qwen2.5_3b_fsdp.sh` 是进仓库、给所有用户共用的正式示例脚本，不同人跑的 workspace 必然不同，写死就意味着别人 checkout 下来直接跑不了、还得手改代码——这也是仓库不允许硬编码绝对路径这条约束的直接体现。同理，`qwen2.5_3b_fsdp_singlenode_demo.sh` 里之所以能直接写死 `PSRL_WORKSPACE=`，是因为那份脚本本来就是某个人自用的本地 demo，不追求跨用户复用。另外，脚本用 `: "${PSRL_WORKSPACE:?msg}"` 强制要求显式赋值、不给默认值，也是刻意为之：[多机启动脚本修复](startup-incident-reviews.md#让-qwen25_3b_fsdpsh-跑通-2-节点实验脚本改了什么)的那次 `FileNotFoundError` 根因正是上游脚本给了一个"隐式默认值"、悄悄覆盖了调用者的意图，所以这里选择"缺失就立刻报错"而不是"猜一个默认路径"。
-1. **模型**：脚本里用的是 `Qwen2.5-3B-Instruct`，下载到 `${PSRL_WORKSPACE}/models/Qwen2.5-3B-Instruct`。
-2. **数据**：需要 `${PSRL_WORKSPACE}/data/gsm8k/{train,test}.parquet`，PSRL 复用了 veRL 的数据预处理脚本（GSM8K/MATH 等），按 veRL 文档转换即可。
-3. **Ray 集群**：准备一个 hostfile（第一行是 head 节点），再执行：
-
-   ```bash
-   bash examples/ray/ray_start.sh ${PSRL_WORKSPACE}/hosts/16GPUs
-   ray status   # 确认看到 2 节点 / 16 GPU
-   ```
-
-   `ray_start.sh` 做的事：先用 `pssh` 在所有节点上 `ray stop --force` 清理残留进程，再在 head 节点跑 `ray start --head --port=8887 --dashboard-port=8265`，其余节点跑 `ray start --address=<head>:8887` 加入集群。
+Parquet 是列式数据格式，题目和元信息还需要正确的嵌套类型；上下文长度和训练显存也分别计算。具体最小检查见[运行前五项](cluster-preflight.md#开跑前先完成这五项)。
 
 ## 逐段拆解示例脚本 `examples/dapo_trainer/qwen2.5_3b_fsdp.sh`
 
-这是官方 Quick Start 用的脚本，跑的是 DAPO 算法在 GSM8K 上训练 Qwen2.5-3B，用法：
+以下依据 2026-11-16 实际阅读的[仓库脚本](../../../examples/dapo_trainer/qwen2.5_3b_fsdp.sh)。它保留了早期环境假设：source 后使用工作区路径，通过 `import psrl` 定位代码，地址依赖外部 `LOCAL_IP`，并会重设 shell 的家目录变量。原文所说“该脚本已自动保护全部路径并自算 IP”与当前源码不符，现已修正。
 
-```bash
-bash examples/dapo_trainer/qwen2.5_3b_fsdp.sh        # 默认 staleness=3
-bash examples/dapo_trainer/qwen2.5_3b_fsdp.sh 2      # 指定 staleness=2
-```
-
-脚本内容可以分成 5 块：
+这份脚本适合用来理解参数。准备真实任务时，先按上述检查固定环境和路径，并核对选用脚本的实际行为。
 
 ### 1. 基本变量与路径
 
-```bash
-staleness=${1:-3}                 # 第1个位置参数：staleness（异步程度），默认3
-experiment_name=DAPO-Qwen2.5-3B-fsdp-staleness_${staleness}
+脚本读取 `PSRL_WORKSPACE` 下的环境、模型和数据。例如工作区为教学路径 `/my-work` 时，模型预期位于 `/my-work/models/Qwen2.5-3B-Instruct`，数据位于 `/my-work/data/gsm8k/`。这些路径表示目录关系。
 
-: "${PSRL_WORKSPACE:?...}"        # 要求调用者已 export，未设置则直接报错退出
-_psrl_workspace=${PSRL_WORKSPACE}
-source ${PSRL_WORKSPACE}/env/psrl.sh   # 见下方「env/psrl.sh 是什么」，会把 PSRL_WORKSPACE 覆盖掉
-export PSRL_WORKSPACE=${_psrl_workspace}   # 所以要恢复回调用者设的值
+`staleness=${1:-3}` 表示第一个脚本参数作为版本滞后设置，缺省为 3。滞后允许生成和训练在有限版本差距内推进，详细机制见[训推协作](../vllm-and-training-parallelism/rl-training-workflow.md)。
 
-LOCAL_IP=$(python3 -c "...")      # 脚本内自算可路由 IP，无需调用者手动 export
-HF_MODEL_PATH=... TRAIN_FILE=... TEST_FILE=...   # 都基于 ${PSRL_WORKSPACE} 拼路径
-```
-
-**`env/psrl.sh` 是什么**：它不是 PSRL 项目自己的代码，是团队共享的一份环境激活脚本，纯环境变量设置、没有业务逻辑，主要做三件事：
-1. `source` 团队公共的 `activate` 脚本（负责切 conda 环境、清代理设置，细节见 [[activate-script-notes|activate 脚本说明]]），再 `conda activate` 到项目用的具体 env；
-2. 设置一批日志/调试开关（`HYDRA_FULL_ERROR`、`PSRL_LOGGING_LEVEL`、`VLLM_LOGGING_LEVEL` 等）和 `LD_LIBRARY_PATH`（保证能找到 conda env 里的 `libstdc++`/cudnn/torch 动态库）；
-3. 设置一大批 UCX/NCCL 调优参数（网卡设备列表、算法选择等），这些是跟机器/机房网络拓扑绑定的，用来让 NIXL/NCCL 走 RDMA 网络而不是慢速以太网。
-
-**坑点**：`activate` 脚本里会无条件把 `PSRL_WORKSPACE` 重新导出成它自己默认的工作区路径——这是它原本设计给自己用的默认值，不知道你想跑的是哪个 workspace。所以任何脚本只要 `source` 了 `env/psrl.sh`，就必须像上面这样在 `source` 前后手动保存/恢复 `PSRL_WORKSPACE`，否则后面所有基于它拼出来的模型/数据/日志路径都会指向错误目录（详见[多机启动脚本修复](startup-incident-reviews.md#让-qwen25_3b_fsdpsh-跑通-2-节点实验脚本改了什么)）。
+共享环境脚本可能覆盖工作区变量，应在实际启动前检查 source 后的值。环境脚本作用见[activate 说明](../../tools/shell-python/python-environments.md#lhyactivate-脚本说明与新-tunnel-启动配置)。
 
 ### 2. 集群拓扑（几节点、几卡，谁做生成谁做训练）
 
-```bash
-NNODES=2; NGPUS_PER_NODE=8          # 总共2节点×8卡=16卡
-GEN_NNODES=1                        # 1节点专门做 rollout(生成)
-TRAIN_NNODES=1                      # 1节点专门做训练
-GEN_TP=1; GEN_PP=1                  # 生成侧张量并行/流水并行都是1（每张卡独立跑一个vLLM实例）
-GEN_INSTANCES = (GEN_NNODES*NGPUS_PER_NODE)/(GEN_TP*GEN_PP)  # =8，即8个独立生成实例
+脚本设置 2 节点、每节点 8 GPU：一个节点生成，一个节点训练。生成 `TP=1,PP=1`，所以 8 张生成卡对应 8 个单卡实例。
+
+```text
+16 GPU = 8 GPU 训练池 + 8 GPU 生成池
+生成实例数 = 生成 GPU 总数 / 每实例使用 GPU 数 = 8 / 1 = 8
 ```
 
-这体现了 PSRL 的核心设计：**训练集群和生成(rollout)集群物理分离**，通过 Parameter Server 异步同步权重，而不是像同步 RL 那样两者互相等待。
+训练侧另配置验证实例，训练与验证的切换按相应资源管理配置处理。Ray 负责把这些角色安排到资源池；改变节点数时，要一起重算角色数量与资源声明，详见[Ray 调度](ray-and-rollout.md)。
 
 ### 3. 算法超参（DAPO/GRPO 相关）
 
-```bash
-adv_estimator=grpo                  # 用 GRPO 计算 advantage
-clip_ratio_low=0.2; clip_ratio_high=0.28   # DAPO 的非对称 clip 区间
-enable_overlong_buffer=True         # 对超长回复做惩罚（DAPO 特有机制）
-train_prompt_bsz=64; n_resp_per_prompt=8   # 64个prompt，每个采样8条回复
-```
+脚本设置 GRPO 优势估计，64 道题每题采 8 条回答，目标工作量为 512 条轨迹。动态采样组处理开关为 `False`；冗余采样、部分 rollout 则另有自己的配置。
+
+非对称裁剪范围参数为 0.2/0.28，按 token 平均损失；回答上限 4096，超长惩罚缓冲为 2048。每项的计算例子见[分组采样与损失](../vllm-and-training-parallelism/rl-loss-and-sampling.md)。
 
 ### 4. 核心 PSRL 命令（真正的启动命令）
 
-```bash
-python -m psrl.trainer.main_ppo --config-path=./config --config-name='ppo_trainer' \
-    psrl.ps_manager_ip=${LOCAL_IP} \        # Parameter Server 地址
-    psrl.staleness=${staleness} \           # 异步staleness上限
-    psrl.ps_mode=nixl_cpu \                 # 权重同步走 NIXL(RDMA) + CPU中转
-    psrl.deployment.n_rollout_instances=... \   # 上一步算出的生成实例数
-    psrl.rollout_coordination.partial_rollout.enable=True \   # 开启“部分rollout”优化长尾延迟
-    gen_actor_rollout_ref.rollout.* \       # 生成侧（vLLM）参数：显存占用率、TP/PP、temperature等
-    train_actor_rollout_ref.actor.* \       # 训练侧（FSDP2）参数：学习率、梯度裁剪、offload等
-    reward.active_managers='[dapo]' \       # 用DAPO的reward逻辑（含超长惩罚）
-    data.train_files=... data.val_files=... \
-    trainer.total_training_steps=200 \
-    2>&1 | tee ${experiment_name}.log
-```
+实际入口是 `python -m psrl.trainer.main_ppo`，后面一长串 `字段=值` 是 Hydra 配置覆盖。下面按前缀读即可：
 
-这一整条命令本质是通过 **Hydra 的 CLI override 语法**，在 `psrl/trainer/config/ppo_trainer.yaml` 的默认配置基础上覆盖参数。参数前缀分组含义：
+| 前缀 | 管什么 | 例子 |
+|---|---|---|
+| `psrl.*` | 调度、部署、权重版本 | 生成实例数、PS 模式 |
+| `gen_actor_rollout_ref.*` | 生成引擎 | TP、批量 token 预算 |
+| `train_actor_rollout_ref.*` | 训练与验证模型 | 学习率、分片、验证采样 |
+| `reward.*` | 评分和奖励处理 | 超长惩罚 |
+| `data.*` | 文件与数据预算 | 训练文件、每批题目数 |
+| `algorithm.*` | 优势与修正算法 | `adv_estimator=grpo` |
+| `trainer.*` | 总步骤、日志和保存 | 该脚本 200 步、每 200 步保存 |
 
-| 前缀 | 含义 |
-|---|---|
-| `psrl.*` | PSRL 自己的调度层：Parameter Server、staleness、部署拓扑、rollout 协调策略 |
-| `gen_actor_rollout_ref.*` | 生成（rollout）侧模型/vLLM 配置 |
-| `train_actor_rollout_ref.*` | 训练侧模型/FSDP(或Megatron)配置 |
-| `reward.*` | reward 计算逻辑 |
-| `data.*` | 数据集路径与格式 |
-| `algorithm.*` | RL 算法（adv_estimator、KL 等） |
-| `trainer.*` | 日志、保存频率、总步数等训练循环控制 |
-
-`+xxx=yyy`（带加号）表示往配置里**新增**一个原本 yaml 里没有的字段，而不是覆盖已有字段，Hydra 的语法约定。
+这里只解释真实脚本，不拼接带省略号的伪可运行启动命令。选定任务后应从实际脚本和最终解析配置核对具体值。
 
 ### 5. 运行时会发生什么
 
-按 Quick Start 文档，一次调用的内部流程是：
+加载配置、连接 Ray 后，训练器创建生成、训练、参数服务器等角色。生成请求经网关到模型执行，回答获得奖励后进入样本队列；训练侧计算概率、优势和损失，更新参数，再发布新权重。
 
-1. `AgentLoopWorkers` 驱动 rollout，把生成请求通过 **SMG RolloutGateway** 转发；PSRL 的 worker selector 向 `PSManager` 查询版本/准入状态后，再分派给某个 vLLM gRPC 实例。
-2. 选中的 vLLM 实例用当前策略版本生成轨迹。
-3. 轨迹写入 **TransferQueue**，训练进程读写字段完成 DAPO 各阶段计算。
-4. 每步训练结束后，训练侧把新权重推给 **Parameter Server**；rollout 侧在 `RolloutCoordinator` 协调下拉取新版本权重。
+TransferQueue 是保存与传递样本字段的队列；参数服务器则传递模型权重，两者内容不同。沿一条回答阅读这条链路，见[完整训练路径](../vllm-and-training-parallelism/rl-training-workflow.md#一条回答的完整路径)。
 
 ## 监控指标
 
-默认用 W&B 记录，重点看：
-
-- `critic/score/mean`、`critic/rewards/mean`：应随训练逐步上升
-- `critic/advantages/mean`、`critic/returns/mean`：GRPO 的 advantage/return
-- `response_length/mean`：回复长度，收敛后应趋于稳定
-- `actor/entropy`：策略熵，缓慢下降代表探索→利用正常过渡
-- `actor/grad_norm`：突然飙高往往意味着更新不稳定
-- `perf/throughput`、`perf/mfu/actor`：吞吐与 MFU
-- `training/global_step`：当前步数
+先看训练 step 是否推进、退出码和异常，再看奖励、验证准确率、回答长度、熵和梯度是否协调。熵下降和奖励上升都需要结合任务阶段解释，单个数字无法保证训练质量。方法见[日志与批量配置](monitoring-and-batches.md)。
 
 ## 实操建议
 
-1. `qwen2.5_3b_fsdp.sh` 需要 **2 节点 × 8 GPU（共16卡）**，资源门槛不低。如果只是想先摸一遍流程、验证环境装对了，可以：
-   - 先跑仓库自带的单测（例如 `tests/` 下的 CPU 测试）确认 `import psrl`、`ray`、`verl` 等都正常；
-   - 如果只有单机多卡，可以把脚本里的 `NNODES=1`、`GEN_NNODES=1`、`TRAIN_NNODES=1`，并相应调小 `NGPUS_PER_NODE`、`GEN_INSTANCES` 等派生变量，做一次小规模验证跑通（显存不够可以调小模型或 `gpu_memory_utilization`）。
-2. `examples/` 下还有 `ppo_trainer/`、`grpo_trainer/`、`retool/`（数学+代码工具）、`mini_swe/`（软件工程 agent）等更复杂的示例，跑通 DAPO 之后可以对比着看其他脚本，套路是一致的（Ray集群 → Hydra命令行）。
-3. `env/psrl.sh`（脚本里 `source ${PSRL_WORKSPACE}/env/psrl.sh`）不在仓库里，需要自己按环境创建，通常放 `conda activate psrl`、`export LOCAL_IP=...`、`export PSRL_WORKSPACE=...` 等。
+先用能回答目标的最小检查。如果目标要求真实训练，缩小规模时同时核对模型容量、数据批量、角色资源池与运行预算。使用共享集群时沿用已分配资源，集群级停止或重建需明确归属。
+
+`examples/ray/ray_start.sh` 包含面向目标节点的清理与启动操作，使用前应先阅读脚本；运行指南不再把重建共享 Ray 当成普通启动步骤。
 
 ## 延伸阅读
 
-- `psrl/docs/tutorial/quickstart.md`、`psrl/docs/tutorial/installation.md`、`psrl/docs/tutorial/configuration.md`
-- `psrl/docs/design/staleness_control.md`（异步staleness机制）、`parameter_server.md`（权重同步）
+- 按代码定位：[训练源码地图](../psrl-training-script-source-map.md)。
+- 准备 Science 环境：[Env 当前设计](../../env-worker-deep-dive/knowledge/current-design.md)。
+- 处理启动报错：[历史故障复盘](startup-incident-reviews.md)。
 
 ## 单机 Demo 脚本与常用 bash 语法：`qwen2.5_3b_fsdp_singlenode_demo.sh`
 
-### 脚本做了什么
+这个名称来自早期本地四卡 Demo，当前仓库未提供该文件。历史记录为 2 卡生成、2 卡训练、3 个训练 step，故障证据保存在[单机复盘](startup-incident-reviews.md#单机-demo-踩坑记录两处根因与修复)。
 
-它是 `qwen2.5_3b_fsdp.sh`（2 节点×8GPU 的 Quick Start 示例）的**单机缩小版**：只用 1 台机器上的 4 张卡（8 张里的 4 张），跑通同一套 DAPO 训练流程，目的是快速验证环境装对了、训练循环能端到端跑起来，而不是训出好模型（`trainer.total_training_steps=3`，只跑 3 步）。拓扑上 4 张卡分两组：2 张做 rollout 生成（vLLM），2 张做训练（FSDP2）；数据是 GSM8K，模型是 Qwen2.5-3B-Instruct，算法是 DAPO/GRPO。
-
-### 涉及的 bash 语法
-
-| 语法 | 脚本里的例子 | 含义 |
-|---|---|---|
-| `#!/bin/bash` | 第1行 | shebang，指定用 bash 解释器执行 |
-| `set -xeuo pipefail` | 第5行 | `-x` 打印每条命令再执行（方便调试）；`-e` 任何命令出错立即退出；`-u` 用到未定义变量就报错退出（防止拼错变量名）；`-o pipefail` 管道中任一环节失败，整个管道就算失败（默认只看最后一个命令的返回值） |
-| `${1:-3}` | `staleness=${1:-3}` | 参数默认值：`$1` 是第1个位置参数，没传时用 `3` |
-| `export VAR` | `export PSRL_WORKSPACE` | 导出为环境变量，供后面 `python -m psrl...` 启动的子进程读取 |
-| `$(...)` 命令替换 | `LOCAL_IP=$(hostname -I \| awk '{print $1}')` | 执行括号里的命令，把标准输出赋给变量（这里取本机第一个 IP） |
-| `$((...))` 算术展开 | `GEN_INSTANCES=$(( (${GEN_NNODES} * ${GEN_NGPUS_PER_NODE}) / (${GEN_TP} * ${GEN_PP}) ))` | bash 内置整数运算，不需要 `expr`/`bc` |
-| `unset VAR` | `unset http_proxy https_proxy` | 清除环境变量，让 Ray/gRPC 走本机直连，不走代理 |
-| 行尾 `\` | 大段 `python -m psrl.trainer.main_ppo \` | 反斜杠+换行＝逻辑上一整行命令，只是拆行方便阅读 |
-| `${VAR:-default}` 允许外部覆盖 | `CKPT_ROOT=${CKPT_ROOT:-${PSRL_WORKSPACE}}` | 外部已设置 `CKPT_ROOT` 就用外部值，否则用默认值 |
-| `2>&1 \| tee file` | 命令最后一行 | `2>&1` 把标准错误合并到标准输出，再交给 `tee` 同时打印到终端并写入日志文件 |
+阅读类似脚本时，几个语法就足够入门：`${VAR:-默认值}` 为未设置变量提供默认值，`export` 将变量传给子进程，`$((...))` 做整数计算，行尾反斜杠表示续行，`2>&1 | tee 文件` 将输出显示并写日志。`source` 对当前终端环境的作用见[进程示例](../../tools/shell-python/python-environments.md#source让环境设置留在当前终端)。

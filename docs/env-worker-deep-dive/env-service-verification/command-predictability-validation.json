@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "scope": "CPU verification of structured command prediction gates and owned queues",
+  "review_date": "2026-11-16",
+  "base_commit": "6aa328d56eff746c2ae6d9fd766b2f3f76b4a670",
+  "includes_uncommitted_changes": true,
+  "committed_or_pushed_by_this_task": false,
+  "gpu_experiment_run": false,
+  "historical_gpu_results_reverified": false,
+  "pytest": {
+    "passed": 270,
+    "test_duration_s": 5.53,
+    "new_prediction_tests": 71,
+    "new_scheduler_tests": 38,
+    "new_managed_execution_tests": 41,
+    "existing_regression_tests": 120,
+    "test_files": [
+      "tests/env_service/test_command_prediction.py",
+      "tests/env_service/test_predictive_scheduler.py",
+      "tests/env_service/test_managed_command.py",
+      "tests/env_service/test_step_predictor.py",
+      "tests/env_service/test_warm_dispatch.py",
+      "tests/env_service/test_warm_placement.py",
+      "tests/env_service/test_warm_study_analysis.py",
+      "tests/env_service/test_warm_study_runtime.py",
+      "tests/env_service/test_warm_study_supervision.py"
+    ],
+    "command": "python -m pytest -q tests/env_service/test_command_prediction.py tests/env_service/test_predictive_scheduler.py tests/env_service/test_managed_command.py tests/env_service/test_step_predictor.py tests/env_service/test_warm_dispatch.py tests/env_service/test_warm_placement.py tests/env_service/test_warm_study_analysis.py tests/env_service/test_warm_study_runtime.py tests/env_service/test_warm_study_supervision.py"
+  },
+  "checks": {
+    "ruff": "passed",
+    "ruff_format": "passed",
+    "prose_style": "passed",
+    "source_file_count": 11,
+    "guarded_cli_help": "passed without starting services"
+  },
+  "teaching_demo": {
+    "physical_gpu_measurement": false,
+    "cases_passed": 6,
+    "logical_target_latency_s": {
+      "off": 8,
+      "observe": 8,
+      "auto_calibrated_stable": 3,
+      "auto_missing_calibration": 8,
+      "auto_unstable": 8,
+      "auto_stale": 8
+    },
+    "all_simulated_resources_released": true
+  },
+  "source_sha256": {
+    "psrl/workers/env_service/command_prediction.py": "ee39c0e5d0decab67e52fa2e9057ddf3937223ebc3a1ae9166be3d91a8f6e14b",
+    "psrl/workers/env_service/predictive_scheduler.py": "b46810e202ffa902e1e4c19f92562ada862a2cec0fe6f151d26a4d1692acdb04",
+    "psrl/workers/env_service/managed_command.py": "dbf6c47985b8dbb8f6a9af598de49c4e4f99713bc541edbf89cd5a0f90c2ea9c",
+    "tests/env_service/test_command_prediction.py": "bfcbb43fbdc5638ea19a9cf6b3cb59d8e774b00e7b84b2dbb96cddef1c0127ee",
+    "tests/env_service/test_predictive_scheduler.py": "22c447a0a0ec8bf7d20171a0622e06e6eb8078ae49721c18bd5331fdd276c39b",
+    "tests/env_service/test_managed_command.py": "7af8b1cf44eab32c93470087a66fcbaea2b8876f5dfdd230399b940681c29eca",
+    "docs/env-worker-deep-dive/env-service-verification/scripts/command_predictability_demo.py": "6811ba86230f50d1e7f4f2f4ade67b3ddaae30daf9617ac05869465a2f5241c6",
+    "docs/env-worker-deep-dive/env-service-verification/scripts/warm_router_study/prediction_provider.py": "4c02d18365165f7e7103ecb4713a60956d69b1671adecf168c01c71693c80c11",
+    "docs/env-worker-deep-dive/env-service-verification/scripts/warm_router_study/guarded.py": "4e8d6a436375ffc6296a328c57cff7dd74218184dee59674cc9bd39774727629",
+    "tests/env_service/test_prediction_provider.py": "2c5eaaabb8d530af1f7a1fa2e37e63ce720ee0da1e74b8f47af85946f55f72eb",
+    "tests/env_service/test_guarded_study.py": "89db79f3f472e74987827fc03bf2510d0f6dcc73ab7fb3e429fac266d1a6b1d2"
+  },
+  "total_passed": 325,
+  "integration_pytest": {
+    "passed": 55,
+    "test_duration_s": 2.89,
+    "provider_protocol_tests": 43,
+    "guarded_entry_tests": 12,
+    "test_files": [
+      "tests/env_service/test_prediction_provider.py",
+      "tests/env_service/test_guarded_study.py"
+    ],
+    "command": "python -m pytest -q tests/env_service/test_prediction_provider.py tests/env_service/test_guarded_study.py",
+    "scope": "CPU protocol stand-in, with real provider, managed dispatcher and off/observe/auto study wiring. Physical shutdown callback replaced by CPU fixture.",
+    "noncooperative_physical_shutdown_regression": "passed without claiming physical release"
+  },
+  "real_gpu_adapter": {
+    "implemented": true,
+    "gpu_execution_reverified": false,
+    "entry": "docs/env-worker-deep-dive/env-service-verification/scripts/warm_router_study/guarded.py",
+    "default_mode": "off",
+    "backend": "native experiment harness with EnvRouter and EnvWorker",
+    "physical_cleanup_owner": "provider shutdown callback for owned containers, outer harness for Router leases"
+  }
+}

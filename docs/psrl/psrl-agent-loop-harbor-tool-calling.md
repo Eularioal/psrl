@@ -1,28 +1,255 @@
 # PSRL rollout 阶段的"工具调用"：Agent Loop、Harbor、TITO 是怎么串起来的
 
-第一次接触这套系统，可以先读 [第 7 节：用一个修代码例子从零理解](#7-用一个修代码例子从零理解)，再回看前面的实现细节。
-
-## 一句话结论
-
-Science 的模型仍输出文本 JSON 命令。普通命令交给 Harbor 终端执行；启用受管理 GPU 作业后，本地 `TruncatingTerminus2` 会拦截 `psrl-gpu` 命令，分发到环境的提交、等待、状态、取消与遥测接口，再把 JSON 观察结果交回模型循环。PSRL 因此既参与 GPU 工具协议，也通过 TITO（Token-In-Token-Out，记录真实输入输出 token 的机制）收集训练轨迹，不能概括成“只旁路记录、不参与工具调用”。
-
-本次于 2026-11-05 对照 `0326d46` 核对本地工具分发与 worker 并发。旧训练日志和 Harbor 内部示例按各节版本阅读，未重新验证外部 Harbor 版本的每一处内部接口。
+一次工具调用的完整链路是：模型提出操作，环境实际执行，把结果交回模型；完成后，评分和真实 token 记录一起组成训练样本。下面先用修加法函数的例子串起流程，再进入各组件与通信细节。
 
 ## 目录
 
-- [整体架构](#整体架构)
-- [1. Agent Loop 整体机制](#1-agent-loop-整体机制)
-- [2. Harbor 是什么，和 psrl 是什么关系](#2-harbor-是什么和-psrl-是什么关系)
-- [3. sciaccel 这个具体 agent loop：注册了哪些"工具"，怎么执行](#3-sciaccel-这个具体-agent-loop注册了哪些工具怎么执行)
-- [4. 工具调用结果如何拼回多轮 prompt](#4-工具调用结果如何拼回多轮-prompt)
-- [5. TITO 与 "multi_thinking" 模板](#5-tito-与-multi_thinking-模板)
-- [6. 常见误解澄清：Docker 容器是"用来训练模型"的吗](#6-常见误解澄清docker-容器是用来训练模型的吗)
-- [7. 用一个修代码例子从零理解](#7-用一个修代码例子从零理解)
-- [8. gRPC 是什么，为什么还需要 SessionRouter](#8-grpc-是什么为什么还需要-sessionrouter)
+- [先用一个修代码例子理解全程](#先用一个修代码例子理解全程)
+  - [先把“做题”和“学习”分开](#先把做题和学习分开)
+  - [第一轮：模型提出查看代码和运行测试](#第一轮模型提出查看代码和运行测试)
+  - [第二轮：把真实结果交回模型，模型再决定下一步](#第二轮把真实结果交回模型模型再决定下一步)
+  - [几个容易混淆的“任务单位”](#几个容易混淆的任务单位)
+  - [Docker、tmux、Harbor 各自增加了什么](#dockertmuxharbor-各自增加了什么)
+  - [模型实际在哪里，SessionRouter 和 SMG 为什么在中间](#模型实际在哪里sessionrouter-和-smg-为什么在中间)
+  - [“工具调用”为什么能只是文字](#工具调用为什么能只是文字)
+  - [谁来打分，分数又如何变成训练信号](#谁来打分分数又如何变成训练信号)
+  - [为什么 TITO 不只记录聊天文字](#为什么-tito-不只记录聊天文字)
+  - [为什么多轮 prompt 越来越长](#为什么多轮-prompt-越来越长)
+  - [为什么有 Ray actor 和 asyncio](#为什么有-ray-actor-和-asyncio)
+  - [建议的阅读顺序](#建议的阅读顺序)
+- [全局流程与组件分工](#全局流程与组件分工)
+- [Agent Loop 怎样推进一条轨迹](#agent-loop-怎样推进一条轨迹)
+- [Harbor 与 PSRL 怎样配合](#harbor-与-psrl-怎样配合)
+- [Science 如何解析和执行工具](#science-如何解析和执行工具)
+- [工具结果怎样进入下一轮输入](#工具结果怎样进入下一轮输入)
+- [TITO 与多轮训练模板](#tito-与多轮训练模板)
+- [做题容器与模型训练进程](#做题容器与模型训练进程)
+- [gRPC 与 SessionRouter 怎样连接组件](#grpc-与-sessionrouter-怎样连接组件)
+  - [从本地函数调用理解 RPC](#从本地函数调用理解-rpc)
+  - [protobuf 和流式返回分别是什么](#protobuf-和流式返回分别是什么)
+  - [为什么 PSRL 的内部通信适合用 gRPC](#为什么-psrl-的内部通信适合用-grpc)
+  - [为什么只有模型 API 还不够](#为什么只有模型-api-还不够)
+  - [SessionRouter 对外隐藏了哪些 PSRL 细节](#sessionrouter-对外隐藏了哪些-psrl-细节)
+  - [必须单独有这个组件吗](#必须单独有这个组件吗)
+  - [延伸阅读](#延伸阅读)
 - [关键文件路径一览](#关键文件路径一览)
 - [延伸](#延伸)
 
-## 整体架构
+<a id="一句话结论"></a>
+
+**具体到 Science**：Science 的模型仍输出文本 JSON 命令。普通命令交给 Harbor 终端执行；启用受管理 GPU 作业后，本地 `TruncatingTerminus2` 会拦截 `psrl-gpu` 命令，分发到环境的提交、等待、状态、取消与遥测接口，再把 JSON 观察结果交回模型循环。PSRL 参与 GPU 工具协议，并通过 TITO（Token-In-Token-Out，记录真实输入输出 token 的机制）收集训练轨迹。
+
+本次于 2026-11-05 对照 `0326d46` 核对本地工具分发与 worker 并发。旧训练日志和 Harbor 内部示例按各节版本阅读，未重新验证外部 Harbor 版本的每一处内部接口。
+
+<a id="7-用一个修代码例子从零理解"></a>
+
+## 先用一个修代码例子理解全程
+
+一句话结论：模型提出操作，程序执行操作并回传结果，循环直到交卷，评测程序打分，PSRL 用整段过程和分数训练模型。
+
+### 先把“做题”和“学习”分开
+
+假设任务是：“修复 `calculator.py` 中的 `add(a, b)`，让测试通过。”初始代码故意写错了：
+
+```python
+def add(a, b):
+    return a - b
+```
+
+下面是教学用的小例子，不是实际 SciAccel 任务文件。实际任务可能是修复 Fortran 科学计算程序、编译、比较数值结果和测量性能，但交互方式相同。
+
+这个例子用来定位组件分工：Harbor 驱动环境交互，PSRL 收集轨迹，训练 worker 消费样本并发布新权重。异步部署中，不同批次的交互和训练可以重叠。
+
+### 第一轮：模型提出查看代码和运行测试
+
+模型看到任务说明后，输出一段 JSON 文本：
+
+```json
+{
+  "analysis": "需要先查看实现和失败的测试。",
+  "plan": "读取文件，然后运行测试。",
+  "commands": [
+    {"keystrokes": "cat calculator.py\n", "duration": 0.1},
+    {"keystrokes": "pytest -q\n", "duration": 1.0}
+  ],
+  "task_complete": false
+}
+```
+
+`commands` 是命令列表，`keystrokes` 是要输入终端的字符，`\n` 相当于按回车，`task_complete` 表示模型是否准备交卷。`duration` 是发送命令后等待、观察输出的时间，不保证命令在这个时间内完成，也不是整个任务的超时上限。
+
+此时模型只是生成了文本。Harbor 中的 Terminus2 读取 JSON，再通过终端接口真正执行命令，得到类似输出：
+
+```text
+def add(a, b):
+    return a - b
+
+FAILED test_add
+Expected: 5
+Actual: -1
+```
+
+`TruncatingTerminus2` 是 PSRL 这边使用的 Terminus2 子类，添加输出长度限制、上下文溢出处理和受管 GPU 工具等功能。本例只走普通终端分支。它不是另一个语言模型。
+
+### 第二轮：把真实结果交回模型，模型再决定下一步
+
+Harbor 把终端输出追加到对话中，再次请求模型。省略模板标记后，对话像这样：
+
+```text
+system: 你可以通过指定 JSON 格式操作终端。
+user:   修复 add(a, b)，让测试通过。
+assistant: 第一轮 JSON，要求查看文件、运行测试。
+user:   文件内容以及 Expected: 5、Actual: -1 的终端输出。
+```
+
+这里的终端反馈由程序追加为 `user` 消息，随后交给模型继续决策。
+
+模型看到实际代码后，可能返回：
+
+```json
+{
+  "analysis": "加法函数误写成了减法。",
+  "plan": "替换运算符并重新运行测试。",
+  "commands": [
+    {"keystrokes": "sed -i 's/return a - b/return a + b/' calculator.py\n", "duration": 0.1},
+    {"keystrokes": "pytest -q\n", "duration": 1.0}
+  ],
+  "task_complete": false
+}
+```
+
+`sed -i` 在这里修改文件内容，`pytest -q` 运行 Python 测试。假设反馈是 `3 passed`，模型下一轮可以声明完成。如果测试仍失败，就继续读日志、改代码、再测。
+
+在这条执行路径中，一个模型回复可以包含多个命令，因此 turn 数与命令数应分别统计。当前 Terminus2 还有完成确认机制，首次声明完成后会再询问确认。
+
+### 几个容易混淆的“任务单位”
+
+| 名词 | 在这个例子中的意思 |
+|---|---|
+| Task | “修复 add”这道题及其文件、环境和评测规则 |
+| Turn | 一次模型请求和回复，可能给出多条命令 |
+| Episode | 从拿到题目到结束的一次完整尝试，可包含很多 turns |
+| Rollout | 让当前策略模型实际尝试任务、收集交互数据的过程 |
+| Trajectory | 一次交互的记录，包括模型输出和环境反馈，TITO 特定配置下一个 session 也可能产生多条轨迹 |
+| Session | 给相关模型请求挂上的会话编号，用来关联状态和记录 |
+| Worker | 执行这些工作的程序进程，一个 worker 可以并发管理多个 episodes |
+
+一个任务可以重复尝试多次，得到不同的命令和修复结果。Harbor 的 trial 对应一次尝试，job 可以管理一组 trials；本例 PSRL wrapper 的配置是一个任务、一个 agent、一次尝试。
+
+### Docker、tmux、Harbor 各自增加了什么
+
+**Docker** 提供带独立文件和进程视图的执行环境，里面有待修复代码、解释器或编译器等依赖。可以把 image 理解为环境模板，container 是从模板启动的一次运行实例。容器共享宿主机内核，并不是另一台完整虚拟机。它用于执行目标程序，本例的 LLM 权重由推理服务加载。[Docker 容器入门](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/)
+
+**tmux** 维护一个持续存在的终端会话。例如第一轮执行 `cd /app`，下一轮还可以在同一个 shell 的工作目录中继续操作。长时间编译也能继续运行，agent 之后再读取输出。这里只把它作为程序可操作、可读取的终端。
+
+**Harbor** 把准备环境、运行 agent、执行评测和收集结果串起来。它是框架，**Terminus2** 是其中一种 agent 控制程序，**Qwen** 等模型则提供“下一步做什么”的生成能力。[Harbor 核心概念](https://docs.harborframework.com/core-concepts)
+
+**Docker Compose** 用配置文件描述并启动相关容器服务。在采用 separate verifier 的任务中，做题环境与评测环境可以分开，不能由此推断所有 Harbor 任务都固定使用两个容器。
+
+### 模型实际在哪里，SessionRouter 和 SMG 为什么在中间
+
+```mermaid
+flowchart LR
+    A[Terminus2 控制程序] -->|对话消息| S[SessionRouter：带会话编号的入口]
+    S --> G[SMG：选推理实例并记录 TITO]
+    G --> V[vLLM：运行模型]
+    V -->|模型回复经网关返回| A
+    A -->|解析 JSON，发送命令| D[Docker 内的终端和目标程序]
+    D -->|真实终端输出| A
+```
+
+可以把模型服务理解成一个接收请求、返回结果的网络服务。`api_base` 就是它的服务地址，`POST /chat/completions` 表示向指定接口提交一份对话，请求下一条回复。
+
+PSRL 给 Harbor 的地址形如 `http://gateway.example/sessions/demo/v1`，这里只是占位示意，不是可运行地址。LiteLLM 是 Harbor 使用的模型客户端适配库，它按约定发送 HTTP 请求。SessionRouter 保存会话关联信息并转发，SMG 选择哪个 vLLM 实例服务，vLLM 在 GPU 上运行模型权重，生成回复。
+
+“OpenAI-compatible”表示接口的格式兼容，例如有 `messages`、`model` 等字段，并不意味着请求必须发到 OpenAI。此处实际服务的是 PSRL 部署的模型。
+
+网关和引擎之间使用的 gRPC 也是一种跨进程通信方式，接口和数据类型通常通过 protobuf 预先定义。理解整体流程时，先把 HTTP 和 gRPC 都视为程序之间传消息即可。
+
+SessionRouter 和 SMG 不是语言模型。它们负责会话、路由和记录，不负责思考如何修代码，也不负责执行 `pytest`。
+
+### “工具调用”为什么能只是文字
+
+它的基本机制是约定一个可解析的格式，再由程序执行。当前配置中，模型回复的 `content` 包含 JSON，Harbor 解析其中的 `commands`。
+
+另一种实现会使用独立的 `tool_calls` 字段指定工具名和参数。两者都需要外部程序真正执行工具。这里应区分“HTTP 返回体本身是 JSON”和“模型的回复文本恰好也是 JSON”这两层。
+
+能读文件、改文件、编译、测试，是因为终端能启动各种程序。当前 SciAccel 的普通命令走终端，启用受管 GPU 工具后的 `psrl-gpu` 命令由本地子类拦截分发。两者都从同一个文本命令列表进入，不需要为每种 shell 命令注册工具 schema。
+
+### 谁来打分，分数又如何变成训练信号
+
+模型说 `task_complete: true` 只表示申请结束。Verifier 按任务定义的规则检查最终结果并产出 reward。例如教学任务可以约定测试全通过得 1，失败得 0；科学计算任务可能还检查数值等价和运行速度，具体公式由任务决定。
+
+模型自己运行的测试提供过程反馈，最终 verifier 提供训练使用的评测结果。二者可能运行不同的检查。SciAccel 的 `reward.py` 主要从 Harbor 返回的 reward 字典中取配置指定的分数字段，并不是另一个神经网络评分模型。[Harbor verifier 说明](https://docs.harborframework.com/core-concepts/tasks/verifier)
+
+这些分数随后按样本分组进入 GRPO 等算法；组内优势与策略损失见[采样和损失专题](vllm-and-training-parallelism/rl-loss-and-sampling.md)。这里继续追踪轨迹怎样从交互记录变成训练输入。
+
+### 为什么 TITO 不只记录聊天文字
+
+Chat template 会添加角色和轮次标记，因此训练数据需要与真实生成的 token 序列对齐。直接把可见聊天文字重新分词，可能改变边界和前缀。
+
+TITO 即 Token-In-Token-Out，在 SMG 请求路径记录真实输入输出及生成时的 logprob。训练侧据此进行配置要求的概率修正；损失中的 old-policy 锚点来自重算还是采样记录，由训练配置决定。
+
+对上面的修代码过程，可以把最终数据简化成：
+
+```text
+prompt_ids:
+  [任务说明和首轮提示]
+
+response_ids:
+  [第一轮模型 JSON][终端报错][第二轮模型 JSON][测试通过反馈][完成回复]
+
+response_mask:
+  [      1       ][   0    ][      1       ][     0      ][   1    ]
+
+reward:
+  1.0
+```
+
+这里每个括号表示一段 token，实际 mask 为每个 token 提供一个值，并按模板边界对齐。模型生成部分用 1，环境注入部分用 0。环境反馈必须保留为后续决策的上下文，但不应作为模型主动生成的动作计算 policy loss。
+
+因此 `response_ids` 不一定全是模型回复，它可以包括轮间工具反馈。`mask=0` 也不表示零计算、零显存，环境 token 仍然参与后续上下文计算。
+
+TITO 记录经 PSRL 转换后，通过 TransferQueue 交给训练侧。TransferQueue 可以理解为生产者与消费者之间的数据交接处，rollout 生产样本，训练进程读取样本。训练侧做前向、计算损失、反向传播和优化器更新，之后新权重再同步到推理实例。
+
+### 为什么多轮 prompt 越来越长
+
+模型不会直接看到容器文件系统。想让它知道文件内容，需要执行读文件命令，再把输出传入下一轮请求。为了理解后续行动，它通常也需要之前的对话记录。
+
+```text
+第 1 轮输入：任务说明
+第 2 轮输入：任务说明 + 回复 1 + 终端反馈 1
+第 3 轮输入：任务说明 + 回复 1 + 终端反馈 1 + 回复 2 + 终端反馈 2
+```
+
+教学估算：初始提示 1000 tokens，每轮增加 500 tokens 模型回复和 800 tokens 工具反馈，完成 3 轮后，下轮输入约为 `1000 + 3 × (500 + 800) = 4900` tokens，尚未计入模板额外开销。
+
+当前配方限制单次终端 observation 为 4096 bytes，bytes 是字节，不是 tokens；限制一次输出不能限制所有轮次之和。KV cache 可以复用历史计算，但不让历史上下文长度归零。
+
+`multi_thinking` 还要求保留历史模型生成的 thinking 文本并用相应模板重放，使 TITO 能匹配先前的 token 前缀。它的目的不是额外执行一次工具，而是保持多轮训练记录的一致性。这也会占用上下文预算。
+
+### 为什么有 Ray actor 和 asyncio
+
+PSRL 同时收集很多任务的样本，用 Ray 把 worker 分布到进程或机器上。Ray actor 可以理解成一个由 Ray 管理、保留内部状态的远程对象，其方法在相应 worker 进程中执行。
+
+每个 worker 又可能同时管理多个 episodes：任务 A 等待模型回复时，可以处理任务 B 的终端输出。`asyncio` 让等待网络、子进程等 I/O 的任务交替推进，避免一个任务等待时整个 worker 停下来。它不会自动让 CPU 密集的 Python 代码获得多核并行。
+
+所以 `agent.num_workers=2` 表示两个 agent worker，既不等于只做两道题，也不等于两张推理 GPU。[SciAccel 准入分支](../../examples/sciaccel_rl/agent_loop.py#L391)在未启用 Env Service 时使用进程内 episode semaphore（并发计数器），启用后改由 EnvRouter 的 unit 预算准入，不再叠加该计数器。vLLM 实例数和 GPU 分配由另一组部署配置控制。
+
+### 建议的阅读顺序
+
+1. [Harbor 基础名词](https://docs.harborframework.com/core-concepts)：理解 task、agent、trial、job、trajectory。
+2. [Docker 容器入门](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/)：理解运行环境。
+3. [Harbor 任务目录](https://docs.harborframework.com/core-concepts/tasks/overview)：查看任务说明、环境和评测如何组织。
+4. [PSRL 中的 SMG 分工](psrl-env-service-envworker-design.md#8-smg-和-sessionrouter-在哪把模型这条路与工具这条路分开看)：通过请求路径和实例选择例子，理解模型服务与任务环境的分工。
+5. [PSRL 的路由与 TITO 设计](../design/router_tito.md)：理解模型交互如何变成训练记录。
+
+在线 Harbor 文档用于解释通用概念，本项目行为应以当前安装的 Harbor 和 PSRL 调用配置为准。
+
+
+<a id="整体架构"></a>
+
+## 全局流程与组件分工
 
 ```
 PSRL 训练主流程 (Ray Trainer)
@@ -72,7 +299,9 @@ PSRL 训练主流程 (Ray Trainer)
 
 这些代码如果有理解上的问题，可以随时追问。跟着图读源码时先读 worker 提交，再读 runner 绑定，随后选择普通终端或 GPU 分发分支，最后读作业汇合与环境清理。多个 task 可以并发，不能把图中的一次轨迹流程当作整个 worker 的串行执行。
 
-## 1. Agent Loop 整体机制
+<a id="1-agent-loop-整体机制"></a>
+
+## Agent Loop 怎样推进一条轨迹
 
 **核心角色分工**（`psrl/workers/agent_loop/`）：
 
@@ -87,11 +316,13 @@ PSRL 训练主流程 (Ray Trainer)
 
 **谁发 LLM 请求 / 谁执行工具 / 谁判断回合结束**（sciaccel_rl 场景）：
 
-- **发 LLM 请求**：不是 psrl 发的，是 Harbor 内部的 `Terminus2` agent（通过 LiteLLM，`model_name="openai/<model>"`, `api_base=<TITO session 的 v1 地址>`）自己跑 while 循环反复调用 chat completion。psrl 只是把 `session_api_url(session_id)` 塞给 Harbor 当 `api_base`，本质是把 SessionRouter 伪装成标准 OpenAI 端点。
+- **发 LLM 请求**：Harbor 的 `Terminus2` agent（通过 LiteLLM，`model_name="openai/<model>"`, `api_base=<TITO session 的 v1 地址>`）自己跑 while 循环反复调用 chat completion。PSRL 将会话 API 地址提供为 `api_base`，SessionRouter 通过兼容接口把请求接入本地模型服务。
 - **执行工具**：普通命令交给 Harbor 终端，受管 `psrl-gpu` 命令由本地子类分发到环境作业接口。
 - **判断回合结束**：Harbor 的 `Terminus2._run_agent_loop` 自己判断（`task_complete: true` 连续两次、或到 `max_turns`、或异常/超时）；psrl 侧还有一层外部约束——`max_turns`、`task_timeout_sec` 传给 Harbor 作硬上限，`SciAccelAgentLoop.run()` 还会判断 `num_tokens >= response_length` → `MAX_RESPONSE_LENGTH_EXCEEDED`，context 溢出时提前结束但保留已产生的部分轨迹用于训练（这就是 [`hf-config-context-window.md`](hf-config-context-window.md) 里那次训练卡死时日志出现的 `Episode hit context overflow, training partial trajectory` 的来源）。
 
-## 2. Harbor 是什么，和 psrl 是什么关系
+<a id="2-harbor-是什么和-psrl-是什么关系"></a>
+
+## Harbor 与 PSRL 怎样配合
 
 Harbor 是一个**独立的第三方 Python 包**，不属于 psrl 代码库。下文的外部内部接口与行号来自原分析所用 `harbor==0.22.0`，不代表当前所有环境安装同一版本。它是一个"terminal-use agent benchmark/执行框架"，内部结构：
 
@@ -107,7 +338,9 @@ Harbor 是一个**独立的第三方 Python 包**，不属于 psrl 代码库。�
 
 Harbor 驱动多轮消息循环，本地子类则参与受管 GPU 指令注入、分发和观察结果拼接。`_execute_commands` 将 GPU 接口返回值序列化成 JSON，与普通终端观察合并并截断，随后交回模型循环。TITO 记录这些交互对应的模型 token。
 
-## 3. sciaccel 这个具体 agent loop：注册了哪些"工具"，怎么执行
+<a id="3-sciaccel-这个具体-agent-loop注册了哪些工具怎么执行"></a>
+
+## Science 如何解析和执行工具
 
 配置文件：`examples/sciaccel_rl/config/sciaccel_agent_config.yaml`
 
@@ -137,14 +370,16 @@ Harbor 驱动多轮消息循环，本地子类则参与受管 GPU 指令注入�
 
 解析器先得到命令列表。本地 [_execute_commands](../../examples/sciaccel_rl/agent.py#L104) 在 `gpu_jobs` 开启时将 `psrl-gpu` 前缀交给 [dispatch_gpu_tool](../../examples/sciaccel_rl/gpu_tools.py#L32)，其他命令交给 Harbor 的父类实现。GPU 结果可以是 job_id、状态或输出，不必来自 tmux。容器创建方式由配置决定，原生与 Compose 路径都使用公共 GPU 执行层。
 
-例如模型提交 `psrl-gpu {"op":"start","command":"python solve.py"}` 时，本地分发器调用 `environment.start_gpu_job` 并返回作业编号。模型下一轮用该编号查询或等待结果。提交返回不表示 GPU 已执行，也不表示预算已归还。只有启用相应绑定时这段文本才走受管分支，普通终端命令不会自动变为 GPU 作业。
+例如模型提交 `psrl-gpu {"op":"start","command":"python solve.py"}` 时，本地分发器调用 `environment.start_gpu_job` 并返回作业编号。模型下一轮用该编号查询或等待结果。提交先返回排队或作业状态，执行与归还分别通过后续状态核对。只有启用相应绑定时这段文本才走受管分支，普通终端命令不会自动变为 GPU 作业。
 
 
 Harbor 出于兼容性/可分析性，会把解析出的命令**回填**成 `ToolCall(function_name="bash_command", arguments={"keystrokes","duration"})` 和 `ToolCall(function_name="mark_task_complete")` 写进它自己的 trajectory JSON 里（`harbor/agents/terminus_2/terminus_2.py:1430-1491`），但这只是**离线可分析格式（ATIF, Agent Trajectory Interchange Format）**，不是发给模型或模型输出的真实协议。
 
-## 4. 工具调用结果如何拼回多轮 prompt
+<a id="4-工具调用结果如何拼回多轮-prompt"></a>
 
-**不是 OpenAI 风格的 `tool_calls`/`tool` role 消息**，而是纯文本拼接进普通的 `user`/`assistant` 轮次：
+## 工具结果怎样进入下一轮输入
+
+这个 Harbor 路径把观察结果作为普通 `user` 文本、模型 JSON 回复作为 `assistant` 文本，组成多轮上下文：
 
 - Harbor 内部维护一个 `Chat`（`harbor/llms/chat.py`）对象，只有 `system / user / assistant` 三种角色。
 - 每一轮：`chat.chat(prompt)` 把当前 `prompt`（上一轮的终端输出、GPU 接口 JSON 观察，或首轮任务说明）作为一条 **user** 消息发给模型，模型回复整段 JSON 文本作为一条 **assistant** 消息。
@@ -152,13 +387,15 @@ Harbor 出于兼容性/可分析性，会把解析出的命令**回填**成 `Too
 
 这也解释了 [`hf-config-context-window.md`](hf-config-context-window.md) 里分析过的"multi-turn 累积增长"问题的具体机制：每一轮的终端输出都是原样拼进下一轮 user 消息，轮数越多、命令输出越多，prompt 就滚得越大。
 
-## 5. TITO 与 "multi_thinking" 模板
+<a id="5-tito-与-multi_thinking-模板"></a>
 
-**TITO = "Token-In-Token-Out"**，是 psrl 自研的 SMG（rollout gateway）内置能力，跟"工具调用"本身无关——它是让第三方黑盒 agent（如 Harbor）能够在完全不感知 RL 训练的情况下，仍然产出可训练的 token 级数据的机制。
+## TITO 与多轮训练模板
+
+**TITO = "Token-In-Token-Out"**，是 psrl 自研的 SMG（rollout gateway）内置能力，用于让第三方黑盒 agent（如 Harbor）能够在完全不感知 RL 训练的情况下，仍然产出可训练的 token 级数据的机制。
 
 - 实现位置：SMG 内部的 gRPC chat pipeline。对每个 session，SMG 增量记录：累计 token 序列（`accumulated_token_ids`）+ 每轮记录（`prompt_token_count`, `output_logprobs`, `finish_reason`）。
 - psrl 侧读取路径：`SessionAgentLoop.get_training_data()` → `GET /sessions/{id}`（`SessionRouter`，一个 FastAPI 代理）→ `psrl/utils/tito/training_data.py::build_training_data()`，把这些记录还原成 `prompt_ids / response_ids / response_mask(1=assistant,0=env) / logprobs / num_turns`。
-- 与工具调用的关系：TITO 完全不关心"工具"，只按 chat completion 请求边界忠实记录 token。Harbor 在两次模型调用之间做了什么（执行了什么命令、往 prompt 里塞了什么终端输出）对 TITO 是透明黑盒——它只看到"这轮 prompt 变长了、多出来的 token 就是 env/tool 部分"（`build_training_data` 里 `response_mask=0` 的那些"env_ids"，就是 Harbor 把终端输出拼回 prompt 后新增的那部分 token）。
+- 与工具调用的关系：TITO 按模型请求边界记录 token；工具执行由环境与适配器完成。Harbor 在两次模型调用之间做了什么（执行了什么命令、往 prompt 里塞了什么终端输出）对 TITO 是透明黑盒——它只看到"这轮 prompt 变长了、多出来的 token 就是 env/tool 部分"（`build_training_data` 里 `response_mask=0` 的那些"env_ids"，就是 Harbor 把终端输出拼回 prompt 后新增的那部分 token）。
 
 **"multi_thinking" 模板**（`psrl/utils/agent/thinking.py`）：`thinking_template` 是 psrl 引入的、关于"如何在多轮之间搬运 CoT（`<think>...</think>`）"的策略，取值之一是 `MULTI_THINKING = "multi_thinking"`，做两件事：
 
@@ -167,226 +404,23 @@ Harbor 出于兼容性/可分析性，会把解析出的命令**回填**成 `Too
 
 日志里 `"TITO data (multi_thinking): 1 trajectory, num_turns=16, response_tokens=30548"` 就是 `SciAccelAgentLoop.run()` 里打印的（`examples/sciaccel_rl/agent_loop.py:197-205`）：`thinking_template` 取自 `psrl.agentic_rl.thinking_template`，配的是 `multi_thinking`；`select_trajectories()` 因为不是 `LONGEST_TRAJ` 模式所以原样返回 TITO 抓到的全部（这里恰好只有 1 条）trajectory，`num_turns=16` 是 16 个 assistant 回合，`response_tokens=30548` 是该 episode 训练用的 response token 总数。
 
-## 6. 常见误解澄清：Docker 容器是"用来训练模型"的吗
+<a id="6-常见误解澄清docker-容器是用来训练模型的吗"></a>
 
-**不是**。容易产生这个误解，是因为 Harbor 确实会在 agent 调用工具（执行终端命令）时真实起一个 Docker 容器，但这个容器的作用和"训练模型"是两件完全不同的事：
+## 做题容器与模型训练进程
 
-- **Docker 容器里跑的是什么**：容器里装的是**待修复的目标代码库**（比如 LAPS、MITgcm、Athena++ 这类科学计算代码），以及一个真实的 Linux 终端（tmux session）。模型输出的 shell 命令在这个容器里真实执行（`ls`、`cat`、改文件、跑编译、跑测试……），容器只是**沙箱化的执行环境**，让模型能安全地"动手"修 bug，而不会碰坏主机或搞坏别人的环境。修复完成后另一个 verifier 容器会重新编译、跑测试来打分，产出 reward。
-- **策略模型的训练在哪里发生**：由 PSRL 的训练 worker 在 GPU 节点上执行梯度更新（见 [psrl-training-script-source-map.md](psrl-training-script-source-map.md)），不是由做题容器负责。环境任务本身也可能加载模型或运行训练程序，例如 GPU benchmark 中的训练任务，因此不能笼统说“容器不装权重、不跑反向传播”。任务内计算与更新被训练策略是两种不同工作。
-- **两者是怎么连起来的**：Harbor 只知道把每一轮 LLM 请求发到一个看起来像 OpenAI 端点的 `api_base`。这个 `api_base` 实际上是 psrl 的 `SessionRouter`，它把请求转发给真正的 vLLM 推理引擎，同时 psrl 自研的 **TITO** 机制在旁路把每一轮的 token、logprob 都记录下来（见上面第 5 节）。episode 结束后，psrl 用这些记录 + verifier 打的分重建出标准的 `(prompt_ids, response_ids, reward)` 训练样本，喂给训练进程。**Harbor/Docker 只负责"生成轨迹和打分"，不参与、也不知道"训练"这一步。**
+做题环境和策略训练承担不同工作。做题容器中保存题目文件、运行模型选择的命令，并由评测器给出反馈；策略训练 worker 使用轨迹和反馈，更新正在学习的语言模型权重。
 
-一句话类比：Docker 容器相当于给模型的"考场"和"作业本"（在里面答题、改代码），而"打分+更新大脑"（算 reward、反向传播更新权重）完全是 psrl/Ray/GPU 侧另一套流程,和容器无关。
+例如模型修改 CUDA solver 后在容器里跑测试，GPU 计算属于题目本身。另一些题目要求训练一个小模型，容器里也会执行反向传播；这更新的是任务要求的小模型。PSRL 随后学习“怎样选择这些操作”，更新的是产生操作的策略模型。
 
-## 7. 用一个修代码例子从零理解
+两者通过数据相连：Harbor 组织尝试与评分，本地工具适配器分发命令，TITO 记录真实输入输出 token，训练器组装有效 token 与奖励后执行策略更新。源码阅读顺序见[训练源码地图](psrl-training-script-source-map.md)。
 
-一句话结论：模型提出操作，程序执行操作并回传结果，循环直到交卷，评测程序打分，PSRL 用整段过程和分数训练模型。
+<a id="8-grpc-是什么为什么还需要-sessionrouter"></a>
 
-### 7.1 先把“做题”和“学习”分开
-
-假设任务是：“修复 `calculator.py` 中的 `add(a, b)`，让测试通过。”初始代码故意写错了：
-
-```python
-def add(a, b):
-    return a - b
-```
-
-下面是教学用的小例子，不是实际 SciAccel 任务文件。实际任务可能是修复 Fortran 科学计算程序、编译、比较数值结果和测量性能，但交互方式相同。
-
-做题过程中，模型不断根据新信息选择操作。做完后，训练程序才使用收集到的数据计算梯度、更新模型权重。执行一次 shell 命令本身不会更新模型参数。
-
-异步 PSRL 可以让不同批次的做题和训练同时进行，因此这里区分的是职责与数据依赖，不是要求所有任务都先做完再统一训练。
-
-### 7.2 第一轮：模型提出查看代码和运行测试
-
-模型看到任务说明后，输出一段 JSON 文本：
-
-```json
-{
-  "analysis": "需要先查看实现和失败的测试。",
-  "plan": "读取文件，然后运行测试。",
-  "commands": [
-    {"keystrokes": "cat calculator.py\n", "duration": 0.1},
-    {"keystrokes": "pytest -q\n", "duration": 1.0}
-  ],
-  "task_complete": false
-}
-```
-
-JSON 是一种程序容易解析的文本格式。`commands` 是命令列表，`keystrokes` 是要输入终端的字符，`\n` 相当于按回车，`task_complete` 表示模型是否准备交卷。`duration` 是发送命令后等待、观察输出的时间，不保证命令在这个时间内完成，也不是整个任务的超时上限。
-
-此时模型只是生成了文本。Harbor 中的 Terminus2 读取 JSON，再通过终端接口真正执行命令，得到类似输出：
-
-```text
-def add(a, b):
-    return a - b
-
-FAILED test_add
-Expected: 5
-Actual: -1
-```
-
-`TruncatingTerminus2` 是 PSRL 这边使用的 Terminus2 子类，添加输出长度限制、上下文溢出处理和受管 GPU 工具等功能。本例只走普通终端分支。它不是另一个语言模型。
-
-### 7.3 第二轮：把真实结果交回模型，模型再决定下一步
-
-Harbor 把终端输出追加到对话中，再次请求模型。省略模板标记后，对话像这样：
-
-```text
-system: 你可以通过指定 JSON 格式操作终端。
-user:   修复 add(a, b)，让测试通过。
-assistant: 第一轮 JSON，要求查看文件、运行测试。
-user:   文件内容以及 Expected: 5、Actual: -1 的终端输出。
-```
-
-`system` 是行为说明，`user` 在这里也可以是程序自动填入的反馈，`assistant` 是模型输出，不要求每条 user 消息都来自真人。
-
-模型看到实际代码后，可能返回：
-
-```json
-{
-  "analysis": "加法函数误写成了减法。",
-  "plan": "替换运算符并重新运行测试。",
-  "commands": [
-    {"keystrokes": "sed -i 's/return a - b/return a + b/' calculator.py\n", "duration": 0.1},
-    {"keystrokes": "pytest -q\n", "duration": 1.0}
-  ],
-  "task_complete": false
-}
-```
-
-`sed -i` 在这里修改文件内容，`pytest -q` 运行 Python 测试。假设反馈是 `3 passed`，模型下一轮可以声明完成。如果测试仍失败，就继续读日志、改代码、再测。
-
-这就是 Agent Loop：观察结果，调用模型决定动作，执行动作，再观察。一个模型回复里可以包含多个命令，因此 turn 数不等于命令数。当前 Terminus2 还有完成确认机制，首次声明完成后会再询问确认。
-
-### 7.4 几个容易混淆的“任务单位”
-
-| 名词 | 在这个例子中的意思 |
-|---|---|
-| Task | “修复 add”这道题及其文件、环境和评测规则 |
-| Turn | 一次模型请求和回复，可能给出多条命令 |
-| Episode | 从拿到题目到结束的一次完整尝试，可包含很多 turns |
-| Rollout | 让当前策略模型实际尝试任务、收集交互数据的过程 |
-| Trajectory | 一次交互的记录，包括模型输出和环境反馈，TITO 特定配置下一个 session 也可能产生多条轨迹 |
-| Session | 给相关模型请求挂上的会话编号，用来关联状态和记录 |
-| Worker | 执行这些工作的程序进程，一个 worker 可以并发管理多个 episodes |
-
-一个任务可以重复尝试多次，得到不同的命令和修复结果。Harbor 的 trial 对应一次尝试，job 可以管理一组 trials；本例 PSRL wrapper 的配置是一个任务、一个 agent、一次尝试。
-
-### 7.5 Docker、tmux、Harbor 各自增加了什么
-
-**Docker** 提供带独立文件和进程视图的执行环境，里面有待修复代码、解释器或编译器等依赖。可以把 image 理解为环境模板，container 是从模板启动的一次运行实例。容器共享宿主机内核，并不是另一台完整虚拟机。它用于执行目标程序，本例的 LLM 权重由推理服务加载。[Docker 容器入门](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/)
-
-**tmux** 维护一个持续存在的终端会话。例如第一轮执行 `cd /app`，下一轮还可以在同一个 shell 的工作目录中继续操作。长时间编译也能继续运行，agent 之后再读取输出。这里只把它作为程序可操作、可读取的终端。
-
-**Harbor** 把准备环境、运行 agent、执行评测和收集结果串起来。它是框架，**Terminus2** 是其中一种 agent 控制程序，**Qwen** 等模型则提供“下一步做什么”的生成能力。[Harbor 核心概念](https://docs.harborframework.com/core-concepts)
-
-**Docker Compose** 用配置文件描述并启动相关容器服务。在采用 separate verifier 的任务中，做题环境与评测环境可以分开，不能由此推断所有 Harbor 任务都固定使用两个容器。
-
-### 7.6 模型实际在哪里，SessionRouter 和 SMG 为什么在中间
-
-```mermaid
-flowchart LR
-    A[Terminus2 控制程序] -->|对话消息| S[SessionRouter：带会话编号的入口]
-    S --> G[SMG：选推理实例并记录 TITO]
-    G --> V[vLLM：运行模型]
-    V -->|模型回复经网关返回| A
-    A -->|解析 JSON，发送命令| D[Docker 内的终端和目标程序]
-    D -->|真实终端输出| A
-```
-
-可以把模型服务理解成一个接收请求、返回结果的网络服务。`api_base` 就是它的服务地址，`POST /chat/completions` 表示向指定接口提交一份对话，请求下一条回复。
-
-PSRL 给 Harbor 的地址形如 `http://gateway.example/sessions/demo/v1`，这里只是占位示意，不是可运行地址。LiteLLM 是 Harbor 使用的模型客户端适配库，它按约定发送 HTTP 请求。SessionRouter 保存会话关联信息并转发，SMG 选择哪个 vLLM 实例服务，vLLM 在 GPU 上运行模型权重，生成回复。
-
-“OpenAI-compatible”表示接口的格式兼容，例如有 `messages`、`model` 等字段，并不意味着请求必须发到 OpenAI。此处实际服务的是 PSRL 部署的模型。
-
-网关和引擎之间使用的 gRPC 也是一种跨进程通信方式，接口和数据类型通常通过 protobuf 预先定义。理解整体流程时，先把 HTTP 和 gRPC 都视为程序之间传消息即可。
-
-SessionRouter 和 SMG 不是语言模型。它们负责会话、路由和记录，不负责思考如何修代码，也不负责执行 `pytest`。
-
-### 7.7 “工具调用”为什么能只是文字
-
-它的基本机制是约定一个可解析的格式，再由程序执行。当前配置中，模型回复的 `content` 包含 JSON，Harbor 解析其中的 `commands`。
-
-另一种实现会使用独立的 `tool_calls` 字段指定工具名和参数。两者都需要外部程序真正执行工具。这里应区分“HTTP 返回体本身是 JSON”和“模型的回复文本恰好也是 JSON”这两层。
-
-能读文件、改文件、编译、测试，是因为终端能启动各种程序。当前 SciAccel 的普通命令走终端，启用受管 GPU 工具后的 `psrl-gpu` 命令由本地子类拦截分发。两者都从同一个文本命令列表进入，不需要为每种 shell 命令注册工具 schema。
-
-### 7.8 谁来打分，分数又如何变成训练信号
-
-模型说 `task_complete: true` 只表示申请结束。Verifier 按任务定义的规则检查最终结果并产出 reward。例如教学任务可以约定测试全通过得 1，失败得 0；科学计算任务可能还检查数值等价和运行速度，具体公式由任务决定。
-
-模型自己运行的测试提供过程反馈，最终 verifier 提供训练使用的评测结果。二者可能运行不同的检查。SciAccel 的 `reward.py` 主要从 Harbor 返回的 reward 字典中取配置指定的分数字段，并不是另一个神经网络评分模型。[Harbor verifier 说明](https://docs.harborframework.com/core-concepts/tasks/verifier)
-
-假设同一道题采样四次，分数是 `[1.0, 0.0, 0.5, 1.0]`。GRPO 可以比较组内结果，计算相对优势，再更新模型，使高优势输出在相似上下文下更容易出现。实际更新还受损失公式、概率比率和裁剪等约束，并不是把每个成功命令直接记成标准答案。
-
-### 7.9 为什么 TITO 不只记录聊天文字
-
-模型实际处理的是 token ID。Tokenizer 把文字拆成 token，再映射到整数编号；一个 token 不固定等于一个汉字或一个英文单词。Chat template 还会添加角色和轮次标记，因此训练需要与真实生成对应的 token 序列。
-
-TITO 即 Token-In-Token-Out，它在 SMG 模型请求路径上记录真实输入输出，以及模型生成这些 token 时的 logprob。比如某 token 概率是 0.2，自然对数约为 -1.61。记录生成时的概率有助于训练侧比较策略变化、做配置要求的概率修正。具体哪份 logprob 用作损失中的 old policy，应以训练配置为准。
-
-对上面的修代码过程，可以把最终数据简化成：
-
-```text
-prompt_ids:
-  [任务说明和首轮提示]
-
-response_ids:
-  [第一轮模型 JSON][终端报错][第二轮模型 JSON][测试通过反馈][完成回复]
-
-response_mask:
-  [      1       ][   0    ][      1       ][     0      ][   1    ]
-
-reward:
-  1.0
-```
-
-这里每个括号表示一段 token，实际 mask 为每个 token 提供一个值，并按模板边界对齐。模型生成部分用 1，环境注入部分用 0。环境反馈必须保留为后续决策的上下文，但不应作为模型主动生成的动作计算 policy loss。
-
-因此 `response_ids` 不一定全是模型回复，它可以包括轮间工具反馈。`mask=0` 也不表示零计算、零显存，环境 token 仍然参与后续上下文计算。
-
-TITO 记录经 PSRL 转换后，通过 TransferQueue 交给训练侧。TransferQueue 可以理解为生产者与消费者之间的数据交接处，rollout 生产样本，训练进程读取样本。训练侧做前向、计算损失、反向传播和优化器更新，之后新权重再同步到推理实例。
-
-### 7.10 为什么多轮 prompt 越来越长
-
-模型不会直接看到容器文件系统。想让它知道文件内容，需要执行读文件命令，再把输出传入下一轮请求。为了理解后续行动，它通常也需要之前的对话记录。
-
-```text
-第 1 轮输入：任务说明
-第 2 轮输入：任务说明 + 回复 1 + 终端反馈 1
-第 3 轮输入：任务说明 + 回复 1 + 终端反馈 1 + 回复 2 + 终端反馈 2
-```
-
-教学估算：初始提示 1000 tokens，每轮增加 500 tokens 模型回复和 800 tokens 工具反馈，完成 3 轮后，下轮输入约为 `1000 + 3 × (500 + 800) = 4900` tokens，尚未计入模板额外开销。
-
-当前配方限制单次终端 observation 为 4096 bytes，bytes 是字节，不是 tokens；限制一次输出不能限制所有轮次之和。KV cache 可以复用历史计算，但不让历史上下文长度归零。
-
-`multi_thinking` 还要求保留历史模型生成的 thinking 文本并用相应模板重放，使 TITO 能匹配先前的 token 前缀。它的目的不是额外执行一次工具，而是保持多轮训练记录的一致性。这也会占用上下文预算。
-
-### 7.11 为什么有 Ray actor 和 asyncio
-
-PSRL 同时收集很多任务的样本，用 Ray 把 worker 分布到进程或机器上。Ray actor 可以理解成一个由 Ray 管理、保留内部状态的远程对象，其方法在相应 worker 进程中执行。
-
-每个 worker 又可能同时管理多个 episodes：任务 A 等待模型回复时，可以处理任务 B 的终端输出。`asyncio` 让等待网络、子进程等 I/O 的任务交替推进，避免一个任务等待时整个 worker 停下来。它不会自动让 CPU 密集的 Python 代码获得多核并行。
-
-所以 `agent.num_workers=2` 表示两个 agent worker，既不等于只做两道题，也不等于两张推理 GPU。[SciAccel 准入分支](../../examples/sciaccel_rl/agent_loop.py#L391)在未启用 Env Service 时使用进程内 episode semaphore（并发计数器），启用后改由 EnvRouter 的 unit 预算准入，不再叠加该计数器。vLLM 实例数和 GPU 分配由另一组部署配置控制。
-
-### 7.12 建议的阅读顺序
-
-1. [Harbor 基础名词](https://docs.harborframework.com/core-concepts)：理解 task、agent、trial、job、trajectory。
-2. [Docker 容器入门](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/)：理解运行环境。
-3. [Harbor 任务目录](https://docs.harborframework.com/core-concepts/tasks/overview)：查看任务说明、环境和评测如何组织。
-4. [PSRL 中的 SMG 分工](psrl-env-service-envworker-design.md#8-smg-和-sessionrouter-在哪把模型这条路与工具这条路分开看)：通过请求路径和实例选择例子，理解模型服务与任务环境的分工。
-5. [PSRL 的路由与 TITO 设计](../design/router_tito.md)：理解模型交互如何变成训练记录。
-
-在线 Harbor 文档用于解释通用概念，本项目行为应以当前安装的 Harbor 和 PSRL 调用配置为准。
-
-## 8. gRPC 是什么，为什么还需要 SessionRouter
+## gRPC 与 SessionRouter 怎样连接组件
 
 一句话结论：gRPC 解决不同程序怎样调用彼此的功能，SessionRouter 解决 PSRL 怎样识别和管理一整次多轮做题过程。这是通信机制与业务组件两个不同层次。
 
-### 8.1 从本地函数调用理解 RPC
+### 从本地函数调用理解 RPC
 
 在同一个程序里，可以直接调用 `result = add(2, 3)`。如果计算发生在另一台机器或另一个进程，就需要把参数发过去，让对方执行，再接收结果。
 
@@ -403,7 +437,7 @@ RPC 是 Remote Procedure Call，即远程过程调用。gRPC 提供相应的接�
 
 这不会把调用方的任意 Python 函数发送到远端执行。远端提供哪些方法，需要事先约定，并由服务端实现。
 
-### 8.2 protobuf 和流式返回分别是什么
+### protobuf 和流式返回分别是什么
 
 protobuf 是常用的接口与消息定义方式。`.proto` 文件声明方法名称、参数类型、返回类型等，再据此生成双方使用的代码。PSRL 使用的 SMG 依赖中，vLLM 服务包含如下真实接口声明：
 
@@ -425,7 +459,7 @@ for chunk in client.Generate(request):
 
 gRPC 支持一次请求一次响应、服务端流、客户端流和双向流。接口还支持 deadline、取消与状态码等机制，但实际超时值与应用处理逻辑仍需配置。[gRPC 核心概念](https://grpc.io/docs/what-is-grpc/core-concepts/)
 
-### 8.3 为什么 PSRL 的内部通信适合用 gRPC
+### 为什么 PSRL 的内部通信适合用 gRPC
 
 SMG 网关的核心是 Rust，vLLM 服务侧是 Python。统一的消息定义便于两种语言准确交换 token ID、logprob、请求状态等数据，生成代码减少手工维护字段格式的工作。流式接口也适合持续传输模型生成结果。
 
@@ -442,7 +476,7 @@ flowchart LR
 
 SessionRouter 是 FastAPI HTTP 服务，不是 gRPC 专用转换器。SMG 接收模型 API 请求并调用 gRPC 推理后端。
 
-### 8.4 为什么只有模型 API 还不够
+### 为什么只有模型 API 还不够
 
 假设同一道题“修复 add”同时尝试两次：尝试 A 第一轮查看文件，第二轮修改代码；尝试 B 第一轮直接运行测试，第二轮再查看代码。
 
@@ -459,7 +493,7 @@ SessionRouter 为这种关联提供一个稳定入口：
 
 SessionRouter 从 URL 获取 session ID，加入例如 `x-smg-tito-session-id` 的 HTTP header，再转发给 SMG。Header 是请求附带的元数据，类似包裹上的标签，不会因此自动变成模型 prompt 的文字。
 
-### 8.5 SessionRouter 对外隐藏了哪些 PSRL 细节
+### SessionRouter 对外隐藏了哪些 PSRL 细节
 
 | 需求 | 它所做的事 | 修代码例子 |
 |---|---|---|
@@ -474,7 +508,7 @@ SessionRouter 从 URL 获取 session ID，加入例如 `x-smg-tito-session-id` �
 
 TITO 的 token 记录保存在 SMG 侧，SessionRouter 负责入口和控制状态。选择具体 vLLM 实例也主要由 SMG 完成。
 
-### 8.6 必须单独有这个组件吗
+### 必须单独有这个组件吗
 
 普通单次模型推理不需要 SessionRouter。理论上，可以让每种 agent 都自行管理 session、路由 header、版本信息、暂停恢复与清理，也可以把这些入口统一实现进 SMG。
 
@@ -482,7 +516,7 @@ TITO 的 token 记录保存在 SMG 侧，SessionRouter 负责入口和控制状�
 
 session ID 不是模型的长期记忆，也不是 KV cache 本身。当前 Harbor 仍然维护对话并发送所需历史，SMG/TITO 用 session 来关联记录，vLLM 单独管理 KV cache。三者的职责不同。
 
-### 8.7 延伸阅读
+### 延伸阅读
 
 - [gRPC 官方入门](https://grpc.io/docs/what-is-grpc/introduction/)
 - [gRPC 的调用类型、生命周期和 deadline](https://grpc.io/docs/what-is-grpc/core-concepts/)

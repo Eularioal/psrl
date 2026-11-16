@@ -1,10 +1,20 @@
 # ReTool Data & Sandbox Preparation
 
+> **Goal:** prepare the math data and verify that this job’s rollout nodes can reach the configured Python execution service. Preparing data and deploying shared services are separate operations.
+
 Before launching training you need to prepare two things: the **DAPO math parquets**
 and the **SandboxFusion code-execution service** that every rollout worker will call
 into over HTTP.
 
 ---
+
+## Contents
+
+- [1. Data](#1-data)
+- [2. SandboxFusion (code-execution service)](#2-sandboxfusion-code-execution-service)
+  - [Step 1: Bake the image onto every node](#step-1-bake-the-image-onto-every-node)
+  - [Step 2: Deploy the SandboxFusion Swarm service](#step-2-deploy-the-sandboxfusion-swarm-service)
+  - [Step 3: Smoke test](#step-3-smoke-test)
 
 ## 1. Data
 
@@ -38,7 +48,6 @@ Every rollout worker emits Python `code_interpreter` tool calls that hit
 ### Step 1: Bake the image onto every node
 
 ```bash
-DOCKERHUB_MIRROR=docker.m.daocloud.io \
 DOCKER_INSTALL_METHOD=skopeo \
 DOCKER_IMAGE_DIR=${PSRL_WORKSPACE}/docker_images \
 DOCKER_IMAGE_FILE=code_sandbox.tar \
@@ -56,7 +65,16 @@ DOCKER_IMAGE_TAG=code_sandbox:server \
 `docker_install.sh` pulls `code_sandbox:server` via `skopeo` into a shared-FS tar.
 `docker_copy.sh` fans the tar out to every node via `pssh` and runs `docker load`.
 
+`PSRL_WORKSPACE` must point to the shared workspace. Set `NODE_IPS` to this job's
+allocated node list and replace `DOCKER_NODE_NUM=8` with its actual node count.
+`DOCKER_IMAGE_TAG` must name an image accessible from your registry. Set
+`DOCKERHUB_MIRROR` only when your deployment explicitly uses a mirror.
+
 ### Step 2: Deploy the SandboxFusion Swarm service
+
+This helper changes Swarm membership and replaces its named sandbox service/network.
+Use it for a dedicated sandbox deployment whose resources you own. For an existing
+shared service, configure its URL in the tool YAML and validate connectivity instead.
 
 ```bash
 SANDBOX_NODE_IPS="${NODE_IPS}" \
@@ -79,7 +97,7 @@ curl http://localhost:8080/run_code \
 ```
 
 Expected: `"status": "Success"`, `"stdout": "5\n"`. If this fails from a rollout node,
-every episode will collapse to `-0.6` reward.
+tool calls cannot receive valid execution results. Inspect service errors separately from task-answer scores.
 
 ---
 

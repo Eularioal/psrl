@@ -10,3 +10,12 @@ for hierarchical, composable configuration management.
 - [Configuration System](configuration/system-and-core.md)
 - [NIXL](configuration/transport-and-rollout.md)
 - [Memory Logger](configuration/monitoring-and-overrides.md)
+
+```{toctree}
+:maxdepth: 1
+:hidden:
+
+configuration/system-and-core
+configuration/transport-and-rollout
+configuration/monitoring-and-overrides
+```

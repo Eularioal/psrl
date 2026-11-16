@@ -1,10 +1,11 @@
 # EnvRouter 的 MPS 并行执行后端
 
-> **核心结论**：配置 `gpu_execution_backend: mps` 后，一个环境容器内和不同环境容器之间的 GPU 作业都能按显存预算并发，放不下的作业排队。每条作业分别记账、取消和回收。native EnvWorker 与 Harbor Compose 共用这套执行实现，command 与 episode 仍决定预算的持有范围。
->
-> 此后端面向同一可信实验域内的任务、环境专用的单张 GPU 和 cgroup v1 节点。它不是不可信租户之间的安全隔离，也不是 vLLM 与环境同卡共享功能。本文主体结果是功能验收，不是 science 训练加速比。[真实 GPU 训练并发对照](../experiments/mps-training-comparison.md)单独报告固定 autoresearch 工作量的性能证据。该验证暴露的并发管理连接竞争已通过按服务串行控制请求修复，原失败训练组的定向复测通过。该结论不等于所有工作负载长期稳定。
+> **核心结论**：MPS 是 NVIDIA 的多进程服务，用来协调多个 CUDA 程序同时使用 GPU。显式配置 `gpu_execution_backend: mps` 后，同一容器和不同容器的 GPU 作业都可以按显存预算并发，放不下的作业排队。每条作业单独记账、取消和回收。
 
-> 性能收益取决于单进程未充分利用的计算资源。显存放得下不等于并发更快，[第 9 节](#9-收益条件与本次-results-的解释)结合实测解释收益条件、单任务变慢与短流程启动成本。
+例如一张卡的可用预算能容纳 A、B 两条命令，系统允许它们同时执行；C 到来后若容量不足，就等其中一条归还。取消 B 只处理 B 的所属进程和预算，A 可以继续运行。第 2 节给出逐步状态变化。
+
+当前支持可信任务、环境专用单卡与 cgroup v1 节点。native EnvWorker 和 Compose 共用实现；`episode` / `command` 分别表示会话持有与逐命令持有预算。vLLM 共卡使用另一套共享协议。本文讲功能与机制；[真实训练对照](../experiments/mps-training-comparison.md)单独解释性能、控制连接修复和短流程成本，收益条件见第 9 节。
+
 
 ## 目录
 
@@ -206,7 +207,7 @@ python -m pytest tests/env_service/test_parallel_gpu.py tests/env_service/test_m
 
 ## 7. 使用边界与后续工作
 
-- **控制通道约束**：[MpsControlChannel](../../../psrl/workers/env_service/mps.py#L11) 按 domain 串行管理连接，GPU 计算仍并行。排队和执行共用 10 秒期限，失败不盲目重试，无法确认物理释放仍保留预算。真实训练收尾复测见[故障定位与修复](../experiments/mps-training-comparison.md#6-控制通道故障定位与修复)。
+- **控制通道约束**：[MpsControlChannel](../../../psrl/workers/env_service/mps.py#L11) 按 domain 串行管理连接，GPU 计算仍并行。排队和执行共用 10 秒期限，失败不盲目重试，无法确认物理释放仍保留预算。真实训练收尾复测见[故障定位与修复](../experiments/history/mps-training-comparison-chronology.md#6-控制通道故障定位与修复)。
 - 默认仍是 direct，MPS 必须显式启用。模式选择仍是 unit 的静态配置，没有自动选择 command/episode、预测 offload 或动态迁移实现。
 - 当前支持 cgroup v1 的 devices/freezer、具备相应管理权限的节点、支持所用 MPS 控制接口的 NVIDIA GPU/驱动。cgroup v2、非 root 客户端、多 GPU unit 明确不在本次支持范围。
 - MPS 控制表查询与终止不是原子事务。当前实现用于可信实验域，配合作业组稳定身份，不宣称能防御恶意客户端重连、篡改工具或对同容器同 UID 进程发送信号。
@@ -306,9 +307,9 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_concurre
 
 **本次 Results 为什么没有接近翻倍。** 以下均引用 2026-11-02 的历史实测，不是本节新跑的数据。负载是 autoresearch 的真实 GPU 训练，经 PSRL EnvRouter 和两个 Docker 容器执行。不是原生 science/LAPS 求解器或完整强化学习训练，也没有 vLLM 或人工显存占位。
 
-第一轮完整三组对照中，两份各训练 10 步，串行总耗时 20.719 秒，普通多进程 22.578 秒，MPS 20.167 秒。MPS 比普通并发少用约 10.7% 时间，但比串行只少约 2.7%。每份单独计算约 10.32 秒，MPS 共享时每份约 20.17 秒。这是“同时推进，但每份变慢，整体只略快”的实测例子。此处串行组的第二份模型也已预热并驻留，只是计算顺序执行。数据和复现脚本见[三组 Results](../experiments/mps-training-comparison.md#3-results)。
+修复前的三组测量已移至[历史报告](../experiments/history/mps-training-comparison-chronology.md#3-results)，本节性能判断使用下面修复后的新配对，不把旧串行组与新 MPS 组拼成新的三组对照。
 
-不能仅凭约 5033 万参数就判断每份任务只占少量算力。实际序列长度为 2048，微批次为 64，即一次前后向处理 `64 × 2048 = 131072` 个 token。微批次是一次送入模型的样本组，梯度累积是多次前后向累计梯度再更新参数。本例累积 4 次，每个优化器更新处理 524288 个 token。模型参数规模和一次执行产生的并行工作量是不同维度。配置及上游版本见[实验条件](../experiments/mps-training-comparison.md#2-三组对照和计时方法)，批量适配与计时边界见 [mps_train_workload.py](../env-service-verification/scripts/mps_train_workload.py#L39)。
+不能仅凭约 5033 万参数就判断每份任务只占少量算力。实际序列长度为 2048，微批次为 64，即一次前后向处理 `64 × 2048 = 131072` 个 token。微批次是一次送入模型的样本组，梯度累积是多次前后向累计梯度再更新参数。本例累积 4 次，每个优化器更新处理 524288 个 token。模型参数规模和一次执行产生的并行工作量是不同维度。配置及上游版本见[实验条件](../experiments/history/mps-training-comparison-chronology.md#2-三组对照和计时方法)，批量适配与计时边界见 [mps_train_workload.py](../env-service-verification/scripts/mps_train_workload.py#L39)。
 
 这使“两份同类训练竞争相同资源”成为合理解释，**但尚未采集足够的硬件指标来确认具体是计算、带宽、缓存还是其他瓶颈**。不能把合理推断写成“已经证明单份跑满 GPU”，也不能将约一成收益全部归因于消除了上下文切换。
 
@@ -319,7 +320,7 @@ python docs/env-worker-deep-dive/env-service-verification/scripts/model_concurre
 | 两份各 10 步的训练段 | 22.499 秒 | 20.160 秒 | 耗时少 10.4%，等工作量吞吐高约 11.6% |
 | 创建环境至物理清理完成 | 133.150 秒 | 136.010 秒 | 耗时多 2.1% |
 
-来源是[修复后配对](../experiments/mps-training-comparison.md#7-修复后的-mps-开关速度对照)和[结果 JSON](../experiments/mps-speed-fixed-results.json)，复现入口是 [mps_training_compare.py](../env-service-verification/scripts/mps_training_compare.py#L30)。这次没有重跑 serial，不能把新 MPS 与旧 serial 包装为一次新的三组对照。这里关闭的是 MPS，Router 仍然启用，两个不同容器里的普通 CUDA 本来就会并发启动。它也不是用户指定提交的历史 PSRL baseline。
+来源是[修复后配对](../experiments/mps-training-comparison.md#results修复后配对)和[结果 JSON](../experiments/mps-speed-fixed-results.json)，复现入口是 [mps_training_compare.py](../env-service-verification/scripts/mps_training_compare.py#L30)。这次没有重跑 serial，不能把新 MPS 与旧 serial 包装为一次新的三组对照。这里关闭的是 MPS，Router 仍然启用，两个不同容器里的普通 CUDA 本来就会并发启动。它也不是用户指定提交的历史 PSRL baseline。
 
 训练段在普通组完整流程中仅占 `22.499 / 133.150 ≈ 16.9%`。即使其他阶段完全不变，单独将这部分缩短 10.4%，整个流程也只缩短约 `16.9% × 10.4% = 1.76%`。实际两组初始化、编译和其他阶段并不相同，抵消了节省的约 2.34 秒，最终完整流程略慢。不能把差额当成固定 MPS 启动成本。多训练几步可以摊薄准备成本，但不会自动让稳定训练段从约 1.12 倍吞吐变成 2 倍。
 

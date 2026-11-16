@@ -1,6 +1,6 @@
 # PSRL 运行指南索引
 
-> **核心结论**：原 840 行运行指南已拆分为 5 篇。先核对集群环境约束，再查启动步骤、Ray 调度、监控配置及历史故障复盘。
+> **核心结论**：运行内容分为 5 篇主专题，Docker 专项历史独立归档。先核对集群环境约束，再查启动步骤、Ray 调度、监控配置及历史故障复盘。
 
 ## 目录
 
@@ -13,6 +13,8 @@
 实际运行前先读[共享环境与集群检查](psrl-run-guide/cluster-preflight.md)，再按需要查基础运行、调度、监控和故障复盘。
 
 ## 专题文档
+
+- [Docker 存储挂起与恢复（历史）](psrl-run-guide/incidents/docker-storage-hang-20261020.md)：原第 19、20 节，保留线程、存储与独立容器测试证据。
 
 - [PSRL 基础运行与示例脚本](psrl-run-guide/getting-started.md)：以 DAPO 示例说明安装、模型与数据准备、启动参数和单机 Demo；执行前先核对集群检查专题中的环境约束。
 - [PSRL 的 Ray 调度与生成长尾](psrl-run-guide/ray-and-rollout.md)：分别说明 Ray 的角色、资源调度流程和 rollout 长尾，区分集群调度职责与模型计算职责。
@@ -46,4 +48,4 @@
 | 十五、共享 conda env 里 `pip install -e` 是全局的：为什么日志/checkpoint 会悄悄跑到别人的目录下 | [阅读章节](psrl-run-guide/cluster-preflight.md#共享-conda-env-里-pip-install--e-是全局的为什么日志checkpoint-会悄悄跑到别人的目录下) |
 | 十六、集群踩坑总表与最小复现（2026-10-13） | [阅读章节](psrl-run-guide/cluster-preflight.md#集群踩坑总表与最小复现2026-10-13) |
 
-本次为文档结构整理，不将历史实验视为当前验证，也未启动训练或集群实验。
+2026-11-16 修正当前脚本说明并整理历史记录；迁移后的故障仍使用原日期与条件，本次未启动服务或训练。

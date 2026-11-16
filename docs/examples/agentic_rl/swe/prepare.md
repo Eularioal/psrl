@@ -1,14 +1,24 @@
 # SWE Data Preparation
 
+> **Goal:** produce data rows with problem metadata, grader identity and image references, then make those images available on the allocated execution nodes. Use the supported SWE-smith or SWE-Gym path for training.
+
 Each training path requires converting raw datasets into PSRL training parquets and warming up Docker image caches on all cluster nodes.
 
 ---
+
+## Contents
+
+- [Data Paths Summary](#data-paths-summary)
+- [Path A: Toy Dataset](#path-a-toy-dataset)
+- [Path B: SWE-smith-py](#path-b-swe-smith-py)
+- [Path C: SWE-Gym](#path-c-swe-gym)
+- [Docker Image Workflow](#docker-image-workflow)
 
 ## Data Paths Summary
 
 | Path | Dataset | Script | Docker Images | Disk Budget |
 |------|---------|--------|---------------|-------------|
-| **Toy** | `simple_cases_train.json` (40 tasks) | `prepare_simple_data.py` | `python:3.11-slim` (baked as `psrl-mini-swe:latest`) | Minimal |
+| **Toy (schema work only)** | `simple_cases_train.json` (40 tasks) | `prepare_simple_data.py` | `python:3.11-slim` (baked as `psrl-mini-swe:latest`) | Minimal |
 | **SWE-smith** | [SWE-bench/SWE-smith-py](https://huggingface.co/datasets/SWE-bench/SWE-smith-py) (50k) | `prepare_swebench.py` | `swebench/swesmith.x86_64.*` (~3 GB each) | 500 GB-1 TB shared FS |
 | **SWE-Gym** | [SWE-Gym/SWE-Gym](https://huggingface.co/datasets/SWE-Gym/SWE-Gym) (2438) | `prepare_swe_gym.py` | `xingyaoww/sweb.eval.x86_64.*` | 500-800 GB shared FS |
 
@@ -16,7 +26,7 @@ Each training path requires converting raw datasets into PSRL training parquets 
 
 ## Path A: Toy Dataset
 
-Quick iteration and smoke tests. All bugs are synthetic and baked into a single Docker image.
+**Schema-development path.** The synthetic tasks and single Docker image are retained for local development. The generated rows lack the grader/problem/image contract required by the current `MiniSWEEnvironment`. Use Path B or C for a complete training recipe; the commands below only prepare the old toy artifacts.
 
 ```bash
 # 1. Bake repos into Docker image

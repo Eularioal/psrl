@@ -1,7 +1,22 @@
 # Quick Start
 
-This guide walks you through running a **DAPO** (Decoupled Clip and Dynamic Sampling
-Policy Optimization) training job, which is the simplest end-to-end example for PSRL.
+> **Goal:** run the repository's two-node DAPO recipe after preparing its software environment, model and data. This is a distributed training example that reserves 16 GPUs.
+
+DAPO is a group-sampling policy-optimization recipe. First-time readers can use [从一道题理解 PSRL](../overview/reading-guide.md) to understand how generation, scoring and parameter updates connect.
+
+## Contents
+
+- [Goal](#goal)
+- [Minimal Setup](#minimal-setup)
+- [Choose your runtime](#choose-your-runtime)
+  - [Cluster Layout](#cluster-layout)
+- [Steps](#steps)
+  - [1. Download Model](#1-download-model)
+  - [2. Download Data](#2-download-data)
+  - [3. Set Up Ray Cluster](#3-set-up-ray-cluster)
+  - [4. Launch Training](#4-launch-training)
+  - [5. Monitor Training](#5-monitor-training)
+- [What Happens Under the Hood](#what-happens-under-the-hood)
 
 ## Goal
 
@@ -45,6 +60,15 @@ If you installed from source, activate the environment created by the
 
 ### 1. Download Model
 
+Set the shared workspace explicitly. The checked-in launch script also expects an
+environment initialization file at `${PSRL_WORKSPACE}/env/psrl.sh` on every node.
+This is your deployment script, which must select the intended checkout, Python
+environment and node addresses. Installing the Docker image alone does not create it.
+
+```bash
+export PSRL_WORKSPACE=/path/to/your/shared-workspace
+```
+
 Download the `Qwen2.5-3B-Instruct` model from HuggingFace:
 
 ```bash
@@ -78,8 +102,11 @@ preparation documentation:
 
 ### 3. Set Up Ray Cluster
 
-We recommend using the bundled `examples/ray/ray_start.sh` helper, which cleans up any
-stale Ray processes and launches the head + worker nodes from a hostfile in one shot.
+Use an allocated, dedicated pair of nodes for this recipe. The bundled
+[`ray_start.sh`](../../examples/ray/ray_start.sh) starts a head and workers, but first
+runs `ray stop --force` on every listed node. Use it only when those Ray processes
+belong to this job. On a shared cluster, use the existing authorized cluster or
+prepare an isolated cluster without stopping other users' processes.
 
 First prepare a hostfile listing all nodes (the **first** line is the head node, the
 rest are workers):
@@ -131,19 +158,20 @@ bash examples/dapo_trainer/qwen2.5_3b_fsdp.sh 2
 
 Staleness controls the maximum version gap between generation and training:
 
-- `staleness=0`: fully synchronous (generation blocks until training catches up)
-- `staleness=3` (default for this example): generation can run up to 3 versions ahead of training
-- Higher values increase throughput but may degrade sample quality
+- `staleness=0`: training consumes data from the matching model version.
+- `staleness=3` (this recipe): training may use data generated up to 3 versions earlier.
+- A larger window permits more overlap, with a larger policy mismatch to evaluate.
 
-Values of 2 to 3 provide a good balance between throughput and policy freshness for
-most workloads.
+For example, data begun at generation version 10 may be used at training version 13
+under a bound of 3. Measure speed and held-out quality before choosing a wider window.
 :::
 
 ### 5. Monitor Training
 
-PSRL logs to [Weights & Biases](https://wandb.ai) by default. The most useful metrics
-to watch are the **critic** statistics that summarize reward quality, together with a
-few actor / performance counters:
+The recipe enables [Weights & Biases](https://wandb.ai) logging. Start by checking
+that steps advance, samples receive task scores, and loss/gradient values are finite.
+The `critic/` metric prefix also appears in GRPO/DAPO runs that do not train a critic
+value model; it names shared statistics, not proof that a critic is active:
 
 | Metric | Description |
 |---|---|
@@ -152,15 +180,16 @@ few actor / performance counters:
 | `critic/rewards/mean` | Mean shaped reward (raw score + overlong penalty) fed into advantage estimation |
 | `critic/advantages/mean` | Mean GRPO advantage used for the policy update |
 | `critic/returns/mean` | Mean return target seen by the actor (equals advantage under GRPO) |
-| `response_length/mean` | Mean generated response length (tokens), should stabilize as training converges |
-| `actor/entropy` | Policy entropy, a slow decrease indicates healthy exploration → exploitation |
+| `response_length/mean` | Mean generated token count; compare with truncation rate and reward |
+| `actor/entropy` | Diversity of the output distribution; interpret changes together with reward and lengths |
 | `actor/grad_norm` | Gradient norm, sudden spikes often signal an unstable update |
 | `perf/throughput` | End-to-end throughput in tokens/sec/GPU |
 | `perf/mfu/actor` | Model FLOPs Utilization of the actor update |
 | `training/global_step` | Current training step |
 
-You should see `critic/score/mean` and `critic/rewards/mean` trend upward over the
-first few hundred steps as the policy learns to solve more GSM8K problems.
+A successful run has completed optimizer steps and valid task feedback. Learning
+quality requires a separate held-out comparison. A falling entropy or shorter
+response alone does not establish improvement. See [the collapse diagnosis](../psrl/dapo-training-collapse-diagnosis.md) for a concrete historical failure.
 
 ## What Happens Under the Hood
 

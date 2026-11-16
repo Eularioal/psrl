@@ -1,53 +1,57 @@
-# PSRL 框架与相关知识索引
+# PSRL：从一次做题理解训练框架
 
-一句话结论：这里收录 PSRL 训练框架本身的运行/源码知识，以及理解它所必须懂的强化学习算法与推理系统知识（GAE、PPO/GRPO/DAPO、RLVR、vLLM、NIXL 等）——两者放在一起，因为看 PSRL 代码经常要跳到这些底层概念才能看懂。
+这里按 PSRL 的运行链路组织文档，重点说明 Agent、环境、训练和推理进程怎样协作。阅读路径默认已有机器学习与 Agent 基础，系统机制在需要时解释；算法公式和完整推导可按问题进入专题。
 
 ## 目录
 
-- [PSRL 框架本身（运行、源码地图、Agent Loop）](#psrl-框架本身运行源码地图agent-loop)
-- [RL 算法与训练机制（PSRL 用到的算法知识）](#rl-算法与训练机制psrl-用到的算法知识)
-- [推理与系统机制（PSRL 依赖的底层框架）](#推理与系统机制psrl-依赖的底层框架)
-- [延伸](#延伸)
+- [第一次读，从这里开始](#第一次读从这里开始)
+- [运行、排查与源码](#运行排查与源码)
+- [算法与系统专题](#算法与系统专题)
+- [历史故障与深入推导](#历史故障与深入推导)
 
-## PSRL 框架本身（运行、源码地图、Agent Loop）
+## 第一次读，从这里开始
 
-| 文档 | 内容 |
+1. [Agent Loop 做题例子](psrl-agent-loop-harbor-tool-calling.md#7-用一个修代码例子从零理解)：命令由哪个组件执行，观察怎样回传，TITO 怎样记录训练数据。
+2. [一条回答怎样变成模型更新](vllm-and-training-parallelism/rl-training-workflow.md)：采样、训练与权重同步怎样重叠，模型版本差距怎样约束。
+3. [Env 当前设计](../env-worker-deep-dive/knowledge/current-design.md)：任务容器怎样申请资源、执行和释放。
+
+如果术语较多，随时查[全局术语表](../overview/glossary.md)。正文会解释理解本节必需的词，专题链接用于继续深入；也可以按其中一个具体步骤继续提问。
+
+## 运行、排查与源码
+
+| 想做什么 | 阅读入口 |
 |---|---|
-| [psrl-run-guide.md](psrl-run-guide.md) | 已拆分为 5 篇子文档；原文件为阅读入口。 |
-| [PSRL 基础运行与示例脚本](psrl-run-guide/getting-started.md) | 以 DAPO 示例说明安装、模型与数据准备、启动参数和单机 Demo；执行前先核对集群检查专题中的环境约束。 |
-| [PSRL 的 Ray 调度与生成长尾](psrl-run-guide/ray-and-rollout.md) | 分别说明 Ray 的角色、资源调度流程和 rollout 长尾，区分集群调度职责与模型计算职责。 |
-| [PSRL 日志监控、批量配置与进程排查](psrl-run-guide/monitoring-and-batches.md) | 从训练日志提取指标，理解 train_prompt_bsz 的配置映射，并确认训练进程所在节点及运行状态。 |
-| [PSRL 单机与多机启动故障复盘](psrl-run-guide/startup-incident-reviews.md) | 保留 IP、数据格式、环境变量覆盖及上下文长度问题的历史故障链、修复过程与验证边界。 |
-| [PSRL 共享环境与集群检查](psrl-run-guide/cluster-preflight.md) | 运行前核对源码与依赖来源、IP/Ray、临时路径、Docker、GPU 身份、数据和验证预算；2026-10-13 的证据只代表当时的条件。 |
-| [psrl-training-script-source-map.md](psrl-training-script-source-map.md) | 跑一次 `fsdp_qwen2.5_3b_laps.sh` 涉及的全部源码文件地图：启动脚本/Hydra 配置、Trainer 核心（`main_ppo.py`/`ray_trainer.py`）、Parameter Server（NIXL 权重同步）、Rollout Gateway/SMG/RolloutCoordinator、Agent Loop、FSDP2/Ulysses/GRPO/rollout correction（本仓库 vs 外部 `verl`）、reward.py/DAPO/数据集，逐文件标注角色与本仓库/外部归属 |
-| [psrl-agent-loop-harbor-tool-calling.md](psrl-agent-loop-harbor-tool-calling.md) | rollout 阶段模型怎么"调用工具"：Agent Loop 架构（`PSRL_AgentLoopWorker`/`SessionAgentLoop`/`SciAccelAgentLoop`）、第三方框架 Harbor（文本 JSON 命令，区分普通终端与受管 `psrl-gpu` 分发）、TITO（Token-In-Token-Out）怎么在旁路记录 token 重建训练样本、`multi_thinking` 模板作用 |
-| [dapo-training-collapse-diagnosis.md](dapo-training-collapse-diagnosis.md) | 一次 DAPO+Qwen2.5-3B 训练在 step~115 发生熵崩溃→长度打满→reward 归零的不可逆连锁崩溃复盘，含完整时间线和各阶段指标特征 |
-| [psrl-env-service-envworker-design.md](psrl-env-service-envworker-design.md) | 2026-09-21 设计提案与 09-22 源码对照，现状另读 [当前设计](../env-worker-deep-dive/knowledge/current-design.md)。从一道修代码题理解 EnvWorker：谁执行命令、谁分配资源、为什么两个进程各限 8 个任务仍会超载；用数字解释 unit、显存预算、两个 Gate 和容器清理，再区分 SMG、SessionRouter 与环境服务，以及现有实现和提案 |
-| [../sciaccel-grpo-oom-analysis.md](../sciaccel-grpo-oom-analysis.md) | SciAccel GRPO+Qwen3.5-4B 训练在第一步 backward 撞 OOM 的根因分析（多轮轨迹累积长度 + 过大的训练 token 预算），以及后续用 `TRAIN_SP` 4→8 + 压低 `max_response_length`/`max_model_len` 重跑 5 步验证修复有效的结果（全程无 OOM，显存稳定在 82GB/95GB；但验证集 `acc/mean@1=0.0`，暴露出独立的训练效果问题） |
+| 准备一次运行 | [基础运行](psrl-run-guide/getting-started.md) → [集群检查](psrl-run-guide/cluster-preflight.md) |
+| 理解 Ray 怎样启动角色 | [Ray 与生成长尾](psrl-run-guide/ray-and-rollout.md) |
+| 看指标、调批量、找进程 | [监控与批量配置](psrl-run-guide/monitoring-and-batches.md) |
+| 从启动脚本读到具体代码 | [训练源码地图](psrl-training-script-source-map.md) |
+| 找所有运行专题 | [运行指南索引](psrl-run-guide.md) |
 
-## RL 算法与训练机制（PSRL 用到的算法知识）
+## 算法与系统专题
 
-| 文档 | 内容 |
+| 想了解的问题 | 阅读入口 |
 |---|---|
-| [gae-bias-variance-tradeoff.md](gae-bias-variance-tradeoff.md) | GAE 用参数 $\lambda$ 把"只信任 1 步 TD 残差"（低方差、高偏差）和"信任整条轨迹的蒙特卡洛回报"（低偏差、高方差）两种优势函数估计方式做指数加权平均，在两个极端之间连续调节偏差与方差 |
-| [ppo-grpo-dapo-sample-requirements.md](ppo-grpo-dapo-sample-requirements.md) | PPO / GRPO / DAPO 核心区别在 advantage 怎么算，决定了"凑齐多少样本才能做一次更新"：PPO 用 critic 给每条独立轨迹算 baseline；GRPO/DAPO 没有 critic，baseline 是组内统计量，必须凑齐一个 prompt 的完整 `n` 条 response |
-| [rlvr-explained.md](rlvr-explained.md) | RLVR（可验证奖励的强化学习）与 RLHF 的核心区别：reward 来自确定性规则函数还是训练出的 Reward Model |
+| 奖励从哪里来 | [RLVR：可验证奖励](rlvr-explained.md) |
+| 一题要采几条回答 | [PPO、GRPO、DAPO 的样本组织](ppo-grpo-dapo-sample-requirements.md) |
+| 优势估计怎样综合多步反馈 | [GAE 数值例子](gae-bias-variance-tradeoff.md) |
+| 多条生成请求怎样一起运行 | [vLLM 机制](vllm-and-training-parallelism/inference-mechanisms.md) |
+| 缓存怎样分页、共享与复制 | [缓存管理详解](vllm-and-training-parallelism/inference-mechanisms.md#kv-缓存管理详解块表写时复制与前缀复用) |
+| 模型怎样分给多张卡 | [训练并行](vllm-and-training-parallelism/training-parallelism.md) |
+| token 怎样参与训练损失 | [分组采样与损失](vllm-and-training-parallelism/rl-loss-and-sampling.md) |
+| 输入、输出和总长度怎样限制 | [上下文长度与模型配置](hf-config-context-window.md) |
+| 权重和缓存怎样传输 | [NIXL](nixl-explained.md) |
+| 查公式与历史吞吐数据 | [实验与公式速查](vllm-and-training-parallelism/experiments-and-reference.md) |
 
-## 推理与系统机制（PSRL 依赖的底层框架）
+完整阅读路线见[推理与训练并行索引](vllm-and-training-parallelism.md)。
 
-| 文档 | 内容 |
+## 历史故障与深入推导
+
+| 记录 | 保留价值 |
 |---|---|
-| [vllm-and-training-parallelism.md](vllm-and-training-parallelism.md) | 已拆分为 5 篇子文档；原文件为阅读入口。 |
-| [vLLM 推理机制：缓存、调度与合批](vllm-and-training-parallelism/inference-mechanisms.md) | 从 prefill/decode 的计算差异出发，理解 KV 缓存、PagedAttention、前缀复用、连续合批和选择性合批；原有算例与性能边界保留。 |
-| [训练并行、通信量与带宽分析](vllm-and-training-parallelism/training-parallelism.md) | 按切分对象理解训练并行，再用每卡通信量和互联带宽判断并行策略应如何排布。 |
-| [PSRL 训推协作与 PPO、GRPO 基础](vllm-and-training-parallelism/rl-training-workflow.md) | 串联轨迹生成、概率重算、优势估计、参数更新与权重同步，并保留 PPO/GRPO 的逐步推导和长尾分析。 |
-| [PSRL 分组采样、DAPO 与训练损失](vllm-and-training-parallelism/rl-loss-and-sampling.md) | 解释同一 prompt 的分组采样、DAPO 改动、熵与 KL 项，以及多轮 response_mask、奖励标签和 rollout correction。 |
-| [推理与训练并行：公式速查及实验记录](vllm-and-training-parallelism/experiments-and-reference.md) | 集中查阅符号、公式、机制对应的实验脚本与历史测量条件；历史结果不代表当前环境的重新验证。 |
-| [hf-config-context-window.md](hf-config-context-window.md) | HuggingFace `config.json` 字段逐一解释（`max_position_embeddings`/`rope_theta`/`rope_scaling`/GQA 相关字段等），RoPE 与长上下文扩展原理；`max_prompt_length`/`max_response_length`/`max_model_len` 三者的关口原理与为什么要留余量；三次复盘：① `max_model_len > max_position_embeddings` 导致 vLLM 启动崩溃，② 改参数后 `max_model_len` 刚好卡满上限、没给 multi-turn 累积长度留余量导致运行时持续报错训练卡死，③ 留了余量之后训练侧（backward）又撞了显存 OOM，牵出 `max_turns` 如何通过序列总长度影响训练激活显存 |
-| [nixl-explained.md](nixl-explained.md) | NIXL（NVIDIA Inference Xfer Library）是什么：底层基于 UCX 自动挑选最快传输方式（共享内存/GPU IPC/RDMA）的点对点内存搬运库，PSRL 用它做训练/生成集群间的权重同步与 KV cache 迁移，不占用 Ray 对象序列化开销 |
+| [启动故障](psrl-run-guide/startup-incident-reviews.md) | IP、数据类型、环境覆盖与上下文配置的真实失败 |
+| [首步 backward OOM](../sciaccel-grpo-oom-analysis.md) | 长轨迹、训练分片和五步复测数据 |
+| [DAPO 训练退化](dapo-training-collapse-diagnosis.md) | 联合读取质量指标，并链接指标与数值推导两篇深入资料 |
+| [EnvWorker 早期设计](psrl-env-service-envworker-design.md) | 2026-09 提案的资源管理动机，现状看当前设计 |
+| [Docker 挂起与恢复](psrl-run-guide/incidents/docker-storage-hang-20261020.md) | 线程与存储证据、独立恢复测试及清理结果 |
 
-## 延伸
-
-- [知识文档总索引](../README.md)
-- [PSRL 项目自身文档目录](../overview/index.md)（`psrl/docs/`，不重复收录到这里）
-- vLLM 机制验证实验脚本（本地资料，未随仓库发布）
+历史记录保留原版本、日期和证据条件，实际运行前重新检查节点与依赖。[返回文档总览](../README.md)。
