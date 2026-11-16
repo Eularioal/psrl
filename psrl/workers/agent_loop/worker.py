@@ -571,8 +571,8 @@ class PSRL_AgentLoopWorker:
             field["response_len"] = response_len
             field["uid"] = uid
             field.setdefault("version_tag", version_tag)
-            if "parent_id" in batch:
-                field["parent_id"] = tu.get(batch, "parent_id")[0]
+            # A single rollout is its own prompt group for advantage computation and metrics.
+            field["parent_id"] = tu.get(batch, "parent_id")[0] if "parent_id" in batch else uid
             field["trajectory_index"] = i
             field["trajectory_num"] = len(outputs)
             # Carried for metrics so the trainer can report reward and gradient share per
