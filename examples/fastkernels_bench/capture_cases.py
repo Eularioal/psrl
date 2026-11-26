@@ -90,17 +90,24 @@ def cases():
     return values
 
 
-def capture(output):
+def capture(output, targets=None, case_timeout=30):
     import torch
     from fastkernels import capture as upstream
     from fastkernels.list import discover_operator_targets
 
     if not torch.cuda.is_available():
         raise RuntimeError("Capture requires a working CUDA device.")
+    if not 1 <= case_timeout <= 90:
+        raise ValueError("Capture cases require a timeout between one and ninety seconds.")
     torch.manual_seed(42)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     specs = cases()
+    if targets is not None:
+        selected = set(targets)
+        specs = [item for item in specs if f"{item[0]}:{item[1]}" in selected]
+        if {f"{item[0]}:{item[1]}" for item in specs} != selected:
+            raise ValueError("Capture targets must identify explicitly supported forward cases.")
     records = []
     loaded = []
     for module, name, init, args, kwargs in specs:
@@ -118,7 +125,7 @@ def capture(output):
     instrumented = upstream._instrument(classes)
 
     def expired(signum, frame):
-        raise TimeoutError("The operator capture exceeded its 30 second budget.")
+        raise TimeoutError("The operator capture exceeded its configured time budget.")
 
     signal.signal(signal.SIGALRM, expired)
     for module, name, cls, init, args, kwargs in loaded:
@@ -126,7 +133,7 @@ def capture(output):
         upstream._HOOK_RECORDS.clear()
         hooks = []
         try:
-            signal.alarm(30)
+            signal.alarm(case_timeout)
             model = cls(*init, **kwargs).cuda().eval()
             with torch.no_grad():
                 for parameter in model.parameters():
@@ -166,4 +173,6 @@ def capture(output):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--targets", nargs="+")
+    parser.add_argument("--case-timeout", type=int, default=30)
     capture(**vars(parser.parse_args()))

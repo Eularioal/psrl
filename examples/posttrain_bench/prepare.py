@@ -18,7 +18,20 @@ JUDGED_BENCHMARKS = ("arenahardwriting", "healthbench")
 BENCHMARKS = LIKELIHOOD_BENCHMARKS + JUDGED_BENCHMARKS
 
 
-def prepare(repo, assets, output, python, image, guided_baseline=False, benchmarks=BENCHMARKS):
+def prepare(
+    repo,
+    assets,
+    output,
+    python,
+    image,
+    guided_baseline=False,
+    benchmarks=BENCHMARKS,
+    gpu_execution_contract="unknown",
+):
+    from psrl.workers.env_service.reservation_policy import GPU_CONTRACTS
+
+    if gpu_execution_contract not in GPU_CONTRACTS:
+        raise ValueError("Unknown GPU execution contract.")
     assets, output = Path(assets).resolve(), Path(output).resolve()
     inventory = posttrain_inventory(Path(repo).resolve())
     models = json.loads((assets / "models.json").read_text())
@@ -103,6 +116,8 @@ def prepare(repo, assets, output, python, image, guided_baseline=False, benchmar
             '[verifier]\ntimeout_sec = 300\nenvironment_mode = "separate"\n[verifier.environment]\n'
             f"docker_image = {json.dumps(image)}\ncpus = 4\nmemory_mb = 32768\ngpus = 1\n"
             'network_mode = "no-network"\n'
+            "[metadata.env_service]\n"
+            f"gpu_execution_contract = {json.dumps(gpu_execution_contract)}\n"
         )
         record = {
             "benchmark": data_source,
@@ -118,6 +133,7 @@ def prepare(repo, assets, output, python, image, guided_baseline=False, benchmar
             "data_hashes": file_hashes(assets / "data" / task["benchmark"]),
             "runtime_verified": False,
             "guided_baseline": guided_baseline,
+            "gpu_execution_contract": gpu_execution_contract,
         }
         (target / "provenance.json").write_text(json.dumps(record, indent=2))
         write_dataset(target, data_source, 16384)
@@ -132,6 +148,12 @@ def main():
     for key in ("repo", "assets", "output", "python", "image"):
         parser.add_argument("--" + key, required=True)
     parser.add_argument("--guided-baseline", action="store_true")
+    parser.add_argument(
+        "--gpu-execution-contract",
+        choices=("unknown", "independent_commands", "resident_state"),
+        default="unknown",
+        help="Declare the audited GPU tool protocol used by the task adapter.",
+    )
     parser.add_argument("--benchmarks", nargs="+", choices=BENCHMARKS, default=BENCHMARKS)
     args = parser.parse_args()
     prepare(**vars(args))

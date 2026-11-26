@@ -10,9 +10,11 @@ from examples.gpu_benchmarks.reward import compute_score
 from examples.posttrain_bench import prepare as module
 from examples.posttrain_bench.judge_scoring import rubric_score
 from examples.posttrain_bench.prepare_judge_data import select_rubrics
+from psrl.workers.env_service.harbor_resources import demand_from_task
 
 
-def test_complete_public_combinations_keep_private_answers_separate(tmp_path, monkeypatch):
+@pytest.mark.parametrize("contract", ["unknown", "independent_commands"])
+def test_complete_public_combinations_keep_private_answers_separate(tmp_path, monkeypatch, contract):
     models = {}
     tasks = []
     assets = tmp_path / "assets"
@@ -35,7 +37,7 @@ def test_complete_public_combinations_keep_private_answers_separate(tmp_path, mo
             (directory / "rows.json").write_text('[{"prompt":"q","answer":"a"}]')
     monkeypatch.setattr(module, "posttrain_inventory", lambda repo: {"revision": "fixed", "tasks": tasks})
     output = tmp_path / "tasks"
-    module.prepare(tmp_path, assets, output, "/runtime/bin/python", "fixture", True)
+    module.prepare(tmp_path, assets, output, "/runtime/bin/python", "fixture", True, gpu_execution_contract=contract)
     frame = pd.read_parquet(output / "tasks.parquet")
     assert len(frame) == 15, "All public model and task combinations must be prepared."
     assert set(frame.data_source) == {"posttrain_bench_local", "posttrain_bench_judged_local"}, (
@@ -43,6 +45,9 @@ def test_complete_public_combinations_keep_private_answers_separate(tmp_path, mo
     )
     for item in json.loads((output / "manifest.json").read_text()):
         target = output / item["task"]
+        assert demand_from_task(str(target)).gpu_execution_contract == contract, (
+            "Generated task capabilities must reach the same admission demand used by the runner."
+        )
         agent = yaml.safe_load((target / "environment/docker-compose.yaml").read_text())["services"]["main"]
         verifier = yaml.safe_load((target / "tests/docker-compose.yaml").read_text())["services"]["main"]
         assert not any(":/data/private" in value for value in agent["volumes"]), "Agent must not see hidden answers."

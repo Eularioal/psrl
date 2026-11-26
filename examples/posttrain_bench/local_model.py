@@ -44,6 +44,20 @@ def load_adapter(model, checkpoint):
         parameter.copy_(state[name])
 
 
+def encode_example(tokenizer, row):
+    """Encode one supervised example with the benchmark's fixed token limits."""
+    import torch
+
+    prompt = tokenizer.encode(row["prompt"], add_special_tokens=True)[-192:]
+    answer = tokenizer.encode(row["answer"], add_special_tokens=False)[:64]
+    if not prompt or not answer:
+        raise ValueError("Each example must contain prompt and answer tokens.")
+    inputs = torch.tensor([prompt + answer], device="cuda")
+    labels = inputs.clone()
+    labels[:, : len(prompt)] = -100
+    return inputs, labels
+
+
 def execute(mode, model_path, data, checkpoint):
     import torch
     from safetensors.torch import save_file
@@ -70,13 +84,7 @@ def execute(mode, model_path, data, checkpoint):
         load_adapter(model, checkpoint)
     losses = []
     for row in rows[:2] if mode == "train" else rows:
-        prompt = tokenizer.encode(row["prompt"], add_special_tokens=True)[-192:]
-        answer = tokenizer.encode(row["answer"], add_special_tokens=False)[:64]
-        if not prompt or not answer:
-            raise ValueError("Each example must contain prompt and answer tokens.")
-        inputs = torch.tensor([prompt + answer], device="cuda")
-        labels = inputs.clone()
-        labels[:, : len(prompt)] = -100
+        inputs, labels = encode_example(tokenizer, row)
         with torch.set_grad_enabled(mode == "train"):
             loss = model(input_ids=inputs, labels=labels, use_cache=False).loss
         if not torch.isfinite(loss):

@@ -47,12 +47,28 @@ def prepare(
             (task / part).mkdir(parents=True)
         source = repo / f"fastkernels/tasks/baseline/L{item['level']}/{item['name']}.py"
         shutil.copy2(source, task / "public/reference.py")
+        candidate_namespace = None
+        if item["level"] == 1 and item["name"] == "rms_norm":
+            original = 'torch.library.Library("fastkernels_norm", "DEF")'
+            reference = source.read_text()
+            if reference.count(original) != 1:
+                raise ValueError("Review changed upstream RMSNorm custom operator registration.")
+            candidate_namespace = "psrl_candidate_fastkernels_norm"
+            reference = reference.replace(original, f'torch.library.Library("{candidate_namespace}", "DEF")')
+            (task / "public/reference.py").write_text(reference)
         shutil.copy2(Path(__file__).with_name("verify.py"), task / "tests/verify.py")
         (task / "tests/spec.json").write_text(json.dumps(item, indent=2))
         candidate = f"/logs/artifacts/candidate/L{item['level']}/{item['name']}.py"
         baseline = (
             f"mkdir -p {shlex.quote(str(Path(candidate).parent))}; cp /opt/task/reference.py {shlex.quote(candidate)}"
         )
+        sidecar = source.with_suffix(".cu")
+        if sidecar.is_file():
+            shutil.copy2(sidecar, task / "public" / sidecar.name)
+            baseline += (
+                f"; cp {shlex.quote('/opt/task/' + sidecar.name)} "
+                f"{shlex.quote(str(Path(candidate).with_suffix('.cu')))}"
+            )
         (task / "solution/solve.sh").write_text(f"#!/bin/bash\nset -euo pipefail\n{baseline}\n")
         instruction = (
             f"Optimize upstream operator {item['qualified_name']} on CUDA. Submit {candidate}. "
@@ -61,6 +77,13 @@ def prepare(
             "The local quick protocol uses one captured shape and two correctness rounds. "
             f"A functional starting point is: {baseline}."
         )
+        if sidecar.is_file():
+            instruction += (
+                " The adjacent .cu file is part of the submission: keep it beside the Python module. "
+                "You may edit both files; CUDA compilation runs inside the dedicated task image."
+            )
+        if candidate_namespace:
+            instruction += f" Keep custom operator registrations in the {candidate_namespace} namespace."
         if guided_baseline:
             instruction += managed_baseline_guidance(baseline, "/opt/task")
         (task / "instruction.md").write_text(instruction)
@@ -93,6 +116,8 @@ def prepare(
             "revision": inventory["revision"],
             "runtime_patch": runtime_patch,
             "capture_hashes": file_hashes(captures),
+            "submission_sources": file_hashes(task / "public"),
+            "candidate_namespace": candidate_namespace,
             "guided_baseline": guided_baseline,
         }
         (task / "provenance.json").write_text(json.dumps(record, indent=2))
