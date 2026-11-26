@@ -64,6 +64,9 @@ def demand_from_task(
         memory_mb=max(memory_mb, 0),
         needs_gpu=needs_gpu,
         gpu_memory_mb=int(gpu_memory_mb_override) if needs_gpu else 0,
+        gpu_execution_contract=str(
+            task.get("metadata", {}).get("env_service", {}).get("gpu_execution_contract", "unknown")
+        ),
     )
     return with_container_budget(task_path, demand, task=task)
 

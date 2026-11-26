@@ -65,7 +65,11 @@ class EnvRouterCore:
         )
         self._lending_config = dict(config.get("gpu_lending") or {})
         self._gpu_bindings = {}
+        self._prepared_gpu_bindings = None
         self._gpu_commands = GpuCommandScheduler(self._ledger, self._gpu_command_node)
+        self._gpu_commands.placement_policy = config.get("command_placement_policy", "least_pressure")
+        if self._gpu_commands.placement_policy not in ("least_pressure", "first_fit"):
+            raise ValueError("Unknown GPU command placement policy.")
         sharing = dict(config.get("gpu_sharing") or {})
         self._sharing_margin_mb = int(sharing.get("safety_margin_mb", 1024))
         self._gpu_commands.shared_margin_mb = self._sharing_margin_mb
@@ -158,6 +162,32 @@ class EnvRouterCore:
         )
         self._warnings = lint_units(list(self._ledger._units.values()), self._ledger._rules)
 
+    def prepare_gpu_bindings(self, servers, coordinator):
+        """Load control handles while model initialization continues without opening admission."""
+        if self._prepared_gpu_bindings is not None:
+            raise ValueError("GPU bindings have already been prepared.")
+        expected = {
+            unit.unit_id
+            for unit in self._ledger._units.values()
+            if unit.rollout_replica_rank is not None or unit.shared_rollout_replica_rank is not None
+        }
+        if set(servers) != expected or not expected.issubset(self._ledger._blocked_units):
+            raise ValueError("Prepared GPU bindings must cover all configured and blocked model units.")
+        self._prepared_gpu_bindings = (dict(servers), coordinator)
+        return len(servers)
+
+    async def activate_gpu_bindings(self):
+        """Validate prepared servers after model readiness before enabling their units."""
+        if self._prepared_gpu_bindings is None:
+            raise RuntimeError("GPU bindings have not been prepared.")
+        servers, coordinator = self._prepared_gpu_bindings
+        for unit_id, server in servers.items():
+            unit = self._ledger._units[unit_id]
+            if unit.shared_rollout_replica_rank is not None:
+                await self.bind_shared_rollout_gpu(unit_id, server)
+            else:
+                await self.bind_rollout_gpu(unit_id, server, coordinator)
+
     async def bind_shared_rollout_gpu(self, unit_id, server):
         """Validate the model profile before making its shared command unit available."""
         unit = self._ledger._units[unit_id]
@@ -167,6 +197,63 @@ class EnvRouterCore:
         self._gpu_commands.shared_servers[unit_id] = server
         self._ledger._blocked_units.discard(unit_id)
         return profile
+
+    async def shared_model_status(self):
+        """Read model control fences without changing routing or admission."""
+        return {
+            unit: await server.env_control_status.remote()
+            for unit, server in self._gpu_commands.shared_servers.items()
+        }
+
+    def configure_partition_commands(self, borrowed_command_cap):
+        """Enable sleeping capacity only after the coordinator validates the topology."""
+        if borrowed_command_cap <= 0:
+            raise ValueError("Borrowed command capacity must be positive.")
+        self._gpu_commands.borrowed_command_cap = borrowed_command_cap
+        self._gpu_commands.reuse_sleeping = True
+
+    def bind_partition_controller(self, coordinator):
+        """Expose controller telemetry through the existing named router."""
+        self._partition_coordinator = coordinator
+
+    async def partition_control_status(self):
+        """Read allocation decisions without changing replica ownership."""
+        if not hasattr(self, "_partition_coordinator"):
+            return {}
+        return await self._partition_coordinator.env_partition_status.remote()
+
+    async def set_partition_unit_state(self, unit_id, state):
+        """Close admissions before a model transition and reopen after acknowledgement."""
+        await self._gpu_commands.set_partition_state(unit_id, state)
+
+    def partition_snapshot(self):
+        """Return command pressure for the rollout partition controller."""
+        return self._gpu_commands.partition_snapshot()
+
+    async def verify_partition_sleep(self, unit_id, maximum_used_mb):
+        """Require physical memory release before declaring a model card borrowed."""
+        unit = self._ledger._units[unit_id]
+        node = await self._gpu_command_node(unit.node_ip)
+        # The supported topology is one device per complete model replica. Hold
+        # the pool lock so command identities cannot be recycled during the sample.
+        if len(unit.gpu_indices) != 1:
+            raise ValueError("Partition sleep verification requires a single GPU.")
+        async with self._gpu_commands._lock(unit_id):
+            commands = [
+                (r.lease_id, r.container_id, r.epoch)
+                for r in self._gpu_commands.requests.values()
+                if r.unit_id == unit_id and r.state in ("active", "returning")
+            ]
+            memory = await node.gpu_command_memory_snapshot.remote(unit.gpu_indices, commands)
+            if memory["attribution_errors"]:
+                raise RuntimeError("Cannot verify sleeping replica with ambiguous environment ownership.")
+            reading = memory["devices"][unit.gpu_indices[0]]
+            owned = sum(memory["owned_mb"].values())
+            remaining = reading["used_mb"] - owned
+            if not 0 <= remaining <= maximum_used_mb:
+                raise RuntimeError("Sleeping replica did not release the expected physical GPU memory.")
+            memory["non_environment_mb"] = remaining
+            return memory
 
     async def set_gpu_phase(self, lease_id: str, phase: str, sequence: int):
         """Switch only a live lease whose unit has a verified rollout binding."""
@@ -502,7 +589,7 @@ try:
                         self._node_handles[node_ip] = service
                         url = await service.ready.remote()
                         units = [u for u in self._ledger._units.values() if u.node_ip == node_ip]
-                        if any(u.gpu_reservation == "command" for u in units):
+                        if any(u.gpu_reservation in ("command", "auto") for u in units):
                             await service.check_gpu_command_support.remote()
                         indices = tuple(sorted({i for u in units for i in u.gpu_indices}))
                         readings = await service.prepare.remote(indices)

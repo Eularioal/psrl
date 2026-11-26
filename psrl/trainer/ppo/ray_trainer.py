@@ -605,8 +605,8 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
             ray.kill(self.env_router_handle)
             self.env_router_handle = None
 
-    def _init_gpu_lending(self, all_wg):
-        """Publish device ownership, then bind explicitly borrowed rollout replicas."""
+    def _prepare_gpu_lending(self, all_wg):
+        """Stage control handles before initial weight transfer without enabling GPU sharing."""
         if self.env_router_handle is None:
             return
         from psrl.workers.env_service.node_policy import gpu_placements_from_worker_groups
@@ -634,6 +634,7 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
             return
         if self.config.psrl.profile.fix_weight and any(unit.rollout_replica_rank is not None for unit in units):
             raise ValueError("GPU lending requires weight restoration with profile.fix_weight=False.")
+        servers = {}
         for unit in units:
             replica = unit.rollout_replica_rank
             if replica is None:
@@ -647,11 +648,36 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
             for other_name, other_slots in placements.items():
                 if other_name != name and slots & other_slots:
                     raise ValueError(f"GPU lending replica {name!r} overlaps another GPU owner {other_name!r}.")
-            server = ray.get(self.rollout_coordinator.get_gpu_lending_server.remote(replica))
-            if unit.shared_rollout_replica_rank is not None:
-                ray.get(self.env_router_handle.bind_shared_rollout_gpu.remote(unit.unit_id, server))
-            else:
-                ray.get(self.env_router_handle.bind_rollout_gpu.remote(unit.unit_id, server, self.rollout_coordinator))
+            servers[unit.unit_id] = ray.get(self.rollout_coordinator.get_gpu_lending_server.remote(replica))
+        psrl_logger.info("Env GPU control handle preparation submitted.")
+        return self.env_router_handle.prepare_gpu_bindings.remote(servers, self.rollout_coordinator)
+
+    def _init_gpu_lending(self, preparation):
+        """Open validated GPU units only after initial model weights are ready."""
+        if preparation is None:
+            return
+        from psrl.workers.env_service.types import EnvUnit
+
+        started = time.monotonic()
+        ray.get(preparation)
+        psrl_logger.info("Env GPU control handle readiness wait: %.3f seconds.", time.monotonic() - started)
+        started = time.monotonic()
+        ray.get(self.env_router_handle.activate_gpu_bindings.remote())
+        units = [EnvUnit.from_mapping(raw) for raw in self.config.psrl.env_service.units]
+        if self.config.psrl.env_service.get("elastic_partition", {}).get("enable", False):
+            partition_units = [
+                {
+                    "unit_id": u.unit_id,
+                    "rank": u.shared_rollout_replica_rank,
+                    "gpus": u.gpu_indices,
+                    "pool": u.command_gpu_pool,
+                }
+                for u in units
+                if u.shared_rollout_replica_rank is not None
+            ]
+            ray.get(self.rollout_coordinator.configure_env_partition.remote(self.env_router_handle, partition_units))
+            ray.get(self.env_router_handle.bind_partition_controller.remote(self.rollout_coordinator))
+        psrl_logger.info("Env GPU admission activation: %.3f seconds.", time.monotonic() - started)
 
     def init_agent_loop_manager(self):
         if self.agent_loop_manager is not None:
@@ -2233,6 +2259,7 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
                 ray.get(self.rollout_coordinator.init_lmcache_p2p.remote())
 
         psrl_logger.info("All workers' models initialized successfully!")
+        gpu_binding_preparation = self._prepare_gpu_lending(all_wg)
 
         # initialize NIXL
         if self.config.psrl.ps_mode == "nixl_cpu" or self.config.psrl.ps_mode == "nixl_gpu":
@@ -2290,7 +2317,7 @@ class PSRL_RayPPOTrainer(RayPPOTrainer):
                 ray.get(initial_pull_futures)
 
         self.init_elastic_rm_runtime()
-        self._init_gpu_lending(all_wg)
+        self._init_gpu_lending(gpu_binding_preparation)
 
         self.replay_buffer.start_polling()
         psrl_logger.info("ReplayBuffer polling started after init_workers() completed.")

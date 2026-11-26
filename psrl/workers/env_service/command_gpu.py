@@ -42,6 +42,32 @@ class GpuCommandScheduler:
         self.shared_max_command_s = 30.0
         self.reuse_sleeping = True
         self.shared_margin_mb = 1024
+        self.placement_policy = "least_pressure"
+        self.partition_states = {}
+        self.borrowed_command_cap = 0
+
+    async def set_partition_state(self, unit_id, state):
+        """Serialize role changes with pending admission and physical return."""
+        if unit_id not in self.shared_servers:
+            raise ValueError("Partition changes require a bound rollout unit.")
+        if state not in ("resident", "draining", "draining_shared", "borrowed", "restoring", "quarantined"):
+            raise ValueError("Unknown command pool partition state.")
+        async with self._lock(unit_id):
+            self.partition_states[unit_id] = state
+
+    def partition_snapshot(self):
+        """Expose pressure in each pool without changing host lease ownership."""
+        result = {}
+        for unit_id in self.shared_servers:
+            lock = self._lock(unit_id)
+            peers = [r for r in self.requests.values() if self._lock(r.unit_id) is lock]
+            result[unit_id] = {
+                "state": self.partition_states.get(unit_id, "resident"),
+                "waiting": sum(r.state == "waiting" for r in peers),
+                "shared_active": sum(r.shared_owner is not None and r.state in ("active", "returning") for r in peers),
+                "active": sum(r.unit_id == unit_id and r.state in ("active", "returning") for r in peers),
+            }
+        return result
 
     def _lease(self, lease_id):
         lease = self.ledger._leases.get(lease_id)
@@ -111,13 +137,34 @@ class GpuCommandScheduler:
             candidates = sorted(
                 candidates,
                 key=lambda u: (
-                    self.ledger._effective_gpu_mb(u, self.ledger._clock()) / u.gpu_memory_mb,
-                    u.unit_id != lease.unit_id,
+                    (
+                        0
+                        if u.shared_rollout_replica_rank is None
+                        else 1
+                        if self.partition_states.get(u.unit_id) == "borrowed"
+                        else 2
+                    ),
+                    (
+                        self.ledger._effective_gpu_mb(u, self.ledger._clock()) / u.gpu_memory_mb
+                        if self.placement_policy == "least_pressure"
+                        else 0
+                    ),
+                    u.unit_id != lease.unit_id if self.placement_policy == "least_pressure" else False,
                     u.unit_id,
                 ),
             )
             for unit in candidates:
                 if unit.unit_id in self.ledger._blocked_units:
+                    continue
+                role = self.partition_states.get(unit.unit_id, "resident")
+                if role not in ("resident", "draining_shared", "borrowed"):
+                    continue
+                active = sum(
+                    r.unit_id == unit.unit_id and r.state in ("active", "returning", "quarantined")
+                    for r in self.requests.values()
+                )
+                cap = self.borrowed_command_cap if role == "borrowed" else unit.max_gpu_commands
+                if cap and active >= cap:
                     continue
                 if self.ledger._declared_gpu_mb(unit) + lease.demand.gpu_memory_mb > unit.gpu_memory_mb:
                     continue
@@ -221,13 +268,14 @@ class GpuCommandScheduler:
             lease.gpu_closing = True
             request.state = "quarantined"
             request.error = "Shared GPU command exceeded its service deadline."
-            self.ledger.block_gpu_cleanup(lease.lease_id, lease.unit_id)
+            selected = self.ledger._units[request.unit_id]
+            self.ledger.block_gpu_cleanup(lease.lease_id, request.unit_id)
             try:
                 node = await self.get_node(lease.node_ip)
                 async with asyncio.timeout(self.return_timeout_s):
                     await node.remove_gpu_lease.remote(lease.lease_id)
                     await node.confirm_gpu_return.remote(
-                        lease.gpu_indices, request.baseline, self.ledger._units[lease.unit_id].model_headroom_mb
+                        selected.gpu_indices, request.baseline, selected.model_headroom_mb
                     )
                     await self._release_model(request)
                 lease.gpu_active = False
@@ -385,8 +433,9 @@ class GpuCommandScheduler:
                 request = self.requests[key]
                 if request.shared_owner:
                     if request.baseline is not None:
+                        selected = self.ledger._units[request.unit_id]
                         await node.confirm_gpu_return.remote(
-                            unit.gpu_indices, request.baseline, unit.model_headroom_mb
+                            selected.gpu_indices, request.baseline, selected.model_headroom_mb
                         )
                     await self._release_model(request)
                 del self.requests[key]

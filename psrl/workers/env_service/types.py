@@ -12,6 +12,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field, replace
 
 from psrl.workers.env_service.container_budget import ContainerBudget
+from psrl.workers.env_service.reservation_policy import GPU_CONTRACTS
+from psrl.workers.env_service.reuse_prediction import ReuseForecast
 
 GRANTED = "granted"
 WAIT = "wait"
@@ -38,8 +40,8 @@ class EnvUnit:
         gpu_indices (tuple[int, ...]): Whole devices owned by this unit. Empty means CPU only.
         max_containers (int): Configured ceiling on concurrent containers, not derived.
         gpu_memory_mb (int): Device memory budget across `gpu_indices`. Zero for CPU units.
-        gpu_reservation (str): Charge GPU capacity for the episode or explicit commands.
-        command_gpu_pool (str): Local pool of compatible dedicated single GPUs. Empty fixes placement.
+        gpu_reservation (str): Hold for the episode, charge explicit commands, or resolve per lease with auto.
+        command_gpu_pool (str): Local pool of dedicated or explicitly shared single GPUs.
     """
 
     unit_id: str
@@ -58,6 +60,7 @@ class EnvUnit:
     mps_thread_percentage: int = 100
     mps_image: str = ""
     command_gpu_pool: str = ""
+    max_gpu_commands: int = 0
 
     @property
     def execution_cpu_overhead(self):
@@ -69,13 +72,16 @@ class EnvUnit:
 
     def __post_init__(self) -> None:
         if self.command_gpu_pool and (
-            self.gpu_reservation != "command"
+            self.gpu_reservation not in ("command", "auto")
             or self.gpu_execution_backend != "direct"
             or len(self.gpu_indices) != 1
             or self.rollout_replica_rank is not None
-            or self.shared_rollout_replica_rank is not None
         ):
-            raise ValueError("Command GPU pools require single dedicated GPUs with direct command execution.")
+            raise ValueError(
+                "Command GPU pools require single GPUs with direct command execution and no episode lending."
+            )
+        if self.max_gpu_commands < 0 or (self.max_gpu_commands and self.gpu_reservation not in ("command", "auto")):
+            raise ValueError("GPU command limits require command reservations and a nonnegative count.")
         if self.gpu_execution_backend not in ("direct", "mps"):
             raise ValueError("Unknown GPU execution backend.")
         if not 1 <= self.mps_thread_percentage <= 100:
@@ -97,8 +103,15 @@ class EnvUnit:
             raise ValueError("Each GPU memory budget must be positive.")
         if sum(self.gpu_memory_per_device_mb) != self.gpu_memory_mb:
             raise ValueError("Per-device GPU budgets must sum to gpu_memory_mb.")
-        if self.gpu_reservation not in ("episode", "command"):
+        if self.gpu_reservation not in ("episode", "command", "auto"):
             raise ValueError(f"Unknown GPU reservation mode {self.gpu_reservation!r}.")
+        if self.gpu_reservation == "auto" and (
+            not self.gpu_indices
+            or self.gpu_execution_backend != "direct"
+            or self.rollout_replica_rank is not None
+            or self.shared_rollout_replica_rank is not None
+        ):
+            raise ValueError("Automatic reservations require dedicated GPUs with direct execution.")
         if self.gpu_reservation == "command" and (not self.gpu_indices or self.rollout_replica_rank is not None):
             raise ValueError("Command reservations require dedicated environment GPUs.")
         if self.shared_rollout_replica_rank is not None:
@@ -165,6 +178,7 @@ class EnvUnit:
             mps_thread_percentage=int(raw.get("mps_thread_percentage", 100)),
             mps_image=str(raw.get("mps_image", "")),
             command_gpu_pool=str(raw.get("command_gpu_pool", "")),
+            max_gpu_commands=int(raw.get("max_gpu_commands", 0)),
             gpu_memory_per_device_mb=tuple(int(m) for m in raw.get("gpu_memory_per_device_mb", ())),
         )
 
@@ -204,6 +218,9 @@ class EnvDemand:
         needs_gpu (bool): Whether the episode needs a GPU device.
         gpu_memory_mb (int): Device memory charged. Zero on a GPU demand means "use the
             router's configured default", because Harbor declares no such field.
+        gpu_execution_contract (str): Host adapter declaration used for automatic reservation selection.
+        gpu_release_forecast (ReuseForecast | None): Optional calibrated cost advice for automatic selection.
+        gpu_timing_required (bool): Retain the GPU when cost-aware selection has no calibrated advice.
     """
 
     cpu: float = 1.0
@@ -212,8 +229,17 @@ class EnvDemand:
     gpu_memory_mb: int = 0
     gpu_memory_per_device_mb: tuple[int, ...] = ()
     container_budget: ContainerBudget | None = None
+    gpu_execution_contract: str = "unknown"
+    gpu_release_forecast: ReuseForecast | None = None
+    gpu_timing_required: bool = False
 
     def __post_init__(self):
+        if self.gpu_execution_contract not in GPU_CONTRACTS:
+            raise ValueError(f"Unknown GPU execution contract {self.gpu_execution_contract!r}.")
+        if self.gpu_release_forecast is not None and not isinstance(self.gpu_release_forecast, ReuseForecast):
+            raise ValueError("GPU timing advice requires a ReuseForecast.")
+        if type(self.gpu_timing_required) is not bool:
+            raise ValueError("GPU timing requirements must be boolean.")
         if self.container_budget and (
             self.cpu != self.container_budget.cpu or self.memory_mb != self.container_budget.memory_mb
         ):
@@ -276,6 +302,7 @@ class EnvLease:
     mps_ipc: str = ""
     gpu_candidate_unit_ids: tuple[str, ...] = ()
     gpu_candidate_indices: tuple[int, ...] = ()
+    gpu_reservation_reason: str = ""
 
 
 @dataclass(frozen=True)

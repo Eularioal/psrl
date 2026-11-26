@@ -1,8 +1,8 @@
 """
 Gate A for the SciAccel (Harbor) path: exclusive per-device GPU reservation.
 
-Background (see docs/psrl/psrl-env-service-envworker-design.md section 15.3(1)
-and section 16 for the full writeup): every GPU-needing SciAccel episode used
+Background (see docs/env-worker-deep-dive/archive/README.md for the EnvWorker
+design proposal, sections 15.3(1) and 16): every GPU-needing SciAccel episode used
 to mount the exact same hardcoded ``/dev/nvidia0`` from
 ``examples/sciaccel_rl/config/gpu-compose-override.yaml``, and nothing in
 ``runner.py``/``agent_loop.py`` tracked *which physical device* was already in

@@ -30,6 +30,7 @@ from . import command_loop as command_loop_module
 from . import status_loop as status_loop_module
 from .base import CoordinatorBase
 from .command_loop import CommandHandlerMixin
+from .env_partition import EnvPartitionMixin
 from .session import thunder_agent as thunder_agent_module
 from .session.thunder_agent import ThunderAgentSessionMixin
 from .status_loop import StatusMixin
@@ -56,6 +57,7 @@ _LOG_FILE_TO_MODULE_LOGGERS = {
 
 
 class RolloutCoordinator(
+    EnvPartitionMixin,
     CommandHandlerMixin,
     StatusMixin,
     SyncAndMigrateMixin,
@@ -160,6 +162,7 @@ class RolloutCoordinator(
         # Engine status tracking
         # Track the latest engine stats of each instance
         self.instance_to_engine_status: dict[RolloutInstanceId, EngineStats] = {}
+        self._engine_status_received = {}
         # Absolute KV-cache token capacity per instance (max_concurrency * max_model_len,
         # obtained via get_total_kv_cache_tokens). Used by the hang/continue scheduler.
         self.instance_to_total_kv_tokens: dict[RolloutInstanceId, int] = {}
@@ -503,6 +506,7 @@ class RolloutCoordinator(
         - Engine status sync task
         - Stats recorder task (if enabled)
         """
+        await self.stop_env_partition()
         if self.command_handler_task is None or self.command_handler_task.done():
             return
 

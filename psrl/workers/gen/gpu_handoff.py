@@ -1,6 +1,8 @@
 """Serialize model control with temporary environment ownership of the GPU."""
 
 import asyncio
+import time
+from collections import deque
 from contextlib import asynccontextmanager
 from functools import wraps
 
@@ -16,11 +18,14 @@ class GpuControlGate:
         self.depth = 0
         self.shared_commands = {}
         self.pending_operations = 0
+        self.partition_state = "resident"
+        self.control_events = deque(maxlen=256)
 
     @asynccontextmanager
-    async def operation(self, borrower=None, sleeping=False):
+    async def operation(self, borrower=None, sleeping=False, resident_sync=False, retirement=False):
         """Serialize operations, allowing nested calls by the same asyncio task."""
         task = asyncio.current_task()
+        started = time.monotonic()
         if self.task is task:
             self.depth += 1
         else:
@@ -30,7 +35,18 @@ class GpuControlGate:
                     await self.condition.wait_for(
                         lambda: (
                             self.task is None
-                            and not self.shared_commands
+                            and (
+                                not self.shared_commands
+                                or (
+                                    (
+                                        (resident_sync and self.partition_state == "resident")
+                                        or (retirement and self.partition_state == "retiring")
+                                    )
+                                    and self.borrower is None
+                                    and self.reservation is None
+                                    and all(mode == "resident" for mode in self.shared_commands.values())
+                                )
+                            )
                             and (self.borrower is None or self.borrower == borrower)
                             and (not sleeping or self.reservation is None)
                         )
@@ -40,7 +56,7 @@ class GpuControlGate:
                 finally:
                     self.pending_operations -= 1
         try:
-            yield
+            yield time.monotonic() - started
         finally:
             async with self.condition:
                 self.depth -= 1
@@ -54,8 +70,33 @@ def gpu_control(method):
 
     @wraps(method)
     async def guarded(self, *args, **kwargs):
-        async with self._gpu_control.operation(sleeping=method.__name__ in ("sleep", "nixl_sleep")):
-            return await method(self, *args, **kwargs)
+        started = time.time()
+        config = getattr(self, "psrl_config", None)
+        overlap = (
+            config is not None
+            and config.env_service.gpu_sharing.get("sync_overlap", False)
+            and config.ps_mode == "nixl_cpu"
+            and self._gpu_weights_valid
+            and method.__name__ in ("pause_for_sync", "pull_model_for_sync", "resume_after_sync", "fail_sync")
+        )
+        async with self._gpu_control.operation(
+            sleeping=method.__name__ in ("sleep", "nixl_sleep"),
+            resident_sync=overlap,
+            retirement=method.__name__ in ("pause_generation", "sleep", "nixl_sleep"),
+        ) as waited:
+            shared_at_entry = dict(self._gpu_control.shared_commands)
+            try:
+                return await method(self, *args, **kwargs)
+            finally:
+                self._gpu_control.control_events.append(
+                    {
+                        "method": method.__name__,
+                        "started_at": started,
+                        "finished_at": time.time(),
+                        "gate_wait_s": waited,
+                        "shared_at_entry": shared_at_entry,
+                    }
+                )
 
     return guarded
 
@@ -63,12 +104,43 @@ def gpu_control(method):
 class GpuHandoffMixin:
     """Expose acknowledged GPU handoff while fencing every ordinary control path."""
 
+    def env_control_status(self):
+        """Expose bounded control timing separately from ordinary inference activity."""
+        return {
+            "events": list(self._gpu_control.control_events),
+            "shared_commands": dict(self._gpu_control.shared_commands),
+            "pending_operations": self._gpu_control.pending_operations,
+            "partition_state": self._gpu_control.partition_state,
+        }
+
+    async def set_env_partition_state(self, state):
+        """Fence new commands throughout whole replica transitions."""
+        if state not in (
+            "resident",
+            "draining",
+            "draining_shared",
+            "retiring",
+            "sleeping",
+            "restoring",
+            "quarantined",
+        ):
+            raise ValueError("Unknown environment partition state.")
+        async with self._gpu_control.condition:
+            self._gpu_control.partition_state = state
+            self._gpu_control.condition.notify_all()
+
     async def validate_env_sharing(self, headroom_mb, margin_mb):
         """Require measured inference workspace plus an explicit deployment margin."""
         profiles = await self.collective_rpc(method="env_sharing_profile")
         if not profiles or any(p["transient_mb"] is None for p in profiles):
             raise ValueError("Resident sharing requires vLLM automatic memory profiling.")
         required = max(p["transient_mb"] for p in profiles) + margin_mb
+        config = getattr(self, "psrl_config", None)
+        if config is not None and config.env_service.gpu_sharing.get("sync_overlap", False):
+            sync_margin = config.env_service.gpu_sharing.get("sync_headroom_mb", 0)
+            if config.ps_mode != "nixl_cpu" or sync_margin <= 0:
+                raise ValueError("Resident synchronization requires nixl_cpu and an explicit memory margin.")
+            required = max(required, sync_margin)
         if headroom_mb < required:
             raise ValueError(f"Model headroom {headroom_mb} MiB is below profiled requirement {required} MiB.")
         return {"profiles": profiles, "required_headroom_mb": required}
@@ -79,6 +151,8 @@ class GpuHandoffMixin:
         async with gate.condition:
             if owner in gate.shared_commands:
                 return gate.shared_commands[owner]
+            if gate.partition_state not in ("resident", "draining_shared", "sleeping"):
+                return None
             if gate.task is not None or gate.pending_operations or gate.borrower or gate.reservation:
                 return None
             # Hold the condition until the snapshot and reservation are committed together.

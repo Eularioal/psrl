@@ -46,6 +46,7 @@ class TerminateReason(Enum):
     # trajectory from the turns completed before the timeout, so this keeps its data.
     ENV_TIMEOUT = "env_timeout"
     TRAJECTORY_TIMEOUT = "trajectory_timeout"
+    OPERATION_TIMEOUT = "operation_timeout"
     ABORTED = "aborted"
     UNKNOWN = "unknown"
     ROLLOUT_ERROR = "rollout_error"
@@ -115,13 +116,13 @@ class TerminateReason(Enum):
     def is_timeout(self) -> bool:
         """Return whether a timeout stopped the trajectory before it produced data.
 
-        Only `TRAJECTORY_TIMEOUT` qualifies: it fires from
+        `TRAJECTORY_TIMEOUT` and `OPERATION_TIMEOUT` fire from
         `run_with_termination_handling`, which owns no partial output. `AGENT_TIMEOUT`
         and `ENV_TIMEOUT` are timeouts too, but their loops return a finalized
         trajectory, and this property feeds `needs_worker_retry` -- re-running an
         episode whose turns were already accepted would duplicate them.
         """
-        return self is TerminateReason.TRAJECTORY_TIMEOUT
+        return self in (TerminateReason.TRAJECTORY_TIMEOUT, TerminateReason.OPERATION_TIMEOUT)
 
     @property
     def is_error(self) -> bool:

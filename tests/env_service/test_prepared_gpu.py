@@ -205,7 +205,7 @@ async def test_managed_environment_stops_process_before_router_cancellation(monk
     env._gpu_commands = {"router_name": "test", "lease_id": "lease"}
     env._gpu_command_lock = asyncio.Lock()
     env._pending_gpu_return = None
-    env._run_docker_compose_command = AsyncMock(return_value=SimpleNamespace(stdout="container"))
+    env._gpu_container_id = AsyncMock(return_value="container")
     with pytest.raises(TimeoutError, match="Execution expired"):
         await env.exec_gpu("command", _cancel_process=stop)
     assert order == ["stopped", "returned"], "Both cancellation phases must complete in order."

@@ -7,9 +7,10 @@ import uuid
 from pathlib import Path
 
 import yaml
-from harbor.environments.docker.docker import DockerEnvironment
+from harbor.environments.docker.docker import DockerEnvironment, _sanitize_docker_compose_project_name
 
 from psrl.workers.env_service.container_budget import ContainerBudget
+from psrl.workers.env_service.docker_api import find_main_container
 from psrl.workers.env_service.managed_execution import ManagedGpuExecution
 from psrl.workers.env_service.overlay import command_security_options
 
@@ -67,11 +68,17 @@ class ManagedDockerEnvironment(ManagedGpuExecution, DockerEnvironment):
         return await super().exec(command, **kwargs)
 
     async def _gpu_container_id(self):
-        result = await self._run_docker_compose_command(["ps", "-q", "main"], timeout_sec=10)
-        identifiers = (result.stdout or "").split()
-        if len(identifiers) != 1:
-            raise RuntimeError("GPU execution needs exactly one running main container.")
-        return identifiers[0]
+        trace = []
+        self.last_container_query = trace
+        backend = self._backend()
+        if backend.last_record is not None:
+            backend.last_record["container_lookup_attempts"] = trace
+        return await find_main_container(
+            _sanitize_docker_compose_project_name(self.session_id),
+            backend.policy.lease_id,
+            self._actor_id,
+            trace=trace,
+        )
 
     async def stop(self, delete: bool):
         try:

@@ -334,7 +334,7 @@ def test_environment_can_plan_before_return_but_joins_before_next_command(monkey
         env._gpu_commands = {"router_name": "test", "lease_id": a.lease_id}
         env._gpu_command_lock = asyncio.Lock()
         env._pending_gpu_return = None
-        env._run_docker_compose_command = AsyncMock(return_value=SimpleNamespace(stdout="a"))
+        env._gpu_container_id = AsyncMock(return_value="a")
         result = await asyncio.wait_for(env.exec_gpu("command1", overlap_return=True), 0.2)
         assert result.stdout == "stable" and ledger.snapshot()[0].declared_gpu_memory_mb == 51
         model = AsyncMock(return_value="next plan")

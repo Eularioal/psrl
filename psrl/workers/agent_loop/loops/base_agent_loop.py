@@ -675,6 +675,7 @@ class AgentLoopBase(ABC):
                 A tuple containing the output data (if any) and the termination reason.
         """
         request_ids = tu.get(request, "uid", "N/A")
+        trajectory_deadline = None
         try:
             prompt = {}
             for k, v in request.items():
@@ -688,10 +689,9 @@ class AgentLoopBase(ABC):
                     psrl_logger.exception(f"Unsupported value: type={type(v)!r}, key={k!r}.")
 
             timeout = self.config.gen_actor_rollout_ref.rollout.agent.trajectory_timeout
-            output, terminate_reason = await asyncio.wait_for(
-                self.run(prompt),
-                timeout=timeout,
-            )
+            trajectory_deadline = asyncio.timeout(timeout)
+            async with trajectory_deadline:
+                output, terminate_reason = await self.run(prompt)
             if output is not None:
                 await self._resolve_version_for_dump(output, prompt)
                 self._attach_loop_timing(output)
@@ -728,13 +728,18 @@ class AgentLoopBase(ABC):
                 e.request_id or "N/A",
             )
             return None, TerminateReason.ABORTED
-        except asyncio.TimeoutError:
+        except asyncio.TimeoutError as error:
+            reason = (
+                TerminateReason.TRAJECTORY_TIMEOUT
+                if trajectory_deadline is not None and trajectory_deadline.expired()
+                else TerminateReason.OPERATION_TIMEOUT
+            )
             psrl_logger.error(
-                "Timeout in agent_loop.run for request %s (this can come from downstream calls, not only trajectory_timeout)",  # noqa: E501
-                request_ids,
+                f"Agent loop timeout for request {request_ids!r}: reason={reason.value!r}, "
+                f"phase={getattr(error, 'phase', None)!r}, error={str(error)!r}.",
                 exc_info=True,
             )
-            return None, TerminateReason.TRAJECTORY_TIMEOUT
+            return None, reason
         except Exception:
             if not raise_on_error:
                 psrl_logger.error(

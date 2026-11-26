@@ -6,6 +6,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
+from psrl.workers.env_service.router import EnvRouterCore
 from psrl.workers.env_service.types import EnvUnit
 from psrl.workers.gen.gpu_handoff import GpuControlGate, GpuHandoffMixin, gpu_control
 
@@ -54,6 +55,65 @@ async def test_missing_profile_and_insufficient_margin_fail_closed():
     model.collective_rpc.return_value = [{"transient_mb": None}]
     with pytest.raises(ValueError, match="profiling"):
         await model.validate_env_sharing(9999, 4)
+
+
+def startup_router():
+    return EnvRouterCore(
+        {
+            "node_policy": "any",
+            "gpu_sharing": {"safety_margin_mb": 4},
+            "units": [
+                {
+                    "unit_id": "shared",
+                    "node_ip": "node",
+                    "cpu_quota": 4,
+                    "memory_mb": 4096,
+                    "gpu_indices": [0],
+                    "gpu_memory_mb": 48000,
+                    "max_containers": 1,
+                    "shared_rollout_replica_rank": 0,
+                    "model_headroom_mb": 35,
+                    "gpu_reservation": "command",
+                }
+            ],
+        }
+    )
+
+
+@pytest.mark.asyncio
+async def test_control_preparation_neither_profiles_nor_opens_gpu_admission():
+    router = startup_router()
+    model = Model()
+    assert router.prepare_gpu_bindings({"shared": Remote(model)}, None) == 1
+    assert "shared" in router._ledger._blocked_units
+    assert not router._gpu_commands.shared_servers
+    model.collective_rpc.assert_not_called()
+    assert not model._gpu_control.shared_commands and model.wakes == 0
+    await router.activate_gpu_bindings()
+    assert "shared" not in router._ledger._blocked_units
+    assert "shared" in router._gpu_commands.shared_servers
+    model.collective_rpc.assert_awaited_once_with(method="env_sharing_profile")
+
+
+@pytest.mark.asyncio
+async def test_prepared_handle_does_not_bypass_failed_memory_validation():
+    router = startup_router()
+    model = Model()
+    model.collective_rpc.return_value = [{"transient_mb": 100}]
+    router.prepare_gpu_bindings({"shared": Remote(model)}, None)
+    with pytest.raises(ValueError, match="below"):
+        await router.activate_gpu_bindings()
+    assert "shared" in router._ledger._blocked_units
+    assert not router._gpu_commands.shared_servers
+
+
+def test_control_preparation_rejects_incomplete_and_duplicate_bindings():
+    router = startup_router()
+    with pytest.raises(ValueError, match="cover all"):
+        router.prepare_gpu_bindings({}, None)
+    router.prepare_gpu_bindings({"shared": Remote(Model())}, None)
+    with pytest.raises(ValueError, match="already"):
+        router.prepare_gpu_bindings({"shared": Remote(Model())}, None)
 
 
 def shared_setup():

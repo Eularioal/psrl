@@ -112,42 +112,44 @@ class CommandHandlerMixin:
                         f"ps_model_version={curr_ps_model_version}."
                     )
 
-                    # Skip instances that are sleeping
-                    is_sleeping = await asyncio.gather(
-                        *[self.server_handles[instance_id[0]].is_sleeping.remote() for instance_id in instance_ids]
-                    )
-                    sync_instance_ids = [
-                        instance_id for instance_id, sleeping in zip(instance_ids, is_sleeping) if not sleeping
-                    ]
-                    sleeping_instance_ids = [
-                        instance_id for instance_id, sleeping in zip(instance_ids, is_sleeping) if sleeping
-                    ]
-                    if sleeping_instance_ids:
-                        psrl_logger.info(f"Skipping SYNC for sleeping instances: {sleeping_instance_ids}")
+                    async with self._env_gpu_transition_lock:
+                        instance_ids = [item for item in instance_ids if item[0] not in self._env_gpu_reservations]
+                        # Skip instances that are sleeping
+                        is_sleeping = await asyncio.gather(
+                            *[self.server_handles[instance_id[0]].is_sleeping.remote() for instance_id in instance_ids]
+                        )
+                        sync_instance_ids = [
+                            instance_id for instance_id, sleeping in zip(instance_ids, is_sleeping) if not sleeping
+                        ]
+                        sleeping_instance_ids = [
+                            instance_id for instance_id, sleeping in zip(instance_ids, is_sleeping) if sleeping
+                        ]
+                        if sleeping_instance_ids:
+                            psrl_logger.info(f"Skipping SYNC for sleeping instances: {sleeping_instance_ids}")
 
-                    if not sync_instance_ids:
-                        self._complete_command(command_id, None)
-                    else:
-                        # Sync with PS (interrupt, pull model, and resume generation)
-                        sync_futures = []
-
-                        for instance_id in instance_ids:
-                            # NOTE(linsh): Ignore DP rank for now.
-                            replica_id, _ = instance_id
-                            sync_future = self.server_handles[replica_id].sync_with_ps.remote(
-                                curr_ps_model_version,
-                                pause_generation=True,
-                            )
-                            sync_futures.append(sync_future)
-
-                        # Post process the command result
-                        if wait_model_sync:
-                            await asyncio.gather(*sync_futures)
+                        if not sync_instance_ids:
                             self._complete_command(command_id, None)
                         else:
-                            # NOTE(linsh): Callers need not always wait for the parameter server pull.
-                            self._complete_command(command_id, None)
-                            await asyncio.gather(*sync_futures)  # Wait for the sync to complete
+                            # Sync with PS (interrupt, pull model, and resume generation)
+                            sync_futures = []
+
+                            for instance_id in sync_instance_ids:
+                                # NOTE(linsh): Ignore DP rank for now.
+                                replica_id, _ = instance_id
+                                sync_future = self.server_handles[replica_id].sync_with_ps.remote(
+                                    curr_ps_model_version,
+                                    pause_generation=True,
+                                )
+                                sync_futures.append(sync_future)
+
+                            # Post process the command result
+                            if wait_model_sync:
+                                await asyncio.gather(*sync_futures)
+                                self._complete_command(command_id, None)
+                            else:
+                                # NOTE(linsh): Callers need not always wait for the parameter server pull.
+                                self._complete_command(command_id, None)
+                                await asyncio.gather(*sync_futures)  # Wait for the sync to complete
                 elif command_type == CommandType.SLEEP:
                     instance_ids = command_args.get("instance_ids", None)
                     if not isinstance(instance_ids, list):
@@ -165,15 +167,17 @@ class CommandHandlerMixin:
                         raise ValueError("WAKE_UP command must contain 'instance_ids' in args.")
                     psrl_logger.info(f"Received WAKE_UP command for instances {instance_ids}")
 
-                    wake_up_futures = []
-                    for instance_id in instance_ids:
-                        # NOTE(linsh): Ignore DP rank for now.
-                        replica_id, _ = instance_id
-                        wake_up_futures.append(self._do_wake_up_instance(replica_id))
-                    await asyncio.gather(*wake_up_futures)
+                    async with self._env_gpu_transition_lock:
+                        instance_ids = [item for item in instance_ids if item[0] not in self._env_gpu_reservations]
+                        wake_up_futures = []
+                        for instance_id in instance_ids:
+                            # NOTE(linsh): Ignore DP rank for now.
+                            replica_id, _ = instance_id
+                            wake_up_futures.append(self._do_wake_up_instance(replica_id))
+                        await asyncio.gather(*wake_up_futures)
 
-                    # Resume routing after the instances have woken up
-                    await self._set_routing_loop_running(True)
+                        # Resume routing after the instances have woken up
+                        await self._set_routing_loop_running(True)
 
                     self._complete_command(command_id, None)
                 else:

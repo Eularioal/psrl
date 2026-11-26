@@ -19,6 +19,7 @@ class Node:
         self.return_gate = None
         self.return_started = asyncio.Event()
         self.grants = []
+        self.confirmations = []
 
     async def gpu_lending_snapshot(self, indices):
         return {
@@ -56,6 +57,9 @@ class Node:
     async def remove_gpu_lease(self, lease_id):
         self.active.pop(lease_id, None)
 
+    async def confirm_gpu_return(self, indices, baseline, headroom):
+        self.confirmations.append((indices, headroom))
+
 
 def setup():
     units = [
@@ -78,6 +82,7 @@ def setup():
                     "grant_gpu_command",
                     "revoke_gpu_command",
                     "remove_gpu_lease",
+                    "confirm_gpu_return",
                 )
             }
         )
@@ -174,7 +179,7 @@ def test_candidates_exclude_other_hosts_pools_and_protected_devices():
     "changes",
     [
         {"gpu_reservation": "episode"},
-        {"shared_rollout_replica_rank": 0},
+        {"rollout_replica_rank": 0},
         {"gpu_indices": (0, 1)},
         {"gpu_execution_backend": "mps"},
     ],
@@ -210,6 +215,64 @@ def test_pool_overlay_maps_candidates_denied_by_default():
     assert main["devices"] == ["/dev/nvidia7:/dev/nvidia7:m", "/dev/nvidia3:/dev/nvidia3:m"], (
         "The container must discover pool candidates without receiving GPU access."
     )
+
+
+@pytest.mark.asyncio
+async def test_shared_pool_preserves_dedicated_priority_and_actual_return_device():
+    ledger, scheduler, node, _, _ = setup()
+    base = asdict(ledger._units["u1"])
+    ledger._units["u1"] = EnvUnit.from_mapping(
+        {**base, "shared_rollout_replica_rank": 0, "model_headroom_mb": 10, "max_gpu_commands": 1}
+    )
+    owners = set()
+
+    async def acquire(owner, reuse):
+        owners.add(owner)
+        return "resident"
+
+    async def release(owner):
+        owners.remove(owner)
+
+    scheduler.shared_servers["u1"] = SimpleNamespace(
+        acquire_env_command=SimpleNamespace(remote=acquire),
+        release_env_command=SimpleNamespace(remote=release),
+    )
+    ledger._rules = NodeRules.build(policy="any", train_rollout_gpu_indices={"node": [1]})
+    ledger._leases.clear()
+    ledger._by_session.clear()
+    ledger._units["u0"] = EnvUnit.from_mapping({**asdict(ledger._units["u0"]), "max_containers": 4})
+    leases = [ledger.try_admit(f"shared-{i}", EnvDemand(1, 1, True, 30), "node").lease for i in range(3)]
+    ledger._units["u0"] = EnvUnit.from_mapping({**asdict(ledger._units["u0"]), "max_gpu_commands": 1})
+    scheduler.placement_policy = "first_fit"
+    first = await scheduler.acquire(leases[0].lease_id, "a", "s0")
+    second = await scheduler.acquire(leases[1].lease_id, "b", "s1")
+    assert first["unit_id"] == "u0" and second["unit_id"] == "u1", "Dedicated capacity takes precedence."
+    assert owners == {"s1"}, "Only a shared grant fences model control."
+    assert (await scheduler.acquire(leases[2].lease_id, "c", "s2"))["status"] == "wait", (
+        "Compute concurrency must be bounded even with spare memory."
+    )
+    await scheduler.release(leases[1].lease_id, "s1", second["epoch"])
+    assert not owners and not node.active.get(leases[1].lease_id), "Physical return precedes model release."
+    assert leases[1].unit_id == "u0", "Host ownership must remain on the dedicated unit."
+    scheduler.shared_max_command_s = 0.01
+    third = await scheduler.acquire(leases[2].lease_id, "c", "s2")
+    assert third["unit_id"] == "u1", "The queued command must use the returned shared slot."
+    await scheduler.shared_deadlines["s2"]
+    assert node.confirmations == [((1,), 10)], "Timeout cleanup must verify the actual shared card and headroom."
+    assert "u1" in ledger._blocked_units and "u0" not in ledger._blocked_units, "Quarantine must target the GPU owner."
+    assert not owners, "Model control may resume only after cleanup has been confirmed."
+
+
+@pytest.mark.asyncio
+async def test_first_fit_fills_one_card_before_next_card():
+    ledger, scheduler, _, _, _ = setup()
+    ledger._leases.clear()
+    ledger._by_session.clear()
+    leases = [ledger.try_admit(f"fit-{i}", EnvDemand(1, 1, True, 30), "node").lease for i in range(3)]
+    ledger._units["u0"] = EnvUnit.from_mapping({**asdict(ledger._units["u0"]), "max_gpu_commands": 2})
+    scheduler.placement_policy = "first_fit"
+    grants = [await scheduler.acquire(lease.lease_id, str(i), f"f{i}") for i, lease in enumerate(leases)]
+    assert [grant["unit_id"] for grant in grants] == ["u0", "u0", "u1"], "Static packing must use the next card."
 
 
 @pytest.mark.asyncio

@@ -183,6 +183,7 @@ class EnvUnitLedger:
                     item[1].unit_id,
                 ),
             )
+            decision = self._reservation(unit, demand)
             lease = EnvLease(
                 lease_id=f"{unit.unit_id}-{next(self._counter)}-{self._id_factory()}",
                 session_id=session_id,
@@ -194,11 +195,12 @@ class EnvUnitLedger:
                 last_seen=now,
                 shared=unit.has_gpu and unit.max_containers > 1,
                 gpu_lending=unit.rollout_replica_rank is not None and demand.needs_gpu,
-                gpu_reservation=unit.gpu_reservation,
-                gpu_active=unit.gpu_reservation == "episode",
+                gpu_reservation=decision.mode,
+                gpu_reservation_reason=decision.reason,
+                gpu_active=demand.needs_gpu and decision.mode == "episode",
                 gpu_execution_backend=unit.gpu_execution_backend,
             )
-            if unit.command_gpu_pool and demand.needs_gpu:
+            if unit.command_gpu_pool and demand.needs_gpu and decision.mode == "command":
                 candidates = self.command_candidates(unit, demand)
                 lease.gpu_candidate_unit_ids = tuple(u.unit_id for u in candidates)
                 lease.gpu_candidate_indices = tuple(sorted(i for u in candidates for i in u.gpu_indices))
@@ -400,6 +402,18 @@ class EnvUnitLedger:
     # ------------------------------------------------------------------ arithmetic
 
     @staticmethod
+    def _reservation(unit, demand):
+        from psrl.workers.env_service.reservation_policy import choose_reservation
+
+        return choose_reservation(
+            unit.gpu_reservation,
+            demand.gpu_execution_contract,
+            demand.needs_gpu,
+            demand.gpu_release_forecast,
+            require_timing=demand.gpu_timing_required,
+        )
+
+    @staticmethod
     def _demand_matches_kind(unit: EnvUnit, demand: EnvDemand) -> bool:
         """A GPU demand needs a unit that owns devices. A CPU demand fits any unit."""
         return unit.has_gpu or not demand.needs_gpu
@@ -408,14 +422,14 @@ class EnvUnitLedger:
         return [lease for lease in self._leases.values() if lease.unit_id == unit_id]
 
     def command_candidates(self, home, demand):
-        """Keep command execution on compatible, explicitly pooled dedicated devices on this node."""
+        """Keep commands in the local pool and require explicit bindings for protected devices."""
         return tuple(
             unit
             for unit in self._units.values()
             if unit.node_ip == home.node_ip
             and unit.command_gpu_pool == home.command_gpu_pool
             and self._rules.tier(unit, demand) is not None
-            and not self._rules.overlaps_train_rollout(unit)
+            and (not self._rules.overlaps_train_rollout(unit) or unit.shared_rollout_replica_rank is not None)
             and len(demand.device_memory(unit)) == 1
             and demand.gpu_memory_mb <= unit.gpu_memory_mb
         )
@@ -557,7 +571,7 @@ class EnvUnitLedger:
             > unit.memory_mb
         ):
             return False
-        if unit.gpu_reservation == "command":
+        if self._reservation(unit, demand).mode == "command":
             return self._could_ever_fit(unit, demand)
         return self._gpu_fits_now(unit, demand, now)
 
@@ -590,7 +604,7 @@ class EnvUnitLedger:
             (sum(lease.demand.memory_mb for lease in leases) + demand.memory_mb + unit.execution_memory_overhead_mb)
             / unit.memory_mb,
         ]
-        if demand.needs_gpu and unit.gpu_memory_mb > 0 and unit.gpu_reservation == "episode":
+        if demand.needs_gpu and unit.gpu_memory_mb > 0 and self._reservation(unit, demand).mode == "episode":
             ratios.append((self._effective_gpu_mb(unit, now) + demand.gpu_memory_mb) / unit.gpu_memory_mb)
         return max(ratios)
 

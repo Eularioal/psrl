@@ -122,6 +122,19 @@ class SyncAndMigrateMixin:
         wait_model_sync: bool = False,
         wait_interrupted_partial_requests_loop_back: bool = True,
     ):
+        """Serialize sync selection with environment ownership transitions."""
+        async with self._env_gpu_transition_lock:
+            selected = [item for item in instance_ids if item[0] not in self._env_gpu_reservations]
+            return await self._sync_with_ps_locked(
+                selected, wait_model_sync, wait_interrupted_partial_requests_loop_back
+            )
+
+    async def _sync_with_ps_locked(
+        self,
+        instance_ids: list[RolloutInstanceId],
+        wait_model_sync: bool = False,
+        wait_interrupted_partial_requests_loop_back: bool = True,
+    ):
         """
         Synchronize with PS for the given instance IDs.
         """

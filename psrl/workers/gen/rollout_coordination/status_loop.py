@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+import time
 
 from psrl.workers.gen.smg_adapter import (
     ROUTING_LOOP_STATUS_PATH,
@@ -79,6 +80,7 @@ class StatusMixin:
 
             # Apply only the newest snapshot per instance
             self.instance_to_engine_status.update(latest_by_instance)
+            self._engine_status_received.update(dict.fromkeys(latest_by_instance, time.monotonic()))
         psrl_logger.info("Stopped processing ZMQ status stream.")
 
     def get_instance_engine_status_snapshot(self) -> dict[RolloutInstanceId, dict]:

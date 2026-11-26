@@ -89,7 +89,13 @@ deny_node_ips: []
 units: []
 
 # Command execution needs writable cgroup v1 controls. Host charges remain on the home unit.
-# A named `command_gpu_pool` allows same-node direct single-GPU placement on dedicated devices only.
+# A named `command_gpu_pool` allows local placement with dedicated devices preferred over bound rollout devices.
+# `max_gpu_commands` bounds compute concurrency independently of memory. Zero uses only memory admission.
+# `gpu_reservation: auto` resolves each lease from the host task's
+# `metadata.env_service.gpu_execution_contract`. Managed `independent_commands` use command mode
+# unless an adapter supplies calibrated `EnvDemand.gpu_release_forecast` advice to retain the GPU.
+# `resident_state` and `unknown` retain episode reservations. Auto currently requires dedicated direct GPUs.
+command_placement_policy: least_pressure
 
 # A unit with `rollout_replica_rank` borrows that complete replica between model calls.
 # Such units require `max_containers: 1` and exact, nonoverlapping GPU placement.
@@ -104,3 +110,25 @@ gpu_sharing:
   safety_margin_mb: 1024
   max_command_s: 30
   reuse_sleeping: true
+  # Only valid resident nixl_cpu weights may synchronize across active resident commands.
+  sync_overlap: false
+  sync_headroom_mb: 16384
+
+# Request capacity must be calibrated for the deployed model and input lengths.
+# Borrowed cards keep their original host leases and rejoin inference only after a version refresh.
+elastic_partition:
+  # Allow resident commands through request draining and own-model sleep.
+  handover_overlap: false
+  enable: false
+  request_capacity: 16
+  min_replicas: 1
+  shrink_fraction: 0.65
+  restore_fraction: 0.90
+  interval_s: 2
+  shrink_window_s: 30
+  restore_window_s: 6
+  cooldown_s: 60
+  stats_max_age_s: 10
+  transition_timeout_s: 330
+  borrowed_max_gpu_commands: 4
+  sleep_memory_mb: 1024

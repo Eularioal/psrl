@@ -41,7 +41,6 @@ from verl.workers.rollout.vllm_rollout.vllm_async_server import (
 )
 from vllm import SamplingParams
 from vllm.engine.arg_utils import AsyncEngineArgs
-from vllm.entrypoints.openai.parser.harmony_utils import get_encoding
 from vllm.inputs import TokensPrompt
 from vllm.lora.request import LoRARequest
 from vllm.outputs import PoolingRequestOutput, RequestOutput
@@ -70,8 +69,6 @@ from psrl.workers.gen.stats_collector import DPLBStatCollector
 from psrl.workers.gen.utils import DEFAULT_MAX_CONNECTIONS, DEFAULT_TIMEOUT, TokenOutput
 from psrl.workers.gen.zmq_queue import ZMQPushQueue
 from psrl.workers.ps.request_status_tracker import PSRL_RequestStatus
-
-get_encoding()
 
 psrl_logger = logging.getLogger(__file__)
 psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
@@ -792,6 +789,11 @@ class PSRL_vLLMHttpServer(GpuHandoffMixin, vLLMHttpServer):
         await self.pause_generation(clear_cache=False)
         # Failed parked requests must wake and reroute away from the quarantined engine.
         self.grpc_servicer.fail_generation_admission()
+
+    async def env_partition_load(self):
+        """Read accepted unfinished requests independently of iteration statistics."""
+        await self.engine.check_health()
+        return self.engine.output_processor.get_num_unfinished_requests()
 
     async def wait_for_requests_to_drain(self):
         await self.engine.wait_for_requests_to_drain()

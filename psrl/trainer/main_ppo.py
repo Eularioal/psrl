@@ -4,19 +4,11 @@ import random
 import socket
 
 import hydra
-import numpy as np
 import ray
-import torch
-import transfer_queue as tq
 from omegaconf import OmegaConf
 from ray.util.scheduling_strategies import NodeAffinitySchedulingStrategy
-from verl.trainer.ppo.utils import need_critic, need_reference_policy
-from verl.utils.device import auto_set_device, is_cuda_available
 
 from psrl.trainer.constants_ppo import get_ppo_ray_runtime_env
-from psrl.trainer.ppo.utils import PSRL_Role
-from psrl.utils.config import validate_config
-from psrl.workers.config.reward_model import resolve_active_managers
 
 psrl_logger = logging.getLogger(__file__)
 psrl_logger.setLevel(os.getenv("PSRL_LOGGING_LEVEL", "WARN"))
@@ -29,6 +21,9 @@ def seed_everything(seed: int):
     Args:
         seed (int): The seed value to set.
     """
+    import numpy as np
+    import torch
+
     random.seed(seed)
     os.environ["PYTHONHASHSEED"] = str(seed)
     np.random.seed(seed)
@@ -40,6 +35,12 @@ def seed_everything(seed: int):
 
 @hydra.main(config_path="config", config_name="ppo_trainer", version_base=None)
 def main(config):
+    from verl.trainer.ppo.utils import need_critic, need_reference_policy
+    from verl.utils.device import auto_set_device
+
+    from psrl.utils.config import validate_config
+
+    seed_everything(0)
     auto_set_device(config)
 
     config.transfer_queue.enable = True
@@ -132,6 +133,8 @@ def run_ppo(config, task_runner_class=None) -> None:
                 model paths, and training hyperparameters.
         task_runner_class: For recipe to change TaskRunner.
     """
+    from verl.utils.device import is_cuda_available
+
     if not ray.is_initialized():
         default_runtime_env = get_ppo_ray_runtime_env()
         ray_init_kwargs = config.ray_kwargs.get("ray_init", {})
@@ -204,6 +207,7 @@ class TaskRunner:
 
     def add_actor_rollout_worker(self, config):
         """Add actor rollout worker (backend selected via config.actor.strategy)."""
+        from psrl.trainer.ppo.utils import PSRL_Role
         from psrl.workers.gen.vllm_rollout import PSRL_ServerAdapter
         from psrl.workers.train.engine_train_worker import PSRL_EngineTrainWorker as PSRL_TrainWorker
 
@@ -215,7 +219,10 @@ class TaskRunner:
 
     def add_critic_worker(self, config):
         """Add critic worker using verl's unified engine TrainingWorker."""
+        from verl.trainer.ppo.utils import need_critic
         from verl.workers.engine_workers import TrainingWorker
+
+        from psrl.trainer.ppo.utils import PSRL_Role
 
         if need_critic(config):
             self.role_worker_mapping[PSRL_Role.Critic] = ray.remote(TrainingWorker)
@@ -223,6 +230,10 @@ class TaskRunner:
 
     def add_ref_policy_worker(self, config):
         """Add a reference policy worker when KL loss or KL reward is enabled."""
+        from verl.trainer.ppo.utils import need_reference_policy
+
+        from psrl.trainer.ppo.utils import PSRL_Role
+
         if not need_reference_policy(config):
             return
 
@@ -233,6 +244,9 @@ class TaskRunner:
 
     def init_resource_pool_mgr(self, config):
         """Initialize resource pool manager."""
+        from psrl.trainer.ppo.utils import PSRL_Role
+        from psrl.workers.config.reward_model import resolve_active_managers
+
         deployment_config = config.psrl.deployment
         # AGENT(VERL): use train_pool instead of global_pool
         train_pool_id = "train_pool"
@@ -361,12 +375,13 @@ class TaskRunner:
 
     def add_reward_model_worker(self, config):
         """Add reward model worker."""
+        from psrl.trainer.ppo.utils import PSRL_Role
         from psrl.workers.gen.vllm_rollout import PSRL_ServerAdapter
 
         self.role_worker_mapping[PSRL_Role.RewardModel] = ray.remote(PSRL_ServerAdapter)
 
     def add_dummy_worker(self, config):
-        from psrl.trainer.ppo.utils import PSRL_DummyWorker
+        from psrl.trainer.ppo.utils import PSRL_DummyWorker, PSRL_Role
 
         self.role_worker_mapping[PSRL_Role.DummyPolicy] = ray.remote(PSRL_DummyWorker)
         self.mapping[PSRL_Role.DummyPolicy] = ["train_pool"]
@@ -384,6 +399,7 @@ class TaskRunner:
         # Print the initial configuration. `resolve=True` will evaluate symbolic values.
         from pprint import pprint
 
+        import transfer_queue as tq
         from omegaconf import OmegaConf
 
         print(f"TaskRunner hostname: {socket.gethostname()}, PID: {os.getpid()}")
@@ -434,5 +450,4 @@ class TaskRunner:
 
 
 if __name__ == "__main__":
-    seed_everything(0)
     main()
