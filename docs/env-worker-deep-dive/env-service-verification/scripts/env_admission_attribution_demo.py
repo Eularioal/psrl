@@ -1,5 +1,5 @@
 """
-自包含教学复刻脚本：对应 psrl/docs/env-worker-deep-dive/knowledge/gpu-admission-attribution-ebpf-identity.md
+自包含教学复刻脚本：对应 docs/env-worker-deep-dive/knowledge/02-资源与调度/03-进程归属_PID身份与显存记账.md
 第 5/7/8 节的真实逻辑搬运 + 第 4 节 eBPF 身份追踪的纯 Python 模拟。
 
 只用标准库（asyncio + dataclasses + contextlib），不依赖 Linux/BPF/Docker/PSRL 代码。
@@ -18,8 +18,8 @@ import math
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 
-
 # ---------- 第 5 节：GPU 显存会计公式（与 gpu_memory.py 逐行一致） ----------
+
 
 def accounted_gpu_memory_mb(measured_mb, reservations, owned_mb=None):
     owned_mb = owned_mb or {}
@@ -45,6 +45,7 @@ def demo_gpu_memory_accounting():
 
 
 # ---------- 第 6 节：容器预算（与 container_budget.py 逐行一致） ----------
+
 
 @dataclass(frozen=True)
 class ContainerBudget:
@@ -76,6 +77,7 @@ def demo_container_budget():
 
 # ---------- 第 7 节：健康状态机（与 health.py 逐行一致） ----------
 
+
 @dataclass
 class NodeHealth:
     failures: int = 0
@@ -106,14 +108,12 @@ def demo_node_health():
     for t in range(1, 5):
         state.fail(float(t), RuntimeError("node unreachable"))
         tripped = state.failures >= max_failures
-        print(
-            f"第{t}次探测失败: failures={state.failures}, available={state.available}, "
-            f"熔断(停止继续探测)={tripped}"
-        )
+        print(f"第{t}次探测失败: failures={state.failures}, available={state.available}, 熔断(停止继续探测)={tripped}")
     print()
 
 
 # ---------- 第 8.3 节：多持有者暂停控制器（与 routing_pause.py 逐行一致） ----------
+
 
 class RoutingPauseController:
     def __init__(self, read_status, write_running, timeout_s=5.0):
@@ -183,6 +183,7 @@ async def demo_routing_pause():
 
 # ---------- 第 4 节：用纯 Python 模拟 eBPF 的三张 map 和 capture/invalidate ----------
 
+
 class FakeKernel:
     """
     模拟 bpf_identity.bpf.c 的 registrations / identities 两张 map，
@@ -192,8 +193,8 @@ class FakeKernel:
     """
 
     def __init__(self):
-        self.registrations = {}   # cgroup_id -> cookie
-        self.identities = {}      # pid -> {"cgroup": ..., "cookie": ...}
+        self.registrations = {}  # cgroup_id -> cookie
+        self.identities = {}  # pid -> {"cgroup": ..., "cookie": ...}
 
     def bind(self, cgroup_id, cookie):
         """对应 bpf_identity.py:155-159 的 bind()：用户态注册一个要追踪的 cgroup。"""
@@ -213,10 +214,7 @@ class FakeKernel:
 
     def owners(self, cookie, pids):
         """对应 bpf_identity.py:187-202 的 owners()：用户态按 cookie 查询一批 pid 还归不归自己。"""
-        return {
-            pid for pid in pids
-            if pid in self.identities and self.identities[pid]["cookie"] == cookie
-        }
+        return {pid for pid in pids if pid in self.identities and self.identities[pid]["cookie"] == cookie}
 
 
 def demo_ebpf_identity_state_machine():

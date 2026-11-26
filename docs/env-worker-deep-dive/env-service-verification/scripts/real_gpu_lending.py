@@ -35,7 +35,7 @@ from psrl.workers.gen.vllm_async_server import PSRL_vLLMHttpServer
 class InferenceOnlyServer(PSRL_vLLMHttpServer):
     """Use the production GPU protocol without starting training or a parameter server."""
 
-    def __init__(self, model, sharing=False):
+    def __init__(self, model, sharing=False, *, max_model_len=512, gpu_memory_utilization=0.15, max_num_seqs=1):
         from smg_grpc_servicer.vllm.servicer import VllmEngineServicer
         from vllm.engine.arg_utils import AsyncEngineArgs
         from vllm.v1.engine.async_llm import AsyncLLM
@@ -55,12 +55,12 @@ class InferenceOnlyServer(PSRL_vLLMHttpServer):
                 dtype="bfloat16",
                 enable_sleep_mode=True,
                 enforce_eager=True,
-                max_model_len=512,
-                max_num_seqs=1,
-                gpu_memory_utilization=0.15,
+                max_model_len=max_model_len,
+                max_num_seqs=max_num_seqs,
+                gpu_memory_utilization=gpu_memory_utilization,
                 kv_cache_memory_bytes=None if sharing else 512 * 1024 * 1024,
-                max_num_batched_tokens=512,
-                worker_extension_cls="psrl.workers.gen.vllm_extension.vLLMWorkerExtension" if sharing else "auto",
+                max_num_batched_tokens=max_model_len,
+                worker_extension_cls="psrl.workers.gen.vllm_extension.vLLMWorkerExtension" if sharing else "",
                 enable_prefix_caching=False,
                 disable_log_stats=True,
             )

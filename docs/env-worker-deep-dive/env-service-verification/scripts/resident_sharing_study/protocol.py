@@ -31,6 +31,7 @@ class PausePoint:
         self.events = []
         self.started_ns = None
         self.updates = 0
+        self.update_times_ns = []
 
     def _request(self):
         request = read(self.directory / "request.json")
@@ -43,6 +44,8 @@ class PausePoint:
     def __call__(self, stage, updates):
         self.updates = updates
         self.synchronize()
+        if stage == "updated":
+            self.update_times_ns.append(time.monotonic_ns())
         if stage == "prepared":
             save(self.directory / "state.json", {"trial_id": self.trial_id, "state": "prepared"})
             deadline = time.monotonic() + 60

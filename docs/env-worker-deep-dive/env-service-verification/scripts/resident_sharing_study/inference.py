@@ -9,6 +9,10 @@ from real_gpu_lending import InferenceOnlyServer
 class StudyServer(InferenceOnlyServer):
     """Keep the inference model and memory profile identical across policies."""
 
+    def __init__(self, model, sharing=False, *, output_tokens=64, **engine_options):
+        self.output_tokens = output_tokens
+        super().__init__(model, sharing=sharing, **engine_options)
+
     async def query(self, index=0):
         from vllm import SamplingParams
 
@@ -21,7 +25,12 @@ class StudyServer(InferenceOnlyServer):
         result = None
         async for result in self.engine.generate(
             prompt,
-            SamplingParams(temperature=0, max_tokens=64, min_tokens=64, ignore_eos=True),
+            SamplingParams(
+                temperature=0,
+                max_tokens=self.output_tokens,
+                min_tokens=self.output_tokens,
+                ignore_eos=True,
+            ),
             request_id=f"study-{index}-{uuid.uuid4().hex}",
         ):
             times.append(time.monotonic_ns())

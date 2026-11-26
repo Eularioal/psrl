@@ -56,11 +56,25 @@ async def wait_json(path, predicate, *, timeout=60):
 class Experiment:
     """Keep shared initialization out of paired steady execution measurements."""
 
+    command_timeout_s = 280
+    command_deadline_s = 300
+    ready_timeout_s = 90
+    environment_memory_mb = 8192
+    environment_gpu_mb = 2048
+    worker_script = "worker.py"
+    task_snapshot = "executed-vision.py"
+    boundary = "Real EnvRouter command leases, Harbor Docker, vLLM, and local CIFAR task. No PPO or MPS."
+
     def __init__(self, args):
         self.args = args
         self.out = args.output.resolve()
+        self.out.mkdir(parents=True, exist_ok=False)
+        self.trial_root = self.out
+        self.gpu_index = args.gpu_index
+        self.before = None
         self.tag = f"resident-study-{uuid.uuid4().hex[:8]}"
         self.local = Path(tempfile.mkdtemp(prefix=self.tag + "-", dir="/tmp"))
+        self.service_root = self.local
         self.environments = []
         self.handles = []
         self.commands = []
@@ -72,9 +86,30 @@ class Experiment:
     def record(self):
         save(self.out / "evidence.json", self.evidence)
 
+    def task_source(self):
+        return Path(self.args.repo) / "examples/mlgym_bench/vision.py"
+
+    def server_options(self):
+        return {}
+
+    def extra_mounts(self, role):
+        return []
+
+    def study_plan(self):
+        return {
+            "epochs": [2, 64],
+            "updates": [8, 256],
+            "profiles": ["spaced", "burst"],
+            "rounds": self.args.rounds,
+            "requests_per_trial": 3,
+            "tokens_per_request": 64,
+            "trial_timeout_s": 20,
+            "mps": False,
+            "model_offload": False,
+            "candidate_pool": "Only the explicitly shared model GPU is configured.",
+        }
+
     async def prepare(self):
-        self.out.mkdir(parents=True, exist_ok=False)
-        self.gpu_index = self.args.gpu_index
         self.before = self.probe.read_gpu_snapshot([self.gpu_index])
         if self.before[self.gpu_index]["pids"] or self.before[self.gpu_index]["used_mb"] > 64:
             raise RuntimeError("The selected GPU must be idle at startup.")
@@ -82,7 +117,7 @@ class Experiment:
             before=self.before,
             devices={self.gpu_index: asdict(self.probe.read_gpu_devices()[self.gpu_index])},
             local_control=str(self.local),
-            boundary="Real EnvRouter command leases, Harbor Docker, vLLM, and local CIFAR task. No PPO or MPS.",
+            boundary=self.boundary,
             sources={
                 name: importlib.util.find_spec(name).origin for name in ("psrl", "verl", "transfer_queue", "vllm")
             },
@@ -90,23 +125,14 @@ class Experiment:
             comparison_kind="Same current source mechanism comparison. A is compute serial, not historical PSRL OFF.",
             commit=subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
             image=docker("image", "inspect", self.args.image, "--format", "{{.Id}}"),
-            plan={
-                "epochs": [2, 64],
-                "updates": [8, 256],
-                "profiles": ["spaced", "burst"],
-                "rounds": self.args.rounds,
-                "requests_per_trial": 3,
-                "tokens_per_request": 64,
-                "trial_timeout_s": 20,
-                "mps": False,
-                "model_offload": False,
-                "candidate_pool": "Only the explicitly shared model GPU is configured.",
-            },
+            plan=self.study_plan(),
         )
-        source = Path(self.args.repo) / "examples/mlgym_bench/vision.py"
-        shutil.copy2(source, self.out / "executed-vision.py")
+        source = self.task_source()
+        shutil.copy2(source, self.out / self.task_snapshot)
+        shutil.copytree(STUDY, self.out / "executed-study", ignore=shutil.ignore_patterns("__pycache__"))
         self.evidence["source_sha256"] = {
-            str(path): hashlib.sha256(path.read_bytes()).hexdigest() for path in (source, *STUDY.glob("*.py"))
+            str(path): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in (source, STUDY.parent / "real_gpu_lending.py", *STUDY.glob("*.py"))
         }
         self.record()
         os.environ["CUDA_VISIBLE_DEVICES"] = str(self.gpu_index)
@@ -133,9 +159,10 @@ class Experiment:
         self.server = (
             ray.remote(num_cpus=2, num_gpus=1, max_concurrency=16)(StudyServer)
             .options(runtime_env=runtime)
-            .remote(str(self.args.model), sharing=True)
+            .remote(str(self.args.model), sharing=True, **self.server_options())
         )
         self.evidence["worker"] = await self.server.ready.remote()
+        self.record()
         self.evidence["warmup_requests"] = [await self.server.query.remote(i) for i in range(2)]
         profile = await self.server.collective_rpc.remote("env_sharing_profile")
         headroom = math.ceil(max(p["transient_mb"] for p in profile) + 2048)
@@ -144,15 +171,19 @@ class Experiment:
         config = {
             "node_policy": "prefer_other",
             "slot_ttl_s": 120,
-            "gpu_sharing": {"safety_margin_mb": 1024, "max_command_s": 300, "reuse_sleeping": False},
+            "gpu_sharing": {
+                "safety_margin_mb": 1024,
+                "max_command_s": self.command_deadline_s,
+                "reuse_sleeping": False,
+            },
             "units": [
                 {
                     "unit_id": self.tag,
                     "node_ip": self.args.node_ip,
                     "cpu_quota": 6,
-                    "memory_mb": 24576,
+                    "memory_mb": self.environment_memory_mb * 3,
                     "gpu_indices": [self.gpu_index],
-                    "gpu_memory_mb": 97871,
+                    "gpu_memory_mb": self.before[self.gpu_index]["total_mb"],
                     "gpu_reservation": "command",
                     "max_containers": 2,
                     "shared_rollout_replica_rank": 0,
@@ -165,26 +196,37 @@ class Experiment:
         self.evidence["binding"] = await self.router.bind_shared_rollout_gpu.remote(self.tag, self.server)
         self.evidence["router_config"] = config
         self.client = EnvServiceClient(self.router, self.args.node_ip, router_name=self.tag, heartbeat_interval_s=2)
-        self.train_control = await self.start_environment("train")
-        self.verify_control = await self.start_environment("verify")
+        self.train_control, self.verify_control = await self.start_environments()
         self.record()
 
+    async def start_environments(self):
+        """Prepare the two separately leased task roles."""
+        return await self.start_environment("train"), await self.start_environment("verify")
+
     async def start_environment(self, role):
-        handle = await self.client.acquire(role, EnvDemand(2, 8192, True, 2048), max_wait_s=20)
+        handle = await self.client.acquire(
+            role,
+            EnvDemand(2, self.environment_memory_mb, True, self.environment_gpu_mb),
+            max_wait_s=20,
+        )
         self.handles.append(handle)
-        local = self.local / role
-        local.mkdir()
+        local = self.service_root / role
+        local.mkdir(parents=True)
         mounts = [
-            f"{STUDY}:/study:ro",
-            f"{self.out / 'executed-vision.py'}:/opt/vision.py:ro",
+            f"{self.out / 'executed-study'}:/study:ro",
+            f"{self.out / self.task_snapshot}:/opt/task.py:ro",
             f"{self.args.data / 'public'}:/data/public:ro",
             f"{local}:/control:rw",
         ]
+        mounts += self.extra_mounts(role)
         prefixes = dict.fromkeys((Path(sys.executable).parent.parent, Path(sys.executable).resolve().parent.parent))
         mounts += [f"{prefix}:{prefix}:ro" for prefix in prefixes]
         if role == "verify":
-            mounts += [f"{self.args.data / 'private'}:/data/private:ro", f"{self.local / 'train'}:/submissions:ro"]
-        environment_dir = self.out / role / "environment"
+            mounts += [
+                f"{self.args.data / 'private'}:/data/private:ro",
+                f"{self.service_root / 'train'}:/submissions:ro",
+            ]
+        environment_dir = self.trial_root / role / "environment"
         environment_dir.mkdir(parents=True)
         settings = {
             "services": {
@@ -209,8 +251,10 @@ class Experiment:
             environment_dir=environment_dir,
             environment_name=f"{self.tag}-{role}",
             session_id=uuid.uuid4().hex[:10],
-            trial_paths=TrialPaths(self.out / role / "trial"),
-            task_env_config=EnvironmentConfig(docker_image=self.args.image, cpus=2, memory_mb=8192),
+            trial_paths=TrialPaths(self.trial_root / role / "trial"),
+            task_env_config=EnvironmentConfig(
+                docker_image=self.args.image, cpus=2, memory_mb=self.environment_memory_mb
+            ),
             extra_docker_compose=[overlay_path],
             lease_overlay=overlay,
             gpu_execution={"router_name": self.tag, "lease_id": handle.lease.lease_id, "mode": "command"},
@@ -220,11 +264,11 @@ class Experiment:
         await environment.start(force_build=False)
         command = [
             sys.executable,
-            "/study/worker.py",
+            f"/study/{self.worker_script}",
             "--control",
             "/control",
             "--source",
-            "/opt/vision.py",
+            "/opt/task.py",
             "--data",
             "/data/public",
             "--role",
@@ -232,9 +276,11 @@ class Experiment:
         ]
         if role == "verify":
             command += ["--private", "/data/private"]
-        task = asyncio.create_task(environment.exec_gpu(shlex.join(command), timeout_sec=280, wait_timeout_sec=20))
+        task = asyncio.create_task(
+            environment.exec_gpu(shlex.join(command), timeout_sec=self.command_timeout_s, wait_timeout_sec=20)
+        )
         self.commands.append(task)
-        ready = await wait_json(local / "ready.json", lambda v: True, timeout=90)
+        ready = await wait_json(local / "ready.json", lambda v: True, timeout=self.ready_timeout_s)
         if ready["cuda_readback"] != 528:
             raise RuntimeError("The container CUDA readback failed.")
         self.evidence[f"{role}_ready"] = ready
@@ -373,7 +419,7 @@ class Experiment:
 
     async def cleanup(self):
         for role in ("train", "verify"):
-            directory = self.local / role
+            directory = self.service_root / role
             if directory.exists():
                 save(directory / "request.json", {"stop": True})
         for command in self.commands:
@@ -402,23 +448,27 @@ class Experiment:
         ray.shutdown()
         for overlay in self.overlays:
             overlay.unlink(missing_ok=True)
-        for _ in range(40):
-            after = self.probe.read_gpu_snapshot([self.gpu_index])
-            if (
-                not after[self.gpu_index]["pids"]
-                and after[self.gpu_index]["used_mb"] <= self.before[self.gpu_index]["used_mb"] + 32
-            ):
-                break
-            await asyncio.sleep(0.5)
+        after = None
+        if self.before is not None:
+            for _ in range(40):
+                after = self.probe.read_gpu_snapshot([self.gpu_index])
+                if (
+                    not after[self.gpu_index]["pids"]
+                    and after[self.gpu_index]["used_mb"] <= self.before[self.gpu_index]["used_mb"] + 32
+                ):
+                    break
+                await asyncio.sleep(0.5)
         self.evidence["after"] = after
         self.evidence["containers_after"] = docker("ps", "-aq", "--filter", f"label=psrl.env_unit={self.tag}")
         self.evidence["physical_release_confirmed"] = (
-            not after[self.gpu_index]["pids"]
+            after is not None
+            and not after[self.gpu_index]["pids"]
             and after[self.gpu_index]["used_mb"] <= self.before[self.gpu_index]["used_mb"] + 32
             and not self.evidence["containers_after"]
         )
         self.evidence["passed"] &= self.evidence["physical_release_confirmed"] and not self.evidence["cleanup_errors"]
         shutil.copytree(self.local, self.out / "control-and-checkpoints", dirs_exist_ok=True)
+        shutil.rmtree(self.local)
         self.record()
         self.probe.close()
 

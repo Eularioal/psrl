@@ -1,7 +1,7 @@
 """CPU-only teaching simulation of the proposed rollout/Docker GPU handoff.
 
 No Ray, Docker, CUDA, network, subprocesses, real waits, or production imports.
-Numbers are hypothetical GiB; diagram numbers refer to rollout-gpu-lending.md.
+Teaching values use GiB. See `docs/env-worker-deep-dive/knowledge/README.md` for the rollout GPU lending guide.
 This demonstrates ordering, not production concurrency or GPU correctness.
 """
 
