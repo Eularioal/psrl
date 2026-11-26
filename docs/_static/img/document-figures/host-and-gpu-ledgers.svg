@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="864pt" height="1692pt" viewBox="0 0 864 1692" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:12:45.934078</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1692 
+L 864 1692 
+L 864 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 67.0464 206.338624 
+L 814.2336 206.338624 
+L 814.2336 385.938991 
+L 67.0464 385.938991 
+z
+" clip-path="url(#pc8a202ae58)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 107.6544 265.054128 
+L 408.1536 265.054128 
+L 408.1536 358.308165 
+L 107.6544 358.308165 
+z
+" clip-path="url(#pc8a202ae58)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 473.1264 265.054128 
+L 757.3824 265.054128 
+L 757.3824 306.500367 
+L 473.1264 306.500367 
+z
+" clip-path="url(#pc8a202ae58)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 473.1264 323.769633 
+L 757.3824 323.769633 
+L 757.3824 365.215872 
+L 473.1264 365.215872 
+z
+" clip-path="url(#pc8a202ae58)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 410.155745 289.231101 
+Q 436.580978 289.231101 461.217356 289.231101 
+" clip-path="url(#pc8a202ae58)" style="fill: none; stroke: #53677c; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 454.817356 286.031101 
+L 461.217356 289.231101 
+L 454.817356 292.431101 
+z
+" clip-path="url(#pc8a202ae58)" style="fill: #53677c; stroke: #53677c; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 410.155745 344.492752 
+Q 436.580978 344.492752 461.217356 344.492752 
+" clip-path="url(#pc8a202ae58)" style="fill: none; stroke: #53677c; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 454.817356 341.292752 
+L 461.217356 344.492752 
+L 454.817356 347.692752 
+z
+" clip-path="url(#pc8a202ae58)" style="fill: #53677c; stroke: #53677c; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 50.8032 399.754404 
+L 830.4768 399.754404 
+L 830.4768 461.923761 
+L 50.8032 461.923761 
+z
+" clip-path="url(#pc8a202ae58)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 50.8032 175.253945 
+L 830.4768 175.253945 
+" clip-path="url(#pc8a202ae58)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="153.845776" transform="rotate(-0 50.8032 153.845776)">① 会话放在哪台机器，命令用哪张卡？</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="99.5328" y="239.899137" transform="rotate(-0 99.5328 239.899137)">节点 N：一个物理主机</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(208.049508 294.485053)">会话 S 的容器</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(216.654 317.385248)">代码、文件</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(215.493844 340.833295)">CPU 与主存</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="615.2544" y="291.739162" transform="rotate(-0 615.2544 291.739162)">GPU0：首条命令</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="615.2544" y="350.486893" transform="rotate(-0 615.2544 350.486893)">GPU1：下条候选</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #3478c5" transform="translate(75.168 424.948067)">同机换卡只改变 GPU 命令的目标，</text>
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #3478c5" transform="translate(75.168 448.234981)">容器与主存没有搬到另一台主机。</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_9">
+    <path d="M 67.0464 593.170183 
+L 416.2752 593.170183 
+L 416.2752 710.601193 
+L 67.0464 710.601193 
+z
+" clip-path="url(#p5a53720e86)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 465.0048 593.170183 
+L 814.2336 593.170183 
+L 814.2336 710.601193 
+L 465.0048 710.601193 
+z
+" clip-path="url(#p5a53720e86)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 50.8032 786.585963 
+L 830.4768 786.585963 
+L 830.4768 848.755321 
+L 50.8032 848.755321 
+z
+" clip-path="url(#p5a53720e86)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 50.8032 562.085505 
+L 830.4768 562.085505 
+" clip-path="url(#p5a53720e86)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="540.853116" transform="rotate(-0 50.8032 540.853116)">② 两层资源账本：分别记录什么？</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(216.9108 622.997797)">会话层</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(184.909823 646.059126)">容器槽位、CPU</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(183.9108 669.24936)">主存、会话身份</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(167.4108 692.632954)">通常保留至会话结束</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(596.467833 623.030024)">GPU 命令层</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(565.3692 646.059126)">目标设备、显存预算</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(565.3692 669.442719)">活动命令与授权周期</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(581.8692 692.568501)">获准到物理归还</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 749.706948)">unit 是声明资源范围的准入单元。</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 772.768277)">账本额度决定能否进，设备遥测核对实占。</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="75.168" y="823.342517" transform="rotate(-0 75.168 823.342517)">额度是资源承诺，不能直接当成计算占用率。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="patch_12">
+    <path d="M 245.7216 1017.994128 
+L 797.9904 1017.994128 
+L 797.9904 1055.986514 
+L 245.7216 1055.986514 
+z
+" clip-path="url(#p606072e864)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 245.7216 1083.617339 
+L 521.856 1083.617339 
+L 521.856 1121.609725 
+L 245.7216 1121.609725 
+z
+" clip-path="url(#p606072e864)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 245.7216 1145.786697 
+L 659.9232 1145.786697 
+L 659.9232 1183.779083 
+L 245.7216 1183.779083 
+z
+" clip-path="url(#p606072e864)" style="fill: #eff3f7; stroke: #aab8c7; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 659.9232 1145.786697 
+L 797.9904 1145.786697 
+L 797.9904 1183.779083 
+L 659.9232 1183.779083 
+z
+" clip-path="url(#p606072e864)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 50.8032 948.917064 
+L 830.4768 948.917064 
+" clip-path="url(#p606072e864)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="927.790145" transform="rotate(-0 50.8032 927.790145)">③ 同一会话执行两条 GPU 命令</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="245.7216" y="992.839137" transform="rotate(-0 245.7216 992.839137)">0</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="521.856" y="992.839137" transform="rotate(-0 521.856 992.839137)">20</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="659.9232" y="992.839137" transform="rotate(-0 659.9232 992.839137)">30</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="797.9904" y="992.839137" transform="rotate(-0 797.9904 992.839137)">40</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="58.9248" y="1044.711388" transform="rotate(-0 58.9248 1044.711388)">容器/主存</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="521.856" y="1042.920009" transform="rotate(-0 521.856 1042.920009)">一直保留在节点 N</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="58.9248" y="1110.270146" transform="rotate(-0 58.9248 1110.270146)">GPU0</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="383.7888" y="1108.575446" transform="rotate(-0 383.7888 1108.575446)">命令1：20秒</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="58.9248" y="1172.407277" transform="rotate(-0 58.9248 1172.407277)">GPU1</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="728.9568" y="1170.744804" transform="rotate(-0 728.9568 1170.744804)">命令2</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="67.0464" y="1230.027079" transform="rotate(-0 67.0464 1230.027079)">20 到 30 秒为 Agent 思考，命令2仍须重新准入。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_16">
+    <path d="M 67.0464 1366.833303 
+L 814.2336 1366.833303 
+L 814.2336 1429.002661 
+L 67.0464 1429.002661 
+z
+" clip-path="url(#p330190c160)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 50.8032 1560.249083 
+L 830.4768 1560.249083 
+L 830.4768 1622.41844 
+L 50.8032 1622.41844 
+z
+" clip-path="url(#p330190c160)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 50.8032 1335.748624 
+L 830.4768 1335.748624 
+" clip-path="url(#p330190c160)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_24">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="1314.516236" transform="rotate(-0 50.8032 1314.516236)">④ 实现边界：换卡并不等于状态迁移</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="440.64" y="1403.847669" transform="rotate(-0 440.64 1403.847669)">可选同机 GPU：必须在配置的候选池内</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1456.545526)">原卡忙：比较等待时间与换卡准备时间。</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1479.703534)">热模型仍在旧卡：新卡可能需要重新加载。</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1502.893768)">后台进程仍占卡：不能先把预算算作已归还。</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #8764b8" transform="translate(75.168 1585.474972)">跨节点需另做文件、主存与进程状态迁移。</text>
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #8764b8" transform="translate(75.168 1608.761886)">本图仅解释同机命令调度的资源边界。</text>
+   </g>
+  </g>
+  <g id="text_28">
+   <text style="font-weight: 700; font-size: 24px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="34.56" y="33.84" transform="rotate(-0 34.56 33.84)">资源边界：会话留在主机，GPU按命令申请</text>
+  </g>
+  <g id="text_29">
+   <text style="font-size: 17px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="71.064" transform="rotate(-0 34.56 71.064)">同机换卡时，容器、CPU、主存、GPU预算和模型状态各自怎样处理？</text>
+  </g>
+  <g id="text_30">
+   <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="101.52" transform="rotate(-0 34.56 101.52)">阅读顺序：自上而下 ① → ② → ③ → ④</text>
+  </g>
+  <g id="text_31">
+   <text style="font-size: 14.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="1670.004" transform="rotate(-0 34.56 1670.004)">图内数字为教学假设。先核角色、计时与同量工作，再核实现范围。实测证据以对应正文为准。</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pc8a202ae58">
+   <rect x="34.56" y="126.9" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p5a53720e86">
+   <rect x="34.56" y="513.73156" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p606072e864">
+   <rect x="34.56" y="900.563119" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p330190c160">
+   <rect x="34.56" y="1287.394679" width="812.16" height="345.385321"/>
+  </clipPath>
+ </defs>
+</svg>

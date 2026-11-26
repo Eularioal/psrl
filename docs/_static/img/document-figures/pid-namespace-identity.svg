@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="1152pt" viewBox="0 0 1152 1152" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:12:58.508502</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1152 
+L 1152 1152 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="46.08" y="41.362305" transform="rotate(-0 46.08 41.362305)">进程归属：容器内编号与宿主编号可能不同</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="93.291734" transform="rotate(-0 46.08 93.291734)">两个容器里都有 PID 12，取消任务时怎么避免杀错进程？</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 107.0208 227.1375 
+L 472.6656 227.1375 
+Q 483.264 227.1375 483.264 233.3475 
+L 483.264 360.6525 
+Q 483.264 366.8625 472.6656 366.8625 
+L 107.0208 366.8625 
+Q 96.4224 366.8625 96.4224 360.6525 
+L 96.4224 233.3475 
+Q 96.4224 227.1375 107.0208 227.1375 
+z
+" clip-path="url(#pe29d3c2a77)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 107.0208 444.4875 
+L 472.6656 444.4875 
+Q 483.264 444.4875 483.264 450.6975 
+L 483.264 578.0025 
+Q 483.264 584.2125 472.6656 584.2125 
+L 107.0208 584.2125 
+Q 96.4224 584.2125 96.4224 578.0025 
+L 96.4224 450.6975 
+Q 96.4224 444.4875 107.0208 444.4875 
+z
+" clip-path="url(#pe29d3c2a77)" style="fill: #fff2db; stroke: #e79730; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 700.5312 227.1375 
+L 1044.9792 227.1375 
+Q 1055.5776 227.1375 1055.5776 233.3475 
+L 1055.5776 360.6525 
+Q 1055.5776 366.8625 1044.9792 366.8625 
+L 700.5312 366.8625 
+Q 689.9328 366.8625 689.9328 360.6525 
+L 689.9328 233.3475 
+Q 689.9328 227.1375 700.5312 227.1375 
+z
+" clip-path="url(#pe29d3c2a77)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 700.5312 444.4875 
+L 1044.9792 444.4875 
+Q 1055.5776 444.4875 1055.5776 450.6975 
+L 1055.5776 578.0025 
+Q 1055.5776 584.2125 1044.9792 584.2125 
+L 700.5312 584.2125 
+Q 689.9328 584.2125 689.9328 578.0025 
+L 689.9328 450.6975 
+Q 689.9328 444.4875 700.5312 444.4875 
+z
+" clip-path="url(#pe29d3c2a77)" style="fill: #fff2db; stroke: #e79730; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 503.811338 297 
+Q 586.597411 297 667.706433 297 
+" clip-path="url(#pe29d3c2a77)" style="fill: none; stroke: #3478c5; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 661.306433 293.8 
+L 667.706433 297 
+L 661.306433 300.2 
+z
+" clip-path="url(#pe29d3c2a77)" style="fill: #3478c5; stroke: #3478c5; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 503.811338 514.35 
+Q 586.597411 514.35 667.706433 514.35 
+" clip-path="url(#pe29d3c2a77)" style="fill: none; stroke: #e79730; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 661.306433 511.15 
+L 667.706433 514.35 
+L 661.306433 517.55 
+z
+" clip-path="url(#pe29d3c2a77)" style="fill: #e79730; stroke: #e79730; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="289.8432" y="285.0607" transform="rotate(-0 289.8432 285.0607)">容器甲</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="289.8432" y="334.282962" transform="rotate(-0 289.8432 334.282962)">内部PID 12</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #e79730" x="289.8432" y="502.488825" transform="rotate(-0 289.8432 502.488825)">容器乙</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="289.8432" y="551.632963" transform="rotate(-0 289.8432 551.632963)">内部PID 12</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="872.7552" y="285.138825" transform="rotate(-0 872.7552 285.138825)">宿主进程</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="872.7552" y="334.322025" transform="rotate(-0 872.7552 334.322025)">PID 418 + 出生身份</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #e79730" x="872.7552" y="502.488825" transform="rotate(-0 872.7552 502.488825)">宿主进程</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="872.7552" y="551.672025" transform="rotate(-0 872.7552 551.672025)">PID 907 + 出生身份</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="576" y="633.005" transform="rotate(-0 576 633.005)">容器内编号相同，不说明是同一个宿主进程。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="text_12">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="142.827734" transform="rotate(-0 46.08 142.827734)">教学编号：容器 A 的 PID 12 对应宿主 418；容器 B 的 PID 12 对应宿主 907。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_8">
+    <path d="M 56.6784 689.904 
+L 1095.3216 689.904 
+Q 1110.15936 689.904 1110.15936 694.44 
+L 1110.15936 785.16 
+Q 1110.15936 789.696 1095.3216 789.696 
+L 56.6784 789.696 
+Q 41.84064 789.696 41.84064 785.16 
+L 41.84064 694.44 
+Q 41.84064 689.904 56.6784 689.904 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 353.4336 705.132 
+L 359.79264 705.132 
+L 359.79264 714.852 
+L 353.4336 714.852 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 353.4336 734.292 
+L 359.79264 734.292 
+L 359.79264 744.012 
+L 353.4336 744.012 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 353.4336 763.452 
+L 359.79264 763.452 
+L 359.79264 773.172 
+L 353.4336 773.172 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 56.6784 800.064 
+L 1095.3216 800.064 
+Q 1110.15936 800.064 1110.15936 804.6 
+L 1110.15936 895.32 
+Q 1110.15936 899.856 1095.3216 899.856 
+L 56.6784 899.856 
+Q 41.84064 899.856 41.84064 895.32 
+L 41.84064 804.6 
+Q 41.84064 800.064 56.6784 800.064 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 353.4336 815.292 
+L 359.79264 815.292 
+L 359.79264 825.012 
+L 353.4336 825.012 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 353.4336 844.452 
+L 359.79264 844.452 
+L 359.79264 854.172 
+L 353.4336 854.172 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 353.4336 873.612 
+L 359.79264 873.612 
+L 359.79264 883.332 
+L 353.4336 883.332 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 56.6784 910.224 
+L 1095.3216 910.224 
+Q 1110.15936 910.224 1110.15936 914.76 
+L 1110.15936 1005.48 
+Q 1110.15936 1010.016 1095.3216 1010.016 
+L 56.6784 1010.016 
+Q 41.84064 1010.016 41.84064 1005.48 
+L 41.84064 914.76 
+Q 41.84064 910.224 56.6784 910.224 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 353.4336 925.452 
+L 359.79264 925.452 
+L 359.79264 935.172 
+L 353.4336 935.172 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 353.4336 954.612 
+L 359.79264 954.612 
+L 359.79264 964.332 
+L 353.4336 964.332 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 353.4336 983.772 
+L 359.79264 983.772 
+L 359.79264 993.492 
+L 353.4336 993.492 
+z
+" clip-path="url(#pc38e74188e)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="67.2768" y="725.978262" transform="rotate(-0 67.2768 725.978262)">01  只看容器编号</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="721.543047" transform="rotate(-0 374.6304 721.543047)">A：PID 12</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="750.703047" transform="rotate(-0 374.6304 750.703047)">B：PID 12</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="779.980234" transform="rotate(-0 374.6304 779.980234)">局部编号相同不等于同进程</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="67.2768" y="836.138262" transform="rotate(-0 67.2768 836.138262)">02  建立可信映射</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="830.453047" transform="rotate(-0 374.6304 830.453047)">核对命名空间与 cgroup</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="861.019297" transform="rotate(-0 374.6304 861.019297)">记录宿主 PID 与出生身份</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="890.179297" transform="rotate(-0 374.6304 890.179297)">关联本次任务归属</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d68b20" x="67.2768" y="946.339277" transform="rotate(-0 67.2768 946.339277)">03  执行取消前</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="942.136484" transform="rotate(-0 374.6304 942.136484)">重新核实进程仍是原对象</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="971.062109" transform="rotate(-0 374.6304 971.062109)">只处理所属资源</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="1000.300234" transform="rotate(-0 374.6304 1000.300234)">PID 被复用时拒绝误取消</text>
+   </g>
+  </g>
+  <g id="axes_5">
+   <g id="patch_20">
+    <path d="M 56.6784 1032.7536 
+L 1095.3216 1032.7536 
+Q 1110.15936 1032.7536 1110.15936 1034.316 
+L 1110.15936 1090.116 
+Q 1110.15936 1091.6784 1095.3216 1091.6784 
+L 56.6784 1091.6784 
+Q 41.84064 1091.6784 41.84064 1090.116 
+L 41.84064 1034.316 
+Q 41.84064 1032.7536 56.6784 1032.7536 
+z
+" clip-path="url(#p8d9412567c)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_25">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="61.9776" y="1061.478797" transform="rotate(-0 61.9776 1061.478797)">进程身份包含所在空间与出生信息。裸 PID 既会跨空间重复，也会在退出后被复用。</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="1121.928117" transform="rotate(-0 46.08 1121.928117)">编号均为教学示意。可信归属的当前实现范围按正文区分，不扩大能力。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pe29d3c2a77">
+   <rect x="46.08" y="172.8" width="1059.84" height="496.8"/>
+  </clipPath>
+  <clipPath id="pc38e74188e">
+   <rect x="46.08" y="691.2" width="1059.84" height="324"/>
+  </clipPath>
+  <clipPath id="p8d9412567c">
+   <rect x="46.08" y="1033.2" width="1059.84" height="111.6"/>
+  </clipPath>
+ </defs>
+</svg>

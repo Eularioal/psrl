@@ -1,0 +1,2270 @@
+{
+  "scope": "Maintained Markdown under docs, including READMEs and public site pages.",
+  "excluded_directory_names": [
+    ".cache",
+    "__pycache__",
+    "_build",
+    "baseline",
+    "results"
+  ],
+  "documents": 204,
+  "documents_with_explanatory_images": 204,
+  "generated_figures": 187,
+  "chapter_explanations_with_question_map": 187,
+  "new_image_placements": 310,
+  "screen_figures": 187,
+  "screen_pages": 498,
+  "limits": "This check validates references, coverage and generated file integrity. Meaning, color use and readability require rendered human review.",
+  "errors": [],
+  "coverage": [
+    {
+      "document": "docs/README.md",
+      "figures": [
+        "_static/img/document-figures/map-0b5ca119d2-screen.png",
+        "_static/img/document-figures/map-0b5ca119d2-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/_static/README.md",
+      "figures": [
+        "img/document-figures/raster-vector-source-screen.png",
+        "img/document-figures/raster-vector-source-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/_static/css/README.md",
+      "figures": [
+        "../img/document-figures/browser-page-layers-screen.png",
+        "../img/document-figures/browser-page-layers-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/_static/img/README.md",
+      "figures": [
+        "document-figures/raster-vector-source-screen.png",
+        "document-figures/raster-vector-source-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/_static/img/document-figures/README.md",
+      "figures": [
+        "raster-vector-source-screen.png",
+        "raster-vector-source-screen-02.png",
+        "memory-promises-screen.png",
+        "memory-promises-screen-02.png",
+        "memory-promises-screen-03.png",
+        "memory-promises-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/_static/img/literature-reviews/README.md",
+      "figures": [
+        "../document-figures/raster-vector-source-screen.png",
+        "../document-figures/raster-vector-source-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/_static/js/README.md",
+      "figures": [
+        "../img/document-figures/browser-page-layers-screen.png",
+        "../img/document-figures/browser-page-layers-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/_templates/README.md",
+      "figures": [
+        "../_static/img/document-figures/browser-page-layers-screen.png",
+        "../_static/img/document-figures/browser-page-layers-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/design/README.md",
+      "figures": [
+        "../_static/img/document-figures/map-c435a658e9-screen.png",
+        "../_static/img/document-figures/map-c435a658e9-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/design/architecture.md",
+      "figures": [
+        "../_static/img/document-figures/explained-overview-c46ca98-screen.png",
+        "../_static/img/document-figures/explained-overview-c46ca98-screen-02.png",
+        "../_static/img/document-figures/explained-overview-c46ca98-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/design/env_worker.md",
+      "figures": [
+        "../_static/img/document-figures/host-and-gpu-ledgers-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/design/flexible_rollout.md",
+      "figures": [
+        "../_static/img/document-figures/explained-rollout_techniques-cf838b0-screen.png",
+        "../_static/img/document-figures/explained-rollout_techniques-cf838b0-screen-02.png",
+        "../_static/img/document-figures/explained-rollout_techniques-cf838b0-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/design/index.md",
+      "figures": [
+        "../_static/img/document-figures/map-0df1b907f1-screen.png",
+        "../_static/img/document-figures/map-0df1b907f1-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/design/kv_cache.md",
+      "figures": [
+        "../_static/img/document-figures/kv-prefix-pages-screen.png",
+        "../_static/img/document-figures/kv-prefix-pages-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/design/parameter_server.md",
+      "figures": [
+        "../_static/img/document-figures/explained-ps-d3858c3-screen.png",
+        "../_static/img/document-figures/explained-ps-d3858c3-screen-02.png",
+        "../_static/img/document-figures/explained-ps-d3858c3-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/design/resource_elasticity.md",
+      "figures": [
+        "../_static/img/document-figures/training-memory-peak-screen.png",
+        "../_static/img/document-figures/training-memory-peak-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/design/router_tito.md",
+      "figures": [
+        "../_static/img/document-figures/sample-fields-and-handles-screen.png",
+        "../_static/img/document-figures/sample-fields-and-handles-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/design/staleness_control.md",
+      "figures": [
+        "../_static/img/document-figures/explained-staleness_compatibility-ab32e0e-screen.png",
+        "../_static/img/document-figures/explained-staleness_compatibility-ab32e0e-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/design/transfer_queue.md",
+      "figures": [
+        "../_static/img/document-figures/sample-fields-and-handles-screen.png",
+        "../_static/img/document-figures/sample-fields-and-handles-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/README.md",
+      "figures": [
+        "experiments/env-reading-guide.png",
+        "experiments/env-current-layout.png",
+        "../_static/img/document-figures/map-31eb3fdaa1-screen.png",
+        "../_static/img/document-figures/map-31eb3fdaa1-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/01-AIRS审计_修复状态与验证范围.md",
+      "figures": [
+        "../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/02-APPS判题_代码隔离与验证边界.md",
+      "figures": [
+        "../../_static/img/document-figures/candidate-and-trusted-verifier-screen.png",
+        "../../_static/img/document-figures/candidate-and-trusted-verifier-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-907da87505-screen.png",
+        "../../_static/img/document-figures/map-907da87505-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/apps-followup/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/apps-isolation/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/candidate-and-trusted-verifier-screen.png",
+        "../../../_static/img/document-figures/candidate-and-trusted-verifier-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/review-round-two/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/01-Env历史_2026年9月EnvWorker原始提案.md",
+      "figures": [
+        "../../_static/img/document-figures/host-and-gpu-ledgers-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/02-Env历史_2026年10月12日资源单元与租约.md",
+      "figures": [
+        "../../_static/img/document-figures/host-and-gpu-ledgers-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/03-Env历史_早期Router执行流程.md",
+      "figures": [
+        "../../_static/img/document-figures/provider-execution-boundary-screen.png",
+        "../../_static/img/document-figures/provider-execution-boundary-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/04-Env历史_Science整卡锁与设备账本.md",
+      "figures": [
+        "../../_static/img/document-figures/static-device-contention-screen.png",
+        "../../_static/img/document-figures/static-device-contention-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/05-Env历史_修复前账本回收与缺口.md",
+      "figures": [
+        "../../_static/img/document-figures/release-logical-and-physical-screen.png",
+        "../../_static/img/document-figures/release-logical-and-physical-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": [
+        "https://raw.githubusercontent.com/eric-haibin-lin/verl-community/main/docs/driver_worker.png"
+      ]
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/06-Env历史_72ca50c版本GateAB机制.md",
+      "figures": [
+        "../../_static/img/document-figures/reply-gate-vs-device-lock-screen.png",
+        "../../_static/img/document-figures/reply-gate-vs-device-lock-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/07-Env历史_GateB回复节流机制.md",
+      "figures": [
+        "../../_static/img/document-figures/reply-gate-vs-device-lock-screen.png",
+        "../../_static/img/document-figures/reply-gate-vs-device-lock-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-bc0d96902a-screen.png",
+        "../../_static/img/document-figures/map-bc0d96902a-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-268b082887-screen.png",
+        "../../_static/img/document-figures/map-268b082887-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/admission_study/README.md",
+      "figures": [
+        "../../../../_static/img/document-figures/two-gpu-command-queue-screen.png",
+        "../../../../_static/img/document-figures/two-gpu-command-queue-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/feedback_pressure/README.md",
+      "figures": [
+        "../../../../_static/img/document-figures/measurement-contention-screen.png",
+        "../../../../_static/img/document-figures/measurement-contention-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/joint_gpu_study/README.md",
+      "figures": [
+        "../../../../_static/img/document-figures/two-gpu-command-queue-screen.png",
+        "../../../../_static/img/document-figures/two-gpu-command-queue-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/posttrain_reuse_study/README.md",
+      "figures": [
+        "../../../../_static/img/document-figures/two-model-training-loops-screen.png",
+        "../../../../_static/img/document-figures/two-model-training-loops-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/resident_sharing_study/README.md",
+      "figures": [
+        "../../../../_static/img/document-figures/borrower-return-delay-screen.png",
+        "../../../../_static/img/document-figures/borrower-return-delay-screen-02.png",
+        "../../../../_static/img/document-figures/borrower-return-delay-screen-03.png",
+        "../../../../_static/img/document-figures/borrower-return-delay-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/state_reuse_study/README.md",
+      "figures": [
+        "../../../../_static/img/document-figures/state-version-match-screen.png",
+        "../../../../_static/img/document-figures/state-version-match-screen-02.png",
+        "../../../../_static/img/document-figures/state-version-match-screen-03.png",
+        "../../../../_static/img/document-figures/state-version-match-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/warm_router_study/README.md",
+      "figures": [
+        "../../../../_static/img/document-figures/wait-or-reload-screen.png",
+        "../../../../_static/img/document-figures/wait-or-reload-screen-02.png",
+        "../../../../_static/img/document-figures/wait-or-reload-screen-03.png",
+        "../../../../_static/img/document-figures/wait-or-reload-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/01-实验总览_调度收益与证据范围.md",
+      "figures": [
+        "partition-current-comparison.png",
+        "../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/02-基线对照_低负载EnvRouter修复验证.md",
+      "figures": [
+        "../../_static/img/document-figures/measured-low-load-screen.png",
+        "../../_static/img/document-figures/measured-low-load-screen-02.png",
+        "../../_static/img/document-figures/measured-low-load-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/03-Science训练_三步对照与显存压力.md",
+      "figures": [
+        "../../_static/img/document-figures/measured-science-three-steps-screen.png",
+        "../../_static/img/document-figures/measured-science-three-steps-screen-02.png",
+        "../../_static/img/document-figures/measured-science-three-steps-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/04-MPS训练_并行执行与控制修复对照.md",
+      "figures": [
+        "../../_static/img/document-figures/measured-mps-boundaries-screen.png",
+        "../../_static/img/document-figures/measured-mps-boundaries-screen-02.png",
+        "../../_static/img/document-figures/measured-mps-boundaries-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/05-容器后端_原生实现修复与Science验证.md",
+      "figures": [
+        "../../_static/img/document-figures/release-logical-and-physical-screen.png",
+        "../../_static/img/document-figures/release-logical-and-physical-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/06-训推共享_常驻vLLM与环境并行实验.md",
+      "figures": [
+        "../../_static/img/document-figures/explained-resident-compute-sharing-f533859-screen.png",
+        "../../_static/img/document-figures/explained-resident-compute-sharing-f533859-screen-02.png",
+        "../../_static/img/document-figures/explained-resident-compute-sharing-f533859-screen-03.png",
+        "../../_static/img/document-figures/explained-resident-compute-sharing-f533859-screen-04.png",
+        "../../_static/img/document-figures/explained-resident-compute-sharing-long-be21a7c-screen.png",
+        "../../_static/img/document-figures/explained-resident-compute-sharing-long-be21a7c-screen-02.png",
+        "../../_static/img/document-figures/explained-resident-compute-sharing-long-be21a7c-screen-03.png",
+        "../../_static/img/document-figures/explained-resident-compute-sharing-long-be21a7c-screen-04.png",
+        "../../_static/img/document-figures/explained-resident-compute-sharing-long-be21a7c-screen-05.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/07-vLLM并发_吞吐与请求延迟曲线.md",
+      "figures": [
+        "../../_static/img/document-figures/explained-single-gpu-inference-curve-evidence-7df94d3-screen.png",
+        "../../_static/img/document-figures/explained-single-gpu-inference-curve-evidence-7df94d3-screen-02.png",
+        "../../_static/img/document-figures/explained-single-gpu-inference-curve-evidence-7df94d3-screen-03.png",
+        "../../_static/img/document-figures/explained-single-gpu-inference-curve-evidence-7df94d3-screen-04.png",
+        "../../_static/img/document-figures/explained-single-gpu-inference-curve-evidence-7df94d3-screen-05.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/08-模式选择_Command与Episode及等待预测.md",
+      "figures": [
+        "../../_static/img/document-figures/explained-automatic-reservation-70f6d6f-screen.png",
+        "../../_static/img/document-figures/explained-automatic-reservation-70f6d6f-screen-02.png",
+        "../../_static/img/document-figures/explained-automatic-reservation-70f6d6f-screen-03.png",
+        "../../_static/img/document-figures/explained-automatic-reservation-70f6d6f-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/09-资源分区_静态卡池与推理余量共享.md",
+      "figures": [
+        "partition-episode-baseline.png",
+        "partition-strategy-distinction.png",
+        "../../_static/img/document-figures/explained-integrated-partition-3748353-screen.png",
+        "../../_static/img/document-figures/explained-integrated-partition-3748353-screen-02.png",
+        "../../_static/img/document-figures/explained-integrated-partition-3748353-screen-03.png",
+        "../../_static/img/document-figures/explained-integrated-partition-3748353-screen-04.png",
+        "../../_static/img/document-figures/explained-environment-capacity-dd7a546-screen.png",
+        "../../_static/img/document-figures/explained-environment-capacity-dd7a546-screen-02.png",
+        "../../_static/img/document-figures/explained-environment-capacity-dd7a546-screen-03.png",
+        "../../_static/img/document-figures/explained-environment-capacity-dd7a546-screen-04.png",
+        "../../_static/img/document-figures/explained-capacity-training-2330452-screen.png",
+        "../../_static/img/document-figures/explained-capacity-training-2330452-screen-02.png",
+        "../../_static/img/document-figures/explained-capacity-training-2330452-screen-03.png",
+        "../../_static/img/document-figures/explained-capacity-training-2330452-screen-04.png",
+        "../../_static/img/document-figures/explained-capacity-command-timeline-ea05e12-screen.png",
+        "../../_static/img/document-figures/explained-capacity-command-timeline-ea05e12-screen-02.png",
+        "../../_static/img/document-figures/explained-capacity-command-timeline-ea05e12-screen-03.png",
+        "../../_static/img/document-figures/explained-capacity-model-c7da45b-screen.png",
+        "../../_static/img/document-figures/explained-capacity-model-c7da45b-screen-02.png",
+        "../../_static/img/document-figures/explained-capacity-model-c7da45b-screen-03.png",
+        "../../_static/img/document-figures/explained-capacity-model-c7da45b-screen-04.png",
+        "static-partition-bottleneck.png",
+        "static-partition-followup.png",
+        "sync-overlap-results.png",
+        "sync-overlap-timeline.png",
+        "three-env-resident-pair.png",
+        "partition-prelaunch-design.png",
+        "live-partition-lifecycle.png",
+        "live-partition-results.png",
+        "live-partition-startup.png",
+        "elastic-startup-repeat.png",
+        "partition-overlap-proposal.png",
+        "handover-overlap-timings.png",
+        "episode-partition-comparison.png",
+        "episode-partition-queue.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/10-进程归属_Procfs挂载障碍与处理.md",
+      "figures": [
+        "../../_static/img/document-figures/pid-namespace-identity-screen.png",
+        "../../_static/img/document-figures/pid-namespace-identity-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/11-历史审阅_低负载配对与GateAB设计.md",
+      "figures": [
+        "../../_static/img/document-figures/explained-paired-latency-d4ff470-screen.png",
+        "../../_static/img/document-figures/explained-paired-latency-d4ff470-screen-02.png",
+        "../../_static/img/document-figures/explained-paired-latency-d4ff470-screen-03.png",
+        "../../_static/img/document-figures/explained-paired-latency-d4ff470-screen-04.png",
+        "../../_static/img/document-figures/explained-paired-latency-d4ff470-screen-05.png",
+        "../../_static/img/document-figures/explained-paired-latency-d4ff470-screen-06.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/12-研究报告_PSRL环境GPU调度的设计与评估.md",
+      "figures": [
+        "partition-episode-baseline.png",
+        "partition-overlap-proposal.png",
+        "partition-evidence-overview.png",
+        "partition-current-comparison.png",
+        "handover-completed-work.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/13-扩展对照_八卡单批次与多负载回放.md",
+      "figures": [
+        "expanded-partition-live.png",
+        "expanded-partition-replay.png",
+        "diverse-workloads-replay.png",
+        "gpu-control-startup-stages.png",
+        "gpu-control-startup-overlap.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-df457d24c5-screen.png",
+        "../../_static/img/document-figures/map-df457d24c5-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/01-任务验收_结果与证据导航.md",
+      "figures": [
+        "../../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/02-状态复用_等待与重新加载的前期实验.md",
+      "figures": [
+        "../../../_static/img/document-figures/wait-or-reload-screen.png",
+        "../../../_static/img/document-figures/wait-or-reload-screen-02.png",
+        "../../../_static/img/document-figures/wait-or-reload-screen-03.png",
+        "../../../_static/img/document-figures/wait-or-reload-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/03-动态放置_真实模型驻留与跨卡探索.md",
+      "figures": [
+        "../../../_static/img/document-figures/two-gpu-command-queue-screen.png",
+        "../../../_static/img/document-figures/two-gpu-command-queue-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/04-动态放置_热卡等待与冷卡加载对照.md",
+      "figures": [
+        "../../../_static/img/document-figures/explained-warm-placement-core-0d59e83-screen.png",
+        "../../../_static/img/document-figures/explained-warm-placement-core-0d59e83-screen-02.png",
+        "../../../_static/img/document-figures/explained-warm-placement-core-0d59e83-screen-03.png",
+        "../../../_static/img/document-figures/explained-warm-placement-decomposition-860b7c4-screen.png",
+        "../../../_static/img/document-figures/explained-warm-placement-decomposition-860b7c4-screen-02.png",
+        "../../../_static/img/document-figures/explained-warm-placement-decomposition-860b7c4-screen-03.png",
+        "../../../_static/img/document-figures/explained-warm-placement-faults-6ec458f-screen.png",
+        "../../../_static/img/document-figures/explained-warm-placement-faults-6ec458f-screen-02.png",
+        "../../../_static/img/document-figures/explained-warm-placement-faults-6ec458f-screen-03.png",
+        "../../../_static/img/document-figures/explained-warm-placement-faults-6ec458f-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/05-评分复用_PostTrain准备成本与整批耗时.md",
+      "figures": [
+        "../../../_static/img/document-figures/measured-posttrain-reuse-screen.png",
+        "../../../_static/img/document-figures/measured-posttrain-reuse-screen-02.png",
+        "../../../_static/img/document-figures/measured-posttrain-reuse-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/06-显存压力_提前排队与失败重试.md",
+      "figures": [
+        "../../../_static/img/document-figures/memory-promises-screen.png",
+        "../../../_static/img/document-figures/memory-promises-screen-02.png",
+        "../../../_static/img/document-figures/memory-promises-screen-03.png",
+        "../../../_static/img/document-figures/memory-promises-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/07-FlashInfer_进程复用与任务合批.md",
+      "figures": [
+        "../../../_static/img/document-figures/measured-flashinfer-preparation-screen.png",
+        "../../../_static/img/document-figures/measured-flashinfer-preparation-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/08-性能反馈_高压力调度实验.md",
+      "figures": [
+        "../../../_static/img/document-figures/measurement-contention-screen.png",
+        "../../../_static/img/document-figures/measurement-contention-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/map-66cda102ff-screen.png",
+        "../../../_static/img/document-figures/map-66cda102ff-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/figures/README.md",
+      "figures": [
+        "../../../../_static/img/document-figures/raster-vector-source-screen.png",
+        "../../../../_static/img/document-figures/raster-vector-source-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/flashinfer-env/README.md",
+      "figures": [
+        "../../../../_static/img/document-figures/shell-and-python-screen.png",
+        "../../../../_static/img/document-figures/shell-and-python-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/scripts/README.md",
+      "figures": [
+        "../../../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/01-历史验证_2026年10月13日EnvService修复.md",
+      "figures": [
+        "../../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/02-历史对照_Science资源账本与Unit余量.md",
+      "figures": [
+        "../../../_static/img/document-figures/explained-comparison-b8c2052-screen.png",
+        "../../../_static/img/document-figures/explained-comparison-b8c2052-screen-02.png",
+        "../../../_static/img/document-figures/explained-comparison-b8c2052-screen-03.png",
+        "../../../_static/img/document-figures/explained-comparison-b8c2052-screen-04.png",
+        "../../../_static/img/document-figures/explained-comparison-b8c2052-screen-05.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/03-历史对照_Science跨任务池显存竞争.md",
+      "figures": [
+        "../../../_static/img/document-figures/explained-cuda-preflight-9c45888-screen.png",
+        "../../../_static/img/document-figures/explained-cuda-preflight-9c45888-screen-02.png",
+        "../../../_static/img/document-figures/explained-cuda-preflight-9c45888-screen-03.png",
+        "../../../_static/img/document-figures/explained-cuda-preflight-9c45888-screen-04.png",
+        "../../../_static/img/document-figures/explained-pressure-matched-c114981-screen.png",
+        "../../../_static/img/document-figures/explained-pressure-matched-c114981-screen-02.png",
+        "../../../_static/img/document-figures/explained-pressure-matched-c114981-screen-03.png",
+        "../../../_static/img/document-figures/explained-pressure-matched-c114981-screen-04.png",
+        "../../../_static/img/document-figures/explained-pressure-matched-c114981-screen-05.png",
+        "../../../_static/img/document-figures/explained-pressure-matched-c114981-screen-06.png",
+        "../../../_static/img/document-figures/explained-pressure-matched-c114981-screen-07.png",
+        "../../../_static/img/document-figures/explained-pressure-matched-c114981-screen-08.png",
+        "../../../_static/img/document-figures/explained-pressure-training-curves-ed8f503-screen.png",
+        "../../../_static/img/document-figures/explained-pressure-training-curves-ed8f503-screen-02.png",
+        "../../../_static/img/document-figures/explained-pressure-training-curves-ed8f503-screen-03.png",
+        "../../../_static/img/document-figures/explained-pressure-training-curves-ed8f503-screen-04.png",
+        "../../../_static/img/document-figures/explained-pressure-training-curves-ed8f503-screen-05.png",
+        "../../../_static/img/document-figures/explained-pressure-training-curves-ed8f503-screen-06.png",
+        "../../../_static/img/document-figures/explained-pressure-training-curves-ed8f503-screen-07.png",
+        "../../../_static/img/document-figures/explained-pressure-training-curves-ed8f503-screen-08.png",
+        "../../../_static/img/document-figures/explained-historical-timing-7286182-screen.png",
+        "../../../_static/img/document-figures/explained-historical-timing-7286182-screen-02.png",
+        "../../../_static/img/document-figures/explained-historical-timing-7286182-screen-03.png",
+        "../../../_static/img/document-figures/explained-fixed-work-outcomes-c85fca2-screen.png",
+        "../../../_static/img/document-figures/explained-fixed-work-outcomes-c85fca2-screen-02.png",
+        "../../../_static/img/document-figures/explained-fixed-work-outcomes-c85fca2-screen-03.png",
+        "../../../_static/img/document-figures/explained-fixed-work-outcomes-c85fca2-screen-04.png",
+        "../../../_static/img/document-figures/explained-fixed-work-outcomes-c85fca2-screen-05.png",
+        "../../../_static/img/document-figures/explained-fixed-work-outcomes-c85fca2-screen-06.png",
+        "../../../_static/img/document-figures/explained-fixed-work-outcomes-c85fca2-screen-07.png",
+        "../../../_static/img/document-figures/explained-fixed-work-outcomes-c85fca2-screen-08.png",
+        "../../../_static/img/document-figures/explained-fixed-work-training-4f78708-screen.png",
+        "../../../_static/img/document-figures/explained-fixed-work-training-4f78708-screen-02.png",
+        "../../../_static/img/document-figures/explained-fixed-work-training-4f78708-screen-03.png",
+        "../../../_static/img/document-figures/explained-fixed-work-training-4f78708-screen-04.png",
+        "../../../_static/img/document-figures/explained-fixed-work-training-4f78708-screen-05.png",
+        "../../../_static/img/document-figures/explained-fixed-work-environment-memory-53e9b38-screen.png",
+        "../../../_static/img/document-figures/explained-fixed-work-environment-memory-53e9b38-screen-02.png",
+        "../../../_static/img/document-figures/explained-fixed-work-environment-memory-53e9b38-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/04-历史对照_LAPS训练与EnvRouter开关.md",
+      "figures": [
+        "../../../_static/img/document-figures/explained-failure-evidence-dd5c2ec-screen.png",
+        "../../../_static/img/document-figures/explained-failure-evidence-dd5c2ec-screen-02.png",
+        "../../../_static/img/document-figures/explained-failure-evidence-dd5c2ec-screen-03.png",
+        "../../../_static/img/document-figures/explained-failure-evidence-dd5c2ec-screen-04.png",
+        "../../../_static/img/document-figures/explained-training-curves-22c06d0-screen.png",
+        "../../../_static/img/document-figures/explained-training-curves-22c06d0-screen-02.png",
+        "../../../_static/img/document-figures/explained-training-curves-22c06d0-screen-03.png",
+        "../../../_static/img/document-figures/explained-training-curves-22c06d0-screen-04.png",
+        "../../../_static/img/document-figures/explained-training-curves-22c06d0-screen-05.png",
+        "../../../_static/img/document-figures/explained-training-curves-22c06d0-screen-06.png",
+        "../../../_static/img/document-figures/explained-training-curves-22c06d0-screen-07.png",
+        "../../../_static/img/document-figures/explained-training-curves-22c06d0-screen-08.png",
+        "../../../_static/img/document-figures/explained-resource-comparison-7069978-screen.png",
+        "../../../_static/img/document-figures/explained-resource-comparison-7069978-screen-02.png",
+        "../../../_static/img/document-figures/explained-resource-comparison-7069978-screen-03.png",
+        "../../../_static/img/document-figures/explained-resource-comparison-7069978-screen-04.png",
+        "../../../_static/img/document-figures/explained-resource-comparison-7069978-screen-05.png",
+        "../../../_static/img/document-figures/explained-resource-comparison-7069978-screen-06.png",
+        "../../../_static/img/document-figures/explained-resource-comparison-7069978-screen-07.png",
+        "../../../_static/img/document-figures/explained-resource-comparison-7069978-screen-08.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/05-历史对照_同任务多协程GPU并发.md",
+      "figures": [
+        "../../../_static/img/document-figures/explained-capacity-comparison-7f2ba30-screen.png",
+        "../../../_static/img/document-figures/explained-capacity-comparison-7f2ba30-screen-02.png",
+        "../../../_static/img/document-figures/explained-capacity-comparison-7f2ba30-screen-03.png",
+        "../../../_static/img/document-figures/explained-capacity-comparison-7f2ba30-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/06-历史过程_Science显存压力与原生任务.md",
+      "figures": [
+        "../../../_static/img/document-figures/explained-comparison-38ffe21-screen.png",
+        "../../../_static/img/document-figures/explained-comparison-38ffe21-screen-02.png",
+        "../../../_static/img/document-figures/explained-comparison-38ffe21-screen-03.png",
+        "../../../_static/img/document-figures/explained-comparison-38ffe21-screen-04.png",
+        "../../../_static/img/document-figures/explained-comparison-38ffe21-screen-05.png",
+        "../../../_static/img/document-figures/explained-comparison-38ffe21-screen-06.png",
+        "../../../_static/img/document-figures/explained-matched-prefix-7cfb46d-screen.png",
+        "../../../_static/img/document-figures/explained-matched-prefix-7cfb46d-screen-02.png",
+        "../../../_static/img/document-figures/explained-matched-prefix-7cfb46d-screen-03.png",
+        "../../../_static/img/document-figures/explained-matched-prefix-7cfb46d-screen-04.png",
+        "../../../_static/img/document-figures/explained-matched-prefix-7cfb46d-screen-05.png",
+        "../../../_static/img/document-figures/explained-per-step-fb816d0-screen.png",
+        "../../../_static/img/document-figures/explained-per-step-fb816d0-screen-02.png",
+        "../../../_static/img/document-figures/explained-per-step-fb816d0-screen-03.png",
+        "../../../_static/img/document-figures/explained-per-step-fb816d0-screen-04.png",
+        "../../../_static/img/document-figures/explained-per-step-fb816d0-screen-05.png",
+        "../../../_static/img/document-figures/explained-per-step-fb816d0-screen-06.png",
+        "../../../_static/img/document-figures/explained-comparison-f2dd9a5-screen.png",
+        "../../../_static/img/document-figures/explained-comparison-f2dd9a5-screen-02.png",
+        "../../../_static/img/document-figures/explained-comparison-f2dd9a5-screen-03.png",
+        "../../../_static/img/document-figures/explained-comparison-f2dd9a5-screen-04.png",
+        "../../../_static/img/document-figures/explained-comparison-f2dd9a5-screen-05.png",
+        "../../../_static/img/document-figures/explained-comparison-c991d3e-screen.png",
+        "../../../_static/img/document-figures/explained-comparison-c991d3e-screen-02.png",
+        "../../../_static/img/document-figures/explained-comparison-c991d3e-screen-03.png",
+        "../../../_static/img/document-figures/explained-comparison-c991d3e-screen-04.png",
+        "../../../_static/img/document-figures/explained-comparison-c991d3e-screen-05.png",
+        "../../../_static/img/document-figures/explained-comparison-c991d3e-screen-06.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/07-历史过程_固定基线修复与单卡验证.md",
+      "figures": [
+        "../../../_static/img/document-figures/explained-completion-a9a0126-screen.png",
+        "../../../_static/img/document-figures/explained-completion-a9a0126-screen-02.png",
+        "../../../_static/img/document-figures/explained-completion-a9a0126-screen-03.png",
+        "../../../_static/img/document-figures/explained-completion-a9a0126-screen-04.png",
+        "../../../_static/img/document-figures/explained-completion-a9a0126-screen-05.png",
+        "../../../_static/img/document-figures/explained-completion-a9a0126-screen-06.png",
+        "../../../_static/img/document-figures/explained-resources-3247f1a-screen.png",
+        "../../../_static/img/document-figures/explained-resources-3247f1a-screen-02.png",
+        "../../../_static/img/document-figures/explained-resources-3247f1a-screen-03.png",
+        "../../../_static/img/document-figures/explained-resources-3247f1a-screen-04.png",
+        "../../../_static/img/document-figures/explained-low-overhead-771a5d1-screen.png",
+        "../../../_static/img/document-figures/explained-low-overhead-771a5d1-screen-02.png",
+        "../../../_static/img/document-figures/explained-low-overhead-771a5d1-screen-03.png",
+        "../../../_static/img/document-figures/explained-low-overhead-771a5d1-screen-04.png",
+        "../../../_static/img/document-figures/explained-prewarm-comparison-b1a015e-screen.png",
+        "../../../_static/img/document-figures/explained-prewarm-comparison-b1a015e-screen-02.png",
+        "../../../_static/img/document-figures/explained-prewarm-comparison-b1a015e-screen-03.png",
+        "../../../_static/img/document-figures/explained-prewarm-comparison-b1a015e-screen-04.png",
+        "../../../_static/img/document-figures/explained-prewarm-comparison-b1a015e-screen-05.png",
+        "../../../_static/img/document-figures/explained-prewarm-comparison-b1a015e-screen-06.png",
+        "../../../_static/img/document-figures/explained-resource-timeline-6931260-screen.png",
+        "../../../_static/img/document-figures/explained-resource-timeline-6931260-screen-02.png",
+        "../../../_static/img/document-figures/explained-resource-timeline-6931260-screen-03.png",
+        "../../../_static/img/document-figures/explained-low-load-breakdown-37a32b1-screen.png",
+        "../../../_static/img/document-figures/explained-low-load-breakdown-37a32b1-screen-02.png",
+        "../../../_static/img/document-figures/explained-low-load-breakdown-37a32b1-screen-03.png",
+        "../../../_static/img/document-figures/explained-startup-offload-6f38130-screen.png",
+        "../../../_static/img/document-figures/explained-startup-offload-6f38130-screen-02.png",
+        "../../../_static/img/document-figures/explained-startup-offload-6f38130-screen-03.png",
+        "../../../_static/img/document-figures/explained-startup-offload-6f38130-screen-04.png",
+        "../../../_static/img/document-figures/explained-startup-offload-6f38130-screen-05.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/08-历史过程_MPS训练并发对照.md",
+      "figures": [
+        "../../../_static/img/document-figures/gpu-capacity-and-compute-screen.png",
+        "../../../_static/img/document-figures/gpu-capacity-and-compute-screen-02.png",
+        "../../../_static/img/document-figures/gpu-capacity-and-compute-screen-03.png",
+        "../../../_static/img/document-figures/gpu-capacity-and-compute-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/09-历史故障_原生后端修复前生命周期.md",
+      "figures": [
+        "../../../_static/img/document-figures/release-logical-and-physical-screen.png",
+        "../../../_static/img/document-figures/release-logical-and-physical-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/10-历史提案_阶段租约与回填调度.md",
+      "figures": [
+        "../../../_static/img/document-figures/command-episode-residency-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/11-历史过程_GPU基准接入验证.md",
+      "figures": [
+        "../../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/12-历史阶段_2026年10月28日设计与收益.md",
+      "figures": [
+        "../../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/map-a0cf851f52-screen.png",
+        "../../../_static/img/document-figures/map-a0cf851f52-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/gpu-job-validation/README.md",
+      "figures": [
+        "../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md",
+      "figures": [
+        "../../experiments/env-current-layout.png",
+        "../../../_static/img/document-figures/host-and-gpu-ledgers-screen.png",
+        "../../../_static/img/document-figures/chapter-episode-admission-screen.png",
+        "../../../_static/img/document-figures/chapter-gpu-pool-host-screen.png",
+        "../../../_static/img/document-figures/chapter-grouped-placement-screen.png",
+        "../../experiments/gpu-control-startup-overlap.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/02-统一执行_EnvRouter与容器及预算策略.md",
+      "figures": [
+        "../../../_static/img/document-figures/provider-execution-boundary-screen.png",
+        "../../../_static/img/document-figures/provider-execution-boundary-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/03-容器后端_EnvWorker与Harbor统一实现.md",
+      "figures": [
+        "../../../_static/img/document-figures/provider-execution-boundary-screen.png",
+        "../../../_static/img/document-figures/provider-execution-boundary-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/04-GPU作业_生命周期与任务遥测.md",
+      "figures": [
+        "../../../_static/img/document-figures/chapter-gpu-return-states-screen.png",
+        "../../../_static/img/document-figures/explained-latency-9f26f8b-screen.png",
+        "../../../_static/img/document-figures/explained-latency-9f26f8b-screen-02.png",
+        "../../../_static/img/document-figures/explained-latency-9f26f8b-screen-03.png",
+        "../../../_static/img/document-figures/chapter-compute-sharing-screen.png",
+        "../../../_static/img/document-figures/chapter-three-limits-screen.png",
+        "../../../_static/img/document-figures/chapter-gpu-return-states-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/05-EnvRouter_配置恢复与Worker重试.md",
+      "figures": [
+        "../../../_static/img/document-figures/release-logical-and-physical-screen.png",
+        "../../../_static/img/document-figures/release-logical-and-physical-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/06-工程审查_待修复问题与优先级.md",
+      "figures": [
+        "../../experiments/episode-partition-queue.png",
+        "../../experiments/container-lookup-trace.png",
+        "../../../_static/img/document-figures/release-logical-and-physical-screen.png",
+        "../../../_static/img/document-figures/release-logical-and-physical-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/map-37db5ffc0f-screen.png",
+        "../../../_static/img/document-figures/map-37db5ffc0f-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/01-显存准入_实测占用与预约预算.md",
+      "figures": [
+        "../../../_static/img/document-figures/memory-promises-screen.png",
+        "../../../_static/img/document-figures/memory-promises-screen-02.png",
+        "../../../_static/img/document-figures/memory-promises-screen-03.png",
+        "../../../_static/img/document-figures/memory-promises-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/02-命令调度_GPU申请归还与状态保留.md",
+      "figures": [
+        "../../../_static/img/document-figures/command-episode-residency-screen.png",
+        "../../../_static/img/document-figures/explained-completion-comparison-f9ce4be-screen.png",
+        "../../../_static/img/document-figures/explained-completion-comparison-f9ce4be-screen-02.png",
+        "../../../_static/img/document-figures/explained-completion-comparison-f9ce4be-screen-03.png",
+        "../../../_static/img/document-figures/explained-completion-comparison-f9ce4be-screen-04.png",
+        "../../../_static/img/document-figures/explained-completion-comparison-f9ce4be-screen-05.png",
+        "../../../_static/img/document-figures/explained-completion-comparison-f9ce4be-screen-06.png",
+        "../../../_static/img/document-figures/explained-completion-comparison-f9ce4be-screen-07.png",
+        "../../../_static/img/document-figures/explained-completion-comparison-f9ce4be-screen-08.png",
+        "../../../_static/img/document-figures/explained-resource-timeline-a3c02cf-screen.png",
+        "../../../_static/img/document-figures/explained-resource-timeline-a3c02cf-screen-02.png",
+        "../../../_static/img/document-figures/explained-resource-timeline-a3c02cf-screen-03.png",
+        "../../../_static/img/document-figures/explained-training-metrics-3137056-screen.png",
+        "../../../_static/img/document-figures/explained-training-metrics-3137056-screen-02.png",
+        "../../../_static/img/document-figures/explained-training-metrics-3137056-screen-03.png",
+        "../../../_static/img/document-figures/explained-training-metrics-3137056-screen-04.png",
+        "../../../_static/img/document-figures/explained-training-metrics-3137056-screen-05.png",
+        "../../../_static/img/document-figures/explained-completion-c7d03c2-screen.png",
+        "../../../_static/img/document-figures/explained-completion-c7d03c2-screen-02.png",
+        "../../../_static/img/document-figures/explained-completion-c7d03c2-screen-03.png",
+        "../../../_static/img/document-figures/explained-overlap-470dd69-screen.png",
+        "../../../_static/img/document-figures/explained-overlap-470dd69-screen-02.png",
+        "../../../_static/img/document-figures/explained-overlap-470dd69-screen-03.png",
+        "../../../_static/img/document-figures/explained-control-comparison-65d1b87-screen.png",
+        "../../../_static/img/document-figures/explained-control-comparison-65d1b87-screen-02.png",
+        "../../../_static/img/document-figures/explained-control-comparison-65d1b87-screen-03.png",
+        "../../../_static/img/document-figures/explained-control-comparison-65d1b87-screen-04.png",
+        "../../../_static/img/document-figures/explained-control-comparison-65d1b87-screen-05.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/03-进程归属_PID身份与显存记账.md",
+      "figures": [
+        "../../../_static/img/document-figures/pid-namespace-identity-screen.png",
+        "../../../_static/img/document-figures/pid-namespace-identity-screen-02.png",
+        "../../../_static/img/document-figures/memory-promises-screen.png",
+        "../../../_static/img/document-figures/memory-promises-screen-02.png",
+        "../../../_static/img/document-figures/memory-promises-screen-03.png",
+        "../../../_static/img/document-figures/memory-promises-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/04-GPU并行_MPS执行后端.md",
+      "figures": [
+        "../../../_static/img/document-figures/gpu-capacity-and-compute-screen.png",
+        "../../../_static/img/document-figures/gpu-capacity-and-compute-screen-02.png",
+        "../../../_static/img/document-figures/gpu-capacity-and-compute-screen-03.png",
+        "../../../_static/img/document-figures/gpu-capacity-and-compute-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md",
+      "figures": [
+        "../../../_static/img/document-figures/chapter-critical-path-screen.png",
+        "../../../_static/img/document-figures/chapter-critical-path-screen-02.png",
+        "../../../_static/img/document-figures/chapter-memory-headroom-screen.png",
+        "../../../_static/img/document-figures/chapter-idle-window-screen.png",
+        "../../../_static/img/document-figures/chapter-gpu-priority-screen.png",
+        "../../../_static/img/document-figures/chapter-sharing-control-screen.png",
+        "../../../_static/img/document-figures/chapter-compute-sharing-screen.png",
+        "../../../_static/img/document-figures/chapter-gpu-return-states-screen.png",
+        "../../../_static/img/document-figures/chapter-gpu-priority-screen.png",
+        "../../experiments/partition-strategy-distinction.png",
+        "../../experiments/live-partition-lifecycle.png",
+        "../../experiments/handover-window-reset.png",
+        "../../experiments/partition-overlap-proposal.png",
+        "../../experiments/borrow-preparation-example.png",
+        "../../../_static/img/literature-reviews/paper-weave-fig01-screen.png",
+        "../../../_static/img/document-figures/chapter-replica-backlog-screen.png",
+        "../../../_static/img/document-figures/chapter-three-limits-screen.png",
+        "../../../_static/img/document-figures/chapter-finite-concurrency-screen.png",
+        "../../../_static/img/document-figures/chapter-tail-batch-screen.png",
+        "../../../_static/img/document-figures/chapter-instances-requests-screen.png",
+        "../../../_static/img/document-figures/chapter-rollout-pipeline-screen.png",
+        "../../experiments/adaptive-admission-design.png",
+        "../../experiments/partition-prelaunch-design.png",
+        "../../experiments/weight-sync-live-storage.png",
+        "../../../_static/img/document-figures/explained-weight-sync-choices-6bf07fc-screen.png",
+        "../../../_static/img/document-figures/explained-weight-sync-choices-6bf07fc-screen-02.png",
+        "../../../_static/img/document-figures/explained-weight-sync-choices-6bf07fc-screen-03.png",
+        "../../../_static/img/document-figures/command-episode-residency-screen.png",
+        "../../../_static/img/document-figures/chapter-process-reuse-screen.png",
+        "../../../_static/img/document-figures/chapter-prediction-intervals-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/06-训推借卡_Rollout睡眠与归还协议.md",
+      "figures": [
+        "../../../_static/img/document-figures/chapter-warm-layers-screen.png",
+        "../../../_static/img/document-figures/chapter-idle-window-screen.png",
+        "../../../_static/img/document-figures/borrower-return-delay-screen.png",
+        "../../../_static/img/document-figures/borrower-return-delay-screen-02.png",
+        "../../../_static/img/document-figures/borrower-return-delay-screen-03.png",
+        "../../../_static/img/document-figures/borrower-return-delay-screen-04.png",
+        "../../../_static/img/document-figures/chapter-three-limits-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/07-状态复用_基线状态寿命与版本正确性.md",
+      "figures": [
+        "../../../_static/img/document-figures/chapter-code-versions-screen.png",
+        "../../../_static/img/document-figures/state-version-match-screen.png",
+        "../../../_static/img/document-figures/state-version-match-screen-02.png",
+        "../../../_static/img/document-figures/state-version-match-screen-03.png",
+        "../../../_static/img/document-figures/state-version-match-screen-04.png",
+        "../../../_static/img/document-figures/chapter-state-dependencies-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/08-命令预测_适用条件与时长估计.md",
+      "figures": [
+        "../../../_static/img/document-figures/wait-or-reload-screen.png",
+        "../../../_static/img/document-figures/wait-or-reload-screen-02.png",
+        "../../../_static/img/document-figures/wait-or-reload-screen-03.png",
+        "../../../_static/img/document-figures/wait-or-reload-screen-04.png",
+        "../../../_static/img/document-figures/chapter-remaining-steps-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/09-动态放置_热卡等待与冷卡重建代码.md",
+      "figures": [
+        "../../../_static/img/document-figures/wait-or-reload-screen.png",
+        "../../../_static/img/document-figures/wait-or-reload-screen-02.png",
+        "../../../_static/img/document-figures/wait-or-reload-screen-03.png",
+        "../../../_static/img/document-figures/wait-or-reload-screen-04.png",
+        "../../../_static/img/literature-reviews/paper-serverlessllm-fig03-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/map-644bc9e974-screen.png",
+        "../../../_static/img/document-figures/map-644bc9e974-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/01-任务接入_公共GPU任务与PSRL配方.md",
+      "figures": [
+        "../../../_static/img/document-figures/gpu-task-asset-boundaries-screen.png",
+        "../../../_static/img/document-figures/gpu-task-asset-boundaries-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/02-任务接入_EnvWorker配置与CUDA验证.md",
+      "figures": [
+        "../../../_static/img/document-figures/experiment-preflight-node-screen.png",
+        "../../../_static/img/document-figures/experiment-preflight-node-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/03-AIRSBench_接入流程与有界验收.md",
+      "figures": [
+        "../../../_static/img/document-figures/gpu-task-asset-boundaries-screen.png",
+        "../../../_static/img/document-figures/gpu-task-asset-boundaries-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/04-MLGym与SWE及Serve_任务协议与评分训练.md",
+      "figures": [
+        "../../../_static/img/document-figures/two-model-training-loops-screen.png",
+        "../../../_static/img/document-figures/two-model-training-loops-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/05-REBench_聊天模型训练接入.md",
+      "figures": [
+        "../../../_static/img/document-figures/two-model-training-loops-screen.png",
+        "../../../_static/img/document-figures/two-model-training-loops-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/06-InferenceBench_评分机制与开关验证.md",
+      "figures": [
+        "../../../_static/img/document-figures/measurement-contention-screen.png",
+        "../../../_static/img/document-figures/measurement-contention-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/map-0e0b082c0a-screen.png",
+        "../../../_static/img/document-figures/map-0e0b082c0a-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-31ab314077-screen.png",
+        "../../_static/img/document-figures/map-31ab314077-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/01-调度论文_五篇近期顶会工作综述.md",
+      "figures": [
+        "../../_static/img/literature-reviews/paper-rollart-fig07-screen.png",
+        "../../_static/img/literature-reviews/paper-dynarl-fig06-screen.png",
+        "../../_static/img/document-figures/chapter-resource-reallocation-screen.png",
+        "../../_static/img/literature-reviews/paper-murakkab-fig05-screen.png",
+        "../../_static/img/literature-reviews/paper-murakkab-fig05-screen-02.png",
+        "../../_static/img/literature-reviews/paper-murakkab-fig05-screen-03.png",
+        "../../_static/img/document-figures/chapter-critical-path-screen.png",
+        "../../_static/img/document-figures/chapter-critical-path-screen-02.png",
+        "../../_static/img/literature-reviews/paper-prism-fig04-screen.png",
+        "../../_static/img/literature-reviews/paper-weave-fig01-screen.png",
+        "../../_static/img/document-figures/explained-borrowing-timeline-2487ead-screen.png",
+        "../../_static/img/document-figures/explained-borrowing-timeline-2487ead-screen-02.png",
+        "../../_static/img/document-figures/explained-borrowing-timeline-2487ead-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/02-论文精读_RollArt与DynaRL的Agent调度.md",
+      "figures": [
+        "../../_static/img/document-figures/chapter-rollout-pipeline-screen.png",
+        "../../_static/img/literature-reviews/paper-rollart-fig08-screen.png",
+        "../../_static/img/literature-reviews/paper-rollart-fig09-screen.png",
+        "../../_static/img/document-figures/explained-rollout-independence-3e2aa22-screen.png",
+        "../../_static/img/document-figures/explained-rollout-independence-3e2aa22-screen-02.png",
+        "../../_static/img/document-figures/explained-rollout-independence-3e2aa22-screen-03.png",
+        "../../_static/img/document-figures/chapter-pipeline-overlap-screen.png",
+        "../../_static/img/literature-reviews/paper-dynarl-fig09-screen.png",
+        "../../_static/img/document-figures/chapter-warm-layers-screen.png",
+        "../../_static/img/document-figures/explained-pipeline-bottleneck-77cbdcf-screen.png",
+        "../../_static/img/document-figures/explained-pipeline-bottleneck-77cbdcf-screen-02.png",
+        "../../_static/img/document-figures/explained-pipeline-bottleneck-77cbdcf-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/03-论文精读_KREX共享GPU测量保护.md",
+      "figures": [
+        "../../_static/img/literature-reviews/paper-krex-fig01-screen.png",
+        "../../_static/img/document-figures/explained-krex-control-flow-0e8d632-screen.png",
+        "../../_static/img/document-figures/explained-krex-control-flow-0e8d632-screen-02.png",
+        "../../_static/img/document-figures/explained-krex-control-flow-0e8d632-screen-03.png",
+        "../../_static/img/document-figures/explained-protected-regions-0a75ded-screen.png",
+        "../../_static/img/document-figures/explained-protected-regions-0a75ded-screen-02.png",
+        "../../_static/img/document-figures/chapter-measurement-ranking-screen.png",
+        "../../_static/img/literature-reviews/paper-krex-fig04-screen.png",
+        "../../_static/img/document-figures/explained-gate-and-drain-1739525-screen.png",
+        "../../_static/img/document-figures/explained-gate-and-drain-1739525-screen-02.png",
+        "../../_static/img/document-figures/explained-gate-and-drain-1739525-screen-03.png",
+        "../../_static/img/document-figures/chapter-local-service-time-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/04-系统借鉴_YARN资源分配与反馈调度.md",
+      "figures": [
+        "../../_static/img/literature-reviews/paper-yarn-architecture-screen.png",
+        "../../_static/img/document-figures/explained-yarn-responsibilities-180f1c7-screen.png",
+        "../../_static/img/document-figures/explained-yarn-responsibilities-180f1c7-screen-02.png",
+        "../../_static/img/document-figures/explained-yarn-responsibilities-180f1c7-screen-03.png",
+        "../../_static/img/document-figures/chapter-resource-layers-screen.png",
+        "../../_static/img/document-figures/chapter-warm-layers-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/05-基准调研_GPU任务类型与接入顺序.md",
+      "figures": [
+        "../../_static/img/document-figures/explained-gpu-task-lifecycle-336b197-screen.png",
+        "../../_static/img/document-figures/explained-gpu-task-lifecycle-336b197-screen-02.png",
+        "../../_static/img/document-figures/explained-gpu-task-lifecycle-336b197-screen-03.png",
+        "../../_static/img/literature-reviews/paper-kernelbench-fig01-screen.png",
+        "../../_static/img/document-figures/chapter-warm-layers-screen.png",
+        "../../_static/img/document-figures/explained-benchmark-choice-c6aaac2-screen.png",
+        "../../_static/img/document-figures/explained-benchmark-choice-c6aaac2-screen-02.png",
+        "../../_static/img/document-figures/explained-benchmark-choice-c6aaac2-screen-03.png",
+        "../../_static/img/document-figures/chapter-measurement-ranking-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/06-基准调研_AI4Infra性能反馈与验证.md",
+      "figures": [
+        "../../_static/img/literature-reviews/paper-krex-fig01-screen.png",
+        "../../_static/img/document-figures/chapter-local-service-time-screen.png",
+        "../../_static/img/document-figures/explained-reward-distortion-5865243-screen.png",
+        "../../_static/img/document-figures/explained-reward-distortion-5865243-screen-02.png",
+        "../../_static/img/document-figures/explained-reward-distortion-5865243-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/07-智能调度_模型决策的已有工作与研究选择.md",
+      "figures": [
+        "../../_static/img/document-figures/explained-scheduling-two-lanes-e460719-screen.png",
+        "../../_static/img/document-figures/explained-scheduling-two-lanes-e460719-screen-02.png",
+        "../../_static/img/document-figures/explained-scheduling-two-lanes-e460719-screen-03.png",
+        "../../_static/img/literature-reviews/paper-schedmate-fig05-screen.png",
+        "../../_static/img/document-figures/chapter-code-versions-screen.png",
+        "../../_static/img/literature-reviews/paper-alphaevolve-fig01-screen.png",
+        "../../_static/img/document-figures/explained-model-decision-cost-05c9647-screen.png",
+        "../../_static/img/document-figures/explained-model-decision-cost-05c9647-screen-02.png",
+        "../../_static/img/document-figures/explained-model-decision-cost-05c9647-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md",
+      "figures": [
+        "../../_static/img/literature-reviews/paper-cuda-agent-fig02-screen.png",
+        "../../_static/img/literature-reviews/paper-firepool-fig02-screen.png",
+        "../../_static/img/literature-reviews/paper-firepool-fig03-screen.png",
+        "../../_static/img/document-figures/chapter-warm-layers-screen.png",
+        "../../_static/img/document-figures/chapter-prepare-gpu-screen.png",
+        "../../_static/img/literature-reviews/paper-seal-fig01-screen.png",
+        "../../_static/img/document-figures/explained-rsi-two-loops-cb6e04f-screen.png",
+        "../../_static/img/document-figures/explained-rsi-two-loops-cb6e04f-screen-02.png",
+        "../../_static/img/document-figures/explained-rsi-two-loops-cb6e04f-screen-03.png",
+        "../../_static/img/document-figures/chapter-model-promotion-screen.png",
+        "../../_static/img/document-figures/chapter-nested-deadlock-screen.png",
+        "../../_static/img/document-figures/chapter-state-dependencies-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/README.md",
+      "figures": [
+        "../../_static/img/document-figures/explained-reading-map-0eb10e0-screen.png",
+        "../../_static/img/document-figures/explained-reading-map-0eb10e0-screen-02.png",
+        "../../_static/img/document-figures/explained-reading-map-0eb10e0-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/01-Science介绍_已接入任务与研究价值.md",
+      "figures": [
+        "../../_static/img/document-figures/two-model-training-loops-screen.png",
+        "../../_static/img/document-figures/two-model-training-loops-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/02-Science现状_任务覆盖与接入路线.md",
+      "figures": [
+        "../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/03-Science验收_接入流程与环境隔离.md",
+      "figures": [
+        "../../_static/img/document-figures/gpu-task-asset-boundaries-screen.png",
+        "../../_static/img/document-figures/gpu-task-asset-boundaries-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/04-调度研究_研究全景交流版.md",
+      "figures": [
+        "../experiments/env-current-layout.png",
+        "../../_static/img/document-figures/host-and-gpu-ledgers-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/05-调度研究_研究全景与证据详解.md",
+      "figures": [
+        "../experiments/env-current-layout.png",
+        "../../_static/img/document-figures/host-and-gpu-ledgers-screen.png",
+        "../experiments/reservation-batch-dependency.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/06-历史阶段_2026年10月28日实现与规划.md",
+      "figures": [
+        "../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-e3e99949ff-screen.png",
+        "../../_static/img/document-figures/map-e3e99949ff-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/01-调度研究_Rollout完成时间与反馈保真.md",
+      "figures": [
+        "../../_static/img/document-figures/rollout-batch-training-screen.png",
+        "../../_static/img/document-figures/rollout-batch-training-screen-02.png",
+        "../../_static/img/document-figures/chapter-rollout-pipeline-screen.png",
+        "../../_static/img/document-figures/chapter-measurement-ranking-screen.png",
+        "../../_static/img/document-figures/chapter-prepare-gpu-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/02-研究场景_非计时评分的GPU任务.md",
+      "figures": [
+        "../../_static/img/document-figures/gpu-task-asset-boundaries-screen.png",
+        "../../_static/img/document-figures/gpu-task-asset-boundaries-screen-02.png",
+        "../../_static/img/document-figures/chapter-state-dependencies-screen.png",
+        "../../_static/img/document-figures/chapter-prepare-gpu-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/03-动态放置_会话与GPU执行分离.md",
+      "figures": [
+        "../../_static/img/document-figures/two-gpu-command-queue-screen.png",
+        "../../_static/img/document-figures/two-gpu-command-queue-screen-02.png",
+        "../../_static/img/document-figures/chapter-gpu-pool-host-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/04-状态复用_真实任务中的收益空间核查.md",
+      "figures": [
+        "../../_static/img/document-figures/state-version-match-screen.png",
+        "../../_static/img/document-figures/state-version-match-screen-02.png",
+        "../../_static/img/document-figures/state-version-match-screen-03.png",
+        "../../_static/img/document-figures/state-version-match-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/05-状态调度_主存受限时的准备状态保留.md",
+      "figures": [
+        "../../_static/img/document-figures/bounded-state-cache-screen.png",
+        "../../_static/img/document-figures/bounded-state-cache-screen-02.png",
+        "../../_static/img/document-figures/chapter-warm-layers-screen.png",
+        "../../_static/img/document-figures/chapter-state-dependencies-screen.png",
+        "../../_static/img/document-figures/chapter-process-reuse-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/06-训推借卡_可撤回执行与反馈依赖.md",
+      "figures": [
+        "../../_static/img/document-figures/borrower-return-delay-screen.png",
+        "../../_static/img/document-figures/borrower-return-delay-screen-02.png",
+        "../../_static/img/document-figures/borrower-return-delay-screen-03.png",
+        "../../_static/img/document-figures/borrower-return-delay-screen-04.png",
+        "../../_static/img/document-figures/chapter-prediction-intervals-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/07-并发准入_未知命令时长与反馈调度.md",
+      "figures": [
+        "../../_static/img/document-figures/two-gpu-command-queue-screen.png",
+        "../../_static/img/document-figures/two-gpu-command-queue-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/08-运行准备_重复准备成本与GPU就绪调度.md",
+      "figures": [
+        "../../_static/img/document-figures/state-version-match-screen.png",
+        "../../_static/img/document-figures/state-version-match-screen-02.png",
+        "../../_static/img/document-figures/state-version-match-screen-03.png",
+        "../../_static/img/document-figures/state-version-match-screen-04.png",
+        "../../_static/img/literature-reviews/paper-firepool-fig03-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-ee40956879-screen.png",
+        "../../_static/img/document-figures/map-ee40956879-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/README.md",
+      "figures": [
+        "../_static/img/document-figures/map-bb83ca628a-screen.png",
+        "../_static/img/document-figures/map-bb83ca628a-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/agentic_rl/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-f580c3ced5-screen.png",
+        "../../_static/img/document-figures/map-f580c3ced5-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/agentic_rl/index.md",
+      "figures": [
+        "../../_static/img/document-figures/two-model-training-loops-screen.png",
+        "../../_static/img/document-figures/two-model-training-loops-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/agentic_rl/retool/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/rollout-batch-training-screen.png",
+        "../../../_static/img/document-figures/rollout-batch-training-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/agentic_rl/retool/index.md",
+      "figures": [
+        "../../../_static/img/document-figures/rollout-batch-training-screen.png",
+        "../../../_static/img/document-figures/rollout-batch-training-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/agentic_rl/swe/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/software-patch-and-fresh-grader-screen.png",
+        "../../../_static/img/document-figures/software-patch-and-fresh-grader-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/agentic_rl/swe/index.md",
+      "figures": [
+        "../../../_static/img/document-figures/software-patch-and-fresh-grader-screen.png",
+        "../../../_static/img/document-figures/software-patch-and-fresh-grader-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/generative_reward_model/README.md",
+      "figures": [
+        "../../_static/img/document-figures/model-derived-feedback-screen.png",
+        "../../_static/img/document-figures/model-derived-feedback-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/generative_reward_model/index.md",
+      "figures": [
+        "../../_static/img/document-figures/model-derived-feedback-screen.png",
+        "../../_static/img/document-figures/model-derived-feedback-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/index.md",
+      "figures": [
+        "../_static/img/document-figures/map-5e297a681a-screen.png",
+        "../_static/img/document-figures/map-5e297a681a-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/rlvr/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-ac6079296a-screen.png",
+        "../../_static/img/document-figures/map-ac6079296a-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/rlvr/common.md",
+      "figures": [
+        "../../_static/img/document-figures/dataset-fields-screen.png",
+        "../../_static/img/document-figures/dataset-fields-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/rlvr/dapo.md",
+      "figures": [
+        "../../_static/img/document-figures/token-loss-weighting-screen.png",
+        "../../_static/img/document-figures/token-loss-weighting-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/rlvr/grpo.md",
+      "figures": [
+        "../../_static/img/document-figures/group-relative-advantages-screen.png",
+        "../../_static/img/document-figures/group-relative-advantages-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/rlvr/index.md",
+      "figures": [
+        "../../_static/img/document-figures/group-relative-advantages-screen.png",
+        "../../_static/img/document-figures/group-relative-advantages-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/examples/rlvr/ppo.md",
+      "figures": [
+        "../../_static/img/document-figures/ppo-clipped-objective-screen.png",
+        "../../_static/img/document-figures/ppo-clipped-objective-screen-02.png",
+        "../../_static/img/document-figures/ppo-clipped-objective-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/index.md",
+      "figures": [
+        "_static/img/document-figures/map-b4d68dc855-screen.png",
+        "_static/img/document-figures/map-b4d68dc855-screen-02.png"
+      ],
+      "decorative_images": [
+        "/_static/img/PSRL_logo_merge.png"
+      ],
+      "remote_images": []
+    },
+    {
+      "document": "docs/overview/01-PSRL入门_从一道题到模型更新.md",
+      "figures": [
+        "../_static/img/document-figures/explained-psrl-training-loop-b6943fc-screen.png",
+        "../_static/img/document-figures/explained-psrl-training-loop-b6943fc-screen-02.png",
+        "../_static/img/document-figures/explained-psrl-training-loop-b6943fc-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/overview/02-PSRL入门_系统与实验术语速查.md",
+      "figures": [
+        "../_static/img/document-figures/host-and-gpu-ledgers-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/overview/README.md",
+      "figures": [
+        "../_static/img/document-figures/map-d345b2b349-screen.png",
+        "../_static/img/document-figures/map-d345b2b349-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/overview/index.md",
+      "figures": [
+        "../_static/img/document-figures/explained-PSRL_arch-4d2b637-screen.png",
+        "../_static/img/document-figures/explained-PSRL_arch-4d2b637-screen-02.png",
+        "../_static/img/document-figures/explained-PSRL_arch-4d2b637-screen-03.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/01-PSRL原理_AgentLoop与工具调用.md",
+      "figures": [
+        "../_static/img/document-figures/chapter-rollout-pipeline-screen.png",
+        "../_static/img/document-figures/rollout-batch-training-screen.png",
+        "../_static/img/document-figures/rollout-batch-training-screen-02.png",
+        "../_static/img/document-figures/chapter-model-promotion-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/02-强化学习_PPO与GRPO及DAPO.md",
+      "figures": [
+        "../_static/img/document-figures/group-relative-advantages-screen.png",
+        "../_static/img/document-figures/group-relative-advantages-screen-02.png",
+        "../_static/img/document-figures/chapter-ppo-credit-screen.png",
+        "../_static/img/document-figures/ppo-clipped-objective-screen.png",
+        "../_static/img/document-figures/ppo-clipped-objective-screen-02.png",
+        "../_static/img/document-figures/ppo-clipped-objective-screen-03.png",
+        "../_static/img/document-figures/token-loss-weighting-screen.png",
+        "../_static/img/document-figures/token-loss-weighting-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/03-模型配置_上下文长度与生成限制.md",
+      "figures": [
+        "../_static/img/document-figures/context-window-growth-screen.png",
+        "../_static/img/document-figures/context-window-growth-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/04-高速传输_NIXL内存搬运机制.md",
+      "figures": [
+        "../_static/img/document-figures/registered-memory-transfer-screen.png",
+        "../_static/img/document-figures/registered-memory-transfer-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/05-训练排障_DAPO退化诊断.md",
+      "figures": [
+        "../_static/img/document-figures/training-health-signals-screen.png",
+        "../_static/img/document-figures/training-health-signals-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/06-训练排障_SciAccel显存不足与修复.md",
+      "figures": [
+        "../_static/img/document-figures/training-memory-peak-screen.png",
+        "../_static/img/document-figures/training-memory-peak-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/07-源码阅读_从Science脚本到训练流程.md",
+      "figures": [
+        "../_static/img/document-figures/experiment-preflight-node-screen.png",
+        "../_static/img/document-figures/experiment-preflight-node-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/README.md",
+      "figures": [
+        "../_static/img/document-figures/map-9e82b92589-screen.png",
+        "../_static/img/document-figures/map-9e82b92589-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/cluster-pitfall-checks/README.md",
+      "figures": [
+        "../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/01-PSRL运行_准备启动与监控.md",
+      "figures": [
+        "../../_static/img/document-figures/experiment-preflight-node-screen.png",
+        "../../_static/img/document-figures/experiment-preflight-node-screen-02.png",
+        "../../_static/img/psrl-ray-science-roles.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/02-集群预检_依赖地址与GPU资源核验.md",
+      "figures": [
+        "../../_static/img/document-figures/experiment-preflight-node-screen.png",
+        "../../_static/img/document-figures/experiment-preflight-node-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/03-启动排障_单机与多机故障复盘.md",
+      "figures": [
+        "../../env-worker-deep-dive/experiments/ray-startup-stages.png",
+        "../../env-worker-deep-dive/experiments/handover-import-profile.png",
+        "../../_static/img/document-figures/dataset-fields-screen.png",
+        "../../_static/img/document-figures/dataset-fields-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-019e476519-screen.png",
+        "../../_static/img/document-figures/map-019e476519-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/incidents/01-Docker故障_2026年10月20日存储挂起.md",
+      "figures": [
+        "../../../_static/img/document-figures/docker-writeback-wait-screen.png",
+        "../../../_static/img/document-figures/docker-writeback-wait-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/incidents/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/docker-writeback-wait-screen.png",
+        "../../../_static/img/document-figures/docker-writeback-wait-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md",
+      "figures": [
+        "../../_static/img/document-figures/roofline-capacity-decision-screen.png",
+        "../../_static/img/document-figures/roofline-capacity-decision-screen-02.png",
+        "../../_static/img/document-figures/roofline-capacity-decision-screen-03.png",
+        "../../_static/img/document-figures/roofline-capacity-decision-screen-04.png",
+        "../../_static/img/document-figures/explained-roofline-and-batching-1ddd7ab-screen.png",
+        "../../_static/img/document-figures/explained-roofline-and-batching-1ddd7ab-screen-02.png",
+        "../../_static/img/document-figures/explained-roofline-and-batching-1ddd7ab-screen-03.png",
+        "../../_static/img/document-figures/explained-roofline-and-batching-1ddd7ab-screen-04.png",
+        "../../_static/img/literature-reviews/paper-vllm-fig06-screen.png",
+        "../../_static/img/document-figures/chapter-continuous-batching-screen.png",
+        "../../_static/img/literature-reviews/paper-distserve-fig06-screen.png",
+        "../../_static/img/document-figures/chapter-selective-batching-screen.png",
+        "../../_static/img/literature-reviews/paper-vllm-fig08-screen.png",
+        "../../_static/img/document-figures/chapter-kv-copy-on-write-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/推理与训练/02-训练并行_模型切分与通信带宽.md",
+      "figures": [
+        "../../_static/img/document-figures/parallel-model-shards-screen.png",
+        "../../_static/img/document-figures/parallel-model-shards-screen-02.png",
+        "../../_static/img/document-figures/chapter-parallel-communication-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/推理与训练/03-训推协作_异步流水线与版本协调.md",
+      "figures": [
+        "../../_static/img/document-figures/rollout-batch-training-screen.png",
+        "../../_static/img/document-figures/rollout-batch-training-screen-02.png",
+        "../../_static/img/document-figures/chapter-pipeline-overlap-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/推理与训练/04-性能分析_公式速查与历史实验.md",
+      "figures": [
+        "../../_static/img/document-figures/gpu-capacity-and-compute-screen.png",
+        "../../_static/img/document-figures/gpu-capacity-and-compute-screen-02.png",
+        "../../_static/img/document-figures/gpu-capacity-and-compute-screen-03.png",
+        "../../_static/img/document-figures/gpu-capacity-and-compute-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/psrl/推理与训练/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-6f366e2480-screen.png",
+        "../../_static/img/document-figures/map-6f366e2480-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/site-maintenance.md",
+      "figures": [
+        "_static/img/document-figures/markdown-and-site-screen.png",
+        "_static/img/document-figures/markdown-and-site-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/README.md",
+      "figures": [
+        "../_static/img/document-figures/map-2f31c326af-screen.png",
+        "../_static/img/document-figures/map-2f31c326af-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/claude-code/01-ClaudeCode_命令执行与权限设置.md",
+      "figures": [
+        "../../_static/img/document-figures/terminal-scroll-layers-screen.png",
+        "../../_static/img/document-figures/terminal-scroll-layers-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/claude-code/README.md",
+      "figures": [
+        "../../_static/img/document-figures/terminal-scroll-layers-screen.png",
+        "../../_static/img/document-figures/terminal-scroll-layers-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/codex/01-智能体配置_Rule与Memory及Skill.md",
+      "figures": [
+        "../../_static/img/document-figures/agent-rule-memory-skill-screen.png",
+        "../../_static/img/document-figures/agent-rule-memory-skill-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/codex/02-Codex配置_备份与按需恢复.md",
+      "figures": [
+        "../../_static/img/document-figures/configuration-selective-restore-screen.png",
+        "../../_static/img/document-figures/configuration-selective-restore-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/codex/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-1c4901e702-screen.png",
+        "../../_static/img/document-figures/map-1c4901e702-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/codex/scripts/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/codex/session-archives/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/session-history-branches-screen.png",
+        "../../../_static/img/document-figures/session-history-branches-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/codex/session-management/01-Codex会话_恢复命名与历史回看.md",
+      "figures": [
+        "../../../_static/img/document-figures/session-history-branches-screen.png",
+        "../../../_static/img/document-figures/session-history-branches-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/codex/session-management/02-Codex终端_滚动与Tmux排查.md",
+      "figures": [
+        "../../../_static/img/document-figures/terminal-scroll-layers-screen.png",
+        "../../../_static/img/document-figures/terminal-scroll-layers-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/codex/session-management/03-Codex故障_会话数据库与SIGBUS排查.md",
+      "figures": [
+        "../../../_static/img/document-figures/mapped-file-pages-screen.png",
+        "../../../_static/img/document-figures/mapped-file-pages-screen-02.png",
+        "../../../_static/img/document-figures/session-history-branches-screen.png",
+        "../../../_static/img/document-figures/session-history-branches-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/codex/session-management/README.md",
+      "figures": [
+        "../../../_static/img/document-figures/map-9c01012189-screen.png",
+        "../../../_static/img/document-figures/map-9c01012189-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/linux/README.md",
+      "figures": [
+        "../../_static/img/document-figures/file-references-screen.png",
+        "../../_static/img/document-figures/file-references-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/文档维护/01-文档组织_阅读结构与维护规范.md",
+      "figures": [
+        "../../_static/img/document-figures/markdown-and-site-screen.png",
+        "../../_static/img/document-figures/markdown-and-site-screen-02.png",
+        "../../_static/img/document-figures/memory-promises-screen.png",
+        "../../_static/img/document-figures/memory-promises-screen-02.png",
+        "../../_static/img/document-figures/memory-promises-screen-03.png",
+        "../../_static/img/document-figures/memory-promises-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/文档维护/02-文档时效_2026年11月历史巡检.md",
+      "figures": [
+        "../../_static/img/document-figures/evidence-levels-screen.png",
+        "../../_static/img/document-figures/evidence-levels-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/文档维护/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-4595f5dfc6-screen.png",
+        "../../_static/img/document-figures/map-4595f5dfc6-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/系统基础/01-运行环境_Shell与Python及Conda.md",
+      "figures": [
+        "../../_static/img/document-figures/shell-and-python-screen.png",
+        "../../_static/img/document-figures/shell-and-python-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/系统基础/02-操作系统_进程与文件映射及SQLite.md",
+      "figures": [
+        "../../_static/img/document-figures/mapped-file-pages-screen.png",
+        "../../_static/img/document-figures/mapped-file-pages-screen-02.png",
+        "../../_static/img/document-figures/sqlite-three-files-screen.png",
+        "../../_static/img/document-figures/sqlite-three-files-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/系统基础/03-文件系统_inode与链接及Docker写回.md",
+      "figures": [
+        "../../_static/img/document-figures/file-references-screen.png",
+        "../../_static/img/document-figures/file-references-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/系统基础/04-网络通信_HTTP请求与GateB调用链.md",
+      "figures": [
+        "../../_static/img/document-figures/http-envelope-screen.png",
+        "../../_static/img/document-figures/http-envelope-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/系统基础/05-GPU并行_CUDA上下文与计算竞争.md",
+      "figures": [
+        "../../_static/img/document-figures/gpu-capacity-and-compute-screen.png",
+        "../../_static/img/document-figures/gpu-capacity-and-compute-screen-02.png",
+        "../../_static/img/document-figures/gpu-capacity-and-compute-screen-03.png",
+        "../../_static/img/document-figures/gpu-capacity-and-compute-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/系统基础/06-远程登录_SSH连接与IP网卡端口.md",
+      "figures": [
+        "../../_static/img/document-figures/ssh-connection-endpoints-screen.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tools/系统基础/README.md",
+      "figures": [
+        "../../_static/img/document-figures/map-7a7363b66b-screen.png",
+        "../../_static/img/document-figures/map-7a7363b66b-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tutorial/README.md",
+      "figures": [
+        "../_static/img/document-figures/map-9d52918d2e-screen.png",
+        "../_static/img/document-figures/map-9d52918d2e-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tutorial/configuration.md",
+      "figures": [
+        "../_static/img/document-figures/configuration-layers-screen.png",
+        "../_static/img/document-figures/configuration-layers-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tutorial/index.md",
+      "figures": [
+        "../_static/img/document-figures/map-63e98fd058-screen.png",
+        "../_static/img/document-figures/map-63e98fd058-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tutorial/installation.md",
+      "figures": [
+        "../_static/img/document-figures/experiment-preflight-node-screen.png",
+        "../_static/img/document-figures/experiment-preflight-node-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tutorial/performance_tuning.md",
+      "figures": [
+        "../_static/img/document-figures/gpu-capacity-and-compute-screen.png",
+        "../_static/img/document-figures/gpu-capacity-and-compute-screen-02.png",
+        "../_static/img/document-figures/gpu-capacity-and-compute-screen-03.png",
+        "../_static/img/document-figures/gpu-capacity-and-compute-screen-04.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    },
+    {
+      "document": "docs/tutorial/quickstart.md",
+      "figures": [
+        "../_static/img/document-figures/experiment-preflight-node-screen.png",
+        "../_static/img/document-figures/experiment-preflight-node-screen-02.png"
+      ],
+      "decorative_images": [],
+      "remote_images": []
+    }
+  ]
+}

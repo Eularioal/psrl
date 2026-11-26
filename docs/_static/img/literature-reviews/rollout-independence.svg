@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1008pt" height="576pt" viewBox="0 0 1008 576" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-19T14:52:17.680607</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 576 
+L 1008 576 
+L 1008 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 233.0496 137.376 
+L 233.0496 192.096 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 349.1712 137.376 
+L 349.1712 192.096 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 465.2928 137.376 
+L 465.2928 192.096 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 581.4144 137.376 
+L 581.4144 192.096 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 697.536 137.376 
+L 697.536 192.096 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_6">
+    <path d="M 813.6576 137.376 
+L 813.6576 192.096 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_7">
+    <path d="M 929.7792 137.376 
+L 929.7792 192.096 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_8">
+    <path d="M 233.0496 208.512 
+L 233.0496 263.232 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_9">
+    <path d="M 349.1712 208.512 
+L 349.1712 263.232 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_10">
+    <path d="M 465.2928 208.512 
+L 465.2928 263.232 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_11">
+    <path d="M 581.4144 208.512 
+L 581.4144 263.232 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_12">
+    <path d="M 697.536 208.512 
+L 697.536 263.232 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_13">
+    <path d="M 813.6576 208.512 
+L 813.6576 263.232 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_14">
+    <path d="M 929.7792 208.512 
+L 929.7792 263.232 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_15">
+    <path d="M 233.0496 323.424 
+L 233.0496 378.144 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_16">
+    <path d="M 349.1712 323.424 
+L 349.1712 378.144 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_17">
+    <path d="M 465.2928 323.424 
+L 465.2928 378.144 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_18">
+    <path d="M 581.4144 323.424 
+L 581.4144 378.144 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_19">
+    <path d="M 697.536 323.424 
+L 697.536 378.144 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_20">
+    <path d="M 813.6576 323.424 
+L 813.6576 378.144 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_21">
+    <path d="M 929.7792 323.424 
+L 929.7792 378.144 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_22">
+    <path d="M 233.0496 394.56 
+L 233.0496 449.28 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_23">
+    <path d="M 349.1712 394.56 
+L 349.1712 449.28 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_24">
+    <path d="M 465.2928 394.56 
+L 465.2928 449.28 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_25">
+    <path d="M 581.4144 394.56 
+L 581.4144 449.28 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_26">
+    <path d="M 697.536 394.56 
+L 697.536 449.28 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_27">
+    <path d="M 813.6576 394.56 
+L 813.6576 449.28 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_28">
+    <path d="M 929.7792 394.56 
+L 929.7792 449.28 
+" clip-path="url(#p40fd5530f6)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="patch_2">
+    <path d="M 233.0496 142.848 
+L 291.1104 142.848 
+L 291.1104 186.624 
+L 233.0496 186.624 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #7756a4; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 291.1104 142.848 
+L 349.1712 142.848 
+L 349.1712 186.624 
+L 291.1104 186.624 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #117f78; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 349.1712 142.848 
+L 581.4144 142.848 
+L 581.4144 186.624 
+L 349.1712 186.624 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #e8edf2; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 581.4144 142.848 
+L 639.4752 142.848 
+L 639.4752 186.624 
+L 581.4144 186.624 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #7756a4; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 639.4752 142.848 
+L 697.536 142.848 
+L 697.536 186.624 
+L 639.4752 186.624 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #117f78; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 697.536 142.848 
+L 929.7792 142.848 
+L 929.7792 186.624 
+L 697.536 186.624 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #e8edf2; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 233.0496 213.984 
+L 291.1104 213.984 
+L 291.1104 257.76 
+L 233.0496 257.76 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #7756a4; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 291.1104 213.984 
+L 581.4144 213.984 
+L 581.4144 257.76 
+L 291.1104 257.76 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #c66b21; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 581.4144 213.984 
+L 639.4752 213.984 
+L 639.4752 257.76 
+L 581.4144 257.76 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #7756a4; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 639.4752 213.984 
+L 929.7792 213.984 
+L 929.7792 257.76 
+L 639.4752 257.76 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #c66b21; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 233.0496 328.896 
+L 291.1104 328.896 
+L 291.1104 372.672 
+L 233.0496 372.672 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #7756a4; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 291.1104 328.896 
+L 349.1712 328.896 
+L 349.1712 372.672 
+L 291.1104 372.672 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #117f78; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 349.1712 328.896 
+L 407.232 328.896 
+L 407.232 372.672 
+L 349.1712 372.672 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #7756a4; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 407.232 328.896 
+L 465.2928 328.896 
+L 465.2928 372.672 
+L 407.232 372.672 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #117f78; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 233.0496 400.032 
+L 291.1104 400.032 
+L 291.1104 443.808 
+L 233.0496 443.808 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #7756a4; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 291.1104 400.032 
+L 581.4144 400.032 
+L 581.4144 443.808 
+L 291.1104 443.808 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #c66b21; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 581.4144 400.032 
+L 639.4752 400.032 
+L 639.4752 443.808 
+L 581.4144 443.808 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #7756a4; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 639.4752 400.032 
+L 929.7792 400.032 
+L 929.7792 443.808 
+L 639.4752 443.808 
+z
+" clip-path="url(#p40fd5530f6)" style="fill: #c66b21; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 22px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="51.368938" transform="rotate(-0 39.5136 51.368938)">轨迹独立推进：A 提早结束，整组仍可能等 B</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #5e6e7c" x="39.5136" y="86.980875" transform="rotate(-0 39.5136 86.980875)">教学假设：A、B 各两轮。每轮生成 1 秒，环境执行分别为 A 1 秒、B 5 秒，生成资源充足。</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="168.468422" transform="rotate(-0 39.5136 168.468422)">按轮同步：A</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #233447" x="465.2928" y="168.20475" transform="rotate(-0 465.2928 168.20475)">等 B 的环境</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #233447" x="813.6576" y="168.20475" transform="rotate(-0 813.6576 168.20475)">等 B，整组结束</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="239.604422" transform="rotate(-0 39.5136 239.604422)">按轮同步：B</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="436.2624" y="239.34075" transform="rotate(-0 436.2624 239.34075)">环境 B₁</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="784.6272" y="239.34075" transform="rotate(-0 784.6272 239.34075)">环境 B₂</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="354.516422" transform="rotate(-0 39.5136 354.516422)">独立推进：A</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="425.652422" transform="rotate(-0 39.5136 425.652422)">独立推进：B</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="436.2624" y="425.38875" transform="rotate(-0 436.2624 425.38875)">环境 B₁</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="784.6272" y="425.38875" transform="rotate(-0 784.6272 425.38875)">环境 B₂</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #117f78" x="513.6768" y="354.276187" transform="rotate(-0 513.6768 354.276187)">A 第 4 秒结束，可提前评分或接后续工作</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="233.0496" y="485.012391" transform="rotate(-0 233.0496 485.012391)">0</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="349.1712" y="485.012391" transform="rotate(-0 349.1712 485.012391)">2</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="465.2928" y="485.012391" transform="rotate(-0 465.2928 485.012391)">4</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="581.4144" y="485.012391" transform="rotate(-0 581.4144 485.012391)">6</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="697.536" y="485.012391" transform="rotate(-0 697.536 485.012391)">8</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="813.6576" y="485.012391" transform="rotate(-0 813.6576 485.012391)">10</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="929.7792" y="485.012391" transform="rotate(-0 929.7792 485.012391)">12</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end; fill: #5e6e7c" x="929.7792" y="512.651687" transform="rotate(-0 929.7792 512.651687)">从任务提交开始计时，单位：秒</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="49.1904" y="540.324187" transform="rotate(-0 49.1904 540.324187)">紫色：模型生成。绿色：A 的环境。橙色：B 的环境。整组完成时间两种方式均为 12 秒。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p40fd5530f6">
+   <rect x="20.16" y="11.52" width="967.68" height="547.2"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="1152pt" viewBox="0 0 1152 1152" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:12:43.040813</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1152 
+L 1152 1152 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="46.08" y="41.413086" transform="rotate(-0 46.08 41.413086)">多轮上下文：历史工具输出也会占用下一轮输入空间</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="93.330797" transform="rotate(-0 46.08 93.330797)">每次只多说一点，为什么下一轮却突然放不下？</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 99.072 278.37 
+L 523.008 278.37 
+L 523.008 359.1 
+L 99.072 359.1 
+z
+" clip-path="url(#pc5727340fa)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 523.008 278.37 
+L 840.96 278.37 
+L 840.96 359.1 
+L 523.008 359.1 
+z
+" clip-path="url(#pc5727340fa)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 840.96 278.37 
+L 1052.928 278.37 
+L 1052.928 359.1 
+L 840.96 359.1 
+z
+" clip-path="url(#pc5727340fa)" style="fill: #f0f3f7; stroke: #d3dce6; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 99.072 439.83 
+L 734.976 439.83 
+L 734.976 520.56 
+L 99.072 520.56 
+z
+" clip-path="url(#pc5727340fa)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 734.976 439.83 
+L 1052.928 439.83 
+L 1052.928 520.56 
+L 734.976 520.56 
+z
+" clip-path="url(#pc5727340fa)" style="fill: #fff2db; stroke: #e79730; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 946.944 216.27 
+L 946.944 545.4 
+" clip-path="url(#pc5727340fa)" style="fill: none; stroke-dasharray: 7.4,3.2; stroke-dashoffset: 0; stroke: #d45b67; stroke-width: 2"/>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="88.4736" y="242.165625" transform="rotate(-0 88.4736 242.165625)">第一轮：8+6=14</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="311.04" y="325.961562" transform="rotate(-0 311.04 325.961562)">输入8</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="681.984" y="325.961562" transform="rotate(-0 681.984 325.961562)">回答6</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="88.4736" y="403.5475" transform="rotate(-0 88.4736 403.5475)">下一轮：12+6=18</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="417.024" y="487.343437" transform="rotate(-0 417.024 487.343437)">累积输入12</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="893.952" y="487.421562" transform="rotate(-0 893.952 487.421562)">申请回答6</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="576" y="601.994062" transform="rotate(-0 576 601.994062)">教学上限16：工具输出并入历史后，留给下一轮回答的空间变小。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="text_10">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="142.983984" transform="rotate(-0 46.08 142.983984)">教学容量缩小为 16 个 token 单位。容量检查发生在一次请求提交时。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_7">
+    <path d="M 56.6784 689.904 
+L 1095.3216 689.904 
+Q 1110.15936 689.904 1110.15936 694.44 
+L 1110.15936 785.16 
+Q 1110.15936 789.696 1095.3216 789.696 
+L 56.6784 789.696 
+Q 41.84064 789.696 41.84064 785.16 
+L 41.84064 694.44 
+Q 41.84064 689.904 56.6784 689.904 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 353.4336 705.132 
+L 359.79264 705.132 
+L 359.79264 714.852 
+L 353.4336 714.852 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 353.4336 734.292 
+L 359.79264 734.292 
+L 359.79264 744.012 
+L 353.4336 744.012 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 353.4336 763.452 
+L 359.79264 763.452 
+L 359.79264 773.172 
+L 353.4336 773.172 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 56.6784 800.064 
+L 1095.3216 800.064 
+Q 1110.15936 800.064 1110.15936 804.6 
+L 1110.15936 895.32 
+Q 1110.15936 899.856 1095.3216 899.856 
+L 56.6784 899.856 
+Q 41.84064 899.856 41.84064 895.32 
+L 41.84064 804.6 
+Q 41.84064 800.064 56.6784 800.064 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 353.4336 815.292 
+L 359.79264 815.292 
+L 359.79264 825.012 
+L 353.4336 825.012 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 353.4336 844.452 
+L 359.79264 844.452 
+L 359.79264 854.172 
+L 353.4336 854.172 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 353.4336 873.612 
+L 359.79264 873.612 
+L 359.79264 883.332 
+L 353.4336 883.332 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 56.6784 910.224 
+L 1095.3216 910.224 
+Q 1110.15936 910.224 1110.15936 914.76 
+L 1110.15936 1005.48 
+Q 1110.15936 1010.016 1095.3216 1010.016 
+L 56.6784 1010.016 
+Q 41.84064 1010.016 41.84064 1005.48 
+L 41.84064 914.76 
+Q 41.84064 910.224 56.6784 910.224 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 353.4336 925.452 
+L 359.79264 925.452 
+L 359.79264 935.172 
+L 353.4336 935.172 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 353.4336 954.612 
+L 359.79264 954.612 
+L 359.79264 964.332 
+L 353.4336 964.332 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 353.4336 983.772 
+L 359.79264 983.772 
+L 359.79264 993.492 
+L 353.4336 993.492 
+z
+" clip-path="url(#p5bbe81c382)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="67.2768" y="725.937246" transform="rotate(-0 67.2768 725.937246)">01  第一轮提交</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="721.660234" transform="rotate(-0 374.6304 721.660234)">输入历史：8</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="750.859297" transform="rotate(-0 374.6304 750.859297)">申请回答：6</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="780.019297" transform="rotate(-0 374.6304 780.019297)">总需求：14 ≤ 16</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="67.2768" y="835.974199" transform="rotate(-0 67.2768 835.974199)">02  工具结果加入历史</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="831.859297" transform="rotate(-0 374.6304 831.859297)">下一轮输入：12</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="861.019297" transform="rotate(-0 374.6304 861.019297)">仍申请回答：6</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="890.179297" transform="rotate(-0 374.6304 890.179297)">总需求：18 &gt; 16</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d68b20" x="67.2768" y="946.380293" transform="rotate(-0 67.2768 946.380293)">03  合法处理方向</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="941.980234" transform="rotate(-0 374.6304 941.980234)">缩短或整理输入历史</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="971.218359" transform="rotate(-0 374.6304 971.218359)">减少本次输出预算</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="1000.339297" transform="rotate(-0 374.6304 1000.339297)">按实际策略截断或拒绝</text>
+   </g>
+  </g>
+  <g id="axes_5">
+   <g id="patch_19">
+    <path d="M 56.6784 1032.7536 
+L 1095.3216 1032.7536 
+Q 1110.15936 1032.7536 1110.15936 1034.316 
+L 1110.15936 1090.116 
+Q 1110.15936 1091.6784 1095.3216 1091.6784 
+L 56.6784 1091.6784 
+Q 41.84064 1091.6784 41.84064 1090.116 
+L 41.84064 1034.316 
+Q 41.84064 1032.7536 56.6784 1032.7536 
+z
+" clip-path="url(#pb60e42fe4e)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="61.9776" y="1061.439734" transform="rotate(-0 61.9776 1061.439734)">输入和预留输出一起占上下文预算，历史与工具结果会让后续请求变长。</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="1121.99843" transform="rotate(-0 46.08 1121.99843)">教学数字。真实 token 数、模型长度上限与截断规则见运行配置。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pc5727340fa">
+   <rect x="46.08" y="172.8" width="1059.84" height="496.8"/>
+  </clipPath>
+  <clipPath id="p5bbe81c382">
+   <rect x="46.08" y="691.2" width="1059.84" height="324"/>
+  </clipPath>
+  <clipPath id="pb60e42fe4e">
+   <rect x="46.08" y="1033.2" width="1059.84" height="111.6"/>
+  </clipPath>
+ </defs>
+</svg>

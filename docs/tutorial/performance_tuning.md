@@ -23,6 +23,20 @@ every field's full reference entry.
 
 **Config**: `psrl.staleness`
 
+<!-- figure:gpu-capacity-and-compute -->
+这张图沿同一个场景解释：用相同的10条命令，分别比较容量、计算竞争和整批完成时间。
+
+[![GPU并发：装得下，不等于一起跑就划算（1/4）](../_static/img/document-figures/gpu-capacity-and-compute-screen.png)](../_static/img/document-figures/gpu-capacity-and-compute.png)
+
+[![GPU并发：装得下，不等于一起跑就划算（2/4）](../_static/img/document-figures/gpu-capacity-and-compute-screen-02.png)](../_static/img/document-figures/gpu-capacity-and-compute.png)
+
+[![GPU并发：装得下，不等于一起跑就划算（3/4）](../_static/img/document-figures/gpu-capacity-and-compute-screen-03.png)](../_static/img/document-figures/gpu-capacity-and-compute.png)
+
+[![GPU并发：装得下，不等于一起跑就划算（4/4）](../_static/img/document-figures/gpu-capacity-and-compute-screen-04.png)](../_static/img/document-figures/gpu-capacity-and-compute.png)
+
+图中90 GiB、每命令8 GiB，以及并发10秒或30秒、分两组共14秒都是教学假设，非新增实测。轻竞争与重竞争两种条件明确分开；两组各5条均按每组7秒计算。SM网格仅解释共享，不对应真实卡的SM数量，也不表示MPS提供固定硬分区。 [查看矢量图](../_static/img/document-figures/gpu-capacity-and-compute.svg)。
+<!-- /figure:gpu-capacity-and-compute -->
+
 `psrl.staleness` is the maximum version gap allowed between the rollout side and the
 training side. A larger value lets training accept samples from older generation
 versions, allowing more overlap between the two pipelines.

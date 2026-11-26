@@ -1,0 +1,816 @@
+{
+  "baseline": "0eeead861ffafed6bf31c962d259fd847775dcf9",
+  "scope": "Real oracle episodes. Both arms use the old runner with an external admission prototype.",
+  "raw_sha256": "076c168696de1e79653406ad4b39cd0e499a959dbd41815a1533a8b8621682aa",
+  "runner_sha256": "223c67cd3511fecba5735a5db0fdfca13d9a2b892733712e18539edce766a89d",
+  "baseline_patch_sha256": "95a2288b4a270f0d7676976ddf52e506c7d3673161d486871f7cd84296657a5f",
+  "budget_s": 1200,
+  "elapsed_s": 847.9516984559596,
+  "blocks": [
+    {
+      "index": 0,
+      "policy": "static",
+      "makespan_s": 180.47578333690763,
+      "tasks": [
+        {
+          "family": "kernel",
+          "wait_s": 7.715262472629547e-05,
+          "service_s": 90.02914827875793,
+          "completion_s": 90.02922569215298,
+          "passed": true,
+          "result": {
+            "task_name": "kernel_bench",
+            "reward": 1.0,
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1.0,
+              "runtime_us": 7.8,
+              "speedup": 0.5833333333333334
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "posttrain",
+          "wait_s": 0.0688860546797514,
+          "service_s": 180.35331713408232,
+          "completion_s": 180.42220344766974,
+          "passed": true,
+          "result": {
+            "task_name": "posttrainbench-gsm8k-qwen3-1.7b",
+            "reward": 0.3953370435934384,
+            "rewards": {
+              "reward": 0.3953370435934384,
+              "answer_nll": 0.9280166029930115,
+              "cuda": 1,
+              "eval_valid": 1,
+              "local_evaluation": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 4184
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "flashinfer",
+          "wait_s": 0.10762517340481281,
+          "service_s": 102.96293314732611,
+          "completion_s": 103.07055857218802,
+          "passed": true,
+          "result": {
+            "task_name": "flashinfer-task",
+            "reward": 1.0,
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "evaluations": 3
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "mlgym",
+          "wait_s": 0.14640378020703793,
+          "service_s": 175.7094921283424,
+          "completion_s": 175.8558963574469,
+          "passed": true,
+          "result": {
+            "task_name": "naturalLanguageInferenceMNLI",
+            "reward": 0.25,
+            "rewards": {
+              "reward": 0.25,
+              "loss": 1.8749026507139206,
+              "cuda": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 9388
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "mle",
+          "wait_s": 0.18862116895616055,
+          "service_s": 63.18584639579058,
+          "completion_s": 63.374468414112926,
+          "passed": true,
+          "result": {
+            "task_name": "mle-ready",
+            "reward": 0.9711111111111111,
+            "rewards": {
+              "reward": 0.9711111111111111,
+              "accuracy": 0.9711111111111111,
+              "valid_submission": 1,
+              "local_evaluation": 1
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "re",
+          "wait_s": 0.22727129608392715,
+          "service_s": 80.91209224425256,
+          "completion_s": 81.13936405070126,
+          "passed": true,
+          "result": {
+            "task_name": "restricted-task",
+            "reward": 0.08456772972870526,
+            "rewards": {
+              "reward": 0.08456772972870526,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "loss": 10.824841499328613
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "policy": "pool",
+      "makespan_s": 246.89797055907547,
+      "tasks": [
+        {
+          "family": "kernel",
+          "wait_s": 7.863901555538177e-05,
+          "service_s": 55.23944769613445,
+          "completion_s": 55.23952662386,
+          "passed": true,
+          "result": {
+            "task_name": "kernel_bench",
+            "reward": 1.0,
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1.0,
+              "runtime_us": 7.8,
+              "speedup": 0.5833333333333334
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "posttrain",
+          "wait_s": 0.05955692008137703,
+          "service_s": 134.43271676823497,
+          "completion_s": 134.492274036631,
+          "passed": true,
+          "result": {
+            "task_name": "posttrainbench-gsm8k-qwen3-1.7b",
+            "reward": 0.3953370435934384,
+            "rewards": {
+              "reward": 0.3953370435934384,
+              "answer_nll": 0.9280166029930115,
+              "cuda": 1,
+              "eval_valid": 1,
+              "local_evaluation": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 4184
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "flashinfer",
+          "wait_s": 55.29441319964826,
+          "service_s": 62.06850976869464,
+          "completion_s": 117.36292327567935,
+          "passed": true,
+          "result": {
+            "task_name": "flashinfer-task",
+            "reward": 1.0,
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "evaluations": 3
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "mlgym",
+          "wait_s": 117.41063393466175,
+          "service_s": 129.42949225008488,
+          "completion_s": 246.8401264641434,
+          "passed": true,
+          "result": {
+            "task_name": "naturalLanguageInferenceMNLI",
+            "reward": 0.25,
+            "rewards": {
+              "reward": 0.25,
+              "loss": 1.8749026507139206,
+              "cuda": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 9388
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "mle",
+          "wait_s": 134.56619031354785,
+          "service_s": 51.80374385416508,
+          "completion_s": 186.36993443965912,
+          "passed": true,
+          "result": {
+            "task_name": "mle-ready",
+            "reward": 0.9711111111111111,
+            "rewards": {
+              "reward": 0.9711111111111111,
+              "accuracy": 0.9711111111111111,
+              "valid_submission": 1,
+              "local_evaluation": 1
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "re",
+          "wait_s": 186.41500080749393,
+          "service_s": 60.202135644853115,
+          "completion_s": 246.61713688075542,
+          "passed": true,
+          "result": {
+            "task_name": "restricted-task",
+            "reward": 0.08422218040199944,
+            "rewards": {
+              "reward": 0.08422218040199944,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "loss": 10.873356819152832
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "policy": "pool",
+      "makespan_s": 240.16279119998217,
+      "tasks": [
+        {
+          "family": "kernel",
+          "wait_s": 7.702410221099854e-05,
+          "service_s": 54.900261860340834,
+          "completion_s": 54.9003391135484,
+          "passed": true,
+          "result": {
+            "task_name": "kernel_bench",
+            "reward": 1.0,
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1.0,
+              "runtime_us": 7.8,
+              "speedup": 0.5833333333333334
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "posttrain",
+          "wait_s": 0.04556768015027046,
+          "service_s": 131.72053454630077,
+          "completion_s": 131.7661024555564,
+          "passed": true,
+          "result": {
+            "task_name": "posttrainbench-gsm8k-qwen3-1.7b",
+            "reward": 0.3953370435934384,
+            "rewards": {
+              "reward": 0.3953370435934384,
+              "answer_nll": 0.9280166029930115,
+              "cuda": 1,
+              "eval_valid": 1,
+              "local_evaluation": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 4184
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "flashinfer",
+          "wait_s": 54.94784484989941,
+          "service_s": 60.53498153761029,
+          "completion_s": 115.48282676003873,
+          "passed": true,
+          "result": {
+            "task_name": "flashinfer-task",
+            "reward": 1.0,
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "evaluations": 3
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "mlgym",
+          "wait_s": 115.53011216782033,
+          "service_s": 124.58219453878701,
+          "completion_s": 240.11230710707605,
+          "passed": true,
+          "result": {
+            "task_name": "naturalLanguageInferenceMNLI",
+            "reward": 0.25,
+            "rewards": {
+              "reward": 0.25,
+              "loss": 1.8749026507139206,
+              "cuda": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 9388
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "mle",
+          "wait_s": 131.81856787204742,
+          "service_s": 46.23412175104022,
+          "completion_s": 178.05268986150622,
+          "passed": true,
+          "result": {
+            "task_name": "mle-ready",
+            "reward": 0.9711111111111111,
+            "rewards": {
+              "reward": 0.9711111111111111,
+              "accuracy": 0.9711111111111111,
+              "valid_submission": 1,
+              "local_evaluation": 1
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "re",
+          "wait_s": 178.10168140754104,
+          "service_s": 59.25686129741371,
+          "completion_s": 237.35854294337332,
+          "passed": true,
+          "result": {
+            "task_name": "restricted-task",
+            "reward": 0.08463103281803618,
+            "rewards": {
+              "reward": 0.08463103281803618,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "loss": 10.815996646881104
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "policy": "static",
+      "makespan_s": 179.7267292868346,
+      "tasks": [
+        {
+          "family": "kernel",
+          "wait_s": 7.843039929866791e-05,
+          "service_s": 61.71273747831583,
+          "completion_s": 61.71281616948545,
+          "passed": true,
+          "result": {
+            "task_name": "kernel_bench",
+            "reward": 1.0,
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1.0,
+              "runtime_us": 7.8,
+              "speedup": 0.5833333333333334
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "posttrain",
+          "wait_s": 0.04658971354365349,
+          "service_s": 179.62808687984943,
+          "completion_s": 179.67467677220702,
+          "passed": true,
+          "result": {
+            "task_name": "posttrainbench-gsm8k-qwen3-1.7b",
+            "reward": 0.3953370435934384,
+            "rewards": {
+              "reward": 0.3953370435934384,
+              "answer_nll": 0.9280166029930115,
+              "cuda": 1,
+              "eval_valid": 1,
+              "local_evaluation": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 4184
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "flashinfer",
+          "wait_s": 0.08888253383338451,
+          "service_s": 66.62916631251574,
+          "completion_s": 66.71804909780622,
+          "passed": true,
+          "result": {
+            "task_name": "flashinfer-task",
+            "reward": 1.0,
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "evaluations": 3
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "mlgym",
+          "wait_s": 0.1301030684262514,
+          "service_s": 175.89149799756706,
+          "completion_s": 176.02160149626434,
+          "passed": true,
+          "result": {
+            "task_name": "naturalLanguageInferenceMNLI",
+            "reward": 0.25,
+            "rewards": {
+              "reward": 0.25,
+              "loss": 1.8749026507139206,
+              "cuda": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 9388
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "mle",
+          "wait_s": 0.17273118905723095,
+          "service_s": 54.93140462972224,
+          "completion_s": 55.10413620993495,
+          "passed": true,
+          "result": {
+            "task_name": "mle-ready",
+            "reward": 0.9711111111111111,
+            "rewards": {
+              "reward": 0.9711111111111111,
+              "accuracy": 0.9711111111111111,
+              "valid_submission": 1,
+              "local_evaluation": 1
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        },
+        {
+          "family": "re",
+          "wait_s": 0.24232742562890053,
+          "service_s": 61.250061977654696,
+          "completion_s": 61.49238977394998,
+          "passed": true,
+          "result": {
+            "task_name": "restricted-task",
+            "reward": 0.08398571729557078,
+            "rewards": {
+              "reward": 0.08398571729557078,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "loss": 10.906786441802979
+            },
+            "exception": null,
+            "exception_type": null
+          },
+          "remaining_containers": ""
+        }
+      ]
+    }
+  ],
+  "families": {
+    "kernel": {
+      "static_s": 75.87102093081921,
+      "pool_s": 55.0699328687042,
+      "reduction_pct": 27.416380861781054,
+      "paired_reduction_pct": [
+        38.642672755237605,
+        11.03899883166497
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 7.8,
+          "speedup": 0.5833333333333334
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 7.8,
+          "speedup": 0.5833333333333334
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 7.8,
+          "speedup": 0.5833333333333334
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 7.8,
+          "speedup": 0.5833333333333334
+        }
+      ]
+    },
+    "posttrain": {
+      "static_s": 180.04844010993838,
+      "pool_s": 133.1291882460937,
+      "reduction_pct": 26.05923818900935,
+      "paired_reduction_pct": [
+        25.456916351407067,
+        26.664065953706707
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 0.3953370435934384,
+          "answer_nll": 0.9280166029930115,
+          "cuda": 1,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 4184
+        },
+        {
+          "reward": 0.3953370435934384,
+          "answer_nll": 0.9280166029930115,
+          "cuda": 1,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 4184
+        },
+        {
+          "reward": 0.3953370435934384,
+          "answer_nll": 0.9280166029930115,
+          "cuda": 1,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 4184
+        },
+        {
+          "reward": 0.3953370435934384,
+          "answer_nll": 0.9280166029930115,
+          "cuda": 1,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 4184
+        }
+      ]
+    },
+    "flashinfer": {
+      "static_s": 84.89430383499712,
+      "pool_s": 116.42287501785904,
+      "reduction_pct": -37.13861797387692,
+      "paired_reduction_pct": [
+        -13.866583146031285,
+        -73.09083272315884
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        }
+      ]
+    },
+    "mlgym": {
+      "static_s": 175.93874892685562,
+      "pool_s": 243.47621678560972,
+      "reduction_pct": -38.386920602028376,
+      "paired_reduction_pct": [
+        -40.364998602272074,
+        -36.41070474646937
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 0.25,
+          "loss": 1.8749026507139206,
+          "cuda": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 9388
+        },
+        {
+          "reward": 0.25,
+          "loss": 1.8749026507139206,
+          "cuda": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 9388
+        },
+        {
+          "reward": 0.25,
+          "loss": 1.8749026507139206,
+          "cuda": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 9388
+        },
+        {
+          "reward": 0.25,
+          "loss": 1.8749026507139206,
+          "cuda": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 9388
+        }
+      ]
+    },
+    "mle": {
+      "static_s": 59.23930231202394,
+      "pool_s": 182.21131215058267,
+      "reduction_pct": -207.58517578556766,
+      "paired_reduction_pct": [
+        -194.07731394581006,
+        -223.1203719139406
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        },
+        {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        },
+        {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        },
+        {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        }
+      ]
+    },
+    "re": {
+      "static_s": 71.31587691232562,
+      "pool_s": 241.98783991206437,
+      "reduction_pct": -239.31832628176136,
+      "paired_reduction_pct": [
+        -203.94265442683613,
+        -285.9966148915642
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 0.08456772972870526,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "loss": 10.824841499328613
+        },
+        {
+          "reward": 0.08422218040199944,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "loss": 10.873356819152832
+        },
+        {
+          "reward": 0.08463103281803618,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "loss": 10.815996646881104
+        },
+        {
+          "reward": 0.08398571729557078,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "loss": 10.906786441802979
+        }
+      ]
+    }
+  },
+  "physical_release": true,
+  "total": {
+    "static_s": 180.1012563118711,
+    "pool_s": 243.53038087952882,
+    "reduction_pct": -35.2185908452638
+  },
+  "families_improved_10pct": 2
+}

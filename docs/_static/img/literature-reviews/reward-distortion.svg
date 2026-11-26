@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1008pt" height="504pt" viewBox="0 0 1008 504" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-19T14:52:18.486407</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 504 
+L 1008 504 
+L 1008 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 242.7264 139.356 
+L 629.7984 139.356 
+L 629.7984 168.084 
+L 242.7264 168.084 
+z
+" clip-path="url(#p8a80c9f66e)" style="fill: #2563a6"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 242.7264 182.448 
+L 633.66912 182.448 
+L 633.66912 211.176 
+L 242.7264 211.176 
+z
+" clip-path="url(#p8a80c9f66e)" style="fill: #c66b21"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 242.7264 263.844 
+L 668.5056 263.844 
+L 668.5056 292.572 
+L 242.7264 292.572 
+z
+" clip-path="url(#p8a80c9f66e)" style="fill: #2563a6"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 242.7264 306.936 
+L 637.578547 306.936 
+L 637.578547 335.664 
+L 242.7264 335.664 
+z
+" clip-path="url(#p8a80c9f66e)" style="fill: #c66b21"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 22px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="47.192937" transform="rotate(-0 39.5136 47.192937)">计时进入奖励后，竞争可能让代码好坏被颠倒</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #5e6e7c" x="39.5136" y="77.37975" transform="rotate(-0 39.5136 77.37975)">教学假设：同一输入、同一参考 12 μs，奖励为参考时间 / 候选时间。柱长只表示候选耗时。</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 14px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="119.462875" transform="rotate(-0 39.5136 119.462875)">相同无干扰条件</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="204.0192" y="157.147734" transform="rotate(-0 204.0192 157.147734)">A</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #2563a6" x="649.152" y="157.427031" transform="rotate(-0 649.152 157.427031)">10 μs，奖励 1.200</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="204.0192" y="200.239734" transform="rotate(-0 204.0192 200.239734)">B</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #c66b21" x="653.02272" y="200.519031" transform="rotate(-0 653.02272 200.519031)">10.1 μs，奖励 1.188</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 14px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="243.950875" transform="rotate(-0 39.5136 243.950875)">只在 A 测量时加入竞争</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="204.0192" y="281.635734" transform="rotate(-0 204.0192 281.635734)">A</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #2563a6" x="687.8592" y="281.915031" transform="rotate(-0 687.8592 281.915031)">11 μs，奖励 1.091</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="204.0192" y="324.727734" transform="rotate(-0 204.0192 324.727734)">B</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #c66b21" x="656.932147" y="325.007031" transform="rotate(-0 656.932147 325.007031)">10.201 μs，奖励 1.176</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 14px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="49.1904" y="406.770219" transform="rotate(-0 49.1904 406.770219)">无干扰时 A 更快，奖励更高。竞争后 A 的代码没变，却因测量条件更差而输给 B。</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #5e6e7c" x="49.1904" y="463.644187" transform="rotate(-0 49.1904 463.644187)">测量条件 → 时间 → 奖励 → 下一轮保留的候选或训练信号。这条反馈链使调度影响搜索方向。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p8a80c9f66e">
+   <rect x="20.16" y="10.08" width="967.68" height="478.8"/>
+  </clipPath>
+ </defs>
+</svg>

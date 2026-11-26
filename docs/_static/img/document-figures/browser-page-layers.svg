@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="1152pt" viewBox="0 0 1152 1152" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:12:41.490344</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1152 
+L 1152 1152 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="46.08" y="41.108398" transform="rotate(-0 46.08 41.108398)">网页呈现：内容、布局样式与交互共同组成页面</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="93.408922" transform="rotate(-0 46.08 93.408922)">一个网页上的内容、排版和点击行为分别由谁改变？</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 117.6192 214.7175 
+L 1034.3808 214.7175 
+Q 1044.9792 214.7175 1044.9792 220.9275 
+L 1044.9792 578.0025 
+Q 1044.9792 584.2125 1034.3808 584.2125 
+L 117.6192 584.2125 
+Q 107.0208 584.2125 107.0208 578.0025 
+L 107.0208 220.9275 
+Q 107.0208 214.7175 117.6192 214.7175 
+z
+" clip-path="url(#pd6dad9d4d8)" style="fill: #ffffff; stroke: #a6bad1; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 120.2688 222.48 
+L 1031.7312 222.48 
+L 1031.7312 284.58 
+L 120.2688 284.58 
+z
+" clip-path="url(#pd6dad9d4d8)" style="fill: #eaf2ff; stroke: #eaf2ff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 149.4144 307.8675 
+L 356.0832 307.8675 
+Q 366.6816 307.8675 366.6816 314.0775 
+L 366.6816 540.7425 
+Q 366.6816 546.9525 356.0832 546.9525 
+L 149.4144 546.9525 
+Q 138.816 546.9525 138.816 540.7425 
+L 138.816 314.0775 
+Q 138.816 307.8675 149.4144 307.8675 
+z
+" clip-path="url(#pd6dad9d4d8)" style="fill: #f2edfb; stroke: #f2edfb; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 424.9728 307.8675 
+L 981.3888 307.8675 
+Q 991.9872 307.8675 991.9872 314.0775 
+L 991.9872 460.0125 
+Q 991.9872 466.2225 981.3888 466.2225 
+L 424.9728 466.2225 
+Q 414.3744 466.2225 414.3744 460.0125 
+L 414.3744 314.0775 
+Q 414.3744 307.8675 424.9728 307.8675 
+z
+" clip-path="url(#pd6dad9d4d8)" style="fill: #e6f6f2; stroke: #e6f6f2; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 689.9328 487.9575 
+L 949.5936 487.9575 
+Q 960.192 487.9575 960.192 494.1675 
+L 960.192 540.7425 
+Q 960.192 546.9525 949.5936 546.9525 
+L 689.9328 546.9525 
+Q 679.3344 546.9525 679.3344 540.7425 
+L 679.3344 494.1675 
+Q 679.3344 487.9575 689.9328 487.9575 
+z
+" clip-path="url(#pd6dad9d4d8)" style="fill: #fff2db; stroke: #e79730; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="162.6624" y="260.7175" transform="rotate(-0 162.6624 260.7175)">标题 / 导航</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(232.7488 413.830859)">侧栏</text>
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(212.7488 443.022266)">阅读目录</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="703.1808" y="393.998125" transform="rotate(-0 703.1808 393.998125)">正文、图片和表格</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #e79730" x="819.7632" y="524.603437" transform="rotate(-0 819.7632 524.603437)">交互控件</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="576" y="625.70125" transform="rotate(-0 576 625.70125)">模板管结构，CSS管样式，JavaScript管交互。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="text_8">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="142.827734" transform="rotate(-0 46.08 142.827734)">沿同一页面操作：先打开文章，再改变侧栏宽度，最后点击折叠按钮。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_7">
+    <path d="M 56.6784 689.904 
+L 1095.3216 689.904 
+Q 1110.15936 689.904 1110.15936 694.44 
+L 1110.15936 785.16 
+Q 1110.15936 789.696 1095.3216 789.696 
+L 56.6784 789.696 
+Q 41.84064 789.696 41.84064 785.16 
+L 41.84064 694.44 
+Q 41.84064 689.904 56.6784 689.904 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 353.4336 705.132 
+L 359.79264 705.132 
+L 359.79264 714.852 
+L 353.4336 714.852 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 353.4336 734.292 
+L 359.79264 734.292 
+L 359.79264 744.012 
+L 353.4336 744.012 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 353.4336 763.452 
+L 359.79264 763.452 
+L 359.79264 773.172 
+L 353.4336 773.172 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 56.6784 800.064 
+L 1095.3216 800.064 
+Q 1110.15936 800.064 1110.15936 804.6 
+L 1110.15936 895.32 
+Q 1110.15936 899.856 1095.3216 899.856 
+L 56.6784 899.856 
+Q 41.84064 899.856 41.84064 895.32 
+L 41.84064 804.6 
+Q 41.84064 800.064 56.6784 800.064 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 353.4336 815.292 
+L 359.79264 815.292 
+L 359.79264 825.012 
+L 353.4336 825.012 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 353.4336 844.452 
+L 359.79264 844.452 
+L 359.79264 854.172 
+L 353.4336 854.172 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 353.4336 873.612 
+L 359.79264 873.612 
+L 359.79264 883.332 
+L 353.4336 883.332 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 56.6784 910.224 
+L 1095.3216 910.224 
+Q 1110.15936 910.224 1110.15936 914.76 
+L 1110.15936 1005.48 
+Q 1110.15936 1010.016 1095.3216 1010.016 
+L 56.6784 1010.016 
+Q 41.84064 1010.016 41.84064 1005.48 
+L 41.84064 914.76 
+Q 41.84064 910.224 56.6784 910.224 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 353.4336 925.452 
+L 359.79264 925.452 
+L 359.79264 935.172 
+L 353.4336 935.172 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 353.4336 954.612 
+L 359.79264 954.612 
+L 359.79264 964.332 
+L 353.4336 964.332 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 353.4336 983.772 
+L 359.79264 983.772 
+L 359.79264 993.492 
+L 353.4336 993.492 
+z
+" clip-path="url(#p5a5b04035b)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="67.2768" y="726.142324" transform="rotate(-0 67.2768 726.142324)">01  内容对象</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="721.582109" transform="rotate(-0 374.6304 721.582109)">HTML：标题与段落</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="750.781172" transform="rotate(-0 374.6304 750.781172)">图片与目录入口</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="779.980234" transform="rotate(-0 374.6304 779.980234)">按钮存在于页面结构</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="67.2768" y="836.05623" transform="rotate(-0 67.2768 836.05623)">02  外观变化</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="831.859297" transform="rotate(-0 374.6304 831.859297)">CSS：侧栏宽度</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="860.784922" transform="rotate(-0 374.6304 860.784922)">字号、留白与颜色</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="890.140234" transform="rotate(-0 374.6304 890.140234)">改变布局但不改正文</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d68b20" x="67.2768" y="946.21623" transform="rotate(-0 67.2768 946.21623)">03  用户交互</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="940.964609" transform="rotate(-0 374.6304 940.964609)">JS：接收点击事件</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="971.101172" transform="rotate(-0 374.6304 971.101172)">切换目录展开状态</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="1000.339297" transform="rotate(-0 374.6304 1000.339297)">页面按新状态重新显示</text>
+   </g>
+  </g>
+  <g id="axes_5">
+   <g id="patch_19">
+    <path d="M 56.6784 1032.7536 
+L 1095.3216 1032.7536 
+Q 1110.15936 1032.7536 1110.15936 1034.316 
+L 1110.15936 1090.116 
+Q 1110.15936 1091.6784 1095.3216 1091.6784 
+L 56.6784 1091.6784 
+Q 41.84064 1091.6784 41.84064 1090.116 
+L 41.84064 1034.316 
+Q 41.84064 1032.7536 56.6784 1032.7536 
+z
+" clip-path="url(#p19174c13f9)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="61.9776" y="1061.439734" transform="rotate(-0 61.9776 1061.439734)">文字错了查内容，布局挤了查样式，按钮无反应查事件与脚本加载。</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="1121.99843" transform="rotate(-0 46.08 1121.99843)">绘制的教学页面。实际模板、样式和脚本入口见本目录说明。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pd6dad9d4d8">
+   <rect x="46.08" y="172.8" width="1059.84" height="496.8"/>
+  </clipPath>
+  <clipPath id="p5a5b04035b">
+   <rect x="46.08" y="691.2" width="1059.84" height="324"/>
+  </clipPath>
+  <clipPath id="p19174c13f9">
+   <rect x="46.08" y="1033.2" width="1059.84" height="111.6"/>
+  </clipPath>
+ </defs>
+</svg>

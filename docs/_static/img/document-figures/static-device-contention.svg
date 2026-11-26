@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="1152pt" viewBox="0 0 1152 1152" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:13:02.546091</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1152 
+L 1152 1152 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="46.08" y="41.362305" transform="rotate(-0 46.08 41.362305)">静态映射风险：两个任务可能看见同一张物理GPU</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="93.291734" transform="rotate(-0 46.08 93.291734)">已经限制每个进程的会话数，为什么两个容器还可能挤到同一张卡？</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 107.0208 220.9275 
+L 440.8704 220.9275 
+Q 451.4688 220.9275 451.4688 227.1375 
+L 451.4688 354.4425 
+Q 451.4688 360.6525 440.8704 360.6525 
+L 107.0208 360.6525 
+Q 96.4224 360.6525 96.4224 354.4425 
+L 96.4224 227.1375 
+Q 96.4224 220.9275 107.0208 220.9275 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 107.0208 450.6975 
+L 440.8704 450.6975 
+Q 451.4688 450.6975 451.4688 456.9075 
+L 451.4688 584.2125 
+Q 451.4688 590.4225 440.8704 590.4225 
+L 107.0208 590.4225 
+Q 96.4224 590.4225 96.4224 584.2125 
+L 96.4224 456.9075 
+Q 96.4224 450.6975 107.0208 450.6975 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #fff2db; stroke: #e79730; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 668.736 258.1875 
+L 1023.7824 258.1875 
+Q 1034.3808 258.1875 1034.3808 264.3975 
+L 1034.3808 528.3225 
+Q 1034.3808 534.5325 1023.7824 534.5325 
+L 668.736 534.5325 
+Q 658.1376 534.5325 658.1376 528.3225 
+L 658.1376 264.3975 
+Q 658.1376 258.1875 668.736 258.1875 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #24374b; stroke: #24374b; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 703.1808 328.05 
+L 745.5744 328.05 
+L 745.5744 359.1 
+L 703.1808 359.1 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 750.8736 328.05 
+L 793.2672 328.05 
+L 793.2672 359.1 
+L 750.8736 359.1 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #e79730; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 798.5664 328.05 
+L 840.96 328.05 
+L 840.96 359.1 
+L 798.5664 359.1 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 846.2592 328.05 
+L 888.6528 328.05 
+L 888.6528 359.1 
+L 846.2592 359.1 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #e79730; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 893.952 328.05 
+L 936.3456 328.05 
+L 936.3456 359.1 
+L 893.952 359.1 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #d45b67; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 941.6448 328.05 
+L 984.0384 328.05 
+L 984.0384 359.1 
+L 941.6448 359.1 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #d45b67; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 703.1808 362.205 
+L 745.5744 362.205 
+L 745.5744 393.255 
+L 703.1808 393.255 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 750.8736 362.205 
+L 793.2672 362.205 
+L 793.2672 393.255 
+L 750.8736 393.255 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #e79730; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 798.5664 362.205 
+L 840.96 362.205 
+L 840.96 393.255 
+L 798.5664 393.255 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 846.2592 362.205 
+L 888.6528 362.205 
+L 888.6528 393.255 
+L 846.2592 393.255 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #e79730; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 893.952 362.205 
+L 936.3456 362.205 
+L 936.3456 393.255 
+L 893.952 393.255 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #d45b67; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 941.6448 362.205 
+L 984.0384 362.205 
+L 984.0384 393.255 
+L 941.6448 393.255 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #d45b67; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 703.1808 396.36 
+L 745.5744 396.36 
+L 745.5744 427.41 
+L 703.1808 427.41 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 750.8736 396.36 
+L 793.2672 396.36 
+L 793.2672 427.41 
+L 750.8736 427.41 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #e79730; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 798.5664 396.36 
+L 840.96 396.36 
+L 840.96 427.41 
+L 798.5664 427.41 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 846.2592 396.36 
+L 888.6528 396.36 
+L 888.6528 427.41 
+L 846.2592 427.41 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #e79730; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 893.952 396.36 
+L 936.3456 396.36 
+L 936.3456 427.41 
+L 893.952 427.41 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #d45b67; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_22">
+    <path d="M 941.6448 396.36 
+L 984.0384 396.36 
+L 984.0384 427.41 
+L 941.6448 427.41 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #d45b67; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_23">
+    <path d="M 471.959698 291.258953 
+Q 560.102006 312.524905 646.614042 333.397524 
+" clip-path="url(#p2b38a82fee)" style="fill: none; stroke: #3478c5; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 641.143082 328.785735 
+L 646.614042 333.397524 
+L 639.642035 335.007218 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #3478c5; stroke: #3478c5; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="patch_24">
+    <path d="M 471.904713 519.909019 
+Q 560.101418 489.510339 646.712606 459.658137 
+" clip-path="url(#p2b38a82fee)" style="fill: none; stroke: #e79730; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 639.619182 458.718279 
+L 646.712606 459.658137 
+L 641.704666 464.768961 
+z
+" clip-path="url(#p2b38a82fee)" style="fill: #e79730; stroke: #e79730; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="273.9456" y="278.8507" transform="rotate(-0 273.9456 278.8507)">容器甲</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="273.9456" y="328.112025" transform="rotate(-0 273.9456 328.112025)">静态映射GPU0</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #e79730" x="273.9456" y="508.698825" transform="rotate(-0 273.9456 508.698825)">容器乙</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="273.9456" y="557.882025" transform="rotate(-0 273.9456 557.882025)">静态映射GPU0</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #ffffff" x="681.984" y="297.899375" transform="rotate(-0 681.984 297.899375)">同一张物理GPU0</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #dce9f4" x="846.2592" y="509.156562" transform="rotate(-0 846.2592 509.156562)">计算网格示意</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="576" y="633.005" transform="rotate(-0 576 633.005)">进程内数量上限，与跨进程设备互斥是不同约束。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="text_10">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="142.085547" transform="rotate(-0 46.08 142.085547)">历史教学场景：进程 P、Q 各只运行一个会话，但两者都静态映射 GPU0。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_25">
+    <path d="M 56.6784 689.904 
+L 1095.3216 689.904 
+Q 1110.15936 689.904 1110.15936 694.44 
+L 1110.15936 785.16 
+Q 1110.15936 789.696 1095.3216 789.696 
+L 56.6784 789.696 
+Q 41.84064 789.696 41.84064 785.16 
+L 41.84064 694.44 
+Q 41.84064 689.904 56.6784 689.904 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_26">
+    <path d="M 353.4336 705.132 
+L 359.79264 705.132 
+L 359.79264 714.852 
+L 353.4336 714.852 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_27">
+    <path d="M 353.4336 734.292 
+L 359.79264 734.292 
+L 359.79264 744.012 
+L 353.4336 744.012 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_28">
+    <path d="M 353.4336 763.452 
+L 359.79264 763.452 
+L 359.79264 773.172 
+L 353.4336 773.172 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_29">
+    <path d="M 56.6784 800.064 
+L 1095.3216 800.064 
+Q 1110.15936 800.064 1110.15936 804.6 
+L 1110.15936 895.32 
+Q 1110.15936 899.856 1095.3216 899.856 
+L 56.6784 899.856 
+Q 41.84064 899.856 41.84064 895.32 
+L 41.84064 804.6 
+Q 41.84064 800.064 56.6784 800.064 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_30">
+    <path d="M 353.4336 815.292 
+L 359.79264 815.292 
+L 359.79264 825.012 
+L 353.4336 825.012 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_31">
+    <path d="M 353.4336 844.452 
+L 359.79264 844.452 
+L 359.79264 854.172 
+L 353.4336 854.172 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_32">
+    <path d="M 353.4336 873.612 
+L 359.79264 873.612 
+L 359.79264 883.332 
+L 353.4336 883.332 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_33">
+    <path d="M 56.6784 910.224 
+L 1095.3216 910.224 
+Q 1110.15936 910.224 1110.15936 914.76 
+L 1110.15936 1005.48 
+Q 1110.15936 1010.016 1095.3216 1010.016 
+L 56.6784 1010.016 
+Q 41.84064 1010.016 41.84064 1005.48 
+L 41.84064 914.76 
+Q 41.84064 910.224 56.6784 910.224 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_34">
+    <path d="M 353.4336 925.452 
+L 359.79264 925.452 
+L 359.79264 935.172 
+L 353.4336 935.172 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_35">
+    <path d="M 353.4336 954.612 
+L 359.79264 954.612 
+L 359.79264 964.332 
+L 353.4336 964.332 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_36">
+    <path d="M 353.4336 983.772 
+L 359.79264 983.772 
+L 359.79264 993.492 
+L 353.4336 993.492 
+z
+" clip-path="url(#pfc187ae79a)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="67.2768" y="726.019277" transform="rotate(-0 67.2768 726.019277)">01  各自看本进程</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="721.347734" transform="rotate(-0 374.6304 721.347734)">P：会话数 1，未超限</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="749.765547" transform="rotate(-0 374.6304 749.765547)">Q：会话数 1，未超限</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="780.019297" transform="rotate(-0 374.6304 780.019297)">双方没有共享设备账本</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="67.2768" y="836.138262" transform="rotate(-0 67.2768 836.138262)">02  实际设备映射</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="831.820234" transform="rotate(-0 374.6304 831.820234)">容器甲看见 GPU0</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="861.058359" transform="rotate(-0 374.6304 861.058359)">容器乙也看见 GPU0</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="890.140234" transform="rotate(-0 374.6304 890.140234)">合计显存需求可能叠加</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d68b20" x="67.2768" y="946.21623" transform="rotate(-0 67.2768 946.21623)">03  正确判断层次</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="941.902109" transform="rotate(-0 374.6304 941.902109)">数量限制：本进程并发</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="971.179297" transform="rotate(-0 374.6304 971.179297)">设备准入：跨任务总需求</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="1000.339297" transform="rotate(-0 374.6304 1000.339297)">可见设备不等于独占设备</text>
+   </g>
+  </g>
+  <g id="axes_5">
+   <g id="patch_37">
+    <path d="M 56.6784 1032.7536 
+L 1095.3216 1032.7536 
+Q 1110.15936 1032.7536 1110.15936 1034.316 
+L 1110.15936 1090.116 
+Q 1110.15936 1091.6784 1095.3216 1091.6784 
+L 56.6784 1091.6784 
+Q 41.84064 1091.6784 41.84064 1090.116 
+L 41.84064 1034.316 
+Q 41.84064 1032.7536 56.6784 1032.7536 
+z
+" clip-path="url(#pb36ee237ca)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="61.9776" y="1061.439734" transform="rotate(-0 61.9776 1061.439734)">局部信号量保护局部数量，无法自动约束另一进程的申请。设备层还需要共同遵守的准入。</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="1121.892961" transform="rotate(-0 46.08 1121.892961)">历史机制解释，不改写任何旧实验的开关、版本和锁语义。实际失败还取决于负载。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p2b38a82fee">
+   <rect x="46.08" y="172.8" width="1059.84" height="496.8"/>
+  </clipPath>
+  <clipPath id="pfc187ae79a">
+   <rect x="46.08" y="691.2" width="1059.84" height="324"/>
+  </clipPath>
+  <clipPath id="pb36ee237ca">
+   <rect x="46.08" y="1033.2" width="1059.84" height="111.6"/>
+  </clipPath>
+ </defs>
+</svg>

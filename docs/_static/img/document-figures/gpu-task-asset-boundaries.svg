@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="1152pt" viewBox="0 0 1152 1152" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:12:45.201913</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1152 
+L 1152 1152 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="46.08" y="41.15918" transform="rotate(-0 46.08 41.15918)">GPU任务：代码、模型、输入与评分资产有不同寿命</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="93.291734" transform="rotate(-0 46.08 93.291734)">同一个 GPU 任务里，哪些能复用、哪些随代码变、哪些必须保密？</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 109.6704 253.53 
+L 374.6304 253.53 
+L 374.6304 390.15 
+L 109.6704 390.15 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 242.1504 238.005 
+C 277.284507 238.005 310.984341 239.640812 335.827906 242.552167 
+C 360.671471 245.463523 374.6304 249.412722 374.6304 253.53 
+C 374.6304 257.647278 360.671471 261.596477 335.827906 264.507833 
+C 310.984341 267.419188 277.284507 269.055 242.1504 269.055 
+C 207.016293 269.055 173.316459 267.419188 148.472894 264.507833 
+C 123.629329 261.596477 109.6704 257.647278 109.6704 253.53 
+C 109.6704 249.412722 123.629329 245.463523 148.472894 242.552167 
+C 173.316459 239.640812 207.016293 238.005 242.1504 238.005 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #eaf2ff; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 242.1504 374.625 
+C 277.284507 374.625 310.984341 376.260812 335.827906 379.172167 
+C 360.671471 382.083523 374.6304 386.032722 374.6304 390.15 
+C 374.6304 394.267278 360.671471 398.216477 335.827906 401.127833 
+C 310.984341 404.039188 277.284507 405.675 242.1504 405.675 
+C 207.016293 405.675 173.316459 404.039188 148.472894 401.127833 
+C 123.629329 398.216477 109.6704 394.267278 109.6704 390.15 
+C 109.6704 386.032722 123.629329 382.083523 148.472894 379.172167 
+C 173.316459 376.260812 207.016293 374.625 242.1504 374.625 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #eaf2ff; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 448.8192 253.53 
+L 713.7792 253.53 
+L 713.7792 390.15 
+L 448.8192 390.15 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #fff2db; stroke: #e79730; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 581.2992 238.005 
+C 616.433307 238.005 650.133141 239.640812 674.976706 242.552167 
+C 699.820271 245.463523 713.7792 249.412722 713.7792 253.53 
+C 713.7792 257.647278 699.820271 261.596477 674.976706 264.507833 
+C 650.133141 267.419188 616.433307 269.055 581.2992 269.055 
+C 546.165093 269.055 512.465259 267.419188 487.621694 264.507833 
+C 462.778129 261.596477 448.8192 257.647278 448.8192 253.53 
+C 448.8192 249.412722 462.778129 245.463523 487.621694 242.552167 
+C 512.465259 239.640812 546.165093 238.005 581.2992 238.005 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #fff2db; stroke: #e79730; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 581.2992 374.625 
+C 616.433307 374.625 650.133141 376.260812 674.976706 379.172167 
+C 699.820271 382.083523 713.7792 386.032722 713.7792 390.15 
+C 713.7792 394.267278 699.820271 398.216477 674.976706 401.127833 
+C 650.133141 404.039188 616.433307 405.675 581.2992 405.675 
+C 546.165093 405.675 512.465259 404.039188 487.621694 401.127833 
+C 462.778129 398.216477 448.8192 394.267278 448.8192 390.15 
+C 448.8192 386.032722 462.778129 382.083523 487.621694 379.172167 
+C 512.465259 376.260812 546.165093 374.625 581.2992 374.625 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #fff2db; stroke: #e79730; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 787.968 253.53 
+L 1052.928 253.53 
+L 1052.928 390.15 
+L 787.968 390.15 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 920.448 238.005 
+C 955.582107 238.005 989.281941 239.640812 1014.125506 242.552167 
+C 1038.969071 245.463523 1052.928 249.412722 1052.928 253.53 
+C 1052.928 257.647278 1038.969071 261.596477 1014.125506 264.507833 
+C 989.281941 267.419188 955.582107 269.055 920.448 269.055 
+C 885.313893 269.055 851.614059 267.419188 826.770494 264.507833 
+C 801.926929 261.596477 787.968 257.647278 787.968 253.53 
+C 787.968 249.412722 801.926929 245.463523 826.770494 242.552167 
+C 851.614059 239.640812 885.313893 238.005 920.448 238.005 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #e6f6f2; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 920.448 374.625 
+C 955.582107 374.625 989.281941 376.260812 1014.125506 379.172167 
+C 1038.969071 382.083523 1052.928 386.032722 1052.928 390.15 
+C 1052.928 394.267278 1038.969071 398.216477 1014.125506 401.127833 
+C 989.281941 404.039188 955.582107 405.675 920.448 405.675 
+C 885.313893 405.675 851.614059 404.039188 826.770494 401.127833 
+C 801.926929 398.216477 787.968 394.267278 787.968 390.15 
+C 787.968 386.032722 801.926929 382.083523 826.770494 379.172167 
+C 851.614059 376.260812 885.313893 374.625 920.448 374.625 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #e6f6f2; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 109.6704 545.4 
+L 432.39168 545.4 
+L 432.39168 607.5 
+L 109.6704 607.5 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 432.39168 545.4 
+L 755.11296 545.4 
+L 755.11296 607.5 
+L 432.39168 607.5 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #fff2db; stroke: #e79730; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 755.11296 545.4 
+L 1031.7312 545.4 
+L 1031.7312 607.5 
+L 755.11296 607.5 
+z
+" clip-path="url(#p3d184fec7d)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="242.1504" y="328.988437" transform="rotate(-0 242.1504 328.988437)">固定资产</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="242.1504" y="465.608438" transform="rotate(-0 242.1504 465.608438)">数据 / 依赖 / 基础模型</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="581.2992" y="329.144687" transform="rotate(-0 581.2992 329.144687)">当前尝试</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="581.2992" y="465.6475" transform="rotate(-0 581.2992 465.6475)">候选代码 / 候选权重</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="920.448" y="329.0275" transform="rotate(-0 920.448 329.0275)">可信评分</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="920.448" y="465.569375" transform="rotate(-0 920.448 465.569375)">隐藏数据 / 评分规则</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="271.03104" y="583.676562" transform="rotate(-0 271.03104 583.676562)">跨请求准备</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="593.75232" y="583.598437" transform="rotate(-0 593.75232 583.598437)">随尝试变化</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="893.42208" y="583.6375" transform="rotate(-0 893.42208 583.6375)">评分器持有</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="text_12">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="141.733984" transform="rotate(-0 46.08 141.733984)">Agent 多次修改候选训练代码，每次使用固定数据和依赖，最后由独立评估器评分。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_14">
+    <path d="M 56.6784 689.904 
+L 1095.3216 689.904 
+Q 1110.15936 689.904 1110.15936 694.44 
+L 1110.15936 785.16 
+Q 1110.15936 789.696 1095.3216 789.696 
+L 56.6784 789.696 
+Q 41.84064 789.696 41.84064 785.16 
+L 41.84064 694.44 
+Q 41.84064 689.904 56.6784 689.904 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 353.4336 705.132 
+L 359.79264 705.132 
+L 359.79264 714.852 
+L 353.4336 714.852 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 353.4336 734.292 
+L 359.79264 734.292 
+L 359.79264 744.012 
+L 353.4336 744.012 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 353.4336 763.452 
+L 359.79264 763.452 
+L 359.79264 773.172 
+L 353.4336 773.172 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 56.6784 800.064 
+L 1095.3216 800.064 
+Q 1110.15936 800.064 1110.15936 804.6 
+L 1110.15936 895.32 
+Q 1110.15936 899.856 1095.3216 899.856 
+L 56.6784 899.856 
+Q 41.84064 899.856 41.84064 895.32 
+L 41.84064 804.6 
+Q 41.84064 800.064 56.6784 800.064 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 353.4336 815.292 
+L 359.79264 815.292 
+L 359.79264 825.012 
+L 353.4336 825.012 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 353.4336 844.452 
+L 359.79264 844.452 
+L 359.79264 854.172 
+L 353.4336 854.172 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 353.4336 873.612 
+L 359.79264 873.612 
+L 359.79264 883.332 
+L 353.4336 883.332 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_22">
+    <path d="M 56.6784 910.224 
+L 1095.3216 910.224 
+Q 1110.15936 910.224 1110.15936 914.76 
+L 1110.15936 1005.48 
+Q 1110.15936 1010.016 1095.3216 1010.016 
+L 56.6784 1010.016 
+Q 41.84064 1010.016 41.84064 1005.48 
+L 41.84064 914.76 
+Q 41.84064 910.224 56.6784 910.224 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_23">
+    <path d="M 353.4336 925.452 
+L 359.79264 925.452 
+L 359.79264 935.172 
+L 353.4336 935.172 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_24">
+    <path d="M 353.4336 954.612 
+L 359.79264 954.612 
+L 359.79264 964.332 
+L 353.4336 964.332 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_25">
+    <path d="M 353.4336 983.772 
+L 359.79264 983.772 
+L 359.79264 993.492 
+L 353.4336 993.492 
+z
+" clip-path="url(#p84f385fcb6)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="67.2768" y="725.89623" transform="rotate(-0 67.2768 725.89623)">01  固定资产</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="721.386797" transform="rotate(-0 374.6304 721.386797)">依赖、基础模型、公开数据</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="750.820234" transform="rotate(-0 374.6304 750.820234)">可按版本预热</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="780.019297" transform="rotate(-0 374.6304 780.019297)">跨请求复用需核对身份</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="67.2768" y="836.097246" transform="rotate(-0 67.2768 836.097246)">02  候选产物</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="830.374922" transform="rotate(-0 374.6304 830.374922)">代码、适配参数、checkpoint</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="860.980234" transform="rotate(-0 374.6304 860.980234)">随尝试与版本变化</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="890.140234" transform="rotate(-0 374.6304 890.140234)">不能误复用旧评分函数</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d68b20" x="67.2768" y="946.134199" transform="rotate(-0 67.2768 946.134199)">03  可信评分资产</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="941.980234" transform="rotate(-0 374.6304 941.980234)">隐藏数据与标准答案</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="971.140234" transform="rotate(-0 374.6304 971.140234)">由可信 verifier 持有</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="1000.222109" transform="rotate(-0 374.6304 1000.222109)">按最终提交重建并评分</text>
+   </g>
+  </g>
+  <g id="axes_5">
+   <g id="patch_26">
+    <path d="M 56.6784 1032.7536 
+L 1095.3216 1032.7536 
+Q 1110.15936 1032.7536 1110.15936 1034.316 
+L 1110.15936 1090.116 
+Q 1110.15936 1091.6784 1095.3216 1091.6784 
+L 56.6784 1091.6784 
+Q 41.84064 1091.6784 41.84064 1090.116 
+L 41.84064 1034.316 
+Q 41.84064 1032.7536 56.6784 1032.7536 
+z
+" clip-path="url(#pb5ef93c6b0)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_25">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="61.9776" y="1061.478797" transform="rotate(-0 61.9776 1061.478797)">资产的生命周期不同，调度能否复用状态必须连同版本与评分边界一起判断。</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="1121.928117" transform="rotate(-0 46.08 1121.928117)">公共结构示意。具体 benchmark 是否已接入、常驻到哪一层，查本篇能力表。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p3d184fec7d">
+   <rect x="46.08" y="172.8" width="1059.84" height="496.8"/>
+  </clipPath>
+  <clipPath id="p84f385fcb6">
+   <rect x="46.08" y="691.2" width="1059.84" height="324"/>
+  </clipPath>
+  <clipPath id="pb5ef93c6b0">
+   <rect x="46.08" y="1033.2" width="1059.84" height="111.6"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -24,6 +24,16 @@ Each sample is addressed by a key, normally its `uid`. When one request produces
 multiple trajectories, PSRL uses a trajectory-specific key. Training and validation
 data use separate `train` and `val` partitions.
 
+<!-- figure:sample-fields-and-handles -->
+这张图沿同一个场景解释：样本在多个组件之间传递时，传的是全部张量还是数据的引用？
+
+[![TransferQueue：字段保存在样本下，阶段之间传递样本引用（1/2）](../_static/img/document-figures/sample-fields-and-handles-screen.png)](../_static/img/document-figures/sample-fields-and-handles.png)
+
+[![TransferQueue：字段保存在样本下，阶段之间传递样本引用（2/2）](../_static/img/document-figures/sample-fields-and-handles-screen-02.png)](../_static/img/document-figures/sample-fields-and-handles.png)
+
+同一逻辑样本 q1 先有 prompt，生成后补回答，评分和训练再补不同字段。 样本身份贯穿阶段，字段逐步齐备。逻辑引用减少耦合，但不能据此断言所有传输都零拷贝。 字段为教学归纳。具体键、张量位置与复制次数取决于后端及运行配置。 [查看矢量图](../_static/img/document-figures/sample-fields-and-handles.svg)。
+<!-- /figure:sample-fields-and-handles -->
+
 Fields are filled incrementally:
 
 | Producer | Representative fields |

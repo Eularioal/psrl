@@ -25,6 +25,16 @@ PSRL supports two installation paths:
 The Docker build context is the repository root. Build the image that matches your
 workload, then run PSRL inside it.
 
+<!-- figure:experiment-preflight-node -->
+这张图沿同一个场景解释：driver 能看到 GPU，为什么实际 worker 的容器仍可能运行失败？
+
+[![实验预检：检查真正执行任务的节点与容器（1/2）](../_static/img/document-figures/experiment-preflight-node-screen.png)](../_static/img/document-figures/experiment-preflight-node.png)
+
+[![实验预检：检查真正执行任务的节点与容器（2/2）](../_static/img/document-figures/experiment-preflight-node-screen-02.png)](../_static/img/document-figures/experiment-preflight-node.png)
+
+一次任务跨越 driver → Ray worker → Docker 容器，三处看到的路径和依赖可能不同。 在真正执行的位置验证能力。设备文件存在与 CUDA 内核可运行是两件事。 只做本次验收所需的最小预检。历史节点空闲或历史成功不替代现场核验。 [查看矢量图](../_static/img/document-figures/experiment-preflight-node.svg)。
+<!-- /figure:experiment-preflight-node -->
+
 ### Prerequisites
 
 - Docker with BuildKit enabled.

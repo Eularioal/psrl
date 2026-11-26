@@ -2,7 +2,7 @@
 
 > **Goal:** run the repository's two-node DAPO recipe after preparing its software environment, model and data. This is a distributed training example that reserves 16 GPUs.
 
-DAPO is a group-sampling policy-optimization recipe. First-time readers can use [从一道题理解 PSRL](../overview/reading-guide.md) to understand how generation, scoring and parameter updates connect.
+DAPO is a group-sampling policy-optimization recipe. First-time readers can use [PSRL入门：从一道题到模型更新](../overview/01-PSRL入门_从一道题到模型更新.md) to understand how generation, scoring and parameter updates connect.
 
 ## Contents
 
@@ -22,6 +22,16 @@ DAPO is a group-sampling policy-optimization recipe. First-time readers can use 
 
 Train a **Qwen2.5-3B-Instruct** model on the GSM8K math reasoning dataset using the
 DAPO algorithm with asynchronous staleness-3 training across 2 nodes (16 GPUs).
+
+<!-- figure:experiment-preflight-node -->
+这张图沿同一个场景解释：driver 能看到 GPU，为什么实际 worker 的容器仍可能运行失败？
+
+[![实验预检：检查真正执行任务的节点与容器（1/2）](../_static/img/document-figures/experiment-preflight-node-screen.png)](../_static/img/document-figures/experiment-preflight-node.png)
+
+[![实验预检：检查真正执行任务的节点与容器（2/2）](../_static/img/document-figures/experiment-preflight-node-screen-02.png)](../_static/img/document-figures/experiment-preflight-node.png)
+
+一次任务跨越 driver → Ray worker → Docker 容器，三处看到的路径和依赖可能不同。 在真正执行的位置验证能力。设备文件存在与 CUDA 内核可运行是两件事。 只做本次验收所需的最小预检。历史节点空闲或历史成功不替代现场核验。 [查看矢量图](../_static/img/document-figures/experiment-preflight-node.svg)。
+<!-- /figure:experiment-preflight-node -->
 
 ## Minimal Setup
 
@@ -189,7 +199,7 @@ value model; it names shared statistics, not proof that a critic is active:
 
 A successful run has completed optimizer steps and valid task feedback. Learning
 quality requires a separate held-out comparison. A falling entropy or shorter
-response alone does not establish improvement. See [the collapse diagnosis](../psrl/dapo-training-collapse-diagnosis.md) for a concrete historical failure.
+response alone does not establish improvement. See [the collapse diagnosis](../psrl/05-训练排障_DAPO退化诊断.md) for a concrete historical failure.
 
 ## What Happens Under the Hood
 

@@ -2,7 +2,7 @@
 
 > **Core idea:** a sample can finish after training has advanced to a newer model. PSRL tracks its generation version and only places it in an eligible training buffer. This bounds version age; model quality and speed still need evaluation.
 
-For a worked introduction, see [从一道题理解 PSRL](../overview/reading-guide.md).
+For a worked introduction, see [PSRL入门：从一道题到模型更新](../overview/01-PSRL入门_从一道题到模型更新.md).
 
 ---
 
@@ -122,13 +122,15 @@ The training worker **consumes** a `READY` buffer to perform one gradient step.
 
 ## Compatibility with Flexible Rollout Coordination
 
-```{figure} /_static/img/staleness_compatibility.svg
-:alt: Compatibility with Flexible Rollout
-:width: 100%
-:align: center
+[![Compatibility with Flexible Rollout（1/2）](../_static/img/document-figures/explained-staleness_compatibility-ab32e0e-screen.png)](../_static/img/document-figures/explained-staleness_compatibility-ab32e0e.png)
+
+[![Compatibility with Flexible Rollout（2/2）](../_static/img/document-figures/explained-staleness_compatibility-ab32e0e-screen-02.png)](../_static/img/document-figures/explained-staleness_compatibility-ab32e0e.png)
 
 The staleness buffer is designed to be fully compatible with a wide range of flexible rollout coordination techniques.
-```
+
+<!-- explained-source:explained-staleness_compatibility-ab32e0e -->
+**读图结论：**版本检查提供消费边界，不能由此推导“异步训练无质量代价”。 实际容忍度与缓冲区规则见正文和运行配置。 [完整解释图（SVG）](../_static/img/document-figures/explained-staleness_compatibility-ab32e0e.svg) · [原始机制图或实验图](../_static/img/staleness_compatibility.svg)。
+<!-- /explained-source:explained-staleness_compatibility-ab32e0e -->
 
 The protocol above is intentionally minimal, it only tracks `V_traj` and entry placements, and is by design compatible with every flexible-rollout technique introduced in {doc}`flexible_rollout`.
 

@@ -9,17 +9,21 @@ read/write locks and resource limits.
 For example, training publishes version 11 while a rollout instance is finishing
 work begun at version 10. The instance later loads version 11 before serving new
 work under that version. This is a teaching example, not a timing measurement.
-Read [the complete flow](../overview/reading-guide.md) if the roles are unfamiliar.
+Read [the complete flow](../overview/01-PSRL入门_从一道题到模型更新.md) if the roles are unfamiliar.
 
-```{figure} /_static/img/ps.svg
-:alt: PSRL Parameter Server architecture
-:width: 100%
-:align: center
+[![PSRL Parameter Server architecture（1/3）](../_static/img/document-figures/explained-ps-d3858c3-screen.png)](../_static/img/document-figures/explained-ps-d3858c3.png)
+
+[![PSRL Parameter Server architecture（2/3）](../_static/img/document-figures/explained-ps-d3858c3-screen-02.png)](../_static/img/document-figures/explained-ps-d3858c3.png)
+
+[![PSRL Parameter Server architecture（3/3）](../_static/img/document-figures/explained-ps-d3858c3-screen-03.png)](../_static/img/document-figures/explained-ps-d3858c3.png)
 
 PSRL's Parameter Server: a PS Manager coordinates a group of CPU-resident PS Workers
 co-located with rollout instances, and weights move over NIXL (UCX-selected RDMA /
 IPC / shared memory).
-```
+
+<!-- explained-source:explained-ps-d3858c3 -->
+**读图结论：**发布目标版本不等于所有副本已同步完成，启用时刻由完整协议决定。 实际 NIXL 后端与同步范围按配置确认。 [完整解释图（SVG）](../_static/img/document-figures/explained-ps-d3858c3.svg) · [原始机制图或实验图](../_static/img/ps.svg)。
+<!-- /explained-source:explained-ps-d3858c3 -->
 
 ---
 
@@ -200,7 +204,7 @@ costs for the actual model and topology rather than assuming transfer is free.
 The lock conditions are in [PSManager](../../psrl/workers/ps/ps_manager.py#L1088).
 The training entry [push_model](../../psrl/workers/train/base_train_worker.py#L294)
 also shows backend preparation around NIXL transfer. For the full execution path
-and a CPU teaching exercise, see [the reading guide](../overview/reading-guide.md).
+and a CPU teaching exercise, see [the reading guide](../overview/01-PSRL入门_从一道题到模型更新.md).
 
 ---
 

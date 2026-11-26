@@ -1,0 +1,1566 @@
+{
+  "baseline": "0eeead861ffafed6bf31c962d259fd847775dcf9",
+  "scope": "Dependency locality only. Original GPU mapping and concurrency retained. No command duration predictor or new production scheduler.",
+  "raw_sha256": "fafb5d5ec134e3d92ed484b6e2b44a4949254eb988e1f2168683ee843cbbfb79",
+  "runner_sha256": "223c67cd3511fecba5735a5db0fdfca13d9a2b892733712e18539edce766a89d",
+  "baseline_patch_sha256": "95a2288b4a270f0d7676976ddf52e506c7d3673161d486871f7cd84296657a5f",
+  "budget_s": 1500,
+  "elapsed_s": 630.1832537595183,
+  "treatment": "local",
+  "blocks": [
+    {
+      "index": 0,
+      "policy": "static",
+      "makespan_s": 140.15105405449867,
+      "tasks": [
+        {
+          "family": "kernel",
+          "wait_s": 7.464364171028137e-05,
+          "service_s": 61.48493731953204,
+          "completion_s": 61.485012371093035,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1.0,
+              "runtime_us": 7.8,
+              "speedup": 0.5833333333333334
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.546403,
+            "agent_execution_s": 0.774134,
+            "verifier_s": 40.993102,
+            "other_s": 14.171373371093033
+          }
+        },
+        {
+          "family": "posttrain",
+          "wait_s": 0.06544905342161655,
+          "service_s": 140.04890120774508,
+          "completion_s": 140.114350810647,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.3953370435934384,
+              "answer_nll": 0.9280166029930115,
+              "cuda": 1,
+              "eval_valid": 1,
+              "local_evaluation": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 4184
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.154358,
+            "agent_execution_s": 57.620843,
+            "verifier_s": 63.792978,
+            "other_s": 13.54617181064701
+          }
+        },
+        {
+          "family": "flashinfer",
+          "wait_s": 0.10200841911137104,
+          "service_s": 67.11155697889626,
+          "completion_s": 67.21356567926705,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "evaluations": 3
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.153912,
+            "agent_execution_s": 0.726098,
+            "verifier_s": 47.059949,
+            "other_s": 14.273606679267047
+          }
+        },
+        {
+          "family": "mlgym",
+          "wait_s": 0.1377374455332756,
+          "service_s": 137.42896905355155,
+          "completion_s": 137.5667067784816,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.25,
+              "loss": 1.8749026507139206,
+              "cuda": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 9388
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 4.785361,
+            "agent_execution_s": 53.815852,
+            "verifier_s": 65.053446,
+            "other_s": 13.912047778481607
+          }
+        },
+        {
+          "family": "mle",
+          "wait_s": 0.17318108677864075,
+          "service_s": 54.399870632216334,
+          "completion_s": 54.57305273972452,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.9711111111111111,
+              "accuracy": 0.9711111111111111,
+              "valid_submission": 1,
+              "local_evaluation": 1
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.286561,
+            "agent_execution_s": 14.203789,
+            "verifier_s": 17.104826,
+            "other_s": 17.977876739724515
+          }
+        },
+        {
+          "family": "re",
+          "wait_s": 0.2070129420608282,
+          "service_s": 61.59093567728996,
+          "completion_s": 61.79794901050627,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.08527760932909277,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "loss": 10.726407527923584
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.491388,
+            "agent_execution_s": 14.002263,
+            "verifier_s": 24.507484,
+            "other_s": 17.796814010506274
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "policy": "local",
+      "makespan_s": 66.97018529288471,
+      "tasks": [
+        {
+          "family": "kernel",
+          "wait_s": 8.488260209560394e-05,
+          "service_s": 46.87818061746657,
+          "completion_s": 46.87826577946544,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1.0,
+              "runtime_us": 7.81,
+              "speedup": 0.5825864276568502
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 6.987091,
+            "agent_execution_s": 0.646256,
+            "verifier_s": 24.683799,
+            "other_s": 14.561119779465436
+          }
+        },
+        {
+          "family": "posttrain",
+          "wait_s": 0.04741578362882137,
+          "service_s": 66.88558208011091,
+          "completion_s": 66.93299845419824,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.3953370435934384,
+              "answer_nll": 0.9280166029930115,
+              "cuda": 1,
+              "eval_valid": 1,
+              "local_evaluation": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 4184
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 9.427443,
+            "agent_execution_s": 13.92989,
+            "verifier_s": 29.999687,
+            "other_s": 13.575978454198236
+          }
+        },
+        {
+          "family": "flashinfer",
+          "wait_s": 0.32415345311164856,
+          "service_s": 49.158261738717556,
+          "completion_s": 49.4824157319963,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "evaluations": 3
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 8.304874,
+            "agent_execution_s": 1.28111,
+            "verifier_s": 25.315669,
+            "other_s": 14.580762731996302
+          }
+        },
+        {
+          "family": "mlgym",
+          "wait_s": 0.40095948427915573,
+          "service_s": 56.580491643399,
+          "completion_s": 56.98145147971809,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.25,
+              "loss": 1.8749026507139206,
+              "cuda": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 9388
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 8.169397,
+            "agent_execution_s": 9.238616,
+            "verifier_s": 25.184276,
+            "other_s": 14.389162479718088
+          }
+        },
+        {
+          "family": "mle",
+          "wait_s": 0.46616578102111816,
+          "service_s": 44.612085208296776,
+          "completion_s": 45.078251307830215,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.9711111111111111,
+              "accuracy": 0.9711111111111111,
+              "valid_submission": 1,
+              "local_evaluation": 1
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 8.891544,
+            "agent_execution_s": 4.421683,
+            "verifier_s": 17.447653,
+            "other_s": 14.317371307830214
+          }
+        },
+        {
+          "family": "re",
+          "wait_s": 0.588302256539464,
+          "service_s": 47.37654406949878,
+          "completion_s": 47.96484659612179,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.08485286984015518,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "loss": 10.785105228424072
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 8.65925,
+            "agent_execution_s": 4.484345,
+            "verifier_s": 20.060382,
+            "other_s": 14.760869596121786
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "policy": "local",
+      "makespan_s": 62.65440844744444,
+      "tasks": [
+        {
+          "family": "kernel",
+          "wait_s": 8.905120193958282e-05,
+          "service_s": 45.4012437723577,
+          "completion_s": 45.40133316256106,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1.0,
+              "runtime_us": 7.82,
+              "speedup": 0.5843989769820972
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.691289,
+            "agent_execution_s": 0.838029,
+            "verifier_s": 24.818708,
+            "other_s": 14.053307162561058
+          }
+        },
+        {
+          "family": "posttrain",
+          "wait_s": 0.05026681534945965,
+          "service_s": 62.55186107940972,
+          "completion_s": 62.60212823562324,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.3953370435934384,
+              "answer_nll": 0.9280166029930115,
+              "cuda": 1,
+              "eval_valid": 1,
+              "local_evaluation": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 4184
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.491327,
+            "agent_execution_s": 13.430168,
+            "verifier_s": 30.118188,
+            "other_s": 13.562445235623244
+          }
+        },
+        {
+          "family": "flashinfer",
+          "wait_s": 0.0919906497001648,
+          "service_s": 45.75423698313534,
+          "completion_s": 45.846228033304214,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "evaluations": 3
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.902577,
+            "agent_execution_s": 0.642162,
+            "verifier_s": 25.037857,
+            "other_s": 14.263632033304216
+          }
+        },
+        {
+          "family": "mlgym",
+          "wait_s": 0.13497585617005825,
+          "service_s": 52.68710005097091,
+          "completion_s": 52.82207631506026,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.25,
+              "loss": 1.8749026507139206,
+              "cuda": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 9388
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.040866,
+            "agent_execution_s": 8.77199,
+            "verifier_s": 25.232156,
+            "other_s": 13.777064315060258
+          }
+        },
+        {
+          "family": "mle",
+          "wait_s": 0.17499635368585587,
+          "service_s": 41.08796130120754,
+          "completion_s": 41.2629579231143,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.9711111111111111,
+              "accuracy": 0.9711111111111111,
+              "valid_submission": 1,
+              "local_evaluation": 1
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.810544,
+            "agent_execution_s": 4.293363,
+            "verifier_s": 16.926856,
+            "other_s": 14.2321949231143
+          }
+        },
+        {
+          "family": "re",
+          "wait_s": 0.2170292790979147,
+          "service_s": 44.87985553778708,
+          "completion_s": 45.09688539803028,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.08474098776019902,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "loss": 10.800664901733398
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.718649,
+            "agent_execution_s": 4.437158,
+            "verifier_s": 20.429042,
+            "other_s": 14.512036398030283
+          }
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "policy": "static",
+      "makespan_s": 146.79150313325226,
+      "tasks": [
+        {
+          "family": "kernel",
+          "wait_s": 8.263252675533295e-05,
+          "service_s": 66.18055204488337,
+          "completion_s": 66.18063494749367,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1.0,
+              "runtime_us": 7.8,
+              "speedup": 0.5833333333333334
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.602428,
+            "agent_execution_s": 0.936558,
+            "verifier_s": 45.391654,
+            "other_s": 14.249994947493668
+          }
+        },
+        {
+          "family": "posttrain",
+          "wait_s": 0.04804977588355541,
+          "service_s": 146.70327071659267,
+          "completion_s": 146.75132077932358,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.3953370435934384,
+              "answer_nll": 0.9280166029930115,
+              "cuda": 1,
+              "eval_valid": 1,
+              "local_evaluation": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 4184
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.204637,
+            "agent_execution_s": 64.652217,
+            "verifier_s": 63.119346,
+            "other_s": 13.775120779323572
+          }
+        },
+        {
+          "family": "flashinfer",
+          "wait_s": 0.090857720002532,
+          "service_s": 75.90517795830965,
+          "completion_s": 75.99603596888483,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "evaluations": 3
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.150401,
+            "agent_execution_s": 0.927078,
+            "verifier_s": 55.571764,
+            "other_s": 14.346792968884827
+          }
+        },
+        {
+          "family": "mlgym",
+          "wait_s": 0.13182061538100243,
+          "service_s": 142.8363357409835,
+          "completion_s": 142.96815664321184,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.25,
+              "loss": 1.8749026507139206,
+              "cuda": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 9388
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.506879,
+            "agent_execution_s": 59.85938,
+            "verifier_s": 63.488849,
+            "other_s": 14.11304864321184
+          }
+        },
+        {
+          "family": "mle",
+          "wait_s": 0.173807917162776,
+          "service_s": 56.924776807427406,
+          "completion_s": 57.09858496487141,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.9711111111111111,
+              "accuracy": 0.9711111111111111,
+              "valid_submission": 1,
+              "local_evaluation": 1
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.524843,
+            "agent_execution_s": 17.213529,
+            "verifier_s": 19.531537,
+            "other_s": 14.828675964871408
+          }
+        },
+        {
+          "family": "re",
+          "wait_s": 0.24282615259289742,
+          "service_s": 68.8676959387958,
+          "completion_s": 69.11052255146205,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.08547410336644519,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "loss": 10.699450016021729
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.436648,
+            "agent_execution_s": 17.291927,
+            "verifier_s": 31.132301,
+            "other_s": 15.249646551462057
+          }
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "policy": "static",
+      "makespan_s": 142.2275824956596,
+      "tasks": [
+        {
+          "family": "kernel",
+          "wait_s": 8.568353950977325e-05,
+          "service_s": 63.41508636623621,
+          "completion_s": 63.41517237946391,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1.0,
+              "runtime_us": 7.82,
+              "speedup": 0.5831202046035805
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.202656,
+            "agent_execution_s": 0.809326,
+            "verifier_s": 43.672401,
+            "other_s": 13.730789379463907
+          }
+        },
+        {
+          "family": "posttrain",
+          "wait_s": 0.04744269140064716,
+          "service_s": 142.13082613795996,
+          "completion_s": 142.17826914973557,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.3953370435934384,
+              "answer_nll": 0.9280166029930115,
+              "cuda": 1,
+              "eval_valid": 1,
+              "local_evaluation": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 4184
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.660753,
+            "agent_execution_s": 57.918636,
+            "verifier_s": 65.191486,
+            "other_s": 13.40739414973558
+          }
+        },
+        {
+          "family": "flashinfer",
+          "wait_s": 0.08932089619338512,
+          "service_s": 69.44584233127534,
+          "completion_s": 69.53516347520053,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "evaluations": 3
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 6.291584,
+            "agent_execution_s": 0.937403,
+            "verifier_s": 48.326094,
+            "other_s": 13.980082475200533
+          }
+        },
+        {
+          "family": "mlgym",
+          "wait_s": 0.12916274741292,
+          "service_s": 138.35485235974193,
+          "completion_s": 138.484015468508,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.25,
+              "loss": 1.8749026507139206,
+              "cuda": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 9388
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.818159,
+            "agent_execution_s": 52.592533,
+            "verifier_s": 66.322382,
+            "other_s": 13.750941468508003
+          }
+        },
+        {
+          "family": "mle",
+          "wait_s": 0.17005206272006035,
+          "service_s": 52.46835328452289,
+          "completion_s": 52.63840560801327,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.9711111111111111,
+              "accuracy": 0.9711111111111111,
+              "valid_submission": 1,
+              "local_evaluation": 1
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.525354,
+            "agent_execution_s": 14.521163,
+            "verifier_s": 18.351626,
+            "other_s": 14.240262608013275
+          }
+        },
+        {
+          "family": "re",
+          "wait_s": 0.21178183890879154,
+          "service_s": 59.78150642104447,
+          "completion_s": 59.99328872002661,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.08434023190716443,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "loss": 10.856737613677979
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.944991,
+            "agent_execution_s": 14.043303,
+            "verifier_s": 25.437386,
+            "other_s": 14.567608720026612
+          }
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "policy": "local",
+      "makespan_s": 67.65739267319441,
+      "tasks": [
+        {
+          "family": "kernel",
+          "wait_s": 7.540546357631683e-05,
+          "service_s": 49.19502997584641,
+          "completion_s": 49.19510565325618,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1.0,
+              "runtime_us": 7.81,
+              "speedup": 0.7311139564660691
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 8.908931,
+            "agent_execution_s": 0.679016,
+            "verifier_s": 24.992481,
+            "other_s": 14.614677653256173
+          }
+        },
+        {
+          "family": "posttrain",
+          "wait_s": 0.33194204419851303,
+          "service_s": 67.1852703038603,
+          "completion_s": 67.51721276156604,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.3953370435934384,
+              "answer_nll": 0.9280166029930115,
+              "cuda": 1,
+              "eval_valid": 1,
+              "local_evaluation": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 4184
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 9.210593,
+            "agent_execution_s": 13.781569,
+            "verifier_s": 30.89246,
+            "other_s": 13.632590761566043
+          }
+        },
+        {
+          "family": "flashinfer",
+          "wait_s": 0.3752324301749468,
+          "service_s": 49.85243825800717,
+          "completion_s": 50.22767110913992,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 1.0,
+              "correctness": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "evaluations": 3
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 9.300754,
+            "agent_execution_s": 1.04004,
+            "verifier_s": 25.654404,
+            "other_s": 14.232473109139917
+          }
+        },
+        {
+          "family": "mlgym",
+          "wait_s": 0.41968561708927155,
+          "service_s": 58.466850163415074,
+          "completion_s": 58.886536069214344,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.25,
+              "loss": 1.8749026507139206,
+              "cuda": 1,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "examples": 4,
+              "optimizer_updates": 0,
+              "checkpoint_bytes": 9388
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 9.774859,
+            "agent_execution_s": 9.010577,
+            "verifier_s": 25.588665,
+            "other_s": 14.512435069214348
+          }
+        },
+        {
+          "family": "mle",
+          "wait_s": 0.4654902573674917,
+          "service_s": 44.79320679977536,
+          "completion_s": 45.25869759730995,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.9711111111111111,
+              "accuracy": 0.9711111111111111,
+              "valid_submission": 1,
+              "local_evaluation": 1
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 5.369443,
+            "agent_execution_s": 4.247111,
+            "verifier_s": 17.404089,
+            "other_s": 18.238054597309947
+          }
+        },
+        {
+          "family": "re",
+          "wait_s": 0.5072661060839891,
+          "service_s": 47.294673569500446,
+          "completion_s": 47.80194002389908,
+          "passed": true,
+          "result": {
+            "rewards": {
+              "reward": 0.08402918169642902,
+              "local_evaluation": 1,
+              "eval_valid": 1,
+              "loss": 10.900627613067627
+            },
+            "exception": null
+          },
+          "remaining_containers": "",
+          "phases": {
+            "environment_setup_s": 4.898585,
+            "agent_execution_s": 4.336516,
+            "verifier_s": 20.551934,
+            "other_s": 18.01490502389908
+          }
+        }
+      ]
+    }
+  ],
+  "families": {
+    "kernel": {
+      "static_s": 63.693606566016875,
+      "treatment_s": 47.15823486509422,
+      "reduction_pct": 25.96080296345622,
+      "paired_reduction_pct": [
+        23.75659697922564,
+        31.397858000937095,
+        22.42376105377062
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 7.8,
+          "speedup": 0.5833333333333334
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 7.81,
+          "speedup": 0.5825864276568502
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 7.82,
+          "speedup": 0.5843989769820972
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 7.8,
+          "speedup": 0.5833333333333334
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 7.82,
+          "speedup": 0.5831202046035805
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1.0,
+          "runtime_us": 7.81,
+          "speedup": 0.7311139564660691
+        }
+      ]
+    },
+    "posttrain": {
+      "static_s": 143.0146469132354,
+      "treatment_s": 65.68411315046251,
+      "reduction_pct": 54.07175798552161,
+      "paired_reduction_pct": [
+        52.229733737515105,
+        57.3413527706774,
+        52.51228393386893
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 0.3953370435934384,
+          "answer_nll": 0.9280166029930115,
+          "cuda": 1,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 4184
+        },
+        {
+          "reward": 0.3953370435934384,
+          "answer_nll": 0.9280166029930115,
+          "cuda": 1,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 4184
+        },
+        {
+          "reward": 0.3953370435934384,
+          "answer_nll": 0.9280166029930115,
+          "cuda": 1,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 4184
+        },
+        {
+          "reward": 0.3953370435934384,
+          "answer_nll": 0.9280166029930115,
+          "cuda": 1,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 4184
+        },
+        {
+          "reward": 0.3953370435934384,
+          "answer_nll": 0.9280166029930115,
+          "cuda": 1,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 4184
+        },
+        {
+          "reward": 0.3953370435934384,
+          "answer_nll": 0.9280166029930115,
+          "cuda": 1,
+          "eval_valid": 1,
+          "local_evaluation": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 4184
+        }
+      ]
+    },
+    "flashinfer": {
+      "static_s": 70.91492170778413,
+      "treatment_s": 48.518771624813475,
+      "reduction_pct": 31.58171727983773,
+      "paired_reduction_pct": [
+        26.38031440242452,
+        39.67286918481497,
+        27.766516106554583
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        },
+        {
+          "reward": 1.0,
+          "correctness": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "evaluations": 3
+        }
+      ]
+    },
+    "mlgym": {
+      "static_s": 139.67295963006714,
+      "treatment_s": 56.230021287997566,
+      "reduction_pct": 59.741655480827205,
+      "paired_reduction_pct": [
+        58.579039351815595,
+        63.05325776362785,
+        57.477737867439686
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 0.25,
+          "loss": 1.8749026507139206,
+          "cuda": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 9388
+        },
+        {
+          "reward": 0.25,
+          "loss": 1.8749026507139206,
+          "cuda": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 9388
+        },
+        {
+          "reward": 0.25,
+          "loss": 1.8749026507139206,
+          "cuda": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 9388
+        },
+        {
+          "reward": 0.25,
+          "loss": 1.8749026507139206,
+          "cuda": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 9388
+        },
+        {
+          "reward": 0.25,
+          "loss": 1.8749026507139206,
+          "cuda": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 9388
+        },
+        {
+          "reward": 0.25,
+          "loss": 1.8749026507139206,
+          "cuda": 1,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "examples": 4,
+          "optimizer_updates": 0,
+          "checkpoint_bytes": 9388
+        }
+      ]
+    },
+    "mle": {
+      "static_s": 54.770014437536396,
+      "treatment_s": 43.866635609418154,
+      "reduction_pct": 19.907569753433652,
+      "paired_reduction_pct": [
+        17.39833297795873,
+        27.733834475056806,
+        14.019626782882444
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        },
+        {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        },
+        {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        },
+        {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        },
+        {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        },
+        {
+          "reward": 0.9711111111111111,
+          "accuracy": 0.9711111111111111,
+          "valid_submission": 1,
+          "local_evaluation": 1
+        }
+      ]
+    },
+    "re": {
+      "static_s": 63.63392009399831,
+      "treatment_s": 46.95455733935038,
+      "reduction_pct": 26.21143366621077,
+      "paired_reduction_pct": [
+        22.384403747821334,
+        34.74671622624529,
+        20.32118751319244
+      ],
+      "valid": true,
+      "rewards": [
+        {
+          "reward": 0.08527760932909277,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "loss": 10.726407527923584
+        },
+        {
+          "reward": 0.08485286984015518,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "loss": 10.785105228424072
+        },
+        {
+          "reward": 0.08474098776019902,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "loss": 10.800664901733398
+        },
+        {
+          "reward": 0.08547410336644519,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "loss": 10.699450016021729
+        },
+        {
+          "reward": 0.08434023190716443,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "loss": 10.856737613677979
+        },
+        {
+          "reward": 0.08402918169642902,
+          "local_evaluation": 1,
+          "eval_valid": 1,
+          "loss": 10.900627613067627
+        }
+      ]
+    }
+  },
+  "physical_release": true,
+  "total": {
+    "static_s": 143.0567132278035,
+    "treatment_s": 65.76066213784118,
+    "reduction_pct": 54.03175380303621
+  },
+  "families_improved_10pct": 6,
+  "protocol": {
+    "baseline": "0eeead861ffafed6bf31c962d259fd847775dcf9",
+    "policies": [
+      "static",
+      "local",
+      "local",
+      "static",
+      "static",
+      "local"
+    ],
+    "families": [
+      "kernel",
+      "posttrain",
+      "flashinfer",
+      "mlgym",
+      "mle",
+      "re"
+    ],
+    "gpus": [
+      0,
+      1
+    ],
+    "budget_s": 1500,
+    "metric": "Seconds from simultaneous submission through runner completion, including queue and cleanup.",
+    "acceptance": "All six family mean completion times improve by at least 10%, with all three paired differences positive. All 36 evaluations valid. Report cache preparation and break-even separately.",
+    "scope": "Dependency locality only. Original GPU mapping and concurrency retained. No command duration predictor or new production scheduler."
+  },
+  "source_sha256": {
+    "pilot.py": "aa425163fb9b47c65098640c596cf48ad4ef6d87040fe0b78d98a16eca0d82bd",
+    "demo.py": "c4c961a599ae1b545f94ace36291a8cadc41df99e6eb415e1c3f41c2f79d6c3b",
+    "analyze.py": "df716e23e41757475d131579bcf5e2594dc713f75a57642b0a4becafc0d677d2",
+    "runtime_probe.py": "646013ad50b825ce579d086c336406a63ab0924caa54a7e759fd3f22fc881046"
+  },
+  "analysis_source_sha256": {
+    "analyze.py": "df716e23e41757475d131579bcf5e2594dc713f75a57642b0a4becafc0d677d2",
+    "analyze_locality.py": "14abea3780fa2b8c989d5895b6ce4443124a592c6719dd2b661362821a9e437f"
+  },
+  "equivalence_audit": {
+    "task_copy_file_pairs_checked": 124,
+    "task_pairs": 12,
+    "only_difference": "Runtime mount source. Normalized Compose dictionaries and all other file bytes match.",
+    "postcopy_full_directory_metadata_audit": "Timed out after 90 seconds. Full postcopy audit not completed.",
+    "copy_completed": true,
+    "runtime_key_file_hashes_checked": 3,
+    "basic_model.pt": {
+      "files": 6,
+      "unique_sha256": [
+        "46e1eff3082a0dcbfeae4a347d9de8e78e875499f1788f39278ef6e52c038881"
+      ],
+      "all_equal": true
+    },
+    "adapter.safetensors": {
+      "files": 6,
+      "unique_sha256": [
+        "66dc9b149e0943731e940e69cd303e129766aa5dced6638f7111051fe3ae7c78"
+      ],
+      "all_equal": true
+    }
+  },
+  "import_probe": {
+    "before": {
+      "uuid": "GPU-cd83b1a8-7650-5cec-d666-4f2f535eeb4b",
+      "minor": 0,
+      "total_mb": 97871.0,
+      "used_mb": 0.1875,
+      "pids": []
+    },
+    "observations": [
+      {
+        "policy": "static",
+        "wall_s": 32.13166085071862,
+        "result": {
+          "times": {
+            "torch_s": 6.404454844072461,
+            "transformers_s": 19.38837093859911,
+            "sklearn_s": 4.149227367714047,
+            "cuda_s": 0.4362560324370861
+          },
+          "cuda_sum": 8.0,
+          "versions": [
+            "2.11.0+cu128",
+            "5.10.1",
+            "1.7.2"
+          ]
+        },
+        "stderr": ""
+      },
+      {
+        "policy": "local",
+        "wall_s": 5.299043098464608,
+        "result": {
+          "times": {
+            "torch_s": 1.1431103814393282,
+            "transformers_s": 1.8848382476717234,
+            "sklearn_s": 0.9146457985043526,
+            "cuda_s": 0.3896032441407442
+          },
+          "cuda_sum": 8.0,
+          "versions": [
+            "2.11.0+cu128",
+            "5.10.1",
+            "1.7.2"
+          ]
+        },
+        "stderr": ""
+      },
+      {
+        "policy": "local",
+        "wall_s": 5.568445924669504,
+        "result": {
+          "times": {
+            "torch_s": 1.1315447874367237,
+            "transformers_s": 1.8755906354635954,
+            "sklearn_s": 0.9126743767410517,
+            "cuda_s": 0.6249554324895144
+          },
+          "cuda_sum": 8.0,
+          "versions": [
+            "2.11.0+cu128",
+            "5.10.1",
+            "1.7.2"
+          ]
+        },
+        "stderr": ""
+      },
+      {
+        "policy": "static",
+        "wall_s": 31.730002380907536,
+        "result": {
+          "times": {
+            "torch_s": 5.522226434201002,
+            "transformers_s": 19.224262323230505,
+            "sklearn_s": 3.54503265209496,
+            "cuda_s": 0.4236658476293087
+          },
+          "cuda_sum": 8.0,
+          "versions": [
+            "2.11.0+cu128",
+            "5.10.1",
+            "1.7.2"
+          ]
+        },
+        "stderr": ""
+      }
+    ],
+    "immutable_files": {
+      "bin/python3.12": "d669f55a4bb656ca3cc5efe05c4e0cb8004ef3a7d2094529d6836c2d1638301a",
+      "lib/python3.12/site-packages/torch/__init__.py": "0387d8b811b289287479c8bfdf4e1dac3a71b246f938d82da1331cf2dc8bf001",
+      "lib/python3.12/site-packages/transformers/__init__.py": "18ef948db06a19dcc22616ef892fd18a51855892534e11e2babe30bcd978be6e"
+    },
+    "after": {
+      "uuid": "GPU-cd83b1a8-7650-5cec-d666-4f2f535eeb4b",
+      "minor": 0,
+      "total_mb": 97871.0,
+      "used_mb": 0.1875,
+      "pids": []
+    }
+  },
+  "phase_means": {
+    "kernel": {
+      "static": {
+        "environment_setup_s": 5.450495666666667,
+        "agent_execution_s": 0.840006,
+        "verifier_s": 43.35238566666667,
+        "other_s": 14.050719232683536
+      },
+      "local": {
+        "environment_setup_s": 7.195770333333334,
+        "agent_execution_s": 0.7211003333333333,
+        "verifier_s": 24.831662666666666,
+        "other_s": 14.40970153176089
+      }
+    },
+    "posttrain": {
+      "static": {
+        "environment_setup_s": 5.339916,
+        "agent_execution_s": 60.06389866666667,
+        "verifier_s": 64.03460333333334,
+        "other_s": 13.576228913235388
+      },
+      "local": {
+        "environment_setup_s": 8.043121,
+        "agent_execution_s": 13.713875666666667,
+        "verifier_s": 30.336778333333335,
+        "other_s": 13.590338150462507
+      }
+    },
+    "flashinfer": {
+      "static": {
+        "environment_setup_s": 5.531965666666666,
+        "agent_execution_s": 0.8635263333333333,
+        "verifier_s": 50.319269,
+        "other_s": 14.200160707784136
+      },
+      "local": {
+        "environment_setup_s": 7.836068333333333,
+        "agent_execution_s": 0.9877706666666667,
+        "verifier_s": 25.335976666666667,
+        "other_s": 14.358955958146812
+      }
+    },
+    "mlgym": {
+      "static": {
+        "environment_setup_s": 5.370133,
+        "agent_execution_s": 55.42258833333334,
+        "verifier_s": 64.95489233333333,
+        "other_s": 13.925345963400483
+      },
+      "local": {
+        "environment_setup_s": 7.661707333333333,
+        "agent_execution_s": 9.007061,
+        "verifier_s": 25.335032333333334,
+        "other_s": 14.226220621330897
+      }
+    },
+    "mle": {
+      "static": {
+        "environment_setup_s": 5.445586,
+        "agent_execution_s": 15.312827,
+        "verifier_s": 18.329329666666666,
+        "other_s": 15.682271770869733
+      },
+      "local": {
+        "environment_setup_s": 6.690510333333333,
+        "agent_execution_s": 4.320719,
+        "verifier_s": 17.259532666666665,
+        "other_s": 15.595873609418154
+      }
+    },
+    "re": {
+      "static": {
+        "environment_setup_s": 5.624342333333333,
+        "agent_execution_s": 15.112497666666666,
+        "verifier_s": 27.025723666666668,
+        "other_s": 15.871356427331648
+      },
+      "local": {
+        "environment_setup_s": 6.425494666666666,
+        "agent_execution_s": 4.419339666666667,
+        "verifier_s": 20.347119333333332,
+        "other_s": 15.762603672683715
+      }
+    }
+  },
+  "preparation": {
+    "copy_s": 333.4,
+    "bytes": 13535827531,
+    "first_profitable_batch_count": 5,
+    "projection_scope": "Extrapolation using measured warm means and copy cost only. Not a measured cold campaign.",
+    "projections": [
+      {
+        "batches": 1,
+        "static_s": 143.0567132278035,
+        "local_with_copy_s": 399.16066213784114
+      },
+      {
+        "batches": 3,
+        "static_s": 429.1701396834105,
+        "local_with_copy_s": 530.6819864135235
+      },
+      {
+        "batches": 5,
+        "static_s": 715.2835661390175,
+        "local_with_copy_s": 662.2033106892059
+      },
+      {
+        "batches": 10,
+        "static_s": 1430.567132278035,
+        "local_with_copy_s": 991.0066213784118
+      }
+    ]
+  },
+  "acceptance_passed": true
+}

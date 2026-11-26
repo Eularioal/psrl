@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="576pt" height="266.4pt" viewBox="0 0 576 266.4" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-25T16:44:19.729097</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 266.4 
+L 576 266.4 
+L 576 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 120.96 210.456 
+L 541.44 210.456 
+L 541.44 63.936 
+L 120.96 63.936 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <path d="M 120.96 210.456 
+L 120.96 63.936 
+" clip-path="url(#p2ec7de38a2)" style="fill: none; stroke: #d8dfe7; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_2">
+      <defs>
+       <path id="m85929da58d" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m85929da58d" x="120.96" y="210.456" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="120.96" y="225.877875" transform="rotate(-0 120.96 225.877875)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_3">
+      <path d="M 189.330732 210.456 
+L 189.330732 63.936 
+" clip-path="url(#p2ec7de38a2)" style="fill: none; stroke: #d8dfe7; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m85929da58d" x="189.330732" y="210.456" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="189.330732" y="225.877875" transform="rotate(-0 189.330732 225.877875)">20</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_5">
+      <path d="M 257.701463 210.456 
+L 257.701463 63.936 
+" clip-path="url(#p2ec7de38a2)" style="fill: none; stroke: #d8dfe7; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#m85929da58d" x="257.701463" y="210.456" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="257.701463" y="225.877875" transform="rotate(-0 257.701463 225.877875)">40</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_7">
+      <path d="M 326.072195 210.456 
+L 326.072195 63.936 
+" clip-path="url(#p2ec7de38a2)" style="fill: none; stroke: #d8dfe7; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_8">
+      <g>
+       <use xlink:href="#m85929da58d" x="326.072195" y="210.456" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="326.072195" y="225.877875" transform="rotate(-0 326.072195 225.877875)">60</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_9">
+      <path d="M 394.442927 210.456 
+L 394.442927 63.936 
+" clip-path="url(#p2ec7de38a2)" style="fill: none; stroke: #d8dfe7; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_10">
+      <g>
+       <use xlink:href="#m85929da58d" x="394.442927" y="210.456" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="394.442927" y="225.877875" transform="rotate(-0 394.442927 225.877875)">80</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_11">
+      <path d="M 462.813659 210.456 
+L 462.813659 63.936 
+" clip-path="url(#p2ec7de38a2)" style="fill: none; stroke: #d8dfe7; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_12">
+      <g>
+       <use xlink:href="#m85929da58d" x="462.813659" y="210.456" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="462.813659" y="225.877875" transform="rotate(-0 462.813659 225.877875)">100</text>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_13">
+      <path d="M 531.18439 210.456 
+L 531.18439 63.936 
+" clip-path="url(#p2ec7de38a2)" style="fill: none; stroke: #d8dfe7; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_14">
+      <g>
+       <use xlink:href="#m85929da58d" x="531.18439" y="210.456" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="531.18439" y="225.877875" transform="rotate(-0 531.18439 225.877875)">120</text>
+     </g>
+    </g>
+    <g id="text_8">
+     <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="331.2" y="241.479438" transform="rotate(-0 331.2 241.479438)">从决定借出 GPU2 起经过的秒数</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_15"/>
+     <g id="text_9">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="112.96" y="101.511396" transform="rotate(-0 112.96 101.511396)">等待交接</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_16"/>
+     <g id="text_10">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="112.96" y="163.406427" transform="rotate(-0 112.96 163.406427)">重叠补跑</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 120.96 105.765097 
+L 456.363435 105.765097 
+L 456.363435 88.277226 
+L 120.96 88.277226 
+z
+" clip-path="url(#p2ec7de38a2)" style="fill: #386eaa"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 456.363435 105.765097 
+L 531.18439 105.765097 
+L 531.18439 88.277226 
+L 456.363435 88.277226 
+z
+" clip-path="url(#p2ec7de38a2)" style="fill: #d5ebe5"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 120.96 167.681613 
+L 133.348977 167.681613 
+L 133.348977 150.193742 
+L 120.96 150.193742 
+z
+" clip-path="url(#p2ec7de38a2)" style="fill: #386eaa"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 133.348977 167.681613 
+L 531.18439 167.681613 
+L 531.18439 150.193742 
+L 133.348977 150.193742 
+z
+" clip-path="url(#p2ec7de38a2)" style="fill: #d5ebe5"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 120.96 210.456 
+L 541.44 210.456 
+" style="fill: none; stroke: #adb9c6; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #17806a" x="462.174947" y="81.166003" transform="rotate(-0 462.174947 81.166003)">98.11 秒开放</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #17806a" x="139.16049" y="143.082519" transform="rotate(-0 139.16049 143.082519)">3.62 秒开放</text>
+   </g>
+   <g id="patch_8">
+    <path d="M 120.96 105.765097 
+L 444.517859 105.765097 
+L 444.517859 88.277226 
+L 120.96 88.277226 
+z
+" clip-path="url(#p2ec7de38a2)" style="fill: #f1d8cf"/>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #aa493d" x="127.797073" y="100.222333" transform="rotate(-0 127.797073 100.222333)">等待原命令归还 94.64 秒</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #17806a" x="141.860066" y="162.138849" transform="rotate(-0 141.860066 162.138849)">4.61 秒时已有 4 条新命令获准</text>
+   </g>
+   <g id="LineCollection_1">
+    <path d="M 120.96 185.405806 
+L 492.729711 185.405806 
+" clip-path="url(#p2ec7de38a2)" style="fill: none; stroke: #aa493d; stroke-width: 1.65"/>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #aa493d" x="127.797073" y="201.991567" transform="rotate(-0 127.797073 201.991567)">原命令继续持卡，于 108.75 秒归还</text>
+   </g>
+   <g id="PathCollection_1">
+    <defs>
+     <path id="m9ae76669b7" d="M 0 4.031129 
+C 1.069068 4.031129 2.094493 3.606384 2.850439 2.850439 
+C 3.606384 2.094493 4.031129 1.069068 4.031129 0 
+C 4.031129 -1.069068 3.606384 -2.094493 2.850439 -2.850439 
+C 2.094493 -3.606384 1.069068 -4.031129 0 -4.031129 
+C -1.069068 -4.031129 -2.094493 -3.606384 -2.850439 -2.850439 
+C -3.606384 -2.094493 -4.031129 -1.069068 -4.031129 0 
+C -4.031129 1.069068 -3.606384 2.094493 -2.850439 2.850439 
+C -2.094493 3.606384 -1.069068 4.031129 0 4.031129 
+z
+" style="stroke: #ffffff; stroke-width: 0.9"/>
+    </defs>
+    <g clip-path="url(#p2ec7de38a2)">
+     <use xlink:href="#m9ae76669b7" x="456.363435" y="97.021161" style="fill: #17806a; stroke: #ffffff; stroke-width: 0.9"/>
+    </g>
+   </g>
+   <g id="PathCollection_2">
+    <g clip-path="url(#p2ec7de38a2)">
+     <use xlink:href="#m9ae76669b7" x="133.348977" y="158.937677" style="fill: #17806a; stroke: #ffffff; stroke-width: 0.9"/>
+    </g>
+   </g>
+   <g id="PathCollection_3">
+    <defs>
+     <path id="m4f4140cf1d" d="M 0 2.5 
+C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767 
+C 2.236584 1.29895 2.5 0.663008 2.5 0 
+C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767 
+C 1.29895 -2.236584 0.663008 -2.5 0 -2.5 
+C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767 
+C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0 
+C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767 
+C -1.29895 2.236584 -0.663008 2.5 0 2.5 
+z
+" style="stroke: #aa493d"/>
+    </defs>
+    <g clip-path="url(#p2ec7de38a2)">
+     <use xlink:href="#m4f4140cf1d" x="492.729711" y="185.405806" style="fill: #aa493d; stroke: #aa493d"/>
+    </g>
+   </g>
+  </g>
+  <g id="text_16">
+   <text style="font-size: 17px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #304159" x="31.68" y="23.976" transform="rotate(-0 31.68 23.976)">同样跑完两步，GPU2 何时向新环境命令开放？</text>
+  </g>
+  <g id="text_17">
+   <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #304159" x="31.68" y="49.284" transform="rotate(-0 31.68 49.284)">两组各完成 2 步训练、24 条轨迹、48 条 GPU 命令、72 次模型请求</text>
+  </g>
+  <g id="text_18">
+   <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="31.68" y="255.744" transform="rotate(-0 31.68 255.744)">蓝段为模型退场和显存核验，浅绿段为容量已开放。两组各运行一次，时限有差异。</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p2ec7de38a2">
+   <rect x="120.96" y="63.936" width="420.48" height="146.52"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -64,11 +64,11 @@ exclude_patterns = [
     "Thumbs.db",
     ".DS_Store",
     "README.md",
+    "**/README.md",
     "superpowers",
     "psrl",
     "env-worker-deep-dive",
     "tools",
-    "sciaccel-grpo-oom-analysis.md",
 ]
 
 

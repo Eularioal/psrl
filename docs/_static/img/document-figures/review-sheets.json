@@ -1,0 +1,659 @@
+[
+  {
+    "file": "review-01.png",
+    "figures": [
+      "agent-rule-memory-skill",
+      "borrower-return-delay"
+    ]
+  },
+  {
+    "file": "review-02.png",
+    "figures": [
+      "bounded-state-cache",
+      "browser-page-layers"
+    ]
+  },
+  {
+    "file": "review-03.png",
+    "figures": [
+      "candidate-and-trusted-verifier",
+      "command-episode-residency"
+    ]
+  },
+  {
+    "file": "review-04.png",
+    "figures": [
+      "configuration-layers",
+      "configuration-selective-restore"
+    ]
+  },
+  {
+    "file": "review-05.png",
+    "figures": [
+      "context-window-growth",
+      "dataset-fields"
+    ]
+  },
+  {
+    "file": "review-06.png",
+    "figures": [
+      "docker-writeback-wait",
+      "evidence-levels"
+    ]
+  },
+  {
+    "file": "review-07.png",
+    "figures": [
+      "experiment-preflight-node",
+      "file-references"
+    ]
+  },
+  {
+    "file": "review-08.png",
+    "figures": [
+      "gpu-capacity-and-compute",
+      "gpu-task-asset-boundaries"
+    ]
+  },
+  {
+    "file": "review-09.png",
+    "figures": [
+      "group-relative-advantages",
+      "host-and-gpu-ledgers"
+    ]
+  },
+  {
+    "file": "review-10.png",
+    "figures": [
+      "http-envelope",
+      "kv-prefix-pages"
+    ]
+  },
+  {
+    "file": "review-11.png",
+    "figures": [
+      "map-019e476519",
+      "map-0b5ca119d2"
+    ]
+  },
+  {
+    "file": "review-12.png",
+    "figures": [
+      "map-0df1b907f1",
+      "map-0e0b082c0a"
+    ]
+  },
+  {
+    "file": "review-13.png",
+    "figures": [
+      "map-1c4901e702",
+      "map-268b082887"
+    ]
+  },
+  {
+    "file": "review-14.png",
+    "figures": [
+      "map-2f31c326af",
+      "map-31ab314077"
+    ]
+  },
+  {
+    "file": "review-15.png",
+    "figures": [
+      "map-31eb3fdaa1",
+      "map-37db5ffc0f"
+    ]
+  },
+  {
+    "file": "review-16.png",
+    "figures": [
+      "map-4595f5dfc6",
+      "map-5e297a681a"
+    ]
+  },
+  {
+    "file": "review-17.png",
+    "figures": [
+      "map-63e98fd058",
+      "map-644bc9e974"
+    ]
+  },
+  {
+    "file": "review-18.png",
+    "figures": [
+      "map-66cda102ff",
+      "map-6f366e2480"
+    ]
+  },
+  {
+    "file": "review-19.png",
+    "figures": [
+      "map-7a7363b66b",
+      "map-907da87505"
+    ]
+  },
+  {
+    "file": "review-20.png",
+    "figures": [
+      "map-9c01012189",
+      "map-9d52918d2e"
+    ]
+  },
+  {
+    "file": "review-21.png",
+    "figures": [
+      "map-9e82b92589",
+      "map-a0cf851f52"
+    ]
+  },
+  {
+    "file": "review-22.png",
+    "figures": [
+      "map-ac6079296a",
+      "map-b4d68dc855"
+    ]
+  },
+  {
+    "file": "review-23.png",
+    "figures": [
+      "map-bb83ca628a",
+      "map-bc0d96902a"
+    ]
+  },
+  {
+    "file": "review-24.png",
+    "figures": [
+      "map-c435a658e9",
+      "map-d345b2b349"
+    ]
+  },
+  {
+    "file": "review-25.png",
+    "figures": [
+      "map-df457d24c5",
+      "map-e3e99949ff"
+    ]
+  },
+  {
+    "file": "review-26.png",
+    "figures": [
+      "map-ee40956879",
+      "map-f580c3ced5"
+    ]
+  },
+  {
+    "file": "review-27.png",
+    "figures": [
+      "mapped-file-pages",
+      "markdown-and-site"
+    ]
+  },
+  {
+    "file": "review-28.png",
+    "figures": [
+      "measured-flashinfer-preparation",
+      "measured-low-load"
+    ]
+  },
+  {
+    "file": "review-29.png",
+    "figures": [
+      "measured-mps-boundaries",
+      "measured-posttrain-reuse"
+    ]
+  },
+  {
+    "file": "review-30.png",
+    "figures": [
+      "measured-science-three-steps",
+      "measurement-contention"
+    ]
+  },
+  {
+    "file": "review-31.png",
+    "figures": [
+      "memory-promises",
+      "parallel-model-shards"
+    ]
+  },
+  {
+    "file": "review-32.png",
+    "figures": [
+      "pid-namespace-identity",
+      "ppo-clipped-objective"
+    ]
+  },
+  {
+    "file": "review-33.png",
+    "figures": [
+      "provider-execution-boundary",
+      "raster-vector-source"
+    ]
+  },
+  {
+    "file": "review-34.png",
+    "figures": [
+      "registered-memory-transfer",
+      "release-logical-and-physical"
+    ]
+  },
+  {
+    "file": "review-35.png",
+    "figures": [
+      "reply-gate-vs-device-lock",
+      "rollout-batch-training"
+    ]
+  },
+  {
+    "file": "review-36.png",
+    "figures": [
+      "sample-fields-and-handles",
+      "session-history-branches"
+    ]
+  },
+  {
+    "file": "review-37.png",
+    "figures": [
+      "shell-and-python",
+      "sqlite-three-files"
+    ]
+  },
+  {
+    "file": "review-38.png",
+    "figures": [
+      "state-version-match",
+      "static-device-contention"
+    ]
+  },
+  {
+    "file": "review-39.png",
+    "figures": [
+      "terminal-scroll-layers",
+      "token-loss-weighting"
+    ]
+  },
+  {
+    "file": "review-40.png",
+    "figures": [
+      "training-health-signals",
+      "training-memory-peak"
+    ]
+  },
+  {
+    "file": "review-41.png",
+    "figures": [
+      "two-gpu-command-queue",
+      "two-model-training-loops"
+    ]
+  },
+  {
+    "file": "review-42.png",
+    "figures": [
+      "wait-or-reload",
+      "software-patch-and-fresh-grader"
+    ]
+  },
+  {
+    "file": "review-43.png",
+    "figures": [
+      "model-derived-feedback",
+      "roofline-capacity-decision"
+    ]
+  },
+  {
+    "file": "review-44.png",
+    "figures": [
+      "explained-overview-c46ca98",
+      "explained-rollout_techniques-cf838b0"
+    ]
+  },
+  {
+    "file": "review-45.png",
+    "figures": [
+      "explained-ps-d3858c3",
+      "explained-staleness_compatibility-ab32e0e"
+    ]
+  },
+  {
+    "file": "review-46.png",
+    "figures": [
+      "explained-resident-compute-sharing-f533859",
+      "explained-resident-compute-sharing-long-be21a7c"
+    ]
+  },
+  {
+    "file": "review-47.png",
+    "figures": [
+      "explained-single-gpu-inference-curve-evidence-7df94d3",
+      "explained-automatic-reservation-70f6d6f"
+    ]
+  },
+  {
+    "file": "review-48.png",
+    "figures": [
+      "explained-capacity-model-c7da45b",
+      "explained-environment-capacity-dd7a546"
+    ]
+  },
+  {
+    "file": "review-49.png",
+    "figures": [
+      "explained-capacity-training-2330452",
+      "explained-capacity-command-timeline-ea05e12"
+    ]
+  },
+  {
+    "file": "review-50.png",
+    "figures": [
+      "explained-integrated-partition-3748353",
+      "explained-paired-latency-d4ff470"
+    ]
+  },
+  {
+    "file": "review-51.png",
+    "figures": [
+      "explained-warm-placement-core-0d59e83",
+      "explained-warm-placement-decomposition-860b7c4"
+    ]
+  },
+  {
+    "file": "review-52.png",
+    "figures": [
+      "explained-warm-placement-faults-6ec458f",
+      "explained-comparison-b8c2052"
+    ]
+  },
+  {
+    "file": "review-53.png",
+    "figures": [
+      "explained-cuda-preflight-9c45888",
+      "explained-pressure-matched-c114981"
+    ]
+  },
+  {
+    "file": "review-54.png",
+    "figures": [
+      "explained-pressure-training-curves-ed8f503",
+      "explained-historical-timing-7286182"
+    ]
+  },
+  {
+    "file": "review-55.png",
+    "figures": [
+      "explained-fixed-work-outcomes-c85fca2",
+      "explained-fixed-work-training-4f78708"
+    ]
+  },
+  {
+    "file": "review-56.png",
+    "figures": [
+      "explained-fixed-work-environment-memory-53e9b38",
+      "explained-failure-evidence-dd5c2ec"
+    ]
+  },
+  {
+    "file": "review-57.png",
+    "figures": [
+      "explained-training-curves-22c06d0",
+      "explained-resource-comparison-7069978"
+    ]
+  },
+  {
+    "file": "review-58.png",
+    "figures": [
+      "explained-capacity-comparison-7f2ba30",
+      "explained-comparison-38ffe21"
+    ]
+  },
+  {
+    "file": "review-59.png",
+    "figures": [
+      "explained-matched-prefix-7cfb46d",
+      "explained-per-step-fb816d0"
+    ]
+  },
+  {
+    "file": "review-60.png",
+    "figures": [
+      "explained-comparison-f2dd9a5",
+      "explained-comparison-c991d3e"
+    ]
+  },
+  {
+    "file": "review-61.png",
+    "figures": [
+      "explained-completion-a9a0126",
+      "explained-resources-3247f1a"
+    ]
+  },
+  {
+    "file": "review-62.png",
+    "figures": [
+      "explained-low-overhead-771a5d1",
+      "explained-prewarm-comparison-b1a015e"
+    ]
+  },
+  {
+    "file": "review-63.png",
+    "figures": [
+      "explained-resource-timeline-6931260",
+      "explained-low-load-breakdown-37a32b1"
+    ]
+  },
+  {
+    "file": "review-64.png",
+    "figures": [
+      "explained-startup-offload-6f38130",
+      "explained-latency-9f26f8b"
+    ]
+  },
+  {
+    "file": "review-65.png",
+    "figures": [
+      "explained-completion-comparison-f9ce4be",
+      "explained-resource-timeline-a3c02cf"
+    ]
+  },
+  {
+    "file": "review-66.png",
+    "figures": [
+      "explained-training-metrics-3137056",
+      "explained-completion-c7d03c2"
+    ]
+  },
+  {
+    "file": "review-67.png",
+    "figures": [
+      "explained-overlap-470dd69",
+      "explained-control-comparison-65d1b87"
+    ]
+  },
+  {
+    "file": "review-68.png",
+    "figures": [
+      "explained-weight-sync-choices-6bf07fc",
+      "explained-borrowing-timeline-2487ead"
+    ]
+  },
+  {
+    "file": "review-69.png",
+    "figures": [
+      "explained-rollout-independence-3e2aa22",
+      "explained-pipeline-bottleneck-77cbdcf"
+    ]
+  },
+  {
+    "file": "review-70.png",
+    "figures": [
+      "explained-krex-control-flow-0e8d632",
+      "explained-protected-regions-0a75ded"
+    ]
+  },
+  {
+    "file": "review-71.png",
+    "figures": [
+      "explained-gate-and-drain-1739525",
+      "explained-yarn-responsibilities-180f1c7"
+    ]
+  },
+  {
+    "file": "review-72.png",
+    "figures": [
+      "explained-gpu-task-lifecycle-336b197",
+      "explained-benchmark-choice-c6aaac2"
+    ]
+  },
+  {
+    "file": "review-73.png",
+    "figures": [
+      "explained-reward-distortion-5865243",
+      "explained-scheduling-two-lanes-e460719"
+    ]
+  },
+  {
+    "file": "review-74.png",
+    "figures": [
+      "explained-model-decision-cost-05c9647",
+      "explained-rsi-two-loops-cb6e04f"
+    ]
+  },
+  {
+    "file": "review-75.png",
+    "figures": [
+      "explained-reading-map-0eb10e0",
+      "explained-psrl-training-loop-b6943fc"
+    ]
+  },
+  {
+    "file": "review-76.png",
+    "figures": [
+      "explained-PSRL_arch-4d2b637",
+      "explained-roofline-and-batching-1ddd7ab"
+    ]
+  },
+  {
+    "file": "chapter-review-01.png",
+    "figures": [
+      "chapter-critical-path",
+      "chapter-memory-headroom"
+    ]
+  },
+  {
+    "file": "chapter-review-02.png",
+    "figures": [
+      "chapter-idle-window",
+      "chapter-gpu-priority"
+    ]
+  },
+  {
+    "file": "chapter-review-03.png",
+    "figures": [
+      "chapter-sharing-control",
+      "chapter-replica-backlog"
+    ]
+  },
+  {
+    "file": "chapter-review-04.png",
+    "figures": [
+      "chapter-finite-concurrency",
+      "chapter-tail-batch"
+    ]
+  },
+  {
+    "file": "chapter-review-05.png",
+    "figures": [
+      "chapter-three-limits",
+      "chapter-instances-requests"
+    ]
+  },
+  {
+    "file": "chapter-review-06.png",
+    "figures": [
+      "chapter-prediction-intervals",
+      "chapter-rollout-pipeline"
+    ]
+  },
+  {
+    "file": "chapter-review-07.png",
+    "figures": [
+      "chapter-pipeline-overlap",
+      "chapter-resource-reallocation"
+    ]
+  },
+  {
+    "file": "chapter-review-08.png",
+    "figures": [
+      "chapter-code-versions",
+      "chapter-state-dependencies"
+    ]
+  },
+  {
+    "file": "chapter-review-09.png",
+    "figures": [
+      "chapter-prepare-gpu",
+      "chapter-measurement-ranking"
+    ]
+  },
+  {
+    "file": "chapter-review-10.png",
+    "figures": [
+      "chapter-local-service-time",
+      "chapter-resource-layers"
+    ]
+  },
+  {
+    "file": "chapter-review-11.png",
+    "figures": [
+      "chapter-warm-layers",
+      "chapter-nested-deadlock"
+    ]
+  },
+  {
+    "file": "chapter-review-12.png",
+    "figures": [
+      "chapter-model-promotion",
+      "chapter-grouped-placement"
+    ]
+  },
+  {
+    "file": "chapter-review-13.png",
+    "figures": [
+      "chapter-gpu-return-states",
+      "chapter-selective-batching"
+    ]
+  },
+  {
+    "file": "chapter-review-14.png",
+    "figures": [
+      "chapter-kv-copy-on-write",
+      "chapter-continuous-batching"
+    ]
+  },
+  {
+    "file": "chapter-review-15.png",
+    "figures": [
+      "chapter-parallel-communication",
+      "chapter-ppo-credit"
+    ]
+  },
+  {
+    "file": "chapter-review-16.png",
+    "figures": [
+      "chapter-gpu-pool-host",
+      "chapter-compute-sharing"
+    ]
+  },
+  {
+    "file": "chapter-review-17.png",
+    "figures": [
+      "chapter-process-reuse",
+      "chapter-remaining-steps"
+    ]
+  },
+  {
+    "file": "chapter-review-18.png",
+    "figures": [
+      "chapter-episode-admission"
+    ]
+  }
+]

@@ -1,50 +1,97 @@
-# 环境执行与回收专题
+# Env框架：现状、实验与研究入口
 
-> **核心结论**：了解目前设计，先读[当前设计](knowledge/current-design.md)，再到「知识与实现」查专题。查实测结果、对照条件和故障证据，从「实验与验证」开始。知识文章中的提案不代表已经实现，实验结论只适用于报告注明的版本与条件。
+**回顾 Env，从这一页开始。** 设计现状、相对基线的效果、下一步研究，各有一篇持续维护的主文档。下面四个入口直接回答这些问题，具体实现和原始证据再按需深入。
 
-## 目录
-
-- [按阅读目的选择](#按阅读目的选择)
-- [推荐阅读顺序](#推荐阅读顺序)
-- [目录与归档规则](#目录与归档规则)
+本页目录：[按问题找文档](#按阅读目的选择) · [当前结论](#当前最需要记住的结论) · [执行流程图](#先看目前能够执行的流程) · [深入阅读](#推荐阅读顺序) · [目录与历史](#目录与归档规则) · [核对范围](#维护与核对范围)
 
 ## 按阅读目的选择
 
-| 想了解什么 | 入口 | 内容边界 |
+| 你现在想知道什么 | 先读哪篇 | 打开后先看哪里 |
 |---|---|---|
-| 给第一次了解工作的读者看什么 | [Science GPU 简版](milestones/science-gpu-bench-brief.md) | 用数字分类题解释任务执行、评分和策略训练，再介绍已有成果。 |
-| 任务覆盖多少、接下来做什么 | [任务现状与路线图](milestones/science-gpu-bench-status-and-roadmap.md) | 题库数量、验收层次、剩余接入和研究顺序。 |
-| 接入时环境与依赖怎么安排 | [接入与验收详情](milestones/science-gpu-full-onboarding.md) | 真实流程、环境隔离实例、固定验收记录与复现条件。 |
-| 查看可引用的实验收益与边界 | [Env 有效实验结论](experiments/env-design-and-results-brief.md) | 优先列出修复后的固定基线对照，旧结果集中归档。 |
-| 详细了解实现进度、收益与规划 | [Env 状态与路线图](milestones/env-status-and-roadmap.md) | 2026-10-28 阶段详细版，比较固定 baseline、当时实现及未来策略，不能替代当前设计。 |
-| 现在怎样工作，接口怎样使用 | [当前设计](knowledge/current-design.md) | 当前结构、模式区别、源码与能力边界，专题查[分类索引](knowledge/README.md)。 |
-| 测过什么，结果如何，哪里失败 | [实验与验证](experiments/README.md) | 训练对照、组件验证、性能分析、故障与未验证项。 |
-| 哪些真实任务值得研究状态复用 | [benchmark 状态核查](research-proposals/benchmark-state-reuse-audit.md) | 参考修复、状态寿命与历史轨迹，区分正确性修复、研究候选和未证实收益。 |
-| 从概念出发理解为什么这样设计 | [EnvWorker 设计讲解](../psrl/psrl-env-service-envworker-design.md) | 问题背景与设计动机，阅读时区分提案和实现。 |
+| **目前 Env 怎样工作，已经实现什么** | [Env架构：现状与完整执行流程](knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md) | [相对主基线增加的能力](knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md#先看结论现有能力与主基线) → 完整执行流程 → 已实现与尚未完成 |
+| **相比 baseline 的优势到底有多少证据** | [实验总览：调度收益与证据范围](experiments/01-实验总览_调度收益与证据范围.md) | [统一主基线与当前结论](experiments/01-实验总览_调度收益与证据范围.md#统一主基线与当前结论) → [当前训练对照](experiments/01-实验总览_调度收益与证据范围.md#当前训练实验有哪些结果) |
+| **接下来还能做什么，先做哪个** | [调度研究：研究全景与证据详解](milestones/05-调度研究_研究全景与证据详解.md#接下来可以做什么优先级与验收边界) | 先看优先级表：动机、已有基础、未实现部分、怎样判断值得继续 |
+| **作为论文还缺什么，自动模式是否值得做** | [自适应持卡的研究切口](milestones/05-调度研究_研究全景与证据详解.md#论文还缺什么自适应持卡的研究切口) | 当前 auto 的实际边界、短暂保留如何影响训练时间、强基线与自然场景证据 |
+| **具体做过哪些实验，怎样复核** | [资源分区九轮实验](experiments/09-资源分区_静态卡池与推理余量共享.md#实验总览每一轮验证了什么)与[全实验目录](experiments/README.md) | 每轮问题 → 实际对照 → 相同工作量结果 → 原因与边界 → 原始证据 |
+| **哪些 baseline 失败或重跑过，先修什么** | [近期失败与重跑审计](knowledge/01-架构与执行/06-工程审查_待修复问题与优先级.md#0-近期-baseline-失败与重跑审计) | Episode 排队期限、Command 十步容器查询、训练兼容与准备长尾；区分修复、规避和补跑成功 |
+| **怎样向研究读者介绍设计和结果** | [PSRL 环境 GPU 调度研究报告](experiments/12-研究报告_PSRL环境GPU调度的设计与评估.md) | 按容量压力梳理实验，四场景合并图同时比较训练与完整时间，解释收益与轻负载代价 |
+| **扩大 GPU 池、替换模型或任务会怎样** | [八卡单批次与多负载回放](experiments/13-扩展对照_八卡单批次与多负载回放.md) | 八卡十步、高显存 AIME 与 CIFAR-10＋COCO 三组对照 |
+| 哪些 benchmark 可用，代码和题库在哪 | [任务覆盖与接入路线](milestones/02-Science现状_任务覆盖与接入路线.md)与[任务目录](milestones/README.md#各-bench-的任务与代码入口) | 区分任务已准备、容器 GPU 已验证、完整策略训练已验证 |
 
-若还不熟悉“策略、轨迹、租约、评分器”等词，可按需查[术语速查](../overview/glossary.md)，或用[完整做题流程](../overview/reading-guide.md)串起背景。
+[![回顾Env的四个问题、主文档及各自负责回答的内容](experiments/env-reading-guide.png)](experiments/env-reading-guide.svg)
 
-例如，想知道「GPU 命令结束后为什么还要确认归还」，读[命令阶段配额](knowledge/command-gpu-reservations.md)。想查「固定 OFF 与 ON 的训练耗时如何比较」，读[真实训练对照](experiments/science-single-gpu-training-control.md)，同时核对基线、压力条件和计时边界。
+按图中 01 → 02 → 03 阅读，可连续理解设计、证据和下一步。04 用于复查具体实验。图是阅读导航，不把某一实验的结果推广成整个框架的普遍收益。
+
+## 当前最需要记住的结论
+
+后续统一主基线为 **静态独立环境卡池＋episode 持卡＋满池排队**，双方使用同次冻结实现。它也可以经过 EnvRouter。区别在 GPU 预算保留多久、可用卡范围与是否调整分卡，不能把“不开 Router”当作这个基线。
+
+| 问题 | 目前准确状态 | 证据入口 |
+|---|---|---|
+| 最近重跑意味着问题修好了吗 | 原十步补跑没有修查询机制；主目录现已改成直接 Docker API、有界只读重试和阶段分类，CPU 与真实容器验证通过。历史卡顿根因仍未知，未重跑训练宣称消除 | [查询修复与 trace 边界](knowledge/01-架构与执行/06-工程审查_待修复问题与优先级.md#容器查询修复与-trace-能回答的问题) |
+| 为什么完整方案初始化多101.85秒 | 视觉组没有借卡；广播后控制连接区段额外33.47秒，其余差值分散在更早启动阶段。主目录已提前准备控制句柄并去掉无关词表预加载，完整PSRL提速待验证 | [初始化分解与修改边界](experiments/13-扩展对照_八卡单批次与多负载回放.md#初始化为什么更久与怎样缩短) |
+| 框架比主基线多了哪些动作 | 逐命令归还、同机下一条命令重选卡、显式推理余量共享、可选整卡角色调整 | [架构能力对照](knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md#先看结论现有能力与主基线) |
+| 最新两步三组完成了吗 | 三场景9组全完成且清理通过。完整方案相对Command静态的完整时间：普通少17.49%、高显存少10.00%、视觉多14.42%；视觉差值主要在初始化。高显存十步首组已接续初始化 | [最新两步与十步状态](experiments/13-扩展对照_八卡单批次与多负载回放.md#两步与十步的同场景补测) |
+| 改用八卡与 8B 策略模型是否仍有收益 | 十步动态组相对 Episode 完整用时少 27.47%；相对成功补跑的 Command 静态少 16.77%，该组为跨窗口补测 | [八卡扩展验证](experiments/13-扩展对照_八卡单批次与多负载回放.md#单批次补测与十步对照) |
+| 更高显存和视觉任务是否也获益 | 两套单步三组均完成。相对 Command 静态，高显存 AIME 完整用时少 5.21%，视觉混合多 4.62%，后者没有触发借卡 | [多场景实测](experiments/13-扩展对照_八卡单批次与多负载回放.md#3-显存压力与异质工具) |
+| 历史共享收益意味着什么 | 对照多数是 command 静态池，证明有条件增量，也出现共享更慢、调高静态并发更快 | [当前训练证据](experiments/01-实验总览_调度收益与证据范围.md#当前训练实验有哪些结果) |
+| 整卡借用是否跑通过 | 两次重叠组都借出 GPU2，交接分别用 5.19 和 3.62 秒。提高执行期限后的补跑完成两步 | [补跑结果](experiments/09-资源分区_静态卡池与推理余量共享.md#给单条命令更长时间后的补跑) |
+| 是否自动使用所有训推卡 | 没有。Env Service 默认关闭，资源范围、共享、副本调整均需显式配置，训练卡借用仍属提案 | [默认配置与能力边界](knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md#4-已实现与尚未完成的边界) |
+
+## 先看目前能够执行的流程
+
+[![模型请求与环境命令两条路径、同机资源布局及批次训练反馈](experiments/env-current-layout.png)](experiments/env-current-layout.svg)
+
+图中 Agent 交替请求模型和执行工具，模型请求交给 SMG 网关，环境命令交给 EnvRouter。文件、容器、CPU 和主存保留在原节点，下一条受管 GPU 命令可以先查独立卡，再查显式允许的推理卡余量。轨迹完成先返回队列，凑齐符合题目组和版本条件的批次才训练，随后新权重影响后续推理。
+
+图中只展开候选资源，不表示某次实验的总GPU数。这是显式单卡 direct 命令池的示意，不表示所有 benchmark 默认都接入这些动作。AIRS 的 sandbox 路线、原生与 Compose 两种容器提供者、MPS 的使用条件，由架构主文档分别解释。图中的整卡借用不包含迁移运行中 CUDA 进程或借训练卡。
 
 ## 推荐阅读顺序
 
-当前实现以[当前设计](knowledge/current-design.md)为首读入口。查性能先读[有效实验结论](experiments/env-design-and-results-brief.md)。[10 月阶段报告](milestones/env-status-and-roadmap.md)只用于追溯，不作为当前能力或当前待办入口。
+第一次回顾只需按上方 **架构现状 → 实验总览 → 下一步优先级** 三处阅读，不必先通读实现手册或论文。已有基础后，按实际问题选择专题：
 
-1. [当前设计](knowledge/current-design.md)：串联准入、容器提供者、direct / MPS 分支、预算持有与清理。
-2. [统一执行后端](knowledge/unified-gpu-execution.md)和[GPU 作业与遥测](knowledge/gpu-jobs-and-task-telemetry.md)：理解实际接口、状态与部署条件。
-3. 按需查[命令阶段配额](knowledge/command-gpu-reservations.md)、[显存准入](knowledge/gpu-memory-admission.md)或[Docker 借用 rollout GPU](knowledge/rollout-gpu-lending.md)。
-4. 到[实验索引](experiments/README.md)选择对应证据，区分 CPU 教学模拟、真实 GPU 组件实验与完整训练。
+| 具体问题 | 深入入口 |
+|---|---|
+| Episode 和 command 到底保留了什么 | [GPU 申请归还与状态保留](knowledge/02-资源与调度/02-命令调度_GPU申请归还与状态保留.md) |
+| 单位资源怎样记账，为什么有空闲还会等待 | [显存准入](knowledge/02-资源与调度/01-显存准入_实测占用与预约预算.md)与[节点和卡池边界](knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md#24-为什么会在本节点排队其他节点仍有空闲) |
+| vLLM 如何共享、休眠、恢复及发布版本 | [训推共享主文档](knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md) |
+| 两种容器提供者为什么还存在 | [统一执行与预算策略](knowledge/01-架构与执行/02-统一执行_EnvRouter与容器及预算策略.md) |
+| 预测器、状态复用和已有论文在哪里 | [研究提案](research-proposals/README.md)、[真实任务核查](research-proposals/04-状态复用_真实任务中的收益空间核查.md)、[文献阅读](literature-reviews/README.md) |
+| 怎样运行与排查任务 | [集群运行指南](../psrl/psrl-run-guide/README.md)与[复现脚本](env-service-verification/README.md) |
+| Ray actor为什么启动失败 | [近期注册超时与依赖故障分诊](../psrl/psrl-run-guide/03-启动排障_单机与多机故障复盘.md#近期env实验ray启动失败与导入阻塞) |
+
+需要补齐背景时，从[一道题到模型更新](../overview/01-PSRL入门_从一道题到模型更新.md)串起 PSRL，用[术语速查](../overview/02-PSRL入门_系统与实验术语速查.md)按需查租约、协程、容器和评分器。
 
 ## 目录与归档规则
 
-| 目录 | 用途 |
-|---|---|
-| [knowledge/](knowledge/README.md) | 知识、实现与接入说明。早期版本文档在索引中单列，不作为当前能力总览。 |
-| [experiments/](experiments/README.md) | 实验报告、对照分析与现场障碍记录。 |
-| [env-service-verification/](env-service-verification/README.md) | 共用复现脚本、教学脚本、原始结果及早期验证报告。 |
-| [gpu-job-validation/](gpu-job-validation) | GPU 作业验证配套文件。 |
-| [AIRS 接入审计](airs-bench-audit/fixes-and-results.md) | 当前修复与剩余边界，配套目录保留 CPU 回归、GPU 证据核对、历史容器实验及脚本。 |
+| 目录 | 维护什么 | 怎样使用 |
+|---|---|---|
+| [knowledge/](knowledge/README.md) | 机制、当前实现、配置与任务接入 | 架构主文档负责全局事实，专题负责展开，不能从某个原型推断全部任务能力 |
+| [experiments/](experiments/README.md) | 当前结论、固定条件实验与负结果 | 总览先区分基线，具体报告保留实际版本和计时边界 |
+| [milestones/](milestones/README.md) | 任务覆盖、分享版和研究全景 | [研究全景](milestones/05-调度研究_研究全景与证据详解.md)给下一步，[10月阶段报告](milestones/06-历史阶段_2026年10月28日实现与规划.md)只供追溯 |
+| [research-proposals/](research-proposals/README.md) | 候选方案、原型和研究假设 | 是否值得继续，以对应实验和自然任务证据为准 |
+| [literature-reviews/](literature-reviews/README.md) | 外部工作与本地启发 | 论文机制与本地实现分别说明，原图不代表项目现状 |
+| [env-service-verification/](env-service-verification/README.md) | 脚本、冻结源码与原始输出 | 通过报告进入，不以日志存活或 CPU 回归替代完整任务证据 |
+| [AIRS审计](airs-bench-audit/README.md)、[GPU作业验证](gpu-job-validation/README.md) | 接入与生命周期的特定证据 | 保留各路径验收范围 |
+| [archive/](archive/README.md)和[实验历史](experiments/history/README.md) | 原始设计、旧实现和修复前记录 | 阅读历史时先看版本与日期，不能作为当前待办 |
 
-一篇文章兼有原理与实测时，按主要阅读目的归类，在分类索引注明附带内容。新增长篇实验报告放到 `experiments/`，从相关知识文章链接过去。复现脚本和原始结果使用上述配套目录，阅读命令时以文中注明的工作目录为准。
+<details>
+<summary>查看完整目录阅读地图</summary>
+
+<!-- figure:map-31eb3fdaa1 -->
+先按当前问题选择阅读入口，再在下方目录点击对应文档。
+
+[![环境执行与回收专题：阅读地图（1/2）](../_static/img/document-figures/map-31eb3fdaa1-screen.png)](../_static/img/document-figures/map-31eb3fdaa1.png)
+
+[![环境执行与回收专题：阅读地图（2/2）](../_static/img/document-figures/map-31eb3fdaa1-screen-02.png)](../_static/img/document-figures/map-31eb3fdaa1.png)
+
+每张彩色书页列出对应入口中的实际章节，帮助按问题定位阅读内容。编号只用于图中定位，不要求顺序通读。 [查看矢量图](../_static/img/document-figures/map-31eb3fdaa1.svg)。
+<!-- /figure:map-31eb3fdaa1 -->
+
+</details>
+
+## 维护与核对范围
+
+本入口于 2026-11-24 同步。现状以工作区源码及[架构核对记录](knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md#核对记录)为准，实验沿用各自冻结证据，本次没有新训练。修改当前能力、默认值或基线时，同步架构、实验总览和研究优先级，再修复相关专题入链，不在不同阶段材料中各维护一份“最新结论”。
 
 [返回知识文档总索引](../README.md)

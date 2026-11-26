@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="1152pt" viewBox="0 0 1152 1152" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:13:04.337502</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1152 
+L 1152 1152 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="46.08" y="39.53418" transform="rotate(-0 46.08 39.53418)">两个模型、两层训练：工具里的模型与Agent策略分开更新</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="92.197984" transform="rotate(-0 46.08 92.197984)">Agent 让环境训练了一个模型，PSRL 更新的到底是哪一个模型？</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 96.4224 214.7175 
+L 536.256 214.7175 
+Q 546.8544 214.7175 546.8544 220.9275 
+L 546.8544 565.5825 
+Q 546.8544 571.7925 536.256 571.7925 
+L 96.4224 571.7925 
+Q 85.824 571.7925 85.824 565.5825 
+L 85.824 220.9275 
+Q 85.824 214.7175 96.4224 214.7175 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 636.9408 214.7175 
+L 1055.5776 214.7175 
+Q 1066.176 214.7175 1066.176 220.9275 
+L 1066.176 565.5825 
+Q 1066.176 571.7925 1055.5776 571.7925 
+L 636.9408 571.7925 
+Q 626.3424 571.7925 626.3424 565.5825 
+L 626.3424 220.9275 
+Q 626.3424 214.7175 636.9408 214.7175 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 183.8592 328.05 
+L 236.8512 328.05 
+L 236.8512 359.1 
+L 183.8592 359.1 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 243.74016 328.05 
+L 296.73216 328.05 
+L 296.73216 359.1 
+L 243.74016 359.1 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 303.62112 328.05 
+L 356.61312 328.05 
+L 356.61312 359.1 
+L 303.62112 359.1 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 363.50208 328.05 
+L 416.49408 328.05 
+L 416.49408 359.1 
+L 363.50208 359.1 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 183.8592 363.1365 
+L 236.8512 363.1365 
+L 236.8512 394.1865 
+L 183.8592 394.1865 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 243.74016 363.1365 
+L 296.73216 363.1365 
+L 296.73216 394.1865 
+L 243.74016 394.1865 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 303.62112 363.1365 
+L 356.61312 363.1365 
+L 356.61312 394.1865 
+L 303.62112 394.1865 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 363.50208 363.1365 
+L 416.49408 363.1365 
+L 416.49408 394.1865 
+L 363.50208 394.1865 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 183.8592 398.223 
+L 236.8512 398.223 
+L 236.8512 429.273 
+L 183.8592 429.273 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 243.74016 398.223 
+L 296.73216 398.223 
+L 296.73216 429.273 
+L 243.74016 429.273 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 303.62112 398.223 
+L 356.61312 398.223 
+L 356.61312 429.273 
+L 303.62112 429.273 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 363.50208 398.223 
+L 416.49408 398.223 
+L 416.49408 429.273 
+L 363.50208 429.273 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #3478c5; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 713.7792 328.05 
+L 766.7712 328.05 
+L 766.7712 359.1 
+L 713.7792 359.1 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 773.66016 328.05 
+L 826.65216 328.05 
+L 826.65216 359.1 
+L 773.66016 359.1 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 833.54112 328.05 
+L 886.53312 328.05 
+L 886.53312 359.1 
+L 833.54112 359.1 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 893.42208 328.05 
+L 946.41408 328.05 
+L 946.41408 359.1 
+L 893.42208 359.1 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 713.7792 363.1365 
+L 766.7712 363.1365 
+L 766.7712 394.1865 
+L 713.7792 394.1865 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 773.66016 363.1365 
+L 826.65216 363.1365 
+L 826.65216 394.1865 
+L 773.66016 394.1865 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_22">
+    <path d="M 833.54112 363.1365 
+L 886.53312 363.1365 
+L 886.53312 394.1865 
+L 833.54112 394.1865 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_23">
+    <path d="M 893.42208 363.1365 
+L 946.41408 363.1365 
+L 946.41408 394.1865 
+L 893.42208 394.1865 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_24">
+    <path d="M 713.7792 398.223 
+L 766.7712 398.223 
+L 766.7712 429.273 
+L 713.7792 429.273 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_25">
+    <path d="M 773.66016 398.223 
+L 826.65216 398.223 
+L 826.65216 429.273 
+L 773.66016 429.273 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_26">
+    <path d="M 833.54112 398.223 
+L 886.53312 398.223 
+L 886.53312 429.273 
+L 833.54112 429.273 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_27">
+    <path d="M 893.42208 398.223 
+L 946.41408 398.223 
+L 946.41408 429.273 
+L 893.42208 429.273 
+z
+" clip-path="url(#p4eb08b4615)" style="fill: #159b8d; stroke: #ffffff; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="316.3392" y="265.52125" transform="rotate(-0 316.3392 265.52125)">Agent策略：参数θ</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="846.2592" y="265.52125" transform="rotate(-0 846.2592 265.52125)">环境任务模型：参数φ</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(226.3392 506.707422)">生成代码、选择工具</text>
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(246.3392 536.094141)">由策略轨迹更新</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(768.29045 506.980859)">训练 / 推理 / 评分</text>
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(786.2592 536.094141)">提交任务产物</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="576" y="619.49125" transform="rotate(-0 576 619.49125)">环境产物的评分成为反馈，再用于训练外层Agent策略。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="text_8">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="141.733984" transform="rotate(-0 46.08 141.733984)">策略模型 θ 提出训练方案，环境任务模型 φ 执行更新并保存产物，评分器返回质量。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_28">
+    <path d="M 56.6784 689.904 
+L 1095.3216 689.904 
+Q 1110.15936 689.904 1110.15936 694.44 
+L 1110.15936 785.16 
+Q 1110.15936 789.696 1095.3216 789.696 
+L 56.6784 789.696 
+Q 41.84064 789.696 41.84064 785.16 
+L 41.84064 694.44 
+Q 41.84064 689.904 56.6784 689.904 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_29">
+    <path d="M 353.4336 705.132 
+L 359.79264 705.132 
+L 359.79264 714.852 
+L 353.4336 714.852 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_30">
+    <path d="M 353.4336 734.292 
+L 359.79264 734.292 
+L 359.79264 744.012 
+L 353.4336 744.012 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_31">
+    <path d="M 353.4336 763.452 
+L 359.79264 763.452 
+L 359.79264 773.172 
+L 353.4336 773.172 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_32">
+    <path d="M 56.6784 800.064 
+L 1095.3216 800.064 
+Q 1110.15936 800.064 1110.15936 804.6 
+L 1110.15936 895.32 
+Q 1110.15936 899.856 1095.3216 899.856 
+L 56.6784 899.856 
+Q 41.84064 899.856 41.84064 895.32 
+L 41.84064 804.6 
+Q 41.84064 800.064 56.6784 800.064 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_33">
+    <path d="M 353.4336 815.292 
+L 359.79264 815.292 
+L 359.79264 825.012 
+L 353.4336 825.012 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_34">
+    <path d="M 353.4336 844.452 
+L 359.79264 844.452 
+L 359.79264 854.172 
+L 353.4336 854.172 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_35">
+    <path d="M 353.4336 873.612 
+L 359.79264 873.612 
+L 359.79264 883.332 
+L 353.4336 883.332 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_36">
+    <path d="M 56.6784 910.224 
+L 1095.3216 910.224 
+Q 1110.15936 910.224 1110.15936 914.76 
+L 1110.15936 1005.48 
+Q 1110.15936 1010.016 1095.3216 1010.016 
+L 56.6784 1010.016 
+Q 41.84064 1010.016 41.84064 1005.48 
+L 41.84064 914.76 
+Q 41.84064 910.224 56.6784 910.224 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_37">
+    <path d="M 353.4336 925.452 
+L 359.79264 925.452 
+L 359.79264 935.172 
+L 353.4336 935.172 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_38">
+    <path d="M 353.4336 954.612 
+L 359.79264 954.612 
+L 359.79264 964.332 
+L 353.4336 964.332 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_39">
+    <path d="M 353.4336 983.772 
+L 359.79264 983.772 
+L 359.79264 993.492 
+L 353.4336 993.492 
+z
+" clip-path="url(#p7b47f0837f)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="67.2768" y="726.019277" transform="rotate(-0 67.2768 726.019277)">01  策略 θ 做决定</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="721.582109" transform="rotate(-0 374.6304 721.582109)">生成代码与工具调用</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="750.781172" transform="rotate(-0 374.6304 750.781172)">根据反馈继续修改</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="779.980234" transform="rotate(-0 374.6304 779.980234)">形成一条交互轨迹</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="67.2768" y="834.620684" transform="rotate(-0 67.2768 834.620684)">02  环境 φ 做任务</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="831.859297" transform="rotate(-0 374.6304 831.859297)">按候选方案训练或评估</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="859.573984" transform="rotate(-0 374.6304 859.573984)">保存任务 checkpoint</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="890.179297" transform="rotate(-0 374.6304 890.179297)">独立评分得到任务奖励</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d68b20" x="67.2768" y="946.257246" transform="rotate(-0 67.2768 946.257246)">03  PSRL 更新 θ</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="942.019297" transform="rotate(-0 374.6304 942.019297)">收集轨迹与奖励</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="971.140234" transform="rotate(-0 374.6304 971.140234)">满足批次条件后更新策略</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="1000.339297" transform="rotate(-0 374.6304 1000.339297)">θ 新参数发布到生成侧</text>
+   </g>
+  </g>
+  <g id="axes_5">
+   <g id="patch_40">
+    <path d="M 56.6784 1032.7536 
+L 1095.3216 1032.7536 
+Q 1110.15936 1032.7536 1110.15936 1034.316 
+L 1110.15936 1090.116 
+Q 1110.15936 1091.6784 1095.3216 1091.6784 
+L 56.6784 1091.6784 
+Q 41.84064 1091.6784 41.84064 1090.116 
+L 41.84064 1034.316 
+Q 41.84064 1032.7536 56.6784 1032.7536 
+z
+" clip-path="url(#p4d16ae3b03)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="61.9776" y="1060.345984" transform="rotate(-0 61.9776 1060.345984)">φ 的内部训练次数与 θ 的策略 step 属于两层循环。任务产物不会自动成为下一轮 Agent。</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="1120.908586" transform="rotate(-0 46.08 1120.908586)">θ、φ 是教学符号。任务模型接管 Agent 是额外设计，需要能力评估与发布协议。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p4eb08b4615">
+   <rect x="46.08" y="172.8" width="1059.84" height="496.8"/>
+  </clipPath>
+  <clipPath id="p7b47f0837f">
+   <rect x="46.08" y="691.2" width="1059.84" height="324"/>
+  </clipPath>
+  <clipPath id="p4d16ae3b03">
+   <rect x="46.08" y="1033.2" width="1059.84" height="111.6"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="864pt" height="1692pt" viewBox="0 0 864 1692" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:12:58.054096</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1692 
+L 864 1692 
+L 864 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 67.0464 247.784862 
+L 648.192 247.784862 
+L 648.192 299.592661 
+L 67.0464 299.592661 
+z
+" clip-path="url(#pca6b7132a0)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 648.192 247.784862 
+L 814.2336 247.784862 
+L 814.2336 299.592661 
+L 648.192 299.592661 
+z
+" clip-path="url(#pca6b7132a0)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 67.0464 330.677339 
+L 416.2752 330.677339 
+L 416.2752 396.30055 
+L 67.0464 396.30055 
+z
+" clip-path="url(#pca6b7132a0)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 465.0048 330.677339 
+L 814.2336 330.677339 
+L 814.2336 396.30055 
+L 465.0048 396.30055 
+z
+" clip-path="url(#pca6b7132a0)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 50.8032 399.754404 
+L 830.4768 399.754404 
+L 830.4768 461.923761 
+L 50.8032 461.923761 
+z
+" clip-path="url(#pca6b7132a0)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 50.8032 175.253945 
+L 830.4768 175.253945 
+" clip-path="url(#pca6b7132a0)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="154.127026" transform="rotate(-0 50.8032 154.127026)">① 初始状态：实占与承诺会重叠吗？</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="58.9248" y="215.464352" transform="rotate(-0 58.9248 215.464352)">同一张卡：容量 90 GiB，外部常驻 70 GiB</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="357.6192" y="279.682902" transform="rotate(-0 357.6192 279.682902)">外部实占 70</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="731.2128" y="279.682902" transform="rotate(-0 731.2128 279.682902)">空余 20</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(173.727206 357.791289)">A 已获准：预约 15</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(177.207675 381.078203)">尚未分配：实占 0</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(590.248106 357.887968)">B 新申请：15</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(565.3692 380.755937)">现在放行，还是等？</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="75.168" y="436.478731" transform="rotate(-0 75.168 436.478731)">要保住 A 后续分配的权利，再判断 B。</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_7">
+    <path d="M 67.0464 641.524128 
+L 554.3424 641.524128 
+L 554.3424 689.878073 
+L 67.0464 689.878073 
+z
+" clip-path="url(#p2b09578374)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 554.3424 641.524128 
+L 651.8016 641.524128 
+L 651.8016 689.878073 
+L 554.3424 689.878073 
+z
+" clip-path="url(#p2b09578374)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 651.8016 641.524128 
+L 749.2608 641.524128 
+L 749.2608 689.878073 
+L 651.8016 689.878073 
+z
+" clip-path="url(#p2b09578374)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 50.8032 786.585963 
+L 830.4768 786.585963 
+L 830.4768 848.755321 
+L 50.8032 848.755321 
+z
+" clip-path="url(#p2b09578374)" style="fill: #fdecef; stroke: #c84f60; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 50.8032 562.085505 
+L 830.4768 562.085505 
+" clip-path="url(#p2b09578374)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 693.569829 631.162569 
+L 693.569829 700.239633 
+" clip-path="url(#p2b09578374)" style="fill: none; stroke-dasharray: 7.4,3.2; stroke-dashoffset: 0; stroke: #c84f60; stroke-width: 2"/>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="540.923429" transform="rotate(-0 50.8032 540.923429)">② 对比算法：旧公式为什么会漏算？</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #c84f60" x="58.9248" y="605.524179" transform="rotate(-0 58.9248 605.524179)">旧：max(整卡实占 70, 已预约 15) = 70</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="310.6944" y="671.663015" transform="rotate(-0 310.6944 671.663015)">外部 70</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="603.072" y="671.630788" transform="rotate(-0 603.072 671.630788)">A 14</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="700.5312" y="671.630788" transform="rotate(-0 700.5312 671.630788)">B 14</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #c84f60" x="628.597029" y="630.249003" transform="rotate(-0 628.597029 630.249003)">容量 90</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 718.718949)">错放 B 后：70 + 14 + 14 = 98 &gt; 90</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 741.715824)">先获准、后分配的时间差，会触发 OOM。</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #c84f60" transform="translate(75.168 811.972986)">把实占与预约全加也不对：</text>
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #c84f60" transform="translate(75.168 835.066541)">A 已分配的部分会被重复计算。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="patch_11">
+    <path d="M 261.9648 1097.432752 
+L 622.0224 1097.432752 
+L 622.0224 1131.971284 
+L 261.9648 1131.971284 
+z
+" clip-path="url(#p4f48ceee64)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 622.0224 1097.432752 
+L 622.0224 1097.432752 
+L 622.0224 1131.971284 
+L 622.0224 1131.971284 
+z
+" clip-path="url(#p4f48ceee64)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 622.0224 1097.432752 
+L 699.1776 1097.432752 
+L 699.1776 1131.971284 
+L 622.0224 1131.971284 
+z
+" clip-path="url(#p4f48ceee64)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 622.0224 1097.432752 
+L 699.1776 1097.432752 
+L 699.1776 1131.971284 
+L 622.0224 1131.971284 
+z
+" clip-path="url(#p4f48ceee64)" style="fill: url(#hc83cfb00cf); stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 261.9648 1152.694404 
+L 622.0224 1152.694404 
+L 622.0224 1187.232936 
+L 261.9648 1187.232936 
+z
+" clip-path="url(#p4f48ceee64)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 622.0224 1152.694404 
+L 694.03392 1152.694404 
+L 694.03392 1187.232936 
+L 622.0224 1187.232936 
+z
+" clip-path="url(#p4f48ceee64)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 694.03392 1152.694404 
+L 699.1776 1152.694404 
+L 699.1776 1187.232936 
+L 694.03392 1187.232936 
+z
+" clip-path="url(#p4f48ceee64)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 694.03392 1152.694404 
+L 699.1776 1152.694404 
+L 699.1776 1187.232936 
+L 694.03392 1187.232936 
+z
+" clip-path="url(#p4f48ceee64)" style="fill: url(#hc83cfb00cf); stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 50.8032 948.917064 
+L 830.4768 948.917064 
+" clip-path="url(#p4f48ceee64)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="927.64952" transform="rotate(-0 50.8032 927.64952)">③ 正确记账：只加尚未兑现的预约</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="67.0464" y="992.612575" transform="rotate(-0 67.0464 992.612575)">U = M + Σ max(Rᵢ − Aᵢ, 0)</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1036.537898)">M：整卡本次实占   Rᵢ：任务 i 的预约</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1059.728132)">Aᵢ：本次可靠核实属于任务 i 的实占</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="67.0464" y="1117.177853" transform="rotate(-0 67.0464 1117.177853)">A 未分配</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="441.9936" y="1120.631706" transform="rotate(-0 441.9936 1120.631706)">70</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="660.6" y="1120.535026" transform="rotate(-0 660.6 1120.535026)">15</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="741.1392" y="1120.631706" transform="rotate(-0 741.1392 1120.631706)">85</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="67.0464" y="1172.052785" transform="rotate(-0 67.0464 1172.052785)">A 已用 14</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="441.9936" y="1175.893357" transform="rotate(-0 441.9936 1175.893357)">70</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="658.02816" y="1175.893357" transform="rotate(-0 658.02816 1175.893357)">14</text>
+   </g>
+   <g id="text_26">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="741.1392" y="1175.893357" transform="rotate(-0 741.1392 1175.893357)">85</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="67.0464" y="1230.897196" transform="rotate(-0 67.0464 1230.897196)">蓝＝外部实占，绿＝A 实占，斜线＝剩余承诺</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_19">
+    <path d="M 67.0464 1508.441284 
+L 814.2336 1508.441284 
+L 814.2336 1549.887523 
+L 67.0464 1549.887523 
+z
+" clip-path="url(#p889f8325ca)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 50.8032 1560.249083 
+L 830.4768 1560.249083 
+L 830.4768 1622.41844 
+L 50.8032 1622.41844 
+z
+" clip-path="url(#p889f8325ca)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 50.8032 1335.748624 
+L 830.4768 1335.748624 
+" clip-path="url(#p889f8325ca)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_28">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="1314.586548" transform="rotate(-0 50.8032 1314.586548)">④ 放行与归还：低占用何时才是真空余？</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1371.561659)">A 仍持预约：U = 85</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1394.751894)">B 需 15：85 + 15 = 100 &gt; 90 → 等待</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1454.164097)">A 仅释放张量：预约仍在，B 继续等。</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1477.322105)">A 确认归还：清预约，U 降到 70。</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="440.64" y="1535.061865" transform="rotate(-0 440.64 1535.061865)">此时再放 B：70 + 15 = 85 ≤ 90</text>
+   </g>
+   <g id="text_32">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #159b8d" transform="translate(75.168 1585.410519)">按任务抵扣，拒用历史峰值。</text>
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #159b8d" transform="translate(75.168 1608.600754)">归属不明时不抵扣，容量判断更保守。</text>
+   </g>
+  </g>
+  <g id="text_33">
+   <text style="font-weight: 700; font-size: 24px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="34.56" y="33.84" transform="rotate(-0 34.56 33.84)">显存准入：从漏算风险到安全放行</text>
+  </g>
+  <g id="text_34">
+   <text style="font-size: 17px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="71.064" transform="rotate(-0 34.56 71.064)">为什么显存看起来有空余，调度器仍要让新任务等待？</text>
+  </g>
+  <g id="text_35">
+   <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="101.52" transform="rotate(-0 34.56 101.52)">阅读顺序：自上而下 ① → ② → ③ → ④</text>
+  </g>
+  <g id="text_36">
+   <text style="font-size: 14.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="1670.004" transform="rotate(-0 34.56 1670.004)">图内数字为教学假设。先核角色、计时与同量工作，再核实现范围。实测证据以对应正文为准。</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pca6b7132a0">
+   <rect x="34.56" y="126.9" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p2b09578374">
+   <rect x="34.56" y="513.73156" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p4f48ceee64">
+   <rect x="34.56" y="900.563119" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p889f8325ca">
+   <rect x="34.56" y="1287.394679" width="812.16" height="345.385321"/>
+  </clipPath>
+ </defs>
+ <defs>
+  <pattern id="hc83cfb00cf" patternUnits="userSpaceOnUse" x="0" y="0" width="72" height="72">
+   <rect x="0" y="0" width="73" height="73" fill="#fff2db"/>
+   <path d="M -36 36 
+L 36 -36 
+M -32 40 
+L 40 -32 
+M -28 44 
+L 44 -28 
+M -24 48 
+L 48 -24 
+M -20 52 
+L 52 -20 
+M -16 56 
+L 56 -16 
+M -12 60 
+L 60 -12 
+M -8 64 
+L 64 -8 
+M -4 68 
+L 68 -4 
+M 0 72 
+L 72 0 
+M 4 76 
+L 76 4 
+M 8 80 
+L 80 8 
+M 12 84 
+L 84 12 
+M 16 88 
+L 88 16 
+M 20 92 
+L 92 20 
+M 24 96 
+L 96 24 
+M 28 100 
+L 100 28 
+M 32 104 
+L 104 32 
+M 36 108 
+L 108 36 
+" style="fill: #d68b20; stroke: #d68b20; stroke-width: 1.0; stroke-linecap: butt; stroke-linejoin: miter"/>
+  </pattern>
+ </defs>
+</svg>

@@ -37,6 +37,16 @@ Train models to solve real-world software engineering tasks via interactive bash
 
 Unlike single-turn RLVR, agentic RL involves:
 
+<!-- figure:two-model-training-loops -->
+这张图沿同一个场景解释：Agent 让环境训练了一个模型，PSRL 更新的到底是哪一个模型？
+
+[![两个模型、两层训练：工具里的模型与Agent策略分开更新（1/2）](../../_static/img/document-figures/two-model-training-loops-screen.png)](../../_static/img/document-figures/two-model-training-loops.png)
+
+[![两个模型、两层训练：工具里的模型与Agent策略分开更新（2/2）](../../_static/img/document-figures/two-model-training-loops-screen-02.png)](../../_static/img/document-figures/two-model-training-loops.png)
+
+策略模型 θ 提出训练方案，环境任务模型 φ 执行更新并保存产物，评分器返回质量。 φ 的内部训练次数与 θ 的策略 step 属于两层循环。任务产物不会自动成为下一轮 Agent。 θ、φ 是教学符号。任务模型接管 Agent 是额外设计，需要能力评估与发布协议。 [查看矢量图](../../_static/img/document-figures/two-model-training-loops.svg)。
+<!-- /figure:two-model-training-loops -->
+
 - **Multi-turn interaction**: The model generates multiple responses, interleaved with environment observations (tool outputs, command results).
 - **Tool-use learning**: The model must learn *when* to call a tool, *what* arguments to pass, and *how* to interpret the result.
 - **Long-horizon credit assignment**: Rewards are sparse (end-of-episode), but the causal chain spans dozens of turns.

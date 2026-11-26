@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1008pt" height="648pt" viewBox="0 0 1008 648" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-19T14:52:19.046106</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 648 
+L 1008 648 
+L 1008 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 45.80352 158.5494 
+L 294.49728 158.5494 
+Q 304.17408 158.5494 304.17408 164.7054 
+L 304.17408 255.1986 
+Q 304.17408 261.3546 294.49728 261.3546 
+L 45.80352 261.3546 
+Q 36.12672 261.3546 36.12672 255.1986 
+L 36.12672 164.7054 
+Q 36.12672 158.5494 45.80352 158.5494 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #f5f8fb; stroke: #2563a6; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 384.49152 158.5494 
+L 633.18528 158.5494 
+Q 642.86208 158.5494 642.86208 164.7054 
+L 642.86208 255.1986 
+Q 642.86208 261.3546 633.18528 261.3546 
+L 384.49152 261.3546 
+Q 374.81472 261.3546 374.81472 255.1986 
+L 374.81472 164.7054 
+Q 374.81472 158.5494 384.49152 158.5494 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #f5f8fb; stroke: #117f78; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 723.17952 158.5494 
+L 962.19648 158.5494 
+Q 971.87328 158.5494 971.87328 164.7054 
+L 971.87328 255.1986 
+Q 971.87328 261.3546 962.19648 261.3546 
+L 723.17952 261.3546 
+Q 713.50272 261.3546 713.50272 255.1986 
+L 713.50272 164.7054 
+Q 713.50272 158.5494 723.17952 158.5494 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #f5f8fb; stroke: #c66b21; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 312.466219 209.952 
+Q 339.494708 209.952 364.957949 209.952 
+" clip-path="url(#p49b09a8537)" style="fill: none; stroke: #5e6e7c; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 358.957949 206.952 
+L 364.957949 209.952 
+L 358.957949 212.952 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #5e6e7c; stroke: #5e6e7c; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 651.154219 209.952 
+Q 678.182708 209.952 703.645949 209.952 
+" clip-path="url(#p49b09a8537)" style="fill: none; stroke: #5e6e7c; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 697.645949 206.952 
+L 703.645949 209.952 
+L 697.645949 212.952 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #5e6e7c; stroke: #5e6e7c; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 326.43072 318.6054 
+L 681.56928 318.6054 
+Q 691.24608 318.6054 691.24608 324.7614 
+L 691.24608 421.4106 
+Q 691.24608 427.5666 681.56928 427.5666 
+L 326.43072 427.5666 
+Q 316.75392 427.5666 316.75392 421.4106 
+L 316.75392 324.7614 
+Q 316.75392 318.6054 326.43072 318.6054 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #f5f8fb; stroke: #2563a6; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 840.970463 266.380341 
+Q 765.273419 311.526108 690.920694 355.870123 
+" clip-path="url(#p49b09a8537)" style="fill: none; stroke: #5e6e7c; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 697.610479 355.373359 
+L 690.920694 355.870123 
+L 694.537153 350.220236 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #5e6e7c; stroke: #5e6e7c; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 318.455304 356.623754 
+Q 247.56596 311.526738 177.997276 267.269874 
+" clip-path="url(#p49b09a8537)" style="fill: none; stroke: #5e6e7c; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 181.449449 273.021613 
+L 177.997276 267.269874 
+L 184.669971 267.959179 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #5e6e7c; stroke: #5e6e7c; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 268.36992 521.7534 
+L 459.00288 521.7534 
+Q 468.67968 521.7534 468.67968 527.9094 
+L 468.67968 599.9346 
+Q 468.67968 606.0906 459.00288 606.0906 
+L 268.36992 606.0906 
+Q 258.69312 606.0906 258.69312 599.9346 
+L 258.69312 527.9094 
+Q 258.69312 521.7534 268.36992 521.7534 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #f5f8fb; stroke-dasharray: 5.55,2.4; stroke-dashoffset: 0; stroke: #b43b4c; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 529.64352 521.7534 
+L 720.27648 521.7534 
+Q 729.95328 521.7534 729.95328 527.9094 
+L 729.95328 599.9346 
+Q 729.95328 606.0906 720.27648 606.0906 
+L 529.64352 606.0906 
+Q 519.96672 606.0906 519.96672 599.9346 
+L 519.96672 527.9094 
+Q 519.96672 521.7534 529.64352 521.7534 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #f5f8fb; stroke-dasharray: 5.55,2.4; stroke-dashoffset: 0; stroke: #b43b4c; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 790.91712 521.7534 
+L 962.19648 521.7534 
+Q 971.87328 521.7534 971.87328 527.9094 
+L 971.87328 599.9346 
+Q 971.87328 606.0906 962.19648 606.0906 
+L 790.91712 606.0906 
+Q 781.24032 606.0906 781.24032 599.9346 
+L 781.24032 527.9094 
+Q 781.24032 521.7534 790.91712 521.7534 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #f5f8fb; stroke-dasharray: 5.55,2.4; stroke-dashoffset: 0; stroke: #b43b4c; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 476.968275 560.844 
+Q 494.321029 560.844 510.108536 560.844 
+" clip-path="url(#p49b09a8537)" style="fill: none; stroke: #b43b4c; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 504.108536 557.844 
+L 510.108536 560.844 
+L 504.108536 563.844 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #b43b4c; stroke: #b43b4c; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 738.241875 560.844 
+Q 755.594629 560.844 771.382136 560.844 
+" clip-path="url(#p49b09a8537)" style="fill: none; stroke: #b43b4c; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 765.382136 557.844 
+L 771.382136 560.844 
+L 765.382136 563.844 
+z
+" clip-path="url(#p49b09a8537)" style="fill: #b43b4c; stroke: #b43b4c; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 49.1904 468.504 
+L 958.8096 468.504 
+" clip-path="url(#p49b09a8537)" style="fill: none; stroke: #d5dee8; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 22px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="55.544938" transform="rotate(-0 39.5136 55.544938)">任务里训练了模型，不等于 Agent 自己换成了那个模型</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #5e6e7c" x="39.5136" y="96.628875" transform="rotate(-0 39.5136 96.628875)">A：外层 Agent 参数。B：任务里训练的模型参数。上半部是已核对的路径，下半部是接管提案。</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #2563a6" x="170.1504" y="196.500064" transform="rotate(-0 170.1504 196.500064)">外层 Agent A</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #233447" x="170.1504" y="233.002178" transform="rotate(-0 170.1504 233.002178)">生成训练与评估命令</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #117f78" x="508.8384" y="196.529361" transform="rotate(-0 508.8384 196.529361)">Docker 内训练 B</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #233447" x="508.8384" y="233.002178" transform="rotate(-0 508.8384 233.002178)">任务模型参数发生变化</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #c66b21" x="842.688" y="196.529361" transform="rotate(-0 842.688 196.529361)">独立评分 B</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #233447" x="842.688" y="232.97874" transform="rotate(-0 842.688 232.97874)">返回分数与交互轨迹</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #2563a6" x="504" y="358.584577" transform="rotate(-0 504 358.584577)">PSRL 更新 A 并发布新 A</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #233447" x="504" y="397.305817" transform="rotate(-0 504 397.305817)">已有：trainer → 参数服务 → vLLM</text>
+   </g>
+   <g id="text_11">
+    <g id="patch_15">
+     <path d="M 217.635347 302.883812 
+L 277.494253 302.883812 
+L 277.494253 289.388187 
+L 217.635347 289.388187 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="247.5648" y="299.272719" transform="rotate(-0 247.5648 299.272719)">后续 rollout</text>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 14px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #b43b4c" x="39.5136" y="509.486875" transform="rotate(-0 39.5136 509.486875)">额外的接管提案</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #b43b4c" x="363.6864" y="553.852897" transform="rotate(-0 363.6864 553.852897)">B 满足 Agent 职责</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #233447" x="363.6864" y="583.43982" transform="rotate(-0 363.6864 583.43982)">可恢复且独立评估通过</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #b43b4c" x="624.96" y="553.852897" transform="rotate(-0 624.96 553.852897)">新服务加载就绪</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #233447" x="624.96" y="583.392945" transform="rotate(-0 624.96 583.392945)">实际接请求并可探活</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #b43b4c" x="876.5568" y="553.823601" transform="rotate(-0 876.5568 553.823601)">切换默认路由</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #233447" x="876.5568" y="583.463257" transform="rotate(-0 876.5568 583.463257)">下一轮由 B 发命令</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p49b09a8537">
+   <rect x="20.16" y="12.96" width="967.68" height="615.6"/>
+  </clipPath>
+ </defs>
+</svg>

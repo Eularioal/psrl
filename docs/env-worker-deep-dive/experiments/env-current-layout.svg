@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="576pt" height="432pt" viewBox="0 0 576 432" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-24T12:09:21.421423</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 432 
+L 576 432 
+L 576 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 18 82.8 
+L 270 82.8 
+L 270 144 
+L 18 144 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #e5eef9; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 306 82.8 
+L 558 82.8 
+L 558 144 
+L 306 144 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #e4f1eb; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 18 157.68 
+L 558 157.68 
+L 558 313.92 
+L 18 313.92 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #f2f5f8; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 30.24 193.68 
+L 185.04 193.68 
+L 185.04 300.24 
+L 30.24 300.24 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #dfe3ed; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 41.04 221.76 
+L 174.24 221.76 
+L 174.24 246.24 
+L 41.04 246.24 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #c7cfe1; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 41.04 251.28 
+L 174.24 251.28 
+L 174.24 275.76 
+L 41.04 275.76 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #c7cfe1; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 188.479687 247.68 
+Q 197.999453 247.68 206.401184 247.68 
+" clip-path="url(#p90c4a9e046)" style="fill: none; stroke: #52697d; stroke-linecap: round"/>
+    <path d="M 200.401184 244.68 
+L 206.401184 247.68 
+L 200.401184 250.68 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #52697d; stroke: #52697d; stroke-linecap: round"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 213.84 216.72 
+L 318.24 216.72 
+L 318.24 278.64 
+L 213.84 278.64 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #bddfce; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 219.6 223.2 
+L 312.48 223.2 
+L 312.48 244.8 
+L 219.6 244.8 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #79b69c; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 219.6 250.56 
+L 312.48 250.56 
+L 312.48 272.16 
+L 219.6 272.16 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #eaf5ee; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 329.04 216.72 
+L 433.44 216.72 
+L 433.44 278.64 
+L 329.04 278.64 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #bddfce; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 334.8 223.2 
+L 427.68 223.2 
+L 427.68 244.8 
+L 334.8 244.8 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #79b69c; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 334.8 250.56 
+L 427.68 250.56 
+L 427.68 272.16 
+L 334.8 272.16 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #eaf5ee; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 444.24 216.72 
+L 545.04 216.72 
+L 545.04 278.64 
+L 444.24 278.64 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #cce0f4; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 450 222.48 
+L 539.28 222.48 
+L 539.28 246.96 
+L 450 246.96 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #99bfe1; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 450 252.72 
+L 539.28 252.72 
+L 539.28 272.88 
+L 450 272.88 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #b8dfcd; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 18 367.2 
+L 162 367.2 
+L 162 396 
+L 18 396 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #ecdfbc; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 201.6 367.2 
+L 370.8 367.2 
+L 370.8 396 
+L 201.6 396 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #d9d1eb; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 410.4 367.2 
+L 558 367.2 
+L 558 396 
+L 410.4 396 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #cce0f4; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 166.162588 381.6 
+Q 181.799966 381.6 196.319309 381.6 
+" clip-path="url(#p90c4a9e046)" style="fill: none; stroke: #52697d; stroke-linecap: round"/>
+    <path d="M 190.319309 378.6 
+L 196.319309 381.6 
+L 190.319309 384.6 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #52697d; stroke: #52697d; stroke-linecap: round"/>
+   </g>
+   <g id="patch_22">
+    <path d="M 374.962588 381.6 
+Q 390.599966 381.6 405.119309 381.6 
+" clip-path="url(#p90c4a9e046)" style="fill: none; stroke: #52697d; stroke-linecap: round"/>
+    <path d="M 399.119309 378.6 
+L 405.119309 381.6 
+L 399.119309 384.6 
+z
+" clip-path="url(#p90c4a9e046)" style="fill: #52697d; stroke: #52697d; stroke-linecap: round"/>
+   </g>
+   <g id="text_1">
+    <text style="font-size: 17px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #17324d" x="18" y="24.48" transform="rotate(-0 18 24.48)">Env 现状：会话留在节点，GPU 按协议申请与归还</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #445b70" x="18" y="46.08" transform="rotate(-0 18 46.08)">本图为显式启用后的单卡 direct 命令池。共享与整卡调整均需另外配置。</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="18" y="70.56" transform="rotate(-0 18 70.56)">① 同一条 Agent 轨迹，交替请求模型和执行工具</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="30.96" y="102.24" transform="rotate(-0 30.96 102.24)">模型请求 → SMG → vLLM 副本</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="30.96" y="128.16" transform="rotate(-0 30.96 128.16)">返回回答，Agent 决定下一条操作</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="318.24" y="102.24" transform="rotate(-0 318.24 102.24)">GPU 工具 → EnvRouter＋资源账本</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="318.24" y="128.16" transform="rotate(-0 318.24 128.16)">检查预算、占用、权限与物理归还</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="30.24" y="177.84" transform="rotate(-0 30.24 177.84)">② 容器在原节点，下一条命令可重新选择同机候选 GPU</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="41.76" y="212.4" transform="rotate(-0 41.76 212.4)">会话资源持续保留</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #17324d" x="107.64" y="237.179688" transform="rotate(-0 107.64 237.179688)">容器与文件</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #17324d" x="107.64" y="266.678203" transform="rotate(-0 107.64 266.678203)">CPU 配额与主存</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="213.84" y="207.36" transform="rotate(-0 213.84 207.36)">独立环境卡 1</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #17324d" x="266.04" y="237.201172" transform="rotate(-0 266.04 237.201172)">活动命令预约</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #17324d" x="266.04" y="264.539688" transform="rotate(-0 266.04 264.539688)">可用容量</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="329.04" y="207.36" transform="rotate(-0 329.04 207.36)">独立环境卡 2</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #17324d" x="381.24" y="237.201172" transform="rotate(-0 381.24 237.201172)">活动命令预约</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #17324d" x="381.24" y="264.539688" transform="rotate(-0 381.24 264.539688)">可用容量</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="444.24" y="207.36" transform="rotate(-0 444.24 207.36)">显式共享推理卡</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #17324d" x="494.64" y="237.856719" transform="rotate(-0 494.64 237.856719)">vLLM 常驻</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #17324d" x="494.64" y="265.979688" transform="rotate(-0 494.64 265.979688)">安全余量</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="213.84" y="298.08" transform="rotate(-0 213.84 298.08)">先查独立卡，全部不满足才查推理余量</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="18" y="335.52" transform="rotate(-0 18 335.52)">可选整卡调整：推理排空 → 休眠 → 卡给环境。借出已实测，恢复未触发。</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="18" y="357.84" transform="rotate(-0 18 357.84)">③ 轨迹完成后先入队，满足题目组和版本条件才训练</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #17324d" x="90" y="384.801172" transform="rotate(-0 90 384.801172)">完整轨迹＋评分</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #17324d" x="286.2" y="384.779688" transform="rotate(-0 286.2 384.779688)">成批进行策略训练</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #17324d" x="484.2" y="384.779688" transform="rotate(-0 484.2 384.779688)">新权重发给推理</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="18" y="419.04" transform="rotate(-0 18 419.04)">Env Service 默认关闭。不搬迁运行中 CUDA 进程，不自动借用训练卡。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p90c4a9e046">
+   <rect x="0" y="0" width="576" height="432"/>
+  </clipPath>
+ </defs>
+</svg>

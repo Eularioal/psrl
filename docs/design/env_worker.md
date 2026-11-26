@@ -1,11 +1,21 @@
 # EnvWorker
 
+For the current Env framework, use the [architecture and capability overview](../env-worker-deep-dive/knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md), [baseline and experimental evidence](../env-worker-deep-dive/experiments/01-实验总览_调度收益与证据范围.md), and [next research priorities](../env-worker-deep-dive/milestones/05-调度研究_研究全景与证据详解.md#接下来可以做什么优先级与验收边界). This page explains the container subsystem and its distinct integration paths.
+
 ## TL;DR
 
 An agent may run several commands that depend on earlier files, working directories or
 installed packages. EnvWorker gives that episode a persistent container and shell. A
 coordinator admits it within resource budgets and returns the capacity after confirmed
 deletion. AIRS uses a separately owned grading container.
+
+<!-- figure:host-and-gpu-ledgers -->
+这张图沿同一个场景解释：同机换卡时，容器、CPU、主存、GPU预算和模型状态各自怎样处理？
+
+[![资源边界：会话留在主机，GPU按命令申请](../_static/img/document-figures/host-and-gpu-ledgers-screen.png)](../_static/img/document-figures/host-and-gpu-ledgers.png)
+
+教学同机布局：首条GPU命令运行20秒，思考10秒，再执行10秒。容器、CPU和主存仍留节点N；GPU预算按命令申请，下一条候选设备来自配置池。图中换卡示意只适用于支持这一执行协议的路径，跨节点与活模型迁移另需实现。 [查看矢量图](../_static/img/document-figures/host-and-gpu-ledgers.svg)。
+<!-- /figure:host-and-gpu-ledgers -->
 
 For example, command 1 writes `data.csv`, command 2 trains from that file, and command 3
 submits the result. All three use the same sandbox. A command timeout invalidates it, so
@@ -357,7 +367,7 @@ Science 的实际顺序是 runner 通过 EnvServiceClient 向 EnvRouter 申请�
 [EnvWorkerEnvironment](../../psrl/workers/env_worker/harbor.py#L19)，
 通过[租约接线](../../examples/sciaccel_rl/runner.py#L145)接入设备映射和资源预算，
 并非自动加入上文的共享 EnvWorkerCoordinator 池。完整结构、direct / MPS 分支和
-生命周期见[当前设计](../env-worker-deep-dive/knowledge/current-design.md)。
+生命周期见[当前设计](../env-worker-deep-dive/knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md)。
 
 `EnvRouter` 负责资源准入及租约。每个参与节点由路由器创建一个 `EnvNodeService`
 actor，负责本机 GPU 遥测和过期租约容器回收。节点间须允许访问该服务返回的 HTTP

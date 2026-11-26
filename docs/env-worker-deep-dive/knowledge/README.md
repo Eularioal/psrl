@@ -1,10 +1,24 @@
 # Env 环境执行：机制与接入指南
 
-> **核心结论**：初次了解项目，先读[当前设计](current-design.md)，建立“任务→容器→资源申请→执行→评分→清理”的整体认识，再按遇到的问题选择专题。需要看实验数字、研究方案或论文时，分别进入[实验](../experiments/README.md)、[研究提案](../research-proposals/README.md)和[文献调研](../literature-reviews/README.md)。
+> **核心结论**：初次了解项目，先读[当前设计](01-架构与执行/01-Env架构_现状与完整执行流程.md)，建立“任务→容器→资源申请→执行→评分→清理”的整体认识，再按遇到的问题选择专题。需要看实验数字、研究方案或论文时，分别进入[实验](../experiments/README.md)、[研究提案](../research-proposals/README.md)和[文献调研](../literature-reviews/README.md)。
 
+先读[架构现状与主基线能力对照](01-架构与执行/01-Env架构_现状与完整执行流程.md#先看结论现有能力与主基线)。想知道是否更快，转[当前实验结论](../experiments/01-实验总览_调度收益与证据范围.md#当前训练实验有哪些结果)；想决定下一步，转[研究优先级](../milestones/05-调度研究_研究全景与证据详解.md#接下来可以做什么优先级与验收边界)。本目录负责解释机制，不独立维护另一套最新实验成绩。
+
+<!-- figure:map-31ab314077 -->
+先按当前问题选择阅读入口，再在下方目录点击对应文档。
+
+[![Env 环境执行：机制与接入指南：阅读地图（1/2）](../../_static/img/document-figures/map-31ab314077-screen.png)](../../_static/img/document-figures/map-31ab314077.png)
+
+[![Env 环境执行：机制与接入指南：阅读地图（2/2）](../../_static/img/document-figures/map-31ab314077-screen-02.png)](../../_static/img/document-figures/map-31ab314077.png)
+
+每张彩色书页列出对应入口中的实际章节，帮助按问题定位阅读内容。编号只用于图中定位，不要求顺序通读。 [查看矢量图](../../_static/img/document-figures/map-31ab314077.svg)。
+<!-- /figure:map-31ab314077 -->
+
+现状入口先显示适合屏幕回顾的小图，点击图片可查看完整图。episode/command、选卡优先级与推理共享的[屏幕版入口](../../_static/img/document-figures/README.md#env现状的屏幕版)可直接打开。
 
 ## 目录
 
+- [目录分组与阅读顺序](#目录分组与阅读顺序)
 - [先读哪一篇](#先读哪一篇)
 - [当前机制详解](#当前机制详解)
 - [任务接入与验证](#任务接入与验证)
@@ -13,16 +27,28 @@
 - [历史实现](#历史实现)
 - [文档维护规则](#文档维护规则)
 
+## 目录分组与阅读顺序
+
+| 分组 | 阅读主线 |
+|---|---|
+| [01-架构与执行](01-架构与执行/README.md) | 当前设计 → 统一执行 → 容器后端 → 作业遥测 → 恢复与工程审查 |
+| [02-资源与调度](02-资源与调度/README.md) | 显存准入 → 命令借还 → 进程记账 → 训推共享 → 状态与预测 |
+| [03-任务接入](03-任务接入/README.md) | 公共协议 → CUDA验证 → 各题库配方与评分 |
+
+文件名统一为“序号-主题_具体内容.md”，编号表示各目录的推荐阅读顺序。系统基础集中在[独立知识组](../../tools/系统基础/README.md)，早期机制集中在[历史档案](../archive/README.md)。
+
 ## 先读哪一篇
 
 | 你的问题 | 首读文档 | 能获得什么 |
 |---|---|---|
-| 整体是怎样运行的 | [当前设计](current-design.md) | 组件分工、完整例子、当前能力和深入入口 |
-| 训练怎样产生环境任务 | [Router 配置与恢复](router-configuration-and-recovery.md#11-启动方题目rollout-与环境申请) | 题目、独立尝试、会话与命令之间的层次 |
-| 想接入自己的 GPU 任务 | [接入 recipe](gpu-benchmark-recipes.md) | 资产准备、数据行、环境调用与验证步骤 |
-| 任务为什么一直在等 | [显存准入](gpu-memory-admission.md) | 容量、实测使用、预约承诺和排队 |
-| 当前有什么问题值得修 | [工程审查](engineering-review.md) | 安全恢复、MPS 故障、队列和长会话的优先级 |
-| 需要给别人介绍任务与进展 | [任务简报](../milestones/science-gpu-bench-brief.md) | 任务做什么、已有覆盖和主要结论 |
+| 整体是怎样运行的 | [当前设计](01-架构与执行/01-Env架构_现状与完整执行流程.md) | 组件分工、完整例子、当前能力和深入入口 |
+| 同题 8 条 rollout 怎样分资源，episode 会不会接续排队任务 | [资源范围与两种持有方式](01-架构与执行/01-Env架构_现状与完整执行流程.md#21-先声明环境资源范围再分派和申请) | 同篇讲清 units、episode 等待与释放，以及 command 额外增加的逐命令借还 |
+| 为什么本节点排队，其他机器有空卡也没有接过去 | [同题分组与节点绑定](01-架构与执行/01-Env架构_现状与完整执行流程.md#24-为什么会在本节点排队其他节点仍有空闲) | 双机容量算例、worker 与容器位置、固定节点重试，以及跨节点扩展所需的协议 |
+| 训练怎样产生环境任务 | [Router 配置与恢复](01-架构与执行/05-EnvRouter_配置恢复与Worker重试.md#11-启动方题目rollout-与环境申请) | 题目、独立尝试、会话与命令之间的层次 |
+| 想接入自己的 GPU 任务 | [接入 recipe](03-任务接入/01-任务接入_公共GPU任务与PSRL配方.md) | 资产准备、数据行、环境调用与验证步骤 |
+| 任务为什么一直在等 | [显存准入](02-资源与调度/01-显存准入_实测占用与预约预算.md) | 容量、实测使用、预约承诺和排队 |
+| 当前有什么问题值得修 | [工程审查](01-架构与执行/06-工程审查_待修复问题与优先级.md) | 近期 baseline 失败与补跑、容器查询恢复与超时分类；服务扩展的安全恢复、MPS 与队列边界 |
+| 需要给别人介绍任务与进展 | [任务简报](../milestones/01-Science介绍_已接入任务与研究价值.md) | 任务做什么、已有覆盖和主要结论 |
 
 例如，想理解“Agent 思考时，另一条任务能否用 GPU”，先看当前设计中的完整例子，再读命令阶段配额。这样可以先理解资源怎样转交，再深入设备权限和物理释放检查。
 
@@ -30,33 +56,32 @@
 
 | 专题 | 解释的问题 |
 |---|---|
-| [统一 GPU 执行层](unified-gpu-execution.md#10-当前结构与前两阶段的对照) | 容器创建方式与 GPU 作业执行怎样分工 |
-| [原生 Harbor 后端](native-harbor-backend.md) | EnvWorker 怎样实现容器、文件、命令和生命周期 |
-| [命令阶段配额](command-gpu-reservations.md) | 容器保留时，GPU 怎样申请、归还与再次申请，含相关实验、慢查询诊断和跨节点提案 |
-| [GPU 作业与遥测](gpu-jobs-and-task-telemetry.md) | 提交、等待、取消与进程采样，含部署排障和早期并发设计的版本条件 |
-| [显存准入](gpu-memory-admission.md) | 怎样保护已承诺但尚未分配的显存，避免重复记账 |
-| [MPS 并行后端](mps-parallel-execution.md) | 环境专用 GPU 上，多作业怎样并行、独立取消和回收 |
-| [GPU 身份、归属与恢复](gpu-admission-attribution-ebpf-identity.md) | 内核身份、容器预算、节点健康和取消安全怎样串联 |
-| [vLLM 与环境共享](vllm-env-opportunistic-sharing.md#10-常驻共享kv-上限与已睡眠窗口) | 独立 GPU 优先、常驻余量、睡眠窗口和模型控制门禁 |
-| [借用 rollout GPU](rollout-gpu-lending.md#16-当前交接能力与-procfs-报错的关系) | 推理引擎睡眠后怎样借卡、归还再唤醒 |
-| [重试与重派发](worker-retry-and-redispatch.md) | 同 worker 重试、整组补采和原请求转移的区别 |
-| [等待或重建代码指南](warm-placement-code-guide.md) | 研究控制器怎样比较模型亲和、复制和预测，怎样处理取消 |
-| [命令可预测性](command-predictability.md) | 固定步数、完成校准与 off / observe / auto，默认关闭。含 CPU 演示、专用 GPU 服务接线与逐 benchmark 收益边界，新入口尚未实机复测 |
+| [统一 GPU 执行层](01-架构与执行/02-统一执行_EnvRouter与容器及预算策略.md#10-当前结构与前两阶段的对照) | 容器创建方式与 GPU 作业执行怎样分工 |
+| [原生 Harbor 后端](01-架构与执行/03-容器后端_EnvWorker与Harbor统一实现.md) | EnvWorker 怎样实现容器、文件、命令和生命周期 |
+| [命令阶段配额](02-资源与调度/02-命令调度_GPU申请归还与状态保留.md) | 容器保留时，GPU 怎样申请、归还与再次申请，含相关实验、慢查询诊断和跨节点提案 |
+| [GPU 作业与遥测](01-架构与执行/04-GPU作业_生命周期与任务遥测.md) | 提交、等待、取消与进程采样，含部署排障和早期并发设计的版本条件 |
+| [显存准入](02-资源与调度/01-显存准入_实测占用与预约预算.md) | 怎样保护已承诺但尚未分配的显存，避免重复记账 |
+| [MPS 并行后端](02-资源与调度/04-GPU并行_MPS执行后端.md) | 环境专用 GPU 上，多作业怎样并行、独立取消和回收 |
+| [GPU 进程身份与显存记账](02-资源与调度/03-进程归属_PID身份与显存记账.md) | 同篇解释 PID 命名空间、pidfd、procfs/eBPF、容器预算和安全回收 |
+| [vLLM 与环境共享](02-资源与调度/05-训推共享_vLLM余量与容量调度.md#10-常驻共享kv-上限与已睡眠窗口) | 独立 GPU 优先、常驻余量、模型门禁，第 16 节的并发曲线与 PD 取舍，第 17 节的 [unit 准入粒度](02-资源与调度/05-训推共享_vLLM余量与容量调度.md#unit-应该调整哪一种粒度)、[有限批次并发比较](02-资源与调度/05-训推共享_vLLM余量与容量调度.md#十并发与十二并发该怎样比较)、[预测器与相关工作](02-资源与调度/05-训推共享_vLLM余量与容量调度.md#学习型容量模型与相关工作)、[PSRL 依赖联合设计](02-资源与调度/05-训推共享_vLLM余量与容量调度.md#容量预测与-psrl-依赖联合设计)、[同步等待与并行](02-资源与调度/05-训推共享_vLLM余量与容量调度.md#模型同步带来的额外依赖)、[借卡时模型排空与环境继续运行](02-资源与调度/05-训推共享_vLLM余量与容量调度.md#借卡时能否一边排空模型请求一边运行环境命令) |
+| [借用 rollout GPU](02-资源与调度/06-训推借卡_Rollout睡眠与归还协议.md#16-当前交接能力与-procfs-报错的关系) | 推理引擎睡眠后怎样借卡、归还再唤醒 |
+| [Router 运行与故障处理](01-架构与执行/05-EnvRouter_配置恢复与Worker重试.md) | 启动契约、资源申请、节点恢复、Worker 重试和整组补采 |
+| [等待或重建代码指南](02-资源与调度/09-动态放置_热卡等待与冷卡重建代码.md) | 研究控制器怎样比较模型亲和、复制和预测，怎样处理取消 |
+| [命令可预测性](02-资源与调度/08-命令预测_适用条件与时长估计.md) | 固定步数、完成校准与 off / observe / auto，默认关闭。含 CPU 演示、专用 GPU 服务接线与逐 benchmark 收益边界，新入口尚未实机复测 |
 
 ## 任务接入与验证
 
 | 文档 | 阅读用途 |
 |---|---|
-| [公共 GPU recipe](gpu-benchmark-recipes.md) | 各类任务的共同接线和准备入口 |
-| [AIRS GPU recipe](airs-gpu-recipe.md) | 独立 Coordinator/sandbox 路径与 19 题有界验证 |
-| [RE-Bench recipe](re-bench-recipe.md) | 聊天训练、裁判反馈和 GPU 状态生命周期 |
-| [MLGym / SWE-Serve recipe](mlgym-swe-serve-recipes.md) | 交付权重与修改推理服务两类本地协议 |
-| [MLGym 权重评分与 Agent DAPO](mlgym-weight-scoring-and-agent-dapo.md) | 区分内层模型与外层 Agent，串联隐藏评分、轨迹掩码、组内优势和策略更新，附 CPU 算例 |
-| [InferenceBench 评分](inferencebench-scoring.md) | 质量门槛、性能分和本地功能分怎样解释 |
-| [EnvWorker 接入实操](onboarding-and-gpu-validation.md) | 自定义 Environment/AgentLoop 与最小真实 GPU 探针 |
-| [固定基线状态生命周期](baseline-state-lifetimes.md) | 文件、常驻进程、源码版本和结果交付怎样分别管理 |
+| [公共 GPU recipe](03-任务接入/01-任务接入_公共GPU任务与PSRL配方.md) | 各类任务的共同接线和准备入口 |
+| [AIRS GPU recipe](03-任务接入/03-AIRSBench_接入流程与有界验收.md) | 独立 Coordinator/sandbox 路径与 19 题有界验证 |
+| [RE-Bench recipe](03-任务接入/05-REBench_聊天模型训练接入.md) | 聊天训练、裁判反馈和 GPU 状态生命周期 |
+| [MLGym / SWE-Serve 协议、评分与训练](03-任务接入/04-MLGym与SWE及Serve_任务协议与评分训练.md) | 同篇串联提交产物、隐藏评分、内外层训练、轨迹掩码和 DAPO 算例 |
+| [InferenceBench 评分](03-任务接入/06-InferenceBench_评分机制与开关验证.md) | 质量门槛、性能分和本地功能分怎样解释 |
+| [EnvWorker 接入实操](03-任务接入/02-任务接入_EnvWorker配置与CUDA验证.md) | 自定义 Environment/AgentLoop 与最小真实 GPU 探针 |
+| [固定基线状态生命周期](02-资源与调度/07-状态复用_基线状态寿命与版本正确性.md) | 文件、常驻进程、源码版本和结果交付怎样分别管理 |
 
-具体题数、完成组合和剩余验收统一查[任务状态与路线图](../milestones/science-gpu-bench-status-and-roadmap.md)，实测数据查[实验入口](../experiments/README.md)。
+具体题数、完成组合和剩余验收统一查[任务状态与路线图](../milestones/02-Science现状_任务覆盖与接入路线.md)，实测数据查[实验入口](../experiments/README.md)。
 
 ## 基础知识
 
@@ -64,22 +89,21 @@
 
 | 文档 | 适合继续了解什么 |
 |---|---|
-| [CUDA 上下文与计算竞争](cuda-context-and-compute-contention.md) | 为什么显存申请量与实测量不同，stream、上下文与 MPS 如何影响共享 |
-| [CPU 与 GPU 并行架构](cpu-gpu-parallelism-architecture-comparison.md) | CPU 核心、GPU SM、MPS 和 MIG 各解决哪一层问题 |
-| [不用 procfs 标识进程](process-identity-without-procfs.md) | PID 命名空间、进程出生身份、pidfd 与 eBPF |
-| [从 Gate B 学 HTTP](http-basics-for-gate-b.md) | 一个请求怎样经 IP、端口、连接和路径抵达处理函数 |
-| [Gate B 新手讲解](gate-b-beginner-guide.md) | 以历史回复节流机制理解会话绑定和控制钩子 |
+| [CPU/GPU 并行、上下文与竞争](../../tools/系统基础/05-GPU并行_CUDA上下文与计算竞争.md) | 从 CPU 核心与 GPU SM 讲到 CUDA 上下文、stream、MPS/MIG，以及完整共享算例 |
+| [进程编号与可信归属章节](02-资源与调度/03-进程归属_PID身份与显存记账.md#进程编号可信归属与后端验证) | 在同一身份与记账主文档中查 PID、进程出生身份、pidfd 和 eBPF |
+| [从 Gate B 学 HTTP](../../tools/系统基础/04-网络通信_HTTP请求与GateB调用链.md) | 一个请求怎样经 IP、端口、连接和路径抵达处理函数 |
+| [Gate B 新手讲解](../archive/07-Env历史_GateB回复节流机制.md) | 以历史回复节流机制理解会话绑定和控制钩子 |
 
 ## 设计提案与阶段讨论
 
-[研究索引](../research-proposals/README.md)按问题和研究状态组织。已经实现的同机命令池见[动态放置](../research-proposals/dynamic-command-placement.md#11-已实现的同机命令池与资源账本)；状态复用是否符合真实任务，先看[benchmark 核查](../research-proposals/benchmark-state-reuse-audit.md)。
+[研究索引](../research-proposals/README.md)按问题和研究状态组织。已经实现的同机命令池见[动态放置](../research-proposals/03-动态放置_会话与GPU执行分离.md#11-已实现的同机命令池与资源账本)；状态复用是否符合真实任务，先看[benchmark 核查](../research-proposals/04-状态复用_真实任务中的收益空间核查.md)。
 
 ## 历史实现
 
-[历史归档](../archive/README.md)保存初期实现、Gate A/B、固定提交审计和旧设计。当前能力从本文与[当前设计](current-design.md)进入，历史文章用来追溯形成原因和原始条件。
+[历史归档](../archive/README.md)保存初期实现、Gate A/B、固定提交审计和旧设计。当前能力从本文与[当前设计](01-架构与执行/01-Env架构_现状与完整执行流程.md)进入，历史文章用来追溯形成原因和原始条件。
 
 ## 文档维护规则
 
-当前结构与默认行为改变时，先更新[当前设计](current-design.md)，再同步专题。机制正文解释因果和例子，实验保存固定版本数据，提案标明尚待验证的部分。长文独立主题拆到同名子目录，原文保留导航；迁移时同步相对链接和原章节入口。
+当前结构与默认行为改变时，先更新[当前设计](01-架构与执行/01-Env架构_现状与完整执行流程.md)，再同步专题。机制正文解释因果和例子，实验保存固定版本数据，提案标明尚待验证的部分。同一阅读任务的必要概念、机制、算例和直接实现说明集中在主文档，用章节导航；追问优先扩充原章节。阅读用途确实独立时才拆分，迁移时同步索引、相对链接和章节入口。
 
 [返回专题入口](../README.md) · [返回总索引](../../README.md)

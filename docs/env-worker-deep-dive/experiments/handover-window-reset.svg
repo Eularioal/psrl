@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="576pt" height="345.6pt" viewBox="0 0 576 345.6" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-25T01:48:32.980081</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 345.6 
+L 576 345.6 
+L 576 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 129.6 248.832 
+L 541.44 248.832 
+L 541.44 89.856 
+L 129.6 89.856 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="PolyCollection_1">
+    <defs>
+     <path id="m78bc561f7b" d="M 138.826558 -181.956335 
+L 138.826558 -211.724749 
+L 340.30878 -211.724749 
+L 340.30878 -181.956335 
+z
+" style="stroke: #d9ebf7"/>
+    </defs>
+    <g clip-path="url(#p2405ec8b9f)">
+     <use xlink:href="#m78bc561f7b" x="0" y="345.6" style="fill: #d9ebf7; stroke: #d9ebf7"/>
+    </g>
+   </g>
+   <g id="PolyCollection_2">
+    <defs>
+     <path id="m4cc4d570e9" d="M 340.30878 -181.956335 
+L 340.30878 -211.724749 
+L 524.839521 -211.724749 
+L 524.839521 -181.956335 
+z
+" style="stroke: #f3d9d5"/>
+    </defs>
+    <g clip-path="url(#p2405ec8b9f)">
+     <use xlink:href="#m4cc4d570e9" x="0" y="345.6" style="fill: #f3d9d5; stroke: #f3d9d5"/>
+    </g>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="md78956724d" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#md78956724d" x="138.826558" y="248.832" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="138.826558" y="264.253875" transform="rotate(-0 138.826558 264.253875)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#md78956724d" x="222.704358" y="248.832" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="222.704358" y="264.253875" transform="rotate(-0 222.704358 264.253875)">10</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#md78956724d" x="306.582159" y="248.832" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="306.582159" y="264.253875" transform="rotate(-0 306.582159 264.253875)">20</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#md78956724d" x="390.459959" y="248.832" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="390.459959" y="264.253875" transform="rotate(-0 390.459959 264.253875)">30</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5">
+      <g>
+       <use xlink:href="#md78956724d" x="474.33776" y="248.832" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="474.33776" y="264.253875" transform="rotate(-0 474.33776 264.253875)">40</text>
+     </g>
+    </g>
+    <g id="text_6">
+     <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="335.52" y="279.855437" transform="rotate(-0 335.52 279.855437)">从该次观察窗口起点经过的秒数</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_6"/>
+     <g id="text_7">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="126.1" y="216.56526" transform="rotate(-0 126.1 216.56526)">独立网关日志</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_7"/>
+     <g id="text_8">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="126.1" y="153.228208" transform="rotate(-0 126.1 153.228208)">控制器有效样本</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_8">
+    <path d="M 138.826558 212.09651 
+L 524.839521 212.09651 
+" clip-path="url(#p2405ec8b9f)" style="fill: none; stroke: #17806a; stroke-width: 5; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_9">
+    <path d="M 390.459959 248.832 
+L 390.459959 89.856 
+" clip-path="url(#p2405ec8b9f)" style="fill: none; stroke-dasharray: 4.81,2.08; stroke-dashoffset: 0; stroke: #aa493d; stroke-width: 1.3"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 129.6 248.832 
+L 541.44 248.832 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #17806a" x="155.602118" y="232.364367" transform="rotate(-0 155.602118 232.364367)">窗口附近 SMG 仍持续记录，排队为 0</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #aa493d" x="397.170183" y="112.657339" transform="rotate(-0 397.170183 112.657339)">30 秒借卡门槛</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 10.5px; font-family: 'Droid Sans Fallback'; text-anchor: end; fill: #386eaa" x="331.082222" y="129.758343" transform="rotate(-0 331.082222 129.758343)">24.02 秒</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 10.5px; font-family: 'Droid Sans Fallback'; text-anchor: end; fill: #386eaa" x="524.839521" y="179.161243" transform="rotate(-0 524.839521 179.161243)">46.02 秒</text>
+   </g>
+   <g id="PathCollection_1">
+    <defs>
+     <path id="me07f8948b1" d="M 0 2.738613 
+C 0.726289 2.738613 1.422928 2.450055 1.936492 1.936492 
+C 2.450055 1.422928 2.738613 0.726289 2.738613 0 
+C 2.738613 -0.726289 2.450055 -1.422928 1.936492 -1.936492 
+C 1.422928 -2.450055 0.726289 -2.738613 0 -2.738613 
+C -0.726289 -2.738613 -1.422928 -2.450055 -1.936492 -1.936492 
+C -2.450055 -1.422928 -2.738613 -0.726289 -2.738613 0 
+C -2.738613 0.726289 -2.450055 1.422928 -1.936492 1.936492 
+C -1.422928 2.450055 -0.726289 2.738613 0 2.738613 
+z
+" style="stroke: #386eaa"/>
+    </defs>
+    <g clip-path="url(#p2405ec8b9f)">
+     <use xlink:href="#me07f8948b1" x="138.826558" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="155.613725" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="172.405201" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="189.199962" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="205.989598" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="222.782511" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="239.58244" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="256.374759" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="273.166459" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="289.952212" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="306.738451" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="323.524802" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="340.30878" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+     <use xlink:href="#me07f8948b1" x="524.839521" y="148.759458" style="fill: #386eaa; stroke: #386eaa"/>
+    </g>
+   </g>
+  </g>
+  <g id="text_13">
+   <text style="font-size: 17px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #304159" x="34.56" y="27.648" transform="rotate(-0 34.56 27.648)">为什么观察了 24 秒，最后还是没借卡？</text>
+  </g>
+  <g id="text_14">
+   <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="34.56" y="57.024" transform="rotate(-0 34.56 57.024)">旧组实测。横轴 0 是本次低负载窗口起点，首条轨迹已开始 315.47 秒。</text>
+  </g>
+  <g id="text_15">
+   <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="34.56" y="303.4368" transform="rotate(-0 34.56 303.4368)">两个有效样本相隔 22.00 秒，超过 6 秒间隔上限，观察窗口清零。</text>
+  </g>
+  <g id="text_16">
+   <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="34.56" y="325.9008" transform="rotate(-0 34.56 325.9008)">新逻辑每轮查一次当前请求数。引擎本轮答复为 0 时，零负载证据可以继续累积。</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p2405ec8b9f">
+   <rect x="129.6" y="89.856" width="411.84" height="158.976"/>
+  </clipPath>
+ </defs>
+</svg>

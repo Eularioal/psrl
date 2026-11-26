@@ -1,0 +1,433 @@
+{
+  "reservations": {
+    "status": "failed",
+    "trials": [
+      {
+        "id": "0-episode-6",
+        "mode": "episode",
+        "gap_s": 6,
+        "total_s": 319.3728017602116,
+        "work_and_cleanup_s": 292.65428487956524,
+        "work_s": 281.58367451280355,
+        "a_completion_s": 128.27738184854388,
+        "gpu_command_held_s": 258.52745604515076,
+        "outside_gpu_commands_s": 23.056218467652798,
+        "gpu_command_intervals_overlap": false,
+        "initial_admission_and_setup_s": 26.71073219180107,
+        "a_next_gpu_wait_s": 0.26967334747314453,
+        "b_session_admission_wait_s": 74.36744000017643,
+        "chosen_modes": {
+          "a": "episode",
+          "b": "episode"
+        },
+        "train_hashes": [
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277",
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277"
+        ],
+        "scores": [
+          0.4359629485025163,
+          0.4359629485025163
+        ],
+        "command_compute_s": 3.063377832993865,
+        "command_preparation_s": 137.4013144671917
+      },
+      {
+        "id": "0-auto-6",
+        "mode": "auto",
+        "gap_s": 6,
+        "total_s": 333.98123450390995,
+        "work_and_cleanup_s": 327.8179682344198,
+        "work_s": 316.2232363540679,
+        "a_completion_s": 168.5730834454298,
+        "gpu_command_held_s": 308.56500029563904,
+        "outside_gpu_commands_s": 7.6582360584288836,
+        "gpu_command_intervals_overlap": false,
+        "initial_admission_and_setup_s": 6.155980674549937,
+        "a_next_gpu_wait_s": 0.9567611217498779,
+        "b_session_admission_wait_s": 0.19033892080187798,
+        "chosen_modes": {
+          "a": "command",
+          "b": "command"
+        },
+        "train_hashes": [
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277",
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277"
+        ],
+        "scores": [
+          0.4359629485025163,
+          0.4359629485025163
+        ],
+        "command_compute_s": 3.0739683844149113,
+        "command_preparation_s": 155.30463506281376
+      },
+      {
+        "id": "0-command-6",
+        "mode": "command",
+        "gap_s": 6,
+        "total_s": 345.3757408335805,
+        "work_and_cleanup_s": 324.4575357567519,
+        "work_s": 312.6955943778157,
+        "a_completion_s": 221.3202532734722,
+        "gpu_command_held_s": 307.395259141922,
+        "outside_gpu_commands_s": 5.300335235893726,
+        "gpu_command_intervals_overlap": false,
+        "initial_admission_and_setup_s": 20.910756405442953,
+        "a_next_gpu_wait_s": 98.98122572898865,
+        "b_session_admission_wait_s": 0.17063612677156925,
+        "chosen_modes": {
+          "a": "command",
+          "b": "command"
+        },
+        "train_hashes": [
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277",
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277"
+        ],
+        "scores": [
+          0.4359629485025163,
+          0.4359629485025163
+        ],
+        "command_compute_s": 3.1010534465312958,
+        "command_preparation_s": 138.4082025103271
+      },
+      {
+        "id": "0-episode-30",
+        "mode": "episode",
+        "gap_s": 30,
+        "total_s": 301.51222549937665,
+        "work_and_cleanup_s": 296.7308023329824,
+        "work_s": 285.98503695242107,
+        "a_completion_s": 172.65438706427813,
+        "gpu_command_held_s": 239.5656270980835,
+        "outside_gpu_commands_s": 46.41940985433757,
+        "gpu_command_intervals_overlap": false,
+        "initial_admission_and_setup_s": 4.772952144965529,
+        "a_next_gpu_wait_s": 0.19048523902893066,
+        "b_session_admission_wait_s": 98.43091680854559,
+        "chosen_modes": {
+          "a": "episode",
+          "b": "episode"
+        },
+        "train_hashes": [
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277",
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277"
+        ],
+        "scores": [
+          0.4359629485025163,
+          0.4359629485025163
+        ],
+        "command_compute_s": 3.0582485124468803,
+        "command_preparation_s": 122.41382647119462
+      },
+      {
+        "id": "0-auto-30",
+        "mode": "auto",
+        "gap_s": 30,
+        "total_s": 207.636418601498,
+        "work_and_cleanup_s": 202.95041640102863,
+        "work_s": 191.35548820532858,
+        "a_completion_s": 148.79329185187817,
+        "gpu_command_held_s": 186.23977303504944,
+        "outside_gpu_commands_s": 5.115715170279145,
+        "gpu_command_intervals_overlap": false,
+        "initial_admission_and_setup_s": 4.676987940445542,
+        "a_next_gpu_wait_s": 24.34946918487549,
+        "b_session_admission_wait_s": 0.2190986480563879,
+        "chosen_modes": {
+          "a": "command",
+          "b": "command"
+        },
+        "train_hashes": [
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277",
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277"
+        ],
+        "scores": [
+          0.4359629485025163,
+          0.4359629485025163
+        ],
+        "command_compute_s": 3.05945254676044,
+        "command_preparation_s": 97.02433476224542
+      },
+      {
+        "id": "0-command-30",
+        "mode": "command",
+        "gap_s": 30,
+        "total_s": 219.29893705435097,
+        "work_and_cleanup_s": 213.04749872349203,
+        "work_s": 201.99787387251854,
+        "a_completion_s": 150.2065115403384,
+        "gpu_command_held_s": 191.69631218910217,
+        "outside_gpu_commands_s": 10.301561683416367,
+        "gpu_command_intervals_overlap": false,
+        "initial_admission_and_setup_s": 6.243445681408048,
+        "a_next_gpu_wait_s": 28.023589611053467,
+        "b_session_admission_wait_s": 0.20424848049879074,
+        "chosen_modes": {
+          "a": "command",
+          "b": "command"
+        },
+        "train_hashes": [
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277",
+          "327e41733105dfac0fcbfb4bb43fe31d4bfdaa87f2de54231a340f267627f277"
+        ],
+        "scores": [
+          0.4359629485025163,
+          0.4359629485025163
+        ],
+        "command_compute_s": 3.4326483216136694,
+        "command_preparation_s": 95.15863397344947
+      }
+    ],
+    "completed_trials": 6,
+    "incomplete_trials": [
+      "1-command-6"
+    ],
+    "completed_weights_agree": true,
+    "completed_scores_agree": true,
+    "physical_release_confirmed": true,
+    "boundary": "One H20, real EnvRouter and managed Docker PostTrain train/verify commands. Controlled inter-command gaps, no rollout model or PPO. Current source in every arm.",
+    "commit": "c5f2d65a70f6923c992a7be867edd0864db2bd0c"
+  },
+  "predictions": {
+    "status": "failed",
+    "trials": [
+      {
+        "index": 0,
+        "profile": "short",
+        "controlled_gap_s": 6,
+        "calibration": true,
+        "forced": false,
+        "proactive": true,
+        "forecast": null,
+        "action": "lend",
+        "started_s": 14275116.807810795,
+        "request_at_s": 14275122.809896601,
+        "service_at_s": 14275192.80314587,
+        "request_done_s": 14275193.593516136,
+        "sample": {
+          "save_return_s": 2.281442143023014,
+          "borrower_s": 73.58049342408776,
+          "restore_s": 0.13337577879428864,
+          "total_gap_s": 6.002085806801915
+        },
+        "model_ready_s": 14275192.803134631,
+        "observed_extra_wait_s": 69.99324926920235,
+        "cycle_s": 76.78574842773378,
+        "formula_wait_s": 69.99323760904372,
+        "formula_error_s": 1.1660158634185791e-05
+      },
+      {
+        "index": 1,
+        "profile": "short",
+        "controlled_gap_s": 6,
+        "calibration": true,
+        "forced": false,
+        "proactive": true,
+        "forecast": null,
+        "action": "lend",
+        "started_s": 14275193.600648768,
+        "request_at_s": 14275199.603249189,
+        "service_at_s": 14275266.99313935,
+        "request_done_s": 14275267.799366528,
+        "sample": {
+          "save_return_s": 0.17703411541879177,
+          "borrower_s": 73.04244024865329,
+          "restore_s": 0.17298968136310577,
+          "total_gap_s": 6.00260042026639
+        },
+        "model_ready_s": 14275266.993127853,
+        "observed_extra_wait_s": 67.38989016227424,
+        "cycle_s": 74.19874649867415,
+        "formula_wait_s": 67.38987829349935,
+        "formula_error_s": 1.1868774890899658e-05
+      },
+      {
+        "index": 2,
+        "profile": "short",
+        "controlled_gap_s": 6,
+        "calibration": true,
+        "forced": false,
+        "proactive": true,
+        "forecast": null,
+        "action": "lend",
+        "started_s": 14275267.80733006,
+        "request_at_s": 14275273.809975406,
+        "service_at_s": 14275335.76118644,
+        "request_done_s": 14275336.546093633,
+        "sample": {
+          "save_return_s": 0.1984414327889681,
+          "borrower_s": 67.6227488592267,
+          "restore_s": 0.1326449066400528,
+          "total_gap_s": 6.002645345404744
+        },
+        "model_ready_s": 14275335.761179209,
+        "observed_extra_wait_s": 61.95121103338897,
+        "cycle_s": 68.73878902196884,
+        "formula_wait_s": 61.95120337232947,
+        "formula_error_s": 7.661059498786926e-06
+      },
+      {
+        "index": 3,
+        "profile": "long",
+        "controlled_gap_s": 70,
+        "calibration": true,
+        "forced": false,
+        "proactive": true,
+        "forecast": null,
+        "action": "lend",
+        "started_s": 14275336.552692495,
+        "request_at_s": 14275406.5535558,
+        "service_at_s": 14275406.553560829,
+        "request_done_s": 14275407.337501036,
+        "sample": {
+          "save_return_s": 0.17637569829821587,
+          "borrower_s": 60.221753960475326,
+          "restore_s": 0.18275434337556362,
+          "total_gap_s": 70.0008633043617
+        },
+        "model_ready_s": 14275397.133590268,
+        "observed_extra_wait_s": 5.029141902923584e-06,
+        "cycle_s": 70.78483417630196,
+        "formula_wait_s": 0.0,
+        "formula_error_s": 5.029141902923584e-06
+      },
+      {
+        "index": 4,
+        "profile": "long",
+        "controlled_gap_s": 70,
+        "calibration": true,
+        "forced": false,
+        "proactive": true,
+        "forecast": null,
+        "action": "lend",
+        "started_s": 14275407.344181553,
+        "request_at_s": 14275477.34730346,
+        "service_at_s": 14275477.347311268,
+        "request_done_s": 14275478.153478852,
+        "sample": {
+          "save_return_s": 0.24337810836732388,
+          "borrower_s": 48.07165754027665,
+          "restore_s": 0.1532484795898199,
+          "total_gap_s": 70.00312190689147
+        },
+        "model_ready_s": 14275455.812484976,
+        "observed_extra_wait_s": 7.808208465576172e-06,
+        "cycle_s": 70.80932612717152,
+        "formula_wait_s": 0.0,
+        "formula_error_s": 7.808208465576172e-06
+      },
+      {
+        "index": 5,
+        "profile": "long",
+        "controlled_gap_s": 70,
+        "calibration": true,
+        "forced": false,
+        "proactive": true,
+        "forecast": null,
+        "action": "lend",
+        "started_s": 14275478.16180192,
+        "request_at_s": 14275548.163983269,
+        "service_at_s": 14275548.163987327,
+        "request_done_s": 14275548.990771452,
+        "sample": {
+          "save_return_s": 0.2030587587505579,
+          "borrower_s": 41.61436334811151,
+          "restore_s": 0.49024881422519684,
+          "total_gap_s": 70.0021813493222
+        },
+        "model_ready_s": 14275520.469487492,
+        "observed_extra_wait_s": 4.058703780174255e-06,
+        "cycle_s": 70.8289979211986,
+        "formula_wait_s": 0.0,
+        "formula_error_s": 4.058703780174255e-06
+      },
+      {
+        "index": 6,
+        "profile": "short",
+        "controlled_gap_s": 6,
+        "calibration": false,
+        "forced": true,
+        "proactive": true,
+        "forecast": {
+          "samples": 3,
+          "point_wait_s": 67.37165703997016,
+          "envelope_wait_s": 70.03283944167197,
+          "remaining_gap_s": 6.00260042026639,
+          "save_return_s": 0.1984414327889681,
+          "borrower_s": 73.04244024865329,
+          "restore_s": 0.13337577879428864,
+          "release_recommended": false,
+          "reason": "Keep reservation under the delay budget."
+        },
+        "action": "lend",
+        "started_s": 14275548.99962422,
+        "request_at_s": 14275555.001895713,
+        "service_at_s": 14275589.362830425,
+        "request_done_s": 14275590.155442404,
+        "sample": {
+          "save_return_s": 0.9128245823085308,
+          "borrower_s": 39.301044296473265,
+          "restore_s": 0.14931038953363895,
+          "total_gap_s": 6.002271492034197
+        },
+        "model_ready_s": 14275589.362822635,
+        "observed_extra_wait_s": 34.36093471199274,
+        "cycle_s": 41.15585707873106,
+        "formula_wait_s": 34.36092661321163,
+        "formula_error_s": 8.098781108856201e-06,
+        "prediction_error_s": -33.01072232797742,
+        "envelope_exceeded": false
+      },
+      {
+        "index": 7,
+        "profile": "long",
+        "controlled_gap_s": 70,
+        "calibration": false,
+        "forced": false,
+        "proactive": true,
+        "forecast": {
+          "samples": 3,
+          "point_wait_s": 0.0,
+          "envelope_wait_s": 0.0,
+          "remaining_gap_s": 70.0021813493222,
+          "save_return_s": 0.2030587587505579,
+          "borrower_s": 48.07165754027665,
+          "restore_s": 0.18275434337556362,
+          "release_recommended": true,
+          "reason": "Observed envelope fits the delay budget."
+        },
+        "action": "lend",
+        "started_s": 14275590.162937662,
+        "request_at_s": 14275660.163968803,
+        "service_at_s": 14275660.163972951,
+        "request_done_s": 14275661.03079029,
+        "sample": {
+          "save_return_s": 0.20198789052665234,
+          "borrower_s": 46.56117368116975,
+          "restore_s": 0.1357552781701088,
+          "total_gap_s": 70.00103114172816
+        },
+        "model_ready_s": 14275637.06186807,
+        "observed_extra_wait_s": 4.148110747337341e-06,
+        "cycle_s": 70.86787914671004,
+        "formula_wait_s": 0.0,
+        "formula_error_s": 4.148110747337341e-06,
+        "prediction_error_s": 4.148110747337341e-06,
+        "envelope_exceeded": false
+      }
+    ],
+    "formula_max_error_s": 1.1868774890899658e-05,
+    "heldout_loans": 2,
+    "heldout_mae_s": 16.505363238044083,
+    "automatic_heldout_loans": 1,
+    "forced_heldout_loans": 1,
+    "completed_cycles": 8,
+    "incomplete_cycles": [
+      8
+    ],
+    "completed_weights_agree": true,
+    "completed_tokens_agree": true,
+    "physical_release_confirmed": true,
+    "boundary": "One H20, real vLLM sleep/wake and managed PostTrain commands. Controlled return times, forecast before execution, no live PSRL rollout or trainer.",
+    "commit": "c5f2d65a70f6923c992a7be867edd0864db2bd0c"
+  }
+}

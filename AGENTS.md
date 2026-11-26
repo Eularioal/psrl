@@ -21,7 +21,10 @@ Claude must read and apply these guides when writing or modifying code.
 
 ## Documentation
 
-- Follow the parent workspace `AGENTS.md` for audience, explanation depth, experiment evidence, documentation updates and link checks. Keep these shared rules there rather than duplicating them here.
+- Chapter figures must answer the section’s main questions through a readable scenario, state changes and causal evidence. Agree on the questions before drawing, organize dense material into a clear reading order, and inspect at the actual document width. Image presence alone is not a quality check.
+
+- Follow the parent workspace `AGENTS.md` for audience, explanation depth, visual explanations, rendered figure checks, experiment evidence, documentation updates and link checks. Keep these shared rules there rather than duplicating them here.
+- Every maintained document under `docs/`, including READMEs and short references, must embed a relevant explanatory color figure. Follow the parent rules for meaningful diagrams, sources, rendered inspection and the figure coverage check.
 - Maintain documentation in this repository's `docs/`, merge into existing topics, and update the relevant indexes and relative links.
 - Assume familiarity with machine learning, LLMs and agents, but less experience with computer systems. Explain the system mechanisms needed to follow the project, keep the main explanation self-contained, and offer optional topic links or follow-up questions for deeper learning.
 - Choose structure by purpose: operational READMEs focus on running the project, tutorials explain mechanisms with examples, and experiment reports lead with the question, results and their explanation. Preserve experimental conditions and evidence in the report or linked evidence files.

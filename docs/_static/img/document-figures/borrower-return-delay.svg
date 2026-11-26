@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="864pt" height="1692pt" viewBox="0 0 864 1692" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:12:40.952739</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1692 
+L 864 1692 
+L 864 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 67.0464 213.24633 
+L 416.2752 213.24633 
+L 416.2752 306.500367 
+L 67.0464 306.500367 
+z
+" clip-path="url(#pd34317aaff)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 465.0048 213.24633 
+L 814.2336 213.24633 
+L 814.2336 306.500367 
+L 465.0048 306.500367 
+z
+" clip-path="url(#pd34317aaff)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 50.8032 399.754404 
+L 830.4768 399.754404 
+L 830.4768 461.923761 
+L 50.8032 461.923761 
+z
+" clip-path="url(#pd34317aaff)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 50.8032 175.253945 
+L 830.4768 175.253945 
+" clip-path="url(#pd34317aaff)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="153.810619" transform="rotate(-0 50.8032 153.810619)">① 同一场景：A 暂停，B 正在等卡</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(187.133456 242.645028)">A：原持卡任务</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(191.548495 265.835263)">空档剩余 6 秒</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(175.048495 288.99327)">之后继续计算 4 秒</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(593.245177 242.645028)">B：等待任务</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(587.605528 265.803036)">需要 GPU 8 秒</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(590.1192 288.961044)">执行中不抢占</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 349.156656)">借出前保存并归还：1 秒</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 372.121304)">B 结束后恢复 A：1 秒；简化为串行。</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="75.168" y="436.639864" transform="rotate(-0 75.168 436.639864)">t=0 从 A 空档开始计。无其他任务干扰。</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_5">
+    <path d="M 213.2352 634.616422 
+L 408.1536 634.616422 
+L 408.1536 686.42422 
+L 213.2352 686.42422 
+z
+" clip-path="url(#p92f3658bfd)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 408.1536 634.616422 
+L 538.0992 634.616422 
+L 538.0992 686.42422 
+L 408.1536 686.42422 
+z
+" clip-path="url(#p92f3658bfd)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 538.0992 634.616422 
+L 797.9904 634.616422 
+L 797.9904 686.42422 
+L 538.0992 686.42422 
+z
+" clip-path="url(#p92f3658bfd)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 213.2352 717.508899 
+L 245.7216 717.508899 
+L 245.7216 769.316697 
+L 213.2352 769.316697 
+z
+" clip-path="url(#p92f3658bfd)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 245.7216 717.508899 
+L 505.6128 717.508899 
+L 505.6128 769.316697 
+L 245.7216 769.316697 
+z
+" clip-path="url(#p92f3658bfd)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 505.6128 717.508899 
+L 538.0992 717.508899 
+L 538.0992 769.316697 
+L 505.6128 769.316697 
+z
+" clip-path="url(#p92f3658bfd)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 538.0992 717.508899 
+L 668.0448 717.508899 
+L 668.0448 769.316697 
+L 538.0992 769.316697 
+z
+" clip-path="url(#p92f3658bfd)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 50.8032 562.085505 
+L 830.4768 562.085505 
+" clip-path="url(#p92f3658bfd)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="540.993741" transform="rotate(-0 50.8032 540.993741)">② 一张卡两种策略：谁何时能完成？</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="213.2352" y="609.461431" transform="rotate(-0 213.2352 609.461431)">0</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="408.1536" y="609.429204" transform="rotate(-0 408.1536 609.429204)">6</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="538.0992" y="609.461431" transform="rotate(-0 538.0992 609.461431)">10</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="668.0448" y="609.461431" transform="rotate(-0 668.0448 609.461431)">14</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="797.9904" y="609.461431" transform="rotate(-0 797.9904 609.461431)">18</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="668.241388" transform="rotate(-0 50.8032 668.241388)">保留给 A</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="310.6944" y="666.514462" transform="rotate(-0 310.6944 666.514462)">A 空档 6</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="473.1264" y="666.450009" transform="rotate(-0 473.1264 666.450009)">A 4</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="668.0448" y="666.450009" transform="rotate(-0 668.0448 666.450009)">B 8</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="751.133865" transform="rotate(-0 50.8032 751.133865)">借给 B</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="375.6672" y="749.342486" transform="rotate(-0 375.6672 749.342486)">B 8</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="603.072" y="749.342486" transform="rotate(-0 603.072 749.342486)">A 4</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="221.3568" y="799.262224" transform="rotate(-0 221.3568 799.262224)">紫色小段各 1 秒：保存归还、恢复。</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="67.0464" y="844.065636" transform="rotate(-0 67.0464 844.065636)">借出后 A 在 t=10 才能继续，比原计划晚 4 秒。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="patch_12">
+    <path d="M 67.0464 1052.532661 
+L 814.2336 1052.532661 
+L 814.2336 1107.794312 
+L 67.0464 1107.794312 
+z
+" clip-path="url(#p1667ab611e)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 50.8032 1173.417523 
+L 830.4768 1173.417523 
+L 830.4768 1235.586881 
+L 50.8032 1235.586881 
+z
+" clip-path="url(#p1667ab611e)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 50.8032 948.917064 
+L 830.4768 948.917064 
+" clip-path="url(#p1667ab611e)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="927.473739" transform="rotate(-0 50.8032 927.473739)">③ 额外等待怎样算，为什么取 max？</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 988.183953)">卡重新可供 A 使用：1 + 8 + 1 = 10 秒</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1011.116375)">A 原本只空闲 6 秒，超出部分需等待。</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(314.842969 1074.014658)">A 额外等待 = max(0, 1 + 8 + 1 − 6)</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(418.98375 1097.688291)">= 4 秒</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1140.121268)">只把 B 改成 2 秒：1 + 2 + 1 = 4 &lt; 6</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1163.053689)">借还落在空档内，额外等待为 0。</text>
+   </g>
+   <g id="text_25">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="75.168" y="1210.33521" transform="rotate(-0 75.168 1210.33521)">max 取零下界：提前归还不产生负等待。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_14">
+    <path d="M 67.0464 1432.456514 
+L 814.2336 1432.456514 
+L 814.2336 1480.810459 
+L 67.0464 1480.810459 
+z
+" clip-path="url(#p6c1f83aaf5)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 50.8032 1560.249083 
+L 830.4768 1560.249083 
+L 830.4768 1622.41844 
+L 50.8032 1622.41844 
+z
+" clip-path="url(#p6c1f83aaf5)" style="fill: #fdecef; stroke: #c84f60; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 50.8032 1335.748624 
+L 830.4768 1335.748624 
+" clip-path="url(#p6c1f83aaf5)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_26">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="1314.305298" transform="rotate(-0 50.8032 1314.305298)">④ A 晚了，整批仍可能更早结束</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1367.78554)">保留：A 于 10 秒结束，B 于 18 秒结束。</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1390.975775)">借出：B 于 9 秒结束，A 于 14 秒结束。</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="440.64" y="1462.273135" transform="rotate(-0 440.64 1462.273135)">整批：18 → 14 秒，节省 4 秒</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1513.137414)">需同时判断：A 多等 4 秒是否可接受？</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1536.359875)">保存与恢复成本能否被填空收益覆盖？</text>
+   </g>
+   <g id="text_30">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #c84f60" transform="translate(75.168 1585.700558)">有收益仍需安全：关闭新借用 → 确认</text>
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #c84f60" transform="translate(75.168 1608.697433)">B 物理归还 → 恢复 A。协议范围见正文。</text>
+   </g>
+  </g>
+  <g id="text_31">
+   <text style="font-weight: 700; font-size: 24px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="34.56" y="33.84" transform="rotate(-0 34.56 33.84)">GPU借还：A多等了，整批为什么仍可能更快？</text>
+  </g>
+  <g id="text_32">
+   <text style="font-size: 17px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="71.064" transform="rotate(-0 34.56 71.064)">把局部额外等待、填空收益和安全归还放在同一个场景里。</text>
+  </g>
+  <g id="text_33">
+   <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="101.52" transform="rotate(-0 34.56 101.52)">阅读顺序：自上而下 ① → ② → ③ → ④</text>
+  </g>
+  <g id="text_34">
+   <text style="font-size: 14.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="1670.004" transform="rotate(-0 34.56 1670.004)">图内数字为教学假设。先核角色、计时与同量工作，再核实现范围。实测证据以对应正文为准。</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pd34317aaff">
+   <rect x="34.56" y="126.9" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p92f3658bfd">
+   <rect x="34.56" y="513.73156" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p1667ab611e">
+   <rect x="34.56" y="900.563119" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p6c1f83aaf5">
+   <rect x="34.56" y="1287.394679" width="812.16" height="345.385321"/>
+  </clipPath>
+ </defs>
+</svg>

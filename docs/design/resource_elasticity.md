@@ -2,7 +2,7 @@
 
 > **Core idea:** an idle worker can release GPU memory and restore it when needed. PSRL has explicit sleep/wake paths, including a switch between training and validation on the training allocation. GPU placement, memory lifecycle and automatic pool resizing are separate controls.
 
-For the overall workflow in Chinese, start with [从一道题理解 PSRL](../overview/reading-guide.md). This page explains the narrower memory lifecycle.
+For the overall workflow in Chinese, start with [PSRL入门：从一道题到模型更新](../overview/01-PSRL入门_从一道题到模型更新.md). This page explains the narrower memory lifecycle.
 
 ## Contents
 
@@ -17,6 +17,16 @@ For the overall workflow in Chinese, start with [从一道题理解 PSRL](../ove
 ## Concept
 
 Training changes model weights. Validation uses a model to answer held-out questions. When these two roles share the training GPUs, both model copies may be too large to keep resident together. PSRL switches which role holds the required memory.
+
+<!-- figure:training-memory-peak -->
+这张图沿同一个场景解释：平时显存还够，为什么长序列的一次更新仍会 OOM？
+
+[![训练显存峰值：长序列的中间状态会挤占余量（1/2）](../_static/img/document-figures/training-memory-peak-screen.png)](../_static/img/document-figures/training-memory-peak.png)
+
+[![训练显存峰值：长序列的中间状态会挤占余量（2/2）](../_static/img/document-figures/training-memory-peak-screen-02.png)](../_static/img/document-figures/training-memory-peak.png)
+
+教学容量 100 格，常驻状态占 60。短序列临时状态 25，长序列临时状态 50。 准入要看执行峰值和未兑现承诺，不能只读静止时的实占。缩小微批也不等于缩短单条序列。 相对格数为教学假设。真实峰值还包含模型、缓存、工作区和分配器状态。 [查看矢量图](../_static/img/document-figures/training-memory-peak.svg)。
+<!-- /figure:training-memory-peak -->
 
 The regular asynchronous generation pool uses its own allocation and can keep generating while training runs. A validation/training switch is therefore different from alternating the whole training job between generation and training.
 

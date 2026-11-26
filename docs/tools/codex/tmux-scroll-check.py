@@ -1,6 +1,6 @@
 """真实 tmux 隔离实验：需要本机 tmux 和 Python 标准库，不运行 Codex。
 
-图中 1–5 见 codex-session-management.md 第五节。
+图中1到5见 `session-management/01-Codex会话_恢复命名与历史回看.md` 第五节。
 使用独立 socket；只清理本实验服务器，不修改已有会话。
 """
 

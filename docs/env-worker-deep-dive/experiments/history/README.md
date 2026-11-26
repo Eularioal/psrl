@@ -1,6 +1,16 @@
 # 历史实验与修复过程
 
-> **核心结论**：这里保存旧版本怎样失败、为什么修复及怎样验收的证据。想了解项目今天的收益先读[实验结论](../env-design-and-results-brief.md)，了解现有代码读[当前设计](../../knowledge/current-design.md)。历史报告用于解释因果与追溯条件。
+> **核心结论**：这里保存旧版本怎样失败、为什么修复及怎样验收的证据。想了解项目今天的收益先读[实验结论](../01-实验总览_调度收益与证据范围.md)，了解现有代码读[当前设计](../../knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md)。历史报告用于解释因果与追溯条件。
+
+<!-- figure:map-a0cf851f52 -->
+先按当前问题选择阅读入口，再在下方目录点击对应文档。
+
+[![历史实验与修复过程：阅读地图（1/2）](../../../_static/img/document-figures/map-a0cf851f52-screen.png)](../../../_static/img/document-figures/map-a0cf851f52.png)
+
+[![历史实验与修复过程：阅读地图（2/2）](../../../_static/img/document-figures/map-a0cf851f52-screen-02.png)](../../../_static/img/document-figures/map-a0cf851f52.png)
+
+每张彩色书页列出对应入口中的实际章节，帮助按问题定位阅读内容。编号只用于图中定位，不要求顺序通读。 [查看矢量图](../../../_static/img/document-figures/map-a0cf851f52.svg)。
+<!-- /figure:map-a0cf851f52 -->
 
 ## 目录
 
@@ -11,18 +21,18 @@
 
 | 想追溯的问题 | 历史报告 | 保留价值与后续入口 |
 |---|---|---|
-| 整任务预约为何减少OOM却拖慢完成？ | [跨任务池压力](science-gpu-pressure-ab.md) | 保存旧版完整任务持有预算的负面结果与空档；后续用[三步修复对照](../science-single-gpu-training-control.md) |
-| 按显存共享与整卡锁有什么不同？ | [整卡锁对预算共享](science-env-router-comparison.md) | 保存14GiB任务、55GiB池的真实容器实验；该OFF版本与指定固定基线分开 |
-| 原始CPU科学题能否接入策略训练？ | [CPU LAPS训练](science-training-router-ab.md) | 保存两步真实策略训练、失败排查与零奖励条件 |
-| 同容器并发为何会串行？ | [单容器多命令](science-natural-gpu-concurrency.md) | 保存CIFAR真实训练、容量压力及用户目标纠正；新[MPS结果](../mps-training-comparison.md)单列 |
-| 低负载早期为何有很高开销？ | [连接、预热和阻塞排查](router-baseline-control-validation-chronology.md) | 保存同步查询和事件循环阻塞的定位；后续读[同期配对](../router-baseline-control-validation.md) |
-| 为什么训练只完成部分步数？ | [训练对照时间线](science-single-gpu-training-control-chronology.md) | 保存模型删除采集文件、镜像EOF、预约公式缺口与最终修复，避免只保留成功值 |
-| MPS为何在收尾断连？ | [MPS控制连接](mps-training-comparison-chronology.md) | 保存竞争故障、定向修复及前后两次性能条件 |
-| GPU任务接入经历了哪些失败？ | [接入时间线](gpu-benchmark-onboarding-chronology.md) | 保存下载、镜像、长命令、评分和小配额试验；当前覆盖读[路线图](../../milestones/science-gpu-bench-status-and-roadmap.md) |
-| 最初的多节点与训练接线如何验证？ | [10月13日以前的验证](env-service-verification-20261013.md) | 保存真实Docker、GPU身份、跨节点等待及worker崩溃回收证据 |
-| 10月28日当时怎样判断设计？ | [阶段设计与收益](env-design-and-results-brief-chronology.md) | 保存当时的能力边界和规划，便于理解路线变化 |
-| 容器为何会在上传未完时执行命令？ | [提前ready故障](native-lifecycle-before-fix.md) | 保存CPU故障注入和历史补丁，后续读[修复报告](../native-backend-fixes-and-science.md) |
-| 为什么需要按GPU阶段借还？ | [阶段租约落地前提案](phase-backfill-before-command.md) | 保存真实空档样本与预测回填教学协议，后续读[command机制](../../knowledge/command-gpu-reservations.md) |
+| 整任务预约为何减少OOM却拖慢完成？ | [跨任务池压力](03-历史对照_Science跨任务池显存竞争.md) | 保存旧版完整任务持有预算的负面结果与空档；后续用[三步修复对照](../03-Science训练_三步对照与显存压力.md) |
+| 按显存共享与整卡锁有什么不同？ | [整卡锁对预算共享](02-历史对照_Science资源账本与Unit余量.md) | 保存14GiB任务、55GiB池的真实容器实验；该OFF版本与指定固定基线分开 |
+| 原始CPU科学题能否接入策略训练？ | [CPU LAPS训练](04-历史对照_LAPS训练与EnvRouter开关.md) | 保存两步真实策略训练、失败排查与零奖励条件 |
+| 同容器并发为何会串行？ | [单容器多命令](05-历史对照_同任务多协程GPU并发.md) | 保存CIFAR真实训练、容量压力及用户目标纠正；新[MPS结果](../04-MPS训练_并行执行与控制修复对照.md)单列 |
+| 低负载早期为何有很高开销？ | [连接、预热和阻塞排查](07-历史过程_固定基线修复与单卡验证.md) | 保存同步查询和事件循环阻塞的定位；后续读[同期配对](../02-基线对照_低负载EnvRouter修复验证.md) |
+| 为什么训练只完成部分步数？ | [训练对照时间线](06-历史过程_Science显存压力与原生任务.md) | 保存模型删除采集文件、镜像EOF、预约公式缺口与最终修复，避免只保留成功值 |
+| MPS为何在收尾断连？ | [MPS控制连接](08-历史过程_MPS训练并发对照.md) | 保存竞争故障、定向修复及前后两次性能条件 |
+| GPU任务接入经历了哪些失败？ | [接入时间线](11-历史过程_GPU基准接入验证.md) | 保存下载、镜像、长命令、评分和小配额试验；当前覆盖读[路线图](../../milestones/02-Science现状_任务覆盖与接入路线.md) |
+| 最初的多节点与训练接线如何验证？ | [10月13日以前的验证](01-历史验证_2026年10月13日EnvService修复.md) | 保存真实Docker、GPU身份、跨节点等待及worker崩溃回收证据 |
+| 10月28日当时怎样判断设计？ | [阶段设计与收益](12-历史阶段_2026年10月28日设计与收益.md) | 保存当时的能力边界和规划，便于理解路线变化 |
+| 容器为何会在上传未完时执行命令？ | [提前ready故障](09-历史故障_原生后端修复前生命周期.md) | 保存CPU故障注入和历史补丁，后续读[修复报告](../05-容器后端_原生实现修复与Science验证.md) |
+| 为什么需要按GPU阶段借还？ | [阶段租约落地前提案](10-历史提案_阶段租约与回填调度.md) | 保存真实空档样本与预测回填教学协议，后续读[command机制](../../knowledge/02-资源与调度/02-命令调度_GPU申请归还与状态保留.md) |
 
 ## 如何引用
 

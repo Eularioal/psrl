@@ -26,6 +26,16 @@ see {doc}`common`.
 
 This page focuses on asymmetric clipping and group filtering. The [DAPO paper](https://arxiv.org/abs/2503.14476) also describes token-level loss aggregation and overlong reward shaping. A launch script determines which features are enabled:
 
+<!-- figure:token-loss-weighting -->
+这张图沿同一个场景解释：两条长短不同的回答，先按回答平均和按全部 token 平均有何不同？
+
+[![按轨迹平均与按token平均：长短回答的权重不同（1/2）](../../_static/img/document-figures/token-loss-weighting-screen.png)](../../_static/img/document-figures/token-loss-weighting.png)
+
+[![按轨迹平均与按token平均：长短回答的权重不同（2/2）](../../_static/img/document-figures/token-loss-weighting-screen-02.png)](../../_static/img/document-figures/token-loss-weighting.png)
+
+教学条件：短回答有 2 个有效 token，长回答有 6 个，只有 mask 有效位置参与。 聚合方式改变不同长度样本的总权重。看见 mean 还需确认在哪个维度、使用什么分母。 权重算例，不替代具体损失配置。轨迹截断、mask 和组归一化还会改变有效贡献。 [查看矢量图](../../_static/img/document-figures/token-loss-weighting.svg)。
+<!-- /figure:token-loss-weighting -->
+
 | Aspect | [GRPO](grpo.md) | DAPO |
 |---|---|---|
 | PPO clip bounds | Symmetric: `clip_ratio` | Asymmetric: `clip_ratio_low` < `clip_ratio_high` |

@@ -4,7 +4,7 @@ This section describes the current PSRL architecture: SMG-based online request
 routing, metadata-only sample flow through TransferQueue, asynchronous weight
 transfer, and hierarchical KV cache management.
 
-Read [the beginner workflow](../overview/reading-guide.md) first if the roles are new.
+Read [the beginner workflow](../overview/01-PSRL入门_从一道题到模型更新.md) first if the roles are new.
 Then choose one subsystem below. The pages explain motivation, mechanisms, examples
 and configuration rather than requiring you to understand every component at once.
 
@@ -90,3 +90,13 @@ kv_cache
 resource_elasticity
 env_worker
 ```
+
+<!-- figure:map-0df1b907f1 -->
+先按当前问题选择阅读入口，再在下方目录点击对应文档。
+
+[![Designs & Features：阅读地图（1/2）](../_static/img/document-figures/map-0df1b907f1-screen.png)](../_static/img/document-figures/map-0df1b907f1.png)
+
+[![Designs & Features：阅读地图（2/2）](../_static/img/document-figures/map-0df1b907f1-screen-02.png)](../_static/img/document-figures/map-0df1b907f1.png)
+
+每张彩色书页列出对应入口中的实际章节，帮助按问题定位阅读内容。编号只用于图中定位，不要求顺序通读。 [查看矢量图](../_static/img/document-figures/map-0df1b907f1.svg)。
+<!-- /figure:map-0df1b907f1 -->

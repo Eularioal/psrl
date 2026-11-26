@@ -16,6 +16,16 @@ orphan: true
 
 ## 两种阅读入口
 
+<!-- figure:markdown-and-site -->
+这张图沿同一个场景解释：Markdown 改名后，为什么正文能打开而网页导航或插图却坏了？
+
+[![Markdown与网页：同一份内容的两种阅读入口（1/2）](_static/img/document-figures/markdown-and-site-screen.png)](_static/img/document-figures/markdown-and-site.png)
+
+[![Markdown与网页：同一份内容的两种阅读入口（2/2）](_static/img/document-figures/markdown-and-site-screen-02.png)](_static/img/document-figures/markdown-and-site.png)
+
+一篇文章连同图片移动到新目录，源文件、相对路径和站点目录要保持一致。 正文、资源、导航是相互引用的一组对象。只改文件名不会自动更新全部入口。 操作示意。构建目录是产物，维护应修改源文档与生成脚本。 [查看矢量图](_static/img/document-figures/markdown-and-site.svg)。
+<!-- /figure:markdown-and-site -->
+
 | 入口或目录 | 用途 |
 |---|---|
 | [README.md](README.md) | 本地知识总览，覆盖所有主题 |
@@ -47,9 +57,11 @@ python -m venv /tmp/psrl-docs-venv
 
 1. 按主题选择目录。先搜索已有文档，能整合就直接改原内容。
 2. 文档按“标题、核心结论、目录、正文”组织。先解释读者的问题和完整例子，再按需深入。
-3. 更新所属分类 README，让总索引能访问到该页。
+3. 同时更新所属目录的 `README.md` 和总索引 `docs/README.md` 的全量直达目录。新建维护目录时一并添加 README。
 4. 对公开站点页面，在该专题 `index.md` 的 `toctree` 中添加文件名。
 5. 检查相对路径、章节锚点与源码定位，最后构建站点。
+
+各级 README 是仓库内的导航入口，`conf.py` 通过 `README.md` 和 `**/README.md` 将它们排除出公开站点，公开页面仍由 `index.md` 的 `toctree` 组织。脚本和静态资源目录也维护 README。原始运行输出、缓存、构建产物和冻结 baseline 在所属目录提供入口，不向其内部批量添加导航文件。
 
 例如新增 `docs/design/new-feature.md`，就在 `docs/design/index.md` 的导航中加入 `new-feature`。只写文件而不登记，读者可能找不到它，Sphinx 也会报未纳入导航。
 

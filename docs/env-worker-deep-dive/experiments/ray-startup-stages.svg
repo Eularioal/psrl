@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="576pt" height="432pt" viewBox="0 0 576 432" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-25T00:43:48.245554</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 432 
+L 576 432 
+L 576 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 122.4 178.56 
+L 122.4 318.96 
+" clip-path="url(#p222b886ef3)" style="fill: none; stroke: #dce3eb; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 237.96 178.56 
+L 237.96 318.96 
+" clip-path="url(#p222b886ef3)" style="fill: none; stroke: #dce3eb; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 353.52 178.56 
+L 353.52 318.96 
+" clip-path="url(#p222b886ef3)" style="fill: none; stroke: #dce3eb; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 469.08 178.56 
+L 469.08 318.96 
+" clip-path="url(#p222b886ef3)" style="fill: none; stroke: #dce3eb; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="patch_2">
+    <path d="M 18 63.36 
+L 140.4 63.36 
+L 140.4 141.12 
+L 18 141.12 
+z
+" clip-path="url(#p222b886ef3)" style="fill: #dbe6f4; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 143.12127 100.8 
+Q 149.400077 100.8 154.560851 100.8 
+" clip-path="url(#p222b886ef3)" style="fill: none; stroke: #000000; stroke-linecap: round"/>
+    <path d="M 148.960851 98 
+L 154.560851 100.8 
+L 148.960851 103.6 
+z
+" clip-path="url(#p222b886ef3)" style="fill: #1f77b4; stroke: #000000; stroke-linecap: round"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 158.4 63.36 
+L 280.8 63.36 
+L 280.8 141.12 
+L 158.4 141.12 
+z
+" clip-path="url(#p222b886ef3)" style="fill: #f4e4cf; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 283.52127 100.8 
+Q 289.800077 100.8 294.960851 100.8 
+" clip-path="url(#p222b886ef3)" style="fill: none; stroke: #000000; stroke-linecap: round"/>
+    <path d="M 289.360851 98 
+L 294.960851 100.8 
+L 289.360851 103.6 
+z
+" clip-path="url(#p222b886ef3)" style="fill: #1f77b4; stroke: #000000; stroke-linecap: round"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 298.8 63.36 
+L 421.2 63.36 
+L 421.2 141.12 
+L 298.8 141.12 
+z
+" clip-path="url(#p222b886ef3)" style="fill: #d5eae3; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 423.92127 100.8 
+Q 430.200077 100.8 435.360851 100.8 
+" clip-path="url(#p222b886ef3)" style="fill: none; stroke: #000000; stroke-linecap: round"/>
+    <path d="M 429.760851 98 
+L 435.360851 100.8 
+L 429.760851 103.6 
+z
+" clip-path="url(#p222b886ef3)" style="fill: #1f77b4; stroke: #000000; stroke-linecap: round"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 439.2 63.36 
+L 561.6 63.36 
+L 561.6 141.12 
+L 439.2 141.12 
+z
+" clip-path="url(#p222b886ef3)" style="fill: #e5dff0; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 122.4 183.6 
+L 237.96 183.6 
+L 237.96 208.08 
+L 122.4 208.08 
+z
+" clip-path="url(#p222b886ef3)" style="fill: #bc5b55"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 238.356756 218.16 
+L 353.916756 218.16 
+L 353.916756 242.64 
+L 238.356756 242.64 
+z
+" clip-path="url(#p222b886ef3)" style="fill: #bc5b55"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 353.947572 252.72 
+L 469.507572 252.72 
+L 469.507572 277.2 
+L 353.947572 277.2 
+z
+" clip-path="url(#p222b886ef3)" style="fill: #bc5b55"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 469.534536 287.28 
+L 501.067008 287.28 
+L 501.067008 311.76 
+L 469.534536 311.76 
+z
+" clip-path="url(#p222b886ef3)" style="fill: #2e8a70"/>
+   </g>
+   <g id="text_1">
+    <text style="font-size: 16px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="18" y="23.04" transform="rotate(-0 18 23.04)">Ray 启动排障：进程存在、注册成功、Actor 就绪是三件事</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="18" y="46.8" transform="rotate(-0 18 46.8)">先定位失败阶段，再解释原因。下方时间线为11月23日真实日志。</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="23.76" y="80.64" transform="rotate(-0 23.76 80.64)">① Driver 配置</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="23.76" y="106.56" transform="rotate(-0 23.76 106.56)">Hydra 查找配置</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="23.76" y="127.44" transform="rotate(-0 23.76 127.44)">缺data/data在此失败</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="164.16" y="80.64" transform="rotate(-0 164.16 80.64)">② Python 启动</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="164.16" y="106.56" transform="rotate(-0 164.16 106.56)">导入Ray及其依赖</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="164.16" y="127.44" transform="rotate(-0 164.16 127.44)">慢文件查询可能在此</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="304.56" y="80.64" transform="rotate(-0 304.56 80.64)">③ 向Raylet注册</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="304.56" y="106.56" transform="rotate(-0 304.56 106.56)">回报worker已就绪</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="304.56" y="127.44" transform="rotate(-0 304.56 127.44)">超时后活进程也会被杀</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="444.96" y="80.64" transform="rotate(-0 444.96 80.64)">④ Actor 业务</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="444.96" y="106.56" transform="rotate(-0 444.96 106.56)">导入业务／运行初始化</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="444.96" y="127.44" transform="rotate(-0 444.96 127.44)">缺模块、gRPC冲突在此</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="18" y="164.88" transform="rotate(-0 18 164.88)">注册失败时间线：t＝0为15:32:13.426，三个worker各等30秒</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="122.4" y="334.08" transform="rotate(-0 122.4 334.08)">0</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="237.96" y="334.08" transform="rotate(-0 237.96 334.08)">30</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="353.52" y="334.08" transform="rotate(-0 353.52 334.08)">60</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="469.08" y="334.08" transform="rotate(-0 469.08 334.08)">90</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="108" y="199.675234" transform="rotate(-0 108 199.675234)">进程1 · 1351900</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="180.18" y="199.019688" transform="rotate(-0 180.18 199.019688)">活着，30秒未注册</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #8e352e" x="240.84" y="198.976719" transform="rotate(-0 240.84 198.976719)">终止</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="108" y="234.235234" transform="rotate(-0 108 234.235234)">进程2 · 1353994</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="296.136756" y="233.579688" transform="rotate(-0 296.136756 233.579688)">活着，30秒未注册</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #8e352e" x="356.796756" y="233.536719" transform="rotate(-0 356.796756 233.536719)">终止</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="108" y="268.795234" transform="rotate(-0 108 268.795234)">进程3 · 1355419</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="411.727572" y="268.139688" transform="rotate(-0 411.727572 268.139688)">活着，30秒未注册</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #8e352e" x="472.387572" y="268.096719" transform="rotate(-0 472.387572 268.096719)">终止</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="108" y="303.355234" transform="rotate(-0 108 303.355234)">进程4 · 1357325</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #21644f" x="506.107008" y="302.420391" transform="rotate(-0 506.107008 302.420391)">CoreWorker</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="489.6" y="334.08" transform="rotate(-0 489.6 334.08)">秒</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="18" y="357.84" transform="rotate(-0 18 357.84)">第4个约8.19秒进入CoreWorker，约87.75秒后Actor创建完成。</text>
+   </g>
+   <g id="text_33">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="18" y="384.48" transform="rotate(-0 18 384.48)">红条证实注册超时，不说明具体卡在哪个import。失败进程没有留下Python栈。</text>
+   </g>
+   <g id="text_34">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="18" y="407.52" transform="rotate(-0 18 407.52)">11月24日另一个worker的9.4秒栈停在文件查询，它未超时，不能替代历史失败栈。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p222b886ef3">
+   <rect x="0" y="0" width="576" height="432"/>
+  </clipPath>
+ </defs>
+</svg>

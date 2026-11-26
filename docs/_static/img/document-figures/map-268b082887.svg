@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="1152pt" viewBox="0 0 1152 1152" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:16:15.784133</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1152 
+L 1152 1152 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="46.08" y="41.463867" transform="rotate(-0 46.08 41.463867)">Env 实验脚本与证据目录：阅读地图</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="93.330797" transform="rotate(-0 46.08 93.330797)">按当前问题选择入口。每张书页列出实际章节，定位主题后到正文点击对应链接。</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 67.2768 194.823529 
+L 544.2048 194.823529 
+Q 559.04256 194.823529 559.04256 205.891765 
+L 559.04256 427.256471 
+Q 559.04256 438.324706 544.2048 438.324706 
+L 67.2768 438.324706 
+Q 52.43904 438.324706 52.43904 427.256471 
+L 52.43904 205.891765 
+Q 52.43904 194.823529 67.2768 194.823529 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 56.6784 197.985882 
+L 73.63584 197.985882 
+L 73.63584 435.162353 
+L 56.6784 435.162353 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 607.7952 194.823529 
+L 1084.7232 194.823529 
+Q 1099.56096 194.823529 1099.56096 205.891765 
+L 1099.56096 427.256471 
+Q 1099.56096 438.324706 1084.7232 438.324706 
+L 607.7952 438.324706 
+Q 592.95744 438.324706 592.95744 427.256471 
+L 592.95744 205.891765 
+Q 592.95744 194.823529 607.7952 194.823529 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 597.1968 197.985882 
+L 614.15424 197.985882 
+L 614.15424 435.162353 
+L 597.1968 435.162353 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 67.2768 463.623529 
+L 544.2048 463.623529 
+Q 559.04256 463.623529 559.04256 474.691765 
+L 559.04256 696.056471 
+Q 559.04256 707.124706 544.2048 707.124706 
+L 67.2768 707.124706 
+Q 52.43904 707.124706 52.43904 696.056471 
+L 52.43904 474.691765 
+Q 52.43904 463.623529 67.2768 463.623529 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 56.6784 466.785882 
+L 73.63584 466.785882 
+L 73.63584 703.962353 
+L 56.6784 703.962353 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 607.7952 463.623529 
+L 1084.7232 463.623529 
+Q 1099.56096 463.623529 1099.56096 474.691765 
+L 1099.56096 696.056471 
+Q 1099.56096 707.124706 1084.7232 707.124706 
+L 607.7952 707.124706 
+Q 592.95744 707.124706 592.95744 696.056471 
+L 592.95744 474.691765 
+Q 592.95744 463.623529 607.7952 463.623529 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 597.1968 466.785882 
+L 614.15424 466.785882 
+L 614.15424 703.962353 
+L 597.1968 703.962353 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #8764b8; stroke: #8764b8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 67.2768 732.423529 
+L 544.2048 732.423529 
+Q 559.04256 732.423529 559.04256 743.491765 
+L 559.04256 964.856471 
+Q 559.04256 975.924706 544.2048 975.924706 
+L 67.2768 975.924706 
+Q 52.43904 975.924706 52.43904 964.856471 
+L 52.43904 743.491765 
+Q 52.43904 732.423529 67.2768 732.423529 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #fdecef; stroke: #c84f60; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 56.6784 735.585882 
+L 73.63584 735.585882 
+L 73.63584 972.762353 
+L 56.6784 972.762353 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #c84f60; stroke: #c84f60; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 607.7952 732.423529 
+L 1084.7232 732.423529 
+Q 1099.56096 732.423529 1099.56096 743.491765 
+L 1099.56096 964.856471 
+Q 1099.56096 975.924706 1084.7232 975.924706 
+L 607.7952 975.924706 
+Q 592.95744 975.924706 592.95744 964.856471 
+L 592.95744 743.491765 
+Q 592.95744 732.423529 607.7952 732.423529 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 597.1968 735.585882 
+L 614.15424 735.585882 
+L 614.15424 972.762353 
+L 597.1968 972.762353 
+z
+" clip-path="url(#pde9a624b7f)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 22px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="88.4736" y="236.697842" transform="rotate(-0 88.4736 236.697842)">01  实验入口</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="88.4736" y="305.768948" transform="rotate(-0 88.4736 305.768948)">• 实验总览：调度收益与证据范围</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="88.4736" y="339.764242" transform="rotate(-0 88.4736 339.764242)">• GPU benchmark 实验导航</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="88.4736" y="373.525161" transform="rotate(-0 88.4736 373.525161)">• Science训练：三步对照与显存压力</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 22px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="628.992" y="236.654874" transform="rotate(-0 628.992 236.654874)">02  当前设计</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="628.992" y="305.690823" transform="rotate(-0 628.992 305.690823)">• 1. 现在的完整结构</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="628.992" y="339.647054" transform="rotate(-0 628.992 339.647054)">• 2. 四个容易混淆的选择</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="628.992" y="373.642348" transform="rotate(-0 628.992 373.642348)">• 3. 资源如何计算与归还</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 22px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d68b20" x="88.4736" y="505.454874" transform="rotate(-0 88.4736 505.454874)">03  容量校准与 PSRL 对照</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="88.4736" y="574.529885" transform="rotate(-0 88.4736 574.529885)">• 容量校准与调优静态基线</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="88.4736" y="608.368929" transform="rotate(-0 88.4736 608.368929)">• 同步并行与更强静态分卡的后续验证</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="88.4736" y="642.364223" transform="rotate(-0 88.4736 642.364223)">• 接入 SMG 与训练器的多步对照</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 22px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #8764b8" x="628.992" y="505.454874" transform="rotate(-0 628.992 505.454874)">04  有效实验结论</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="628.992" y="574.529885" transform="rotate(-0 628.992 574.529885)">• 固定基线的有效性能证据</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="628.992" y="608.447054" transform="rotate(-0 628.992 608.447054)">• 功能验收与机制探索</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="628.992" y="642.598598" transform="rotate(-0 628.992 642.598598)">• 已退出当前结论的旧实验</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 22px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #c84f60" x="88.4736" y="774.211905" transform="rotate(-0 88.4736 774.211905)">05  常驻模型的计算共享</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="88.4736" y="843.329885" transform="rotate(-0 88.4736 843.329885)">• 短图像任务协议与 36 组对照</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="88.4736" y="877.325179" transform="rotate(-0 88.4736 877.325179)">• 长生成与 4B 环境模型的 12 组对照</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 22px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="628.992" y="774.297842" transform="rotate(-0 628.992 774.297842)">06  主存受限的状态调度研究</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="628.992" y="843.329885" transform="rotate(-0 628.992 843.329885)">• 范围与全局执行图</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="628.992" y="877.325179" transform="rotate(-0 628.992 877.325179)">• 旧代码问题修到了哪里</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="628.992" y="911.164223" transform="rotate(-0 628.992 911.164223)">• 场景与真正受限的资源</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="patch_14">
+    <path d="M 56.6784 1019.0592 
+L 1095.3216 1019.0592 
+Q 1110.15936 1019.0592 1110.15936 1020.672 
+L 1110.15936 1122.048 
+Q 1110.15936 1123.6608 1095.3216 1123.6608 
+L 56.6784 1123.6608 
+Q 41.84064 1123.6608 41.84064 1122.048 
+L 41.84064 1020.672 
+Q 41.84064 1019.0592 56.6784 1019.0592 
+z
+" clip-path="url(#ped7f2c0540)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 19px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.2768 1052.935895)">阅读方法：先选问题 → 看对应章节的场景与图 → 需要核验时再查源码或实验。</text>
+    <text style="font-size: 19px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.2768 1078.537652)">更多入口在本页完整目录。编号仅用于图中定位，不表示所有文章必须依次阅读。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pde9a624b7f">
+   <rect x="46.08" y="190.08" width="1059.84" height="806.4"/>
+  </clipPath>
+  <clipPath id="ped7f2c0540">
+   <rect x="46.08" y="1019.52" width="1059.84" height="115.2"/>
+  </clipPath>
+ </defs>
+</svg>

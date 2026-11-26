@@ -2,7 +2,7 @@
 
 > **Start here:** PSRL separates collecting model answers from updating model parameters, then coordinates sample data and model versions between them.
 
-第一次接触项目，可以先读[从一道题理解 PSRL](reading-guide.md)了解组件如何衔接，再按需查[系统与实验术语](glossary.md)。这两篇默认已有机器学习与 agent 基础。
+第一次接触项目，可以先读[PSRL入门：从一道题到模型更新](01-PSRL入门_从一道题到模型更新.md)了解组件如何衔接，再按需查[系统与实验术语](02-PSRL入门_系统与实验术语速查.md)。这两篇默认已有机器学习与 agent 基础。
 
 ## Contents
 
@@ -20,13 +20,17 @@ explicitly bounded.
 
 Built on [veRL](https://github.com/volcengine/verl), PSRL focuses on the system bottlenecks that emerge in agentic, dynamic, and long-tailed RL workloads: uneven rollout latency, version-aware weight management, multi-turn KV cache reuse, and elastic resource allocation across rollout, reward, and training models.
 
-```{figure} /_static/img/PSRL_arch.svg
-:alt: PSRL System Architecture
-:width: 100%
-:align: center
+[![PSRL System Architecture（1/3）](../_static/img/document-figures/explained-PSRL_arch-4d2b637-screen.png)](../_static/img/document-figures/explained-PSRL_arch-4d2b637.png)
+
+[![PSRL System Architecture（2/3）](../_static/img/document-figures/explained-PSRL_arch-4d2b637-screen-02.png)](../_static/img/document-figures/explained-PSRL_arch-4d2b637.png)
+
+[![PSRL System Architecture（3/3）](../_static/img/document-figures/explained-PSRL_arch-4d2b637-screen-03.png)](../_static/img/document-figures/explained-PSRL_arch-4d2b637.png)
 
 Overall PSRL system architecture.
-```
+
+<!-- explained-source:explained-PSRL_arch-4d2b637 -->
+**读图结论：**解耦让阶段有重叠机会，数据可用性和模型版本仍要显式协调。 架构概览不代表所有阶段能同时无限并发，细节见完整执行主文档。 [完整解释图（SVG）](../_static/img/document-figures/explained-PSRL_arch-4d2b637.svg) · [原始机制图或实验图](../_static/img/PSRL_arch.svg)。
+<!-- /explained-source:explained-PSRL_arch-4d2b637 -->
 
 ## Key Capabilities
 
@@ -75,6 +79,6 @@ See {doc}`../design/architecture` for the detailed architecture.
 :maxdepth: 1
 :hidden:
 
-reading-guide
-glossary
+01-PSRL入门_从一道题到模型更新
+02-PSRL入门_系统与实验术语速查
 ```

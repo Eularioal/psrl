@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="864pt" height="1692pt" viewBox="0 0 864 1692" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:13:02.242055</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1692 
+L 864 1692 
+L 864 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 67.0464 213.24633 
+L 400.032 213.24633 
+L 400.032 306.500367 
+L 67.0464 306.500367 
+z
+" clip-path="url(#pb4cfe7d0a4)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 481.248 213.24633 
+L 814.2336 213.24633 
+L 814.2336 306.500367 
+L 481.248 306.500367 
+z
+" clip-path="url(#pb4cfe7d0a4)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 410.156241 258.146422 
+Q 440.640116 258.146422 469.335138 258.146422 
+" clip-path="url(#pb4cfe7d0a4)" style="fill: none; stroke: #c84f60; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 462.935138 254.946422 
+L 469.335138 258.146422 
+L 462.935138 261.346422 
+z
+" clip-path="url(#pb4cfe7d0a4)" style="fill: #c84f60; stroke: #c84f60; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 50.8032 399.754404 
+L 830.4768 399.754404 
+L 830.4768 461.923761 
+L 50.8032 461.923761 
+z
+" clip-path="url(#pb4cfe7d0a4)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 50.8032 175.253945 
+L 830.4768 175.253945 
+" clip-path="url(#pb4cfe7d0a4)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="153.810619" transform="rotate(-0 50.8032 153.810619)">① 修改发生了，但常驻进程还没变</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(217.0392 242.612802)">磁盘</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(185.650528 263.869442)">score.py：v2</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(180.462052 288.928817)">权重文件：W1</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(614.7408 242.580575)">常驻进程</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(597.982988 265.77081)">评分函数：v1</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(586.413652 288.896591)">已加载权重：W1</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 352.384923)">新请求要求 v2，但进程可能继续调用 v1。</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 375.671837)">写文件改变磁盘内容，不会自动改内存对象。</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="75.168" y="436.639864" transform="rotate(-0 75.168 436.639864)">需要区分可复用的权重与必须更新的评分代码。</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_6">
+    <path d="M 67.0464 600.07789 
+L 416.2752 600.07789 
+L 416.2752 658.793394 
+L 67.0464 658.793394 
+z
+" clip-path="url(#p0141036725)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 465.0048 600.07789 
+L 814.2336 600.07789 
+L 814.2336 658.793394 
+L 465.0048 658.793394 
+z
+" clip-path="url(#p0141036725)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 67.0464 689.878073 
+L 416.2752 689.878073 
+L 416.2752 748.593578 
+L 67.0464 748.593578 
+z
+" clip-path="url(#p0141036725)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 465.0048 689.878073 
+L 814.2336 689.878073 
+L 814.2336 748.593578 
+L 465.0048 748.593578 
+z
+" clip-path="url(#p0141036725)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 50.8032 786.585963 
+L 830.4768 786.585963 
+L 830.4768 848.755321 
+L 50.8032 848.755321 
+z
+" clip-path="url(#p0141036725)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 50.8032 562.085505 
+L 830.4768 562.085505 
+" clip-path="url(#p0141036725)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="540.642179" transform="rotate(-0 50.8032 540.642179)">② 按依赖记录版本，而非清空全部状态</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="241.6608" y="635.333103" transform="rotate(-0 241.6608 635.333103)">权重 W1 → 内存模型</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="639.6192" y="635.333103" transform="rotate(-0 639.6192 635.333103)">评分 v2 → 评分函数</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="241.6608" y="725.165513" transform="rotate(-0 241.6608 725.165513)">数据 D1 → 已处理输入</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="639.6192" y="725.19774" transform="rotate(-0 639.6192 725.19774)">配置 C1 → 服务选项</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #3478c5" transform="translate(75.168 811.7474)">适配器声明依赖关系。版本标签是教学简写，</text>
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #3478c5" transform="translate(75.168 835.066541)">实际身份需覆盖文件内容与相关配置。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="patch_11">
+    <path d="M 67.0464 1052.532661 
+L 416.2752 1052.532661 
+L 416.2752 1135.425138 
+L 67.0464 1135.425138 
+z
+" clip-path="url(#p1b828fd968)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 465.0048 1052.532661 
+L 814.2336 1052.532661 
+L 814.2336 1135.425138 
+L 465.0048 1135.425138 
+z
+" clip-path="url(#p1b828fd968)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 50.8032 1173.417523 
+L 830.4768 1173.417523 
+L 830.4768 1235.586881 
+L 50.8032 1235.586881 
+z
+" clip-path="url(#p1b828fd968)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 50.8032 948.917064 
+L 830.4768 948.917064 
+" clip-path="url(#p1b828fd968)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="927.473739" transform="rotate(-0 50.8032 927.473739)">③ 这一次请求：先核对，再选择更新动作</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 980.986207)">对照期望与实际：W1=W1，D1=D1，C1=C1</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1004.176442)">只有评分代码不匹配：期望 v2，实际 v1。</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(225.1608 1076.718352)">保留</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(183.9108 1099.87636)">模型权重与输入</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(192.1608 1123.131048)">避免重复准备</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(623.1192 1076.718352)">重建</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(581.8692 1099.97304)">受影响评分状态</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(590.1192 1123.098821)">更新后再核对</text>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #159b8d" transform="translate(75.168 1198.707866)">确认代码与状态一致后才执行并发布结果。</text>
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #159b8d" transform="translate(75.168 1221.769194)">无法确认或更新失败，就拒绝本次复用。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_14">
+    <path d="M 67.0464 1442.818073 
+L 814.2336 1442.818073 
+L 814.2336 1532.618257 
+L 67.0464 1532.618257 
+z
+" clip-path="url(#p2363123ef2)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 50.8032 1560.249083 
+L 830.4768 1560.249083 
+L 830.4768 1622.41844 
+L 50.8032 1622.41844 
+z
+" clip-path="url(#p2363123ef2)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 50.8032 1335.748624 
+L 830.4768 1335.748624 
+" clip-path="url(#p2363123ef2)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="1314.621704" transform="rotate(-0 50.8032 1314.621704)">④ 评价复用：正确结果与准备代价都要看</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1370.369276)">每次新进程：重新 import、加载 W1、加载 v2。</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1394.461855)">无检查常驻：省准备，却可能返回 v1 的结果。</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(349.89 1470.489845)">执行前固定本次文件快照</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(311.153672 1493.39004)">保留 W1，新评分进程读取本次快照</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(308.64 1516.612501)">发布前再核对版本，检查成本也计时</text>
+   </g>
+   <g id="text_20">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #8764b8" transform="translate(75.168 1585.410519)">若执行中发生相关文件的新修改，</text>
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #8764b8" transform="translate(75.168 1608.761886)">要求当前版本的请求应拒收旧版本结果。</text>
+   </g>
+  </g>
+  <g id="text_21">
+   <text style="font-weight: 700; font-size: 24px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="34.56" y="33.84" transform="rotate(-0 34.56 33.84)">状态复用：保住昂贵准备，更新已变化的代码</text>
+  </g>
+  <g id="text_22">
+   <text style="font-size: 17px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="71.064" transform="rotate(-0 34.56 71.064)">文件变了以后，怎样避免常驻进程读旧版本，又保留可复用状态？</text>
+  </g>
+  <g id="text_23">
+   <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="101.52" transform="rotate(-0 34.56 101.52)">阅读顺序：自上而下 ① → ② → ③ → ④</text>
+  </g>
+  <g id="text_24">
+   <text style="font-size: 14.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="1670.004" transform="rotate(-0 34.56 1670.004)">图内数字为教学假设。先核角色、计时与同量工作，再核实现范围。实测证据以对应正文为准。</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pb4cfe7d0a4">
+   <rect x="34.56" y="126.9" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p0141036725">
+   <rect x="34.56" y="513.73156" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p1b828fd968">
+   <rect x="34.56" y="900.563119" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p2363123ef2">
+   <rect x="34.56" y="1287.394679" width="812.16" height="345.385321"/>
+  </clipPath>
+ </defs>
+</svg>

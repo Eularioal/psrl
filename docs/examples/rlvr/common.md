@@ -17,9 +17,19 @@ focus on the bits that actually differ between recipes.
 ## Architecture
 
 For a beginner example and a verified source-by-source reading order, see
-[从一道题理解 PSRL](../../overview/reading-guide.md). The diagram below is a compact
+[PSRL入门：从一道题到模型更新](../../overview/01-PSRL入门_从一道题到模型更新.md). The diagram below is a compact
 role overview; the training workers publish new weights to PS, and rollout replicas
 pull them. TransferQueue stores samples, while the trainer coordinates operations.
+
+<!-- figure:dataset-fields -->
+这张图沿同一个场景解释：看起来相同的 JSON 文本，为什么不能替代真正的消息列表？
+
+[![训练数据：结构化字段与样本内容要一起核对（1/2）](../../_static/img/document-figures/dataset-fields-screen.png)](../../_static/img/document-figures/dataset-fields.png)
+
+[![训练数据：结构化字段与样本内容要一起核对（2/2）](../../_static/img/document-figures/dataset-fields-screen-02.png)](../../_static/img/document-figures/dataset-fields.png)
+
+同一条数据要被 loader 读取：prompt 是消息列表，奖励和任务参数是结构字段。 序列化后的外观相似不等于类型相同。先核数据结构，再排查模型或调度。 实际列名和嵌套字段由对应 loader 决定，不把一套 schema 套用到全部数据集。 [查看矢量图](../../_static/img/document-figures/dataset-fields.svg)。
+<!-- /figure:dataset-fields -->
 
 Even single-turn RLVR runs through PSRL's decoupled online-serving path. A prompt is
 driven by an **AgentLoopWorker**, dispatched through the **SMG RolloutGateway** (PSRL

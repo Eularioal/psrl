@@ -29,6 +29,16 @@ $$
 
 ## GRPO vs. PPO
 
+<!-- figure:group-relative-advantages -->
+这张图沿同一个场景解释：同一道题的多次尝试，怎样变成鼓励或抑制某条回答的信号？
+
+[![GRPO：同题多次尝试，通过组内比较获得方向（1/2）](../../_static/img/document-figures/group-relative-advantages-screen.png)](../../_static/img/document-figures/group-relative-advantages.png)
+
+[![GRPO：同题多次尝试，通过组内比较获得方向（2/2）](../../_static/img/document-figures/group-relative-advantages-screen-02.png)](../../_static/img/document-figures/group-relative-advantages.png)
+
+教学组含四条回答，奖励为 1、1、0、0，使用总体标准差，暂不考虑额外稳定项。 组内优势表达相对好坏。全零策略梯度可能来自相同反馈，不自动说明程序崩溃。 教学简化。分组、标准化、稳定项与同奖励过滤以实际算法配置为准。 [查看矢量图](../../_static/img/document-figures/group-relative-advantages.svg)。
+<!-- /figure:group-relative-advantages -->
+
 | Aspect | [PPO](ppo.md) | GRPO |
 |---|---|---|
 | Critic / value model | Required (GAE) | Not used |

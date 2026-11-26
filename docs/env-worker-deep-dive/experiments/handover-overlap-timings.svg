@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="576pt" height="410.4pt" viewBox="0 0 576 410.4" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-25T01:48:33.083383</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 410.4 
+L 576 410.4 
+L 576 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 132.48 156.395676 
+L 501.12 156.395676 
+L 501.12 82.08 
+L 132.48 82.08 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <path d="M 132.48 156.395676 
+L 132.48 82.08 
+" clip-path="url(#p8c5892f59e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.23; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_2">
+      <defs>
+       <path id="m54374a93d3" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m54374a93d3" x="132.48" y="156.395676" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="132.48" y="171.817551" transform="rotate(-0 132.48 171.817551)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_3">
+      <path d="M 197.824244 156.395676 
+L 197.824244 82.08 
+" clip-path="url(#p8c5892f59e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.23; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m54374a93d3" x="197.824244" y="156.395676" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="197.824244" y="171.817551" transform="rotate(-0 197.824244 171.817551)">20</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_5">
+      <path d="M 263.168488 156.395676 
+L 263.168488 82.08 
+" clip-path="url(#p8c5892f59e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.23; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#m54374a93d3" x="263.168488" y="156.395676" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="263.168488" y="171.817551" transform="rotate(-0 263.168488 171.817551)">40</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_7">
+      <path d="M 328.512733 156.395676 
+L 328.512733 82.08 
+" clip-path="url(#p8c5892f59e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.23; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_8">
+      <g>
+       <use xlink:href="#m54374a93d3" x="328.512733" y="156.395676" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="328.512733" y="171.817551" transform="rotate(-0 328.512733 171.817551)">60</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_9">
+      <path d="M 393.856977 156.395676 
+L 393.856977 82.08 
+" clip-path="url(#p8c5892f59e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.23; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_10">
+      <g>
+       <use xlink:href="#m54374a93d3" x="393.856977" y="156.395676" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="393.856977" y="171.817551" transform="rotate(-0 393.856977 171.817551)">80</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_11">
+      <path d="M 459.201221 156.395676 
+L 459.201221 82.08 
+" clip-path="url(#p8c5892f59e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.23; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_12">
+      <g>
+       <use xlink:href="#m54374a93d3" x="459.201221" y="156.395676" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="459.201221" y="171.817551" transform="rotate(-0 459.201221 171.817551)">100</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_13"/>
+     <g id="text_7">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="128.98" y="99.77073" transform="rotate(-0 128.98 99.77073)">等待交接</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_14"/>
+     <g id="text_8">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="128.98" y="147.66393" transform="rotate(-0 128.98 147.66393)">重叠交接</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 132.48 85.457985 
+L 441.689342 85.457985 
+L 441.689342 105.103006 
+L 132.48 105.103006 
+z
+" clip-path="url(#p8c5892f59e)" style="fill: #aa493d"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 441.689342 85.457985 
+L 453.036522 85.457985 
+L 453.036522 105.103006 
+L 441.689342 105.103006 
+z
+" clip-path="url(#p8c5892f59e)" style="fill: #386eaa"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 132.48 133.37267 
+L 132.480039 133.37267 
+L 132.480039 153.01769 
+L 132.48 153.01769 
+z
+" clip-path="url(#p8c5892f59e)" style="fill: #aa493d"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 132.480039 133.37267 
+L 149.446948 133.37267 
+L 149.446948 153.01769 
+L 132.480039 153.01769 
+z
+" clip-path="url(#p8c5892f59e)" style="fill: #386eaa"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 132.48 156.395676 
+L 501.12 156.395676 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="287.084671" y="98.460183" transform="rotate(-0 287.084671 98.460183)">等待 94.64 s</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="457.93734" y="97.917214" transform="rotate(-0 457.93734 97.917214)">98.11 s</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="154.347766" y="145.831899" transform="rotate(-0 154.347766 145.831899)">5.19 s</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="132.48" y="76.08" transform="rotate(-0 132.48 76.08)">从决定借出到新环境命令可以进卡（秒）</text>
+   </g>
+   <g id="legend_1">
+    <g id="patch_8">
+     <path d="M 132.264 194.40719 
+L 152.264 194.40719 
+L 152.264 187.40719 
+L 132.264 187.40719 
+z
+" style="fill: #aa493d"/>
+    </g>
+    <g id="text_13">
+     <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="160.264" y="194.40719" transform="rotate(-0 160.264 194.40719)">等旧命令归还</text>
+    </g>
+    <g id="patch_9">
+     <path d="M 240.264 194.40719 
+L 260.264 194.40719 
+L 260.264 187.40719 
+L 240.264 187.40719 
+z
+" style="fill: #386eaa"/>
+    </g>
+    <g id="text_14">
+     <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="268.264" y="194.40719" transform="rotate(-0 268.264 194.40719)">其他借卡动作</text>
+    </g>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_10">
+    <path d="M 132.48 357.048 
+L 501.12 357.048 
+L 501.12 245.574486 
+L 132.48 245.574486 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="matplotlib.axis_3">
+    <g id="xtick_7">
+     <g id="line2d_15">
+      <path d="M 132.48 357.048 
+L 132.48 245.574486 
+" clip-path="url(#pbbedc8e199)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.23; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_16">
+      <g>
+       <use xlink:href="#m54374a93d3" x="132.48" y="357.048" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_15">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="132.48" y="372.469875" transform="rotate(-0 132.48 372.469875)">0%</text>
+     </g>
+    </g>
+    <g id="xtick_8">
+     <g id="line2d_17">
+      <path d="M 212.61913 357.048 
+L 212.61913 245.574486 
+" clip-path="url(#pbbedc8e199)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.23; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_18">
+      <g>
+       <use xlink:href="#m54374a93d3" x="212.61913" y="357.048" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_16">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="212.61913" y="372.469875" transform="rotate(-0 212.61913 372.469875)">25%</text>
+     </g>
+    </g>
+    <g id="xtick_9">
+     <g id="line2d_19">
+      <path d="M 292.758261 357.048 
+L 292.758261 245.574486 
+" clip-path="url(#pbbedc8e199)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.23; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_20">
+      <g>
+       <use xlink:href="#m54374a93d3" x="292.758261" y="357.048" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_17">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="292.758261" y="372.469875" transform="rotate(-0 292.758261 372.469875)">50%</text>
+     </g>
+    </g>
+    <g id="xtick_10">
+     <g id="line2d_21">
+      <path d="M 372.897391 357.048 
+L 372.897391 245.574486 
+" clip-path="url(#pbbedc8e199)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.23; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_22">
+      <g>
+       <use xlink:href="#m54374a93d3" x="372.897391" y="357.048" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_18">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="372.897391" y="372.469875" transform="rotate(-0 372.897391 372.469875)">75%</text>
+     </g>
+    </g>
+    <g id="xtick_11">
+     <g id="line2d_23">
+      <path d="M 453.036522 357.048 
+L 453.036522 245.574486 
+" clip-path="url(#pbbedc8e199)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.23; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_24">
+      <g>
+       <use xlink:href="#m54374a93d3" x="453.036522" y="357.048" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_19">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="453.036522" y="372.469875" transform="rotate(-0 453.036522 372.469875)">100%</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_4">
+    <g id="ytick_3">
+     <g id="line2d_25"/>
+     <g id="text_20">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="128.98" y="267.682415" transform="rotate(-0 128.98 267.682415)">训练 step</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_26"/>
+     <g id="text_21">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="128.98" y="305.801478" transform="rotate(-0 128.98 305.801478)">轨迹</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_27"/>
+     <g id="text_22">
+      <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="128.98" y="343.92054" transform="rotate(-0 128.98 343.92054)">GPU 命令</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_11">
+    <path d="M 132.48 250.641464 
+L 453.036522 250.641464 
+L 453.036522 261.308786 
+L 132.48 261.308786 
+z
+" clip-path="url(#pbbedc8e199)" style="fill: #304159"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 132.48 265.118544 
+L 132.48 265.118544 
+L 132.48 275.785866 
+L 132.48 275.785866 
+z
+" clip-path="url(#pbbedc8e199)" style="fill: #17806a"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 132.48 288.739042 
+L 453.036522 288.739042 
+L 453.036522 299.406364 
+L 132.48 299.406364 
+z
+" clip-path="url(#pbbedc8e199)" style="fill: #304159"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 132.48 303.216122 
+L 266.045217 303.216122 
+L 266.045217 313.883444 
+L 132.48 313.883444 
+z
+" clip-path="url(#pbbedc8e199)" style="fill: #17806a"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 132.48 326.836621 
+L 453.036522 326.836621 
+L 453.036522 337.503942 
+L 132.48 337.503942 
+z
+" clip-path="url(#pbbedc8e199)" style="fill: #304159"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 132.48 341.3137 
+L 339.506087 341.3137 
+L 339.506087 351.981022 
+L 132.48 351.981022 
+z
+" clip-path="url(#pbbedc8e199)" style="fill: #17806a"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 132.48 357.048 
+L 501.12 357.048 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #304159" x="461.050435" y="258.611844" transform="rotate(-0 461.050435 258.611844)">2/2</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #17806a" x="140.493913" y="273.088924" transform="rotate(-0 140.493913 273.088924)">0/2</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #304159" x="461.050435" y="296.709422" transform="rotate(-0 461.050435 296.709422)">24/24</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #17806a" x="274.05913" y="311.186502" transform="rotate(-0 274.05913 311.186502)">10/24</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #304159" x="461.050435" y="334.807" transform="rotate(-0 461.050435 334.807)">48/48</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 10px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #17806a" x="347.52" y="349.28408" transform="rotate(-0 347.52 349.28408)">31/48</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="132.48" y="239.574486" transform="rotate(-0 132.48 239.574486)">两组实际完成的工作量（占计划比例）</text>
+   </g>
+  </g>
+  <g id="text_30">
+   <text style="font-size: 16px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #304159" x="34.56" y="26.676" transform="rotate(-0 34.56 26.676)">GPU2 交接耗时由 98.11 秒降至 5.19 秒</text>
+  </g>
+  <g id="text_31">
+   <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="34.56" y="55.404" transform="rotate(-0 34.56 55.404)">真实 PSRL 配对。每组计划两步训练，初始均为两张环境卡与两张推理卡。</text>
+  </g>
+  <g id="text_32">
+   <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="34.56" y="394.3944" transform="rotate(-0 34.56 394.3944)">深蓝为等待组，绿色为重叠组。重叠组在凑齐首批轨迹前退出。</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p8c5892f59e">
+   <rect x="132.48" y="82.08" width="368.64" height="74.315676"/>
+  </clipPath>
+  <clipPath id="pbbedc8e199">
+   <rect x="132.48" y="245.574486" width="368.64" height="111.473514"/>
+  </clipPath>
+ </defs>
+</svg>

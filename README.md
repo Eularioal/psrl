@@ -19,7 +19,7 @@ An Efficient Asynchronous RL Framework for LLM Post-Training
 <a href="https://psrl.readthedocs.io/en/latest/"><img src="https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat" alt="Documentation"></a>
 <a href="https://arxiv.org/abs/2601.12784"><img src="https://img.shields.io/static/v1?label=SIGMOD%202027&message=Paper&color=red" alt="Paper"></a>
 <a href="https://github.com/volcengine/verl"><img src="https://img.shields.io/badge/built%20on-veRL-blueviolet" alt="Built on veRL"></a>
-<a href="./LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-green.svg" alt="License"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-green.svg" alt="License"></a>
 </p>
 
 ---

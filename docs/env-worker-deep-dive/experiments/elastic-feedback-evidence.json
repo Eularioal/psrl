@@ -1,0 +1,82 @@
+{
+  "status": "passed",
+  "initialization_s": 672.3857236914337,
+  "inference_calibration": [
+    {
+      "concurrency": 1,
+      "elapsed_s": 6.137741316109896,
+      "tokens_per_s": 83.4183087280234
+    },
+    {
+      "concurrency": 2,
+      "elapsed_s": 6.211649812757969,
+      "tokens_per_s": 164.8515339510655
+    },
+    {
+      "concurrency": 4,
+      "elapsed_s": 6.0931815057992935,
+      "tokens_per_s": 336.1134077576353
+    },
+    {
+      "concurrency": 8,
+      "elapsed_s": 6.105003360658884,
+      "tokens_per_s": 670.9251015969855
+    },
+    {
+      "concurrency": 16,
+      "elapsed_s": 6.215819424018264,
+      "tokens_per_s": 1317.927603936766
+    }
+  ],
+  "inference_limit": 16,
+  "trials": [
+    {
+      "id": "0-fixed",
+      "total_with_restore_s": 343.78879821300507,
+      "all_episode_results_ready_s": 343.78875379636884,
+      "mean_env_wait_s": 23.667309658788145,
+      "mean_burst_latency_s": 9.653576981654624,
+      "p95_burst_latency_s": 13.091869423165917,
+      "mean_feedback_latency_s": 6.133297491632402,
+      "mean_burst_queue_s": 3.245947754068766,
+      "model_gpu_commands": 0,
+      "restoration_waits_s": [],
+      "transition_calls_s": 0,
+      "model_gpu_compute_overlapping_queries": 0
+    },
+    {
+      "id": "1-resident",
+      "total_with_restore_s": 292.7925833184272,
+      "all_episode_results_ready_s": 292.79253146238625,
+      "mean_env_wait_s": 2.638567239046097e-05,
+      "mean_burst_latency_s": 9.970753005007282,
+      "p95_burst_latency_s": 13.837185190990567,
+      "mean_feedback_latency_s": 6.1547998046502475,
+      "mean_burst_queue_s": 3.375752325053327,
+      "model_gpu_commands": 2,
+      "restoration_waits_s": [],
+      "transition_calls_s": 0,
+      "model_gpu_compute_overlapping_queries": 0
+    },
+    {
+      "id": "2-dynamic",
+      "total_with_restore_s": 291.81233455613256,
+      "all_episode_results_ready_s": 291.81229851953685,
+      "mean_env_wait_s": 0.6351673793047666,
+      "mean_burst_latency_s": 19.86230754936696,
+      "p95_burst_latency_s": 31.392640758305788,
+      "mean_feedback_latency_s": 6.224104110524058,
+      "mean_burst_queue_s": 12.30590409549768,
+      "model_gpu_commands": 2,
+      "restoration_waits_s": [
+        130.67063932307065,
+        107.42192671820521
+      ],
+      "transition_calls_s": 5.161618819460273,
+      "model_gpu_compute_overlapping_queries": 0
+    }
+  ],
+  "task_outputs_identical": true,
+  "physical_release_confirmed": true,
+  "boundary": "Real PSRL EnvRouter and model controls with PostTrain train/verify and generated feedback. The bounded workflow fixes commands and updates. No free-form agent, SMG, PPO, or optimizer on trajectories."
+}

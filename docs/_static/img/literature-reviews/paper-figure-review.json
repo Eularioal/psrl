@@ -1,0 +1,1490 @@
+{
+  "date": "2026-11-23",
+  "scope": "All maintained Markdown scanned for primary paper citations and existing illustration references. Selected mechanism sections read for original-figure additions. This is not a full prose or runtime implementation audit.",
+  "scanned_documents": 201,
+  "documents_with_primary_paper_links": 26,
+  "documents_with_original_figures_added": 12,
+  "original_figures": 22,
+  "source_works": 16,
+  "screen_pages": 24,
+  "placements": 25,
+  "source_manifest": "paper-figures.json",
+  "manual_render_review": "Six sheets with all 24 screen panels opened at native 800-pixel width. Five revised panels (Prism, vLLM mapping, Murakkab b/c and YARN) separately re-opened after repair.",
+  "runtime_experiments": "None. Source retrieval, CPU PDF rendering and document checks only.",
+  "change_state": "Uncommitted in psrl/. Not pushed, merged or deployed.",
+  "documents": [
+    {
+      "document": "docs/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/_static/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/_static/css/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/_static/img/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/_static/img/document-figures/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/_static/img/literature-reviews/README.md",
+      "paper_urls": [
+        "https://www.usenix.org/conference/osdi26/presentation/gao",
+        "https://www.usenix.org/conference/osdi26/presentation/wang-yuanqing",
+        "https://www.usenix.org/conference/osdi26/presentation/chaudhry",
+        "https://www.usenix.org/conference/osdi26/presentation/yu-shan",
+        "https://www.usenix.org/conference/osdi26/presentation/wu-tianyuan",
+        "https://arxiv.org/html/2609.30057v1",
+        "https://arxiv.org/html/2502.10517v1",
+        "https://arxiv.org/html/2510.03334v1",
+        "https://arxiv.org/abs/2506.13131v1",
+        "https://arxiv.org/html/2611.10832v1",
+        "https://arxiv.org/html/2506.10943v2",
+        "https://arxiv.org/abs/2309.06180v1",
+        "https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin",
+        "https://www.usenix.org/conference/osdi24/presentation/fu"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/_static/js/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/_templates/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/design/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/design/architecture.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/design/env_worker.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/design/flexible_rollout.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/design/index.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/design/kv_cache.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/design/parameter_server.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/design/resource_elasticity.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/design/router_tito.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/design/staleness_control.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/design/transfer_queue.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/01-AIRS审计_修复状态与验证范围.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/02-APPS判题_代码隔离与验证边界.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/apps-followup/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/apps-isolation/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/airs-bench-audit/review-round-two/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/01-Env历史_2026年9月EnvWorker原始提案.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/02-Env历史_2026年10月12日资源单元与租约.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/03-Env历史_早期Router执行流程.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/04-Env历史_Science整卡锁与设备账本.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/05-Env历史_修复前账本回收与缺口.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/06-Env历史_72ca50c版本GateAB机制.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/07-Env历史_GateB回复节流机制.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/archive/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/admission_study/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/feedback_pressure/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/joint_gpu_study/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/posttrain_reuse_study/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/resident_sharing_study/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/state_reuse_study/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/env-service-verification/scripts/warm_router_study/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/01-实验总览_调度收益与证据范围.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/02-基线对照_低负载EnvRouter修复验证.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/03-Science训练_三步对照与显存压力.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/04-MPS训练_并行执行与控制修复对照.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/05-容器后端_原生实现修复与Science验证.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/06-训推共享_常驻vLLM与环境并行实验.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/07-vLLM并发_吞吐与请求延迟曲线.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/08-模式选择_Command与Episode及等待预测.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/09-资源分区_静态卡池与推理余量共享.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/10-进程归属_Procfs挂载障碍与处理.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/11-历史审阅_低负载配对与GateAB设计.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/01-任务验收_结果与证据导航.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/02-状态复用_等待与重新加载的前期实验.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/03-动态放置_真实模型驻留与跨卡探索.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/04-动态放置_热卡等待与冷卡加载对照.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/05-评分复用_PostTrain准备成本与整批耗时.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/06-显存压力_提前排队与失败重试.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/07-FlashInfer_进程复用与任务合批.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/08-性能反馈_高压力调度实验.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/figures/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/flashinfer-env/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/scripts/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/01-历史验证_2026年10月13日EnvService修复.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/02-历史对照_Science资源账本与Unit余量.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/03-历史对照_Science跨任务池显存竞争.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/04-历史对照_LAPS训练与EnvRouter开关.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/05-历史对照_同任务多协程GPU并发.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/06-历史过程_Science显存压力与原生任务.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/07-历史过程_固定基线修复与单卡验证.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/08-历史过程_MPS训练并发对照.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/09-历史故障_原生后端修复前生命周期.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/10-历史提案_阶段租约与回填调度.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/11-历史过程_GPU基准接入验证.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/12-历史阶段_2026年10月28日设计与收益.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/experiments/history/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/gpu-job-validation/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/02-统一执行_EnvRouter与容器及预算策略.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/03-容器后端_EnvWorker与Harbor统一实现.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/04-GPU作业_生命周期与任务遥测.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/05-EnvRouter_配置恢复与Worker重试.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/06-工程审查_待修复问题与优先级.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/01-显存准入_实测占用与预约预算.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/02-命令调度_GPU申请归还与状态保留.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/03-进程归属_PID身份与显存记账.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/04-GPU并行_MPS执行后端.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md",
+      "paper_urls": [
+        "https://www.usenix.org/conference/osdi26/presentation/wu-tianyuan",
+        "https://www.usenix.org/conference/osdi24/presentation/sun-biao",
+        "https://www.usenix.org/conference/osdi24/presentation/lin-chaofan",
+        "https://www.usenix.org/conference/atc25/presentation/he-yongjun",
+        "https://arxiv.org/html/2603.13019v1",
+        "https://arxiv.org/html/2606.03077v3",
+        "https://arxiv.org/html/2609.27547v1",
+        "https://www.usenix.org/conference/osdi22/presentation/mohan",
+        "https://www.usenix.org/conference/osdi20/presentation/narayanan-deepak",
+        "https://www.usenix.org/conference/atc22/presentation/choi-seungbeom",
+        "https://arxiv.org/abs/2302.11665",
+        "https://arxiv.org/abs/2401.09670",
+        "https://arxiv.org/html/2609.02109v1",
+        "https://arxiv.org/html/2610.23086v1",
+        "https://arxiv.org/html/2610.23086v1#S4.SS3",
+        "https://arxiv.org/html/2611.16661v1",
+        "https://www.usenix.org/conference/osdi21/presentation/qiao",
+        "https://www.usenix.org/system/files/osdi26-wang-yuanqing.pdf",
+        "https://arxiv.org/html/2607.09207v1",
+        "https://arxiv.org/html/2610.03286v1",
+        "https://arxiv.org/html/2605.06534v2",
+        "https://www.usenix.org/conference/osdi18/presentation/xiao",
+        "https://www.usenix.org/conference/nsdi19/presentation/gu",
+        "https://arxiv.org/html/2006.02464",
+        "https://www.usenix.org/system/files/osdi24-fu.pdf",
+        "https://arxiv.org/html/2608.15127v1",
+        "https://proceedings.neurips.cc/paper/2021/file/8b8388180314a337c9aa3c5aa8e2f37a-Paper.pdf",
+        "https://www.usenix.org/conference/osdi22/presentation/han"
+      ],
+      "paper_figures_added": [
+        "paper-weave-fig01"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/06-训推借卡_Rollout睡眠与归还协议.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/07-状态复用_基线状态寿命与版本正确性.md",
+      "paper_urls": [
+        "https://www.usenix.org/conference/osdi24/presentation/fu"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/08-命令预测_适用条件与时长估计.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/09-动态放置_热卡等待与冷卡重建代码.md",
+      "paper_urls": [
+        "https://www.usenix.org/conference/osdi24/presentation/fu"
+      ],
+      "paper_figures_added": [
+        "paper-serverlessllm-fig03"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/01-任务接入_公共GPU任务与PSRL配方.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/02-任务接入_EnvWorker配置与CUDA验证.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/03-AIRSBench_接入流程与有界验收.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/04-MLGym与SWE及Serve_任务协议与评分训练.md",
+      "paper_urls": [
+        "https://arxiv.org/html/2503.14476v2"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/05-REBench_聊天模型训练接入.md",
+      "paper_urls": [
+        "https://proceedings.mlsys.org/paper_files/paper/2020/hash/d9cd83bc91b8c36a0c7c0fcca59228f2-Abstract.html",
+        "https://www.usenix.org/conference/osdi20/presentation/bai",
+        "https://arxiv.org/abs/2202.07848",
+        "https://arxiv.org/abs/2502.16631",
+        "https://www.usenix.org/conference/fast26/presentation/zeng",
+        "https://arxiv.org/abs/2101.06840"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/06-InferenceBench_评分机制与开关验证.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/03-任务接入/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/01-调度论文_五篇近期顶会工作综述.md",
+      "paper_urls": [
+        "https://www.usenix.org/conference/osdi26/presentation/gao",
+        "https://www.usenix.org/system/files/osdi26-gao.pdf",
+        "https://www.usenix.org/conference/osdi26/presentation/wang-yuanqing",
+        "https://www.usenix.org/system/files/osdi26-wang-yuanqing.pdf",
+        "https://www.usenix.org/conference/osdi26/presentation/chaudhry",
+        "https://www.usenix.org/system/files/osdi26-chaudhry.pdf",
+        "https://www.usenix.org/conference/osdi26/presentation/yu-shan",
+        "https://www.usenix.org/system/files/osdi26-yu-shan.pdf",
+        "https://www.usenix.org/conference/osdi26/presentation/wu-tianyuan",
+        "https://www.usenix.org/system/files/osdi26-wu-tianyuan.pdf"
+      ],
+      "paper_figures_added": [
+        "paper-rollart-fig07",
+        "paper-dynarl-fig06",
+        "paper-murakkab-fig05",
+        "paper-prism-fig04",
+        "paper-weave-fig01"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/02-论文精读_RollArt与DynaRL的Agent调度.md",
+      "paper_urls": [
+        "https://www.usenix.org/conference/osdi26/presentation/gao",
+        "https://www.usenix.org/system/files/osdi26-gao.pdf",
+        "https://www.usenix.org/conference/osdi26/presentation/wang-yuanqing",
+        "https://www.usenix.org/system/files/osdi26-wang-yuanqing.pdf"
+      ],
+      "paper_figures_added": [
+        "paper-rollart-fig08",
+        "paper-rollart-fig09",
+        "paper-dynarl-fig09"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/03-论文精读_KREX共享GPU测量保护.md",
+      "paper_urls": [
+        "https://arxiv.org/html/2609.30057v1",
+        "https://arxiv.org/pdf/2609.30057"
+      ],
+      "paper_figures_added": [
+        "paper-krex-fig01",
+        "paper-krex-fig04"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/04-系统借鉴_YARN资源分配与反馈调度.md",
+      "paper_urls": [
+        "https://arxiv.org/html/2609.30057v1",
+        "https://arxiv.org/abs/2605.31464",
+        "https://proceedings.mlsys.org/paper_files/paper/2020/hash/d9cd83bc91b8c36a0c7c0fcca59228f2-Abstract.html",
+        "https://www.usenix.org/conference/osdi18/presentation/xiao",
+        "https://arxiv.org/abs/2502.10517"
+      ],
+      "paper_figures_added": [
+        "paper-yarn-architecture"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/05-基准调研_GPU任务类型与接入顺序.md",
+      "paper_urls": [
+        "https://arxiv.org/html/2502.10517v1",
+        "https://arxiv.org/abs/2610.36589",
+        "https://arxiv.org/html/2506.22419#S3"
+      ],
+      "paper_figures_added": [
+        "paper-kernelbench-fig01"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/06-基准调研_AI4Infra性能反馈与验证.md",
+      "paper_urls": [
+        "https://arxiv.org/html/2609.30057v1"
+      ],
+      "paper_figures_added": [
+        "paper-krex-fig01"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/07-智能调度_模型决策的已有工作与研究选择.md",
+      "paper_urls": [
+        "https://arxiv.org/abs/2607.22242",
+        "https://arxiv.org/abs/2510.03334",
+        "https://arxiv.org/abs/2506.13131",
+        "https://arxiv.org/abs/2512.14806",
+        "https://proceedings.mlr.press/v306/cao26z.html",
+        "https://arxiv.org/html/2607.22242v1",
+        "https://arxiv.org/html/2510.03334v1",
+        "https://arxiv.org/html/2510.03334v1#S5.SS2",
+        "https://arxiv.org/abs/2506.13131v1",
+        "https://arxiv.org/html/2506.13131v1#S3.SS3.SSS1"
+      ],
+      "paper_figures_added": [
+        "paper-schedmate-fig05",
+        "paper-alphaevolve-fig01"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md",
+      "paper_urls": [
+        "https://arxiv.org/html/2611.10832v1",
+        "https://arxiv.org/abs/2611.10832",
+        "https://arxiv.org/html/2602.05885v1#S3",
+        "https://arxiv.org/html/2611.17294v1",
+        "https://arxiv.org/html/2609.30057v1",
+        "https://arxiv.org/html/2610.03286v1#S4",
+        "https://proceedings.neurips.cc/paper_files/paper/2025/hash/6b41e04c41726e2a60e456d0a2b961ab-Abstract-Conference.html",
+        "https://proceedings.neurips.cc/paper_files/paper/2025/hash/9837dc00ff67d176373268ed48042d49-Abstract-Conference.html",
+        "https://arxiv.org/abs/2511.16043",
+        "https://arxiv.org/abs/2310.02304",
+        "https://openreview.net/pdf?id=pUpzQZTvGY",
+        "https://arxiv.org/html/2506.10943v2",
+        "https://arxiv.org/html/2505.03335v3#S3",
+        "https://arxiv.org/html/2511.16043v2#S3",
+        "https://arxiv.org/html/2505.22954v3",
+        "https://arxiv.org/html/2609.26457v1",
+        "https://arxiv.org/html/2611.11558v1",
+        "https://arxiv.org/html/2610.09426v1",
+        "https://arxiv.org/html/2611.16591v1",
+        "https://proceedings.mlsys.org/paper_files/paper/2020/hash/a06f20b349c6cf09a6b171c71b88bbfc-Abstract.html",
+        "https://arxiv.org/html/2505.03335v3",
+        "https://arxiv.org/html/2511.16043v2",
+        "https://arxiv.org/abs/2611.11558",
+        "https://arxiv.org/abs/2610.09426",
+        "https://arxiv.org/abs/2611.16591"
+      ],
+      "paper_figures_added": [
+        "paper-firepool-fig02",
+        "paper-firepool-fig03",
+        "paper-cuda-agent-fig02",
+        "paper-seal-fig01"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/01-Science介绍_已接入任务与研究价值.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/02-Science现状_任务覆盖与接入路线.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/03-Science验收_接入流程与环境隔离.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/04-调度研究_研究全景交流版.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/05-调度研究_研究全景与证据详解.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/06-历史阶段_2026年10月28日实现与规划.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/milestones/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/01-调度研究_Rollout完成时间与反馈保真.md",
+      "paper_urls": [
+        "https://arxiv.org/abs/2502.10517",
+        "https://arxiv.org/html/2609.26777v1",
+        "https://arxiv.org/html/2602.05885v1",
+        "https://arxiv.org/abs/2609.30057",
+        "https://www.usenix.org/conference/nsdi26/presentation/gao-wei",
+        "https://arxiv.org/abs/2605.31464",
+        "https://arxiv.org/abs/2103.01304",
+        "https://arxiv.org/abs/2602.13692",
+        "https://arxiv.org/abs/2511.02230",
+        "https://arxiv.org/abs/2609.18849",
+        "https://arxiv.org/abs/1206.5865",
+        "https://arxiv.org/abs/2608.01804",
+        "https://arxiv.org/html/2610.03286v1#S4",
+        "https://arxiv.org/abs/2001.05811",
+        "https://www.usenix.org/conference/osdi20/presentation/narayanan-deepak",
+        "https://arxiv.org/html/2610.37230v1",
+        "https://arxiv.org/html/2606.21401v2",
+        "https://arxiv.org/html/2610.03286v1",
+        "https://www.usenix.org/conference/osdi26/presentation/gao",
+        "https://www.usenix.org/conference/osdi26/presentation/wang-yuanqing",
+        "https://www.usenix.org/conference/osdi26/presentation/chaudhry",
+        "https://www.usenix.org/conference/osdi26/presentation/wu-tianyuan",
+        "https://arxiv.org/html/2401.09670v3#S4.SS3",
+        "https://arxiv.org/abs/2512.22560",
+        "https://arxiv.org/abs/2608.02611",
+        "https://arxiv.org/abs/2607.17979"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/02-研究场景_非计时评分的GPU任务.md",
+      "paper_urls": [
+        "https://arxiv.org/abs/2610.36589",
+        "https://arxiv.org/abs/2401.14351",
+        "https://arxiv.org/abs/2610.25219",
+        "https://arxiv.org/html/2609.22978v1",
+        "https://arxiv.org/abs/2605.00528",
+        "https://arxiv.org/html/2610.03286v1",
+        "https://arxiv.org/html/2610.37230v1",
+        "https://www.usenix.org/conference/osdi24/presentation/fu",
+        "https://arxiv.org/abs/2409.09202",
+        "https://arxiv.org/html/2602.11210v2",
+        "https://arxiv.org/html/2608.15241v1"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/03-动态放置_会话与GPU执行分离.md",
+      "paper_urls": [
+        "https://arxiv.org/abs/2401.09670",
+        "https://arxiv.org/abs/2407.00079"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/04-状态复用_真实任务中的收益空间核查.md",
+      "paper_urls": [
+        "https://proceedings.mlsys.org/paper_files/paper/2024/hash/906419cd502575b617cc489a1a696a67-Abstract-Conference.html",
+        "https://arxiv.org/abs/1807.05118"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/05-状态调度_主存受限时的准备状态保留.md",
+      "paper_urls": [
+        "https://www.usenix.org/conference/osdi18/presentation/lee",
+        "https://www.usenix.org/conference/osdi24/presentation/fu",
+        "https://www.usenix.org/conference/osdi16/technical-sessions/presentation/grandl_graphene",
+        "https://www.usenix.org/system/files/nsdi23-yu.pdf",
+        "https://arxiv.org/abs/2511.02230",
+        "https://arxiv.org/abs/2605.00528",
+        "https://arxiv.org/html/2609.33762v1",
+        "https://arxiv.org/html/2610.37230v1",
+        "https://arxiv.org/html/2604.26963v2"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/06-训推借卡_可撤回执行与反馈依赖.md",
+      "paper_urls": [
+        "https://proceedings.mlr.press/v306/qiao26i.html",
+        "https://arxiv.org/html/2604.07874v1",
+        "https://arxiv.org/html/2605.06534v2#S4.SS1",
+        "https://arxiv.org/html/2607.09207v2#S6.SS3",
+        "https://arxiv.org/html/2610.03286v1#S4.SS3",
+        "https://arxiv.org/html/2607.22242v1",
+        "https://arxiv.org/html/2611.05269v1"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/07-并发准入_未知命令时长与反馈调度.md",
+      "paper_urls": [
+        "https://www.usenix.org/conference/nsdi19/presentation/gu",
+        "https://www.usenix.org/conference/osdi18/presentation/xiao",
+        "https://arxiv.org/abs/2604.26963v3",
+        "https://arxiv.org/abs/2607.22242v1"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/08-运行准备_重复准备成本与GPU就绪调度.md",
+      "paper_urls": [
+        "https://arxiv.org/html/2611.10832v1",
+        "https://www.usenix.org/system/files/conference/nsdi26/nsdi26spring_lou_prepub.pdf",
+        "https://arxiv.org/abs/2610.38196v2"
+      ],
+      "paper_figures_added": [
+        "paper-firepool-fig03"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/agentic_rl/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/agentic_rl/index.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/agentic_rl/retool/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/agentic_rl/retool/index.md",
+      "paper_urls": [
+        "https://arxiv.org/abs/2504.11536"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/examples/agentic_rl/swe/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/agentic_rl/swe/index.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/generative_reward_model/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/generative_reward_model/index.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/index.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/rlvr/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/rlvr/common.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/rlvr/dapo.md",
+      "paper_urls": [
+        "https://arxiv.org/abs/2503.14476"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/examples/rlvr/grpo.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/rlvr/index.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/examples/rlvr/ppo.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/index.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/overview/01-PSRL入门_从一道题到模型更新.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/overview/02-PSRL入门_系统与实验术语速查.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/overview/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/overview/index.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/01-PSRL原理_AgentLoop与工具调用.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/02-强化学习_PPO与GRPO及DAPO.md",
+      "paper_urls": [
+        "https://arxiv.org/abs/1506.02438",
+        "https://arxiv.org/abs/2503.14476",
+        "https://arxiv.org/abs/1912.09729"
+      ],
+      "paper_figures_added": [],
+      "decision": "Existing citations checked as candidates. Bibliographic listings, historical measurements and incidental citations do not need repeated paper figures."
+    },
+    {
+      "document": "docs/psrl/03-模型配置_上下文长度与生成限制.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/04-高速传输_NIXL内存搬运机制.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/05-训练排障_DAPO退化诊断.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/06-训练排障_SciAccel显存不足与修复.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/07-源码阅读_从Science脚本到训练流程.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/cluster-pitfall-checks/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/01-PSRL运行_准备启动与监控.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/02-集群预检_依赖地址与GPU资源核验.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/03-启动排障_单机与多机故障复盘.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/incidents/01-Docker故障_2026年10月20日存储挂起.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/psrl-run-guide/incidents/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md",
+      "paper_urls": [
+        "https://arxiv.org/abs/2309.06180v1",
+        "https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin",
+        "https://www.usenix.org/system/files/osdi22-yu.pdf"
+      ],
+      "paper_figures_added": [
+        "paper-vllm-fig06",
+        "paper-vllm-fig08",
+        "paper-distserve-fig06"
+      ],
+      "decision": "Added directly relevant original mechanism figure with Chinese reading guide."
+    },
+    {
+      "document": "docs/psrl/推理与训练/02-训练并行_模型切分与通信带宽.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/推理与训练/03-训推协作_异步流水线与版本协调.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/推理与训练/04-性能分析_公式速查与历史实验.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/psrl/推理与训练/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/site-maintenance.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/claude-code/01-ClaudeCode_命令执行与权限设置.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/claude-code/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/codex/01-智能体配置_Rule与Memory及Skill.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/codex/02-Codex配置_备份与按需恢复.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/codex/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/codex/scripts/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/codex/session-archives/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/codex/session-management/01-Codex会话_恢复命名与历史回看.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/codex/session-management/02-Codex终端_滚动与Tmux排查.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/codex/session-management/03-Codex故障_会话数据库与SIGBUS排查.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/codex/session-management/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/linux/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/文档维护/01-文档组织_阅读结构与维护规范.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/文档维护/02-文档时效_2026年11月历史巡检.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/文档维护/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/系统基础/01-运行环境_Shell与Python及Conda.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/系统基础/02-操作系统_进程与文件映射及SQLite.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/系统基础/03-文件系统_inode与链接及Docker写回.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/系统基础/04-网络通信_HTTP请求与GateB调用链.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/系统基础/05-GPU并行_CUDA上下文与计算竞争.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tools/系统基础/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tutorial/README.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tutorial/configuration.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tutorial/index.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tutorial/installation.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tutorial/performance_tuning.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    },
+    {
+      "document": "docs/tutorial/quickstart.md",
+      "paper_urls": [],
+      "paper_figures_added": [],
+      "decision": "No primary paper citation requiring an original figure in this pass. Existing local explanation figures retained."
+    }
+  ],
+  "checks": {
+    "original_figures": "passed: 22 original figures and 24 screen pages, source and output hashes, attribution and complete document placements",
+    "document_coverage": "passed: 201 documents, 187 existing registered explanation figures and 310 existing placements, all retained",
+    "local_links": {
+      "files": 205,
+      "local_links": 12241,
+      "anchors": 2731,
+      "source_line_locations": 2524,
+      "linked_screen_pages": 769,
+      "errors": []
+    },
+    "source_checks": {
+      "ruff": "passed",
+      "format": "passed",
+      "prose": "passed",
+      "git_diff_check": "passed"
+    },
+    "strict_sphinx": "Not rerun. Scope is direct Markdown image rendering and link validation.",
+    "runtime_experiments": "None."
+  },
+  "paper_source_checks": "Selected official PDFs and versioned arXiv sources inspected against figure number, page and Chinese reading guide. Numerical results not remeasured. No exhaustive re-audit of the remaining citations."
+}

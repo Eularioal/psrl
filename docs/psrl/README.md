@@ -2,6 +2,16 @@
 
 这里按 PSRL 的运行链路组织文档，重点说明 Agent、环境、训练和推理进程怎样协作。阅读路径默认已有机器学习与 Agent 基础，系统机制在需要时解释；算法公式和完整推导可按问题进入专题。
 
+<!-- figure:map-9e82b92589 -->
+先按当前问题选择阅读入口，再在下方目录点击对应文档。
+
+[![PSRL：从一次做题理解训练框架：阅读地图（1/2）](../_static/img/document-figures/map-9e82b92589-screen.png)](../_static/img/document-figures/map-9e82b92589.png)
+
+[![PSRL：从一次做题理解训练框架：阅读地图（2/2）](../_static/img/document-figures/map-9e82b92589-screen-02.png)](../_static/img/document-figures/map-9e82b92589.png)
+
+每张彩色书页列出对应入口中的实际章节，帮助按问题定位阅读内容。编号只用于图中定位，不要求顺序通读。 [查看矢量图](../_static/img/document-figures/map-9e82b92589.svg)。
+<!-- /figure:map-9e82b92589 -->
+
 ## 目录
 
 - [第一次读，从这里开始](#第一次读从这里开始)
@@ -11,47 +21,50 @@
 
 ## 第一次读，从这里开始
 
-1. [Agent Loop 做题例子](psrl-agent-loop-harbor-tool-calling.md#7-用一个修代码例子从零理解)：命令由哪个组件执行，观察怎样回传，TITO 怎样记录训练数据。
-2. [一条回答怎样变成模型更新](vllm-and-training-parallelism/rl-training-workflow.md)：采样、训练与权重同步怎样重叠，模型版本差距怎样约束。
-3. [Env 当前设计](../env-worker-deep-dive/knowledge/current-design.md)：任务容器怎样申请资源、执行和释放。
+1. [Agent Loop 做题例子](01-PSRL原理_AgentLoop与工具调用.md#先用一个修代码例子理解全程)：命令由哪个组件执行，观察怎样回传，TITO 怎样记录训练数据。
+2. [一条回答怎样变成模型更新](推理与训练/03-训推协作_异步流水线与版本协调.md)：采样、训练与权重同步怎样重叠，模型版本差距怎样约束。
+3. [Env 当前设计](../env-worker-deep-dive/knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md)：任务容器怎样申请资源、执行和释放。
 
-如果术语较多，随时查[全局术语表](../overview/glossary.md)。正文会解释理解本节必需的词，专题链接用于继续深入；也可以按其中一个具体步骤继续提问。
+如果术语较多，随时查[全局术语表](../overview/02-PSRL入门_系统与实验术语速查.md)。正文会解释理解本节必需的词，专题链接用于继续深入；也可以按其中一个具体步骤继续提问。
 
 ## 运行、排查与源码
 
 | 想做什么 | 阅读入口 |
 |---|---|
-| 准备一次运行 | [基础运行](psrl-run-guide/getting-started.md) → [集群检查](psrl-run-guide/cluster-preflight.md) |
-| 理解 Ray 怎样启动角色 | [Ray 与生成长尾](psrl-run-guide/ray-and-rollout.md) |
-| 看指标、调批量、找进程 | [监控与批量配置](psrl-run-guide/monitoring-and-batches.md) |
-| 从启动脚本读到具体代码 | [训练源码地图](psrl-training-script-source-map.md) |
-| 找所有运行专题 | [运行指南索引](psrl-run-guide.md) |
+| 准备一次运行 | [基础运行](psrl-run-guide/01-PSRL运行_准备启动与监控.md#准备与启动) → [集群检查](psrl-run-guide/02-集群预检_依赖地址与GPU资源核验.md) |
+| 理解 Ray 怎样启动和协调各角色 | [Ray 在 PSRL 中的职责](psrl-run-guide/01-PSRL运行_准备启动与监控.md#ray-角色与-rollout-流程) · [Ray Core 的通用概念](psrl-run-guide/01-PSRL运行_准备启动与监控.md#ray-core-的通用概念) |
+| 看指标、调批量、找进程 | [监控与批量配置](psrl-run-guide/01-PSRL运行_准备启动与监控.md#监控批量与排障) |
+| 从启动脚本读到具体代码 | [训练源码地图](07-源码阅读_从Science脚本到训练流程.md) |
+| 连续阅读完整运行流程 | [PSRL 运行指南](psrl-run-guide/01-PSRL运行_准备启动与监控.md) |
 
 ## 算法与系统专题
 
 | 想了解的问题 | 阅读入口 |
 |---|---|
-| 奖励从哪里来 | [RLVR：可验证奖励](rlvr-explained.md) |
-| 一题要采几条回答 | [PPO、GRPO、DAPO 的样本组织](ppo-grpo-dapo-sample-requirements.md) |
-| 优势估计怎样综合多步反馈 | [GAE 数值例子](gae-bias-variance-tradeoff.md) |
-| 多条生成请求怎样一起运行 | [vLLM 机制](vllm-and-training-parallelism/inference-mechanisms.md) |
-| 缓存怎样分页、共享与复制 | [缓存管理详解](vllm-and-training-parallelism/inference-mechanisms.md#kv-缓存管理详解块表写时复制与前缀复用) |
-| 模型怎样分给多张卡 | [训练并行](vllm-and-training-parallelism/training-parallelism.md) |
-| token 怎样参与训练损失 | [分组采样与损失](vllm-and-training-parallelism/rl-loss-and-sampling.md) |
-| 输入、输出和总长度怎样限制 | [上下文长度与模型配置](hf-config-context-window.md) |
-| 权重和缓存怎样传输 | [NIXL](nixl-explained.md) |
-| 查公式与历史吞吐数据 | [实验与公式速查](vllm-and-training-parallelism/experiments-and-reference.md) |
+| PPO、GRPO、DAPO 的完整原理 | [从奖励到模型更新](02-强化学习_PPO与GRPO及DAPO.md)：同篇串联 RLVR、PPO/GAE、分组优势、裁剪、token 损失、熵与 KL，附完整手算 |
+| 多条生成请求怎样一起运行 | [vLLM 机制](推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md) |
+| 缓存怎样分页、共享与复制 | [缓存管理详解](推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md#kv-缓存管理详解块表写时复制与前缀复用) |
+| 模型怎样分给多张卡 | [训练并行](推理与训练/02-训练并行_模型切分与通信带宽.md) |
+| 输入、输出和总长度怎样限制 | [上下文长度与模型配置](03-模型配置_上下文长度与生成限制.md) |
+| 权重和缓存怎样传输 | [NIXL](04-高速传输_NIXL内存搬运机制.md) |
+| 查公式与历史吞吐数据 | [实验与公式速查](推理与训练/04-性能分析_公式速查与历史实验.md) |
 
-完整阅读路线见[推理与训练并行索引](vllm-and-training-parallelism.md)。
+理解算法先读完整原理一篇，通过目录定位所需章节。系统专题的完整阅读路线见[推理与训练并行索引](推理与训练/README.md)。
 
 ## 历史故障与深入推导
 
 | 记录 | 保留价值 |
 |---|---|
-| [启动故障](psrl-run-guide/startup-incident-reviews.md) | IP、数据类型、环境覆盖与上下文配置的真实失败 |
-| [首步 backward OOM](../sciaccel-grpo-oom-analysis.md) | 长轨迹、训练分片和五步复测数据 |
-| [DAPO 训练退化](dapo-training-collapse-diagnosis.md) | 联合读取质量指标，并链接指标与数值推导两篇深入资料 |
-| [EnvWorker 早期设计](psrl-env-service-envworker-design.md) | 2026-09 提案的资源管理动机，现状看当前设计 |
-| [Docker 挂起与恢复](psrl-run-guide/incidents/docker-storage-hang-20261020.md) | 线程与存储证据、独立恢复测试及清理结果 |
+| [启动故障](psrl-run-guide/03-启动排障_单机与多机故障复盘.md) | 近期Env的Ray注册与依赖失败，以及历史IP、数据和上下文故障，按进程启动阶段定位 |
+| [首步 backward OOM](06-训练排障_SciAccel显存不足与修复.md) | 长轨迹、训练分片和五步复测数据 |
+| [DAPO 训练退化](05-训练排障_DAPO退化诊断.md) | 历史退化现象、质量与效率指标、MFU 计算口径，通用原理回链完整教程 |
+| [EnvWorker 早期设计](../env-worker-deep-dive/archive/01-Env历史_2026年9月EnvWorker原始提案.md) | 2026-09 提案的资源管理动机，现状看当前设计 |
+| [Docker 挂起与恢复](psrl-run-guide/incidents/01-Docker故障_2026年10月20日存储挂起.md) | 线程与存储证据、独立恢复测试及清理结果 |
 
 历史记录保留原版本、日期和证据条件，实际运行前重新检查节点与依赖。[返回文档总览](../README.md)。
+
+## 目录补充导航
+
+- [集群问题检查脚本与证据](cluster-pitfall-checks/README.md)
+- [集群预检与运行故障](psrl-run-guide/README.md)
+- [推理与训练专题：阅读顺序与章节索引](推理与训练/README.md)

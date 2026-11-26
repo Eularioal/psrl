@@ -1,0 +1,3830 @@
+[
+  {
+    "id": "explained-overview-c46ca98",
+    "kind": "evidence_explanation",
+    "title": "系统总览：样本流与参数流",
+    "caption": "样本流回答“训练什么”，参数流回答“以后用哪个模型”。两条路径可重叠，仍需版本约束。 架构解释，不由图推断任意样本都可无限滞后。",
+    "status": "teaching",
+    "documents": [
+      "docs/design/architecture.md"
+    ],
+    "original": "docs/_static/img/overview.svg",
+    "original_sha256": "925247334c20d9bed9f012aa1ca81f008789538c526335d3c20229e2bc90911a",
+    "explanation": {
+      "title": "系统总览：样本流与参数流",
+      "question": "一次回答怎样变成训练数据，新参数又怎样回到生成侧？",
+      "scope": "PSRL 架构关系。箭头区分样本、参数与协调。",
+      "states": [
+        [
+          "采集样本",
+          [
+            "Worker 请求生成并调用工具",
+            "评分后写入样本数据"
+          ]
+        ],
+        [
+          "消费样本",
+          [
+            "TransferQueue 提供所需字段",
+            "训练端按批次条件读取"
+          ]
+        ],
+        [
+          "更新生成",
+          [
+            "训练参数推送到参数服务",
+            "协调生成实例加载新版本"
+          ]
+        ]
+      ],
+      "result": "样本流回答“训练什么”，参数流回答“以后用哪个模型”。两条路径可重叠，仍需版本约束。",
+      "limit": "架构解释，不由图推断任意样本都可无限滞后。"
+    },
+    "reading_question": "一次回答怎样变成训练数据，新参数又怎样回到生成侧？",
+    "explanation_review": {
+      "target_questions": [
+        "一次回答怎样变成训练数据，新参数又怎样回到生成侧？",
+        "采集样本：发生什么及为什么？",
+        "消费样本：发生什么及为什么？",
+        "更新生成：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-rollout_techniques-cf838b0",
+    "kind": "evidence_explanation",
+    "title": "Rollout协调：路由、保留与冗余各解决什么",
+    "caption": "三种动作作用于不同问题，不能把打开更多机制等同于自动更快。 机制条件依实现和配置，不声称所有组合都有收益。",
+    "status": "teaching",
+    "documents": [
+      "docs/design/flexible_rollout.md"
+    ],
+    "original": "docs/_static/img/rollout_techniques.svg",
+    "original_sha256": "30452cd304f33f7c83e010dc148572230ba6422d2e7bbb41cf2177fee0a81dd4",
+    "explanation": {
+      "title": "Rollout协调：路由、保留与冗余各解决什么",
+      "question": "遇到长短不一的轨迹，应该改放置、保留进度还是重复采样？",
+      "scope": "PSRL 生成协调机制，具体开关以配置为准。",
+      "states": [
+        [
+          "放到哪里",
+          [
+            "路由选择生成实例",
+            "改变请求等待与负载"
+          ]
+        ],
+        [
+          "中断后怎么办",
+          [
+            "Partial rollout 保留已完成部分",
+            "续跑仍核对版本与合法状态"
+          ]
+        ],
+        [
+          "长尾如何处理",
+          [
+            "冗余以额外工作换减少等待",
+            "比较整批就绪时间与浪费"
+          ]
+        ]
+      ],
+      "result": "三种动作作用于不同问题，不能把打开更多机制等同于自动更快。",
+      "limit": "机制条件依实现和配置，不声称所有组合都有收益。"
+    },
+    "reading_question": "遇到长短不一的轨迹，应该改放置、保留进度还是重复采样？",
+    "explanation_review": {
+      "target_questions": [
+        "遇到长短不一的轨迹，应该改放置、保留进度还是重复采样？",
+        "放到哪里：发生什么及为什么？",
+        "中断后怎么办：发生什么及为什么？",
+        "长尾如何处理：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-ps-d3858c3",
+    "kind": "evidence_explanation",
+    "title": "参数服务：发布、传输、启用是三个动作",
+    "caption": "发布目标版本不等于所有副本已同步完成，启用时刻由完整协议决定。 实际 NIXL 后端与同步范围按配置确认。",
+    "status": "teaching",
+    "documents": [
+      "docs/design/parameter_server.md"
+    ],
+    "original": "docs/_static/img/ps.svg",
+    "original_sha256": "741ecd14adbd9f6bac7c4ea21380ac9c4e90c942f205a174366100efb12fcfeb",
+    "explanation": {
+      "title": "参数服务：发布、传输、启用是三个动作",
+      "question": "训练已经产出参数，为什么生成端还不能立刻宣布使用新版本？",
+      "scope": "参数服务 PS 协调训练侧 push 与生成侧 pull。",
+      "states": [
+        [
+          "训练侧发布",
+          [
+            "产生目标参数版本",
+            "保持传输缓冲区有效"
+          ]
+        ],
+        [
+          "传输进行中",
+          [
+            "参数服务提供存储与句柄",
+            "生成端按协议拉取权重"
+          ]
+        ],
+        [
+          "完成后启用",
+          [
+            "核对传输完成及缓存处理",
+            "协调恢复生成与版本标记"
+          ]
+        ]
+      ],
+      "result": "发布目标版本不等于所有副本已同步完成，启用时刻由完整协议决定。",
+      "limit": "实际 NIXL 后端与同步范围按配置确认。"
+    },
+    "reading_question": "训练已经产出参数，为什么生成端还不能立刻宣布使用新版本？",
+    "explanation_review": {
+      "target_questions": [
+        "训练已经产出参数，为什么生成端还不能立刻宣布使用新版本？",
+        "训练侧发布：发生什么及为什么？",
+        "传输进行中：发生什么及为什么？",
+        "完成后启用：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-staleness_compatibility-ab32e0e",
+    "kind": "evidence_explanation",
+    "title": "样本滞后：版本年龄与可消费区间",
+    "caption": "版本检查提供消费边界，不能由此推导“异步训练无质量代价”。 实际容忍度与缓冲区规则见正文和运行配置。",
+    "status": "teaching",
+    "documents": [
+      "docs/design/staleness_control.md"
+    ],
+    "original": "docs/_static/img/staleness_compatibility.svg",
+    "original_sha256": "7fd490c44de9e0e6579ae488a45ba78d0c64a56503946aaf070636adc4488366",
+    "explanation": {
+      "title": "样本滞后：版本年龄与可消费区间",
+      "question": "晚完成的样本还能进入哪一批训练，怎样限制它有多旧？",
+      "scope": "PSRL 细粒度 staleness 控制，图中版本表示模型版本。",
+      "states": [
+        [
+          "样本产生",
+          [
+            "记录生成时的模型版本",
+            "长轨迹完成时训练可能已前进"
+          ]
+        ],
+        [
+          "匹配消费位置",
+          [
+            "核对版本年龄与缓冲区条件",
+            "只放入允许的位置"
+          ]
+        ],
+        [
+          "解释效果",
+          [
+            "约束样本版本滞后范围",
+            "质量和速度仍需分别评估"
+          ]
+        ]
+      ],
+      "result": "版本检查提供消费边界，不能由此推导“异步训练无质量代价”。",
+      "limit": "实际容忍度与缓冲区规则见正文和运行配置。"
+    },
+    "reading_question": "晚完成的样本还能进入哪一批训练，怎样限制它有多旧？",
+    "explanation_review": {
+      "target_questions": [
+        "晚完成的样本还能进入哪一批训练，怎样限制它有多旧？",
+        "样本产生：发生什么及为什么？",
+        "匹配消费位置：发生什么及为什么？",
+        "解释效果：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-resident-compute-sharing-f533859",
+    "kind": "evidence_explanation",
+    "title": "短任务共享：暂停为什么没有更快",
+    "caption": "在这些短任务里，主动暂停主要损失环境进度，未超过现有共享。 内部生成、到达响应和整批时间边界不同，不代表真实 PPO 训练收益。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/06-训推共享_常驻vLLM与环境并行实验.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/resident-compute-sharing.png",
+    "original_sha256": "f1b97e0870b8101f353107ef293f7a80533de46abd38d3ab8b1ce1105268eb06",
+    "explanation": {
+      "title": "短任务共享：暂停为什么没有更快",
+      "question": "环境命令与推理能重叠时，暂停环境付出了什么代价？",
+      "scope": "历史实测：36 区块、三次配对重复，MPS 关闭。",
+      "states": [
+        [
+          "先看总量",
+          [
+            "相同更新与生成工作",
+            "比值基准为计算串行"
+          ]
+        ],
+        [
+          "再看长短条件",
+          [
+            "区分 8 / 256 次更新",
+            "区分间隔与连续请求"
+          ]
+        ],
+        [
+          "看损失出现在哪",
+          [
+            "连续长工具下暂停多 14.49%",
+            "模型内部生成时间几乎不变"
+          ]
+        ]
+      ],
+      "result": "在这些短任务里，主动暂停主要损失环境进度，未超过现有共享。",
+      "limit": "内部生成、到达响应和整批时间边界不同，不代表真实 PPO 训练收益。"
+    },
+    "reading_question": "环境命令与推理能重叠时，暂停环境付出了什么代价？",
+    "explanation_review": {
+      "target_questions": [
+        "环境命令与推理能重叠时，暂停环境付出了什么代价？",
+        "先看总量：发生什么及为什么？",
+        "再看长短条件：发生什么及为什么？",
+        "看损失出现在哪：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-resident-compute-sharing-long-be21a7c",
+    "kind": "evidence_explanation",
+    "title": "长任务共享：保留有益重叠",
+    "caption": "更长命令仍可因计算重叠受益，不能仅因推理重新活跃就无条件停环境。 计时排除公共加载，批次边界含真实借还。不是新一次实机实验。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/06-训推共享_常驻vLLM与环境并行实验.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/resident-compute-sharing-long.svg",
+    "original_sha256": "b8b0faa73115b3ccae22211144a9892680dccefb8317a02f4472f0d638e9cc87",
+    "explanation": {
+      "title": "长任务共享：保留有益重叠",
+      "question": "环境工作延长后，合作式暂停能否胜过直接共享？",
+      "scope": "历史实测：4B 环境模型、固定 448 次更新，两次配对。",
+      "states": [
+        [
+          "固定工作量",
+          [
+            "两种请求到达方式",
+            "同一组复用已加载模型"
+          ]
+        ],
+        [
+          "比较整批完成",
+          [
+            "共享约 39.11 / 27.98 秒",
+            "暂停约 48.80 / 48.34 秒"
+          ]
+        ],
+        [
+          "读出代价",
+          [
+            "暂停比共享多 24.78% / 72.77%",
+            "误差线为两次最小与最大"
+          ]
+        ]
+      ],
+      "result": "更长命令仍可因计算重叠受益，不能仅因推理重新活跃就无条件停环境。",
+      "limit": "计时排除公共加载，批次边界含真实借还。不是新一次实机实验。"
+    },
+    "reading_question": "环境工作延长后，合作式暂停能否胜过直接共享？",
+    "explanation_review": {
+      "target_questions": [
+        "环境工作延长后，合作式暂停能否胜过直接共享？",
+        "固定工作量：发生什么及为什么？",
+        "比较整批完成：发生什么及为什么？",
+        "读出代价：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-single-gpu-inference-curve-evidence-7df94d3",
+    "kind": "evidence_explanation",
+    "title": "单卡并发：吞吐增长与单请求变慢",
+    "caption": "并发上限依模型、长度和延迟目标而变。延迟增加的拐点不等于硬件已饱和。 同批请求波次，不是持续到达稳态。未加入环境共运行或 PPO。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/07-vLLM并发_吞吐与请求延迟曲线.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/single-gpu-inference-curve-evidence.svg",
+    "original_sha256": "93e4f9fc5ffd78809b76406569713d274c553c9c347a57fce1e07eb2c1c6433e",
+    "explanation": {
+      "title": "单卡并发：吞吐增长与单请求变慢",
+      "question": "并发加到多少开始明显变慢，能否把它叫作 SM 饱和上限？",
+      "scope": "H20、Qwen2.5-3B、固定输出 512 token，单 vLLM 引擎。",
+      "states": [
+        [
+          "读横轴条件",
+          [
+            "128 / 2048 token 输入",
+            "分别比较各自单请求基准"
+          ]
+        ],
+        [
+          "同时看两个量",
+          [
+            "短输入 64 并发延迟约多 12%",
+            "吞吐在扫描范围仍增长"
+          ]
+        ],
+        [
+          "别误认硬件上限",
+          [
+            "长输入 32 并发约多 52%",
+            "未观察到明确吞吐平台"
+          ]
+        ]
+      ],
+      "result": "并发上限依模型、长度和延迟目标而变。延迟增加的拐点不等于硬件已饱和。",
+      "limit": "同批请求波次，不是持续到达稳态。未加入环境共运行或 PPO。"
+    },
+    "reading_question": "并发加到多少开始明显变慢，能否把它叫作 SM 饱和上限？",
+    "explanation_review": {
+      "target_questions": [
+        "并发加到多少开始明显变慢，能否把它叫作 SM 饱和上限？",
+        "读横轴条件：发生什么及为什么？",
+        "同时看两个量：发生什么及为什么？",
+        "别误认硬件上限：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-automatic-reservation-70f6d6f",
+    "kind": "evidence_explanation",
+    "title": "自动持有：短空档与长空档分开看",
+    "caption": "可归还决定动作是否合法，等待和重载成本才决定是否值得。该版不保证最优。 单次矩阵含命令准备波动，31.6% 不是严格隔离的纯调度收益。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/08-模式选择_Command与Episode及等待预测.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/automatic-reservation.svg",
+    "original_sha256": "d824a126e272076a3f6c5d5a2318b9498c984634f0089f11e2779ba3d5720e5f",
+    "explanation": {
+      "title": "自动持有：短空档与长空档分开看",
+      "question": "auto 为什么选了 command，却没有在所有空档下更快？",
+      "scope": "PostTrain 六组真实对照，空档受控设为 6 或 30 秒。",
+      "states": [
+        [
+          "选模式的依据",
+          [
+            "auto 按租约判断可归还条件",
+            "不是先试遍两种模式再选最快"
+          ]
+        ],
+        [
+          "短空档风险",
+          [
+            "6 秒组 episode 292.65 秒",
+            "auto 为 327.82 秒"
+          ]
+        ],
+        [
+          "长空档机会",
+          [
+            "30 秒组 episode 296.73 秒",
+            "auto 为 202.95 秒"
+          ]
+        ]
+      ],
+      "result": "可归还决定动作是否合法，等待和重载成本才决定是否值得。该版不保证最优。",
+      "limit": "单次矩阵含命令准备波动，31.6% 不是严格隔离的纯调度收益。"
+    },
+    "reading_question": "auto 为什么选了 command，却没有在所有空档下更快？",
+    "explanation_review": {
+      "target_questions": [
+        "auto 为什么选了 command，却没有在所有空档下更快？",
+        "选模式的依据：发生什么及为什么？",
+        "短空档风险：发生什么及为什么？",
+        "长空档机会：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-capacity-model-c7da45b",
+    "kind": "evidence_explanation",
+    "title": "解码建模：拟合点与留出点怎样读",
+    "caption": "Roofline 为瓶颈提供结构，经验修正贴近实测，预测范围仍需明确限定。 未覆盖 prefill、SMG 排队、同步、多实例或环境共卡，无跨日期泛化证据。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/09-资源分区_静态卡池与推理余量共享.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/capacity-model.svg",
+    "original_sha256": "1f8a4d61f18d6072fb3942d5e59cf0fbe38a05761c7a7d76137ea2974e26ab75",
+    "explanation": {
+      "title": "解码建模：拟合点与留出点怎样读",
+      "question": "模型能预测哪些时间，又没有覆盖哪些等待？",
+      "scope": "历史解码容量模型。圆点拟合，叉号为留出配置。",
+      "states": [
+        [
+          "输入条件",
+          [
+            "模型、批量与上下文长度",
+            "显式考虑 KV 读取影响"
+          ]
+        ],
+        [
+          "输出对象",
+          [
+            "预测 decode 平均每 token 时间",
+            "不是整条请求响应时间"
+          ]
+        ],
+        [
+          "留出检验",
+          [
+            "同一批次按配置留出",
+            "观察误差而非只看拟合点"
+          ]
+        ]
+      ],
+      "result": "Roofline 为瓶颈提供结构，经验修正贴近实测，预测范围仍需明确限定。",
+      "limit": "未覆盖 prefill、SMG 排队、同步、多实例或环境共卡，无跨日期泛化证据。"
+    },
+    "reading_question": "模型能预测哪些时间，又没有覆盖哪些等待？",
+    "explanation_review": {
+      "target_questions": [
+        "模型能预测哪些时间，又没有覆盖哪些等待？",
+        "输入条件：发生什么及为什么？",
+        "输出对象：发生什么及为什么？",
+        "留出检验：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-environment-capacity-dd7a546",
+    "kind": "evidence_explanation",
+    "title": "环境容量：并发越大是否越快",
+    "caption": "容量调优必须把准备和竞争都计入整批时间，校准本身也要摊销。 实机与离线面板计时对象不同，预测不替代新布局的真实训练验证。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/09-资源分区_静态卡池与推理余量共享.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/environment-capacity.svg",
+    "original_sha256": "74a34ab8ed0068f2be545eee876cfa9d9f79cae183170c3e0fd274d0ee06412b",
+    "explanation": {
+      "title": "环境容量：并发越大是否越快",
+      "question": "相同六个环境任务，怎样选每卡并发上限并计算校准成本？",
+      "scope": "左图真实单卡六任务，右图两卡十二轨迹离线预测。",
+      "states": [
+        [
+          "同量扫描",
+          [
+            "任务与更新次数固定",
+            "比较整组六任务完成时间"
+          ]
+        ],
+        [
+          "读预测用途",
+          [
+            "留出配置用于检查误差",
+            "离线预测用于筛选候选布局"
+          ]
+        ],
+        [
+          "算校准回本",
+          [
+            "完整扫描约 37.8 分钟",
+            "短任务未必值得重新扫描"
+          ]
+        ]
+      ],
+      "result": "容量调优必须把准备和竞争都计入整批时间，校准本身也要摊销。",
+      "limit": "实机与离线面板计时对象不同，预测不替代新布局的真实训练验证。"
+    },
+    "reading_question": "相同六个环境任务，怎样选每卡并发上限并计算校准成本？",
+    "explanation_review": {
+      "target_questions": [
+        "相同六个环境任务，怎样选每卡并发上限并计算校准成本？",
+        "同量扫描：发生什么及为什么？",
+        "读预测用途：发生什么及为什么？",
+        "算校准回本：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-capacity-training-2330452",
+    "kind": "evidence_explanation",
+    "title": "真实训练：四步累计怎样体现共享收益",
+    "caption": "共享提前推进环境任务，但异步等待会跨 step 转移。应比较固定整批工作。 仅一对运行，token 与策略选择仍有差异，未证明胜过全部静态分卡方案。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/09-资源分区_静态卡池与推理余量共享.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/capacity-training.svg",
+    "original_sha256": "8962e3bad97a40f3d8fd5af5f1c8e51bb19edb9eafd01c9b80e8c90e9945ef31",
+    "explanation": {
+      "title": "真实训练：四步累计怎样体现共享收益",
+      "question": "某些 step 变慢，为什么四步合计仍可更快？",
+      "scope": "历史 PSRL 配对：各 4 step、48 轨迹、96 GPU 命令、144 请求。",
+      "states": [
+        [
+          "相同工作层次",
+          [
+            "每条轨迹含适配与独立评分",
+            "累计数量不等于同时并发"
+          ]
+        ],
+        [
+          "看累计而非挑单步",
+          [
+            "step 合计 1343.00 → 1107.20 秒",
+            "减少约 17.56%"
+          ]
+        ],
+        [
+          "再看完整边界",
+          [
+            "启动至清理 2169.85 → 1876.52 秒",
+            "减少约 13.52%"
+          ]
+        ]
+      ],
+      "result": "共享提前推进环境任务，但异步等待会跨 step 转移。应比较固定整批工作。",
+      "limit": "仅一对运行，token 与策略选择仍有差异，未证明胜过全部静态分卡方案。"
+    },
+    "reading_question": "某些 step 变慢，为什么四步合计仍可更快？",
+    "explanation_review": {
+      "target_questions": [
+        "某些 step 变慢，为什么四步合计仍可更快？",
+        "相同工作层次：发生什么及为什么？",
+        "看累计而非挑单步：发生什么及为什么？",
+        "再看完整边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-capacity-command-timeline-ea05e12",
+    "kind": "evidence_explanation",
+    "title": "命令时间线：共享加速与同步等待并存",
+    "caption": "设备多了可以缩短队列，同时长持卡命令可能延长模型控制等待，两项要联合比较。 本图为历史观测。阶段暂缓规则在对应报告中仍为待验证方案。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/09-资源分区_静态卡池与推理余量共享.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/capacity-command-timeline.svg",
+    "original_sha256": "abe9a683052536f8e049c41289302b5957105c373c970b4b72a6aeade01efa4b",
+    "explanation": {
+      "title": "命令时间线：共享加速与同步等待并存",
+      "question": "环境有了更多卡，为什么模型同步仍可能被长命令挡住？",
+      "scope": "色条为准入至物理归还，包含准备与收尾。红条为模型控制等待。",
+      "states": [
+        [
+          "更多设备",
+          [
+            "共享卡接受合规环境命令",
+            "命令有机会更早开始"
+          ]
+        ],
+        [
+          "跨越同步时刻",
+          [
+            "命令尚未归还时同步等待",
+            "不是所有色条都在运行 GPU 核"
+          ]
+        ],
+        [
+          "后续方向",
+          [
+            "先试训练阶段暂缓新共享",
+            "再量化预测器的额外收益"
+          ]
+        ]
+      ],
+      "result": "设备多了可以缩短队列，同时长持卡命令可能延长模型控制等待，两项要联合比较。",
+      "limit": "本图为历史观测。阶段暂缓规则在对应报告中仍为待验证方案。"
+    },
+    "reading_question": "环境有了更多卡，为什么模型同步仍可能被长命令挡住？",
+    "explanation_review": {
+      "target_questions": [
+        "环境有了更多卡，为什么模型同步仍可能被长命令挡住？",
+        "更多设备：发生什么及为什么？",
+        "跨越同步时刻：发生什么及为什么？",
+        "后续方向：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-integrated-partition-3748353",
+    "kind": "evidence_explanation",
+    "title": "六步对照：整批完成与异步边界",
+    "caption": "共享收益应沿完整流水线验证，不能把某一步或单请求的速度当作最终训练吞吐。 本报告的分卡、并发和版本条件固定，不能与其他实验直接相减归因。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/09-资源分区_静态卡池与推理余量共享.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/integrated-partition.svg",
+    "original_sha256": "441cd637988992883c65b4de10410a4699f90db94609ab83dc9d819e47fddba1",
+    "explanation": {
+      "title": "六步对照：整批完成与异步边界",
+      "question": "真实 PSRL 里共享推理卡，收益是否能传到整个训练任务？",
+      "scope": "六步静态池与常驻共享，初始化、训练和收尾分别计时。",
+      "states": [
+        [
+          "固定累计工作",
+          [
+            "各 48 次适配、48 次评分",
+            "各 144 次模型请求"
+          ]
+        ],
+        [
+          "看异步节奏",
+          [
+            "单步时间有长短交替",
+            "共享第六步更慢仍可能累计更快"
+          ]
+        ],
+        [
+          "保留因果边界",
+          [
+            "模型 token 数接近但不全相同",
+            "报告初始化与工作阶段两种范围"
+          ]
+        ]
+      ],
+      "result": "共享收益应沿完整流水线验证，不能把某一步或单请求的速度当作最终训练吞吐。",
+      "limit": "本报告的分卡、并发和版本条件固定，不能与其他实验直接相减归因。"
+    },
+    "reading_question": "真实 PSRL 里共享推理卡，收益是否能传到整个训练任务？",
+    "explanation_review": {
+      "target_questions": [
+        "真实 PSRL 里共享推理卡，收益是否能传到整个训练任务？",
+        "固定累计工作：发生什么及为什么？",
+        "看异步节奏：发生什么及为什么？",
+        "保留因果边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-paired-latency-d4ff470",
+    "kind": "evidence_explanation",
+    "title": "配对延迟：低负载的差异有多稳定",
+    "caption": "支持低负载控制路径接近 OFF，尚不足以给出稳定加速或尾延迟保证。 总驱动时间不含导入前启动和结束后的独立释放复核。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/11-历史审阅_低负载配对与GateAB设计.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/router-paired-review-20261020/paired-latency.png",
+    "original_sha256": "7f6bf72364419935043ab5f7d056e30060f60fd3c95e75f43b5587001e778412",
+    "explanation": {
+      "title": "配对延迟：低负载的差异有多稳定",
+      "question": "两对实验中 ON 工作更短，足以宣布稳定加速吗？",
+      "scope": "历史两对运行。散点为任务观测，黑线为均值。",
+      "states": [
+        [
+          "先核重复单位",
+          [
+            "16 条任务共享两对运行环境",
+            "不是 16 次独立重复"
+          ]
+        ],
+        [
+          "区分计时范围",
+          [
+            "工作合计 171.68 → 160.84 秒",
+            "驱动合计 213.96 → 217.15 秒"
+          ]
+        ],
+        [
+          "保留启动成本",
+          [
+            "ON 需初始化 Router 与节点服务",
+            "两对差异方向不完全一致"
+          ]
+        ]
+      ],
+      "result": "支持低负载控制路径接近 OFF，尚不足以给出稳定加速或尾延迟保证。",
+      "limit": "总驱动时间不含导入前启动和结束后的独立释放复核。"
+    },
+    "reading_question": "两对实验中 ON 工作更短，足以宣布稳定加速吗？",
+    "explanation_review": {
+      "target_questions": [
+        "两对实验中 ON 工作更短，足以宣布稳定加速吗？",
+        "先核重复单位：发生什么及为什么？",
+        "区分计时范围：发生什么及为什么？",
+        "保留启动成本：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-warm-placement-core-0d59e83",
+    "kind": "evidence_explanation",
+    "title": "热卡等待与冷卡加载：何时换卡",
+    "caption": "预测的价值是同时识别该等与该加载的条件，而不是总去空卡。 条件来自固定程序的重复实验，需额外显存存放模型副本。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/gpu-benchmarks/04-动态放置_热卡等待与冷卡加载对照.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/figures/warm-placement-core.svg",
+    "original_sha256": "0b1c1bf61ce97547b84db8335f5d184f2f6958f7f40841fae563ea660e481ad7",
+    "explanation": {
+      "title": "热卡等待与冷卡加载：何时换卡",
+      "question": "同一模型状态可复用时，空卡是否总比等待热卡好？",
+      "scope": "真实 PostTrain 固定模型与输入，四类等待和目标规模。",
+      "states": [
+        [
+          "短等待",
+          [
+            "已有热状态可以复用",
+            "盲目复制会增加加载"
+          ]
+        ],
+        [
+          "长等待",
+          [
+            "直接等待约 86.11 秒",
+            "预测选择约 52.80 秒"
+          ]
+        ],
+        [
+          "看整组和清理",
+          [
+            "四类各一次累计少 19.14%",
+            "含冷卡清理后少 18.29%"
+          ]
+        ]
+      ],
+      "result": "预测的价值是同时识别该等与该加载的条件，而不是总去空卡。",
+      "limit": "条件来自固定程序的重复实验，需额外显存存放模型副本。"
+    },
+    "reading_question": "同一模型状态可复用时，空卡是否总比等待热卡好？",
+    "explanation_review": {
+      "target_questions": [
+        "同一模型状态可复用时，空卡是否总比等待热卡好？",
+        "短等待：发生什么及为什么？",
+        "长等待：发生什么及为什么？",
+        "看整组和清理：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-warm-placement-decomposition-860b7c4",
+    "kind": "evidence_explanation",
+    "title": "换卡成本分解：快在哪里又付出了什么",
+    "caption": "换卡是用空间与准备工作换更早执行，等待很短时往往不值得。 模型副本约 7.49 GiB，另有 1 GiB 临时空间预算，条件限于该实验。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/gpu-benchmarks/04-动态放置_热卡等待与冷卡加载对照.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/figures/warm-placement-decomposition.svg",
+    "original_sha256": "f398338d1c616f409332a558643131635667bcb97eaaaeef0c454b6e3aca0fc6",
+    "explanation": {
+      "title": "换卡成本分解：快在哪里又付出了什么",
+      "question": "冷卡执行提前了多少，哪些加载和清理开销不能漏掉？",
+      "scope": "固定模型与工作量，拆解等待、准备、执行和清理。",
+      "states": [
+        [
+          "原卡路径",
+          [
+            "已有模型可复用",
+            "支付在途任务剩余等待"
+          ]
+        ],
+        [
+          "冷卡路径",
+          [
+            "需要额外副本与临时空间",
+            "支付加载及后续清理"
+          ]
+        ],
+        [
+          "相同边界比较",
+          [
+            "目标请求完成与整组不同",
+            "把额外空间和准备一并记账"
+          ]
+        ]
+      ],
+      "result": "换卡是用空间与准备工作换更早执行，等待很短时往往不值得。",
+      "limit": "模型副本约 7.49 GiB，另有 1 GiB 临时空间预算，条件限于该实验。"
+    },
+    "reading_question": "冷卡执行提前了多少，哪些加载和清理开销不能漏掉？",
+    "explanation_review": {
+      "target_questions": [
+        "冷卡执行提前了多少，哪些加载和清理开销不能漏掉？",
+        "原卡路径：发生什么及为什么？",
+        "冷卡路径：发生什么及为什么？",
+        "相同边界比较：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-warm-placement-faults-6ec458f",
+    "kind": "evidence_explanation",
+    "title": "预测失败：过期、高估与容量不足",
+    "caption": "预测器必须给出可信度与适用条件，安全检查和保守退路比单个低误差更重要。 故障组有提前停止与未完成样本，不能补成计划次数或稳定长期比例。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/gpu-benchmarks/04-动态放置_热卡等待与冷卡加载对照.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/gpu-benchmarks/figures/warm-placement-faults.svg",
+    "original_sha256": "496ebcdfbf177fc5d90c62ff7759c4000465525e5b062551e8c14cbfde44edef",
+    "explanation": {
+      "title": "预测失败：过期、高估与容量不足",
+      "question": "预测错了会怎样，什么时候应回到保守路径？",
+      "scope": "主动注入预测放大、进度过期和冷卡预算不足。",
+      "states": [
+        [
+          "高估剩余等待",
+          [
+            "错误地选择换卡加载",
+            "短等待实验反而增加耗时"
+          ]
+        ],
+        [
+          "进度过期",
+          [
+            "把旧进度标为未知",
+            "保留热卡等待路径"
+          ]
+        ],
+        [
+          "空间不足",
+          [
+            "拒绝建立冷卡副本",
+            "不能用预测收益绕过容量检查"
+          ]
+        ]
+      ],
+      "result": "预测器必须给出可信度与适用条件，安全检查和保守退路比单个低误差更重要。",
+      "limit": "故障组有提前停止与未完成样本，不能补成计划次数或稳定长期比例。"
+    },
+    "reading_question": "预测错了会怎样，什么时候应回到保守路径？",
+    "explanation_review": {
+      "target_questions": [
+        "预测错了会怎样，什么时候应回到保守路径？",
+        "高估剩余等待：发生什么及为什么？",
+        "进度过期：发生什么及为什么？",
+        "空间不足：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-comparison-b8c2052",
+    "kind": "evidence_explanation",
+    "title": "CUDA准入：三条执行，一条等待",
+    "caption": "活动三条与等待一条同时出现，释放后继续推进，构成容量准入的直接证据。 主要持有显存，计算很小。GPU 窗口缩短不等于真实训练吞吐同倍增加。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/02-历史对照_Science资源账本与Unit余量.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-cuda-ab-20261016-fixed/comparison.png",
+    "original_sha256": "f7f45cbbaf8dff9cf3fbc1dc20a6067225bda8ba8650c973b45b0a69c8866a04",
+    "explanation": {
+      "title": "CUDA准入：三条执行，一条等待",
+      "question": "怎样证明不是容器名额，而是显存预算真正限制了并发？",
+      "scope": "历史 4 个 CUDA 探针，每个申报 14 GiB，设备预算 55 GiB。",
+      "states": [
+        [
+          "可并行三条",
+          [
+            "3 × 14 = 42 ≤ 55 GiB",
+            "实际显存约 42.95 GiB"
+          ]
+        ],
+        [
+          "第四条必须等",
+          [
+            "4 × 14 = 56 > 55 GiB",
+            "其他资源允许四容器"
+          ]
+        ],
+        [
+          "释放后继续",
+          [
+            "前批释放后第四条执行",
+            "八次结果校验均为 42"
+          ]
+        ]
+      ],
+      "result": "活动三条与等待一条同时出现，释放后继续推进，构成容量准入的直接证据。",
+      "limit": "主要持有显存，计算很小。GPU 窗口缩短不等于真实训练吞吐同倍增加。"
+    },
+    "reading_question": "怎样证明不是容器名额，而是显存预算真正限制了并发？",
+    "explanation_review": {
+      "target_questions": [
+        "怎样证明不是容器名额，而是显存预算真正限制了并发？",
+        "可并行三条：发生什么及为什么？",
+        "第四条必须等：发生什么及为什么？",
+        "释放后继续：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-cuda-preflight-9c45888",
+    "kind": "evidence_explanation",
+    "title": "CUDA压力预检：失败与监控故障分开",
+    "caption": "任务执行、遥测采集和汇总退出码是不同证据，需逐层定位。 历史短预检，不证明完整训练已通过，也未验证 vLLM 同卡借还。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/03-历史对照_Science跨任务池显存竞争.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-pressure-ab-20261018/preflight/cuda-preflight.png",
+    "original_sha256": "0b7eda651e879b1ac4103122daa006dc5c4adb0694ab3e5a7cb8ffce490803ee",
+    "explanation": {
+      "title": "CUDA压力预检：失败与监控故障分开",
+      "question": "OFF 两次 OOM 与 ON 汇总丢失，分别属于什么问题？",
+      "scope": "四次真实压力命令对照，训练与推理卡独立。",
+      "states": [
+        [
+          "任务结果",
+          [
+            "OFF 两次成功、两次 OOM",
+            "ON 四次压力执行成功"
+          ]
+        ],
+        [
+          "监控故障",
+          [
+            "ON 采样超时中断汇总",
+            "不把缺失值补零或当任务失败"
+          ]
+        ],
+        [
+          "证据处理",
+          [
+            "核对独立 trial 与 CUDA 结果",
+            "保留缺失遥测的结论边界"
+          ]
+        ]
+      ],
+      "result": "任务执行、遥测采集和汇总退出码是不同证据，需逐层定位。",
+      "limit": "历史短预检，不证明完整训练已通过，也未验证 vLLM 同卡借还。"
+    },
+    "reading_question": "OFF 两次 OOM 与 ON 汇总丢失，分别属于什么问题？",
+    "explanation_review": {
+      "target_questions": [
+        "OFF 两次 OOM 与 ON 汇总丢失，分别属于什么问题？",
+        "任务结果：发生什么及为什么？",
+        "监控故障：发生什么及为什么？",
+        "证据处理：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-pressure-matched-c114981",
+    "kind": "evidence_explanation",
+    "title": "等步数不等工作：前两步压力对照",
+    "caption": "OOM 提前结束会减少后续工作，不能把失败更快当作同量工作更高效。 共同完成前缀只是描述性对照，不能消除 ON 后续崩溃的稳定性问题。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/03-历史对照_Science跨任务池显存竞争.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-pressure-ab-20261018/pressure-matched.png",
+    "original_sha256": "909fc29dc17548104de4cb68ae0bb0ab1ab625dcf67a434825e81af1f5627c4a",
+    "explanation": {
+      "title": "等步数不等工作：前两步压力对照",
+      "question": "ON 更慢却有更多有效 token，该怎样比较？",
+      "scope": "共同前缀各两步、八轨迹，ON 后续 actor 崩溃单独保留。",
+      "states": [
+        [
+          "先看完成内容",
+          [
+            "压力成功 OFF 4/8、ON 8/8",
+            "有效 token 13474 → 33158"
+          ]
+        ],
+        [
+          "再看时间",
+          [
+            "681.56 → 1367.75 秒",
+            "ON 做了更多有效工作"
+          ]
+        ],
+        [
+          "选择对应指标",
+          [
+            "有效 token/s 约增加 22.6%",
+            "不是单步提速或质量提升"
+          ]
+        ]
+      ],
+      "result": "OOM 提前结束会减少后续工作，不能把失败更快当作同量工作更高效。",
+      "limit": "共同完成前缀只是描述性对照，不能消除 ON 后续崩溃的稳定性问题。"
+    },
+    "reading_question": "ON 更慢却有更多有效 token，该怎样比较？",
+    "explanation_review": {
+      "target_questions": [
+        "ON 更慢却有更多有效 token，该怎样比较？",
+        "先看完成内容：发生什么及为什么？",
+        "再看时间：发生什么及为什么？",
+        "选择对应指标：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-pressure-training-curves-ed8f503",
+    "kind": "evidence_explanation",
+    "title": "训练曲线：没有完成的数据留空",
+    "caption": "曲线展示已发生的执行，未完成区域保持缺失，不能当作零 loss 或零熵。 实验有 actor 崩溃与工作量差异，不据此声称稳定训练优势。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/03-历史对照_Science跨任务池显存竞争.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-pressure-ab-20261018/pressure-training-curves.png",
+    "original_sha256": "421ac08d8aecbae941e4eaba8093983225cdb3385a446f5bfa49e9ca94a9f1d9",
+    "explanation": {
+      "title": "训练曲线：没有完成的数据留空",
+      "question": "OFF 四步、ON 两步，曲线应该在哪些地方停止比较？",
+      "scope": "历史压力对照，缺失步骤不填零。",
+      "states": [
+        [
+          "共有前缀",
+          [
+            "只在前两步逐项比较",
+            "同时核对 token、奖励与梯度"
+          ]
+        ],
+        [
+          "各自实际记录",
+          [
+            "OFF 后续两步保留",
+            "ON 无对应值，不连虚构曲线"
+          ]
+        ],
+        [
+          "解释零梯度",
+          [
+            "组内同奖励可导致零优势",
+            "不自动说明训练程序没执行"
+          ]
+        ]
+      ],
+      "result": "曲线展示已发生的执行，未完成区域保持缺失，不能当作零 loss 或零熵。",
+      "limit": "实验有 actor 崩溃与工作量差异，不据此声称稳定训练优势。"
+    },
+    "reading_question": "OFF 四步、ON 两步，曲线应该在哪些地方停止比较？",
+    "explanation_review": {
+      "target_questions": [
+        "OFF 四步、ON 两步，曲线应该在哪些地方停止比较？",
+        "共有前缀：发生什么及为什么？",
+        "各自实际记录：发生什么及为什么？",
+        "解释零梯度：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-historical-timing-7286182",
+    "kind": "evidence_explanation",
+    "title": "历史耗时分解：等待采样不全是排队",
+    "caption": "耗时主要增长在采样侧，但采样等待不是单一 Router 开销。 历史整任务保留模式，不能当作当前 command 模式结果。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/03-历史对照_Science跨任务池显存竞争.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-pressure-ab-20261018/baseline-0eeead8/historical-timing.png",
+    "original_sha256": "f489b7ba2d692a2b9aa855e7a095ef1bf2cd9d1b745b22c51d3cfd5f4d107d10",
+    "explanation": {
+      "title": "历史耗时分解：等待采样不全是排队",
+      "question": "ON 增加的时间主要在哪里，能否全算给 Router？",
+      "scope": "历史共同两步耗时，图名不表示该图运行了指定旧提交。",
+      "states": [
+        [
+          "先分阶段",
+          [
+            "等待采样、log-prob、actor 更新",
+            "使用相同 step 边界"
+          ]
+        ],
+        [
+          "观察差值",
+          [
+            "等待采样 591.58 → 1211.56 秒",
+            "它还包含工具、评分与清理"
+          ]
+        ],
+        [
+          "保留工作差异",
+          [
+            "ON 有更多有效 token",
+            "训练阶段也需处理更多数据"
+          ]
+        ]
+      ],
+      "result": "耗时主要增长在采样侧，但采样等待不是单一 Router 开销。",
+      "limit": "历史整任务保留模式，不能当作当前 command 模式结果。"
+    },
+    "reading_question": "ON 增加的时间主要在哪里，能否全算给 Router？",
+    "explanation_review": {
+      "target_questions": [
+        "ON 增加的时间主要在哪里，能否全算给 Router？",
+        "先分阶段：发生什么及为什么？",
+        "观察差值：发生什么及为什么？",
+        "保留工作差异：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-fixed-work-outcomes-c85fca2",
+    "kind": "evidence_explanation",
+    "title": "固定完成量：成功数对齐后再看耗时",
+    "caption": "更少 OOM 不保证更短总时间，粗粒度保留也可能抵消准入的好处。 一次历史版本对照，不把整树代码差异全部归因于 Router。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/03-历史对照_Science跨任务池显存竞争.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-fixed-work-20261019/fixed-work-outcomes.png",
+    "original_sha256": "207d4cb7988ec5cd1f18058061120b97cd615c756b27e0874221402b3fcdaa53",
+    "explanation": {
+      "title": "固定完成量：成功数对齐后再看耗时",
+      "question": "补齐同样成功任务后，旧基线与 Router 各付出了什么？",
+      "scope": "指定旧提交与历史 Router，保留版本差异和重试。",
+      "states": [
+        [
+          "先对齐完成量",
+          [
+            "成功任务数相同",
+            "失败尝试另行计数"
+          ]
+        ],
+        [
+          "再看代价",
+          [
+            "OOM 会增加准备、失败和清理",
+            "整任务持卡也会错失空档"
+          ]
+        ],
+        [
+          "分开两个机制",
+          [
+            "避免失败是准入收益",
+            "缩短持卡期是下一层优化"
+          ]
+        ]
+      ],
+      "result": "更少 OOM 不保证更短总时间，粗粒度保留也可能抵消准入的好处。",
+      "limit": "一次历史版本对照，不把整树代码差异全部归因于 Router。"
+    },
+    "reading_question": "补齐同样成功任务后，旧基线与 Router 各付出了什么？",
+    "explanation_review": {
+      "target_questions": [
+        "补齐同样成功任务后，旧基线与 Router 各付出了什么？",
+        "先对齐完成量：发生什么及为什么？",
+        "再看代价：发生什么及为什么？",
+        "分开两个机制：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-fixed-work-training-4f78708",
+    "kind": "evidence_explanation",
+    "title": "固定完成量下的训练信号",
+    "caption": "等量成功让调度比较更公平，但不保证训练张量与学习信号完全一致。 历史单次曲线，不构成收敛或模型能力改善证据。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/03-历史对照_Science跨任务池显存竞争.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-fixed-work-20261019/fixed-work-training.png",
+    "original_sha256": "348f8244850700e60d04fe665ef45e285799da8ab75738e9233c04c879008cfa",
+    "explanation": {
+      "title": "固定完成量下的训练信号",
+      "question": "成功数量相同后，奖励、有效 token 和梯度是否也相同？",
+      "scope": "历史等完成量训练指标，逐步保留真实观测。",
+      "states": [
+        [
+          "核对有效数据",
+          [
+            "成功任务数只是第一层",
+            "有效 token 与长度仍可能不同"
+          ]
+        ],
+        [
+          "核对奖励与优势",
+          [
+            "相同奖励会导致零相对方向",
+            "不能仅看 loss 是否为零"
+          ]
+        ],
+        [
+          "核对执行与结论",
+          [
+            "训练调用和非零更新分开",
+            "模型效果需另有评估"
+          ]
+        ]
+      ],
+      "result": "等量成功让调度比较更公平，但不保证训练张量与学习信号完全一致。",
+      "limit": "历史单次曲线，不构成收敛或模型能力改善证据。"
+    },
+    "reading_question": "成功数量相同后，奖励、有效 token 和梯度是否也相同？",
+    "explanation_review": {
+      "target_questions": [
+        "成功数量相同后，奖励、有效 token 和梯度是否也相同？",
+        "核对有效数据：发生什么及为什么？",
+        "核对奖励与优势：发生什么及为什么？",
+        "核对执行与结论：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-fixed-work-environment-memory-53e9b38",
+    "kind": "evidence_explanation",
+    "title": "物理显存空闲，为什么等待者进不来",
+    "caption": "这是时间上的额度保留问题，command 模式针对这类空档，不是显存碎片证明。 虚线与实占的差值不自动代表可安全借用，仍要遵守归还协议。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/03-历史对照_Science跨任务池显存竞争.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-fixed-work-20261019/fixed-work-environment-memory.png",
+    "original_sha256": "baa56a6473bab38d063786e831229d8177376c0e5e5ed0d434f42fba30cb9a23",
+    "explanation": {
+      "title": "物理显存空闲，为什么等待者进不来",
+      "question": "整任务保留如何产生“有空卡却还排队”的时间窗口？",
+      "scope": "历史 episode 保留：红虚线为申报，绿色为实际显存。",
+      "states": [
+        [
+          "GPU 命令已结束",
+          [
+            "实际显存下降甚至为零",
+            "容器继续 Agent 交互与评分"
+          ]
+        ],
+        [
+          "账本仍保留",
+          [
+            "整任务租约尚未结束",
+            "等待者仍因预算不足阻塞"
+          ]
+        ],
+        [
+          "看到优化空间",
+          [
+            "命令边界核验物理释放",
+            "可让预算生命周期更贴近使用"
+          ]
+        ]
+      ],
+      "result": "这是时间上的额度保留问题，command 模式针对这类空档，不是显存碎片证明。",
+      "limit": "虚线与实占的差值不自动代表可安全借用，仍要遵守归还协议。"
+    },
+    "reading_question": "整任务保留如何产生“有空卡却还排队”的时间窗口？",
+    "explanation_review": {
+      "target_questions": [
+        "整任务保留如何产生“有空卡却还排队”的时间窗口？",
+        "GPU 命令已结束：发生什么及为什么？",
+        "账本仍保留：发生什么及为什么？",
+        "看到优化空间：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-failure-evidence-dd5c2ec",
+    "kind": "evidence_explanation",
+    "title": "故障证据：外部占用导致训练 OOM",
+    "caption": "这是基础设施干扰与 OOM 的证据图，不能拿失败时间评估调度速度。 没有移走外部进程后的完整训练证据，不把假设修复写成已验证。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/04-历史对照_LAPS训练与EnvRouter开关.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-training-ab-20261016-retry/failure-evidence.png",
+    "original_sha256": "8ffbad4b33b0b1b03f2bdbc03cb4c80a4bca9c34e5d286fed195fea82d4186ab",
+    "explanation": {
+      "title": "故障证据：外部占用导致训练 OOM",
+      "question": "怎样区分训卡被外部占用，与环境调度准入失败？",
+      "scope": "历史 GPU 设备采样与 OOM 异常，同次训练未完成。",
+      "states": [
+        [
+          "确认故障位置",
+          [
+            "发生在模型前向",
+            "不是任务 Docker 的压力命令"
+          ]
+        ],
+        [
+          "确认显存归属",
+          [
+            "异常含外部约 76.11 GiB",
+            "训练进程约 18.70 GiB"
+          ]
+        ],
+        [
+          "限制性能结论",
+          [
+            "失败前阶段数据保留",
+            "ON/OFF 没有完整公平对照"
+          ]
+        ]
+      ],
+      "result": "这是基础设施干扰与 OOM 的证据图，不能拿失败时间评估调度速度。",
+      "limit": "没有移走外部进程后的完整训练证据，不把假设修复写成已验证。"
+    },
+    "reading_question": "怎样区分训卡被外部占用，与环境调度准入失败？",
+    "explanation_review": {
+      "target_questions": [
+        "怎样区分训卡被外部占用，与环境调度准入失败？",
+        "确认故障位置：发生什么及为什么？",
+        "确认显存归属：发生什么及为什么？",
+        "限制性能结论：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-training-curves-22c06d0",
+    "kind": "evidence_explanation",
+    "title": "LAPS两步训练：链路通过与加速分开",
+    "caption": "功能链路可通过，但性能结论需要同边界、同工作量和足够对照。 历史一次配对，不代表当前代码速度，也不是模型学习效果对照。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/04-历史对照_LAPS训练与EnvRouter开关.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-training-ab-20261016-live/training-curves.png",
+    "original_sha256": "c72118fc949bbd90c449f0150305f56a95474f07b654a0fc34ba7bda05d71f36",
+    "explanation": {
+      "title": "LAPS两步训练：链路通过与加速分开",
+      "question": "两组训练都完成，为什么仍不能说 Router 有速度优势？",
+      "scope": "各两步、八轨迹，真实 token 和反馈不同。",
+      "states": [
+        [
+          "实际执行",
+          [
+            "两组完成训练链",
+            "各有零与非零梯度步骤"
+          ]
+        ],
+        [
+          "计时结果",
+          [
+            "step 合计 763.15 → 788.95 秒",
+            "本次 ON 未更快"
+          ]
+        ],
+        [
+          "保持解释边界",
+          [
+            "生成 token 数不相同",
+            "单次差值不全归因调度"
+          ]
+        ]
+      ],
+      "result": "功能链路可通过，但性能结论需要同边界、同工作量和足够对照。",
+      "limit": "历史一次配对，不代表当前代码速度，也不是模型学习效果对照。"
+    },
+    "reading_question": "两组训练都完成，为什么仍不能说 Router 有速度优势？",
+    "explanation_review": {
+      "target_questions": [
+        "两组训练都完成，为什么仍不能说 Router 有速度优势？",
+        "实际执行：发生什么及为什么？",
+        "计时结果：发生什么及为什么？",
+        "保持解释边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-resource-comparison-7069978",
+    "kind": "evidence_explanation",
+    "title": "LAPS资源：设备曲线能说明什么",
+    "caption": "资源曲线用于核对行为和干扰，不能仅凭显存更高就宣布 GPU 利用更好。 采样缺失与外部小额占用保留，不用零补齐未观测值。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/04-历史对照_LAPS训练与EnvRouter开关.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-training-ab-20261016-live/resource-comparison.png",
+    "original_sha256": "6c334d54b978d348c622bbf430a60089b8ece1eb36d45014515fab09b28fae7c",
+    "explanation": {
+      "title": "LAPS资源：设备曲线能说明什么",
+      "question": "设备级利用率和显存，能否直接证明本次任务吞吐？",
+      "scope": "三卡设备级采样，完整墙钟含不同收尾等待。",
+      "states": [
+        [
+          "显存与利用率",
+          [
+            "显存峰值不是计算吞吐",
+            "设备数据还可能含外部进程"
+          ]
+        ],
+        [
+          "配额与实际",
+          [
+            "账本说明申报资源",
+            "曲线说明采样到的实占"
+          ]
+        ],
+        [
+          "计时范围",
+          [
+            "两组释放观测条件不同",
+            "完整墙钟不是纯调度耗时"
+          ]
+        ]
+      ],
+      "result": "资源曲线用于核对行为和干扰，不能仅凭显存更高就宣布 GPU 利用更好。",
+      "limit": "采样缺失与外部小额占用保留，不用零补齐未观测值。"
+    },
+    "reading_question": "设备级利用率和显存，能否直接证明本次任务吞吐？",
+    "explanation_review": {
+      "target_questions": [
+        "设备级利用率和显存，能否直接证明本次任务吞吐？",
+        "显存与利用率：发生什么及为什么？",
+        "配额与实际：发生什么及为什么？",
+        "计时范围：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-capacity-comparison-7f2ba30",
+    "kind": "evidence_explanation",
+    "title": "并发容量：失败更快不等于吞吐更高",
+    "caption": "比较速度前先核对真正完成的工作，容量不足造成的快速失败需单列。 四组各一次，没有统计置信区间，也不证明计算饱和或碎片改善。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/05-历史对照_同任务多协程GPU并发.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-gpu-capacity-20261022/capacity-comparison.svg",
+    "original_sha256": "4605e4eb65a95c81241adb558e003bcde93e075266a82a273da64df739711030",
+    "explanation": {
+      "title": "并发容量：失败更快不等于吞吐更高",
+      "question": "高压力 OFF 返回更快时，是否完成了同样四条命令？",
+      "scope": "相同四命令，低压与高压分别比较 ON/OFF。",
+      "states": [
+        [
+          "先看左侧数量",
+          [
+            "成功和失败分开计数",
+            "固定总请求不等于固定成功量"
+          ]
+        ],
+        [
+          "再看右侧时间",
+          [
+            "失败可能在分配时快速返回",
+            "不能直接当作完成时间优势"
+          ]
+        ],
+        [
+          "再核边界",
+          [
+            "CPU 协程与单轨迹内并行不同",
+            "本轮是独立 rollout 尝试"
+          ]
+        ]
+      ],
+      "result": "比较速度前先核对真正完成的工作，容量不足造成的快速失败需单列。",
+      "limit": "四组各一次，没有统计置信区间，也不证明计算饱和或碎片改善。"
+    },
+    "reading_question": "高压力 OFF 返回更快时，是否完成了同样四条命令？",
+    "explanation_review": {
+      "target_questions": [
+        "高压力 OFF 返回更快时，是否完成了同样四条命令？",
+        "先看左侧数量：发生什么及为什么？",
+        "再看右侧时间：发生什么及为什么？",
+        "再核边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-comparison-38ffe21",
+    "kind": "evidence_explanation",
+    "title": "单卡压力：预算停止与成功完成不同",
+    "caption": "有界实验可以证明链路和失败机制，未完成的一组不能被画成同量训练性能。 图属于截断历史试验，不能推广为三步或长期吞吐。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/06-历史过程_Science显存压力与原生任务.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-single-gpu-training-20261020/comparison.png",
+    "original_sha256": "1cdc9a9f2382714519445efe44b409fa0c2fcd36403df340d63a2ff633fc104e",
+    "explanation": {
+      "title": "单卡压力：预算停止与成功完成不同",
+      "question": "OFF 到时被停止、ON 完成一步，该如何画公平边界？",
+      "scope": "历史单卡显存压力试验，OFF 受预算截断。",
+      "states": [
+        [
+          "标清停止原因",
+          [
+            "OFF 由看门狗终止",
+            "退出 −15 不是模型主动 OOM 退出"
+          ]
+        ],
+        [
+          "标清完成层次",
+          [
+            "ON 完成一步与参数推送",
+            "组内同奖励使策略梯度为零"
+          ]
+        ],
+        [
+          "标清计时对象",
+          [
+            "画实际运行到停止的时间",
+            "不能当双方都完成一步的加速"
+          ]
+        ]
+      ],
+      "result": "有界实验可以证明链路和失败机制，未完成的一组不能被画成同量训练性能。",
+      "limit": "图属于截断历史试验，不能推广为三步或长期吞吐。"
+    },
+    "reading_question": "OFF 到时被停止、ON 完成一步，该如何画公平边界？",
+    "explanation_review": {
+      "target_questions": [
+        "OFF 到时被停止、ON 完成一步，该如何画公平边界？",
+        "标清停止原因：发生什么及为什么？",
+        "标清完成层次：发生什么及为什么？",
+        "标清计时对象：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-matched-prefix-7cfb46d",
+    "kind": "evidence_explanation",
+    "title": "共同前缀：五步对照的收益与干扰",
+    "caption": "共同前缀能对齐执行数量，但外部活动与生成差异仍限制因果归因。 观测百分比不是严格隔离的纯调度比例，也不是持续算力满载证据。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/06-历史过程_Science显存压力与原生任务.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-ten-step-training-20261020/matched-prefix.png",
+    "original_sha256": "0892f7325be9bf0cbbbf0dc6e6dc0ce7d4755a048207a008f80afcb3f79a2254",
+    "explanation": {
+      "title": "共同前缀：五步对照的收益与干扰",
+      "question": "双方完成前五步后，怎样报告收益同时保留外部干扰？",
+      "scope": "历史十步计划中共同完成的五步，按实际记录比较。",
+      "states": [
+        [
+          "只比较完整前缀",
+          [
+            "前五步都有真实完成值",
+            "后续不补造 ON 结果"
+          ]
+        ],
+        [
+          "同时统计失败",
+          [
+            "OFF 多次显存分配 OOM",
+            "ON 前缀无对应 OOM"
+          ]
+        ],
+        [
+          "暴露外部活动",
+          [
+            "OFF 第五批有另卡活动",
+            "设备监测不等于节点独占"
+          ]
+        ]
+      ],
+      "result": "共同前缀能对齐执行数量，但外部活动与生成差异仍限制因果归因。",
+      "limit": "观测百分比不是严格隔离的纯调度比例，也不是持续算力满载证据。"
+    },
+    "reading_question": "双方完成前五步后，怎样报告收益同时保留外部干扰？",
+    "explanation_review": {
+      "target_questions": [
+        "双方完成前五步后，怎样报告收益同时保留外部干扰？",
+        "只比较完整前缀：发生什么及为什么？",
+        "同时统计失败：发生什么及为什么？",
+        "暴露外部活动：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-per-step-fb816d0",
+    "kind": "evidence_explanation",
+    "title": "逐步曲线：完成数、token与OOM一起看",
+    "caption": "逐步曲线帮助找到等待和工作量变化，不宜只挑最好的一步代表整组收益。 组内同奖励与零梯度不说明训练完全没执行，也不支持能力改善。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/06-历史过程_Science显存压力与原生任务.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-ten-step-training-20261020/per-step.png",
+    "original_sha256": "4bc7a5166148376623eea818c7e5e9b0ae02ad2901656ba29da0afe3eb39f66f",
+    "explanation": {
+      "title": "逐步曲线：完成数、token与OOM一起看",
+      "question": "单个 step 长短交替时，应怎样读整个试验？",
+      "scope": "历史按实际完成 step 展示时间、token 与失败。",
+      "states": [
+        [
+          "先看横轴",
+          [
+            "只包含实际完成步骤",
+            "未完成部分保留缺失"
+          ]
+        ],
+        [
+          "再看工作量",
+          [
+            "各步有效 token 可能不同",
+            "OOM 重试也消耗时间"
+          ]
+        ],
+        [
+          "最后看整段",
+          [
+            "按共同前缀累计",
+            "同时标注共享资源干扰"
+          ]
+        ]
+      ],
+      "result": "逐步曲线帮助找到等待和工作量变化，不宜只挑最好的一步代表整组收益。",
+      "limit": "组内同奖励与零梯度不说明训练完全没执行，也不支持能力改善。"
+    },
+    "reading_question": "单个 step 长短交替时，应怎样读整个试验？",
+    "explanation_review": {
+      "target_questions": [
+        "单个 step 长短交替时，应怎样读整个试验？",
+        "先看横轴：发生什么及为什么？",
+        "再看工作量：发生什么及为什么？",
+        "最后看整段：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-comparison-f2dd9a5",
+    "kind": "evidence_explanation",
+    "title": "原生任务：不注入压力时的边界",
+    "caption": "没有容量争用时，准入器可能只增加控制成本，收益必须回到原生任务核验。 以本图原始标签和对应章节为准，不套用其他压力试验数字。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/06-历史过程_Science显存压力与原生任务.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-native-training-20261021/comparison.png",
+    "original_sha256": "aa232e1cfd13cb614717e423603fc59c756cd0ddb42ed33156dedba21717c84f",
+    "explanation": {
+      "title": "原生任务：不注入压力时的边界",
+      "question": "没有人为显存压力，Router 的收益能否直接沿用？",
+      "scope": "历史原生 science 配置，图中按原条件保留各阶段。",
+      "states": [
+        [
+          "核对真实负载",
+          [
+            "保留原生工具和评分",
+            "不把压力试验当成原生任务"
+          ]
+        ],
+        [
+          "核对计时",
+          [
+            "启动、任务和清理分开",
+            "相同边界再比较"
+          ]
+        ],
+        [
+          "核对成功层次",
+          [
+            "轨迹、评分和更新分别看",
+            "失败或截断不能冒充完成"
+          ]
+        ]
+      ],
+      "result": "没有容量争用时，准入器可能只增加控制成本，收益必须回到原生任务核验。",
+      "limit": "以本图原始标签和对应章节为准，不套用其他压力试验数字。"
+    },
+    "reading_question": "没有人为显存压力，Router 的收益能否直接沿用？",
+    "explanation_review": {
+      "target_questions": [
+        "没有人为显存压力，Router 的收益能否直接沿用？",
+        "核对真实负载：发生什么及为什么？",
+        "核对计时：发生什么及为什么？",
+        "核对成功层次：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-comparison-c991d3e",
+    "kind": "evidence_explanation",
+    "title": "常驻显存压力：低压与高压的收益不同",
+    "caption": "低压力下未观察到加速；高压力下失败减少、完成更快，但此历史版本仍有准入漏洞。 图中是历史修复前的版本，不是当前安全公式的验证；不涉及模型状态复用或完整长期训练。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/06-历史过程_Science显存压力与原生任务.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-resident-matrix-20261026/comparison.png",
+    "original_sha256": "9d137993253cb4f30a2d5c5c5e9d411785d85ba20a9101cc7355e2c3b96f4873",
+    "explanation": {
+      "title": "常驻显存压力：低压与高压的收益不同",
+      "question": "同一批环境工作，为什么低压力下持平，高压力下才可能获益？",
+      "scope": "历史各一次 PSRL 更新；相同 14 GiB 环境阶段，常驻压力分别为 0 / 70 GiB。",
+      "states": [
+        [
+          "低压力",
+          [
+            "训练 step：141.5 → 146.0 秒",
+            "两组均未观察到 OOM"
+          ]
+        ],
+        [
+          "高压力",
+          [
+            "训练 step：353.3 → 262.9 秒",
+            "OOM 尝试：6 → 2"
+          ]
+        ],
+        [
+          "理解收益来源",
+          [
+            "准入减少分配失败及重试",
+            "这版 ON 仍有 OOM，尚未修好"
+          ]
+        ]
+      ],
+      "result": "低压力下未观察到加速；高压力下失败减少、完成更快，但此历史版本仍有准入漏洞。",
+      "limit": "图中是历史修复前的版本，不是当前安全公式的验证；不涉及模型状态复用或完整长期训练。"
+    },
+    "reading_question": "同一批环境工作，为什么低压力下持平，高压力下才可能获益？",
+    "explanation_review": {
+      "target_questions": [
+        "同一批环境工作，为什么低压力下持平，高压力下才可能获益？",
+        "低压力：观察到什么及为什么？",
+        "高压力：观察到什么及为什么？",
+        "理解收益来源：观察到什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-completion-a9a0126",
+    "kind": "evidence_explanation",
+    "title": "单卡固定基线：避免失败带来什么",
+    "caption": "主要收益来自避免额外失败尝试，不是把已成功的 CUDA 工作减少了。 低压力结论不同，且并发失败时长不能简单相加当作墙钟节省。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/07-历史过程_固定基线修复与单卡验证.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/router-baseline-control-20261020/completion.png",
+    "original_sha256": "9dcaa55cc7748474f9f15d8aa84d6dbb930d64e4545714c8ace2fdad22e4ae85",
+    "explanation": {
+      "title": "单卡固定基线：避免失败带来什么",
+      "question": "同样 16 条成功任务，准入减少了哪些额外成本？",
+      "scope": "历史高压力机制对照，同一张环境 GPU。",
+      "states": [
+        [
+          "成功数量一致",
+          [
+            "两边都完成 16 条成功任务",
+            "成功 CUDA 命令各 32 条"
+          ]
+        ],
+        [
+          "失败额外成本",
+          [
+            "OFF 另有 15 次分配 OOM",
+            "包括失败准备、清理与重试"
+          ]
+        ],
+        [
+          "观察时间",
+          [
+            "任务 266.52 → 207.84 秒",
+            "约减少 22.02%"
+          ]
+        ]
+      ],
+      "result": "主要收益来自避免额外失败尝试，不是把已成功的 CUDA 工作减少了。",
+      "limit": "低压力结论不同，且并发失败时长不能简单相加当作墙钟节省。"
+    },
+    "reading_question": "同样 16 条成功任务，准入减少了哪些额外成本？",
+    "explanation_review": {
+      "target_questions": [
+        "同样 16 条成功任务，准入减少了哪些额外成本？",
+        "成功数量一致：发生什么及为什么？",
+        "失败额外成本：发生什么及为什么？",
+        "观察时间：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-resources-3247f1a",
+    "kind": "evidence_explanation",
+    "title": "统一资源时间轴：预算与实占是否对齐",
+    "caption": "将三种视角放在同一时间轴，才能区分资源泄漏、保留额度与正常空档。 离散采样可能漏峰值，采集失败保持缺失，不等于物理隔离。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/07-历史过程_固定基线修复与单卡验证.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/router-baseline-control-20261020/resources.png",
+    "original_sha256": "24b54a532b0efdb337ec69b44064cc28c8daf41b00270feefcb6cfb9fa472f53",
+    "explanation": {
+      "title": "统一资源时间轴：预算与实占是否对齐",
+      "question": "同时画显存、会话与命令，能找出什么问题？",
+      "scope": "历史同卡资源与账本采样，单位和曲线含义沿用原图。",
+      "states": [
+        [
+          "设备视角",
+          [
+            "实际显存反映已分配量",
+            "不是 GPU 计算利用率"
+          ]
+        ],
+        [
+          "会话视角",
+          [
+            "活着容器可处于 CPU 空档",
+            "不应全部视作活动 GPU 命令"
+          ]
+        ],
+        [
+          "账本视角",
+          [
+            "预算需要与生命周期对应",
+            "遥测下降不自动注销租约"
+          ]
+        ]
+      ],
+      "result": "将三种视角放在同一时间轴，才能区分资源泄漏、保留额度与正常空档。",
+      "limit": "离散采样可能漏峰值，采集失败保持缺失，不等于物理隔离。"
+    },
+    "reading_question": "同时画显存、会话与命令，能找出什么问题？",
+    "explanation_review": {
+      "target_questions": [
+        "同时画显存、会话与命令，能找出什么问题？",
+        "设备视角：发生什么及为什么？",
+        "会话视角：发生什么及为什么？",
+        "账本视角：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-low-overhead-771a5d1",
+    "kind": "evidence_explanation",
+    "title": "低开销验证：启动与命令路径分开看",
+    "caption": "减轻控制开销可以改善低负载，但不能从一次快样本推出稳定普遍提速。 历史顺序对照，具体版本、计时与失败保留原记录。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/07-历史过程_固定基线修复与单卡验证.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/router-low-overhead-20261020/low-overhead.png",
+    "original_sha256": "3c21b5753be8a0b3b6754e734dc803c58460727314a839ce6205fb2cb2b07d57",
+    "explanation": {
+      "title": "低开销验证：启动与命令路径分开看",
+      "question": "修复减少哪段等待，是否已证明所有负载下都更快？",
+      "scope": "历史低压力同量任务，控制路径开销单独分析。",
+      "states": [
+        [
+          "确认工作相同",
+          [
+            "先核成功命令数与结果",
+            "保留每组初始化成本"
+          ]
+        ],
+        [
+          "定位可改区间",
+          [
+            "命令前准备与授权分开",
+            "长尾不都来自账本锁"
+          ]
+        ],
+        [
+          "评价边界",
+          [
+            "局部查询变快有直接证据",
+            "整组仍受启动和节点抖动影响"
+          ]
+        ]
+      ],
+      "result": "减轻控制开销可以改善低负载，但不能从一次快样本推出稳定普遍提速。",
+      "limit": "历史顺序对照，具体版本、计时与失败保留原记录。"
+    },
+    "reading_question": "修复减少哪段等待，是否已证明所有负载下都更快？",
+    "explanation_review": {
+      "target_questions": [
+        "修复减少哪段等待，是否已证明所有负载下都更快？",
+        "确认工作相同：发生什么及为什么？",
+        "定位可改区间：发生什么及为什么？",
+        "评价边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-prewarm-comparison-b1a015e",
+    "kind": "evidence_explanation",
+    "title": "预热对照：冷准备是否移出任务关键路径",
+    "caption": "预热可将部分准备与其他工作重叠，只有移出关键路径的部分才是墙钟收益。 不能把历史空闲条件推广到当前节点，也不把预热当作免费。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/07-历史过程_固定基线修复与单卡验证.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/router-prewarm-private-20261020/prewarm-comparison.png",
+    "original_sha256": "f738e1e00d9d57b07383bcc79e020ec15dcc2ac047239d56fb22c49ab8976870",
+    "explanation": {
+      "title": "预热对照：冷准备是否移出任务关键路径",
+      "question": "提前准备能减少等待吗，初始化成本应该放在哪里？",
+      "scope": "历史有界预热试验，双方共同准备窗口按原报告保留。",
+      "states": [
+        [
+          "预热阶段",
+          [
+            "提前启动 Router 与节点服务",
+            "异步等待不等于准备已经完成"
+          ]
+        ],
+        [
+          "任务阶段",
+          [
+            "比较同样任务完成时间",
+            "保留未被窗口覆盖的冷启动"
+          ]
+        ],
+        [
+          "整组边界",
+          [
+            "准备与任务不能重复相加",
+            "短作业应计入额外初始化"
+          ]
+        ]
+      ],
+      "result": "预热可将部分准备与其他工作重叠，只有移出关键路径的部分才是墙钟收益。",
+      "limit": "不能把历史空闲条件推广到当前节点，也不把预热当作免费。"
+    },
+    "reading_question": "提前准备能减少等待吗，初始化成本应该放在哪里？",
+    "explanation_review": {
+      "target_questions": [
+        "提前准备能减少等待吗，初始化成本应该放在哪里？",
+        "预热阶段：发生什么及为什么？",
+        "任务阶段：发生什么及为什么？",
+        "整组边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-resource-timeline-6931260",
+    "kind": "evidence_explanation",
+    "title": "预热资源时间线：提前准备是否越权占用",
+    "caption": "资源时间线说明准备移到了哪里，不能仅靠任务内部时间隐藏启动与回收。 采样只描述历史配置，原始曲线保留，不外推当前设备状态。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/07-历史过程_固定基线修复与单卡验证.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/router-prewarm-private-20261020/resource-timeline.png",
+    "original_sha256": "67a7defe5da03e097f8a736855172954146b249de5286e5f5a30c0fbf9419707",
+    "explanation": {
+      "title": "预热资源时间线：提前准备是否越权占用",
+      "question": "任务开始前后，哪些是控制服务，哪些才是实际 GPU 占用？",
+      "scope": "历史预热与正式任务统一时间轴。",
+      "states": [
+        [
+          "先识别准备窗口",
+          [
+            "服务初始化可能在任务之前",
+            "它仍有 CPU 与等待开销"
+          ]
+        ],
+        [
+          "再识别设备阶段",
+          [
+            "GPU 申请与物理分配区分",
+            "不能把服务存活视作 GPU 执行"
+          ]
+        ],
+        [
+          "最后核对清理",
+          [
+            "预算和所属物理资源归零",
+            "窗口外观测也有边界"
+          ]
+        ]
+      ],
+      "result": "资源时间线说明准备移到了哪里，不能仅靠任务内部时间隐藏启动与回收。",
+      "limit": "采样只描述历史配置，原始曲线保留，不外推当前设备状态。"
+    },
+    "reading_question": "任务开始前后，哪些是控制服务，哪些才是实际 GPU 占用？",
+    "explanation_review": {
+      "target_questions": [
+        "任务开始前后，哪些是控制服务，哪些才是实际 GPU 占用？",
+        "先识别准备窗口：发生什么及为什么？",
+        "再识别设备阶段：发生什么及为什么？",
+        "最后核对清理：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-low-load-breakdown-37a32b1",
+    "kind": "evidence_explanation",
+    "title": "低负载长尾：获准后为什么还没开始脚本",
+    "caption": "总延迟由多段组成，优化需要找到主导且可归因的区间，不能只盯调度核心。 少量样本不能断定长尾具体来自 Docker、驱动或文件系统。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/07-历史过程_固定基线修复与单卡验证.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/router-prewarm-private-20261020/low-load-breakdown.png",
+    "original_sha256": "c7133b4fb6c833c18c6e72b8b0e4a160f585831325c6df193bd9f48320bb1181",
+    "explanation": {
+      "title": "低负载长尾：获准后为什么还没开始脚本",
+      "question": "账本判断已经很快，下一步该优化哪段控制路径？",
+      "scope": "历史 pre_agent、agent、post_agent 与授权细分。",
+      "states": [
+        [
+          "先划清区间",
+          [
+            "代理前准备不等于单个查询",
+            "OFF 没有授权，起点不同"
+          ]
+        ],
+        [
+          "再看长尾位置",
+          [
+            "grant_to_script 含进程启动",
+            "还可能有 CUDA 初始化等待"
+          ]
+        ],
+        [
+          "按证据优化",
+          [
+            "增加目标分段计时",
+            "已是毫秒级的账本不先重写"
+          ]
+        ]
+      ],
+      "result": "总延迟由多段组成，优化需要找到主导且可归因的区间，不能只盯调度核心。",
+      "limit": "少量样本不能断定长尾具体来自 Docker、驱动或文件系统。"
+    },
+    "reading_question": "账本判断已经很快，下一步该优化哪段控制路径？",
+    "explanation_review": {
+      "target_questions": [
+        "账本判断已经很快，下一步该优化哪段控制路径？",
+        "先划清区间：发生什么及为什么？",
+        "再看长尾位置：发生什么及为什么？",
+        "按证据优化：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-startup-offload-6f38130",
+    "kind": "evidence_explanation",
+    "title": "同步查询移出事件循环：收益到哪里为止",
+    "caption": "阻塞查询能放大控制等待。改善特定路径不等于所有进程创建长尾都已修复。 单次顺序对照不证明固定长期加速比例，缓存和节点噪声仍在。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/experiments/history/07-历史过程_固定基线修复与单卡验证.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/router-sync-offload-20261020/startup-offload.png",
+    "original_sha256": "9ce0462ce16235361533618cbaa71131ba1fcf8fc5fe6204d6f7f71a759028fd",
+    "explanation": {
+      "title": "同步查询移出事件循环：收益到哪里为止",
+      "question": "为什么一个慢查询会拖住多个协程，修复后该声称什么？",
+      "scope": "历史两项准备优化共同启用，同量任务顺序对照。",
+      "states": [
+        [
+          "原等待传播",
+          [
+            "同步查询占住事件循环线程",
+            "其他就绪协程不能及时继续"
+          ]
+        ],
+        [
+          "修改后的动作",
+          [
+            "目标查询移到后台执行",
+            "主协程继续响应其他任务"
+          ]
+        ],
+        [
+          "证据边界",
+          [
+            "本次停顿减少且同量更快",
+            "两项改动未分别消融"
+          ]
+        ]
+      ],
+      "result": "阻塞查询能放大控制等待。改善特定路径不等于所有进程创建长尾都已修复。",
+      "limit": "单次顺序对照不证明固定长期加速比例，缓存和节点噪声仍在。"
+    },
+    "reading_question": "为什么一个慢查询会拖住多个协程，修复后该声称什么？",
+    "explanation_review": {
+      "target_questions": [
+        "为什么一个慢查询会拖住多个协程，修复后该声称什么？",
+        "原等待传播：发生什么及为什么？",
+        "修改后的动作：发生什么及为什么？",
+        "证据边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-latency-9f26f8b",
+    "kind": "evidence_explanation",
+    "title": "作业重叠：结果可用与资源归还不同步",
+    "caption": "异步结果可隐藏独立工作等待，但不允许把尚占用的 GPU 预算提前交给别人。 原型故障证据保留，后续修复未重跑此延迟矩阵。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/knowledge/01-架构与执行/04-GPU作业_生命周期与任务遥测.md"
+    ],
+    "original": "docs/env-worker-deep-dive/gpu-job-validation/latency.svg",
+    "original_sha256": "d1a15a13b4a85276b1bca3505e186ba82bd020a8fb0e727886d69c0e81652752",
+    "explanation": {
+      "title": "作业重叠：结果可用与资源归还不同步",
+      "question": "提前拿到输出后，为什么后续任务仍要等物理归还？",
+      "scope": "首轮真实 GPU 作业原型的受控重叠时长。",
+      "states": [
+        [
+          "输出事件",
+          [
+            "命令输出可以先被读取",
+            "调用方可开展独立 CPU 工作"
+          ]
+        ],
+        [
+          "资源事件",
+          [
+            "GPU 进程仍需退出或归还",
+            "预算须留到物理核验完成"
+          ]
+        ],
+        [
+          "解释原型数据",
+          [
+            "当时进程归因曾匹配失败",
+            "不能估算最终遥测完整开销"
+          ]
+        ]
+      ],
+      "result": "异步结果可隐藏独立工作等待，但不允许把尚占用的 GPU 预算提前交给别人。",
+      "limit": "原型故障证据保留，后续修复未重跑此延迟矩阵。"
+    },
+    "reading_question": "提前拿到输出后，为什么后续任务仍要等物理归还？",
+    "explanation_review": {
+      "target_questions": [
+        "提前拿到输出后，为什么后续任务仍要等物理归还？",
+        "输出事件：发生什么及为什么？",
+        "资源事件：发生什么及为什么？",
+        "解释原型数据：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-completion-comparison-f9ce4be",
+    "kind": "evidence_explanation",
+    "title": "逐命令归还：怎样证明空档被复用",
+    "caption": "command 模式能缩短 GPU 额度保留期，但不会让排队和归还检查消失。 真实 CUDA 结果与归属检查支持本次机制，不自动证明所有训练负载收益。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/knowledge/02-资源与调度/02-命令调度_GPU申请归还与状态保留.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-command-work-20261019/completion-comparison.png",
+    "original_sha256": "5e9bcd5eb62a86fe83eeb9ca3b1cacf74e98ff50bdcc8522e87de9378cdbda52",
+    "explanation": {
+      "title": "逐命令归还：怎样证明空档被复用",
+      "question": "容器还活着时，GPU 是否真的交给了另一会话？",
+      "scope": "历史同量完成与失败次数，command 申请归还有独立记录。",
+      "states": [
+        [
+          "分别计数",
+          [
+            "会话容器与活动 GPU 阶段不同",
+            "申报预算与物理使用都核对"
+          ]
+        ],
+        [
+          "观察跨任务复用",
+          [
+            "前任务未结束，后任务已用卡",
+            "以物理归还先后确认安全"
+          ]
+        ],
+        [
+          "保留排队成本",
+          [
+            "下一条命令仍需准入",
+            "归还检查也会增加等待"
+          ]
+        ]
+      ],
+      "result": "command 模式能缩短 GPU 额度保留期，但不会让排队和归还检查消失。",
+      "limit": "真实 CUDA 结果与归属检查支持本次机制，不自动证明所有训练负载收益。"
+    },
+    "reading_question": "容器还活着时，GPU 是否真的交给了另一会话？",
+    "explanation_review": {
+      "target_questions": [
+        "容器还活着时，GPU 是否真的交给了另一会话？",
+        "分别计数：发生什么及为什么？",
+        "观察跨任务复用：发生什么及为什么？",
+        "保留排队成本：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-resource-timeline-a3c02cf",
+    "kind": "evidence_explanation",
+    "title": "Command资源轨迹：容器常驻而GPU间歇使用",
+    "caption": "这里改善的是时间上的额度闲置，不能把它称为 CUDA 分配器碎片减少。 反事实虚线只解释约束，不提供另一策略的真实完成时间。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/knowledge/02-资源与调度/02-命令调度_GPU申请归还与状态保留.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-command-work-20261019/resource-timeline.png",
+    "original_sha256": "e516a1ae20407a5c82bcd993f3d9988347029aa0be59eaef1e99ef54330bfd92",
+    "explanation": {
+      "title": "Command资源轨迹：容器常驻而GPU间歇使用",
+      "question": "图中的空档减少，是显存碎片改善还是生命周期变细？",
+      "scope": "实测显存、活着会话与 GPU 配额同轴；虚线为反事实预算。",
+      "states": [
+        [
+          "物理层",
+          [
+            "上图是显存，不是计算利用率",
+            "命令结束时显存可下降"
+          ]
+        ],
+        [
+          "逻辑层",
+          [
+            "容器数可多于活动命令数",
+            "CPU 与文件生命周期继续"
+          ]
+        ],
+        [
+          "反事实层",
+          [
+            "虚线是假设所有会话持卡",
+            "不是旧模式本次实测曲线"
+          ]
+        ]
+      ],
+      "result": "这里改善的是时间上的额度闲置，不能把它称为 CUDA 分配器碎片减少。",
+      "limit": "反事实虚线只解释约束，不提供另一策略的真实完成时间。"
+    },
+    "reading_question": "图中的空档减少，是显存碎片改善还是生命周期变细？",
+    "explanation_review": {
+      "target_questions": [
+        "图中的空档减少，是显存碎片改善还是生命周期变细？",
+        "物理层：发生什么及为什么？",
+        "逻辑层：发生什么及为什么？",
+        "反事实层：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-training-metrics-3137056",
+    "kind": "evidence_explanation",
+    "title": "Command训练指标：执行成功与有效更新",
+    "caption": "调度功能、非零学习信号与模型效果是三个结论，需要各自证据。 未完成记录不能补零，图不代表调度提高科学任务能力。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/knowledge/02-资源与调度/02-命令调度_GPU申请归还与状态保留.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/science-command-work-20261019/training-metrics.png",
+    "original_sha256": "e7166fceb82072509e7f602c757b38306a0af754fd3f1fdef7e9d5704705c905",
+    "explanation": {
+      "title": "Command训练指标：执行成功与有效更新",
+      "question": "全组奖励相同时，为什么能跑完训练却没有策略梯度？",
+      "scope": "历史 command ON 的真实训练记录，OFF 未完成处留空。",
+      "states": [
+        [
+          "数据有效性",
+          [
+            "核对 mask 与有效 token",
+            "样本进入真实训练路径"
+          ]
+        ],
+        [
+          "奖励与优势",
+          [
+            "每组奖励相同，组内优势为零",
+            "策略梯度因此可以为零"
+          ]
+        ],
+        [
+          "正确报告",
+          [
+            "执行链和优化器调用完成",
+            "模型学得更好仍无证据"
+          ]
+        ]
+      ],
+      "result": "调度功能、非零学习信号与模型效果是三个结论，需要各自证据。",
+      "limit": "未完成记录不能补零，图不代表调度提高科学任务能力。"
+    },
+    "reading_question": "全组奖励相同时，为什么能跑完训练却没有策略梯度？",
+    "explanation_review": {
+      "target_questions": [
+        "全组奖励相同时，为什么能跑完训练却没有策略梯度？",
+        "数据有效性：发生什么及为什么？",
+        "奖励与优势：发生什么及为什么？",
+        "正确报告：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-completion-c7d03c2",
+    "kind": "evidence_explanation",
+    "title": "异步归还：安全重叠不保证总时间减少",
+    "caption": "异步提供重叠机会，整组是否变快取决于后续排队与控制路径，不能只看提前返回。 本次异步更慢，少量样本不证明长期必然变慢。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/knowledge/02-资源与调度/02-命令调度_GPU申请归还与状态保留.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/async-return-gpu-20261019/controlled-fixed/completion.png",
+    "original_sha256": "793bce17d609b0615701fcc2d8b99df39393b72c542aba84563e86c77e27c87d",
+    "explanation": {
+      "title": "异步归还：安全重叠不保证总时间减少",
+      "question": "A 已提前规划，为什么两会话最后反而更晚结束？",
+      "scope": "真实 CUDA 与模拟规划的受控两回合。",
+      "states": [
+        [
+          "能重叠的部分",
+          [
+            "命令输出后先做 CPU 规划",
+            "GPU 配额仍保留到归还完成"
+          ]
+        ],
+        [
+          "新增长等待",
+          [
+            "B 等归还后再获准",
+            "A 下条命令又等队列与控制路径"
+          ]
+        ],
+        [
+          "最终看整批",
+          [
+            "独立工作提前开始",
+            "后续等待仍可能抵消节省"
+          ]
+        ]
+      ],
+      "result": "异步提供重叠机会，整组是否变快取决于后续排队与控制路径，不能只看提前返回。",
+      "limit": "本次异步更慢，少量样本不证明长期必然变慢。"
+    },
+    "reading_question": "A 已提前规划，为什么两会话最后反而更晚结束？",
+    "explanation_review": {
+      "target_questions": [
+        "A 已提前规划，为什么两会话最后反而更晚结束？",
+        "能重叠的部分：发生什么及为什么？",
+        "新增长等待：发生什么及为什么？",
+        "最终看整批：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-overlap-470dd69",
+    "kind": "evidence_explanation",
+    "title": "异步时间线：谁先返回、谁后获准",
+    "caption": "同一时间轴能区分隐藏了什么等待，以及哪些排队仍在关键路径上。 蓝条含启动开销，不是 GPU 核持续忙碌；规划等待为明确模拟。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/knowledge/02-资源与调度/02-命令调度_GPU申请归还与状态保留.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/async-return-gpu-20261019/controlled-fixed/overlap.png",
+    "original_sha256": "40d7489211198d329911794e177a0a634c3342c3948f83afd9ae9e081d9e49d7",
+    "explanation": {
+      "title": "异步时间线：谁先返回、谁后获准",
+      "question": "B 在哪一刻可以安全占卡，A 的规划又在哪段重叠？",
+      "scope": "蓝色为获准后命令，橙色为归还检查，绿色为模拟规划。",
+      "states": [
+        [
+          "A 的两个事件",
+          [
+            "命令输出先就绪",
+            "物理归还稍后才确认"
+          ]
+        ],
+        [
+          "B 的准入条件",
+          [
+            "必须晚于 A 归还确认",
+            "不能以打印结果代替释放"
+          ]
+        ],
+        [
+          "A 再次申请",
+          [
+            "规划结束不保证立刻获准",
+            "仍受 B 与控制路径影响"
+          ]
+        ]
+      ],
+      "result": "同一时间轴能区分隐藏了什么等待，以及哪些排队仍在关键路径上。",
+      "limit": "蓝条含启动开销，不是 GPU 核持续忙碌；规划等待为明确模拟。"
+    },
+    "reading_question": "B 在哪一刻可以安全占卡，A 的规划又在哪段重叠？",
+    "explanation_review": {
+      "target_questions": [
+        "B 在哪一刻可以安全占卡，A 的规划又在哪段重叠？",
+        "A 的两个事件：发生什么及为什么？",
+        "B 的准入条件：发生什么及为什么？",
+        "A 再次申请：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-control-comparison-65d1b87",
+    "kind": "evidence_explanation",
+    "title": "控制路径修复：同步与异步都可能受益",
+    "caption": "控制路径缩短同时帮助同步与异步，不能把全部均值差都归功于异步重叠。 样本少且命令启动时间不同，不外推长期训练吞吐百分比。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/knowledge/02-资源与调度/02-命令调度_GPU申请归还与状态保留.md"
+    ],
+    "original": "docs/env-worker-deep-dive/env-service-verification/results/async-admission-diagnosis-20261020/control-comparison.png",
+    "original_sha256": "a9635726d656febf2a69533e4641593b9760a44818b766be9adbbe588aa6e23d",
+    "explanation": {
+      "title": "控制路径修复：同步与异步都可能受益",
+      "question": "少查一次慢接口，为什么比改变归还方式本身影响更大？",
+      "scope": "修复前后全部样本保留，黑点为回合，柱高为均值。",
+      "states": [
+        [
+          "比较全部样本",
+          [
+            "不只挑最快异步回合",
+            "每组仅两次，波动需保留"
+          ]
+        ],
+        [
+          "拆出准入区间",
+          [
+            "只分解已满足预算后的调用",
+            "不把 B 仍持卡算查询开销"
+          ]
+        ],
+        [
+          "区分两个贡献",
+          [
+            "直接接口缩短控制等待",
+            "异步仅隐藏可重叠的归还检查"
+          ]
+        ]
+      ],
+      "result": "控制路径缩短同时帮助同步与异步，不能把全部均值差都归功于异步重叠。",
+      "limit": "样本少且命令启动时间不同，不外推长期训练吞吐百分比。"
+    },
+    "reading_question": "少查一次慢接口，为什么比改变归还方式本身影响更大？",
+    "explanation_review": {
+      "target_questions": [
+        "少查一次慢接口，为什么比改变归还方式本身影响更大？",
+        "比较全部样本：发生什么及为什么？",
+        "拆出准入区间：发生什么及为什么？",
+        "区分两个贡献：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-weight-sync-choices-6bf07fc",
+    "kind": "evidence_explanation",
+    "title": "权重同步：等待、并行还是取消重做",
+    "caption": "先明确可执行动作，再比较整批完成时间与反馈依赖，不能只最小化模型等待。 图含设计选择。现有门禁在进入真正同步前等待共享命令归还。",
+    "status": "reported",
+    "documents": [
+      "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md"
+    ],
+    "original": "docs/env-worker-deep-dive/experiments/weight-sync-choices.png",
+    "original_sha256": "2e820aab0e55307d081dff0c06022d8661c59cee347c811aaf6878a1bca3148c",
+    "explanation": {
+      "title": "权重同步：等待、并行还是取消重做",
+      "question": "环境长命令跨过同步时刻，怎样核算不同处理动作的代价？",
+      "scope": "同一教学时间轴，实际生产能力与提案分开。",
+      "states": [
+        [
+          "等待归还",
+          [
+            "保留环境已完成工作",
+            "模型同步需要等现有命令结束"
+          ]
+        ],
+        [
+          "继续并行",
+          [
+            "需要证明参数传输和执行可共存",
+            "不能凭显存够用直接绕门禁"
+          ]
+        ],
+        [
+          "取消重做",
+          [
+            "可能让模型更早同步",
+            "丢失进度、重载与重试需计入"
+          ]
+        ]
+      ],
+      "result": "先明确可执行动作，再比较整批完成时间与反馈依赖，不能只最小化模型等待。",
+      "limit": "图含设计选择。现有门禁在进入真正同步前等待共享命令归还。"
+    },
+    "reading_question": "环境长命令跨过同步时刻，怎样核算不同处理动作的代价？",
+    "explanation_review": {
+      "target_questions": [
+        "环境长命令跨过同步时刻，怎样核算不同处理动作的代价？",
+        "等待归还：发生什么及为什么？",
+        "继续并行：发生什么及为什么？",
+        "取消重做：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-borrowing-timeline-2487ead",
+    "kind": "evidence_explanation",
+    "title": "借卡时间线：空档如何被利用",
+    "caption": "不计借还开销时整批 14 → 10 秒。收益来自填空，不是 A 或 B 计算更快。 真实决策必须加入保存、恢复与 B 超时风险。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/01-调度论文_五篇近期顶会工作综述.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/borrowing-timeline.png",
+    "original_sha256": "655194bb6c814f1efd86a9e85f3b50a8ff68dc70fe13ae8047d9f0461d3612db",
+    "explanation": {
+      "title": "借卡时间线：空档如何被利用",
+      "question": "A 暂时不用卡，B 填空能让同一批工作更早结束吗？",
+      "scope": "论文综述中的原创教学例子，单位秒，不是论文实测。",
+      "states": [
+        [
+          "固定同一工作",
+          [
+            "A1 需 2 秒，空档至第 8 秒",
+            "A2 需 2 秒，B 需 4 秒"
+          ]
+        ],
+        [
+          "整段保留",
+          [
+            "B 等 A 完成才执行",
+            "整批结束于第 14 秒"
+          ]
+        ],
+        [
+          "按命令归还",
+          [
+            "B 在第 2 至 6 秒填空",
+            "A2 仍在第 8 至 10 秒"
+          ]
+        ]
+      ],
+      "result": "不计借还开销时整批 14 → 10 秒。收益来自填空，不是 A 或 B 计算更快。",
+      "limit": "真实决策必须加入保存、恢复与 B 超时风险。"
+    },
+    "reading_question": "A 暂时不用卡，B 填空能让同一批工作更早结束吗？",
+    "explanation_review": {
+      "target_questions": [
+        "A 暂时不用卡，B 填空能让同一批工作更早结束吗？",
+        "固定同一工作：发生什么及为什么？",
+        "整段保留：发生什么及为什么？",
+        "按命令归还：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-rollout-independence-3e2aa22",
+    "kind": "evidence_explanation",
+    "title": "独立推进：快轨迹提前是否等于整批提前",
+    "caption": "去掉不必要同步创造重叠机会，是否缩短整批，要看省下等待是否影响最后完成链。 论文思想教学，不把该例子的 A 提前量当作本地实测加速。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/02-论文精读_RollArt与DynaRL的Agent调度.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/rollout-independence.png",
+    "original_sha256": "c9a025e8ac2c8a81487d5a8b470ef63676d6c2228e0eee86e19c4b07ccd17373",
+    "explanation": {
+      "title": "独立推进：快轨迹提前是否等于整批提前",
+      "question": "A 不再等 B，可以更早完成，为什么这一组仍是十二秒？",
+      "scope": "教学同一时间轴，比较按轮同步与独立推进。",
+      "states": [
+        [
+          "同步约束",
+          [
+            "A 第 2 秒已可继续",
+            "仍等 B 第 6 秒结束本轮"
+          ]
+        ],
+        [
+          "独立推进",
+          [
+            "A 可在第 4 秒完成",
+            "B 的两轮仍需 12 秒"
+          ]
+        ],
+        [
+          "回到关键路径",
+          [
+            "只等 A、B 都结束时仍是 12 秒",
+            "后续必需工作可能利用 A 提前量"
+          ]
+        ]
+      ],
+      "result": "去掉不必要同步创造重叠机会，是否缩短整批，要看省下等待是否影响最后完成链。",
+      "limit": "论文思想教学，不把该例子的 A 提前量当作本地实测加速。"
+    },
+    "reading_question": "A 不再等 B，可以更早完成，为什么这一组仍是十二秒？",
+    "explanation_review": {
+      "target_questions": [
+        "A 不再等 B，可以更早完成，为什么这一组仍是十二秒？",
+        "同步约束：发生什么及为什么？",
+        "独立推进：发生什么及为什么？",
+        "回到关键路径：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-pipeline-bottleneck-77cbdcf",
+    "kind": "evidence_explanation",
+    "title": "流水线瓶颈：资源应转给谁",
+    "caption": "稳定吞吐找瓶颈，有限批次还要计入迁移成本与剩余工作量。 教学比例与数字，不是论文实测，也不等同于单 GPU Roofline。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/02-论文精读_RollArt与DynaRL的Agent调度.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/pipeline-bottleneck.png",
+    "original_sha256": "a22e1420a41fd0b81e924c7e12f7d2334b45c80e8469d128686a9af35d0f52b5",
+    "explanation": {
+      "title": "流水线瓶颈：资源应转给谁",
+      "question": "一个阶段变慢后，整个流水线为什么反而可能更快？",
+      "scope": "教学：相同工作单位下比较两个阶段的处理速率。",
+      "states": [
+        [
+          "先统一工作单位",
+          [
+            "两个阶段都按同一批样本计量",
+            "不能直接比较 token/s 与 batch/s"
+          ]
+        ],
+        [
+          "再改善慢阶段",
+          [
+            "整体速率受较慢阶段限制",
+            "资源给更快阶段收益可能很小"
+          ]
+        ],
+        [
+          "最后算迁移回本",
+          [
+            "剩余 12 单元时迁移可能亏",
+            "剩余 120 单元时可能划算"
+          ]
+        ]
+      ],
+      "result": "稳定吞吐找瓶颈，有限批次还要计入迁移成本与剩余工作量。",
+      "limit": "教学比例与数字，不是论文实测，也不等同于单 GPU Roofline。"
+    },
+    "reading_question": "一个阶段变慢后，整个流水线为什么反而可能更快？",
+    "explanation_review": {
+      "target_questions": [
+        "一个阶段变慢后，整个流水线为什么反而可能更快？",
+        "先统一工作单位：发生什么及为什么？",
+        "再改善慢阶段：发生什么及为什么？",
+        "最后算迁移回本：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-krex-control-flow-0e8d632",
+    "kind": "evidence_explanation",
+    "title": "KREX控制：准备复用与测量保护",
+    "caption": "准备上下文复用与可信测量保护是配合的两套动作，不能简化成普通 shell 常驻。 图为外部论文机制，各节点出处和本地缺口见正文对照表。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/03-论文精读_KREX共享GPU测量保护.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/krex-control-flow.png",
+    "original_sha256": "317e92274afc671c153cd066fb43437ccfd3cd0d4da9be3d7082e43dc865cdba",
+    "explanation": {
+      "title": "KREX控制：准备复用与测量保护",
+      "question": "候选退出后，哪些上下文能留下，哪些资源必须清理？",
+      "scope": "依据论文 NVIDIA 路径重画，本地没有同样的 KREX 实现。",
+      "states": [
+        [
+          "准备与配对",
+          [
+            "dispatcher 为候选配对 context",
+            "驱动调用经本机队列转发"
+          ]
+        ],
+        [
+          "测量区域",
+          [
+            "按作者标记进入保护协议",
+            "提交门、排空与 CPU 条件协调"
+          ]
+        ],
+        [
+          "命令退出",
+          [
+            "清理候选所属设备资源",
+            "健康 context 可留待下条命令"
+          ]
+        ]
+      ],
+      "result": "准备上下文复用与可信测量保护是配合的两套动作，不能简化成普通 shell 常驻。",
+      "limit": "图为外部论文机制，各节点出处和本地缺口见正文对照表。"
+    },
+    "reading_question": "候选退出后，哪些上下文能留下，哪些资源必须清理？",
+    "explanation_review": {
+      "target_questions": [
+        "候选退出后，哪些上下文能留下，哪些资源必须清理？",
+        "准备与配对：发生什么及为什么？",
+        "测量区域：发生什么及为什么？",
+        "命令退出：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-protected-regions-0a75ded",
+    "kind": "evidence_explanation",
+    "title": "保护窗口：共享准备、独占测量",
+    "caption": "缩小保护区域有利用率空间，但必须证明测量环境达到目标条件。 教学时间不是论文性能数据，实际保护还包含 CPU 与缓存等条件。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/03-论文精读_KREX共享GPU测量保护.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/protected-regions.png",
+    "original_sha256": "223d5a28719204af967aa6424a7b3bb94ba15eb3a3aeaf84d0be04c59a48162f",
+    "explanation": {
+      "title": "保护窗口：共享准备、独占测量",
+      "question": "怎样减少整条命令独占的浪费，同时保持目标测量条件？",
+      "scope": "教学四条命令，相同测量工作量与保护开销。",
+      "states": [
+        [
+          "可共享阶段",
+          [
+            "导入、编译与准备可重叠",
+            "不必全程锁住 GPU"
+          ]
+        ],
+        [
+          "受保护阶段",
+          [
+            "测量前协调竞争退出",
+            "只保护需要可信计时的区域"
+          ]
+        ],
+        [
+          "比较整组代价",
+          [
+            "保护有额外切换开销",
+            "仍须核对总完成时间"
+          ]
+        ]
+      ],
+      "result": "缩小保护区域有利用率空间，但必须证明测量环境达到目标条件。",
+      "limit": "教学时间不是论文性能数据，实际保护还包含 CPU 与缓存等条件。"
+    },
+    "reading_question": "怎样减少整条命令独占的浪费，同时保持目标测量条件？",
+    "explanation_review": {
+      "target_questions": [
+        "怎样减少整条命令独占的浪费，同时保持目标测量条件？",
+        "可共享阶段：发生什么及为什么？",
+        "受保护阶段：发生什么及为什么？",
+        "比较整组代价：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-gate-and-drain-1739525",
+    "kind": "evidence_explanation",
+    "title": "关门与排空：为什么必须做两步",
+    "caption": "关门阻止新增，排空处理存量。两者完成后才有资格讨论受保护计时。 还需 CPU 与缓存条件，不把图中两步当作完整隔离保证。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/03-论文精读_KREX共享GPU测量保护.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/gate-and-drain.png",
+    "original_sha256": "8fbaef6fd278d992434941eaee8590b2e8767c79eb4b3ebd01a225bff6902762",
+    "explanation": {
+      "title": "关门与排空：为什么必须做两步",
+      "question": "暂停新提交后，已经进入 GPU 的工作会自己消失吗？",
+      "scope": "教学 GPU 队列与测量窗口，排空确认属于当前轮次。",
+      "states": [
+        [
+          "关提交门",
+          [
+            "禁止新竞争进入",
+            "已提交内核仍可能在执行"
+          ]
+        ],
+        [
+          "排空在途工作",
+          [
+            "等待已有队列与计数归零",
+            "主机函数返回不等于设备完成"
+          ]
+        ],
+        [
+          "当前轮确认",
+          [
+            "匹配本轮 epoch",
+            "拒绝旧轮迟到消息提前开测"
+          ]
+        ]
+      ],
+      "result": "关门阻止新增，排空处理存量。两者完成后才有资格讨论受保护计时。",
+      "limit": "还需 CPU 与缓存条件，不把图中两步当作完整隔离保证。"
+    },
+    "reading_question": "暂停新提交后，已经进入 GPU 的工作会自己消失吗？",
+    "explanation_review": {
+      "target_questions": [
+        "暂停新提交后，已经进入 GPU 的工作会自己消失吗？",
+        "关提交门：发生什么及为什么？",
+        "排空在途工作：发生什么及为什么？",
+        "当前轮确认：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-yarn-responsibilities-180f1c7",
+    "kind": "evidence_explanation",
+    "title": "YARN借鉴：任务语义与节点执行分工",
+    "caption": "语义、调度和执行分层，信息通过明确协议相连，避免中央节点猜所有任务含义。 YARN 原机制不等于本地已实现完整比较协调，具体缺口见正文。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/04-系统借鉴_YARN资源分配与反馈调度.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/yarn-responsibilities.png",
+    "original_sha256": "925f0decf4254026077b0a0e8b617d6a62d9e50ba9f3deb64c53fd09d7eed655",
+    "explanation": {
+      "title": "YARN借鉴：任务语义与节点执行分工",
+      "question": "谁知道什么任务值得做，谁知道哪张卡当前可用？",
+      "scope": "左侧外部 YARN，右侧 PSRL 对应分析，组级协调为提案。",
+      "states": [
+        [
+          "任务侧声明",
+          [
+            "掌握候选之间的比较关系",
+            "提出资源与反馈要求"
+          ]
+        ],
+        [
+          "资源层安排",
+          [
+            "掌握队列与设备状态",
+            "核验准入、放置与取消"
+          ]
+        ],
+        [
+          "节点实际执行",
+          [
+            "启动命令并收集状态",
+            "确认所属物理资源归还"
+          ]
+        ]
+      ],
+      "result": "语义、调度和执行分层，信息通过明确协议相连，避免中央节点猜所有任务含义。",
+      "limit": "YARN 原机制不等于本地已实现完整比较协调，具体缺口见正文。"
+    },
+    "reading_question": "谁知道什么任务值得做，谁知道哪张卡当前可用？",
+    "explanation_review": {
+      "target_questions": [
+        "谁知道什么任务值得做，谁知道哪张卡当前可用？",
+        "任务侧声明：发生什么及为什么？",
+        "资源层安排：发生什么及为什么？",
+        "节点实际执行：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-gpu-task-lifecycle-336b197",
+    "kind": "evidence_explanation",
+    "title": "GPU任务生命周期：会话与命令分两层",
+    "caption": "benchmark 选型还在选择状态寿命与提交边界，不只是选择一个 GPU 计算函数。 不是所有任务都默认 command，接入和验证层次按正文逐项确认。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/05-基准调研_GPU任务类型与接入顺序.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/gpu-task-lifecycle.png",
+    "original_sha256": "f62b3f9dc8c2a29c10bdd8a3b431210d5cfc10704d45254ed7f944655c146f8d",
+    "explanation": {
+      "title": "GPU任务生命周期：会话与命令分两层",
+      "question": "一题多轮修改后，哪些东西保留，最终评分又读什么？",
+      "scope": "本地任务结构与候选 benchmark 接入分析。",
+      "states": [
+        [
+          "创建会话",
+          [
+            "申请 CPU、主存与容器资源",
+            "代码文件在多轮间保留"
+          ]
+        ],
+        [
+          "多轮 GPU 工具",
+          [
+            "每条按实际持有策略准入",
+            "结束后按协议保留或归还"
+          ]
+        ],
+        [
+          "最终评估",
+          [
+            "verifier 读取最终提交产物",
+            "评分后清理所属会话资源"
+          ]
+        ]
+      ],
+      "result": "benchmark 选型还在选择状态寿命与提交边界，不只是选择一个 GPU 计算函数。",
+      "limit": "不是所有任务都默认 command，接入和验证层次按正文逐项确认。"
+    },
+    "reading_question": "一题多轮修改后，哪些东西保留，最终评分又读什么？",
+    "explanation_review": {
+      "target_questions": [
+        "一题多轮修改后，哪些东西保留，最终评分又读什么？",
+        "创建会话：发生什么及为什么？",
+        "多轮 GPU 工具：发生什么及为什么？",
+        "最终评估：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-benchmark-choice-c6aaac2",
+    "kind": "evidence_explanation",
+    "title": "基准选择：准确率是否一定与竞争无关",
+    "caption": "选择非时间指标还要固定实际工作，限时准确率任务仍可能受设备竞争影响。 图用于研究选型，不把外部 benchmark 的公开描述当作本地已接入。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/05-基准调研_GPU任务类型与接入顺序.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/benchmark-choice.png",
+    "original_sha256": "14404d7b5e19ea9750534fcc15e9a9dab099b4f985f200f2bbe39f476c96fd0d",
+    "explanation": {
+      "title": "基准选择：准确率是否一定与竞争无关",
+      "question": "不用时间打分，就能完全忽略共运行对任务结果的影响吗？",
+      "scope": "区分固定工作量质量评分、限时训练与直接测速评分。",
+      "states": [
+        [
+          "固定工作量",
+          [
+            "更新次数和数据固定",
+            "质量评分更适合先做吞吐对照"
+          ]
+        ],
+        [
+          "限时训练",
+          [
+            "竞争可能让实际更新变少",
+            "准确率下降是真实结果变化"
+          ]
+        ],
+        [
+          "直接测速",
+          [
+            "竞争直接改变分数",
+            "需要统一测量条件或保护区域"
+          ]
+        ]
+      ],
+      "result": "选择非时间指标还要固定实际工作，限时准确率任务仍可能受设备竞争影响。",
+      "limit": "图用于研究选型，不把外部 benchmark 的公开描述当作本地已接入。"
+    },
+    "reading_question": "不用时间打分，就能完全忽略共运行对任务结果的影响吗？",
+    "explanation_review": {
+      "target_questions": [
+        "不用时间打分，就能完全忽略共运行对任务结果的影响吗？",
+        "固定工作量：发生什么及为什么？",
+        "限时训练：发生什么及为什么？",
+        "直接测速：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-reward-distortion-5865243",
+    "kind": "evidence_explanation",
+    "title": "奖励偏差：重复测量也可能稳定地选错",
+    "caption": "随机噪声可通过重测缩小，系统偏差要先统一测量条件，不能仅增加重复次数。 教学数字不是外部 benchmark 数据，不由排名不变推断梯度不变。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/06-基准调研_AI4Infra性能反馈与验证.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/reward-distortion.png",
+    "original_sha256": "8cc1d618d04192c1efd4990d2a55011959218ff12baab709a6d2ff2cad06096b",
+    "explanation": {
+      "title": "奖励偏差：重复测量也可能稳定地选错",
+      "question": "相同两份代码，为什么共享硬件可能把排名翻转？",
+      "scope": "教学相同 A、B 与输入，只改变候选所遇到的竞争。",
+      "states": [
+        [
+          "目标无竞争",
+          [
+            "A 本来更快",
+            "评分应反映目标运行条件"
+          ]
+        ],
+        [
+          "不等竞争",
+          [
+            "候选对带宽和算力敏感性不同",
+            "减速倍率不一定相同"
+          ]
+        ],
+        [
+          "后续学习",
+          [
+            "Agent 可能选错代码",
+            "组内优势也可能改变"
+          ]
+        ]
+      ],
+      "result": "随机噪声可通过重测缩小，系统偏差要先统一测量条件，不能仅增加重复次数。",
+      "limit": "教学数字不是外部 benchmark 数据，不由排名不变推断梯度不变。"
+    },
+    "reading_question": "相同两份代码，为什么共享硬件可能把排名翻转？",
+    "explanation_review": {
+      "target_questions": [
+        "相同两份代码，为什么共享硬件可能把排名翻转？",
+        "目标无竞争：发生什么及为什么？",
+        "不等竞争：发生什么及为什么？",
+        "后续学习：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-scheduling-two-lanes-e460719",
+    "kind": "evidence_explanation",
+    "title": "调度两条路径：低频分析与快速派发",
+    "caption": "模型可补充难直接观测的信息，在线资源准入仍需可验证规则与有界开销。 提案不等于生产 EnvRouter 已用 LLM 实时派发。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/07-智能调度_模型决策的已有工作与研究选择.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/scheduling-two-lanes.png",
+    "original_sha256": "97bb251dc12dbabbe01725d5f6e862175a5f264ddb3e1a5b2166c36155d44bc7",
+    "explanation": {
+      "title": "调度两条路径：低频分析与快速派发",
+      "question": "模型适合每条命令都做决策，还是提前提供可复用的信息？",
+      "scope": "设计提案，S1 语义分析与完整有效期检查未接入生产。",
+      "states": [
+        [
+          "低频分析",
+          [
+            "读取代码与历史",
+            "估计阶段、时长与可释放条件"
+          ]
+        ],
+        [
+          "快速派发",
+          [
+            "读现场队列和设备预算",
+            "核对建议有效后执行算法"
+          ]
+        ],
+        [
+          "版本变化",
+          [
+            "代码、模型或数据变化使画像失效",
+            "取消与回收仍由执行协议保证"
+          ]
+        ]
+      ],
+      "result": "模型可补充难直接观测的信息，在线资源准入仍需可验证规则与有界开销。",
+      "limit": "提案不等于生产 EnvRouter 已用 LLM 实时派发。"
+    },
+    "reading_question": "模型适合每条命令都做决策，还是提前提供可复用的信息？",
+    "explanation_review": {
+      "target_questions": [
+        "模型适合每条命令都做决策，还是提前提供可复用的信息？",
+        "低频分析：发生什么及为什么？",
+        "快速派发：发生什么及为什么？",
+        "版本变化：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-model-decision-cost-05c9647",
+    "kind": "evidence_explanation",
+    "title": "决策成本：选对动作仍可能更慢",
+    "caption": "评价决策要同时计入动作质量与决策成本，缓存分析还需维护版本有效性。 教学条件。不能把不支持 CPU 的任意 CUDA 命令当作合法替代动作。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/07-智能调度_模型决策的已有工作与研究选择.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/model-decision-cost.png",
+    "original_sha256": "96aa1b5db9e4dbd73138d47f9ced35f3eaba64ce4c42dafe9a2d1c9746aa99ff",
+    "explanation": {
+      "title": "决策成本：选对动作仍可能更慢",
+      "question": "冷卡加载更快，但为做决策花太久，会不会失去收益？",
+      "scope": "同一条四秒命令，同一份已核实加载时间，教学对照。",
+      "states": [
+        [
+          "直接等待",
+          [
+            "不花额外分析时间",
+            "支付热卡队列等待"
+          ]
+        ],
+        [
+          "规则选冷卡",
+          [
+            "成本为加载加执行",
+            "若信息已知，可更早结束"
+          ]
+        ],
+        [
+          "在线慢分析",
+          [
+            "分析本身在等待链上",
+            "可能吃掉换卡节省"
+          ]
+        ]
+      ],
+      "result": "评价决策要同时计入动作质量与决策成本，缓存分析还需维护版本有效性。",
+      "limit": "教学条件。不能把不支持 CPU 的任意 CUDA 命令当作合法替代动作。"
+    },
+    "reading_question": "冷卡加载更快，但为做决策花太久，会不会失去收益？",
+    "explanation_review": {
+      "target_questions": [
+        "冷卡加载更快，但为做决策花太久，会不会失去收益？",
+        "直接等待：发生什么及为什么？",
+        "规则选冷卡：发生什么及为什么？",
+        "在线慢分析：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-rsi-two-loops-cb6e04f",
+    "kind": "evidence_explanation",
+    "title": "两层训练与模型接管：参数流别混淆",
+    "caption": "训练一个模型作业与让该模型成为下一轮 Agent 是不同流程，后者不由评分自动触发。 当前新参数进入 rollout 的正式路径来自外层 trainer，任务产物接管仍是提案。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/rsi-two-loops.png",
+    "original_sha256": "4a1f1c6a9ad4e830fdb1205730a1f9112487d42c894edcbeb8cf5a5ae0ce8a67",
+    "explanation": {
+      "title": "两层训练与模型接管：参数流别混淆",
+      "question": "任务模型 B 训练好了，下一条命令为什么仍由 Agent A 生成？",
+      "scope": "上半部常规两层训练，下半部红虚线为额外接管提案。",
+      "states": [
+        [
+          "A 提出实验",
+          [
+            "A 是研究 Agent 策略",
+            "向环境发训练与评估命令"
+          ]
+        ],
+        [
+          "B 作为任务产物",
+          [
+            "在环境中更新并接受评分",
+            "分数和轨迹用来训练 A"
+          ]
+        ],
+        [
+          "B 接管需额外步骤",
+          [
+            "具备 Agent 能力并通过评估",
+            "发布服务就绪再切换路由"
+          ]
+        ]
+      ],
+      "result": "训练一个模型作业与让该模型成为下一轮 Agent 是不同流程，后者不由评分自动触发。",
+      "limit": "当前新参数进入 rollout 的正式路径来自外层 trainer，任务产物接管仍是提案。"
+    },
+    "reading_question": "任务模型 B 训练好了，下一条命令为什么仍由 Agent A 生成？",
+    "explanation_review": {
+      "target_questions": [
+        "任务模型 B 训练好了，下一条命令为什么仍由 Agent A 生成？",
+        "A 提出实验：发生什么及为什么？",
+        "B 作为任务产物：发生什么及为什么？",
+        "B 接管需额外步骤：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-reading-map-0eb10e0",
+    "kind": "evidence_explanation",
+    "title": "调研阅读地图：按问题选择论文机制",
+    "caption": "先确定待解决的问题，再借用对应机制，不能从论文名字直接跳到本地收益。 阅读地图用于导航，完整方法和证据仍在各篇精读中连续解释。",
+    "status": "teaching",
+    "documents": [
+      "docs/env-worker-deep-dive/literature-reviews/README.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/reading-map.png",
+    "original_sha256": "448721c6b5e94284cacc83634f160fdbfdaefec63a42fed098f7d1840018248c",
+    "explanation": {
+      "title": "调研阅读地图：按问题选择论文机制",
+      "question": "空档借用、资源分配、反馈可信和决策建模分别读哪里？",
+      "scope": "四列对应四类问题，论文与本地实验状态分开。",
+      "states": [
+        [
+          "先看空档与依赖",
+          [
+            "五篇论文建立共同场景",
+            "RollArt 与 DynaRL 区分动作层次"
+          ]
+        ],
+        [
+          "再看真实任务",
+          [
+            "任务调研确认 GPU 使用阶段",
+            "KREX 与 AI4Infra 处理测速反馈"
+          ]
+        ],
+        [
+          "最后选决策方式",
+          [
+            "YARN 看职责与信息边界",
+            "模型调度看预测成本和有效期"
+          ]
+        ]
+      ],
+      "result": "先确定待解决的问题，再借用对应机制，不能从论文名字直接跳到本地收益。",
+      "limit": "阅读地图用于导航，完整方法和证据仍在各篇精读中连续解释。"
+    },
+    "reading_question": "空档借用、资源分配、反馈可信和决策建模分别读哪里？",
+    "explanation_review": {
+      "target_questions": [
+        "空档借用、资源分配、反馈可信和决策建模分别读哪里？",
+        "先看空档与依赖：发生什么及为什么？",
+        "再看真实任务：发生什么及为什么？",
+        "最后选决策方式：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-psrl-training-loop-b6943fc",
+    "kind": "evidence_explanation",
+    "title": "PSRL完整循环：工具反馈怎样进入下一次更新",
+    "caption": "生成路由与 EnvRouter 各管不同队列，工具更快还要通过批次依赖才影响训练开始。 图省略部分版本控制箭头，调用关系与源码定位在正文补齐。",
+    "status": "teaching",
+    "documents": [
+      "docs/overview/01-PSRL入门_从一道题到模型更新.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/psrl-training-loop.png",
+    "original_sha256": "fe212adb616ed04fdd747802ee90858af9df3b9678358fcee0418eba77e191c8",
+    "explanation": {
+      "title": "PSRL完整循环：工具反馈怎样进入下一次更新",
+      "question": "模型请求、环境命令、轨迹与策略 step 是什么包含关系？",
+      "scope": "上排一次交互，下排样本、训练与参数发布。",
+      "states": [
+        [
+          "生成与工具",
+          [
+            "Worker 请求模型生成",
+            "必要时调用 EnvRouter 管理的工具"
+          ]
+        ],
+        [
+          "形成训练批次",
+          [
+            "多轮交互产生一条轨迹",
+            "多条满足条件才进入一次更新"
+          ]
+        ],
+        [
+          "发布新参数",
+          [
+            "trainer 更新策略",
+            "参数服务协调生成侧启用新版本"
+          ]
+        ]
+      ],
+      "result": "生成路由与 EnvRouter 各管不同队列，工具更快还要通过批次依赖才影响训练开始。",
+      "limit": "图省略部分版本控制箭头，调用关系与源码定位在正文补齐。"
+    },
+    "reading_question": "模型请求、环境命令、轨迹与策略 step 是什么包含关系？",
+    "explanation_review": {
+      "target_questions": [
+        "模型请求、环境命令、轨迹与策略 step 是什么包含关系？",
+        "生成与工具：发生什么及为什么？",
+        "形成训练批次：发生什么及为什么？",
+        "发布新参数：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-PSRL_arch-4d2b637",
+    "kind": "evidence_explanation",
+    "title": "PSRL入口：生成与训练怎样解耦",
+    "caption": "解耦让阶段有重叠机会，数据可用性和模型版本仍要显式协调。 架构概览不代表所有阶段能同时无限并发，细节见完整执行主文档。",
+    "status": "teaching",
+    "documents": [
+      "docs/overview/index.md"
+    ],
+    "original": "docs/_static/img/PSRL_arch.svg",
+    "original_sha256": "3654a9088f4c53c142e4a98ab33ce0d94305888ed88a26ab881d82598bec475b",
+    "explanation": {
+      "title": "PSRL入口：生成与训练怎样解耦",
+      "question": "独立采样和训练之后，靠什么把数据与模型版本接起来？",
+      "scope": "项目总览架构，沿样本数据与模型权重两条路径阅读。",
+      "states": [
+        [
+          "生成侧",
+          [
+            "题目进入 Agent 与生成实例",
+            "环境交互形成轨迹和评分"
+          ]
+        ],
+        [
+          "数据侧",
+          [
+            "样本字段与引用进入队列",
+            "训练按批次和版本条件读取"
+          ]
+        ],
+        [
+          "参数侧",
+          [
+            "训练发布新权重",
+            "生成端协调完成同步再启用"
+          ]
+        ]
+      ],
+      "result": "解耦让阶段有重叠机会，数据可用性和模型版本仍要显式协调。",
+      "limit": "架构概览不代表所有阶段能同时无限并发，细节见完整执行主文档。"
+    },
+    "reading_question": "独立采样和训练之后，靠什么把数据与模型版本接起来？",
+    "explanation_review": {
+      "target_questions": [
+        "独立采样和训练之后，靠什么把数据与模型版本接起来？",
+        "生成侧：发生什么及为什么？",
+        "数据侧：发生什么及为什么？",
+        "参数侧：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  },
+  {
+    "id": "explained-roofline-and-batching-1ddd7ab",
+    "kind": "evidence_explanation",
+    "title": "Roofline与合批：拐点从哪里来",
+    "caption": "min 的性能上限对应 max 的时间下界。真实上限还受 KV、上下文和共运行影响。 数字是教学假设，不是 H20 的固定 50 请求上限，一个请求步不是完成整条回答。",
+    "status": "teaching",
+    "documents": [
+      "docs/psrl/推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md"
+    ],
+    "original": "docs/_static/img/literature-reviews/roofline-and-batching.png",
+    "original_sha256": "19b51240be03de3e5155d43ac125a3415258c2ad018ab0f134d33ada924f77d7",
+    "explanation": {
+      "title": "Roofline与合批：拐点从哪里来",
+      "question": "单 token 变慢时，为什么吞吐还能提高，到哪里才趋于平台？",
+      "scope": "原创教学模型：读权重至少 3 ms，计算每请求步 0.06 ms。",
+      "states": [
+        [
+          "从两种时间出发",
+          [
+            "一轮至少 max(3, 0.06B) ms",
+            "搬运和计算都必须完成"
+          ]
+        ],
+        [
+          "代入同一模型",
+          [
+            "B=32：3 ms，约 10667 步/s",
+            "B=64：3.84 ms，约 16667 步/s"
+          ]
+        ],
+        [
+          "解释拐点",
+          [
+            "3 / 0.06 = 50 个请求",
+            "更大 B 只提高延迟，理想吞吐不增"
+          ]
+        ]
+      ],
+      "result": "min 的性能上限对应 max 的时间下界。真实上限还受 KV、上下文和共运行影响。",
+      "limit": "数字是教学假设，不是 H20 的固定 50 请求上限，一个请求步不是完成整条回答。"
+    },
+    "reading_question": "单 token 变慢时，为什么吞吐还能提高，到哪里才趋于平台？",
+    "explanation_review": {
+      "target_questions": [
+        "单 token 变慢时，为什么吞吐还能提高，到哪里才趋于平台？",
+        "从两种时间出发：发生什么及为什么？",
+        "代入同一模型：发生什么及为什么？",
+        "解释拐点：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ],
+      "source": "compose.py"
+    }
+  }
+]

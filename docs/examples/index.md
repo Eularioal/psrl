@@ -2,7 +2,7 @@
 
 > **Start here:** choose a task by how its result is scored. RLVR checks answers or tests, while agentic recipes add tools and multiple turns. Planned judge/distillation pages describe intended work and are labeled separately.
 
-If you are new to RL training, [the worked flow](../overview/reading-guide.md) explains the shared steps before you choose a recipe.
+If you are new to RL training, [the worked flow](../overview/01-PSRL入门_从一道题到模型更新.md) explains the shared steps before you choose a recipe.
 
 ---
 
@@ -37,6 +37,16 @@ LLM-derived reward signals for open-ended tasks: LLM-as-a-Judge scoring and On-P
 ::::
 
 ---
+
+<!-- figure:map-5e297a681a -->
+先按当前问题选择阅读入口，再在下方目录点击对应文档。
+
+[![Examples：阅读地图（1/2）](../_static/img/document-figures/map-5e297a681a-screen.png)](../_static/img/document-figures/map-5e297a681a.png)
+
+[![Examples：阅读地图（2/2）](../_static/img/document-figures/map-5e297a681a-screen-02.png)](../_static/img/document-figures/map-5e297a681a.png)
+
+每张彩色书页列出对应入口中的实际章节，帮助按问题定位阅读内容。编号只用于图中定位，不要求顺序通读。 [查看矢量图](../_static/img/document-figures/map-5e297a681a.svg)。
+<!-- /figure:map-5e297a681a -->
 
 ## Recipe Overview
 

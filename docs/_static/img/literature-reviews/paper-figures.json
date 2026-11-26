@@ -1,0 +1,999 @@
+{
+  "date": "2026-11-23",
+  "scope": "Original paper and official architecture figure excerpts. Existing teaching diagrams and historical evidence retained.",
+  "figures": [
+    {
+      "id": "paper-rollart-fig07",
+      "paper": "rollart",
+      "title": "RollArt: Disaggregated Multi-Task Agentic RL Training at Scale",
+      "authors": "Wei Gao et al.",
+      "source_url": "https://www.usenix.org/system/files/osdi26-gao.pdf",
+      "source_page": "https://www.usenix.org/conference/osdi26/presentation/gao",
+      "version": "OSDI 2026 published edition",
+      "figure_number": "7",
+      "pdf_page": 7,
+      "box": [
+        54,
+        70,
+        272,
+        214
+      ],
+      "format": "pdf",
+      "reading_question": "资源、执行与控制三层",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://www.usenix.org/conference/osdi26/presentation/gao"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/01-调度论文_五篇近期顶会工作综述.md",
+          "section": "3. RollArt：环境长尾与轨迹级解耦",
+          "reading_question": "资源、执行与控制三层"
+        }
+      ],
+      "source_sha256": "49344555d8e08db2621b0664adcb68d0f95ce7021c06542a1da08ce75cb89e7d",
+      "pages": [
+        {
+          "png": "paper-rollart-fig07-screen.png",
+          "width": 800,
+          "height": 528,
+          "sha256": "6a375af205757028dfd76867ed6e4e581c5f7942aa8658d5a57469fd7a91ffef"
+        }
+      ],
+      "full_png_sha256": "53ee138f321efa15223fd8f6385e0f853b4c701065aae211273cc6340e818472",
+      "full_svg_sha256": "c7e3090e88a380a44b554d0e077705dbd7408debcffd68c6a1eadab224368b2f"
+    },
+    {
+      "id": "paper-rollart-fig08",
+      "paper": "rollart",
+      "title": "RollArt: Disaggregated Multi-Task Agentic RL Training at Scale",
+      "authors": "Wei Gao et al.",
+      "source_url": "https://www.usenix.org/system/files/osdi26-gao.pdf",
+      "source_page": "https://www.usenix.org/conference/osdi26/presentation/gao",
+      "version": "OSDI 2026 published edition",
+      "figure_number": "8",
+      "pdf_page": 9,
+      "box": [
+        317,
+        70,
+        560,
+        122
+      ],
+      "format": "pdf",
+      "reading_question": "每条轨迹独立调用环境与推理",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://www.usenix.org/conference/osdi26/presentation/gao"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/02-论文精读_RollArt与DynaRL的Agent调度.md",
+          "section": "3. RollArt 的贡献与执行过程",
+          "reading_question": "每条轨迹独立调用环境与推理"
+        }
+      ],
+      "source_sha256": "49344555d8e08db2621b0664adcb68d0f95ce7021c06542a1da08ce75cb89e7d",
+      "pages": [
+        {
+          "png": "paper-rollart-fig08-screen.png",
+          "width": 800,
+          "height": 171,
+          "sha256": "c024dfd116be5cbd9f79d14489c723433e508ded9177ff82aed4334a2bcb78c3"
+        }
+      ],
+      "full_png_sha256": "9b9bd9eac33e633a41ec01d2d88aaaf53e5dfe1a68d1bd393161922e449a84b2",
+      "full_svg_sha256": "83d3eef99bc8bec039e47dedab30bd5fe6cecb92ff56865ffc39492030fb8dc3"
+    },
+    {
+      "id": "paper-rollart-fig09",
+      "paper": "rollart",
+      "title": "RollArt: Disaggregated Multi-Task Agentic RL Training at Scale",
+      "authors": "Wei Gao et al.",
+      "source_url": "https://www.usenix.org/system/files/osdi26-gao.pdf",
+      "source_page": "https://www.usenix.org/conference/osdi26/presentation/gao",
+      "version": "OSDI 2026 published edition",
+      "figure_number": "9",
+      "pdf_page": 10,
+      "box": [
+        330,
+        70,
+        547,
+        204
+      ],
+      "format": "pdf",
+      "reading_question": "样本收集、权重切换与训练重叠",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://www.usenix.org/conference/osdi26/presentation/gao"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/02-论文精读_RollArt与DynaRL的Agent调度.md",
+          "section": "3. RollArt 的贡献与执行过程",
+          "reading_question": "样本收集、权重切换与训练重叠"
+        }
+      ],
+      "source_sha256": "49344555d8e08db2621b0664adcb68d0f95ce7021c06542a1da08ce75cb89e7d",
+      "pages": [
+        {
+          "png": "paper-rollart-fig09-screen.png",
+          "width": 800,
+          "height": 493,
+          "sha256": "e4ec91af282677a4a07d20cdf5824105f46a81fd6523d2539ece9c841e56533e"
+        }
+      ],
+      "full_png_sha256": "bc630f702f16cacde2a99036a662985c43a33e221cd14f95930eb66c869b5aae",
+      "full_svg_sha256": "a31aea3a9a22a522a0bdb6f28522e135f7d416117f203eb2927466b8e5128e42"
+    },
+    {
+      "id": "paper-dynarl-fig06",
+      "paper": "dynarl",
+      "title": "DynaRL: Flexible and Dynamic Scheduling of Large-Scale Reinforcement Learning Training",
+      "authors": "Yuanqing Wang et al.",
+      "source_url": "https://www.usenix.org/system/files/osdi26-wang-yuanqing.pdf",
+      "source_page": "https://www.usenix.org/conference/osdi26/presentation/wang-yuanqing",
+      "version": "OSDI 2026 published edition",
+      "figure_number": "6",
+      "pdf_page": 5,
+      "box": [
+        55,
+        70,
+        284,
+        275
+      ],
+      "format": "pdf",
+      "reading_question": "全局决策与本地迁移反馈环",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://www.usenix.org/conference/osdi26/presentation/wang-yuanqing"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/01-调度论文_五篇近期顶会工作综述.md",
+          "section": "4. DynaRL：随瓶颈变化重新分配资源",
+          "reading_question": "全局决策与本地迁移反馈环"
+        }
+      ],
+      "source_sha256": "f19ccf45513cebea665b8292a9282e6e9fc97dbc87018e6b350aa2cadf6035ec",
+      "pages": [
+        {
+          "png": "paper-dynarl-fig06-screen.png",
+          "width": 800,
+          "height": 598,
+          "sha256": "f08ffadf6e52aefffb9e3349c4c0ad5bd3b237aa10cc47f4d89ec341903ffa61"
+        }
+      ],
+      "full_png_sha256": "9dae3755783dd704830ebb5475bbd2e3bb7eb953722b0a069f32788c1026fb64",
+      "full_svg_sha256": "345c5b0a281e89bdeb2bb7bbac49d75d2d5aebc801e7d11f7d40e5095803ea9f"
+    },
+    {
+      "id": "paper-dynarl-fig09",
+      "paper": "dynarl",
+      "title": "DynaRL: Flexible and Dynamic Scheduling of Large-Scale Reinforcement Learning Training",
+      "authors": "Yuanqing Wang et al.",
+      "source_url": "https://www.usenix.org/system/files/osdi26-wang-yuanqing.pdf",
+      "source_page": "https://www.usenix.org/conference/osdi26/presentation/wang-yuanqing",
+      "version": "OSDI 2026 published edition",
+      "figure_number": "9",
+      "pdf_page": 6,
+      "box": [
+        321,
+        309,
+        556,
+        439
+      ],
+      "format": "pdf",
+      "reading_question": "三种迁移动作及其状态开销",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://www.usenix.org/conference/osdi26/presentation/wang-yuanqing"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/02-论文精读_RollArt与DynaRL的Agent调度.md",
+          "section": "6. DynaRL 的贡献与执行过程",
+          "reading_question": "三种迁移动作及其状态开销"
+        }
+      ],
+      "source_sha256": "f19ccf45513cebea665b8292a9282e6e9fc97dbc87018e6b350aa2cadf6035ec",
+      "pages": [
+        {
+          "png": "paper-dynarl-fig09-screen.png",
+          "width": 800,
+          "height": 442,
+          "sha256": "6e15ed19a561876316551fba0fe0bb9acff1f63137918e16d33a12e641430c2c"
+        }
+      ],
+      "full_png_sha256": "b89b8f1b0cd10568fee8fd10bfceba219f732b18905cf6a5b479d8692ee6619d",
+      "full_svg_sha256": "b4a2c513dc03261de2631deed6a19e26e64b89cc6b4966b553c4fddf009db50d"
+    },
+    {
+      "id": "paper-murakkab-fig05",
+      "paper": "murakkab",
+      "title": "Murakkab: Resource-Efficient Agentic Workflow Orchestration in Cloud Platforms",
+      "authors": "Gohar Irfan Chaudhry et al.",
+      "source_url": "https://www.usenix.org/system/files/osdi26-chaudhry.pdf",
+      "source_page": "https://www.usenix.org/conference/osdi26/presentation/chaudhry",
+      "version": "OSDI 2026 published edition",
+      "figure_number": "5",
+      "pdf_page": 7,
+      "box": [
+        68,
+        72,
+        558,
+        181
+      ],
+      "format": "pdf",
+      "reading_question": "工作流声明、优化部署与运行执行",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://www.usenix.org/conference/osdi26/presentation/chaudhry"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/01-调度论文_五篇近期顶会工作综述.md",
+          "section": "5. Murakkab：按完整工作流优化",
+          "reading_question": "工作流声明、优化部署与运行执行"
+        }
+      ],
+      "panels": [
+        [
+          68,
+          72,
+          215,
+          181
+        ],
+        [
+          218,
+          72,
+          390,
+          181
+        ],
+        [
+          392,
+          72,
+          558,
+          181
+        ]
+      ],
+      "source_sha256": "9c9aa888b675c7849467d5b594e640996fee57f32b79fc9cf443fb549587c0e0",
+      "pages": [
+        {
+          "png": "paper-murakkab-fig05-screen.png",
+          "width": 800,
+          "height": 592,
+          "sha256": "e25a449430cf2a3cbedc9812d6fab7f073c13baa8fe875d331d7eb8b9c19958d"
+        },
+        {
+          "png": "paper-murakkab-fig05-screen-02.png",
+          "width": 800,
+          "height": 506,
+          "sha256": "a082ea2da24aa90e9736f5f13a80d300f07b0475b7ebe34c40b18f4eab283e95"
+        },
+        {
+          "png": "paper-murakkab-fig05-screen-03.png",
+          "width": 800,
+          "height": 524,
+          "sha256": "9b51039f3d8f77aabfc69ed872d5157507ddad136220298d6ea7bab0908da0ac"
+        }
+      ],
+      "full_png_sha256": "06944360ca0158d50e366204a560944e76f28318d7670734bd4cefb2ac538337",
+      "full_svg_sha256": "0e84c249c85551b39a5b5f7805086037e2511436875590fbc2742aa4b2803903"
+    },
+    {
+      "id": "paper-prism-fig04",
+      "paper": "prism",
+      "title": "Prism: Cost-Efficient Multi-LLM Serving via GPU Memory Ballooning",
+      "authors": "Shan Yu et al.",
+      "source_url": "https://www.usenix.org/system/files/osdi26-yu-shan.pdf",
+      "source_page": "https://www.usenix.org/conference/osdi26/presentation/yu-shan",
+      "version": "OSDI 2026 published edition",
+      "figure_number": "4",
+      "pdf_page": 7,
+      "box": [
+        314,
+        70,
+        562,
+        197
+      ],
+      "format": "pdf",
+      "reading_question": "虚拟地址与物理显存页的解耦",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://www.usenix.org/conference/osdi26/presentation/yu-shan"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/01-调度论文_五篇近期顶会工作综述.md",
+          "section": "6. Prism：让模型显存真正具有弹性",
+          "reading_question": "虚拟地址与物理显存页的解耦"
+        }
+      ],
+      "source_sha256": "b2af6f908a07adbb037c0dc14ccebfa51b7635c2ec614f1a0d39d8eea4017347",
+      "pages": [
+        {
+          "png": "paper-prism-fig04-screen.png",
+          "width": 800,
+          "height": 409,
+          "sha256": "fb334d3a2de28046d29c5db9d62cc7bf2b1d6aed058656450c5bfec7d23ddc10"
+        }
+      ],
+      "full_png_sha256": "99b8173a33811cffd6caa49b09e27d411ccfdf355cc19f359097d33cd623d8e2",
+      "full_svg_sha256": "b5ce5b6e39da373769a1e626995c176f292a416088a86071babe2dbefcf6fa79"
+    },
+    {
+      "id": "paper-weave-fig01",
+      "paper": "weave",
+      "title": "Weave: Efficient Co-Scheduling for Disaggregated RL Post-Training",
+      "authors": "Tianyuan Wu et al.",
+      "source_url": "https://www.usenix.org/system/files/osdi26-wu-tianyuan.pdf",
+      "source_page": "https://www.usenix.org/conference/osdi26/presentation/wu-tianyuan",
+      "version": "OSDI 2026 published edition",
+      "figure_number": "1",
+      "pdf_page": 2,
+      "box": [
+        324,
+        185,
+        552,
+        302
+      ],
+      "format": "pdf",
+      "reading_question": "两个RL作业交错利用依赖空泡",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://www.usenix.org/conference/osdi26/presentation/wu-tianyuan"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/01-调度论文_五篇近期顶会工作综述.md",
+          "section": "7. Weave：利用依赖造成的空闲窗口",
+          "reading_question": "两个RL作业交错利用依赖空泡"
+        },
+        {
+          "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md",
+          "section": "借出的卡什么时候能收回来",
+          "reading_question": "两个RL作业交错利用依赖空泡"
+        }
+      ],
+      "source_sha256": "eb8ce1c9fe00e6fe4165e2784e76ce63f02199b1f4b9fe529c2b4bf02465631e",
+      "pages": [
+        {
+          "png": "paper-weave-fig01-screen.png",
+          "width": 800,
+          "height": 410,
+          "sha256": "06084f98783085508a7c9223a0e29634ff3ad84fde79cb1aa600bce36456ef55"
+        }
+      ],
+      "full_png_sha256": "83685016eb7bdcec4eb28eb4c81ac08c27fe473ec5ea8a58670d450d08479521",
+      "full_svg_sha256": "89fec6d805d78fd969514d89988f6f9bd9ab780b68803b22448b16cde5b4ccd2"
+    },
+    {
+      "id": "paper-krex-fig01",
+      "paper": "krex",
+      "title": "KREX: Concurrent Kernel Benchmarking on Shared GPUs via Region-Granular Exclusivity",
+      "authors": "Tianyu Feng et al.",
+      "source_url": "https://arxiv.org/pdf/2609.30057v1",
+      "source_page": "https://arxiv.org/html/2609.30057v1",
+      "version": "arXiv 2609.30057v1",
+      "figure_number": "1",
+      "pdf_page": 2,
+      "box": [
+        55,
+        70,
+        296,
+        282
+      ],
+      "format": "pdf",
+      "reading_question": "整命令与测量区间的保护范围",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://arxiv.org/html/2609.30057v1"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/03-论文精读_KREX共享GPU测量保护.md",
+          "section": "1. 从完整流程理解论文",
+          "reading_question": "整命令与测量区间的保护范围"
+        },
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/06-基准调研_AI4Infra性能反馈与验证.md",
+          "section": "为什么可靠反馈会改变调度目标",
+          "reading_question": "整命令与测量区间的保护范围"
+        }
+      ],
+      "source_sha256": "bd76ce92bf3c88ce48b5cd3bb38fcc303120efbf24660760fe660dfdc01aefd1",
+      "pages": [
+        {
+          "png": "paper-krex-fig01-screen.png",
+          "width": 800,
+          "height": 598,
+          "sha256": "a7474904662a1a6248795d5fb4db2d0c8451ee82b1eae14e7f74fb8e3c462fb5"
+        }
+      ],
+      "full_png_sha256": "b02b0b8212556f641d264d7a9c268945df90face4840ebbd61fcbc686d545e1e",
+      "full_svg_sha256": "8e22cda7d6a706f0ace16746ce2403240d1d6e6b888ff62b113f36174b606cca"
+    },
+    {
+      "id": "paper-krex-fig04",
+      "paper": "krex",
+      "title": "KREX: Concurrent Kernel Benchmarking on Shared GPUs via Region-Granular Exclusivity",
+      "authors": "Tianyu Feng et al.",
+      "source_url": "https://arxiv.org/pdf/2609.30057v1",
+      "source_page": "https://arxiv.org/html/2609.30057v1",
+      "version": "arXiv 2609.30057v1",
+      "figure_number": "4",
+      "pdf_page": 5,
+      "box": [
+        322,
+        70,
+        554,
+        219
+      ],
+      "format": "pdf",
+      "reading_question": "关门、排空、冻结与解冻的顺序",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://arxiv.org/html/2609.30057v1"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/03-论文精读_KREX共享GPU测量保护.md",
+          "section": "3. 怎样建立真正可测量的独占窗口",
+          "reading_question": "关门、排空、冻结与解冻的顺序"
+        }
+      ],
+      "source_sha256": "bd76ce92bf3c88ce48b5cd3bb38fcc303120efbf24660760fe660dfdc01aefd1",
+      "pages": [
+        {
+          "png": "paper-krex-fig04-screen.png",
+          "width": 800,
+          "height": 513,
+          "sha256": "748aa61d9953c544c59236569736d5fddd2c21215638a5cc8ac49a730b37de8e"
+        }
+      ],
+      "full_png_sha256": "e63c21e9eca0386d4e0f5d586cd3cdb33481e2eceeb310cc3f004ce6a385bc4f",
+      "full_svg_sha256": "1ee10d9301e88a82697e102ae57d2fdd676375173825d493d5cb543cf7eef4e0"
+    },
+    {
+      "id": "paper-kernelbench-fig01",
+      "paper": "kernelbench",
+      "title": "KernelBench: Can LLMs Write Efficient GPU Kernels?",
+      "authors": "Anne Ouyang et al.",
+      "source_url": "https://arxiv.org/pdf/2502.10517v1",
+      "source_page": "https://arxiv.org/html/2502.10517v1",
+      "version": "arXiv 2502.10517v1",
+      "figure_number": "1",
+      "pdf_page": 2,
+      "box": [
+        77,
+        74,
+        535,
+        211
+      ],
+      "format": "pdf",
+      "reading_question": "生成代码、正确性检查与性能测量",
+      "rights": {
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "verification_url": "https://arxiv.org/abs/2502.10517v1"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/05-基准调研_GPU任务类型与接入顺序.md",
+          "section": "比较维度",
+          "reading_question": "生成代码、正确性检查与性能测量"
+        }
+      ],
+      "source_sha256": "fb1765807098915b853cca7a007aaa4bccdcd1a45eb1baef0d3919948abd7a6b",
+      "pages": [
+        {
+          "png": "paper-kernelbench-fig01-screen.png",
+          "width": 800,
+          "height": 239,
+          "sha256": "a5350c15256310cf9ecfb8b2d155e19ad918cd1f3f2dffc8243761f1ea40510b"
+        }
+      ],
+      "full_png_sha256": "02ec10bb43660d4efe01ab4980e98b833c76e44a7c09722ed44bc0d0d669bfa0",
+      "full_svg_sha256": "531b426acd61a85c353e4eaf22a21b87ff1ec6dffe0fffd9ecd2ad7a7080cde1"
+    },
+    {
+      "id": "paper-schedmate-fig05",
+      "paper": "schedmate",
+      "title": "Semantic-Aware Scheduling for GPU Clusters with Large Language Models",
+      "authors": "Zerui Wang et al.",
+      "source_url": "https://arxiv.org/pdf/2510.03334v1",
+      "source_page": "https://arxiv.org/html/2510.03334v1",
+      "version": "arXiv 2510.03334v1",
+      "figure_number": "5",
+      "pdf_page": 4,
+      "box": [
+        344,
+        70,
+        538,
+        196
+      ],
+      "format": "pdf",
+      "reading_question": "代码语义提取与历史近邻估计",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://arxiv.org/html/2510.03334v1"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/07-智能调度_模型决策的已有工作与研究选择.md",
+          "section": "语义补信息：SchedMate",
+          "reading_question": "代码语义提取与历史近邻估计"
+        }
+      ],
+      "source_sha256": "c08b666f05d08c4aef1e0f358f0adace2e6d6f5dea7a102f7ce6e51424825e13",
+      "pages": [
+        {
+          "png": "paper-schedmate-fig05-screen.png",
+          "width": 800,
+          "height": 519,
+          "sha256": "51141e3db015ef4a6a249e1175abb9b14d978afdb424da14bc4894eb55d123c9"
+        }
+      ],
+      "full_png_sha256": "e532bb6998d795129cf5d8914f36d54263e8dcd0eaa4c8f78658dcacda89bafc",
+      "full_svg_sha256": "c4b8fd3751f1d8fefb6d44700ef9cac806bc245ff283e237be9a14bb6314b6e1"
+    },
+    {
+      "id": "paper-alphaevolve-fig01",
+      "paper": "alphaevolve",
+      "title": "AlphaEvolve: A coding agent for scientific and algorithmic discovery",
+      "authors": "Alexander Novikov et al.",
+      "source_url": "https://arxiv.org/pdf/2506.13131v1",
+      "source_page": "https://arxiv.org/abs/2506.13131v1",
+      "version": "arXiv 2506.13131v1",
+      "figure_number": "1",
+      "pdf_page": 3,
+      "box": [
+        298,
+        399,
+        534,
+        587
+      ],
+      "format": "pdf",
+      "reading_question": "生成、评价与程序库反馈环",
+      "rights": {
+        "license": "CC BY-NC-ND 4.0. Unmodified figure excerpt, format conversion only.",
+        "license_url": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "verification_url": "https://arxiv.org/abs/2506.13131v1"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/07-智能调度_模型决策的已有工作与研究选择.md",
+          "section": "离线生成算法：AlphaEvolve 与 ADRS",
+          "reading_question": "生成、评价与程序库反馈环"
+        }
+      ],
+      "source_sha256": "f092c8cbd65da89951ee6496374da9a54963f9035758c25ac6e4625f506df9ad",
+      "pages": [
+        {
+          "png": "paper-alphaevolve-fig01-screen.png",
+          "width": 800,
+          "height": 598,
+          "sha256": "23543a42bd04859ddb0d0c3117fdbd536f84be007ef71fa32b2d1cd84cd3ffea"
+        }
+      ],
+      "full_png_sha256": "cb8c78d1e18b64bd73a1d8737b995a5248d1eb09f5df0cdb96c7b282dfec60b1",
+      "full_svg_sha256": "533e56449b8e695b83e8af8ab78961d7caa0a808cd7ee11ebd56dce77d47ab91"
+    },
+    {
+      "id": "paper-firepool-fig02",
+      "paper": "firepool",
+      "title": "Firepool: Brokering Warm GPU Capacity for Agentic and RL Workloads at LinkedIn",
+      "authors": "Ankit Goyal et al.",
+      "source_url": "https://arxiv.org/pdf/2611.10832v1",
+      "source_page": "https://arxiv.org/html/2611.10832v1",
+      "version": "arXiv 2611.10832v1",
+      "figure_number": "2",
+      "pdf_page": 3,
+      "box": [
+        58,
+        305,
+        284,
+        413
+      ],
+      "format": "pdf",
+      "reading_question": "作业请求与预热容器池的分工",
+      "rights": {
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "verification_url": "https://arxiv.org/abs/2611.10832v1"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md",
+          "section": "Firepool：最直接的工业 GPU 沙盒调度系统",
+          "reading_question": "作业请求与预热容器池的分工"
+        }
+      ],
+      "source_sha256": "adf32d0ebc26c080474e6d0293b9147ed8dad56d8212badb524bd5832397b8e6",
+      "pages": [
+        {
+          "png": "paper-firepool-fig02-screen.png",
+          "width": 800,
+          "height": 382,
+          "sha256": "822f136064eaf6c04f61640cd4523a0f0283aaa5ccada2c8c460a8438ecfd658"
+        }
+      ],
+      "full_png_sha256": "4033703ea368fe5384db7cc1644221ccfe77032e1c025476bd8cd4461dfcdad0",
+      "full_svg_sha256": "c779cf3c9908e1c9393badc701d890dd058805d37a71bfa7bb79340210c84ab3"
+    },
+    {
+      "id": "paper-firepool-fig03",
+      "paper": "firepool",
+      "title": "Firepool: Brokering Warm GPU Capacity for Agentic and RL Workloads at LinkedIn",
+      "authors": "Ankit Goyal et al.",
+      "source_url": "https://arxiv.org/pdf/2611.10832v1",
+      "source_page": "https://arxiv.org/html/2611.10832v1",
+      "version": "arXiv 2611.10832v1",
+      "figure_number": "3",
+      "pdf_page": 4,
+      "box": [
+        316,
+        70,
+        534,
+        181
+      ],
+      "format": "pdf",
+      "reading_question": "零显存备用容器怎样缩短交接",
+      "rights": {
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "verification_url": "https://arxiv.org/abs/2611.10832v1"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md",
+          "section": "Firepool 场景与 PSRL 三项能力对照",
+          "reading_question": "零显存备用容器怎样缩短交接"
+        },
+        {
+          "document": "docs/env-worker-deep-dive/research-proposals/08-运行准备_重复准备成本与GPU就绪调度.md",
+          "section": "已有研究与创新边界",
+          "reading_question": "零显存备用容器怎样缩短交接"
+        }
+      ],
+      "source_sha256": "adf32d0ebc26c080474e6d0293b9147ed8dad56d8212badb524bd5832397b8e6",
+      "pages": [
+        {
+          "png": "paper-firepool-fig03-screen.png",
+          "width": 800,
+          "height": 407,
+          "sha256": "43a57507951faa1d45929769b6166735fb38c36bbabca0a5feef6bfd49f8b8e9"
+        }
+      ],
+      "full_png_sha256": "0965954a82865cff98188262f12288dfd2f98bc7205b25206df69a4880366b33",
+      "full_svg_sha256": "571c58ebaa38656fbf972c8d4f2cdd87432eaa3a8dd299bccfc2a242421188a6"
+    },
+    {
+      "id": "paper-cuda-agent-fig02",
+      "paper": "cuda-agent",
+      "title": "CUDA Agent: Large-Scale Agentic RL for High-Performance CUDA Kernel Generation",
+      "authors": "Weinan Dai et al.",
+      "source_url": "https://cuda-agent.github.io/static/pdf/CUDA_Agent_Arxiv_Version.pdf",
+      "source_page": "https://cuda-agent.github.io/",
+      "version": "Project PDF, pinned by SHA-256",
+      "figure_number": "2",
+      "pdf_page": 4,
+      "box": [
+        117,
+        76,
+        495,
+        194
+      ],
+      "format": "pdf",
+      "reading_question": "GPU工具反馈回到内核生成Agent",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://cuda-agent.github.io/"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md",
+          "section": "CUDA Agent：最贴近的工业训练场景",
+          "reading_question": "GPU工具反馈回到内核生成Agent"
+        }
+      ],
+      "source_sha256": "cdeebc53efb4a25d74b7e9b428e5292fcccd8626aa283c0d8aa9277f516995f9",
+      "pages": [
+        {
+          "png": "paper-cuda-agent-fig02-screen.png",
+          "width": 800,
+          "height": 250,
+          "sha256": "9deffb53385c44c95d95cb4ac2df6bb532acb52c1380c1f0274b683021b27de4"
+        }
+      ],
+      "full_png_sha256": "1acd9dfdb6982053f5997cef2ccbaf4b3ed25450ab0d6f54e2e5d1a9d66f154e",
+      "full_svg_sha256": "b0be5e31c57d0e50e0d7f985250b3a5f42a39d9e745ae48fe09ccc4c3c33d060"
+    },
+    {
+      "id": "paper-seal-fig01",
+      "paper": "seal",
+      "title": "Self-Adapting Language Models",
+      "authors": "Adam Zweiger et al.",
+      "source_url": "https://arxiv.org/pdf/2506.10943v2",
+      "source_page": "https://arxiv.org/html/2506.10943v2",
+      "version": "arXiv 2506.10943v2",
+      "figure_number": "1",
+      "pdf_page": 2,
+      "box": [
+        106,
+        68,
+        497,
+        172
+      ],
+      "format": "pdf",
+      "reading_question": "临时适应模型与外层策略更新",
+      "rights": {
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "verification_url": "https://arxiv.org/abs/2506.10943v2"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md",
+          "section": "SEAL：学习怎样生成有效的自训练指令",
+          "reading_question": "临时适应模型与外层策略更新"
+        }
+      ],
+      "source_sha256": "3abf83bcf05862d5e6e72078dc0e47ebfcf2e72866e9fdfe1dbc3663c72a9dc6",
+      "pages": [
+        {
+          "png": "paper-seal-fig01-screen.png",
+          "width": 800,
+          "height": 213,
+          "sha256": "0b0c58009dbd4c0039f939b0522db79a826c08685d25032e98331bcada2ea79c"
+        }
+      ],
+      "full_png_sha256": "9d5ebb73934b0097601a411a069e8efb425219ac474155766c808f53c84e8108",
+      "full_svg_sha256": "9609fdeeda1dccd2997567edb5c73cda51b270ec4f3eeebcc480d72c42bcffa9"
+    },
+    {
+      "id": "paper-vllm-fig06",
+      "paper": "vllm",
+      "title": "Efficient Memory Management for Large Language Model Serving with PagedAttention",
+      "authors": "Woosuk Kwon et al.",
+      "source_url": "https://arxiv.org/pdf/2309.06180v1",
+      "source_page": "https://arxiv.org/abs/2309.06180v1",
+      "version": "arXiv 2309.06180v1",
+      "figure_number": "6",
+      "pdf_page": 6,
+      "box": [
+        54,
+        70,
+        296,
+        187
+      ],
+      "format": "pdf",
+      "reading_question": "逻辑KV块通过块表映射到物理显存",
+      "rights": {
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "verification_url": "https://arxiv.org/abs/2309.06180v1"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/psrl/推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md",
+          "section": "1.3 PagedAttention：把 KV cache 当虚拟内存管",
+          "reading_question": "逻辑KV块通过块表映射到物理显存"
+        }
+      ],
+      "source_sha256": "55b3b324d779a67c59dac2519445e3b07c14e6ff5c656fadb47a3d7b5997469e",
+      "pages": [
+        {
+          "png": "paper-vllm-fig06-screen.png",
+          "width": 800,
+          "height": 386,
+          "sha256": "1b5bd7fcd1215ea35188bd1219a00e88783b33f730da9572a4a8a2745ac8546d"
+        }
+      ],
+      "full_png_sha256": "ac5246208b4050eb64e40ec13f82ec771b0e07b5b82dc3e85fbc217e350fd979",
+      "full_svg_sha256": "039251e8f61c9f38bd01eabc14d2ad8edabffb4c7aa8c4211b2412591fd2e63b"
+    },
+    {
+      "id": "paper-vllm-fig08",
+      "paper": "vllm",
+      "title": "Efficient Memory Management for Large Language Model Serving with PagedAttention",
+      "authors": "Woosuk Kwon et al.",
+      "source_url": "https://arxiv.org/pdf/2309.06180v1",
+      "source_page": "https://arxiv.org/abs/2309.06180v1",
+      "version": "arXiv 2309.06180v1",
+      "figure_number": "8",
+      "pdf_page": 7,
+      "box": [
+        54,
+        70,
+        296,
+        171
+      ],
+      "format": "pdf",
+      "reading_question": "共享前缀的引用计数与写时复制",
+      "rights": {
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "verification_url": "https://arxiv.org/abs/2309.06180v1"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/psrl/推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md",
+          "section": "三条分支怎样共享并各自续写",
+          "reading_question": "共享前缀的引用计数与写时复制"
+        }
+      ],
+      "source_sha256": "55b3b324d779a67c59dac2519445e3b07c14e6ff5c656fadb47a3d7b5997469e",
+      "pages": [
+        {
+          "png": "paper-vllm-fig08-screen.png",
+          "width": 800,
+          "height": 334,
+          "sha256": "356cc9d43c7f927cd2ffc5ba14163b8bbf4be7e176514bff9967dc8edadd8c3b"
+        }
+      ],
+      "full_png_sha256": "229a2bdb2090bc8a40d3ce0435a60843d7f68b1dd51fc26bc89e4d433c942d18",
+      "full_svg_sha256": "903bcdaf9fa3496229f63cd00a0152282ad16f0f60ae422a52942e074d36b339"
+    },
+    {
+      "id": "paper-distserve-fig06",
+      "paper": "distserve",
+      "title": "DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving",
+      "authors": "Yinmin Zhong et al.",
+      "source_url": "https://www.usenix.org/system/files/osdi24-zhong-yinmin.pdf",
+      "source_page": "https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin",
+      "version": "OSDI 2024 published edition",
+      "figure_number": "6",
+      "pdf_page": 9,
+      "box": [
+        327,
+        74,
+        550,
+        193
+      ],
+      "format": "pdf",
+      "reading_question": "P池、D池与跨池KV传输",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/psrl/推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md",
+          "section": "1.6 Prefill/Decode 分离（Disaggregation）",
+          "reading_question": "P池、D池与跨池KV传输"
+        }
+      ],
+      "source_sha256": "bb03e59d6ec6550015901f3f78d7e68f5a07cad8ccacb12f72835a8b667341c1",
+      "pages": [
+        {
+          "png": "paper-distserve-fig06-screen.png",
+          "width": 800,
+          "height": 426,
+          "sha256": "a4e86ad3fda5110bd5f37cb533579e71123a287eecf1f6ece3f29ba86b31d7cd"
+        }
+      ],
+      "full_png_sha256": "39fe80f5ce09e5cf65730e6a010791ccfce7efe6622f9b4f2d526411b056cd9d",
+      "full_svg_sha256": "545edfc92f65081273efb754bf37824a9215d3bde24bd89109027b0624e27fcc"
+    },
+    {
+      "id": "paper-serverlessllm-fig03",
+      "paper": "serverlessllm",
+      "title": "ServerlessLLM: Low-Latency Serverless Inference for Large Language Models",
+      "authors": "Yao Fu et al.",
+      "source_url": "https://www.usenix.org/system/files/osdi24-fu.pdf",
+      "source_page": "https://www.usenix.org/conference/osdi24/presentation/fu",
+      "version": "OSDI 2024 published edition",
+      "figure_number": "3",
+      "pdf_page": 7,
+      "box": [
+        318,
+        73,
+        560,
+        246
+      ],
+      "format": "pdf",
+      "reading_question": "空卡、状态局部性与在线迁移的四种选择",
+      "rights": {
+        "license": "Author copyright. Scholarly figure excerpt for commentary. No open redistribution license asserted.",
+        "license_url": "https://www.usenix.org/conference/osdi24/presentation/fu"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Crop surrounding article text, preserve original diagram and labels, rasterize at display size. Chinese commentary appears outside the image.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/09-动态放置_热卡等待与冷卡重建代码.md",
+          "section": "5. 类型化成本与三种放置策略",
+          "reading_question": "空卡、状态局部性与在线迁移的四种选择"
+        }
+      ],
+      "source_sha256": "c008c0f769c5b09c8e5e416fb1402e644be05d89f60b0873388b3ea85338c423",
+      "pages": [
+        {
+          "png": "paper-serverlessllm-fig03-screen.png",
+          "width": 800,
+          "height": 571,
+          "sha256": "4df18090e11d03aee0996d911b287443b79876290d149cdb8821c31003f6a9ad"
+        }
+      ],
+      "full_png_sha256": "77c7119d2ae51915e8cddaeb5b47a546a9d33f1a71d4576585aaf839d94bdea7",
+      "full_svg_sha256": "803e0c04a4465b24a70371e63fceb1f240989772ab64a1996a5d4c9e67f27ed8"
+    },
+    {
+      "id": "paper-yarn-architecture",
+      "paper": "yarn",
+      "title": "Apache Hadoop YARN architecture",
+      "authors": "Apache Software Foundation and Hadoop contributors",
+      "source_url": "https://hadoop.apache.org/docs/r3.4.2/hadoop-yarn/hadoop-yarn-site/yarn_architecture.gif",
+      "source_page": "https://hadoop.apache.org/docs/r3.4.2/hadoop-yarn/hadoop-yarn-site/YARN.html",
+      "version": "Hadoop 3.4.2 documentation",
+      "figure_number": "YARN architecture (unnumbered official diagram)",
+      "format": "gif",
+      "reading_question": "资源管理器、应用管理器与节点容器的关系",
+      "rights": {
+        "license": "Apache License 2.0",
+        "license_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "verification_url": "https://github.com/apache/hadoop/blob/rel/release-3.4.2/LICENSE.txt"
+      },
+      "accessed": "2026-11-23",
+      "modifications": "Convert official GIF to PNG, scale uniformly.",
+      "placements": [
+        {
+          "document": "docs/env-worker-deep-dive/literature-reviews/04-系统借鉴_YARN资源分配与反馈调度.md",
+          "section": "先理解 YARN 提供的分工",
+          "reading_question": "资源管理器、应用管理器与节点容器的关系"
+        }
+      ],
+      "source_sha256": "a1e52948cd0de9d6ea19101c5b9bcc4f3918fcc0e6cb38f413f5efeab7b28bdf",
+      "pages": [
+        {
+          "png": "paper-yarn-architecture-screen.png",
+          "width": 800,
+          "height": 495,
+          "sha256": "5fc8aeefd3773388f683ebeee07f0e354386fd0d0b6311699eb4c0a40c7b9545"
+        }
+      ],
+      "full_png_sha256": "a4609931ad1ae1dca25d698373e417ebec80ea3926ed44efa6dfc63b5d2b639d"
+    }
+  ]
+}

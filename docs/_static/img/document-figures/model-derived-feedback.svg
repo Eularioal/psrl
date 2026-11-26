@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="1152pt" viewBox="0 0 1152 1152" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:13:05.320894</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1152 
+L 1152 1152 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="46.08" y="41.311523" transform="rotate(-0 46.08 41.311523)">模型反馈：评分者或教师为策略提供学习信号</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="93.408922" transform="rotate(-0 46.08 93.408922)">独立反馈模型怎样影响策略学习，又有哪些角色不能混在一起？</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 107.0208 233.3475 
+L 387.8784 233.3475 
+Q 398.4768 233.3475 398.4768 239.5575 
+L 398.4768 453.8025 
+Q 398.4768 460.0125 387.8784 460.0125 
+L 107.0208 460.0125 
+Q 96.4224 460.0125 96.4224 453.8025 
+L 96.4224 239.5575 
+Q 96.4224 233.3475 107.0208 233.3475 
+z
+" clip-path="url(#pdbb25e9a19)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 456.768 233.3475 
+L 705.8304 233.3475 
+Q 716.4288 233.3475 716.4288 239.5575 
+L 716.4288 453.8025 
+Q 716.4288 460.0125 705.8304 460.0125 
+L 456.768 460.0125 
+Q 446.1696 460.0125 446.1696 453.8025 
+L 446.1696 239.5575 
+Q 446.1696 233.3475 456.768 233.3475 
+z
+" clip-path="url(#pdbb25e9a19)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 774.72 233.3475 
+L 1044.9792 233.3475 
+Q 1055.5776 233.3475 1055.5776 239.5575 
+L 1055.5776 453.8025 
+Q 1055.5776 460.0125 1044.9792 460.0125 
+L 774.72 460.0125 
+Q 764.1216 460.0125 764.1216 453.8025 
+L 764.1216 239.5575 
+Q 764.1216 233.3475 774.72 233.3475 
+z
+" clip-path="url(#pdbb25e9a19)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 408.424444 340.47 
+Q 422.324197 340.47 434.546898 340.47 
+" clip-path="url(#pdbb25e9a19)" style="fill: none; stroke: #3478c5; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 428.146898 337.27 
+L 434.546898 340.47 
+L 428.146898 343.67 
+z
+" clip-path="url(#pdbb25e9a19)" style="fill: #3478c5; stroke: #3478c5; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 726.376444 340.47 
+Q 740.276197 340.47 752.498898 340.47 
+" clip-path="url(#pdbb25e9a19)" style="fill: none; stroke: #8764b8; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 746.098898 337.27 
+L 752.498898 340.47 
+L 746.098898 343.67 
+z
+" clip-path="url(#pdbb25e9a19)" style="fill: #8764b8; stroke: #8764b8; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 915.1488 472.8771 
+Q 915.1488 505.031814 915.1488 535.509477 
+" clip-path="url(#pdbb25e9a19)" style="fill: none; stroke: #159b8d; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 918.3488 529.109477 
+L 915.1488 535.509477 
+L 911.9488 529.109477 
+z
+" clip-path="url(#pdbb25e9a19)" style="fill: #159b8d; stroke: #159b8d; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 913.14935 539.19 
+Q 581.298746 539.19 251.125193 539.19 
+" clip-path="url(#pdbb25e9a19)" style="fill: none; stroke: #159b8d; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 257.525193 542.39 
+L 251.125193 539.19 
+L 257.525193 535.99 
+z
+" clip-path="url(#pdbb25e9a19)" style="fill: #159b8d; stroke: #159b8d; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 247.4496 537.1929 
+Q 247.4496 505.038186 247.4496 474.560523 
+" clip-path="url(#pdbb25e9a19)" style="fill: none; stroke: #159b8d; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 244.2496 480.960523 
+L 247.4496 474.560523 
+L 250.6496 480.960523 
+z
+" clip-path="url(#pdbb25e9a19)" style="fill: #159b8d; stroke: #159b8d; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="247.4496" y="322.647225" transform="rotate(-0 247.4496 322.647225)">策略模型</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(207.4496 388.415934)">根据题目</text>
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(207.4496 417.646403)">生成回答</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #8764b8" x="581.2992" y="322.490975" transform="rotate(-0 581.2992 322.490975)">反馈模型</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(541.2992 388.494059)">评分标准</text>
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(531.2992 417.607341)">或教师目标</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #159b8d" x="909.8496" y="322.608162" transform="rotate(-0 909.8496 322.608162)">学习信号</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(869.8496 388.454997)">奖励分数</text>
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(854.458975 417.607341)">或token目标</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="576" y="620.585" transform="rotate(-0 576 620.585)">计划方案：反馈用于策略学习，反馈模型是否更新另行决定。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="text_10">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="142.827734" transform="rotate(-0 46.08 142.827734)">设计方案：策略模型先回答，反馈模型再提供分数或教师目标，PSRL 使用对应学习信号。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_10">
+    <path d="M 56.6784 689.904 
+L 1095.3216 689.904 
+Q 1110.15936 689.904 1110.15936 694.44 
+L 1110.15936 785.16 
+Q 1110.15936 789.696 1095.3216 789.696 
+L 56.6784 789.696 
+Q 41.84064 789.696 41.84064 785.16 
+L 41.84064 694.44 
+Q 41.84064 689.904 56.6784 689.904 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 353.4336 705.132 
+L 359.79264 705.132 
+L 359.79264 714.852 
+L 353.4336 714.852 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 353.4336 734.292 
+L 359.79264 734.292 
+L 359.79264 744.012 
+L 353.4336 744.012 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 353.4336 763.452 
+L 359.79264 763.452 
+L 359.79264 773.172 
+L 353.4336 773.172 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 56.6784 800.064 
+L 1095.3216 800.064 
+Q 1110.15936 800.064 1110.15936 804.6 
+L 1110.15936 895.32 
+Q 1110.15936 899.856 1095.3216 899.856 
+L 56.6784 899.856 
+Q 41.84064 899.856 41.84064 895.32 
+L 41.84064 804.6 
+Q 41.84064 800.064 56.6784 800.064 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 353.4336 815.292 
+L 359.79264 815.292 
+L 359.79264 825.012 
+L 353.4336 825.012 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 353.4336 844.452 
+L 359.79264 844.452 
+L 359.79264 854.172 
+L 353.4336 854.172 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 353.4336 873.612 
+L 359.79264 873.612 
+L 359.79264 883.332 
+L 353.4336 883.332 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 56.6784 910.224 
+L 1095.3216 910.224 
+Q 1110.15936 910.224 1110.15936 914.76 
+L 1110.15936 1005.48 
+Q 1110.15936 1010.016 1095.3216 1010.016 
+L 56.6784 1010.016 
+Q 41.84064 1010.016 41.84064 1005.48 
+L 41.84064 914.76 
+Q 41.84064 910.224 56.6784 910.224 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 353.4336 925.452 
+L 359.79264 925.452 
+L 359.79264 935.172 
+L 353.4336 935.172 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 353.4336 954.612 
+L 359.79264 954.612 
+L 359.79264 964.332 
+L 353.4336 964.332 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 353.4336 983.772 
+L 359.79264 983.772 
+L 359.79264 993.492 
+L 353.4336 993.492 
+z
+" clip-path="url(#p871d2da5cd)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="67.2768" y="726.019277" transform="rotate(-0 67.2768 726.019277)">01  策略模型</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="721.582109" transform="rotate(-0 374.6304 721.582109)">接收任务并产生回答</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="750.820234" transform="rotate(-0 374.6304 750.820234)">是待优化的行为主体</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="779.980234" transform="rotate(-0 374.6304 779.980234)">参数由策略训练更新</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="67.2768" y="836.015215" transform="rotate(-0 67.2768 836.015215)">02  反馈模型</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="830.374922" transform="rotate(-0 374.6304 830.374922)">Judge：输出奖励分数</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="860.941172" transform="rotate(-0 374.6304 860.941172)">Teacher：提供 token 目标</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="890.140234" transform="rotate(-0 374.6304 890.140234)">是否更新由独立方案决定</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d68b20" x="67.2768" y="946.298262" transform="rotate(-0 67.2768 946.298262)">03  学习信号</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="941.941172" transform="rotate(-0 374.6304 941.941172)">奖励进入回报或优势</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="971.179297" transform="rotate(-0 374.6304 971.179297)">教师分布进入蒸馏目标</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="1000.261172" transform="rotate(-0 374.6304 1000.261172)">两种目标需分别实现与验证</text>
+   </g>
+  </g>
+  <g id="axes_5">
+   <g id="patch_22">
+    <path d="M 56.6784 1032.7536 
+L 1095.3216 1032.7536 
+Q 1110.15936 1032.7536 1110.15936 1034.316 
+L 1110.15936 1090.116 
+Q 1110.15936 1091.6784 1095.3216 1091.6784 
+L 56.6784 1091.6784 
+Q 41.84064 1091.6784 41.84064 1090.116 
+L 41.84064 1034.316 
+Q 41.84064 1032.7536 56.6784 1032.7536 
+z
+" clip-path="url(#p54a513258d)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="61.9776" y="1060.463172" transform="rotate(-0 61.9776 1060.463172)">反馈模型、环境任务模型和 Agent 策略是不同角色。先定义反馈协议，再讨论接入与训练。</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="1120.943742" transform="rotate(-0 46.08 1120.943742)">提案示意，不表示 Judge、蒸馏或相关训练配方已全部接入正式路径。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pdbb25e9a19">
+   <rect x="46.08" y="172.8" width="1059.84" height="496.8"/>
+  </clipPath>
+  <clipPath id="p871d2da5cd">
+   <rect x="46.08" y="691.2" width="1059.84" height="324"/>
+  </clipPath>
+  <clipPath id="p54a513258d">
+   <rect x="46.08" y="1033.2" width="1059.84" height="111.6"/>
+  </clipPath>
+ </defs>
+</svg>

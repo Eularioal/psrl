@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="576pt" height="432pt" viewBox="0 0 576 432" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-24T11:35:07.524972</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 432 
+L 576 432 
+L 576 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 126 202.32 
+L 126 341.28 
+" clip-path="url(#p27906a34d2)" style="fill: none; stroke: #e1e7ee; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 203.76 202.32 
+L 203.76 341.28 
+" clip-path="url(#p27906a34d2)" style="fill: none; stroke: #e1e7ee; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 281.52 202.32 
+L 281.52 341.28 
+" clip-path="url(#p27906a34d2)" style="fill: none; stroke: #e1e7ee; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 320.4 202.32 
+L 320.4 341.28 
+" clip-path="url(#p27906a34d2)" style="fill: none; stroke: #e1e7ee; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 398.16 202.32 
+L 398.16 341.28 
+" clip-path="url(#p27906a34d2)" style="fill: none; stroke: #e1e7ee; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_6">
+    <path d="M 475.92 202.32 
+L 475.92 341.28 
+" clip-path="url(#p27906a34d2)" style="fill: none; stroke: #e1e7ee; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_7">
+    <path d="M 514.8 202.32 
+L 514.8 341.28 
+" clip-path="url(#p27906a34d2)" style="fill: none; stroke: #e1e7ee; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="patch_2">
+    <path d="M 21.6 80.64 
+L 99.36 80.64 
+L 99.36 114.48 
+L 21.6 114.48 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #d7d4ec; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 102.24 80.64 
+L 180 80.64 
+L 180 114.48 
+L 102.24 114.48 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #d7d4ec; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 208.8 80.64 
+L 286.56 80.64 
+L 286.56 114.48 
+L 208.8 114.48 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #cce2f6; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 289.44 80.64 
+L 367.2 80.64 
+L 367.2 114.48 
+L 289.44 114.48 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #cce2f6; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 396 80.64 
+L 473.76 80.64 
+L 473.76 114.48 
+L 396 114.48 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #b7e2d3; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 476.64 80.64 
+L 554.4 80.64 
+L 554.4 114.48 
+L 476.64 114.48 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #b7e2d3; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 126 205.92 
+L 203.76 205.92 
+L 203.76 229.68 
+L 126 229.68 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #287d68; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 320.4 205.92 
+L 398.16 205.92 
+L 398.16 229.68 
+L 320.4 229.68 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #287d68; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 126 280.8 
+L 203.76 280.8 
+L 203.76 304.56 
+L 126 304.56 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #287d68; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 320.4 280.8 
+L 398.16 280.8 
+L 398.16 304.56 
+L 320.4 304.56 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #287d68; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 203.76 205.92 
+L 320.4 205.92 
+L 320.4 229.68 
+L 203.76 229.68 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #a6c9e4; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 203.76 239.04 
+L 398.16 239.04 
+L 398.16 262.8 
+L 203.76 262.8 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #f6d59a; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 398.16 239.04 
+L 475.92 239.04 
+L 475.92 262.8 
+L 398.16 262.8 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #e49144; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 203.76 280.8 
+L 320.4 280.8 
+L 320.4 304.56 
+L 203.76 304.56 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #eef3f8; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 203.76 313.92 
+L 281.52 313.92 
+L 281.52 337.68 
+L 203.76 337.68 
+z
+" clip-path="url(#p27906a34d2)" style="fill: #e49144; stroke: #ffffff; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 17px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="21.6" y="25.2" transform="rotate(-0 21.6 25.2)">统一主基线：固定环境卡池，episode 全程持卡</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="21.6" y="48.24" transform="rotate(-0 21.6 48.24)">① 卡的角色固定。只有绿色池接纳环境，满了就等。</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="21.6" y="70.56" transform="rotate(-0 21.6 70.56)">两张训练卡</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #20354a" x="60.48" y="101.005313" transform="rotate(-0 60.48 101.005313)">训练 0</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #20354a" x="141.12" y="101.005313" transform="rotate(-0 141.12 101.005313)">训练 1</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="208.8" y="70.56" transform="rotate(-0 208.8 70.56)">两张推理卡</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #20354a" x="247.68" y="100.724063" transform="rotate(-0 247.68 100.724063)">vLLM 0</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #20354a" x="328.32" y="100.724063" transform="rotate(-0 328.32 100.724063)">vLLM 1</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="396" y="70.56" transform="rotate(-0 396 70.56)">两张环境卡</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #20354a" x="434.88" y="101.02875" transform="rotate(-0 434.88 101.02875)">环境 0</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #20354a" x="515.52" y="101.02875" transform="rotate(-0 515.52 101.02875)">环境 1</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="21.6" y="134.64" transform="rotate(-0 21.6 134.64)">主基线不借推理余量，也不让 vLLM 休眠来腾卡。</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="21.6" y="164.88" transform="rotate(-0 21.6 164.88)">② 同一个例子：只剩 1 个名额，A 在第 20 秒暂停，B 此时到达。</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="21.6" y="184.32" transform="rotate(-0 21.6 184.32)">教学假设：A 算 20 秒、思考 30 秒、再算 20 秒，B 算 20 秒。</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="126" y="354.96" transform="rotate(-0 126 354.96)">0</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="203.76" y="354.96" transform="rotate(-0 203.76 354.96)">20</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="281.52" y="354.96" transform="rotate(-0 281.52 354.96)">40</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="320.4" y="354.96" transform="rotate(-0 320.4 354.96)">50</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="398.16" y="354.96" transform="rotate(-0 398.16 354.96)">70</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="475.92" y="354.96" transform="rotate(-0 475.92 354.96)">90</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle" x="514.8" y="354.96" transform="rotate(-0 514.8 354.96)">100</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="111.6" y="220.340391" transform="rotate(-0 111.6 220.340391)">episode · A</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="111.6" y="253.460391" transform="rotate(-0 111.6 253.460391)">episode · B</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="111.6" y="295.220391" transform="rotate(-0 111.6 295.220391)">command · A</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end" x="111.6" y="328.340391" transform="rotate(-0 111.6 328.340391)">command · B</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="164.88" y="221.26875" transform="rotate(-0 164.88 221.26875)">计算</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="359.28" y="221.26875" transform="rotate(-0 359.28 221.26875)">计算</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="164.88" y="296.14875" transform="rotate(-0 164.88 296.14875)">计算</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="359.28" y="296.14875" transform="rotate(-0 359.28 296.14875)">计算</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #20354a" x="262.08" y="221.245313" transform="rotate(-0 262.08 221.245313)">思考，仍持卡</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #20354a" x="300.96" y="254.38875" transform="rotate(-0 300.96 254.38875)">B 等待 50 秒</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #20354a" x="437.04" y="254.38875" transform="rotate(-0 437.04 254.38875)">B 计算</text>
+   </g>
+   <g id="text_33">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #20354a" x="262.08" y="296.101875" transform="rotate(-0 262.08 296.101875)">思考，已归还</text>
+   </g>
+   <g id="text_34">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #20354a" x="242.64" y="329.26875" transform="rotate(-0 242.64 329.26875)">B 计算</text>
+   </g>
+   <g id="text_35">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="481.68" y="253.761172" transform="rotate(-0 481.68 253.761172)">90 秒完</text>
+   </g>
+   <g id="text_36">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="403.92" y="295.521172" transform="rotate(-0 403.92 295.521172)">70 秒完</text>
+   </g>
+   <g id="text_37">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="522" y="354.96" transform="rotate(-0 522 354.96)">秒</text>
+   </g>
+   <g id="text_38">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="21.6" y="384.48" transform="rotate(-0 21.6 384.48)">浅蓝表示为 A 保留 GPU 预算。深绿才是计算，两者含义不同。</text>
+   </g>
+   <g id="text_39">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="21.6" y="403.2" transform="rotate(-0 21.6 403.2)">command 释放经物理检查的 GPU 预算，CPU、主存和容器继续保留。</text>
+   </g>
+   <g id="text_40">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: start" x="21.6" y="420.48" transform="rotate(-0 21.6 420.48)">时间线为教学假设，省略交接成本。本图不报告实测加速或自动最优决策。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p27906a34d2">
+   <rect x="0" y="0" width="576" height="432"/>
+  </clipPath>
+ </defs>
+</svg>

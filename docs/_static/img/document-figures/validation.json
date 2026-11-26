@@ -1,0 +1,207 @@
+{
+  "date": "2026-11-20",
+  "base_head": "c5f2d65a70f6923c992a7be867edd0864db2bd0c",
+  "branch": "research/env-elastic-partition",
+  "change_state": "Uncommitted documentation and figure-source changes; not pushed, merged or deployed.",
+  "maintained_documents": 201,
+  "documents_with_explanatory_images": 201,
+  "explanatory_figures": 187,
+  "replaced_display_sources": 152,
+  "image_placements": 310,
+  "mechanism_and_operation_figures": 49,
+  "historical_table_redraws": 5,
+  "reading_maps": 32,
+  "source_specific_architecture_literature_and_evidence_figures": 66,
+  "manual_rendered_review": {
+    "figures_in_overviews": 152,
+    "overview_pages": 19,
+    "reading_width_pixels": 900,
+    "detail_figures": 19,
+    "generated_contact_sheets": 76,
+    "record": "review.json",
+    "question_review_record": "quality-review.json",
+    "manifest": "upgrade-manifest.json"
+  },
+  "source_integrity": {
+    "original_panels_checked": 66,
+    "all_original_panels_unchanged": true,
+    "new_png_hashes_differ_from_previous_display": 152
+  },
+  "local_links": {
+    "files": 201,
+    "local_links": 9730,
+    "anchors": 2525,
+    "source_line_locations": 2524,
+    "errors": [],
+    "documents_missing_from_total_index": [],
+    "maintained_directories": 60,
+    "directories_without_readme": []
+  },
+  "rule_links": {
+    "files": 4,
+    "local_links": 5,
+    "anchors": 3,
+    "source_line_locations": 0,
+    "errors": []
+  },
+  "sphinx": {
+    "result": "passed",
+    "command": "python -I -m sphinx -b html -W --keep-going docs OUTPUT_DIRECTORY",
+    "warnings": 0
+  },
+  "figure_source_checks": {
+    "ruff_check": "passed",
+    "ruff_format": "passed",
+    "prose_style": "passed",
+    "git_diff_check": "passed"
+  },
+  "runtime_experiments": "None. CPU figure generation only; no training, GPU, Docker or Ray jobs started.",
+  "limits": "The new readability pass covers 35 new diagrams and prose edits in 24 long documents. Existing 152 figure records, original experiment evidence and previous review scopes are preserved. Link and coverage checks cover all 201 maintained documents. No new source-code, paper or experimental-performance audit is claimed.",
+  "typography": {
+    "new_vector_texts_checked": 3412,
+    "minimum_at_900px": 14.06,
+    "raster_text": "Manual review of listed representatives. Not covered by vector font-size checks.",
+    "regenerated_figures": 152,
+    "pngs_differ_from_before_typography": 152
+  },
+  "chapter_local_figures": 35,
+  "chapter_local_revision": {
+    "figures": 35,
+    "placements_added": 65,
+    "long_documents_reworked": 24,
+    "manual_reviewed_at_900_pixels": 35,
+    "new_label_minimum_pixels_at_900": 16,
+    "review": "chapter-readability-review.json",
+    "source": "chapters.py",
+    "methods": [
+      "Aligned timelines",
+      "Memory and device layouts",
+      "Queue growth and concurrency comparisons",
+      "State dependencies",
+      "Token and memory block diagrams"
+    ],
+    "source_integrity": {
+      "original_panels_checked": 66,
+      "original_panels_unchanged": true,
+      "existing_152_generated_figures_unchanged": true,
+      "manifest_figures_checked": 187
+    },
+    "verification": {
+      "coverage": "passed: 201 documents, 187 figures, 310 registered placements",
+      "links": "passed",
+      "strict_sphinx": "passed",
+      "ruff_check": "passed",
+      "ruff_format": "passed",
+      "source_prose_style": "passed",
+      "git_diff_check": "passed"
+    },
+    "runtime_experiments": "None. CPU document rendering and checks only."
+  },
+  "prior_typography_validation": {
+    "date": "2026-11-20",
+    "base_head": "c5f2d65a70f6923c992a7be867edd0864db2bd0c",
+    "branch": "research/env-elastic-partition",
+    "change_state": "Uncommitted documentation and figure-source changes; not pushed, merged or deployed.",
+    "maintained_documents": 201,
+    "documents_with_explanatory_images": 201,
+    "explanatory_figures": 152,
+    "replaced_display_sources": 152,
+    "image_placements": 245,
+    "mechanism_and_operation_figures": 49,
+    "historical_table_redraws": 5,
+    "reading_maps": 32,
+    "source_specific_architecture_literature_and_evidence_figures": 66,
+    "manual_rendered_review": {
+      "figures_in_overviews": 152,
+      "overview_pages": 19,
+      "reading_width_pixels": 900,
+      "detail_figures": 19,
+      "generated_contact_sheets": 76,
+      "record": "review.json",
+      "question_review_record": "quality-review.json",
+      "manifest": "upgrade-manifest.json"
+    },
+    "source_integrity": {
+      "original_panels_checked": 66,
+      "all_original_panels_unchanged": true,
+      "new_png_hashes_differ_from_previous_display": 152
+    },
+    "local_links": {
+      "files": 201,
+      "local_links": 9465,
+      "anchors": 2520,
+      "source_line_locations": 2524,
+      "errors": [],
+      "documents_missing_from_total_index": [],
+      "maintained_directories": 60,
+      "directories_without_readme": []
+    },
+    "rule_links": {
+      "files": 4,
+      "local_links": 5,
+      "anchors": 3,
+      "source_line_locations": 0,
+      "errors": []
+    },
+    "sphinx": {
+      "result": "passed",
+      "command": "python -I -m sphinx -b html -W --keep-going docs OUTPUT_DIRECTORY",
+      "warnings": 0
+    },
+    "figure_source_checks": {
+      "ruff_check": "passed",
+      "ruff_format": "passed",
+      "prose_style": "passed",
+      "git_diff_check": "passed"
+    },
+    "runtime_experiments": "None. CPU figure generation only; no training, GPU, Docker or Ray jobs started.",
+    "limits": "The automatic 14-pixel floor covers new vector text, not embedded raster text. Manual reading-width inspection is listed separately. This is a typography and layout review, not a new historical experiment, source-code or paper audit.",
+    "typography": {
+      "new_vector_texts_checked": 3412,
+      "minimum_at_900px": 14.06,
+      "raster_text": "Manual review of listed representatives. Not covered by vector font-size checks.",
+      "regenerated_figures": 152,
+      "pngs_differ_from_before_typography": 152
+    }
+  },
+  "screen_revision": {
+    "date": "2026-11-22",
+    "scope": "All maintained documentation explanation figures now use bounded clickable screen pages. Full figures and historical evidence retained.",
+    "screen_variants": 187,
+    "screen_pages": 498,
+    "maintained_documents": 201,
+    "registered_placements": 310,
+    "independent_figure_count_unchanged": 187,
+    "record": "screen-review.json",
+    "validation": "All figure dimensions, complete embedded page sequences, local targets, anchors and source-line ranges passed. Full source hashes unchanged. Every screen PNG viewed at native width. Source lint passed.",
+    "change_state": "Uncommitted. Not pushed, merged or deployed.",
+    "runtime_experiments": "None. CPU documentation rendering only.",
+    "strict_sphinx": "Not rerun for this display revision."
+  },
+  "prior_screen_revisions": [
+    {
+      "date": "2026-11-22",
+      "scope": "Four screen variants, six embedded preview links in the three current Env topic documents. Full figures and historical reports retain their original detail.",
+      "screen_variants": 4,
+      "independent_figure_count_unchanged": 187,
+      "record": "screen-review.json",
+      "validation": "Coverage, targeted local links and anchors, source line ranges, Markdown preview-to-full-image rendering, full figure hashes, source lint and manual PNG review passed.",
+      "change_state": "Uncommitted. Not pushed, merged or deployed.",
+      "runtime_experiments": "None. CPU documentation checks only."
+    }
+  ],
+  "paper_original_revision": {
+    "date": "2026-11-23",
+    "scope": "All maintained Markdown scanned for primary paper citations and existing illustration references. Selected mechanism sections read for original-figure additions. This is not a full prose or runtime implementation audit.",
+    "scanned_documents": 201,
+    "documents_with_primary_paper_links": 26,
+    "documents_with_original_figures_added": 12,
+    "original_figures": 22,
+    "source_works": 16,
+    "screen_pages": 24,
+    "placements": 25,
+    "manual_render_review": "Six sheets with all 24 screen panels opened at native 800-pixel width. Five revised panels (Prism, vLLM mapping, Murakkab b/c and YARN) separately re-opened after repair.",
+    "change_state": "Uncommitted in psrl/. Not pushed, merged or deployed.",
+    "record": "../literature-reviews/paper-figure-review.json"
+  }
+}

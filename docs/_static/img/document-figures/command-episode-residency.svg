@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="864pt" height="1692pt" viewBox="0 0 864 1692" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:12:42.196037</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1692 
+L 864 1692 
+L 864 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 213.2352 251.238716 
+L 505.6128 251.238716 
+L 505.6128 303.046514 
+L 213.2352 303.046514 
+z
+" clip-path="url(#pc1f592625b)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 505.6128 251.238716 
+L 651.8016 251.238716 
+L 651.8016 303.046514 
+L 505.6128 303.046514 
+z
+" clip-path="url(#pc1f592625b)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 651.8016 251.238716 
+L 797.9904 251.238716 
+L 797.9904 303.046514 
+L 651.8016 303.046514 
+z
+" clip-path="url(#pc1f592625b)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 50.8032 399.754404 
+L 830.4768 399.754404 
+L 830.4768 461.923761 
+L 50.8032 461.923761 
+z
+" clip-path="url(#pc1f592625b)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 50.8032 175.253945 
+L 830.4768 175.253945 
+" clip-path="url(#pc1f592625b)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="153.845776" transform="rotate(-0 50.8032 153.845776)">① 同一会话：两次计算，中间思考 10 秒</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="213.2352" y="219.176018" transform="rotate(-0 213.2352 219.176018)">0</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="505.6128" y="219.176018" transform="rotate(-0 505.6128 219.176018)">20</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="651.8016" y="219.176018" transform="rotate(-0 651.8016 219.176018)">30</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="797.9904" y="219.176018" transform="rotate(-0 797.9904 219.176018)">40</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="284.831455" transform="rotate(-0 50.8032 284.831455)">A 任务</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="359.424" y="283.072302" transform="rotate(-0 359.424 283.072302)">GPU 20</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="578.7072" y="283.136755" transform="rotate(-0 578.7072 283.136755)">空档10</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="724.896" y="283.072302" transform="rotate(-0 724.896 283.072302)">GPU10</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 352.384923)">容器和文件贯穿 40 秒，GPU 只计算 30 秒。</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 375.607384)">B 正在等卡，能否进入中间这 10 秒？</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="75.168" y="436.510958" transform="rotate(-0 75.168 436.510958)">比较相同任务与空档，不改变 A 的工作量。</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_6">
+    <path d="M 245.7216 638.070275 
+L 797.9904 638.070275 
+L 797.9904 686.42422 
+L 245.7216 686.42422 
+z
+" clip-path="url(#p0519a03b36)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 245.7216 717.508899 
+L 521.856 717.508899 
+L 521.856 765.862844 
+L 245.7216 765.862844 
+z
+" clip-path="url(#p0519a03b36)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 521.856 717.508899 
+L 659.9232 717.508899 
+L 659.9232 765.862844 
+L 521.856 765.862844 
+z
+" clip-path="url(#p0519a03b36)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 659.9232 717.508899 
+L 797.9904 717.508899 
+L 797.9904 765.862844 
+L 659.9232 765.862844 
+z
+" clip-path="url(#p0519a03b36)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 50.8032 786.585963 
+L 830.4768 786.585963 
+L 830.4768 848.755321 
+L 50.8032 848.755321 
+z
+" clip-path="url(#p0519a03b36)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 50.8032 562.085505 
+L 830.4768 562.085505 
+" clip-path="url(#p0519a03b36)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="540.958585" transform="rotate(-0 50.8032 540.958585)">② 两种模式改变 GPU 使用权的寿命</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="245.7216" y="606.007577" transform="rotate(-0 245.7216 606.007577)">0</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="521.856" y="606.007577" transform="rotate(-0 521.856 606.007577)">20</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="659.9232" y="606.007577" transform="rotate(-0 659.9232 606.007577)">30</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #53677c" x="797.9904" y="606.007577" transform="rotate(-0 797.9904 606.007577)">40</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="58.9248" y="666.565607" transform="rotate(-0 58.9248 666.565607)">episode</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="521.856" y="668.241388" transform="rotate(-0 521.856 668.241388)">GPU 预约一直留给 A</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="58.9248" y="747.905598" transform="rotate(-0 58.9248 747.905598)">command</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="383.7888" y="747.615559" transform="rotate(-0 383.7888 747.615559)">A 持有</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="590.8896" y="747.615559" transform="rotate(-0 590.8896 747.615559)">可借 B</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="728.9568" y="747.615559" transform="rotate(-0 728.9568 747.615559)">A再申请</text>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #3478c5" transform="translate(75.168 811.7474)">command 的空档从物理归还后开始，</text>
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #3478c5" transform="translate(75.168 834.969861)">B 未及时结束时，A 下条命令仍可能排队。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="patch_11">
+    <path d="M 67.0464 980.001743 
+L 814.2336 980.001743 
+L 814.2336 1024.901835 
+L 67.0464 1024.901835 
+z
+" clip-path="url(#p09eda7bd9c)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 67.0464 1052.532661 
+L 416.2752 1052.532661 
+L 416.2752 1149.24055 
+L 67.0464 1149.24055 
+z
+" clip-path="url(#p09eda7bd9c)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 465.0048 1052.532661 
+L 814.2336 1052.532661 
+L 814.2336 1149.24055 
+L 465.0048 1149.24055 
+z
+" clip-path="url(#p09eda7bd9c)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 50.8032 1173.417523 
+L 830.4768 1173.417523 
+L 830.4768 1235.586881 
+L 50.8032 1235.586881 
+z
+" clip-path="url(#p09eda7bd9c)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 50.8032 948.917064 
+L 830.4768 948.917064 
+" clip-path="url(#p09eda7bd9c)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_24">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="926.454207" transform="rotate(-0 50.8032 926.454207)">③ 两种模式都不自动保存退出的 Python</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="440.64" y="1008.220344" transform="rotate(-0 440.64 1008.220344)">容器文件：代码、输出、检查点可以保留</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(187.616855 1083.658285)">命令1进程退出</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(180.398105 1105.62391)">Python 内存消失</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(173.759433 1129.974301)">GPU 张量随之释放</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(593.825255 1083.658285)">命令2新进程</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(579.258848 1105.656137)">通常重新 import</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(590.1192 1129.942074)">按需重载模型</text>
+   </g>
+   <g id="text_28">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #8764b8" transform="translate(75.168 1198.57896)">要保住模型内存，需显式常驻服务。</text>
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #8764b8" transform="translate(75.168 1221.8981)">保留 GPU 预约本身不会做到这一点。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_15">
+    <path d="M 67.0464 1449.72578 
+L 814.2336 1449.72578 
+L 814.2336 1532.618257 
+L 67.0464 1532.618257 
+z
+" clip-path="url(#p885b4916d4)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 50.8032 1560.249083 
+L 830.4768 1560.249083 
+L 830.4768 1622.41844 
+L 50.8032 1622.41844 
+z
+" clip-path="url(#p885b4916d4)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 50.8032 1335.748624 
+L 830.4768 1335.748624 
+" clip-path="url(#p885b4916d4)" style="fill: none; stroke: #d8e2ed; stroke-linecap: square"/>
+   </g>
+   <g id="text_29">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="50.8032" y="1314.340454" transform="rotate(-0 50.8032 1314.340454)">④ auto 第一版：先验能力，不靠猜命令</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1359.902089)">创建租约时检查适配器的执行能力声明：</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1381.932167)">未知能力或常驻状态 → episode</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(67.0464 1406.347011)">可独立归还的命令 → 继续检查成本建议</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(333.39 1473.911471)">有可靠预测：按借还建议选择</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(351.533555 1497.069479)">无预测：默认 command</text>
+    <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(302.098008 1519.099557)">若配置必须有预测，缺预测则 episode</text>
+   </g>
+   <g id="text_32">
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #d68b20" transform="translate(75.168 1585.410519)">模式在本次会话内固定，并记录选择理由。</text>
+    <text style="font-weight: 700; font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #d68b20" transform="translate(75.168 1608.600754)">安全可归还，还要进一步判断是否值得归还。</text>
+   </g>
+  </g>
+  <g id="text_33">
+   <text style="font-weight: 700; font-size: 24px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="34.56" y="33.84" transform="rotate(-0 34.56 33.84)">持卡模式：容器常驻，为什么模型仍要重载？</text>
+  </g>
+  <g id="text_34">
+   <text style="font-size: 17px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="71.064" transform="rotate(-0 34.56 71.064)">区分会话文件、GPU预约、命令进程，以及auto在何处作决定。</text>
+  </g>
+  <g id="text_35">
+   <text style="font-size: 16.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="101.52" transform="rotate(-0 34.56 101.52)">阅读顺序：自上而下 ① → ② → ③ → ④</text>
+  </g>
+  <g id="text_36">
+   <text style="font-size: 14.5px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="34.56" y="1670.004" transform="rotate(-0 34.56 1670.004)">图内数字为教学假设。先核角色、计时与同量工作，再核实现范围。实测证据以对应正文为准。</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pc1f592625b">
+   <rect x="34.56" y="126.9" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p0519a03b36">
+   <rect x="34.56" y="513.73156" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p09eda7bd9c">
+   <rect x="34.56" y="900.563119" width="812.16" height="345.385321"/>
+  </clipPath>
+  <clipPath id="p885b4916d4">
+   <rect x="34.56" y="1287.394679" width="812.16" height="345.385321"/>
+  </clipPath>
+ </defs>
+</svg>

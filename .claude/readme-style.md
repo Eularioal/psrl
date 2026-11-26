@@ -5,6 +5,17 @@ Knowledge tutorials and experiment reports follow the parent workspace `AGENTS.m
 explain needed system mechanisms, preserve evidence, and organize around the
 reader's question and existing ML background. Detailed explanations are not subject to the README-only
 cut lists or the assumption that the reader already knows the stack.
+Follow the parent writing rules for figure selection, placement and rendered
+inspection. Every maintained document, including operational READMEs, embeds a
+relevant explanatory color figure. A README can use a reading map or an operation
+example. Substantial tutorials also illustrate their key relationships locally.
+Logos, decorative covers and arrow-only diagrams do not satisfy this requirement.
+A chapter figure answers its main questions through a concrete scenario, internal
+layout or state changes, and a causal comparison. List the questions before
+drawing, use a clear reading order, and inspect at the actual document width.
+Use multiple panels or adjacent figures when needed. Do not shrink text or add
+unrelated labels to claim higher information density. A navigation map serves
+navigation and does not demonstrate that the mechanism has been explained.
 The [prose punctuation bans](coding-style.md#banned-characters-in-all-prose-) apply
 here in full: no `;`, no `—`/`–`, no clause dashes, no double spaces.
 
@@ -143,8 +154,8 @@ Everything here is published, so nothing may leak an environment:
 - **Define placeholders in a table** near the top, once
 - **Every command must run as written.** Verify before committing, including
   that referenced files exist
-- **Every committed figure must be regenerable** by a committed script, and the
-  README says which one
+- **Every committed figure retains its generator or editable source.** The
+  README explains reproduction. Render and inspect figures before delivery
 
 ## §7. Voice
 

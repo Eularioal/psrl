@@ -1,49 +1,93 @@
 # Env 实验与验证入口
 
-> **核心结论**：想了解结论，先读[实验结论简报](env-design-and-results-brief.md)；想选GPU研究题，读[任务与实验导览](gpu-benchmarks/README.md)。每份报告注明版本、工作量和计时范围，历史故障与原始证据在专门目录保留。
+> **核心结论**：想了解结论，先读[实验结论简报](01-实验总览_调度收益与证据范围.md)；想选GPU研究题，读[任务与实验导览](gpu-benchmarks/README.md)。每份报告注明版本、工作量和计时范围，历史故障与原始证据在专门目录保留。
+
+## 当前统一基线与完整训练
+
+当前主基线采用静态环境池、Episode 持卡、满池排队。已完成的两步对照中，Command 静态的完整作业用时少 14.77%，重叠交接补跑少 38.39%。各组启动与时限设置见[结论总览](01-实验总览_调度收益与证据范围.md#统一主基线与当前结论)。
+
+| 查什么 | 阅读入口 |
+|---|---|
+| 当前设计为什么提供这些动作 | [架构能力对照](../knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md#先看结论现有能力与主基线) |
+| 共享、静态并发和整卡借用的效果 | [当前训练结果表](01-实验总览_调度收益与证据范围.md#当前训练实验有哪些结果) |
+| 每轮做了什么，条件和失败是什么 | [九轮实验总览](09-资源分区_静态卡池与推理余量共享.md#实验总览每一轮验证了什么) |
+| Episode完整补测及旧超时尝试 | [后排等待与轨迹超时](09-资源分区_静态卡池与推理余量共享.md#实验九补测统一的episode静态基线) |
+| 借卡决策遗漏与模型退场重叠 | [导入预检排障与配对](09-资源分区_静态卡池与推理余量共享.md#交接重叠配对验证) |
+| 容器查询超时、直接 API 修复与实机 trace | [工程审查中的机制与验证](../knowledge/01-架构与执行/06-工程审查_待修复问题与优先级.md#容器查询修复与-trace-能回答的问题)；图 `container-lookup-trace.png`／SVG 由[绘图脚本](../env-service-verification/scripts/draw_container_lookup.py)生成 |
+| Command、episode、auto 如何比较 | [模式与预测器现状](01-实验总览_调度收益与证据范围.md#持卡模式与预测器验证到了哪里)及[详细模式实验](08-模式选择_Command与Episode及等待预测.md) |
+
+<details>
+<summary>查看完整实验目录地图</summary>
+
+<!-- figure:map-df457d24c5 -->
+先按当前问题选择阅读入口，再在下方目录点击对应文档。
+
+[![Env 实验与验证入口：阅读地图（1/2）](../../_static/img/document-figures/map-df457d24c5-screen.png)](../../_static/img/document-figures/map-df457d24c5.png)
+
+[![Env 实验与验证入口：阅读地图（2/2）](../../_static/img/document-figures/map-df457d24c5-screen-02.png)](../../_static/img/document-figures/map-df457d24c5.png)
+
+每张彩色书页列出对应入口中的实际章节，帮助按问题定位阅读内容。编号只用于图中定位，不要求顺序通读。 [查看矢量图](../../_static/img/document-figures/map-df457d24c5.svg)。
+<!-- /figure:map-df457d24c5 -->
+
+</details>
 
 ## 目录
 
-- [固定基线性能对照](#固定基线性能对照)
+- [当前统一基线与完整训练](#当前统一基线与完整训练)
+- [历史固定基线性能对照](#历史固定基线性能对照)
 - [功能验收与当前机制](#功能验收与当前机制)
 - [研究探索](#研究探索)
 - [历史与审计](#历史与审计)
 
-## 固定基线性能对照
+## 历史固定基线性能对照
+
+下表保留各报告原有基线。后续调度实验统一采用“静态环境池＋episode 持卡＋满池排队”，使用与改进组共同冻结的实现。历史 command 对照不改名，完整定义及已完成实验见[分区实验梳理](09-资源分区_静态卡池与推理余量共享.md#统一基线与读表方法)。
 
 | 报告 | 有效结论与边界 |
 |---|---|
-| [Science 修复后三步训练](science-single-gpu-training-control.md) | 人工高压力下减少显存不足重试，完成相同三步目标，完整时间少27.59% |
-| [常驻模型整卡压力](gpu-benchmarks/resident-model-pressure.md) | 真实 Mistral 服务、相同 7 项任务 14 请求，完整时间少 10.6%，没有 PSRL 策略训练 |
-| [低负载同期配对](router-baseline-control-validation.md) | 修复后两对总时间相差约 1.49%，未证明稳定提速，替代最早高开销参考 |
+| [Science 修复后三步训练](03-Science训练_三步对照与显存压力.md) | 人工高压力下减少显存不足重试，完成相同三步目标，完整时间少27.59% |
+| [常驻模型整卡压力](gpu-benchmarks/06-显存压力_提前排队与失败重试.md) | 真实 Mistral 服务、相同 7 项任务 14 请求，完整时间少 10.6%，没有 PSRL 策略训练 |
+| [低负载同期配对](02-基线对照_低负载EnvRouter修复验证.md) | 修复后两对总时间相差约 1.49%，未证明稳定提速，替代最早高开销参考 |
 
 ## 功能验收与当前机制
 
 | 报告 | 验收范围 |
 |---|---|
-| [GPU任务验收证据](gpu-benchmarks/FINDINGS.md) | 按问题定位固定运行；[任务路线图](../milestones/science-gpu-bench-status-and-roadmap.md)维护当前完整数量与缺口 |
-| [MPS 修复后配对](mps-training-comparison.md) | 真实计算并发与控制修复，两组都开 Router，不是固定 OFF/ON |
-| [原生后端 lifecycle 修复](native-backend-fixes-and-science.md) | 当时 CPU LAPS oracle 接线的有限对照，不代表原生 GPU 仍未完成 |
-| [Worker 重试与监督](../knowledge/worker-retry-and-redispatch.md#7-可运行验证与-results) | Ray worker 死亡、错误传播和所属容器回收 |
-| [进程归属部署条件](host-proc-blocker.md) | procfs 条件与可选 eBPF 归属，不将历史节点故障推广到所有部署 |
-| [AIRS GPU 接入](../knowledge/airs-gpu-recipe.md)、[接入审计](../airs-bench-audit/fixes-and-results.md)与[APPS 隔离](../airs-bench-audit/apps-isolation.md) | 19 个非 Kaggle 任务的有界 GPU 与代表闭环证据、当前 CPU 回归及剩余缺口，历史回放保留原条件 |
+| [GPU任务验收证据](gpu-benchmarks/01-任务验收_结果与证据导航.md) | 按问题定位固定运行；[任务路线图](../milestones/02-Science现状_任务覆盖与接入路线.md)维护当前完整数量与缺口 |
+| [MPS 修复后配对](04-MPS训练_并行执行与控制修复对照.md) | 真实计算并发与控制修复，两组都开 Router，不是固定 OFF/ON |
+| [原生后端 lifecycle 修复](05-容器后端_原生实现修复与Science验证.md) | 当时 CPU LAPS oracle 接线的有限对照，不代表原生 GPU 仍未完成 |
+| [Worker 重试与监督](../knowledge/01-架构与执行/05-EnvRouter_配置恢复与Worker重试.md#7-可运行验证与-results) | Ray worker 死亡、错误传播和所属容器回收 |
+| [进程归属部署条件](10-进程归属_Procfs挂载障碍与处理.md) | procfs 条件与可选 eBPF 归属，不将历史节点故障推广到所有部署 |
+| [AIRS GPU 接入](../knowledge/03-任务接入/03-AIRSBench_接入流程与有界验收.md)、[接入审计](../airs-bench-audit/01-AIRS审计_修复状态与验证范围.md)与[APPS 隔离](../airs-bench-audit/02-APPS判题_代码隔离与验证边界.md) | 19 个非 Kaggle 任务的有界 GPU 与代表闭环证据、当前 CPU 回归及剩余缺口，历史回放保留原条件 |
 
 ## 研究探索
 
-- [常驻 vLLM 与环境共享计算](resident-compute-sharing.md)：三策略真实对照已完成，合作式暂停可正确继续，小图像任务上未胜过现有共享。
-- [热卡等待与冷卡加载的对照实验](gpu-benchmarks/warm-placement-matrix.md)：比较直接等待、优先复制与预测选择，用实测结果解释等待和加载的取舍。
-- [等待或重建的代码阅读指南](../knowledge/warm-placement-code-guide.md)：研究执行链、协程并发、类型化成本、准入与清理，附 CPU 教学实验。
-- [热卡等待还是冷卡重建](gpu-benchmarks/warm-wait-or-rebuild.md)：前期真实 PSRL 固定步数长命令的历史探索，保留其完成数量与计时边界。
-- [PostTrain 候选评分准备复用](gpu-benchmarks/posttrain-verifier-reuse.md)：九次真实 GPU 评分，已加载模型的请求变快，但完整短批次未胜过普通进程复用。
-- [GPU 性能反馈压力实验](gpu-benchmarks/feedback-pressure.md)：144 组矩阵与 15 组持续竞争，简单保护避免严重选优错误，自适应未胜过固定两轮。
+- [八卡单批次与多负载回放](13-扩展对照_八卡单批次与多负载回放.md)汇总八卡十步、高显存 AIME 与视觉混合的 Episode 静态、Command 静态和动态方案对照，以及单组补跑状态。正式协议采用 2 步短档和 10 步长档，并包含[初始化分段与控制连接准备](13-扩展对照_八卡单批次与多负载回放.md#初始化为什么更久与怎样缩短)。
+- [PSRL 环境 GPU 调度研究报告](12-研究报告_PSRL环境GPU调度的设计与评估.md)按环境池紧张时的收益、容量充足时的代价、静态配置及交接机制组织证据。四个八卡场景合并绘图，统一比较三种策略、训练与完整用时。[图 5 所在章节](12-研究报告_PSRL环境GPU调度的设计与评估.md#56-重叠交接怎样减少等待)用完成相同工作量的两组画出借卡时间线。[附录 A.1](12-研究报告_PSRL环境GPU调度的设计与评估.md#a1-首次超时与完整补跑)记录命令超时的触发位置、已写入的产物和补跑设置。
+- [未知时长下的公共准入试验](../research-proposals/07-并发准入_未知命令时长与反馈调度.md#小实验协议和结果)：六类参考任务、固定旧 runner，简单池化只改善两类返回时间，整批反而更慢。
+- [六类 GPU 任务的运行依赖复用](../research-proposals/08-运行准备_重复准备成本与GPU就绪调度.md)：三组固定旧 runner 配对全部完成，六类代表任务均获益，解释依赖已准备好的条件与首次复制成本。
 
-- [同机 command 池](../research-proposals/dynamic-command-placement.md#14-results真实-ray-与相同工作量对照)：同版本机制验证与安全边界。
-- [真实服务准备前移](../research-proposals/non-timing-gpu-scheduling-scenarios.md#results真实-score-服务题与准备前移对照)：减少预算持有，未测得整组加速。
-- [FlashInfer 批量与分段](gpu-benchmarks/flashinfer-batching.md)：进程复用、候选筛选与分段可行性，尚无新联合调度收益。
+- [静态环境池与推理余量共享](09-资源分区_静态卡池与推理余量共享.md)：按九轮实验说明实际对照、结果和结论。先读[统一基线](09-资源分区_静态卡池与推理余量共享.md#统一基线与读表方法)和[实验总览](09-资源分区_静态卡池与推理余量共享.md#实验总览每一轮验证了什么)。Episode 主基线提高期限至 1200 秒后完成相同两步，保留 720 秒历史失败。两次重叠交接均成功。提高执行期限后完整补跑结束，交接用 3.62 秒。
+- [自动持有模式与借卡等待预测](08-模式选择_Command与Episode及等待预测.md)：真实 PostTrain 命令的 episode、command、auto 对照，以及 vLLM 保存归还、借用和恢复的预测验证。
+- [单卡 vLLM 并发曲线](07-vLLM并发_吞吐与请求延迟曲线.md)：短、长输入下吞吐与请求延迟的关系，解释延迟阈值、等待成本，以及 Roofline 和 PD 分离的适用边界。
+- [常驻 vLLM 与环境共享计算](06-训推共享_常驻vLLM与环境并行实验.md)：同一报告保存短图像任务与长生成/4B 环境模型的三策略对照，串联暂停协议、完整实测例子、输出核验和清理证据。
+- [热卡等待与冷卡加载的对照实验](gpu-benchmarks/04-动态放置_热卡等待与冷卡加载对照.md)：比较直接等待、优先复制与预测选择，用实测结果解释等待和加载的取舍。
+- [等待或重建的代码阅读指南](../knowledge/02-资源与调度/09-动态放置_热卡等待与冷卡重建代码.md)：研究执行链、协程并发、类型化成本、准入与清理，附 CPU 教学实验。
+- [热卡等待还是冷卡重建](gpu-benchmarks/02-状态复用_等待与重新加载的前期实验.md)：前期真实 PSRL 固定步数长命令的历史探索，保留其完成数量与计时边界。
+- [PostTrain 候选评分准备复用](gpu-benchmarks/05-评分复用_PostTrain准备成本与整批耗时.md)：九次真实 GPU 评分，已加载模型的请求变快，但完整短批次未胜过普通进程复用。
+- [GPU 性能反馈压力实验](gpu-benchmarks/08-性能反馈_高压力调度实验.md)：144 组矩阵与 15 组持续竞争，简单保护避免严重选优错误，自适应未胜过固定两轮。
+
+- [同机 command 池](../research-proposals/03-动态放置_会话与GPU执行分离.md#14-results真实-ray-与相同工作量对照)：同版本机制验证与安全边界。
+- [真实服务准备前移](../research-proposals/02-研究场景_非计时评分的GPU任务.md#results真实-score-服务题与准备前移对照)：减少预算持有，未测得整组加速。
+- [FlashInfer 批量与分段](gpu-benchmarks/07-FlashInfer_进程复用与任务合批.md)：进程复用、候选筛选与分段可行性，尚无新联合调度收益。
 
 ## 历史与审计
 
 - [历史实验索引](history/README.md)：旧整任务保留、旧整卡锁、容量不对称配置、修复前失败与完整时间线。
-- [全量文档审查](../../tools/docs-freshness-audit.md#7-2026-11-11-实验文档全量审查与重整)：逐文件清单、替代关系与核验边界。
+- [全量文档审查](../../tools/文档维护/02-文档时效_2026年11月历史巡检.md#7-2026-11-11-实验文档全量审查与重整)：逐文件清单、替代关系与核验边界。
 - [脚本与原始证据](../env-service-verification/README.md)：重跑前必须重新预检，不能沿用历史空闲状态。
-- [当前设计](../knowledge/current-design.md)：查现在的代码能力。阶段报告和实验快照不能覆盖它。
+- [当前设计](../knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md)：查现在的代码能力。阶段报告和实验快照不能覆盖它。
+
+## 目录补充导航
+
+- [历史审阅：低负载配对与GateAB设计](11-历史审阅_低负载配对与GateAB设计.md)

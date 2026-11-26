@@ -1,0 +1,5795 @@
+{
+  "date": "2026-11-20",
+  "scope": "Typography and layout of all 152 explanatory figures.",
+  "method": "Inspected overview grids containing all 152 regenerated figures, then inspected the listed representatives at 900-pixel reading width, including dense diagrams, plots, legends and raster crops. Corrected shared SVG glyph definitions, overlapping PPO axis labels and a timeline caption. Reopened corrected renders. The 76 permanent two-figure sheets were regenerated at full 900-pixel width without a maximum-height reduction.",
+  "checks": {
+    "rendered_figures_viewed": 152,
+    "reading_width_pixels": 900,
+    "detail_figures_viewed": [
+      "borrower-return-delay",
+      "command-episode-residency",
+      "host-and-gpu-ledgers",
+      "gpu-capacity-and-compute",
+      "roofline-capacity-decision",
+      "wait-or-reload",
+      "memory-promises",
+      "state-version-match",
+      "configuration-selective-restore",
+      "ppo-clipped-objective",
+      "explained-capacity-model-c7da45b",
+      "explained-benchmark-choice-c6aaac2",
+      "explained-krex-control-flow-0e8d632",
+      "explained-gpu-task-lifecycle-336b197",
+      "explained-warm-placement-core-0d59e83",
+      "explained-warm-placement-decomposition-860b7c4",
+      "explained-historical-timing-7286182",
+      "explained-fixed-work-environment-memory-53e9b38",
+      "explained-roofline-and-batching-1ddd7ab"
+    ],
+    "new_vector_text_minimum_pixels": 14,
+    "question_coverage": "Existing 3–6 questions per figure and original evidence retained."
+  },
+  "corrections": [
+    "Dense four-panel diagrams now read vertically",
+    "Explanation cards occupy full-width horizontal bands",
+    "Historical plot axes are enlarged separately",
+    "Small legends are unfolded as larger original legend entries",
+    "All shared SVG glyph definitions retained before extracting axes",
+    "Roofline twin scales stay together and Chinese text uses the original generator",
+    "PPO x-axis labels and panel titles no longer overlap",
+    "Long images keep full reading width"
+  ],
+  "vector_font_measurements": [
+    {
+      "id": "agent-rule-memory-skill",
+      "vector_texts": 26,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "borrower-return-delay",
+      "vector_texts": 45,
+      "minimum_at_900px": 15.1
+    },
+    {
+      "id": "bounded-state-cache",
+      "vector_texts": 23,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "browser-page-layers",
+      "vector_texts": 23,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "candidate-and-trusted-verifier",
+      "vector_texts": 26,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "command-episode-residency",
+      "vector_texts": 48,
+      "minimum_at_900px": 15.1
+    },
+    {
+      "id": "configuration-layers",
+      "vector_texts": 29,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "configuration-selective-restore",
+      "vector_texts": 26,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "context-window-growth",
+      "vector_texts": 24,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "dataset-fields",
+      "vector_texts": 27,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "docker-writeback-wait",
+      "vector_texts": 25,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "evidence-levels",
+      "vector_texts": 29,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "experiment-preflight-node",
+      "vector_texts": 28,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "file-references",
+      "vector_texts": 29,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "gpu-capacity-and-compute",
+      "vector_texts": 38,
+      "minimum_at_900px": 15.1
+    },
+    {
+      "id": "gpu-task-asset-boundaries",
+      "vector_texts": 26,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "group-relative-advantages",
+      "vector_texts": 31,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "host-and-gpu-ledgers",
+      "vector_texts": 44,
+      "minimum_at_900px": 15.1
+    },
+    {
+      "id": "http-envelope",
+      "vector_texts": 29,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "kv-prefix-pages",
+      "vector_texts": 32,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "map-019e476519",
+      "vector_texts": 19,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-0b5ca119d2",
+      "vector_texts": 28,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-0df1b907f1",
+      "vector_texts": 28,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-0e0b082c0a",
+      "vector_texts": 32,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-1c4901e702",
+      "vector_texts": 21,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-268b082887",
+      "vector_texts": 27,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-2f31c326af",
+      "vector_texts": 28,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-31ab314077",
+      "vector_texts": 28,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-31eb3fdaa1",
+      "vector_texts": 28,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-37db5ffc0f",
+      "vector_texts": 30,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-4595f5dfc6",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-5e297a681a",
+      "vector_texts": 25,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-63e98fd058",
+      "vector_texts": 19,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-644bc9e974",
+      "vector_texts": 29,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-66cda102ff",
+      "vector_texts": 28,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-6f366e2480",
+      "vector_texts": 26,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-7a7363b66b",
+      "vector_texts": 27,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-907da87505",
+      "vector_texts": 18,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-9c01012189",
+      "vector_texts": 18,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-9d52918d2e",
+      "vector_texts": 21,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-9e82b92589",
+      "vector_texts": 27,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-a0cf851f52",
+      "vector_texts": 27,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-ac6079296a",
+      "vector_texts": 24,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-b4d68dc855",
+      "vector_texts": 18,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-bb83ca628a",
+      "vector_texts": 17,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-bc0d96902a",
+      "vector_texts": 30,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-c435a658e9",
+      "vector_texts": 26,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-d345b2b349",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-df457d24c5",
+      "vector_texts": 27,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-e3e99949ff",
+      "vector_texts": 27,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-ee40956879",
+      "vector_texts": 28,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "map-f580c3ced5",
+      "vector_texts": 12,
+      "minimum_at_900px": 14.84
+    },
+    {
+      "id": "mapped-file-pages",
+      "vector_texts": 28,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "markdown-and-site",
+      "vector_texts": 25,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "measured-flashinfer-preparation",
+      "vector_texts": 32,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "measured-low-load",
+      "vector_texts": 43,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "measured-mps-boundaries",
+      "vector_texts": 43,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "measured-posttrain-reuse",
+      "vector_texts": 43,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "measured-science-three-steps",
+      "vector_texts": 40,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "measurement-contention",
+      "vector_texts": 29,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "memory-promises",
+      "vector_texts": 44,
+      "minimum_at_900px": 15.1
+    },
+    {
+      "id": "parallel-model-shards",
+      "vector_texts": 43,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "pid-namespace-identity",
+      "vector_texts": 26,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "ppo-clipped-objective",
+      "vector_texts": 47,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "provider-execution-boundary",
+      "vector_texts": 26,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "raster-vector-source",
+      "vector_texts": 20,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "registered-memory-transfer",
+      "vector_texts": 21,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "release-logical-and-physical",
+      "vector_texts": 26,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "reply-gate-vs-device-lock",
+      "vector_texts": 31,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "rollout-batch-training",
+      "vector_texts": 37,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "sample-fields-and-handles",
+      "vector_texts": 26,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "session-history-branches",
+      "vector_texts": 28,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "shell-and-python",
+      "vector_texts": 24,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "sqlite-three-files",
+      "vector_texts": 25,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "state-version-match",
+      "vector_texts": 40,
+      "minimum_at_900px": 15.1
+    },
+    {
+      "id": "static-device-contention",
+      "vector_texts": 24,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "terminal-scroll-layers",
+      "vector_texts": 21,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "token-loss-weighting",
+      "vector_texts": 23,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "training-health-signals",
+      "vector_texts": 30,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "training-memory-peak",
+      "vector_texts": 24,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "two-gpu-command-queue",
+      "vector_texts": 27,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "two-model-training-loops",
+      "vector_texts": 24,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "wait-or-reload",
+      "vector_texts": 44,
+      "minimum_at_900px": 15.1
+    },
+    {
+      "id": "software-patch-and-fresh-grader",
+      "vector_texts": 24,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "model-derived-feedback",
+      "vector_texts": 27,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "roofline-capacity-decision",
+      "vector_texts": 42,
+      "minimum_at_900px": 15.1
+    },
+    {
+      "id": "explained-overview-c46ca98",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-rollout_techniques-cf838b0",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-ps-d3858c3",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-staleness_compatibility-ab32e0e",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-resident-compute-sharing-f533859",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-resident-compute-sharing-long-be21a7c",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-single-gpu-inference-curve-evidence-7df94d3",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-automatic-reservation-70f6d6f",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-capacity-model-c7da45b",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-environment-capacity-dd7a546",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-capacity-training-2330452",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-capacity-command-timeline-ea05e12",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-integrated-partition-3748353",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-paired-latency-d4ff470",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-warm-placement-core-0d59e83",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-warm-placement-decomposition-860b7c4",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-warm-placement-faults-6ec458f",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-comparison-b8c2052",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-cuda-preflight-9c45888",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-pressure-matched-c114981",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-pressure-training-curves-ed8f503",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-historical-timing-7286182",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-fixed-work-outcomes-c85fca2",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-fixed-work-training-4f78708",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-fixed-work-environment-memory-53e9b38",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-failure-evidence-dd5c2ec",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-training-curves-22c06d0",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-resource-comparison-7069978",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-capacity-comparison-7f2ba30",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-comparison-38ffe21",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-matched-prefix-7cfb46d",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-per-step-fb816d0",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-comparison-f2dd9a5",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-comparison-c991d3e",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-completion-a9a0126",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-resources-3247f1a",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-low-overhead-771a5d1",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-prewarm-comparison-b1a015e",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-resource-timeline-6931260",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-low-load-breakdown-37a32b1",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-startup-offload-6f38130",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-latency-9f26f8b",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-completion-comparison-f9ce4be",
+      "vector_texts": 16,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-resource-timeline-a3c02cf",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-training-metrics-3137056",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-completion-c7d03c2",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-overlap-470dd69",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-control-comparison-65d1b87",
+      "vector_texts": 15,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-weight-sync-choices-6bf07fc",
+      "vector_texts": 18,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-borrowing-timeline-2487ead",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-rollout-independence-3e2aa22",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-pipeline-bottleneck-77cbdcf",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-krex-control-flow-0e8d632",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-protected-regions-0a75ded",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-gate-and-drain-1739525",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-yarn-responsibilities-180f1c7",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-gpu-task-lifecycle-336b197",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-benchmark-choice-c6aaac2",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-reward-distortion-5865243",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-scheduling-two-lanes-e460719",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-model-decision-cost-05c9647",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-rsi-two-loops-cb6e04f",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-reading-map-0eb10e0",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-psrl-training-loop-b6943fc",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-PSRL_arch-4d2b637",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    },
+    {
+      "id": "explained-roofline-and-batching-1ddd7ab",
+      "vector_texts": 14,
+      "minimum_at_900px": 14.06
+    }
+  ],
+  "figures": [
+    {
+      "id": "agent-rule-memory-skill",
+      "questions": [
+        "同样是一条信息，应该放进要求、背景还是可复用操作？",
+        "先识别用途具体发生什么？",
+        "分别维护具体发生什么？",
+        "本次执行具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "borrower-return-delay",
+      "questions": [
+        "A和B的角色及计时起点是什么？",
+        "为什么额外等待要用max取零下界？",
+        "A变慢与整批加速能否同时出现？",
+        "借用结束后为什么还要确认物理归还？"
+      ],
+      "reading_order": [
+        "① 第一个面板",
+        "② 第二个面板",
+        "③ 第三个面板",
+        "④ 第四个面板"
+      ]
+    },
+    {
+      "id": "bounded-state-cache",
+      "questions": [
+        "内存放不下两个热状态时，留下谁才能少做重建？",
+        "先装 A具体发生什么？",
+        "轮到 B具体发生什么？",
+        "再次请求 A具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "browser-page-layers",
+      "questions": [
+        "一个网页上的内容、排版和点击行为分别由谁改变？",
+        "内容对象具体发生什么？",
+        "外观变化具体发生什么？",
+        "用户交互具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "candidate-and-trusted-verifier",
+      "questions": [
+        "候选程序怎样得到输入，同时不能读到隐藏答案或篡改最终分数？",
+        "可信侧准备具体发生什么？",
+        "候选侧执行具体发生什么？",
+        "可信侧评分具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "command-episode-residency",
+      "questions": [
+        "episode与command改变的是哪一段资源寿命？",
+        "容器保留为什么不等于Python模型保留？",
+        "B占用空档为何会让A再次等待？",
+        "auto的能力与时间预测分别怎样参与选择？"
+      ],
+      "reading_order": [
+        "① 第一个面板",
+        "② 第二个面板",
+        "③ 第三个面板",
+        "④ 第四个面板"
+      ]
+    },
+    {
+      "id": "configuration-layers",
+      "questions": [
+        "多层配置写了不同的值，最终到底用了哪一个？",
+        "默认配置具体发生什么？",
+        "任务覆盖具体发生什么？",
+        "最终生效具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "configuration-selective-restore",
+      "questions": [
+        "怎样恢复需要的配置，又不把现在有效的修改一起覆盖？",
+        "当前文件具体发生什么？",
+        "逐项比较备份具体发生什么？",
+        "合并后的文件具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "context-window-growth",
+      "questions": [
+        "每次只多说一点，为什么下一轮却突然放不下？",
+        "第一轮提交具体发生什么？",
+        "工具结果加入历史具体发生什么？",
+        "合法处理方向具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "dataset-fields",
+      "questions": [
+        "看起来相同的 JSON 文本，为什么不能替代真正的消息列表？",
+        "期望结构具体发生什么？",
+        "错误写法具体发生什么？",
+        "正确交付具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "docker-writeback-wait",
+      "questions": [
+        "显存已经下降，Docker 为什么还迟迟不能完成清理？",
+        "分别观察具体发生什么？",
+        "定位等待链具体发生什么？",
+        "安全处理具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "evidence-levels",
+      "questions": [
+        "一次检查通过，究竟能支持多大的结论？",
+        "机制或执行证据具体发生什么？",
+        "训练或性能证据具体发生什么？",
+        "按问题选择具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "experiment-preflight-node",
+      "questions": [
+        "driver 能看到 GPU，为什么实际 worker 的容器仍可能运行失败？",
+        "driver 核对具体发生什么？",
+        "实际 worker 核对具体发生什么？",
+        "容器里核对具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "file-references",
+      "questions": [
+        "文件名删了，为什么进程还能读？空间什么时候才可回收？",
+        "初始引用具体发生什么？",
+        "删除两个名字具体发生什么？",
+        "关闭最后的 fd具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "gpu-capacity-and-compute",
+      "questions": [
+        "显存容量和SM计算能力分别限制什么？",
+        "MPS能否保证任务互不减速？",
+        "哪些条件下10并发胜过5加5，哪些条件下相反？",
+        "应该测哪些指标才能决定是否限流？"
+      ],
+      "reading_order": [
+        "① 第一个面板",
+        "② 第二个面板",
+        "③ 第三个面板",
+        "④ 第四个面板"
+      ]
+    },
+    {
+      "id": "gpu-task-asset-boundaries",
+      "questions": [
+        "同一个 GPU 任务里，哪些能复用、哪些随代码变、哪些必须保密？",
+        "固定资产具体发生什么？",
+        "候选产物具体发生什么？",
+        "可信评分资产具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "group-relative-advantages",
+      "questions": [
+        "同一道题的多次尝试，怎样变成鼓励或抑制某条回答的信号？",
+        "原始奖励具体发生什么？",
+        "组内标准化具体发生什么？",
+        "如何解释具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "host-and-gpu-ledgers",
+      "questions": [
+        "unit与会话资源是什么关系？",
+        "会话层与GPU命令层分别记录什么？",
+        "换卡时主存和容器是否一起移动？",
+        "热模型和跨节点迁移有哪些边界？"
+      ],
+      "reading_order": [
+        "① 第一个面板",
+        "② 第二个面板",
+        "③ 第三个面板",
+        "④ 第四个面板"
+      ]
+    },
+    {
+      "id": "http-envelope",
+      "questions": [
+        "一段 URL 怎样找到机器、服务和这次要执行的操作？",
+        "先找到入口具体发生什么？",
+        "服务解释请求具体发生什么？",
+        "返回可解释结果具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "kv-prefix-pages",
+      "questions": [
+        "两条请求共享同一前缀，怎样省显存而不互相改坏生成历史？",
+        "共同前缀具体发生什么？",
+        "各自增长具体发生什么？",
+        "需要修改共享块具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-019e476519",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-0b5ca119d2",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-0df1b907f1",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-0e0b082c0a",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-1c4901e702",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-268b082887",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-2f31c326af",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-31ab314077",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-31eb3fdaa1",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-37db5ffc0f",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-4595f5dfc6",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-5e297a681a",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-63e98fd058",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-644bc9e974",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-66cda102ff",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-6f366e2480",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-7a7363b66b",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-907da87505",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-9c01012189",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-9d52918d2e",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-9e82b92589",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-a0cf851f52",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-ac6079296a",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-b4d68dc855",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-bb83ca628a",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-bc0d96902a",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-c435a658e9",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-d345b2b349",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-df457d24c5",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-e3e99949ff",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-ee40956879",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "map-f580c3ced5",
+      "questions": [
+        "当前问题应该进入哪篇？",
+        "该入口实际解释哪些内容？",
+        "应该怎样从主线进入源码或证据？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "mapped-file-pages",
+      "questions": [
+        "映射地址还在，为什么访问文件的后半部分会触发 SIGBUS？",
+        "映射建立时具体发生什么？",
+        "文件被截短具体发生什么？",
+        "进程继续访问具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "markdown-and-site",
+      "questions": [
+        "Markdown 改名后，为什么正文能打开而网页导航或插图却坏了？",
+        "源文件层具体发生什么？",
+        "移动或修改后具体发生什么？",
+        "构建与交付具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "measured-flashinfer-preparation",
+      "questions": [
+        "相同工作量与计时边界是什么？",
+        "阶段与完整任务的结果是否一致？",
+        "数据能支持什么，不能支持什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "measured-low-load",
+      "questions": [
+        "相同工作量与计时边界是什么？",
+        "阶段与完整任务的结果是否一致？",
+        "数据能支持什么，不能支持什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "measured-mps-boundaries",
+      "questions": [
+        "相同工作量与计时边界是什么？",
+        "阶段与完整任务的结果是否一致？",
+        "数据能支持什么，不能支持什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "measured-posttrain-reuse",
+      "questions": [
+        "相同工作量与计时边界是什么？",
+        "阶段与完整任务的结果是否一致？",
+        "数据能支持什么，不能支持什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "measured-science-three-steps",
+      "questions": [
+        "相同工作量与计时边界是什么？",
+        "阶段与完整任务的结果是否一致？",
+        "数据能支持什么，不能支持什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "measurement-contention",
+      "questions": [
+        "候选代码没有变，为什么它的计时分数却变差？",
+        "目标条件具体发生什么？",
+        "只改变共运行条件具体发生什么？",
+        "选择正确指标具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "memory-promises",
+      "questions": [
+        "实占与预约为什么不能直接取总量的max？",
+        "为什么也不能把实占与预约全部相加？",
+        "新公式怎样避免漏算和重复计算？",
+        "B何时等待，何时放行？"
+      ],
+      "reading_order": [
+        "① 第一个面板",
+        "② 第二个面板",
+        "③ 第三个面板",
+        "④ 第四个面板"
+      ]
+    },
+    {
+      "id": "parallel-model-shards",
+      "questions": [
+        "多张卡是在算不同样本、同一层，还是不同层？",
+        "数据并行 DP具体发生什么？",
+        "张量并行 TP具体发生什么？",
+        "流水线并行 PP具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "pid-namespace-identity",
+      "questions": [
+        "两个容器里都有 PID 12，取消任务时怎么避免杀错进程？",
+        "只看容器编号具体发生什么？",
+        "建立可信映射具体发生什么？",
+        "执行取消前具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "ppo-clipped-objective",
+      "questions": [
+        "PPO 的裁剪到底在哪一边停止奖励继续变化？",
+        "未裁剪目标具体发生什么？",
+        "两个手算例子具体发生什么？",
+        "裁剪的作用具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "provider-execution-boundary",
+      "questions": [
+        "两个后端仍在，哪些职责可以共用，哪些生命周期应分别保留？",
+        "各自创建容器具体发生什么？",
+        "共用执行协议具体发生什么？",
+        "任务结束具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "raster-vector-source",
+      "questions": [
+        "PNG、SVG 与绘图脚本分别解决显示、编辑还是复现的问题？",
+        "PNG：稳定显示具体发生什么？",
+        "SVG：可缩放编辑具体发生什么？",
+        "源脚本与数据具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "registered-memory-transfer",
+      "questions": [
+        "发送函数返回后，为什么接收端还不能立刻使用新数据？",
+        "准备控制信息具体发生什么？",
+        "发起搬运具体发生什么？",
+        "确认可使用具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "release-logical-and-physical",
+      "questions": [
+        "租约数已经是零，为什么下一组实验仍可能撞上残留显存？",
+        "逻辑结束具体发生什么？",
+        "物理核验具体发生什么？",
+        "交给下一组具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "reply-gate-vs-device-lock",
+      "questions": [
+        "设备准入与回复等待为什么会分别增加时间？",
+        "Gate A：设备具体发生什么？",
+        "Gate B：回复具体发生什么？",
+        "计时解释具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "rollout-batch-training",
+      "questions": [
+        "一条 episode 结束后，为什么模型不一定马上开始训练？",
+        "样本逐条就绪具体发生什么？",
+        "满足本批条件具体发生什么？",
+        "找真正的收益具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "sample-fields-and-handles",
+      "questions": [
+        "样本在多个组件之间传递时，传的是全部张量还是数据的引用？",
+        "生成阶段具体发生什么？",
+        "评分阶段具体发生什么？",
+        "训练阶段具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "session-history-branches",
+      "questions": [
+        "从同一步分叉后，哪些历史相同，后续修改又属于哪条讨论？",
+        "共同前缀具体发生什么？",
+        "分支 A具体发生什么？",
+        "分支 B具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "shell-and-python",
+      "questions": [
+        "source 环境脚本后，哪些内容能被子进程继承，哪些状态仍各自独立？",
+        "当前 Shell具体发生什么？",
+        "Python P1具体发生什么？",
+        "Python P2具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "sqlite-three-files",
+      "questions": [
+        "为什么数据库旁边还有 WAL 和 SHM，只复制主文件可能丢什么？",
+        "主库已有旧页具体发生什么？",
+        "新提交进入 WAL具体发生什么？",
+        "checkpoint 合并具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "state-version-match",
+      "questions": [
+        "写磁盘文件为何不自动更新进程？",
+        "哪些依赖对应哪些内存状态？",
+        "为什么只改评分代码时可以保留模型？",
+        "什么条件下拒绝复用或拒绝发布结果？"
+      ],
+      "reading_order": [
+        "① 第一个面板",
+        "② 第二个面板",
+        "③ 第三个面板",
+        "④ 第四个面板"
+      ]
+    },
+    {
+      "id": "static-device-contention",
+      "questions": [
+        "已经限制每个进程的会话数，为什么两个容器还可能挤到同一张卡？",
+        "各自看本进程具体发生什么？",
+        "实际设备映射具体发生什么？",
+        "正确判断层次具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "terminal-scroll-layers",
+      "questions": [
+        "终端外层能滚动，为什么内部列表仍停在原地？",
+        "终端层具体发生什么？",
+        "tmux 层具体发生什么？",
+        "应用层具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "token-loss-weighting",
+      "questions": [
+        "两条长短不同的回答，先按回答平均和按全部 token 平均有何不同？",
+        "先按回答求均值具体发生什么？",
+        "按全部 token 求均值具体发生什么？",
+        "影响学习目标具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "training-health-signals",
+      "questions": [
+        "训练进程还在运行，怎样判断它有没有拿到有效学习信号？",
+        "先看样本具体发生什么？",
+        "再看反馈具体发生什么？",
+        "最后看更新具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "training-memory-peak",
+      "questions": [
+        "平时显存还够，为什么长序列的一次更新仍会 OOM？",
+        "短序列具体发生什么？",
+        "长序列具体发生什么？",
+        "针对阶段处理具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "two-gpu-command-queue",
+      "questions": [
+        "老会话下条命令被堵住时，为什么可以考虑同机另一张空卡？",
+        "原卡继续等具体发生什么？",
+        "同机换卡具体发生什么？",
+        "比较后再选具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "two-model-training-loops",
+      "questions": [
+        "Agent 让环境训练了一个模型，PSRL 更新的到底是哪一个模型？",
+        "策略 θ 做决定具体发生什么？",
+        "环境 φ 做任务具体发生什么？",
+        "PSRL 更新 θ具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "wait-or-reload",
+      "questions": [
+        "两张卡分别保留什么状态？",
+        "等待与换卡的时间从哪里开始算？",
+        "为什么空闲卡也可能不值得使用？",
+        "A提前7秒为什么整批只提前4秒？"
+      ],
+      "reading_order": [
+        "① 第一个面板",
+        "② 第二个面板",
+        "③ 第三个面板",
+        "④ 第四个面板"
+      ]
+    },
+    {
+      "id": "software-patch-and-fresh-grader",
+      "questions": [
+        "工作容器里测试通过，为什么还要在新容器里重新评分？",
+        "工作容器具体发生什么？",
+        "独立评分容器具体发生什么？",
+        "提交边界具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "model-derived-feedback",
+      "questions": [
+        "独立反馈模型怎样影响策略学习，又有哪些角色不能混在一起？",
+        "策略模型具体发生什么？",
+        "反馈模型具体发生什么？",
+        "学习信号具体发生什么？"
+      ],
+      "reading_order": [
+        "具体对象或原始数据",
+        "操作前与可选动作",
+        "变化后的结果",
+        "原因与边界"
+      ]
+    },
+    {
+      "id": "roofline-capacity-decision",
+      "questions": [
+        "计算和搬运为何同时给出时间下界？",
+        "Roofline的坐标、斜线和平台分别是什么？",
+        "合批如何提高权重搬运的复用程度？",
+        "硬件拐点为何还需要映射到真实服务曲线？"
+      ],
+      "reading_order": [
+        "① 第一个面板",
+        "② 第二个面板",
+        "③ 第三个面板",
+        "④ 第四个面板"
+      ]
+    },
+    {
+      "id": "explained-overview-c46ca98",
+      "questions": [
+        "一次回答怎样变成训练数据，新参数又怎样回到生成侧？",
+        "采集样本：发生什么及为什么？",
+        "消费样本：发生什么及为什么？",
+        "更新生成：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-rollout_techniques-cf838b0",
+      "questions": [
+        "遇到长短不一的轨迹，应该改放置、保留进度还是重复采样？",
+        "放到哪里：发生什么及为什么？",
+        "中断后怎么办：发生什么及为什么？",
+        "长尾如何处理：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-ps-d3858c3",
+      "questions": [
+        "训练已经产出参数，为什么生成端还不能立刻宣布使用新版本？",
+        "训练侧发布：发生什么及为什么？",
+        "传输进行中：发生什么及为什么？",
+        "完成后启用：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-staleness_compatibility-ab32e0e",
+      "questions": [
+        "晚完成的样本还能进入哪一批训练，怎样限制它有多旧？",
+        "样本产生：发生什么及为什么？",
+        "匹配消费位置：发生什么及为什么？",
+        "解释效果：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-resident-compute-sharing-f533859",
+      "questions": [
+        "环境命令与推理能重叠时，暂停环境付出了什么代价？",
+        "先看总量：发生什么及为什么？",
+        "再看长短条件：发生什么及为什么？",
+        "看损失出现在哪：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-resident-compute-sharing-long-be21a7c",
+      "questions": [
+        "环境工作延长后，合作式暂停能否胜过直接共享？",
+        "固定工作量：发生什么及为什么？",
+        "比较整批完成：发生什么及为什么？",
+        "读出代价：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-single-gpu-inference-curve-evidence-7df94d3",
+      "questions": [
+        "并发加到多少开始明显变慢，能否把它叫作 SM 饱和上限？",
+        "读横轴条件：发生什么及为什么？",
+        "同时看两个量：发生什么及为什么？",
+        "别误认硬件上限：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-automatic-reservation-70f6d6f",
+      "questions": [
+        "auto 为什么选了 command，却没有在所有空档下更快？",
+        "选模式的依据：发生什么及为什么？",
+        "短空档风险：发生什么及为什么？",
+        "长空档机会：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-capacity-model-c7da45b",
+      "questions": [
+        "模型能预测哪些时间，又没有覆盖哪些等待？",
+        "输入条件：发生什么及为什么？",
+        "输出对象：发生什么及为什么？",
+        "留出检验：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-environment-capacity-dd7a546",
+      "questions": [
+        "相同六个环境任务，怎样选每卡并发上限并计算校准成本？",
+        "同量扫描：发生什么及为什么？",
+        "读预测用途：发生什么及为什么？",
+        "算校准回本：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-capacity-training-2330452",
+      "questions": [
+        "某些 step 变慢，为什么四步合计仍可更快？",
+        "相同工作层次：发生什么及为什么？",
+        "看累计而非挑单步：发生什么及为什么？",
+        "再看完整边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-capacity-command-timeline-ea05e12",
+      "questions": [
+        "环境有了更多卡，为什么模型同步仍可能被长命令挡住？",
+        "更多设备：发生什么及为什么？",
+        "跨越同步时刻：发生什么及为什么？",
+        "后续方向：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-integrated-partition-3748353",
+      "questions": [
+        "真实 PSRL 里共享推理卡，收益是否能传到整个训练任务？",
+        "固定累计工作：发生什么及为什么？",
+        "看异步节奏：发生什么及为什么？",
+        "保留因果边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-paired-latency-d4ff470",
+      "questions": [
+        "两对实验中 ON 工作更短，足以宣布稳定加速吗？",
+        "先核重复单位：发生什么及为什么？",
+        "区分计时范围：发生什么及为什么？",
+        "保留启动成本：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-warm-placement-core-0d59e83",
+      "questions": [
+        "同一模型状态可复用时，空卡是否总比等待热卡好？",
+        "短等待：发生什么及为什么？",
+        "长等待：发生什么及为什么？",
+        "看整组和清理：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-warm-placement-decomposition-860b7c4",
+      "questions": [
+        "冷卡执行提前了多少，哪些加载和清理开销不能漏掉？",
+        "原卡路径：发生什么及为什么？",
+        "冷卡路径：发生什么及为什么？",
+        "相同边界比较：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-warm-placement-faults-6ec458f",
+      "questions": [
+        "预测错了会怎样，什么时候应回到保守路径？",
+        "高估剩余等待：发生什么及为什么？",
+        "进度过期：发生什么及为什么？",
+        "空间不足：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-comparison-b8c2052",
+      "questions": [
+        "怎样证明不是容器名额，而是显存预算真正限制了并发？",
+        "可并行三条：发生什么及为什么？",
+        "第四条必须等：发生什么及为什么？",
+        "释放后继续：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-cuda-preflight-9c45888",
+      "questions": [
+        "OFF 两次 OOM 与 ON 汇总丢失，分别属于什么问题？",
+        "任务结果：发生什么及为什么？",
+        "监控故障：发生什么及为什么？",
+        "证据处理：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-pressure-matched-c114981",
+      "questions": [
+        "ON 更慢却有更多有效 token，该怎样比较？",
+        "先看完成内容：发生什么及为什么？",
+        "再看时间：发生什么及为什么？",
+        "选择对应指标：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-pressure-training-curves-ed8f503",
+      "questions": [
+        "OFF 四步、ON 两步，曲线应该在哪些地方停止比较？",
+        "共有前缀：发生什么及为什么？",
+        "各自实际记录：发生什么及为什么？",
+        "解释零梯度：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-historical-timing-7286182",
+      "questions": [
+        "ON 增加的时间主要在哪里，能否全算给 Router？",
+        "先分阶段：发生什么及为什么？",
+        "观察差值：发生什么及为什么？",
+        "保留工作差异：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-fixed-work-outcomes-c85fca2",
+      "questions": [
+        "补齐同样成功任务后，旧基线与 Router 各付出了什么？",
+        "先对齐完成量：发生什么及为什么？",
+        "再看代价：发生什么及为什么？",
+        "分开两个机制：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-fixed-work-training-4f78708",
+      "questions": [
+        "成功数量相同后，奖励、有效 token 和梯度是否也相同？",
+        "核对有效数据：发生什么及为什么？",
+        "核对奖励与优势：发生什么及为什么？",
+        "核对执行与结论：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-fixed-work-environment-memory-53e9b38",
+      "questions": [
+        "整任务保留如何产生“有空卡却还排队”的时间窗口？",
+        "GPU 命令已结束：发生什么及为什么？",
+        "账本仍保留：发生什么及为什么？",
+        "看到优化空间：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-failure-evidence-dd5c2ec",
+      "questions": [
+        "怎样区分训卡被外部占用，与环境调度准入失败？",
+        "确认故障位置：发生什么及为什么？",
+        "确认显存归属：发生什么及为什么？",
+        "限制性能结论：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-training-curves-22c06d0",
+      "questions": [
+        "两组训练都完成，为什么仍不能说 Router 有速度优势？",
+        "实际执行：发生什么及为什么？",
+        "计时结果：发生什么及为什么？",
+        "保持解释边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-resource-comparison-7069978",
+      "questions": [
+        "设备级利用率和显存，能否直接证明本次任务吞吐？",
+        "显存与利用率：发生什么及为什么？",
+        "配额与实际：发生什么及为什么？",
+        "计时范围：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-capacity-comparison-7f2ba30",
+      "questions": [
+        "高压力 OFF 返回更快时，是否完成了同样四条命令？",
+        "先看左侧数量：发生什么及为什么？",
+        "再看右侧时间：发生什么及为什么？",
+        "再核边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-comparison-38ffe21",
+      "questions": [
+        "OFF 到时被停止、ON 完成一步，该如何画公平边界？",
+        "标清停止原因：发生什么及为什么？",
+        "标清完成层次：发生什么及为什么？",
+        "标清计时对象：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-matched-prefix-7cfb46d",
+      "questions": [
+        "双方完成前五步后，怎样报告收益同时保留外部干扰？",
+        "只比较完整前缀：发生什么及为什么？",
+        "同时统计失败：发生什么及为什么？",
+        "暴露外部活动：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-per-step-fb816d0",
+      "questions": [
+        "单个 step 长短交替时，应怎样读整个试验？",
+        "先看横轴：发生什么及为什么？",
+        "再看工作量：发生什么及为什么？",
+        "最后看整段：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-comparison-f2dd9a5",
+      "questions": [
+        "没有人为显存压力，Router 的收益能否直接沿用？",
+        "核对真实负载：发生什么及为什么？",
+        "核对计时：发生什么及为什么？",
+        "核对成功层次：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-comparison-c991d3e",
+      "questions": [
+        "同一批环境工作，为什么低压力下持平，高压力下才可能获益？",
+        "低压力：观察到什么及为什么？",
+        "高压力：观察到什么及为什么？",
+        "理解收益来源：观察到什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-completion-a9a0126",
+      "questions": [
+        "同样 16 条成功任务，准入减少了哪些额外成本？",
+        "成功数量一致：发生什么及为什么？",
+        "失败额外成本：发生什么及为什么？",
+        "观察时间：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-resources-3247f1a",
+      "questions": [
+        "同时画显存、会话与命令，能找出什么问题？",
+        "设备视角：发生什么及为什么？",
+        "会话视角：发生什么及为什么？",
+        "账本视角：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-low-overhead-771a5d1",
+      "questions": [
+        "修复减少哪段等待，是否已证明所有负载下都更快？",
+        "确认工作相同：发生什么及为什么？",
+        "定位可改区间：发生什么及为什么？",
+        "评价边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-prewarm-comparison-b1a015e",
+      "questions": [
+        "提前准备能减少等待吗，初始化成本应该放在哪里？",
+        "预热阶段：发生什么及为什么？",
+        "任务阶段：发生什么及为什么？",
+        "整组边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-resource-timeline-6931260",
+      "questions": [
+        "任务开始前后，哪些是控制服务，哪些才是实际 GPU 占用？",
+        "先识别准备窗口：发生什么及为什么？",
+        "再识别设备阶段：发生什么及为什么？",
+        "最后核对清理：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-low-load-breakdown-37a32b1",
+      "questions": [
+        "账本判断已经很快，下一步该优化哪段控制路径？",
+        "先划清区间：发生什么及为什么？",
+        "再看长尾位置：发生什么及为什么？",
+        "按证据优化：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-startup-offload-6f38130",
+      "questions": [
+        "为什么一个慢查询会拖住多个协程，修复后该声称什么？",
+        "原等待传播：发生什么及为什么？",
+        "修改后的动作：发生什么及为什么？",
+        "证据边界：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-latency-9f26f8b",
+      "questions": [
+        "提前拿到输出后，为什么后续任务仍要等物理归还？",
+        "输出事件：发生什么及为什么？",
+        "资源事件：发生什么及为什么？",
+        "解释原型数据：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-completion-comparison-f9ce4be",
+      "questions": [
+        "容器还活着时，GPU 是否真的交给了另一会话？",
+        "分别计数：发生什么及为什么？",
+        "观察跨任务复用：发生什么及为什么？",
+        "保留排队成本：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-resource-timeline-a3c02cf",
+      "questions": [
+        "图中的空档减少，是显存碎片改善还是生命周期变细？",
+        "物理层：发生什么及为什么？",
+        "逻辑层：发生什么及为什么？",
+        "反事实层：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-training-metrics-3137056",
+      "questions": [
+        "全组奖励相同时，为什么能跑完训练却没有策略梯度？",
+        "数据有效性：发生什么及为什么？",
+        "奖励与优势：发生什么及为什么？",
+        "正确报告：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-completion-c7d03c2",
+      "questions": [
+        "A 已提前规划，为什么两会话最后反而更晚结束？",
+        "能重叠的部分：发生什么及为什么？",
+        "新增长等待：发生什么及为什么？",
+        "最终看整批：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-overlap-470dd69",
+      "questions": [
+        "B 在哪一刻可以安全占卡，A 的规划又在哪段重叠？",
+        "A 的两个事件：发生什么及为什么？",
+        "B 的准入条件：发生什么及为什么？",
+        "A 再次申请：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-control-comparison-65d1b87",
+      "questions": [
+        "少查一次慢接口，为什么比改变归还方式本身影响更大？",
+        "比较全部样本：发生什么及为什么？",
+        "拆出准入区间：发生什么及为什么？",
+        "区分两个贡献：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-weight-sync-choices-6bf07fc",
+      "questions": [
+        "环境长命令跨过同步时刻，怎样核算不同处理动作的代价？",
+        "等待归还：发生什么及为什么？",
+        "继续并行：发生什么及为什么？",
+        "取消重做：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-borrowing-timeline-2487ead",
+      "questions": [
+        "A 暂时不用卡，B 填空能让同一批工作更早结束吗？",
+        "固定同一工作：发生什么及为什么？",
+        "整段保留：发生什么及为什么？",
+        "按命令归还：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-rollout-independence-3e2aa22",
+      "questions": [
+        "A 不再等 B，可以更早完成，为什么这一组仍是十二秒？",
+        "同步约束：发生什么及为什么？",
+        "独立推进：发生什么及为什么？",
+        "回到关键路径：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-pipeline-bottleneck-77cbdcf",
+      "questions": [
+        "一个阶段变慢后，整个流水线为什么反而可能更快？",
+        "先统一工作单位：发生什么及为什么？",
+        "再改善慢阶段：发生什么及为什么？",
+        "最后算迁移回本：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-krex-control-flow-0e8d632",
+      "questions": [
+        "候选退出后，哪些上下文能留下，哪些资源必须清理？",
+        "准备与配对：发生什么及为什么？",
+        "测量区域：发生什么及为什么？",
+        "命令退出：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-protected-regions-0a75ded",
+      "questions": [
+        "怎样减少整条命令独占的浪费，同时保持目标测量条件？",
+        "可共享阶段：发生什么及为什么？",
+        "受保护阶段：发生什么及为什么？",
+        "比较整组代价：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-gate-and-drain-1739525",
+      "questions": [
+        "暂停新提交后，已经进入 GPU 的工作会自己消失吗？",
+        "关提交门：发生什么及为什么？",
+        "排空在途工作：发生什么及为什么？",
+        "当前轮确认：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-yarn-responsibilities-180f1c7",
+      "questions": [
+        "谁知道什么任务值得做，谁知道哪张卡当前可用？",
+        "任务侧声明：发生什么及为什么？",
+        "资源层安排：发生什么及为什么？",
+        "节点实际执行：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-gpu-task-lifecycle-336b197",
+      "questions": [
+        "一题多轮修改后，哪些东西保留，最终评分又读什么？",
+        "创建会话：发生什么及为什么？",
+        "多轮 GPU 工具：发生什么及为什么？",
+        "最终评估：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-benchmark-choice-c6aaac2",
+      "questions": [
+        "不用时间打分，就能完全忽略共运行对任务结果的影响吗？",
+        "固定工作量：发生什么及为什么？",
+        "限时训练：发生什么及为什么？",
+        "直接测速：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-reward-distortion-5865243",
+      "questions": [
+        "相同两份代码，为什么共享硬件可能把排名翻转？",
+        "目标无竞争：发生什么及为什么？",
+        "不等竞争：发生什么及为什么？",
+        "后续学习：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-scheduling-two-lanes-e460719",
+      "questions": [
+        "模型适合每条命令都做决策，还是提前提供可复用的信息？",
+        "低频分析：发生什么及为什么？",
+        "快速派发：发生什么及为什么？",
+        "版本变化：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-model-decision-cost-05c9647",
+      "questions": [
+        "冷卡加载更快，但为做决策花太久，会不会失去收益？",
+        "直接等待：发生什么及为什么？",
+        "规则选冷卡：发生什么及为什么？",
+        "在线慢分析：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-rsi-two-loops-cb6e04f",
+      "questions": [
+        "任务模型 B 训练好了，下一条命令为什么仍由 Agent A 生成？",
+        "A 提出实验：发生什么及为什么？",
+        "B 作为任务产物：发生什么及为什么？",
+        "B 接管需额外步骤：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-reading-map-0eb10e0",
+      "questions": [
+        "空档借用、资源分配、反馈可信和决策建模分别读哪里？",
+        "先看空档与依赖：发生什么及为什么？",
+        "再看真实任务：发生什么及为什么？",
+        "最后选决策方式：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-psrl-training-loop-b6943fc",
+      "questions": [
+        "模型请求、环境命令、轨迹与策略 step 是什么包含关系？",
+        "生成与工具：发生什么及为什么？",
+        "形成训练批次：发生什么及为什么？",
+        "发布新参数：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-PSRL_arch-4d2b637",
+      "questions": [
+        "独立采样和训练之后，靠什么把数据与模型版本接起来？",
+        "生成侧：发生什么及为什么？",
+        "数据侧：发生什么及为什么？",
+        "参数侧：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    },
+    {
+      "id": "explained-roofline-and-batching-1ddd7ab",
+      "questions": [
+        "单 token 变慢时，为什么吞吐还能提高，到哪里才趋于平台？",
+        "从两种时间出发：发生什么及为什么？",
+        "代入同一模型：发生什么及为什么？",
+        "解释拐点：发生什么及为什么？"
+      ],
+      "reading_order": [
+        "上方条件",
+        "中部机制或原始证据",
+        "下方三组解释",
+        "结论与边界"
+      ]
+    }
+  ],
+  "limits": "The automatic 14-pixel floor covers new vector text, not embedded raster text. Manual reading-width inspection is listed separately. This is a typography and layout review, not a new historical experiment, source-code or paper audit.",
+  "prior_reviews": [
+    {
+      "date": "2026-11-20",
+      "scope": "All 152 explanatory illustrations in 201 maintained documents.",
+      "method": "Compare each rendered figure against its question map and source context, then inspect at document reading width.",
+      "checks": {
+        "rendered_figures_viewed": 152,
+        "reading_width_pixels": 1100,
+        "question_coverage": "Qualitative review against 3–6 questions recorded for each figure.",
+        "visual_result": "Fixed the identified layout and cross-panel inconsistencies, then inspected corrected renders."
+      },
+      "corrections": [
+        "Configuration restore: selected field and restored values agree",
+        "HTTP: use port 8080 consistently",
+        "KV: shared P0/P1/P2 and private A3/B3 agree",
+        "Rollout batch: separate scene description from time-axis labels",
+        "Navigation: actual descendant topics replace upstream navigation labels",
+        "Resident-pressure experiment: pressure, OOM and timing replace an incorrect model-reuse interpretation"
+      ],
+      "figures": [
+        {
+          "id": "agent-rule-memory-skill",
+          "questions": [
+            "同样是一条信息，应该放进要求、背景还是可复用操作？",
+            "先识别用途具体发生什么？",
+            "分别维护具体发生什么？",
+            "本次执行具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-01.png"
+        },
+        {
+          "id": "borrower-return-delay",
+          "questions": [
+            "A和B的角色及计时起点是什么？",
+            "为什么额外等待要用max取零下界？",
+            "A变慢与整批加速能否同时出现？",
+            "借用结束后为什么还要确认物理归还？"
+          ],
+          "reading_order": [
+            "① 左上",
+            "② 右上",
+            "③ 左下",
+            "④ 右下"
+          ],
+          "review_sheet": "review-01.png"
+        },
+        {
+          "id": "bounded-state-cache",
+          "questions": [
+            "内存放不下两个热状态时，留下谁才能少做重建？",
+            "先装 A具体发生什么？",
+            "轮到 B具体发生什么？",
+            "再次请求 A具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-02.png"
+        },
+        {
+          "id": "browser-page-layers",
+          "questions": [
+            "一个网页上的内容、排版和点击行为分别由谁改变？",
+            "内容对象具体发生什么？",
+            "外观变化具体发生什么？",
+            "用户交互具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-02.png"
+        },
+        {
+          "id": "candidate-and-trusted-verifier",
+          "questions": [
+            "候选程序怎样得到输入，同时不能读到隐藏答案或篡改最终分数？",
+            "可信侧准备具体发生什么？",
+            "候选侧执行具体发生什么？",
+            "可信侧评分具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-03.png"
+        },
+        {
+          "id": "command-episode-residency",
+          "questions": [
+            "episode与command改变的是哪一段资源寿命？",
+            "容器保留为什么不等于Python模型保留？",
+            "B占用空档为何会让A再次等待？",
+            "auto的能力与时间预测分别怎样参与选择？"
+          ],
+          "reading_order": [
+            "① 左上",
+            "② 右上",
+            "③ 左下",
+            "④ 右下"
+          ],
+          "review_sheet": "review-03.png"
+        },
+        {
+          "id": "configuration-layers",
+          "questions": [
+            "多层配置写了不同的值，最终到底用了哪一个？",
+            "默认配置具体发生什么？",
+            "任务覆盖具体发生什么？",
+            "最终生效具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-04.png"
+        },
+        {
+          "id": "configuration-selective-restore",
+          "questions": [
+            "怎样恢复需要的配置，又不把现在有效的修改一起覆盖？",
+            "当前文件具体发生什么？",
+            "逐项比较备份具体发生什么？",
+            "合并后的文件具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-04.png"
+        },
+        {
+          "id": "context-window-growth",
+          "questions": [
+            "每次只多说一点，为什么下一轮却突然放不下？",
+            "第一轮提交具体发生什么？",
+            "工具结果加入历史具体发生什么？",
+            "合法处理方向具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-05.png"
+        },
+        {
+          "id": "dataset-fields",
+          "questions": [
+            "看起来相同的 JSON 文本，为什么不能替代真正的消息列表？",
+            "期望结构具体发生什么？",
+            "错误写法具体发生什么？",
+            "正确交付具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-05.png"
+        },
+        {
+          "id": "docker-writeback-wait",
+          "questions": [
+            "显存已经下降，Docker 为什么还迟迟不能完成清理？",
+            "分别观察具体发生什么？",
+            "定位等待链具体发生什么？",
+            "安全处理具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-06.png"
+        },
+        {
+          "id": "evidence-levels",
+          "questions": [
+            "一次检查通过，究竟能支持多大的结论？",
+            "机制或执行证据具体发生什么？",
+            "训练或性能证据具体发生什么？",
+            "按问题选择具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-06.png"
+        },
+        {
+          "id": "experiment-preflight-node",
+          "questions": [
+            "driver 能看到 GPU，为什么实际 worker 的容器仍可能运行失败？",
+            "driver 核对具体发生什么？",
+            "实际 worker 核对具体发生什么？",
+            "容器里核对具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-07.png"
+        },
+        {
+          "id": "file-references",
+          "questions": [
+            "文件名删了，为什么进程还能读？空间什么时候才可回收？",
+            "初始引用具体发生什么？",
+            "删除两个名字具体发生什么？",
+            "关闭最后的 fd具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-07.png"
+        },
+        {
+          "id": "gpu-capacity-and-compute",
+          "questions": [
+            "显存容量和SM计算能力分别限制什么？",
+            "MPS能否保证任务互不减速？",
+            "哪些条件下10并发胜过5加5，哪些条件下相反？",
+            "应该测哪些指标才能决定是否限流？"
+          ],
+          "reading_order": [
+            "① 左上",
+            "② 右上",
+            "③ 左下",
+            "④ 右下"
+          ],
+          "review_sheet": "review-08.png"
+        },
+        {
+          "id": "gpu-task-asset-boundaries",
+          "questions": [
+            "同一个 GPU 任务里，哪些能复用、哪些随代码变、哪些必须保密？",
+            "固定资产具体发生什么？",
+            "候选产物具体发生什么？",
+            "可信评分资产具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-08.png"
+        },
+        {
+          "id": "group-relative-advantages",
+          "questions": [
+            "同一道题的多次尝试，怎样变成鼓励或抑制某条回答的信号？",
+            "原始奖励具体发生什么？",
+            "组内标准化具体发生什么？",
+            "如何解释具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-09.png"
+        },
+        {
+          "id": "host-and-gpu-ledgers",
+          "questions": [
+            "unit与会话资源是什么关系？",
+            "会话层与GPU命令层分别记录什么？",
+            "换卡时主存和容器是否一起移动？",
+            "热模型和跨节点迁移有哪些边界？"
+          ],
+          "reading_order": [
+            "① 左上",
+            "② 右上",
+            "③ 左下",
+            "④ 右下"
+          ],
+          "review_sheet": "review-09.png"
+        },
+        {
+          "id": "http-envelope",
+          "questions": [
+            "一段 URL 怎样找到机器、服务和这次要执行的操作？",
+            "先找到入口具体发生什么？",
+            "服务解释请求具体发生什么？",
+            "返回可解释结果具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-10.png"
+        },
+        {
+          "id": "kv-prefix-pages",
+          "questions": [
+            "两条请求共享同一前缀，怎样省显存而不互相改坏生成历史？",
+            "共同前缀具体发生什么？",
+            "各自增长具体发生什么？",
+            "需要修改共享块具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-10.png"
+        },
+        {
+          "id": "map-019e476519",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-11.png"
+        },
+        {
+          "id": "map-0b5ca119d2",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-11.png"
+        },
+        {
+          "id": "map-0df1b907f1",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-12.png"
+        },
+        {
+          "id": "map-0e0b082c0a",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-12.png"
+        },
+        {
+          "id": "map-1c4901e702",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-13.png"
+        },
+        {
+          "id": "map-268b082887",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-13.png"
+        },
+        {
+          "id": "map-2f31c326af",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-14.png"
+        },
+        {
+          "id": "map-31ab314077",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-14.png"
+        },
+        {
+          "id": "map-31eb3fdaa1",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-15.png"
+        },
+        {
+          "id": "map-37db5ffc0f",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-15.png"
+        },
+        {
+          "id": "map-4595f5dfc6",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-16.png"
+        },
+        {
+          "id": "map-5e297a681a",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-16.png"
+        },
+        {
+          "id": "map-63e98fd058",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-17.png"
+        },
+        {
+          "id": "map-644bc9e974",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-17.png"
+        },
+        {
+          "id": "map-66cda102ff",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-18.png"
+        },
+        {
+          "id": "map-6f366e2480",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-18.png"
+        },
+        {
+          "id": "map-7a7363b66b",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-19.png"
+        },
+        {
+          "id": "map-907da87505",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-19.png"
+        },
+        {
+          "id": "map-9c01012189",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-20.png"
+        },
+        {
+          "id": "map-9d52918d2e",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-20.png"
+        },
+        {
+          "id": "map-9e82b92589",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-21.png"
+        },
+        {
+          "id": "map-a0cf851f52",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-21.png"
+        },
+        {
+          "id": "map-ac6079296a",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-22.png"
+        },
+        {
+          "id": "map-b4d68dc855",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-22.png"
+        },
+        {
+          "id": "map-bb83ca628a",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-23.png"
+        },
+        {
+          "id": "map-bc0d96902a",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-23.png"
+        },
+        {
+          "id": "map-c435a658e9",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-24.png"
+        },
+        {
+          "id": "map-d345b2b349",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-24.png"
+        },
+        {
+          "id": "map-df457d24c5",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-25.png"
+        },
+        {
+          "id": "map-e3e99949ff",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-25.png"
+        },
+        {
+          "id": "map-ee40956879",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-26.png"
+        },
+        {
+          "id": "map-f580c3ced5",
+          "questions": [
+            "当前问题应该进入哪篇？",
+            "该入口实际解释哪些内容？",
+            "应该怎样从主线进入源码或证据？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-26.png"
+        },
+        {
+          "id": "mapped-file-pages",
+          "questions": [
+            "映射地址还在，为什么访问文件的后半部分会触发 SIGBUS？",
+            "映射建立时具体发生什么？",
+            "文件被截短具体发生什么？",
+            "进程继续访问具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-27.png"
+        },
+        {
+          "id": "markdown-and-site",
+          "questions": [
+            "Markdown 改名后，为什么正文能打开而网页导航或插图却坏了？",
+            "源文件层具体发生什么？",
+            "移动或修改后具体发生什么？",
+            "构建与交付具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-27.png"
+        },
+        {
+          "id": "measured-flashinfer-preparation",
+          "questions": [
+            "相同工作量与计时边界是什么？",
+            "阶段与完整任务的结果是否一致？",
+            "数据能支持什么，不能支持什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-28.png"
+        },
+        {
+          "id": "measured-low-load",
+          "questions": [
+            "相同工作量与计时边界是什么？",
+            "阶段与完整任务的结果是否一致？",
+            "数据能支持什么，不能支持什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-28.png"
+        },
+        {
+          "id": "measured-mps-boundaries",
+          "questions": [
+            "相同工作量与计时边界是什么？",
+            "阶段与完整任务的结果是否一致？",
+            "数据能支持什么，不能支持什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-29.png"
+        },
+        {
+          "id": "measured-posttrain-reuse",
+          "questions": [
+            "相同工作量与计时边界是什么？",
+            "阶段与完整任务的结果是否一致？",
+            "数据能支持什么，不能支持什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-29.png"
+        },
+        {
+          "id": "measured-science-three-steps",
+          "questions": [
+            "相同工作量与计时边界是什么？",
+            "阶段与完整任务的结果是否一致？",
+            "数据能支持什么，不能支持什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-30.png"
+        },
+        {
+          "id": "measurement-contention",
+          "questions": [
+            "候选代码没有变，为什么它的计时分数却变差？",
+            "目标条件具体发生什么？",
+            "只改变共运行条件具体发生什么？",
+            "选择正确指标具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-30.png"
+        },
+        {
+          "id": "memory-promises",
+          "questions": [
+            "实占与预约为什么不能直接取总量的max？",
+            "为什么也不能把实占与预约全部相加？",
+            "新公式怎样避免漏算和重复计算？",
+            "B何时等待，何时放行？"
+          ],
+          "reading_order": [
+            "① 左上",
+            "② 右上",
+            "③ 左下",
+            "④ 右下"
+          ],
+          "review_sheet": "review-31.png"
+        },
+        {
+          "id": "parallel-model-shards",
+          "questions": [
+            "多张卡是在算不同样本、同一层，还是不同层？",
+            "数据并行 DP具体发生什么？",
+            "张量并行 TP具体发生什么？",
+            "流水线并行 PP具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-31.png"
+        },
+        {
+          "id": "pid-namespace-identity",
+          "questions": [
+            "两个容器里都有 PID 12，取消任务时怎么避免杀错进程？",
+            "只看容器编号具体发生什么？",
+            "建立可信映射具体发生什么？",
+            "执行取消前具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-32.png"
+        },
+        {
+          "id": "ppo-clipped-objective",
+          "questions": [
+            "PPO 的裁剪到底在哪一边停止奖励继续变化？",
+            "未裁剪目标具体发生什么？",
+            "两个手算例子具体发生什么？",
+            "裁剪的作用具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-32.png"
+        },
+        {
+          "id": "provider-execution-boundary",
+          "questions": [
+            "两个后端仍在，哪些职责可以共用，哪些生命周期应分别保留？",
+            "各自创建容器具体发生什么？",
+            "共用执行协议具体发生什么？",
+            "任务结束具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-33.png"
+        },
+        {
+          "id": "raster-vector-source",
+          "questions": [
+            "PNG、SVG 与绘图脚本分别解决显示、编辑还是复现的问题？",
+            "PNG：稳定显示具体发生什么？",
+            "SVG：可缩放编辑具体发生什么？",
+            "源脚本与数据具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-33.png"
+        },
+        {
+          "id": "registered-memory-transfer",
+          "questions": [
+            "发送函数返回后，为什么接收端还不能立刻使用新数据？",
+            "准备控制信息具体发生什么？",
+            "发起搬运具体发生什么？",
+            "确认可使用具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-34.png"
+        },
+        {
+          "id": "release-logical-and-physical",
+          "questions": [
+            "租约数已经是零，为什么下一组实验仍可能撞上残留显存？",
+            "逻辑结束具体发生什么？",
+            "物理核验具体发生什么？",
+            "交给下一组具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-34.png"
+        },
+        {
+          "id": "reply-gate-vs-device-lock",
+          "questions": [
+            "设备准入与回复等待为什么会分别增加时间？",
+            "Gate A：设备具体发生什么？",
+            "Gate B：回复具体发生什么？",
+            "计时解释具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-35.png"
+        },
+        {
+          "id": "rollout-batch-training",
+          "questions": [
+            "一条 episode 结束后，为什么模型不一定马上开始训练？",
+            "样本逐条就绪具体发生什么？",
+            "满足本批条件具体发生什么？",
+            "找真正的收益具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-35.png"
+        },
+        {
+          "id": "sample-fields-and-handles",
+          "questions": [
+            "样本在多个组件之间传递时，传的是全部张量还是数据的引用？",
+            "生成阶段具体发生什么？",
+            "评分阶段具体发生什么？",
+            "训练阶段具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-36.png"
+        },
+        {
+          "id": "session-history-branches",
+          "questions": [
+            "从同一步分叉后，哪些历史相同，后续修改又属于哪条讨论？",
+            "共同前缀具体发生什么？",
+            "分支 A具体发生什么？",
+            "分支 B具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-36.png"
+        },
+        {
+          "id": "shell-and-python",
+          "questions": [
+            "source 环境脚本后，哪些内容能被子进程继承，哪些状态仍各自独立？",
+            "当前 Shell具体发生什么？",
+            "Python P1具体发生什么？",
+            "Python P2具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-37.png"
+        },
+        {
+          "id": "sqlite-three-files",
+          "questions": [
+            "为什么数据库旁边还有 WAL 和 SHM，只复制主文件可能丢什么？",
+            "主库已有旧页具体发生什么？",
+            "新提交进入 WAL具体发生什么？",
+            "checkpoint 合并具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-37.png"
+        },
+        {
+          "id": "state-version-match",
+          "questions": [
+            "写磁盘文件为何不自动更新进程？",
+            "哪些依赖对应哪些内存状态？",
+            "为什么只改评分代码时可以保留模型？",
+            "什么条件下拒绝复用或拒绝发布结果？"
+          ],
+          "reading_order": [
+            "① 左上",
+            "② 右上",
+            "③ 左下",
+            "④ 右下"
+          ],
+          "review_sheet": "review-38.png"
+        },
+        {
+          "id": "static-device-contention",
+          "questions": [
+            "已经限制每个进程的会话数，为什么两个容器还可能挤到同一张卡？",
+            "各自看本进程具体发生什么？",
+            "实际设备映射具体发生什么？",
+            "正确判断层次具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-38.png"
+        },
+        {
+          "id": "terminal-scroll-layers",
+          "questions": [
+            "终端外层能滚动，为什么内部列表仍停在原地？",
+            "终端层具体发生什么？",
+            "tmux 层具体发生什么？",
+            "应用层具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-39.png"
+        },
+        {
+          "id": "token-loss-weighting",
+          "questions": [
+            "两条长短不同的回答，先按回答平均和按全部 token 平均有何不同？",
+            "先按回答求均值具体发生什么？",
+            "按全部 token 求均值具体发生什么？",
+            "影响学习目标具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-39.png"
+        },
+        {
+          "id": "training-health-signals",
+          "questions": [
+            "训练进程还在运行，怎样判断它有没有拿到有效学习信号？",
+            "先看样本具体发生什么？",
+            "再看反馈具体发生什么？",
+            "最后看更新具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-40.png"
+        },
+        {
+          "id": "training-memory-peak",
+          "questions": [
+            "平时显存还够，为什么长序列的一次更新仍会 OOM？",
+            "短序列具体发生什么？",
+            "长序列具体发生什么？",
+            "针对阶段处理具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-40.png"
+        },
+        {
+          "id": "two-gpu-command-queue",
+          "questions": [
+            "老会话下条命令被堵住时，为什么可以考虑同机另一张空卡？",
+            "原卡继续等具体发生什么？",
+            "同机换卡具体发生什么？",
+            "比较后再选具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-41.png"
+        },
+        {
+          "id": "two-model-training-loops",
+          "questions": [
+            "Agent 让环境训练了一个模型，PSRL 更新的到底是哪一个模型？",
+            "策略 θ 做决定具体发生什么？",
+            "环境 φ 做任务具体发生什么？",
+            "PSRL 更新 θ具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-41.png"
+        },
+        {
+          "id": "wait-or-reload",
+          "questions": [
+            "两张卡分别保留什么状态？",
+            "等待与换卡的时间从哪里开始算？",
+            "为什么空闲卡也可能不值得使用？",
+            "A提前7秒为什么整批只提前4秒？"
+          ],
+          "reading_order": [
+            "① 左上",
+            "② 右上",
+            "③ 左下",
+            "④ 右下"
+          ],
+          "review_sheet": "review-42.png"
+        },
+        {
+          "id": "software-patch-and-fresh-grader",
+          "questions": [
+            "工作容器里测试通过，为什么还要在新容器里重新评分？",
+            "工作容器具体发生什么？",
+            "独立评分容器具体发生什么？",
+            "提交边界具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-42.png"
+        },
+        {
+          "id": "model-derived-feedback",
+          "questions": [
+            "独立反馈模型怎样影响策略学习，又有哪些角色不能混在一起？",
+            "策略模型具体发生什么？",
+            "反馈模型具体发生什么？",
+            "学习信号具体发生什么？"
+          ],
+          "reading_order": [
+            "具体对象或原始数据",
+            "操作前与可选动作",
+            "变化后的结果",
+            "原因与边界"
+          ],
+          "review_sheet": "review-43.png"
+        },
+        {
+          "id": "roofline-capacity-decision",
+          "questions": [
+            "计算和搬运为何同时给出时间下界？",
+            "Roofline的坐标、斜线和平台分别是什么？",
+            "合批如何提高权重搬运的复用程度？",
+            "硬件拐点为何还需要映射到真实服务曲线？"
+          ],
+          "reading_order": [
+            "① 左上",
+            "② 右上",
+            "③ 左下",
+            "④ 右下"
+          ],
+          "review_sheet": "review-43.png"
+        },
+        {
+          "id": "explained-overview-c46ca98",
+          "questions": [
+            "一次回答怎样变成训练数据，新参数又怎样回到生成侧？",
+            "采集样本：发生什么及为什么？",
+            "消费样本：发生什么及为什么？",
+            "更新生成：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-44.png"
+        },
+        {
+          "id": "explained-rollout_techniques-cf838b0",
+          "questions": [
+            "遇到长短不一的轨迹，应该改放置、保留进度还是重复采样？",
+            "放到哪里：发生什么及为什么？",
+            "中断后怎么办：发生什么及为什么？",
+            "长尾如何处理：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-44.png"
+        },
+        {
+          "id": "explained-ps-d3858c3",
+          "questions": [
+            "训练已经产出参数，为什么生成端还不能立刻宣布使用新版本？",
+            "训练侧发布：发生什么及为什么？",
+            "传输进行中：发生什么及为什么？",
+            "完成后启用：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-45.png"
+        },
+        {
+          "id": "explained-staleness_compatibility-ab32e0e",
+          "questions": [
+            "晚完成的样本还能进入哪一批训练，怎样限制它有多旧？",
+            "样本产生：发生什么及为什么？",
+            "匹配消费位置：发生什么及为什么？",
+            "解释效果：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-45.png"
+        },
+        {
+          "id": "explained-resident-compute-sharing-f533859",
+          "questions": [
+            "环境命令与推理能重叠时，暂停环境付出了什么代价？",
+            "先看总量：发生什么及为什么？",
+            "再看长短条件：发生什么及为什么？",
+            "看损失出现在哪：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-46.png"
+        },
+        {
+          "id": "explained-resident-compute-sharing-long-be21a7c",
+          "questions": [
+            "环境工作延长后，合作式暂停能否胜过直接共享？",
+            "固定工作量：发生什么及为什么？",
+            "比较整批完成：发生什么及为什么？",
+            "读出代价：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-46.png"
+        },
+        {
+          "id": "explained-single-gpu-inference-curve-evidence-7df94d3",
+          "questions": [
+            "并发加到多少开始明显变慢，能否把它叫作 SM 饱和上限？",
+            "读横轴条件：发生什么及为什么？",
+            "同时看两个量：发生什么及为什么？",
+            "别误认硬件上限：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-47.png"
+        },
+        {
+          "id": "explained-automatic-reservation-70f6d6f",
+          "questions": [
+            "auto 为什么选了 command，却没有在所有空档下更快？",
+            "选模式的依据：发生什么及为什么？",
+            "短空档风险：发生什么及为什么？",
+            "长空档机会：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-47.png"
+        },
+        {
+          "id": "explained-capacity-model-c7da45b",
+          "questions": [
+            "模型能预测哪些时间，又没有覆盖哪些等待？",
+            "输入条件：发生什么及为什么？",
+            "输出对象：发生什么及为什么？",
+            "留出检验：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-48.png"
+        },
+        {
+          "id": "explained-environment-capacity-dd7a546",
+          "questions": [
+            "相同六个环境任务，怎样选每卡并发上限并计算校准成本？",
+            "同量扫描：发生什么及为什么？",
+            "读预测用途：发生什么及为什么？",
+            "算校准回本：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-48.png"
+        },
+        {
+          "id": "explained-capacity-training-2330452",
+          "questions": [
+            "某些 step 变慢，为什么四步合计仍可更快？",
+            "相同工作层次：发生什么及为什么？",
+            "看累计而非挑单步：发生什么及为什么？",
+            "再看完整边界：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-49.png"
+        },
+        {
+          "id": "explained-capacity-command-timeline-ea05e12",
+          "questions": [
+            "环境有了更多卡，为什么模型同步仍可能被长命令挡住？",
+            "更多设备：发生什么及为什么？",
+            "跨越同步时刻：发生什么及为什么？",
+            "后续方向：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-49.png"
+        },
+        {
+          "id": "explained-integrated-partition-3748353",
+          "questions": [
+            "真实 PSRL 里共享推理卡，收益是否能传到整个训练任务？",
+            "固定累计工作：发生什么及为什么？",
+            "看异步节奏：发生什么及为什么？",
+            "保留因果边界：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-50.png"
+        },
+        {
+          "id": "explained-paired-latency-d4ff470",
+          "questions": [
+            "两对实验中 ON 工作更短，足以宣布稳定加速吗？",
+            "先核重复单位：发生什么及为什么？",
+            "区分计时范围：发生什么及为什么？",
+            "保留启动成本：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-50.png"
+        },
+        {
+          "id": "explained-warm-placement-core-0d59e83",
+          "questions": [
+            "同一模型状态可复用时，空卡是否总比等待热卡好？",
+            "短等待：发生什么及为什么？",
+            "长等待：发生什么及为什么？",
+            "看整组和清理：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-51.png"
+        },
+        {
+          "id": "explained-warm-placement-decomposition-860b7c4",
+          "questions": [
+            "冷卡执行提前了多少，哪些加载和清理开销不能漏掉？",
+            "原卡路径：发生什么及为什么？",
+            "冷卡路径：发生什么及为什么？",
+            "相同边界比较：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-51.png"
+        },
+        {
+          "id": "explained-warm-placement-faults-6ec458f",
+          "questions": [
+            "预测错了会怎样，什么时候应回到保守路径？",
+            "高估剩余等待：发生什么及为什么？",
+            "进度过期：发生什么及为什么？",
+            "空间不足：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-52.png"
+        },
+        {
+          "id": "explained-comparison-b8c2052",
+          "questions": [
+            "怎样证明不是容器名额，而是显存预算真正限制了并发？",
+            "可并行三条：发生什么及为什么？",
+            "第四条必须等：发生什么及为什么？",
+            "释放后继续：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-52.png"
+        },
+        {
+          "id": "explained-cuda-preflight-9c45888",
+          "questions": [
+            "OFF 两次 OOM 与 ON 汇总丢失，分别属于什么问题？",
+            "任务结果：发生什么及为什么？",
+            "监控故障：发生什么及为什么？",
+            "证据处理：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-53.png"
+        },
+        {
+          "id": "explained-pressure-matched-c114981",
+          "questions": [
+            "ON 更慢却有更多有效 token，该怎样比较？",
+            "先看完成内容：发生什么及为什么？",
+            "再看时间：发生什么及为什么？",
+            "选择对应指标：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-53.png"
+        },
+        {
+          "id": "explained-pressure-training-curves-ed8f503",
+          "questions": [
+            "OFF 四步、ON 两步，曲线应该在哪些地方停止比较？",
+            "共有前缀：发生什么及为什么？",
+            "各自实际记录：发生什么及为什么？",
+            "解释零梯度：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-54.png"
+        },
+        {
+          "id": "explained-historical-timing-7286182",
+          "questions": [
+            "ON 增加的时间主要在哪里，能否全算给 Router？",
+            "先分阶段：发生什么及为什么？",
+            "观察差值：发生什么及为什么？",
+            "保留工作差异：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-54.png"
+        },
+        {
+          "id": "explained-fixed-work-outcomes-c85fca2",
+          "questions": [
+            "补齐同样成功任务后，旧基线与 Router 各付出了什么？",
+            "先对齐完成量：发生什么及为什么？",
+            "再看代价：发生什么及为什么？",
+            "分开两个机制：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-55.png"
+        },
+        {
+          "id": "explained-fixed-work-training-4f78708",
+          "questions": [
+            "成功数量相同后，奖励、有效 token 和梯度是否也相同？",
+            "核对有效数据：发生什么及为什么？",
+            "核对奖励与优势：发生什么及为什么？",
+            "核对执行与结论：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-55.png"
+        },
+        {
+          "id": "explained-fixed-work-environment-memory-53e9b38",
+          "questions": [
+            "整任务保留如何产生“有空卡却还排队”的时间窗口？",
+            "GPU 命令已结束：发生什么及为什么？",
+            "账本仍保留：发生什么及为什么？",
+            "看到优化空间：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-56.png"
+        },
+        {
+          "id": "explained-failure-evidence-dd5c2ec",
+          "questions": [
+            "怎样区分训卡被外部占用，与环境调度准入失败？",
+            "确认故障位置：发生什么及为什么？",
+            "确认显存归属：发生什么及为什么？",
+            "限制性能结论：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-56.png"
+        },
+        {
+          "id": "explained-training-curves-22c06d0",
+          "questions": [
+            "两组训练都完成，为什么仍不能说 Router 有速度优势？",
+            "实际执行：发生什么及为什么？",
+            "计时结果：发生什么及为什么？",
+            "保持解释边界：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-57.png"
+        },
+        {
+          "id": "explained-resource-comparison-7069978",
+          "questions": [
+            "设备级利用率和显存，能否直接证明本次任务吞吐？",
+            "显存与利用率：发生什么及为什么？",
+            "配额与实际：发生什么及为什么？",
+            "计时范围：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-57.png"
+        },
+        {
+          "id": "explained-capacity-comparison-7f2ba30",
+          "questions": [
+            "高压力 OFF 返回更快时，是否完成了同样四条命令？",
+            "先看左侧数量：发生什么及为什么？",
+            "再看右侧时间：发生什么及为什么？",
+            "再核边界：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-58.png"
+        },
+        {
+          "id": "explained-comparison-38ffe21",
+          "questions": [
+            "OFF 到时被停止、ON 完成一步，该如何画公平边界？",
+            "标清停止原因：发生什么及为什么？",
+            "标清完成层次：发生什么及为什么？",
+            "标清计时对象：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-58.png"
+        },
+        {
+          "id": "explained-matched-prefix-7cfb46d",
+          "questions": [
+            "双方完成前五步后，怎样报告收益同时保留外部干扰？",
+            "只比较完整前缀：发生什么及为什么？",
+            "同时统计失败：发生什么及为什么？",
+            "暴露外部活动：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-59.png"
+        },
+        {
+          "id": "explained-per-step-fb816d0",
+          "questions": [
+            "单个 step 长短交替时，应怎样读整个试验？",
+            "先看横轴：发生什么及为什么？",
+            "再看工作量：发生什么及为什么？",
+            "最后看整段：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-59.png"
+        },
+        {
+          "id": "explained-comparison-f2dd9a5",
+          "questions": [
+            "没有人为显存压力，Router 的收益能否直接沿用？",
+            "核对真实负载：发生什么及为什么？",
+            "核对计时：发生什么及为什么？",
+            "核对成功层次：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-60.png"
+        },
+        {
+          "id": "explained-comparison-c991d3e",
+          "questions": [
+            "同一批环境工作，为什么低压力下持平，高压力下才可能获益？",
+            "低压力：观察到什么及为什么？",
+            "高压力：观察到什么及为什么？",
+            "理解收益来源：观察到什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-60.png"
+        },
+        {
+          "id": "explained-completion-a9a0126",
+          "questions": [
+            "同样 16 条成功任务，准入减少了哪些额外成本？",
+            "成功数量一致：发生什么及为什么？",
+            "失败额外成本：发生什么及为什么？",
+            "观察时间：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-61.png"
+        },
+        {
+          "id": "explained-resources-3247f1a",
+          "questions": [
+            "同时画显存、会话与命令，能找出什么问题？",
+            "设备视角：发生什么及为什么？",
+            "会话视角：发生什么及为什么？",
+            "账本视角：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-61.png"
+        },
+        {
+          "id": "explained-low-overhead-771a5d1",
+          "questions": [
+            "修复减少哪段等待，是否已证明所有负载下都更快？",
+            "确认工作相同：发生什么及为什么？",
+            "定位可改区间：发生什么及为什么？",
+            "评价边界：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-62.png"
+        },
+        {
+          "id": "explained-prewarm-comparison-b1a015e",
+          "questions": [
+            "提前准备能减少等待吗，初始化成本应该放在哪里？",
+            "预热阶段：发生什么及为什么？",
+            "任务阶段：发生什么及为什么？",
+            "整组边界：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-62.png"
+        },
+        {
+          "id": "explained-resource-timeline-6931260",
+          "questions": [
+            "任务开始前后，哪些是控制服务，哪些才是实际 GPU 占用？",
+            "先识别准备窗口：发生什么及为什么？",
+            "再识别设备阶段：发生什么及为什么？",
+            "最后核对清理：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-63.png"
+        },
+        {
+          "id": "explained-low-load-breakdown-37a32b1",
+          "questions": [
+            "账本判断已经很快，下一步该优化哪段控制路径？",
+            "先划清区间：发生什么及为什么？",
+            "再看长尾位置：发生什么及为什么？",
+            "按证据优化：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-63.png"
+        },
+        {
+          "id": "explained-startup-offload-6f38130",
+          "questions": [
+            "为什么一个慢查询会拖住多个协程，修复后该声称什么？",
+            "原等待传播：发生什么及为什么？",
+            "修改后的动作：发生什么及为什么？",
+            "证据边界：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-64.png"
+        },
+        {
+          "id": "explained-latency-9f26f8b",
+          "questions": [
+            "提前拿到输出后，为什么后续任务仍要等物理归还？",
+            "输出事件：发生什么及为什么？",
+            "资源事件：发生什么及为什么？",
+            "解释原型数据：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-64.png"
+        },
+        {
+          "id": "explained-completion-comparison-f9ce4be",
+          "questions": [
+            "容器还活着时，GPU 是否真的交给了另一会话？",
+            "分别计数：发生什么及为什么？",
+            "观察跨任务复用：发生什么及为什么？",
+            "保留排队成本：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-65.png"
+        },
+        {
+          "id": "explained-resource-timeline-a3c02cf",
+          "questions": [
+            "图中的空档减少，是显存碎片改善还是生命周期变细？",
+            "物理层：发生什么及为什么？",
+            "逻辑层：发生什么及为什么？",
+            "反事实层：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-65.png"
+        },
+        {
+          "id": "explained-training-metrics-3137056",
+          "questions": [
+            "全组奖励相同时，为什么能跑完训练却没有策略梯度？",
+            "数据有效性：发生什么及为什么？",
+            "奖励与优势：发生什么及为什么？",
+            "正确报告：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-66.png"
+        },
+        {
+          "id": "explained-completion-c7d03c2",
+          "questions": [
+            "A 已提前规划，为什么两会话最后反而更晚结束？",
+            "能重叠的部分：发生什么及为什么？",
+            "新增长等待：发生什么及为什么？",
+            "最终看整批：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-66.png"
+        },
+        {
+          "id": "explained-overlap-470dd69",
+          "questions": [
+            "B 在哪一刻可以安全占卡，A 的规划又在哪段重叠？",
+            "A 的两个事件：发生什么及为什么？",
+            "B 的准入条件：发生什么及为什么？",
+            "A 再次申请：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-67.png"
+        },
+        {
+          "id": "explained-control-comparison-65d1b87",
+          "questions": [
+            "少查一次慢接口，为什么比改变归还方式本身影响更大？",
+            "比较全部样本：发生什么及为什么？",
+            "拆出准入区间：发生什么及为什么？",
+            "区分两个贡献：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-67.png"
+        },
+        {
+          "id": "explained-weight-sync-choices-6bf07fc",
+          "questions": [
+            "环境长命令跨过同步时刻，怎样核算不同处理动作的代价？",
+            "等待归还：发生什么及为什么？",
+            "继续并行：发生什么及为什么？",
+            "取消重做：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-68.png"
+        },
+        {
+          "id": "explained-borrowing-timeline-2487ead",
+          "questions": [
+            "A 暂时不用卡，B 填空能让同一批工作更早结束吗？",
+            "固定同一工作：发生什么及为什么？",
+            "整段保留：发生什么及为什么？",
+            "按命令归还：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-68.png"
+        },
+        {
+          "id": "explained-rollout-independence-3e2aa22",
+          "questions": [
+            "A 不再等 B，可以更早完成，为什么这一组仍是十二秒？",
+            "同步约束：发生什么及为什么？",
+            "独立推进：发生什么及为什么？",
+            "回到关键路径：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-69.png"
+        },
+        {
+          "id": "explained-pipeline-bottleneck-77cbdcf",
+          "questions": [
+            "一个阶段变慢后，整个流水线为什么反而可能更快？",
+            "先统一工作单位：发生什么及为什么？",
+            "再改善慢阶段：发生什么及为什么？",
+            "最后算迁移回本：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-69.png"
+        },
+        {
+          "id": "explained-krex-control-flow-0e8d632",
+          "questions": [
+            "候选退出后，哪些上下文能留下，哪些资源必须清理？",
+            "准备与配对：发生什么及为什么？",
+            "测量区域：发生什么及为什么？",
+            "命令退出：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-70.png"
+        },
+        {
+          "id": "explained-protected-regions-0a75ded",
+          "questions": [
+            "怎样减少整条命令独占的浪费，同时保持目标测量条件？",
+            "可共享阶段：发生什么及为什么？",
+            "受保护阶段：发生什么及为什么？",
+            "比较整组代价：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-70.png"
+        },
+        {
+          "id": "explained-gate-and-drain-1739525",
+          "questions": [
+            "暂停新提交后，已经进入 GPU 的工作会自己消失吗？",
+            "关提交门：发生什么及为什么？",
+            "排空在途工作：发生什么及为什么？",
+            "当前轮确认：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-71.png"
+        },
+        {
+          "id": "explained-yarn-responsibilities-180f1c7",
+          "questions": [
+            "谁知道什么任务值得做，谁知道哪张卡当前可用？",
+            "任务侧声明：发生什么及为什么？",
+            "资源层安排：发生什么及为什么？",
+            "节点实际执行：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-71.png"
+        },
+        {
+          "id": "explained-gpu-task-lifecycle-336b197",
+          "questions": [
+            "一题多轮修改后，哪些东西保留，最终评分又读什么？",
+            "创建会话：发生什么及为什么？",
+            "多轮 GPU 工具：发生什么及为什么？",
+            "最终评估：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-72.png"
+        },
+        {
+          "id": "explained-benchmark-choice-c6aaac2",
+          "questions": [
+            "不用时间打分，就能完全忽略共运行对任务结果的影响吗？",
+            "固定工作量：发生什么及为什么？",
+            "限时训练：发生什么及为什么？",
+            "直接测速：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-72.png"
+        },
+        {
+          "id": "explained-reward-distortion-5865243",
+          "questions": [
+            "相同两份代码，为什么共享硬件可能把排名翻转？",
+            "目标无竞争：发生什么及为什么？",
+            "不等竞争：发生什么及为什么？",
+            "后续学习：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-73.png"
+        },
+        {
+          "id": "explained-scheduling-two-lanes-e460719",
+          "questions": [
+            "模型适合每条命令都做决策，还是提前提供可复用的信息？",
+            "低频分析：发生什么及为什么？",
+            "快速派发：发生什么及为什么？",
+            "版本变化：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-73.png"
+        },
+        {
+          "id": "explained-model-decision-cost-05c9647",
+          "questions": [
+            "冷卡加载更快，但为做决策花太久，会不会失去收益？",
+            "直接等待：发生什么及为什么？",
+            "规则选冷卡：发生什么及为什么？",
+            "在线慢分析：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-74.png"
+        },
+        {
+          "id": "explained-rsi-two-loops-cb6e04f",
+          "questions": [
+            "任务模型 B 训练好了，下一条命令为什么仍由 Agent A 生成？",
+            "A 提出实验：发生什么及为什么？",
+            "B 作为任务产物：发生什么及为什么？",
+            "B 接管需额外步骤：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-74.png"
+        },
+        {
+          "id": "explained-reading-map-0eb10e0",
+          "questions": [
+            "空档借用、资源分配、反馈可信和决策建模分别读哪里？",
+            "先看空档与依赖：发生什么及为什么？",
+            "再看真实任务：发生什么及为什么？",
+            "最后选决策方式：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-75.png"
+        },
+        {
+          "id": "explained-psrl-training-loop-b6943fc",
+          "questions": [
+            "模型请求、环境命令、轨迹与策略 step 是什么包含关系？",
+            "生成与工具：发生什么及为什么？",
+            "形成训练批次：发生什么及为什么？",
+            "发布新参数：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-75.png"
+        },
+        {
+          "id": "explained-PSRL_arch-4d2b637",
+          "questions": [
+            "独立采样和训练之后，靠什么把数据与模型版本接起来？",
+            "生成侧：发生什么及为什么？",
+            "数据侧：发生什么及为什么？",
+            "参数侧：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-76.png"
+        },
+        {
+          "id": "explained-roofline-and-batching-1ddd7ab",
+          "questions": [
+            "单 token 变慢时，为什么吞吐还能提高，到哪里才趋于平台？",
+            "从两种时间出发：发生什么及为什么？",
+            "代入同一模型：发生什么及为什么？",
+            "解释拐点：发生什么及为什么？"
+          ],
+          "reading_order": [
+            "上方条件",
+            "中部机制或原始证据",
+            "下方三组解释",
+            "结论与边界"
+          ],
+          "review_sheet": "review-76.png"
+        }
+      ],
+      "limits": "High information content is judged by question coverage, not automatically by word count or image coverage. Source-specific charts preserve historical evidence, not a new measurement.",
+      "prior_reviews": [
+        {
+          "date": "2026-11-20",
+          "scope": "Seven replacement chapter explanations and one additional Roofline explanation. Other figures keep their prior review scope.",
+          "method": "Opened all eight rendered PNGs, then opened all eight previews at 1000 pixels wide. Checked scenario consistency, numeric comparisons, labels, time origins and question coverage.",
+          "checks": {
+            "rendered_figures_viewed": 8,
+            "reading_width_pixels": 1000,
+            "question_coverage": "Reviewed against each figure target question. This is a qualitative explanation review, not an automatically measured quality score.",
+            "visual_result": "No clipping or unreadable overlaps found at the reviewed display width."
+          },
+          "source_checks": [
+            "gpu_memory.py arithmetic inspected",
+            "reservation_policy.py capability and optional timing branches inspected",
+            "state_reuse_study/workspace.py capture and publication inspected",
+            "Placement teaching scenario matched to its chapter 12/5/4 second example",
+            "All newly used numbers explicitly labeled as teaching assumptions"
+          ],
+          "figures": [
+            {
+              "id": "memory-promises",
+              "questions": [
+                "实占与预约为什么不能直接取总量的max？",
+                "为什么也不能把实占与预约全部相加？",
+                "新公式怎样避免漏算和重复计算？",
+                "B何时等待，何时放行？"
+              ],
+              "reading_order": [
+                "① 左上",
+                "② 右上",
+                "③ 左下",
+                "④ 右下"
+              ],
+              "question_review": "Each question has an explicit panel or caption answer. Cross-panel questions use the common scenario.",
+              "png_sha256": "63252c37be86a7bcac69770274d97cfd5b5f351b1d6f9e20fac10b20b25b29bc",
+              "svg_sha256": "14ed3869ee1db5f7b4929dd2017b4dce18e4e88d5ccd1bdbbcbf579d95e0b02d"
+            },
+            {
+              "id": "wait-or-reload",
+              "questions": [
+                "两张卡分别保留什么状态？",
+                "等待与换卡的时间从哪里开始算？",
+                "为什么空闲卡也可能不值得使用？",
+                "A提前7秒为什么整批只提前4秒？"
+              ],
+              "reading_order": [
+                "① 左上",
+                "② 右上",
+                "③ 左下",
+                "④ 右下"
+              ],
+              "question_review": "Each question has an explicit panel or caption answer. Cross-panel questions use the common scenario.",
+              "png_sha256": "8016abaf828c83f2aadf0e2a9fb6ae0c0b943c8f68ba38373a311dbaab5c6bbd",
+              "svg_sha256": "6e477894192b9af50d6b72ce1fbc1c99a4aa94e1958169e1736efa21cec3aeb7"
+            },
+            {
+              "id": "borrower-return-delay",
+              "questions": [
+                "A和B的角色及计时起点是什么？",
+                "为什么额外等待要用max取零下界？",
+                "A变慢与整批加速能否同时出现？",
+                "借用结束后为什么还要确认物理归还？"
+              ],
+              "reading_order": [
+                "① 左上",
+                "② 右上",
+                "③ 左下",
+                "④ 右下"
+              ],
+              "question_review": "Each question has an explicit panel or caption answer. Cross-panel questions use the common scenario.",
+              "png_sha256": "2ff423d7a0ae8073ebeb6d2aa08fd9edab56908cc4795df01376f3bdbe4ee318",
+              "svg_sha256": "3e01c87bc41201a09887b7c2362388fbd6efce8bea13d13f8441a165bb71a867"
+            },
+            {
+              "id": "host-and-gpu-ledgers",
+              "questions": [
+                "unit与会话资源是什么关系？",
+                "会话层与GPU命令层分别记录什么？",
+                "换卡时主存和容器是否一起移动？",
+                "热模型和跨节点迁移有哪些边界？"
+              ],
+              "reading_order": [
+                "① 左上",
+                "② 右上",
+                "③ 左下",
+                "④ 右下"
+              ],
+              "question_review": "Each question has an explicit panel or caption answer. Cross-panel questions use the common scenario.",
+              "png_sha256": "d94f864cd29ef1999d0b67119b81e42c1c8656a6928b1511720471dc5740559c",
+              "svg_sha256": "d6c6cd6874ad06e2e344be4278f8fc4e2b0c687b632353662076616254dbd9b9"
+            },
+            {
+              "id": "state-version-match",
+              "questions": [
+                "写磁盘文件为何不自动更新进程？",
+                "哪些依赖对应哪些内存状态？",
+                "为什么只改评分代码时可以保留模型？",
+                "什么条件下拒绝复用或拒绝发布结果？"
+              ],
+              "reading_order": [
+                "① 左上",
+                "② 右上",
+                "③ 左下",
+                "④ 右下"
+              ],
+              "question_review": "Each question has an explicit panel or caption answer. Cross-panel questions use the common scenario.",
+              "png_sha256": "1c0c463edc47983d117ae33a607a7519c8dd28406dc15e16b06565f8e5cfbc1d",
+              "svg_sha256": "12e0bee929f079fd066fb88e0c97a00b52cdeec91d87762c894e32c4a2c6c19a"
+            },
+            {
+              "id": "command-episode-residency",
+              "questions": [
+                "episode与command改变的是哪一段资源寿命？",
+                "容器保留为什么不等于Python模型保留？",
+                "B占用空档为何会让A再次等待？",
+                "auto的能力与时间预测分别怎样参与选择？"
+              ],
+              "reading_order": [
+                "① 左上",
+                "② 右上",
+                "③ 左下",
+                "④ 右下"
+              ],
+              "question_review": "Each question has an explicit panel or caption answer. Cross-panel questions use the common scenario.",
+              "png_sha256": "bff68babda634680c0712bc5d44ed3b8ee55277b5fb8c907cec536e56cd8c358",
+              "svg_sha256": "68d78304d75dc8e4137004c7215af2b1bcb33be29ea6b66e5af28325d4d9cc1d"
+            },
+            {
+              "id": "gpu-capacity-and-compute",
+              "questions": [
+                "显存容量和SM计算能力分别限制什么？",
+                "MPS能否保证任务互不减速？",
+                "哪些条件下10并发胜过5加5，哪些条件下相反？",
+                "应该测哪些指标才能决定是否限流？"
+              ],
+              "reading_order": [
+                "① 左上",
+                "② 右上",
+                "③ 左下",
+                "④ 右下"
+              ],
+              "question_review": "Each question has an explicit panel or caption answer. Cross-panel questions use the common scenario.",
+              "png_sha256": "38fc26e3f13aa648fbe0829b43a2d0ed9820b470310dd4bfa629eec60368de4c",
+              "svg_sha256": "46dd7185e1629269235578e7d5a37510d6872c1d3956db1dd0014b2a571d2c78"
+            },
+            {
+              "id": "roofline-capacity-decision",
+              "questions": [
+                "计算和搬运为何同时给出时间下界？",
+                "Roofline的坐标、斜线和平台分别是什么？",
+                "合批如何提高权重搬运的复用程度？",
+                "硬件拐点为何还需要映射到真实服务曲线？"
+              ],
+              "reading_order": [
+                "① 左上",
+                "② 右上",
+                "③ 左下",
+                "④ 右下"
+              ],
+              "question_review": "Each question has an explicit panel or caption answer. Cross-panel questions use the common scenario.",
+              "png_sha256": "8383d7625682012b666f8b29350c1c797728585cf5ed2ea1d3ba171e9e7c3424",
+              "svg_sha256": "24f05f9d6e184d074647ae50261733a6370a3165fd403ada11d14fbd564293f7"
+            }
+          ],
+          "limits": "No new performance experiments. No claim that all existing figures have the richer chapter explanation structure. The current 201/201 coverage is a separate file-reference result."
+        }
+      ]
+    }
+  ],
+  "chapter_local_revision": {
+    "date": "2026-11-20",
+    "figures": 35,
+    "placements_added": 65,
+    "documents_reworked": 24,
+    "reading_width_pixels": 900,
+    "review": "chapter-readability-review.json",
+    "sheets": [
+      {
+        "file": "chapter-review-01.png",
+        "figures": [
+          "chapter-critical-path",
+          "chapter-memory-headroom"
+        ]
+      },
+      {
+        "file": "chapter-review-02.png",
+        "figures": [
+          "chapter-idle-window",
+          "chapter-gpu-priority"
+        ]
+      },
+      {
+        "file": "chapter-review-03.png",
+        "figures": [
+          "chapter-sharing-control",
+          "chapter-replica-backlog"
+        ]
+      },
+      {
+        "file": "chapter-review-04.png",
+        "figures": [
+          "chapter-finite-concurrency",
+          "chapter-tail-batch"
+        ]
+      },
+      {
+        "file": "chapter-review-05.png",
+        "figures": [
+          "chapter-three-limits",
+          "chapter-instances-requests"
+        ]
+      },
+      {
+        "file": "chapter-review-06.png",
+        "figures": [
+          "chapter-prediction-intervals",
+          "chapter-rollout-pipeline"
+        ]
+      },
+      {
+        "file": "chapter-review-07.png",
+        "figures": [
+          "chapter-pipeline-overlap",
+          "chapter-resource-reallocation"
+        ]
+      },
+      {
+        "file": "chapter-review-08.png",
+        "figures": [
+          "chapter-code-versions",
+          "chapter-state-dependencies"
+        ]
+      },
+      {
+        "file": "chapter-review-09.png",
+        "figures": [
+          "chapter-prepare-gpu",
+          "chapter-measurement-ranking"
+        ]
+      },
+      {
+        "file": "chapter-review-10.png",
+        "figures": [
+          "chapter-local-service-time",
+          "chapter-resource-layers"
+        ]
+      },
+      {
+        "file": "chapter-review-11.png",
+        "figures": [
+          "chapter-warm-layers",
+          "chapter-nested-deadlock"
+        ]
+      },
+      {
+        "file": "chapter-review-12.png",
+        "figures": [
+          "chapter-model-promotion",
+          "chapter-grouped-placement"
+        ]
+      },
+      {
+        "file": "chapter-review-13.png",
+        "figures": [
+          "chapter-gpu-return-states",
+          "chapter-selective-batching"
+        ]
+      },
+      {
+        "file": "chapter-review-14.png",
+        "figures": [
+          "chapter-kv-copy-on-write",
+          "chapter-continuous-batching"
+        ]
+      },
+      {
+        "file": "chapter-review-15.png",
+        "figures": [
+          "chapter-parallel-communication",
+          "chapter-ppo-credit"
+        ]
+      },
+      {
+        "file": "chapter-review-16.png",
+        "figures": [
+          "chapter-gpu-pool-host",
+          "chapter-compute-sharing"
+        ]
+      },
+      {
+        "file": "chapter-review-17.png",
+        "figures": [
+          "chapter-process-reuse",
+          "chapter-remaining-steps"
+        ]
+      },
+      {
+        "file": "chapter-review-18.png",
+        "figures": [
+          "chapter-episode-admission"
+        ]
+      }
+    ],
+    "limits": "The top-level fields retain the previous 152-figure typography review. This revision records the additional 35 figures separately."
+  },
+  "screen_revision": {
+    "date": "2026-11-22",
+    "variants": 4,
+    "current_documents_updated": 3,
+    "display_width": 800,
+    "max_height": 600,
+    "minimum_label_pixels": 14.22,
+    "record": "screen-review.json",
+    "scope": "Screen recap variants. Full-resolution figures and historical evidence retained. Existing quality snapshots keep their original review scope.",
+    "checks": {
+      "manual_render": "passed: four native 800-pixel previews viewed",
+      "coverage": "passed: 201 documents, 187 independent figures, 310 registered placements",
+      "links": {
+        "files": 7,
+        "local_links": 1548,
+        "anchors": 196,
+        "clickable_screen_images": 6,
+        "errors": []
+      },
+      "source_checks": "Ruff, format, source prose style and git diff whitespace passed",
+      "markdown_display": "Six embedded previews in the three current knowledge documents parse as images inside links to their full figure."
+    }
+  }
+}

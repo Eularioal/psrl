@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="1152pt" viewBox="0 0 1152 1152" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:12:46.512714</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1152 
+L 1152 1152 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="46.08" y="41.006836" transform="rotate(-0 46.08 41.006836)">KV缓存：共享已完成的前缀，分支继续时保留各自的新状态</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="93.330797" transform="rotate(-0 46.08 93.330797)">两条请求共享同一前缀，怎样省显存而不互相改坏生成历史？</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 340.1856 202.2975 
+L 451.4688 202.2975 
+Q 462.0672 202.2975 462.0672 208.5075 
+L 462.0672 273.7125 
+Q 462.0672 279.9225 451.4688 279.9225 
+L 340.1856 279.9225 
+Q 329.5872 279.9225 329.5872 273.7125 
+L 329.5872 208.5075 
+Q 329.5872 202.2975 340.1856 202.2975 
+z
+" clip-path="url(#pdf6ffd1906)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 499.1616 202.2975 
+L 610.4448 202.2975 
+Q 621.0432 202.2975 621.0432 208.5075 
+L 621.0432 273.7125 
+Q 621.0432 279.9225 610.4448 279.9225 
+L 499.1616 279.9225 
+Q 488.5632 279.9225 488.5632 273.7125 
+L 488.5632 208.5075 
+Q 488.5632 202.2975 499.1616 202.2975 
+z
+" clip-path="url(#pdf6ffd1906)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 658.1376 202.2975 
+L 769.4208 202.2975 
+Q 780.0192 202.2975 780.0192 208.5075 
+L 780.0192 273.7125 
+Q 780.0192 279.9225 769.4208 279.9225 
+L 658.1376 279.9225 
+Q 647.5392 279.9225 647.5392 273.7125 
+L 647.5392 208.5075 
+Q 647.5392 202.2975 658.1376 202.2975 
+z
+" clip-path="url(#pdf6ffd1906)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 340.1856 369.9675 
+L 451.4688 369.9675 
+Q 462.0672 369.9675 462.0672 376.1775 
+L 462.0672 441.3825 
+Q 462.0672 447.5925 451.4688 447.5925 
+L 340.1856 447.5925 
+Q 329.5872 447.5925 329.5872 441.3825 
+L 329.5872 376.1775 
+Q 329.5872 369.9675 340.1856 369.9675 
+z
+" clip-path="url(#pdf6ffd1906)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 499.1616 369.9675 
+L 610.4448 369.9675 
+Q 621.0432 369.9675 621.0432 376.1775 
+L 621.0432 441.3825 
+Q 621.0432 447.5925 610.4448 447.5925 
+L 499.1616 447.5925 
+Q 488.5632 447.5925 488.5632 441.3825 
+L 488.5632 376.1775 
+Q 488.5632 369.9675 499.1616 369.9675 
+z
+" clip-path="url(#pdf6ffd1906)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 658.1376 369.9675 
+L 769.4208 369.9675 
+Q 780.0192 369.9675 780.0192 376.1775 
+L 780.0192 441.3825 
+Q 780.0192 447.5925 769.4208 447.5925 
+L 658.1376 447.5925 
+Q 647.5392 447.5925 647.5392 441.3825 
+L 647.5392 376.1775 
+Q 647.5392 369.9675 658.1376 369.9675 
+z
+" clip-path="url(#pdf6ffd1906)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 859.5072 369.9675 
+L 1034.3808 369.9675 
+Q 1044.9792 369.9675 1044.9792 376.1775 
+L 1044.9792 441.3825 
+Q 1044.9792 447.5925 1034.3808 447.5925 
+L 859.5072 447.5925 
+Q 848.9088 447.5925 848.9088 441.3825 
+L 848.9088 376.1775 
+Q 848.9088 369.9675 859.5072 369.9675 
+z
+" clip-path="url(#pdf6ffd1906)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 340.1856 525.2175 
+L 451.4688 525.2175 
+Q 462.0672 525.2175 462.0672 531.4275 
+L 462.0672 596.6325 
+Q 462.0672 602.8425 451.4688 602.8425 
+L 340.1856 602.8425 
+Q 329.5872 602.8425 329.5872 596.6325 
+L 329.5872 531.4275 
+Q 329.5872 525.2175 340.1856 525.2175 
+z
+" clip-path="url(#pdf6ffd1906)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 499.1616 525.2175 
+L 610.4448 525.2175 
+Q 621.0432 525.2175 621.0432 531.4275 
+L 621.0432 596.6325 
+Q 621.0432 602.8425 610.4448 602.8425 
+L 499.1616 602.8425 
+Q 488.5632 602.8425 488.5632 596.6325 
+L 488.5632 531.4275 
+Q 488.5632 525.2175 499.1616 525.2175 
+z
+" clip-path="url(#pdf6ffd1906)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 658.1376 525.2175 
+L 769.4208 525.2175 
+Q 780.0192 525.2175 780.0192 531.4275 
+L 780.0192 596.6325 
+Q 780.0192 602.8425 769.4208 602.8425 
+L 658.1376 602.8425 
+Q 647.5392 602.8425 647.5392 596.6325 
+L 647.5392 531.4275 
+Q 647.5392 525.2175 658.1376 525.2175 
+z
+" clip-path="url(#pdf6ffd1906)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 859.5072 525.2175 
+L 1034.3808 525.2175 
+Q 1044.9792 525.2175 1044.9792 531.4275 
+L 1044.9792 596.6325 
+Q 1044.9792 602.8425 1034.3808 602.8425 
+L 859.5072 602.8425 
+Q 848.9088 602.8425 848.9088 596.6325 
+L 848.9088 531.4275 
+Q 848.9088 525.2175 859.5072 525.2175 
+z
+" clip-path="url(#pdf6ffd1906)" style="fill: #fff2db; stroke: #e79730; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="88.4736" y="229.745625" transform="rotate(-0 88.4736 229.745625)">共享前缀块</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="395.8272" y="248.2975" transform="rotate(-0 395.8272 248.2975)">P0</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="554.8032" y="248.258437" transform="rotate(-0 554.8032 248.258437)">P1</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="713.7792" y="248.336562" transform="rotate(-0 713.7792 248.336562)">P2</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="99.072" y="415.889375" transform="rotate(-0 99.072 415.889375)">分支甲</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="395.8272" y="415.9675" transform="rotate(-0 395.8272 415.9675)">引用P0</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="554.8032" y="415.9675" transform="rotate(-0 554.8032 415.9675)">引用P1</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="713.7792" y="415.9675" transform="rotate(-0 713.7792 415.9675)">引用P2</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #159b8d" x="946.944" y="416.045625" transform="rotate(-0 946.944 416.045625)">自己的新块</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="99.072" y="571.178437" transform="rotate(-0 99.072 571.178437)">分支乙</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="395.8272" y="571.2175" transform="rotate(-0 395.8272 571.2175)">引用P0</text>
+   </g>
+   <g id="text_14">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="554.8032" y="571.2175" transform="rotate(-0 554.8032 571.2175)">引用P1</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="713.7792" y="571.2175" transform="rotate(-0 713.7792 571.2175)">引用P2</text>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #e79730" x="946.944" y="571.295625" transform="rotate(-0 946.944 571.295625)">自己的新块</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="607.7952" y="639.254063" transform="rotate(-0 607.7952 639.254063)">共享只读前缀，修改与增长保留分支自己的状态。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="text_18">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="142.866797" transform="rotate(-0 46.08 142.866797)">A、B 输入前缀相同，前缀 KV 块只读共享；生成各自的新 token 后开始分支。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_13">
+    <path d="M 56.6784 689.904 
+L 1095.3216 689.904 
+Q 1110.15936 689.904 1110.15936 694.44 
+L 1110.15936 785.16 
+Q 1110.15936 789.696 1095.3216 789.696 
+L 56.6784 789.696 
+Q 41.84064 789.696 41.84064 785.16 
+L 41.84064 694.44 
+Q 41.84064 689.904 56.6784 689.904 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 353.4336 705.132 
+L 359.79264 705.132 
+L 359.79264 714.852 
+L 353.4336 714.852 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 353.4336 734.292 
+L 359.79264 734.292 
+L 359.79264 744.012 
+L 353.4336 744.012 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 353.4336 763.452 
+L 359.79264 763.452 
+L 359.79264 773.172 
+L 353.4336 773.172 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 56.6784 800.064 
+L 1095.3216 800.064 
+Q 1110.15936 800.064 1110.15936 804.6 
+L 1110.15936 895.32 
+Q 1110.15936 899.856 1095.3216 899.856 
+L 56.6784 899.856 
+Q 41.84064 899.856 41.84064 895.32 
+L 41.84064 804.6 
+Q 41.84064 800.064 56.6784 800.064 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 353.4336 815.292 
+L 359.79264 815.292 
+L 359.79264 825.012 
+L 353.4336 825.012 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 353.4336 844.452 
+L 359.79264 844.452 
+L 359.79264 854.172 
+L 353.4336 854.172 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 353.4336 873.612 
+L 359.79264 873.612 
+L 359.79264 883.332 
+L 353.4336 883.332 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 56.6784 910.224 
+L 1095.3216 910.224 
+Q 1110.15936 910.224 1110.15936 914.76 
+L 1110.15936 1005.48 
+Q 1110.15936 1010.016 1095.3216 1010.016 
+L 56.6784 1010.016 
+Q 41.84064 1010.016 41.84064 1005.48 
+L 41.84064 914.76 
+Q 41.84064 910.224 56.6784 910.224 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_22">
+    <path d="M 353.4336 925.452 
+L 359.79264 925.452 
+L 359.79264 935.172 
+L 353.4336 935.172 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_23">
+    <path d="M 353.4336 954.612 
+L 359.79264 954.612 
+L 359.79264 964.332 
+L 353.4336 964.332 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_24">
+    <path d="M 353.4336 983.772 
+L 359.79264 983.772 
+L 359.79264 993.492 
+L 353.4336 993.492 
+z
+" clip-path="url(#p3c93a62201)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="67.2768" y="725.978262" transform="rotate(-0 67.2768 725.978262)">01  共同前缀</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="721.386797" transform="rotate(-0 374.6304 721.386797)">A、B 引用 P0、P1、P2</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="750.859297" transform="rotate(-0 374.6304 750.859297)">物理块只存一份</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="780.019297" transform="rotate(-0 374.6304 780.019297)">相同前缀减少重复准备</text>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="67.2768" y="836.179277" transform="rotate(-0 67.2768 836.179277)">02  各自增长</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="831.859297" transform="rotate(-0 374.6304 831.859297)">A 新建私有块 A3</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="861.019297" transform="rotate(-0 374.6304 861.019297)">B 新建私有块 B3</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="890.179297" transform="rotate(-0 374.6304 890.179297)">新 token 状态彼此隔离</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d68b20" x="67.2768" y="946.298262" transform="rotate(-0 67.2768 946.298262)">03  需要修改共享块</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="941.667734" transform="rotate(-0 374.6304 941.667734)">先复制，再修改副本</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="971.179297" transform="rotate(-0 374.6304 971.179297)">原块仍供另一请求读取</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="1000.300234" transform="rotate(-0 374.6304 1000.300234)">即写时复制的基本思想</text>
+   </g>
+  </g>
+  <g id="axes_5">
+   <g id="patch_25">
+    <path d="M 56.6784 1032.7536 
+L 1095.3216 1032.7536 
+Q 1110.15936 1032.7536 1110.15936 1034.316 
+L 1110.15936 1090.116 
+Q 1110.15936 1091.6784 1095.3216 1091.6784 
+L 56.6784 1091.6784 
+Q 41.84064 1091.6784 41.84064 1090.116 
+L 41.84064 1034.316 
+Q 41.84064 1032.7536 56.6784 1032.7536 
+z
+" clip-path="url(#p6e37ee3c43)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_31">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="61.9776" y="1061.635047" transform="rotate(-0 61.9776 1061.635047)">共享依赖不可变内容与独立引用。共享前缀不会让一条请求读取另一条的私有后缀。</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="1121.928117" transform="rotate(-0 46.08 1121.928117)">块大小和 token 数为示意，缓存是否启用、可共享条件和回收策略按实现确认。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pdf6ffd1906">
+   <rect x="46.08" y="172.8" width="1059.84" height="496.8"/>
+  </clipPath>
+  <clipPath id="p3c93a62201">
+   <rect x="46.08" y="691.2" width="1059.84" height="324"/>
+  </clipPath>
+  <clipPath id="p6e37ee3c43">
+   <rect x="46.08" y="1033.2" width="1059.84" height="111.6"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1008pt" height="504pt" viewBox="0 0 1008 504" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-19T14:52:18.048627</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 504 
+L 1008 504 
+L 1008 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 233.0496 139.356 
+L 233.0496 187.236 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 389.81376 139.356 
+L 389.81376 187.236 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 466.454016 139.356 
+L 466.454016 187.236 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 581.4144 139.356 
+L 581.4144 187.236 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 755.5968 139.356 
+L 755.5968 187.236 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_6">
+    <path d="M 929.7792 139.356 
+L 929.7792 187.236 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_7">
+    <path d="M 233.0496 239.904 
+L 233.0496 287.784 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_8">
+    <path d="M 389.81376 239.904 
+L 389.81376 287.784 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_9">
+    <path d="M 466.454016 239.904 
+L 466.454016 287.784 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_10">
+    <path d="M 581.4144 239.904 
+L 581.4144 287.784 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_11">
+    <path d="M 755.5968 239.904 
+L 755.5968 287.784 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_12">
+    <path d="M 929.7792 239.904 
+L 929.7792 287.784 
+" clip-path="url(#p3dcc68a597)" style="fill: none; stroke: #d5dee8; stroke-width: 0.6; stroke-linecap: square"/>
+   </g>
+   <g id="patch_2">
+    <path d="M 233.0496 144.144 
+L 389.81376 144.144 
+L 389.81376 182.448 
+L 233.0496 182.448 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #117f78; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 389.81376 144.144 
+L 407.232 144.144 
+L 407.232 182.448 
+L 389.81376 182.448 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #2563a6; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 407.232 144.144 
+L 563.99616 144.144 
+L 563.99616 182.448 
+L 407.232 182.448 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #117f78; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 563.99616 144.144 
+L 581.4144 144.144 
+L 581.4144 182.448 
+L 563.99616 182.448 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #2563a6; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 581.4144 144.144 
+L 738.17856 144.144 
+L 738.17856 182.448 
+L 581.4144 182.448 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #117f78; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 738.17856 144.144 
+L 755.5968 144.144 
+L 755.5968 182.448 
+L 738.17856 182.448 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #2563a6; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 755.5968 144.144 
+L 912.36096 144.144 
+L 912.36096 182.448 
+L 755.5968 182.448 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #117f78; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 912.36096 144.144 
+L 929.7792 144.144 
+L 929.7792 182.448 
+L 912.36096 182.448 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #2563a6; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 233.0496 244.692 
+L 389.81376 244.692 
+L 389.81376 282.996 
+L 233.0496 282.996 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #117f78; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 389.81376 244.692 
+L 391.555584 244.692 
+L 391.555584 282.996 
+L 389.81376 282.996 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #e8edf2; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 391.555584 244.692 
+L 408.973824 244.692 
+L 408.973824 282.996 
+L 391.555584 282.996 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #2563a6; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 408.973824 244.692 
+L 410.715648 244.692 
+L 410.715648 282.996 
+L 408.973824 282.996 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #e8edf2; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 410.715648 244.692 
+L 428.133888 244.692 
+L 428.133888 282.996 
+L 410.715648 282.996 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #2563a6; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 428.133888 244.692 
+L 429.875712 244.692 
+L 429.875712 282.996 
+L 428.133888 282.996 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #e8edf2; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 429.875712 244.692 
+L 447.293952 244.692 
+L 447.293952 282.996 
+L 429.875712 282.996 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #2563a6; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 447.293952 244.692 
+L 449.035776 244.692 
+L 449.035776 282.996 
+L 447.293952 282.996 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #e8edf2; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 449.035776 244.692 
+L 466.454016 244.692 
+L 466.454016 282.996 
+L 449.035776 282.996 
+z
+" clip-path="url(#p3dcc68a597)" style="fill: #2563a6; stroke: #ffffff; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 22px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="47.192937" transform="rotate(-0 39.5136 47.192937)">保护测量区域，把 CPU 准备重叠起来</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #5e6e7c" x="39.5136" y="77.426625" transform="rotate(-0 39.5136 77.426625)">教学假设：四条命令各准备 90 ms、测量 10 ms。CPU 足够，忽略 GPU 正确性检查。</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="167.079203" transform="rotate(-0 39.5136 167.079203)">整命令串行</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="311.43168" y="166.788187" transform="rotate(-0 311.43168 166.788187)">命令 1 准备</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="485.61408" y="166.788187" transform="rotate(-0 485.61408 166.788187)">命令 2 准备</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="659.79648" y="166.788187" transform="rotate(-0 659.79648 166.788187)">命令 3 准备</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="833.97888" y="166.788187" transform="rotate(-0 833.97888 166.788187)">命令 4 准备</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 13px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="39.5136" y="267.551031" transform="rotate(-0 39.5136 267.551031)">仅测量串行</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #ffffff" x="311.43168" y="267.31275" transform="rotate(-0 311.43168 267.31275)">四条同时准备</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="233.0496" y="328.988391" transform="rotate(-0 233.0496 328.988391)">0</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="389.81376" y="328.988391" transform="rotate(-0 389.81376 328.988391)">90</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="466.454016" y="328.988391" transform="rotate(-0 466.454016 328.988391)">134</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="581.4144" y="328.988391" transform="rotate(-0 581.4144 328.988391)">200</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="755.5968" y="328.988391" transform="rotate(-0 755.5968 328.988391)">300</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: middle; fill: #5e6e7c" x="929.7792" y="328.988391" transform="rotate(-0 929.7792 328.988391)">400</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 11px; font-family: 'Droid Sans Fallback'; text-anchor: end; fill: #5e6e7c" x="929.7792" y="353.250656" transform="rotate(-0 929.7792 353.250656)">从任务提交开始计时，单位：毫秒</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 14px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #233447" x="49.1904" y="416.346219" transform="rotate(-0 49.1904 416.346219)">整命令：4 × (90 + 10) = 400 ms。区域保护：90 + 4 × (1 + 10) = 134 ms。</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 12px; font-family: 'Droid Sans Fallback'; text-anchor: start; fill: #5e6e7c" x="49.1904" y="468.432187" transform="rotate(-0 49.1904 468.432187)">蓝色测量始终逐条进行。收益来自绿色准备阶段重叠，每次保护另计 1 ms，真实隔离成本需要实测。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p3dcc68a597">
+   <rect x="20.16" y="10.08" width="967.68" height="478.8"/>
+  </clipPath>
+ </defs>
+</svg>

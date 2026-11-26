@@ -1,0 +1,1319 @@
+{
+  "date": "2026-11-20",
+  "scope": "35 new chapter-local diagrams, 65 added placements and prose edits in 24 existing long documents. Navigation and maintenance rules updated separately.",
+  "status": "Uncommitted documentation changes. No runtime changes or experiments in this pass.",
+  "reading_width_pixels": 900,
+  "figures_viewed": 35,
+  "method": "Viewed all 35 PNGs in 18 complete-width two-figure sheets. Inspected corrected PNGs again. SVG geometry is rendered with CairoSVG and Chinese labels with Pillow using an explicit CJK font. This review covers the new diagrams, not a fresh audit of all 201 documents or all historical sources.",
+  "corrections": [
+    "Chinese raster font rendering corrected",
+    "Overlapping KV prefix label shortened",
+    "Training preparation label kept within its box",
+    "Resource return depicts occupied memory clearing instead of decorative dots",
+    "Prediction document uses the same A/B roles as the corresponding wait-or-reload illustration",
+    "Repeated prose and tables replaced or shortened where the local figure explains the same sequence"
+  ],
+  "figures": [
+    {
+      "id": "chapter-critical-path",
+      "questions": [
+        "同样的三项工作，先让谁用GPU？",
+        "模型结束后解锁哪项CPU工作？",
+        "为何两种顺序分别在12秒和22秒结束？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md",
+        "docs/env-worker-deep-dive/literature-reviews/01-调度论文_五篇近期顶会工作综述.md"
+      ],
+      "png_sha256": "2f68a65a7dc9b1a20d07912f7f51264bfb554573f3798a0b3e5a89e5b994ed75",
+      "svg_sha256": "e47b2b29f56cc28fb0466dbb5532e6eddc8d91e72955e8ea36c70530421b50b8"
+    },
+    {
+      "id": "chapter-memory-headroom",
+      "questions": [
+        "物理空闲16 GiB为何只容许新增4 GiB？",
+        "模型与环境的未兑现预约分别是多少？",
+        "怎样避免把同一份已用显存计费两次？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md"
+      ],
+      "png_sha256": "d3bbe5cef01cc37fcdb293fc3df3e57d0bf3aa65e8df4e98433b102cf7661bff",
+      "svg_sha256": "a32a435a96ca9ac6912cf227560fe32f1520cbc450ec1eafef2517824e42cf72"
+    },
+    {
+      "id": "chapter-idle-window",
+      "questions": [
+        "环境30秒为何还需要45秒窗口预算？",
+        "卸载、清理和恢复从何时开始计时？",
+        "请求提前到第8秒为何多等32秒？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md",
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/06-训推借卡_Rollout睡眠与归还协议.md"
+      ],
+      "png_sha256": "a130b45ee24a6ebab40b8f93be0cdaf6f9d6ba7738ef07f66af2a58cab26d931",
+      "svg_sha256": "cc556a91e48b108d49940044a1e0f5e30070e54d72b10884db68a1967d8edd87"
+    },
+    {
+      "id": "chapter-gpu-priority",
+      "questions": [
+        "独立卡与共享卡同时可用时选哪张？",
+        "独立卡不够但共享卡够时怎么办？",
+        "没有共享绑定时是否自动加入候选？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md"
+      ],
+      "png_sha256": "f716e560814f1b9b93edcf45985b9d2a36fb3973277b542253eaa5da6f37c207",
+      "svg_sha256": "90c913b3986e18cba6702d751326d9643c2581b78e91c73f436b34ceaba87c9c"
+    },
+    {
+      "id": "chapter-sharing-control",
+      "questions": [
+        "普通推理与模型控制操作的等待条件有何不同？",
+        "共享票据记录什么？",
+        "为何物理归还后才放开控制操作？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md"
+      ],
+      "png_sha256": "6c01d21de0637b6a301147afdf731bf72c07dc63680e4a709140600f91856aeb",
+      "svg_sha256": "1bc67b67835ce68b7de7b77fc4d7fbc240469d33936ba98b2365ae62df4482da"
+    },
+    {
+      "id": "chapter-replica-backlog",
+      "questions": [
+        "缩减副本后积压以多快速率增加？",
+        "第80秒归还时积压多少？",
+        "为何恢复后还需80秒清空？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md"
+      ],
+      "png_sha256": "5d2131b4dcf26d180922ce3ce2586bea292a1c6a5e2ea8e077a08035f56dbb21",
+      "svg_sha256": "e3411d2da5408586810cf184c5aa75c0859cc4c3f53b389329809e83ada91495"
+    },
+    {
+      "id": "chapter-finite-concurrency",
+      "questions": [
+        "每条更慢时整批为何仍可更快？",
+        "固定30条在各并发下需要多少波？",
+        "容量上限与性能最优为何不同？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md"
+      ],
+      "png_sha256": "5caa611d176d43b4e00f483f304de4b4980ceefee311187e4f12003dae83e772",
+      "svg_sha256": "53f2b31a275485e2d2bb8fcd41d07bea0c5541a38fa6784369b86852f00f4e4c"
+    },
+    {
+      "id": "chapter-tail-batch",
+      "questions": [
+        "同样12条为何10并发未必最好？",
+        "持续吞吐与有限批次目标差在哪里？",
+        "哪种争用程度下先10后2更合适？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md"
+      ],
+      "png_sha256": "6baf26363e13ac8097086ed793d641a0b4f22a6b0d23e3823b42651a199134c0",
+      "svg_sha256": "4c841be89465c06083593ccd32c15c676ac5b8a42f7687c00faf620a816a510c"
+    },
+    {
+      "id": "chapter-three-limits",
+      "questions": [
+        "16个会话、4项准备、2条GPU工作分别限制什么？",
+        "等待期间哪些状态仍保留？",
+        "哪些分阶段控制仍需执行协议支持？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/01-架构与执行/04-GPU作业_生命周期与任务遥测.md",
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md",
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/06-训推借卡_Rollout睡眠与归还协议.md"
+      ],
+      "png_sha256": "f89d117cd5b38eabf4f6d3a4baad388145623c5461f826fc08697fab6b6da987",
+      "svg_sha256": "b3000a9714deaf5dcbb036f7f8d33e7854dc9a67d7ffe78a90d8f081341ac196"
+    },
+    {
+      "id": "chapter-instances-requests",
+      "questions": [
+        "一个实例内多请求怎样共享状态？",
+        "两个实例为何复制权重与KV预算？",
+        "容量能放下为何还不能推断吞吐？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md"
+      ],
+      "png_sha256": "4c64af130eb9d472108d1f2382ca3859de3537cd5acc50c830ceb5d556a268d5",
+      "svg_sha256": "927fd9f1a62f967ae949d81b6bfe049458828d37870ca44657ad1976c38e3e42"
+    },
+    {
+      "id": "chapter-prediction-intervals",
+      "questions": [
+        "点预测和保守估计为何可能建议不同动作？",
+        "准备、执行、恢复是否都计入了？",
+        "如何理解A可能多等7秒？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md",
+        "docs/env-worker-deep-dive/research-proposals/06-训推借卡_可撤回执行与反馈依赖.md"
+      ],
+      "png_sha256": "bbd4cfea0f75b5cbe78eb9b39388972694c085fb072bd8f935ea7e7378688513",
+      "svg_sha256": "afff331eab93b953c7d8cdc09624dce460c360a102e47bbf172559c658fe71e4"
+    },
+    {
+      "id": "chapter-rollout-pipeline",
+      "questions": [
+        "训练批次与轨迹、命令怎样区分？",
+        "第一条轨迹完成为何还不能启动本例训练？",
+        "收齐之后还要完成什么准备？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md",
+        "docs/env-worker-deep-dive/literature-reviews/02-论文精读_RollArt与DynaRL的Agent调度.md",
+        "docs/env-worker-deep-dive/research-proposals/01-调度研究_Rollout完成时间与反馈保真.md",
+        "docs/psrl/01-PSRL原理_AgentLoop与工具调用.md"
+      ],
+      "png_sha256": "62b19fd6cb8f07c05e14c9f7b428c05898378055c40cefbae88c638df5bf437c",
+      "svg_sha256": "ca91e8b662ac4055deda36e52459c876e96ee49150371a76446bf296f7a73753"
+    },
+    {
+      "id": "chapter-pipeline-overlap",
+      "questions": [
+        "三批采样与训练怎样重叠？",
+        "48秒为何变40秒？",
+        "对参数版本有何先决条件？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/literature-reviews/02-论文精读_RollArt与DynaRL的Agent调度.md",
+        "docs/psrl/推理与训练/03-训推协作_异步流水线与版本协调.md"
+      ],
+      "png_sha256": "25d24d8b7558f02bbd1384feb8905c35ca99c6651ea2fdd4413dadaf24da61ef",
+      "svg_sha256": "eb5b15660280b6c4c4d9b842c9193d57a3ed31d2c805faf3a5ccf764ef9eb202"
+    },
+    {
+      "id": "chapter-resource-reallocation",
+      "questions": [
+        "同样八卡怎样分给两个阶段？",
+        "有效速率为何由较慢者决定？",
+        "为何还需另外算迁移与剩余工作？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/literature-reviews/01-调度论文_五篇近期顶会工作综述.md"
+      ],
+      "png_sha256": "3be76fd6128e978f9d2fd166804a3a5e252c114533795a6c8a09c2a387fce4df",
+      "svg_sha256": "8a5dc546c22221157650be3df868f0dfd66ee038fcdd652f10ea64f3981bbaa1"
+    },
+    {
+      "id": "chapter-code-versions",
+      "questions": [
+        "文件与进程内模块是什么关系？",
+        "文件改为v2后进程为何仍用v1？",
+        "复用前要检查什么版本依赖？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/07-状态复用_基线状态寿命与版本正确性.md",
+        "docs/env-worker-deep-dive/literature-reviews/07-智能调度_模型决策的已有工作与研究选择.md"
+      ],
+      "png_sha256": "b05cd2dd7efb688a3bcba974a2f3e07d09879dda2374e43f50ab348cb6733593",
+      "svg_sha256": "3eb274676ccd2e78efbf43d83cdac8fac8f9155415812b34d0f786cda9c7c599"
+    },
+    {
+      "id": "chapter-state-dependencies",
+      "questions": [
+        "权重、数据与评分分别影响什么状态？",
+        "只改评分代码为何可能保留模型？",
+        "为何输出也要携带版本？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/07-状态复用_基线状态寿命与版本正确性.md",
+        "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md",
+        "docs/env-worker-deep-dive/research-proposals/02-研究场景_非计时评分的GPU任务.md",
+        "docs/env-worker-deep-dive/research-proposals/05-状态调度_主存受限时的准备状态保留.md"
+      ],
+      "png_sha256": "495e9b23d2ba71e9c991281f72904ba43c1ce342e979d0fc7de61be7b8e1265c",
+      "svg_sha256": "b4e03b85a262d0d49a9c44c6315f1e0c735ff3461eb663fc809b060f7b3fcd3a"
+    },
+    {
+      "id": "chapter-prepare-gpu",
+      "questions": [
+        "CPU先准备省下了哪段占卡时间？",
+        "同样四项为何16秒变10秒？",
+        "prepared接口是否自动拆解任意命令？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md",
+        "docs/env-worker-deep-dive/research-proposals/01-调度研究_Rollout完成时间与反馈保真.md",
+        "docs/env-worker-deep-dive/research-proposals/02-研究场景_非计时评分的GPU任务.md"
+      ],
+      "png_sha256": "9ebafcabed1a468b1d24d0800a8f99ae0de79c9378052220584b6cece9a4d425",
+      "svg_sha256": "b2109686851f79f3758f4dd15695028db6949bd4c09b0f68e630ea250509375b"
+    },
+    {
+      "id": "chapter-measurement-ranking",
+      "questions": [
+        "竞争怎样翻转A与B的排序？",
+        "为何重复测量仍可能选错？",
+        "服务吞吐与反馈质量为何分别验证？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/literature-reviews/03-论文精读_KREX共享GPU测量保护.md",
+        "docs/env-worker-deep-dive/literature-reviews/05-基准调研_GPU任务类型与接入顺序.md",
+        "docs/env-worker-deep-dive/research-proposals/01-调度研究_Rollout完成时间与反馈保真.md"
+      ],
+      "png_sha256": "bb0937b88c7430d76a43c20b2a9c5d817b313b17448a0bab8e591563d4acf70e",
+      "svg_sha256": "675abcd229628d0ae8adbee24c89400d825ee6f8ebc7f5ff9c0676dbf3a6c4a1"
+    },
+    {
+      "id": "chapter-local-service-time",
+      "questions": [
+        "1 ms程序为何要24 ms才返回？",
+        "哪些等待属于服务延迟？",
+        "代码性能与调度成本各用什么指标？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/literature-reviews/03-论文精读_KREX共享GPU测量保护.md",
+        "docs/env-worker-deep-dive/literature-reviews/06-基准调研_AI4Infra性能反馈与验证.md"
+      ],
+      "png_sha256": "bdc320a6f60010a25feb88a572c34918dfbf7ae7d7be6d351416ac91fc615211",
+      "svg_sha256": "d2a0eb7283026775a2b0dae6abea9f16e14176cb72b091d6d9f347182506a992"
+    },
+    {
+      "id": "chapter-resource-layers",
+      "questions": [
+        "中央资源层知道什么？",
+        "应用层为何要提供依赖信息？",
+        "为何资源保障不等于准确计时？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/literature-reviews/04-系统借鉴_YARN资源分配与反馈调度.md"
+      ],
+      "png_sha256": "bf5aa06cc0f35ba096533e0f943c56b6422c4b174bb28df020acc830f7c5d7d8",
+      "svg_sha256": "58d5a595623624c71cb7e5c24045dabb52c0e447d80947e8b8665331cc7c20ce"
+    },
+    {
+      "id": "chapter-warm-layers",
+      "questions": [
+        "容器、CPU进程与GPU模型的预热差在哪？",
+        "每层能省哪些准备？",
+        "更深复用增加什么资源与版本责任？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/06-训推借卡_Rollout睡眠与归还协议.md",
+        "docs/env-worker-deep-dive/literature-reviews/02-论文精读_RollArt与DynaRL的Agent调度.md",
+        "docs/env-worker-deep-dive/literature-reviews/04-系统借鉴_YARN资源分配与反馈调度.md",
+        "docs/env-worker-deep-dive/literature-reviews/05-基准调研_GPU任务类型与接入顺序.md",
+        "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md",
+        "docs/env-worker-deep-dive/research-proposals/05-状态调度_主存受限时的准备状态保留.md"
+      ],
+      "png_sha256": "b9fd96d10c9c2e33f5ddf9ce26516109d6665c6fd912ce3ada63ecac53ecd499",
+      "svg_sha256": "3dd276f1c71d6735164c967dcb22a7986cdbb97fe7c40e808908d87fa5201de6"
+    },
+    {
+      "id": "chapter-nested-deadlock",
+      "questions": [
+        "父任务与子任务分别在等什么？",
+        "一份GPU容量怎样形成等待环？",
+        "为何提高优先级不能解环？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md"
+      ],
+      "png_sha256": "a8adb2b5066d29cb1462c7ff93efcd3df9eb810adfbb4c1d359b2afd5cbdb625",
+      "svg_sha256": "1c417dfea23c75ddde00763f69a36642f9983a9ed2b760361d4f4683a937922e"
+    },
+    {
+      "id": "chapter-model-promotion",
+      "questions": [
+        "当前Agent与工具模型属于什么角色？",
+        "模型接管还需哪些验证和发布步骤？",
+        "为何新请求与在途旧请求要分开管理？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md",
+        "docs/psrl/01-PSRL原理_AgentLoop与工具调用.md"
+      ],
+      "png_sha256": "2e2b3257eb1746e07b1b112f311812f3bf59f7d593b27ed69d324dce4a66f71d",
+      "svg_sha256": "6d15fdbd38200f61807b8274e38e4768f87771f754e8224ae7191197b8340cec"
+    },
+    {
+      "id": "chapter-grouped-placement",
+      "questions": [
+        "同题八条何时绑定到一个节点？",
+        "A重试时为何不选择空闲B？",
+        "同机命令换卡与跨节点迁移差在哪？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md"
+      ],
+      "png_sha256": "1270fbab9557b23ca9a0d80b094420909334172361c1f7b20147b7974bd0694e",
+      "svg_sha256": "26f68d71560600c83bfcfbd02c2f28c98a1c91da8f074e60d83412e7705817d7"
+    },
+    {
+      "id": "chapter-gpu-return-states",
+      "questions": [
+        "输出可读时显存是否已经释放？",
+        "撤权、物理清理和账本释放先后如何？",
+        "清理失败为何不能只把预约数清零？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/01-架构与执行/04-GPU作业_生命周期与任务遥测.md",
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md"
+      ],
+      "png_sha256": "d4017f225205873ad045c5659d6d7c84f8f464c2fc32b9296925ed720e7c1090",
+      "svg_sha256": "034045ab0417dd43334ee524292bd7702edc2add066a8519eb0b22b183c2f8d0"
+    },
+    {
+      "id": "chapter-selective-batching",
+      "questions": [
+        "A、B、C的6个新token怎样合投影？",
+        "共享权重为何不混合请求历史？",
+        "attention需要保留什么边界？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/psrl/推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md"
+      ],
+      "png_sha256": "9acfb8b0a89c51afcb8cbd797c3f2865e700a0c5e760e74c91549d1d6c1c5f96",
+      "svg_sha256": "0df100bf219696cf515a28c7726b343c0f1786fb35362fc1c968e54e5198d61a"
+    },
+    {
+      "id": "chapter-kv-copy-on-write",
+      "questions": [
+        "6个前缀token怎样占用两块？",
+        "哪个满块可以继续共享？",
+        "未满块续写前为何复制？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/psrl/推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md"
+      ],
+      "png_sha256": "88735828a3feb26d869ecd97434a46256e80cfaa0b4b7595b99cedfddff41872",
+      "svg_sha256": "dc2fa4321dffba5637c1f7349c9cba2945104348d8caa4399e5bcb5b813ad27f"
+    },
+    {
+      "id": "chapter-continuous-batching",
+      "questions": [
+        "一条请求结束后何时补位？",
+        "为何不必等同批全部结束？",
+        "每轮耗时还受哪些条件影响？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/psrl/推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md"
+      ],
+      "png_sha256": "af4e0d6224955a293471b09463f7788e3b6c0bb2e0c8dc167a39dd20429a0e64",
+      "svg_sha256": "5f7400a083663110e3d34ebc8231a1d298c74cdc45d1c1fc8f32edabde7b94f7"
+    },
+    {
+      "id": "chapter-parallel-communication",
+      "questions": [
+        "TP、PP和DP分别切分什么？",
+        "各自要在卡间搬运什么？",
+        "为何显存可行不保证更多卡更快？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/psrl/推理与训练/02-训练并行_模型切分与通信带宽.md"
+      ],
+      "png_sha256": "33bc93dcb2d4c92d8b1e51754dfe0ec68e13fdb046d0df012d020a019b27c406",
+      "svg_sha256": "c93811b1d17455ac3140f4acc65d43e618b6597c058cc3e01ca29d54ce636637"
+    },
+    {
+      "id": "chapter-ppo-credit",
+      "questions": [
+        "最终奖励怎样影响较早token？",
+        "PPO与GRPO各提供什么比较基准？",
+        "优势和概率裁剪分别解决什么问题？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/psrl/02-强化学习_PPO与GRPO及DAPO.md"
+      ],
+      "png_sha256": "7e70a6ba08b9ac0e92f6ace12a981ef28018d923c994392723c0973fb8a21532",
+      "svg_sha256": "7c9aa540d8c7dc638a620b2ebcd7e2125cc59c299315df565ea135dc5e5cd1e2"
+    },
+    {
+      "id": "chapter-gpu-pool-host",
+      "questions": [
+        "下一条命令换卡时哪些资源仍留主机？",
+        "旧卡拥堵时谁授权新候选？",
+        "为何不等于活GPU状态或容器跨节点迁移？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md",
+        "docs/env-worker-deep-dive/research-proposals/03-动态放置_会话与GPU执行分离.md"
+      ],
+      "png_sha256": "74807c36ef8eedc5b737725e5105edfd7399682140eec34ff25c263ccddddf6a",
+      "svg_sha256": "34599debc3f52a2f0521ccb14894690154f3b4ed797f0c2b51376200d9590868"
+    },
+    {
+      "id": "chapter-compute-sharing",
+      "questions": [
+        "有空闲计算机会与满负载争用有何不同？",
+        "MPS为何不增加硬件总能力？",
+        "为何还要同时观察显存带宽与整批时间？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/01-架构与执行/04-GPU作业_生命周期与任务遥测.md",
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md"
+      ],
+      "png_sha256": "2bdf894983719e675899c116ee545a23acbcb4d992c5d6b96bc8ee5001aa7430",
+      "svg_sha256": "e8a9433f5e0161ae6c6bf2093e1a53b27fe99088465221dd9ef5bf50c77747e1"
+    },
+    {
+      "id": "chapter-process-reuse",
+      "questions": [
+        "三次独立进程重复了哪些准备？",
+        "模型常驻为何30秒变14秒？",
+        "版本变化后哪些复用可能失效？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md",
+        "docs/env-worker-deep-dive/research-proposals/05-状态调度_主存受限时的准备状态保留.md"
+      ],
+      "png_sha256": "98e239cf2a82d9c21e71b7f6506297901f13745cb00e509517791453ebe80747",
+      "svg_sha256": "a713877e471de204f4391643b0b1b09fe30deef9f04dfc905f642761596fd93e"
+    },
+    {
+      "id": "chapter-remaining-steps",
+      "questions": [
+        "20个剩余小步怎样换成秒？",
+        "收尾为何不能漏计？",
+        "报告过期为何不能机械倒计时？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/02-资源与调度/08-命令预测_适用条件与时长估计.md"
+      ],
+      "png_sha256": "6da9ae8b995809b6de07b0487bfe763bbbdeee360d95b89ebea1f191bddec616",
+      "svg_sha256": "dfde3e7f0fd8cae20b0d8d5d9f16d3a0a45f9ecd204c820b86e9c047caf46a0c"
+    },
+    {
+      "id": "chapter-episode-admission",
+      "questions": [
+        "8条尝试中为何只有4个环境获准？",
+        "R1归还后R5怎样接续？",
+        "等待时是否已创建受管理容器？"
+      ],
+      "reading_order": [
+        "起始条件与对象",
+        "同条件变化或时间对照",
+        "结果、原因与适用边界"
+      ],
+      "documents": [
+        "docs/env-worker-deep-dive/knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md"
+      ],
+      "png_sha256": "a79dd10bbc236cd383e1c932236e2876113e206eb16af5a7495dcb9ffc0b9d82",
+      "svg_sha256": "4479121fc7029f02d7c3a50559494bf9627a3b7c2d0f4abd9bbdeb50187995fb"
+    }
+  ],
+  "sheets": [
+    {
+      "file": "chapter-review-01.png",
+      "figures": [
+        "chapter-critical-path",
+        "chapter-memory-headroom"
+      ]
+    },
+    {
+      "file": "chapter-review-02.png",
+      "figures": [
+        "chapter-idle-window",
+        "chapter-gpu-priority"
+      ]
+    },
+    {
+      "file": "chapter-review-03.png",
+      "figures": [
+        "chapter-sharing-control",
+        "chapter-replica-backlog"
+      ]
+    },
+    {
+      "file": "chapter-review-04.png",
+      "figures": [
+        "chapter-finite-concurrency",
+        "chapter-tail-batch"
+      ]
+    },
+    {
+      "file": "chapter-review-05.png",
+      "figures": [
+        "chapter-three-limits",
+        "chapter-instances-requests"
+      ]
+    },
+    {
+      "file": "chapter-review-06.png",
+      "figures": [
+        "chapter-prediction-intervals",
+        "chapter-rollout-pipeline"
+      ]
+    },
+    {
+      "file": "chapter-review-07.png",
+      "figures": [
+        "chapter-pipeline-overlap",
+        "chapter-resource-reallocation"
+      ]
+    },
+    {
+      "file": "chapter-review-08.png",
+      "figures": [
+        "chapter-code-versions",
+        "chapter-state-dependencies"
+      ]
+    },
+    {
+      "file": "chapter-review-09.png",
+      "figures": [
+        "chapter-prepare-gpu",
+        "chapter-measurement-ranking"
+      ]
+    },
+    {
+      "file": "chapter-review-10.png",
+      "figures": [
+        "chapter-local-service-time",
+        "chapter-resource-layers"
+      ]
+    },
+    {
+      "file": "chapter-review-11.png",
+      "figures": [
+        "chapter-warm-layers",
+        "chapter-nested-deadlock"
+      ]
+    },
+    {
+      "file": "chapter-review-12.png",
+      "figures": [
+        "chapter-model-promotion",
+        "chapter-grouped-placement"
+      ]
+    },
+    {
+      "file": "chapter-review-13.png",
+      "figures": [
+        "chapter-gpu-return-states",
+        "chapter-selective-batching"
+      ]
+    },
+    {
+      "file": "chapter-review-14.png",
+      "figures": [
+        "chapter-kv-copy-on-write",
+        "chapter-continuous-batching"
+      ]
+    },
+    {
+      "file": "chapter-review-15.png",
+      "figures": [
+        "chapter-parallel-communication",
+        "chapter-ppo-credit"
+      ]
+    },
+    {
+      "file": "chapter-review-16.png",
+      "figures": [
+        "chapter-gpu-pool-host",
+        "chapter-compute-sharing"
+      ]
+    },
+    {
+      "file": "chapter-review-17.png",
+      "figures": [
+        "chapter-process-reuse",
+        "chapter-remaining-steps"
+      ]
+    },
+    {
+      "file": "chapter-review-18.png",
+      "figures": [
+        "chapter-episode-admission"
+      ]
+    }
+  ],
+  "font_measurements": [
+    {
+      "id": "chapter-critical-path",
+      "vector_texts": 22,
+      "minimum_at_900px": 16.0
+    },
+    {
+      "id": "chapter-memory-headroom",
+      "vector_texts": 15,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-idle-window",
+      "vector_texts": 23,
+      "minimum_at_900px": 16.0
+    },
+    {
+      "id": "chapter-gpu-priority",
+      "vector_texts": 21,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-sharing-control",
+      "vector_texts": 14,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-replica-backlog",
+      "vector_texts": 16,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-finite-concurrency",
+      "vector_texts": 22,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-tail-batch",
+      "vector_texts": 18,
+      "minimum_at_900px": 16.0
+    },
+    {
+      "id": "chapter-three-limits",
+      "vector_texts": 29,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-instances-requests",
+      "vector_texts": 19,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-prediction-intervals",
+      "vector_texts": 16,
+      "minimum_at_900px": 16.0
+    },
+    {
+      "id": "chapter-rollout-pipeline",
+      "vector_texts": 14,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-pipeline-overlap",
+      "vector_texts": 26,
+      "minimum_at_900px": 16.0
+    },
+    {
+      "id": "chapter-resource-reallocation",
+      "vector_texts": 36,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-code-versions",
+      "vector_texts": 18,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-state-dependencies",
+      "vector_texts": 15,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-prepare-gpu",
+      "vector_texts": 25,
+      "minimum_at_900px": 16.0
+    },
+    {
+      "id": "chapter-measurement-ranking",
+      "vector_texts": 14,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-local-service-time",
+      "vector_texts": 16,
+      "minimum_at_900px": 16.0
+    },
+    {
+      "id": "chapter-resource-layers",
+      "vector_texts": 13,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-warm-layers",
+      "vector_texts": 18,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-nested-deadlock",
+      "vector_texts": 12,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-model-promotion",
+      "vector_texts": 13,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-grouped-placement",
+      "vector_texts": 21,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-gpu-return-states",
+      "vector_texts": 19,
+      "minimum_at_900px": 16.0
+    },
+    {
+      "id": "chapter-selective-batching",
+      "vector_texts": 16,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-kv-copy-on-write",
+      "vector_texts": 33,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-continuous-batching",
+      "vector_texts": 27,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-parallel-communication",
+      "vector_texts": 15,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-ppo-credit",
+      "vector_texts": 15,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-gpu-pool-host",
+      "vector_texts": 13,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-compute-sharing",
+      "vector_texts": 39,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-process-reuse",
+      "vector_texts": 27,
+      "minimum_at_900px": 16.0
+    },
+    {
+      "id": "chapter-remaining-steps",
+      "vector_texts": 9,
+      "minimum_at_900px": 17.0
+    },
+    {
+      "id": "chapter-episode-admission",
+      "vector_texts": 36,
+      "minimum_at_900px": 17.0
+    }
+  ],
+  "documents": [
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/05-训推共享_vLLM余量与容量调度.md",
+      "before": {
+        "cjk_characters": 55090,
+        "image_placements": 2,
+        "long_prose_paragraphs_over_220_cjk": 12
+      },
+      "after": {
+        "cjk_characters": 55304,
+        "image_placements": 18,
+        "long_prose_paragraphs_over_220_cjk": 6
+      },
+      "sha256_after": "29933d62baa3e53d1bd6113d655e3ff061867e318364b04746de340d6a1ac5d6"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/01-Env架构_现状与完整执行流程.md",
+      "before": {
+        "cjk_characters": 10238,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 5
+      },
+      "after": {
+        "cjk_characters": 10512,
+        "image_placements": 4,
+        "long_prose_paragraphs_over_220_cjk": 4
+      },
+      "sha256_after": "54d1790fc7c5d8a531cccb41a0274d71c67f400f4193487c039b7b0903e6f288"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/01-调度论文_五篇近期顶会工作综述.md",
+      "before": {
+        "cjk_characters": 4854,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "after": {
+        "cjk_characters": 5071,
+        "image_placements": 3,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "sha256_after": "47135a9154755ea0f3d5eec3a48e3daf2659d37cfc1769d4a77689c8d824de6a"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/02-论文精读_RollArt与DynaRL的Agent调度.md",
+      "before": {
+        "cjk_characters": 9264,
+        "image_placements": 2,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "after": {
+        "cjk_characters": 9478,
+        "image_placements": 5,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "sha256_after": "abad14b096d895bff4a308988f980855b052a93df78b51fc0bd798669b2e482d"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/03-论文精读_KREX共享GPU测量保护.md",
+      "before": {
+        "cjk_characters": 9671,
+        "image_placements": 3,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "after": {
+        "cjk_characters": 9717,
+        "image_placements": 5,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "sha256_after": "db105f86bfdf7808703517b28e1c954c14e2870eb26ce5bdfeccc844afdde9a5"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/04-系统借鉴_YARN资源分配与反馈调度.md",
+      "before": {
+        "cjk_characters": 6889,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "after": {
+        "cjk_characters": 7084,
+        "image_placements": 3,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "sha256_after": "41ddd364e5f3b31302a9374596b3872c831b7851abf0772126cf2f973b283c33"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/05-基准调研_GPU任务类型与接入顺序.md",
+      "before": {
+        "cjk_characters": 9036,
+        "image_placements": 2,
+        "long_prose_paragraphs_over_220_cjk": 3
+      },
+      "after": {
+        "cjk_characters": 9244,
+        "image_placements": 4,
+        "long_prose_paragraphs_over_220_cjk": 3
+      },
+      "sha256_after": "ef836ec18215402ca04e84740689b33a28b92cc730ea0d90f1c7403a75cd2ca0"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/06-基准调研_AI4Infra性能反馈与验证.md",
+      "before": {
+        "cjk_characters": 4313,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 0
+      },
+      "after": {
+        "cjk_characters": 4408,
+        "image_placements": 2,
+        "long_prose_paragraphs_over_220_cjk": 0
+      },
+      "sha256_after": "1ad442f65b1622b4c44d9e0f6b914def3a296ea3f2ef02b41fffdef78813415c"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/07-智能调度_模型决策的已有工作与研究选择.md",
+      "before": {
+        "cjk_characters": 5687,
+        "image_placements": 2,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "after": {
+        "cjk_characters": 5795,
+        "image_placements": 3,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "sha256_after": "9a4944828b224937bb2d99f9323b5529928cb6fbff7740c5076f9414f30175ee"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/literature-reviews/08-基础设施_RSI与GPU沙盒及模型接管.md",
+      "before": {
+        "cjk_characters": 17301,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 4
+      },
+      "after": {
+        "cjk_characters": 17722,
+        "image_placements": 6,
+        "long_prose_paragraphs_over_220_cjk": 4
+      },
+      "sha256_after": "dd5d3c4738c9f02982506113ecca3571f4236a54cd85466f3bbcc951363fc1b3"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/07-状态复用_基线状态寿命与版本正确性.md",
+      "before": {
+        "cjk_characters": 8743,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "after": {
+        "cjk_characters": 8950,
+        "image_placements": 3,
+        "long_prose_paragraphs_over_220_cjk": 0
+      },
+      "sha256_after": "106122e6a6f84a98ad4e0d0763f19a367d970abc71d33d87c670d6cd1647dfd3"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/08-命令预测_适用条件与时长估计.md",
+      "before": {
+        "cjk_characters": 13688,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "after": {
+        "cjk_characters": 13743,
+        "image_placements": 2,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "sha256_after": "9d2f5523ee18654cb72de03a9050990a097381c6fdfbca5f8b12c7a1a0828a8f"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/02-资源与调度/06-训推借卡_Rollout睡眠与归还协议.md",
+      "before": {
+        "cjk_characters": 14387,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 4
+      },
+      "after": {
+        "cjk_characters": 14665,
+        "image_placements": 4,
+        "long_prose_paragraphs_over_220_cjk": 4
+      },
+      "sha256_after": "a718723f5c1f0b2b7abf42536626d66541f08c5ae736fd3c17dc2dd6d7b19b79"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/knowledge/01-架构与执行/04-GPU作业_生命周期与任务遥测.md",
+      "before": {
+        "cjk_characters": 17837,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 3
+      },
+      "after": {
+        "cjk_characters": 18191,
+        "image_placements": 5,
+        "long_prose_paragraphs_over_220_cjk": 3
+      },
+      "sha256_after": "bcac3578eecbaeb38b2c299e97693c5c4c94465f8b6ddebe32a740ee36a2e523"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/03-动态放置_会话与GPU执行分离.md",
+      "before": {
+        "cjk_characters": 13977,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "after": {
+        "cjk_characters": 14076,
+        "image_placements": 2,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "sha256_after": "b4918c652edd855d854cbab79d23b34df6ecc03d5bf157a6e232e1b6213d3e97"
+    },
+    {
+      "document": "docs/psrl/01-PSRL原理_AgentLoop与工具调用.md",
+      "before": {
+        "cjk_characters": 7921,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "after": {
+        "cjk_characters": 8130,
+        "image_placements": 3,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "sha256_after": "298c1ae0ee206c9fa0a60bd3ddea4efe86fe20c46b1c586525ccfbe1f8702fbb"
+    },
+    {
+      "document": "docs/psrl/推理与训练/01-vLLM推理_计算瓶颈与KV缓存.md",
+      "before": {
+        "cjk_characters": 7260,
+        "image_placements": 2,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "after": {
+        "cjk_characters": 7537,
+        "image_placements": 5,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "sha256_after": "b9a43bc7d964c6abfc04f077efc37198fe486c6717c110f34de266d7793f17df"
+    },
+    {
+      "document": "docs/psrl/推理与训练/02-训练并行_模型切分与通信带宽.md",
+      "before": {
+        "cjk_characters": 4323,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "after": {
+        "cjk_characters": 4413,
+        "image_placements": 2,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "sha256_after": "2fa528cdf72486d13f4ae09deb239e75eae24b430bdaccbe800d7803658bfb02"
+    },
+    {
+      "document": "docs/psrl/推理与训练/03-训推协作_异步流水线与版本协调.md",
+      "before": {
+        "cjk_characters": 5150,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "after": {
+        "cjk_characters": 5252,
+        "image_placements": 2,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "sha256_after": "782da8fabf1aad14a4ec2593c6876e5dcb478519041981a1ec37820e3a3c0a33"
+    },
+    {
+      "document": "docs/psrl/02-强化学习_PPO与GRPO及DAPO.md",
+      "before": {
+        "cjk_characters": 7842,
+        "image_placements": 3,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "after": {
+        "cjk_characters": 7944,
+        "image_placements": 4,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "sha256_after": "41b8d8e2dd444fc56a9bbcce348deee0eaf11c37921c3d571d63236ef51e74f0"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/01-调度研究_Rollout完成时间与反馈保真.md",
+      "before": {
+        "cjk_characters": 24366,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 7
+      },
+      "after": {
+        "cjk_characters": 24646,
+        "image_placements": 4,
+        "long_prose_paragraphs_over_220_cjk": 5
+      },
+      "sha256_after": "8b4d73ff40e503cdda013e0cda6b06f408e3aa24ae0e823c5a95c56a12c8557e"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/02-研究场景_非计时评分的GPU任务.md",
+      "before": {
+        "cjk_characters": 20683,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 5
+      },
+      "after": {
+        "cjk_characters": 20885,
+        "image_placements": 3,
+        "long_prose_paragraphs_over_220_cjk": 4
+      },
+      "sha256_after": "c450f25b7a94d7c249a8c2eaf41fddb0c7c7aa187e9c11c61863343d49d3385a"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/05-状态调度_主存受限时的准备状态保留.md",
+      "before": {
+        "cjk_characters": 11385,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "after": {
+        "cjk_characters": 11656,
+        "image_placements": 4,
+        "long_prose_paragraphs_over_220_cjk": 1
+      },
+      "sha256_after": "555d0ef3a3bdab0142860dfdcfec6d1ddb0adce87aafe731b5643a7aff1820ee"
+    },
+    {
+      "document": "docs/env-worker-deep-dive/research-proposals/06-训推借卡_可撤回执行与反馈依赖.md",
+      "before": {
+        "cjk_characters": 8690,
+        "image_placements": 1,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "after": {
+        "cjk_characters": 8789,
+        "image_placements": 2,
+        "long_prose_paragraphs_over_220_cjk": 2
+      },
+      "sha256_after": "9a7e6c1b4c0a74518dab6d05fff6580f1a7ed51322f645bc1bfb0ed186830af9"
+    }
+  ],
+  "limits": "Teaching examples retain explicit assumptions. Original experiment panels and numerical evidence are unchanged. Counts and paragraph metrics identify editing scope, not automatic proof of explanation quality."
+}

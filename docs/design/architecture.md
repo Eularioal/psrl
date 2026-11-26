@@ -2,7 +2,7 @@
 
 > **Core idea:** generation uses the current model to collect answers, while training changes the model using scored answers. PSRL lets these jobs overlap. TransferQueue carries sample data, and the Parameter Server distributes updated model weights. Version checks bound how old a sample may be when training uses it.
 
-New to the project? [从一道题理解 PSRL](../overview/reading-guide.md) explains the complete flow in Chinese, with a worked example, source map and CPU exercise. The [glossary](../overview/glossary.md) is optional reference.
+New to the project? [PSRL入门：从一道题到模型更新](../overview/01-PSRL入门_从一道题到模型更新.md) explains the complete flow in Chinese, with a worked example, source map and CPU exercise. The [glossary](../overview/02-PSRL入门_系统与实验术语速查.md) is optional reference.
 
 ## Contents
 
@@ -20,13 +20,17 @@ New to the project? [从一道题理解 PSRL](../overview/reading-guide.md) expl
   - [Example: 4-Node Setup (2 Gen + 2 Train)](#example-4-node-setup-2-gen--2-train)
   - [Configuration](#configuration)
 
-```{figure} /_static/img/overview.svg
-:alt: PSRL System Architecture
-:width: 100%
-:align: center
+[![PSRL System Architecture（1/3）](../_static/img/document-figures/explained-overview-c46ca98-screen.png)](../_static/img/document-figures/explained-overview-c46ca98.png)
+
+[![PSRL System Architecture（2/3）](../_static/img/document-figures/explained-overview-c46ca98-screen-02.png)](../_static/img/document-figures/explained-overview-c46ca98.png)
+
+[![PSRL System Architecture（3/3）](../_static/img/document-figures/explained-overview-c46ca98-screen-03.png)](../_static/img/document-figures/explained-overview-c46ca98.png)
 
 Overall PSRL system architecture showing decoupled training and generation.
-```
+
+<!-- explained-source:explained-overview-c46ca98 -->
+**读图结论：**样本流回答“训练什么”，参数流回答“以后用哪个模型”。两条路径可重叠，仍需版本约束。 架构解释，不由图推断任意样本都可无限滞后。 [完整解释图（SVG）](../_static/img/document-figures/explained-overview-c46ca98.svg) · [原始机制图或实验图](../_static/img/overview.svg)。
+<!-- /explained-source:explained-overview-c46ca98 -->
 
 ---
 

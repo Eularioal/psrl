@@ -4,13 +4,17 @@
 
 PSRL employs several complementary techniques to maximize generation throughput and minimize idle GPU time during rollout. Each one targets a different source of imbalance in the rollout workload.
 
-```{figure} /_static/img/rollout_techniques.svg
-:alt: Rollout Coordination Techniques
-:width: 100%
-:align: center
+[![Rollout Coordination Techniques（1/3）](../_static/img/document-figures/explained-rollout_techniques-cf838b0-screen.png)](../_static/img/document-figures/explained-rollout_techniques-cf838b0.png)
+
+[![Rollout Coordination Techniques（2/3）](../_static/img/document-figures/explained-rollout_techniques-cf838b0-screen-02.png)](../_static/img/document-figures/explained-rollout_techniques-cf838b0.png)
+
+[![Rollout Coordination Techniques（3/3）](../_static/img/document-figures/explained-rollout_techniques-cf838b0-screen-03.png)](../_static/img/document-figures/explained-rollout_techniques-cf838b0.png)
 
 Different complementary rollout coordination techniques in PSRL.
-```
+
+<!-- explained-source:explained-rollout_techniques-cf838b0 -->
+**读图结论：**三种动作作用于不同问题，不能把打开更多机制等同于自动更快。 机制条件依实现和配置，不声称所有组合都有收益。 [完整解释图（SVG）](../_static/img/document-figures/explained-rollout_techniques-cf838b0.svg) · [原始机制图或实验图](../_static/img/rollout_techniques.svg)。
+<!-- /explained-source:explained-rollout_techniques-cf838b0 -->
 
 All of these strategies live under a single config group, `psrl.rollout_coordination.*`,
 composed from six Hydra sub-groups: `partial_rollout`, `redundant_rollout`,

@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="1152pt" viewBox="0 0 1152 1152" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:12:44.516886</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1152 
+L 1152 1152 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="46.08" y="41.108398" transform="rotate(-0 46.08 41.108398)">文件名、inode与打开引用：名字消失后谁还在用文件</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="93.330797" transform="rotate(-0 46.08 93.330797)">文件名删了，为什么进程还能读？空间什么时候才可回收？</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 96.4224 202.2975 
+L 536.256 202.2975 
+Q 546.8544 202.2975 546.8544 208.5075 
+L 546.8544 540.7425 
+Q 546.8544 546.9525 536.256 546.9525 
+L 96.4224 546.9525 
+Q 85.824 546.9525 85.824 540.7425 
+L 85.824 208.5075 
+Q 85.824 202.2975 96.4224 202.2975 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #ffffff; stroke: #d4dfea; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 353.4336 328.05 
+L 501.8112 328.05 
+L 501.8112 452.25 
+L 353.4336 452.25 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 427.6224 312.525 
+C 447.2975 312.525 466.169407 314.160812 480.081804 317.072167 
+C 493.9942 319.983523 501.8112 323.932722 501.8112 328.05 
+C 501.8112 332.167278 493.9942 336.116477 480.081804 339.027833 
+C 466.169407 341.939188 447.2975 343.575 427.6224 343.575 
+C 407.9473 343.575 389.075393 341.939188 375.162996 339.027833 
+C 361.2506 336.116477 353.4336 332.167278 353.4336 328.05 
+C 353.4336 323.932722 361.2506 319.983523 375.162996 317.072167 
+C 389.075393 314.160812 407.9473 312.525 427.6224 312.525 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #eaf2ff; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 427.6224 436.725 
+C 447.2975 436.725 466.169407 438.360812 480.081804 441.272167 
+C 493.9942 444.183523 501.8112 448.132722 501.8112 452.25 
+C 501.8112 456.367278 493.9942 460.316477 480.081804 463.227833 
+C 466.169407 466.139188 447.2975 467.775 427.6224 467.775 
+C 407.9473 467.775 389.075393 466.139188 375.162996 463.227833 
+C 361.2506 460.316477 353.4336 456.367278 353.4336 452.25 
+C 353.4336 448.132722 361.2506 444.183523 375.162996 441.272167 
+C 389.075393 438.360812 407.9473 436.725 427.6224 436.725 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #eaf2ff; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 128.2176 419.6475 
+L 281.8944 419.6475 
+Q 292.4928 419.6475 292.4928 425.8575 
+L 292.4928 484.8525 
+Q 292.4928 491.0625 281.8944 491.0625 
+L 128.2176 491.0625 
+Q 117.6192 491.0625 117.6192 484.8525 
+L 117.6192 425.8575 
+Q 117.6192 419.6475 128.2176 419.6475 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 291.422869 451.015884 
+Q 321.639096 427.409456 350.533767 404.835495 
+" clip-path="url(#p5fbf8272fe)" style="fill: none; stroke: #159b8d; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 343.52035 406.253938 
+L 350.533767 404.835495 
+L 347.460472 411.297294 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #159b8d; stroke: #159b8d; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 615.744 202.2975 
+L 1055.5776 202.2975 
+Q 1066.176 202.2975 1066.176 208.5075 
+L 1066.176 540.7425 
+Q 1066.176 546.9525 1055.5776 546.9525 
+L 615.744 546.9525 
+Q 605.1456 546.9525 605.1456 540.7425 
+L 605.1456 208.5075 
+Q 605.1456 202.2975 615.744 202.2975 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #ffffff; stroke: #d4dfea; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 872.7552 328.05 
+L 1021.1328 328.05 
+L 1021.1328 452.25 
+L 872.7552 452.25 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 946.944 312.525 
+C 966.6191 312.525 985.491007 314.160812 999.403404 317.072167 
+C 1013.3158 319.983523 1021.1328 323.932722 1021.1328 328.05 
+C 1021.1328 332.167278 1013.3158 336.116477 999.403404 339.027833 
+C 985.491007 341.939188 966.6191 343.575 946.944 343.575 
+C 927.2689 343.575 908.396993 341.939188 894.484596 339.027833 
+C 880.5722 336.116477 872.7552 332.167278 872.7552 328.05 
+C 872.7552 323.932722 880.5722 319.983523 894.484596 317.072167 
+C 908.396993 314.160812 927.2689 312.525 946.944 312.525 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #eaf2ff; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 946.944 436.725 
+C 966.6191 436.725 985.491007 438.360812 999.403404 441.272167 
+C 1013.3158 444.183523 1021.1328 448.132722 1021.1328 452.25 
+C 1021.1328 456.367278 1013.3158 460.316477 999.403404 463.227833 
+C 985.491007 466.139188 966.6191 467.775 946.944 467.775 
+C 927.2689 467.775 908.396993 466.139188 894.484596 463.227833 
+C 880.5722 460.316477 872.7552 456.367278 872.7552 452.25 
+C 872.7552 448.132722 880.5722 444.183523 894.484596 441.272167 
+C 908.396993 438.360812 927.2689 436.725 946.944 436.725 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #eaf2ff; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 647.5392 419.6475 
+L 801.216 419.6475 
+Q 811.8144 419.6475 811.8144 425.8575 
+L 811.8144 484.8525 
+Q 811.8144 491.0625 801.216 491.0625 
+L 647.5392 491.0625 
+Q 636.9408 491.0625 636.9408 484.8525 
+L 636.9408 425.8575 
+Q 636.9408 419.6475 647.5392 419.6475 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 810.744469 451.015884 
+Q 840.960696 427.409456 869.855367 404.835495 
+" clip-path="url(#p5fbf8272fe)" style="fill: none; stroke: #159b8d; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 862.84195 406.253938 
+L 869.855367 404.835495 
+L 866.782072 411.297294 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #159b8d; stroke: #159b8d; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 128.2176 295.4475 
+L 281.8944 295.4475 
+Q 292.4928 295.4475 292.4928 301.6575 
+L 292.4928 342.0225 
+Q 292.4928 348.2325 281.8944 348.2325 
+L 128.2176 348.2325 
+Q 117.6192 348.2325 117.6192 342.0225 
+L 117.6192 301.6575 
+Q 117.6192 295.4475 128.2176 295.4475 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 128.2176 357.5475 
+L 281.8944 357.5475 
+Q 292.4928 357.5475 292.4928 363.7575 
+L 292.4928 404.1225 
+Q 292.4928 410.3325 281.8944 410.3325 
+L 128.2176 410.3325 
+Q 117.6192 410.3325 117.6192 404.1225 
+L 117.6192 363.7575 
+Q 117.6192 357.5475 128.2176 357.5475 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 291.640219 322.717451 
+Q 321.63739 337.364507 350.127564 351.275725 
+" clip-path="url(#p5fbf8272fe)" style="fill: none; stroke: #3478c5; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 345.780588 345.592082 
+L 350.127564 351.275725 
+L 342.972464 351.34312 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #3478c5; stroke: #3478c5; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 291.842044 383.94 
+Q 321.635982 383.94 349.752869 383.94 
+" clip-path="url(#p5fbf8272fe)" style="fill: none; stroke: #3478c5; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 343.352869 380.74 
+L 349.752869 383.94 
+L 343.352869 387.14 
+z
+" clip-path="url(#p5fbf8272fe)" style="fill: #3478c5; stroke: #3478c5; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="316.3392" y="241.775" transform="rotate(-0 316.3392 241.775)">有名字，也有打开引用</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(396.138025 383.132422)">inode I</text>
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(395.786463 412.245703)">hello\n</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #159b8d" x="205.056" y="462.503438" transform="rotate(-0 205.056 462.503438)">进程fd</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="835.6608" y="241.775" transform="rotate(-0 835.6608 241.775)">名字删除，引用仍打开</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(915.459625 383.132422)">inode I</text>
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; fill: #203149" transform="translate(915.108063 412.245703)">hello\n</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #159b8d" x="724.3776" y="462.503438" transform="rotate(-0 724.3776 462.503438)">进程fd</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="205.056" y="328.285312" transform="rotate(-0 205.056 328.285312)">a.txt</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #3478c5" x="205.056" y="391.400937" transform="rotate(-0 205.056 391.400937)">b.txt</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d45b67" x="660.7872" y="341.213125" transform="rotate(-0 660.7872 341.213125)">a、b均已unlink</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="109.6704" y="589.027187" transform="rotate(-0 109.6704 589.027187)">硬链接共享I；复制会创建另一个文件对象J。</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="text_13">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="142.944922" transform="rotate(-0 46.08 142.944922)">同一文件对象 I 有两个名字 a、b，另有进程通过 fd 打开它。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_18">
+    <path d="M 56.6784 689.904 
+L 1095.3216 689.904 
+Q 1110.15936 689.904 1110.15936 694.44 
+L 1110.15936 785.16 
+Q 1110.15936 789.696 1095.3216 789.696 
+L 56.6784 789.696 
+Q 41.84064 789.696 41.84064 785.16 
+L 41.84064 694.44 
+Q 41.84064 689.904 56.6784 689.904 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 353.4336 705.132 
+L 359.79264 705.132 
+L 359.79264 714.852 
+L 353.4336 714.852 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 353.4336 734.292 
+L 359.79264 734.292 
+L 359.79264 744.012 
+L 353.4336 744.012 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 353.4336 763.452 
+L 359.79264 763.452 
+L 359.79264 773.172 
+L 353.4336 773.172 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_22">
+    <path d="M 56.6784 800.064 
+L 1095.3216 800.064 
+Q 1110.15936 800.064 1110.15936 804.6 
+L 1110.15936 895.32 
+Q 1110.15936 899.856 1095.3216 899.856 
+L 56.6784 899.856 
+Q 41.84064 899.856 41.84064 895.32 
+L 41.84064 804.6 
+Q 41.84064 800.064 56.6784 800.064 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_23">
+    <path d="M 353.4336 815.292 
+L 359.79264 815.292 
+L 359.79264 825.012 
+L 353.4336 825.012 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_24">
+    <path d="M 353.4336 844.452 
+L 359.79264 844.452 
+L 359.79264 854.172 
+L 353.4336 854.172 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_25">
+    <path d="M 353.4336 873.612 
+L 359.79264 873.612 
+L 359.79264 883.332 
+L 353.4336 883.332 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_26">
+    <path d="M 56.6784 910.224 
+L 1095.3216 910.224 
+Q 1110.15936 910.224 1110.15936 914.76 
+L 1110.15936 1005.48 
+Q 1110.15936 1010.016 1095.3216 1010.016 
+L 56.6784 1010.016 
+Q 41.84064 1010.016 41.84064 1005.48 
+L 41.84064 914.76 
+Q 41.84064 910.224 56.6784 910.224 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_27">
+    <path d="M 353.4336 925.452 
+L 359.79264 925.452 
+L 359.79264 935.172 
+L 353.4336 935.172 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_28">
+    <path d="M 353.4336 954.612 
+L 359.79264 954.612 
+L 359.79264 964.332 
+L 353.4336 964.332 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_29">
+    <path d="M 353.4336 983.772 
+L 359.79264 983.772 
+L 359.79264 993.492 
+L 353.4336 993.492 
+z
+" clip-path="url(#pbabb42bb4d)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_14">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="67.2768" y="725.937246" transform="rotate(-0 67.2768 725.937246)">01  初始引用</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="721.464922" transform="rotate(-0 374.6304 721.464922)">目录名字：a、b → I</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="750.859297" transform="rotate(-0 374.6304 750.859297)">名字引用数：2</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="779.902109" transform="rotate(-0 374.6304 779.902109)">打开引用：fd → I</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="67.2768" y="836.138262" transform="rotate(-0 67.2768 836.138262)">02  删除两个名字</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="831.546797" transform="rotate(-0 374.6304 831.546797)">a、b 都不再出现</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="861.019297" transform="rotate(-0 374.6304 861.019297)">名字引用数：0</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="890.296484" transform="rotate(-0 374.6304 890.296484)">fd 仍可读原对象 I</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d68b20" x="67.2768" y="946.339277" transform="rotate(-0 67.2768 946.339277)">03  关闭最后的 fd</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="941.863047" transform="rotate(-0 374.6304 941.863047)">打开引用也归零</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="971.257422" transform="rotate(-0 374.6304 971.257422)">对象才具备回收条件</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="999.479922" transform="rotate(-0 374.6304 999.479922)">复制文件会产生新对象 J</text>
+   </g>
+  </g>
+  <g id="axes_5">
+   <g id="patch_30">
+    <path d="M 56.6784 1032.7536 
+L 1095.3216 1032.7536 
+Q 1110.15936 1032.7536 1110.15936 1034.316 
+L 1110.15936 1090.116 
+Q 1110.15936 1091.6784 1095.3216 1091.6784 
+L 56.6784 1091.6784 
+Q 41.84064 1091.6784 41.84064 1090.116 
+L 41.84064 1034.316 
+Q 41.84064 1032.7536 56.6784 1032.7536 
+z
+" clip-path="url(#p38e220ba7d)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_26">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="61.9776" y="1061.556922" transform="rotate(-0 61.9776 1061.556922)">名字是查找入口，打开引用是进程的使用权。删除入口不等于立即销毁正在使用的对象。</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="1121.330461" transform="rotate(-0 46.08 1121.330461)">省略文件系统内部细节。I、J 是教学标记，删除与截断文件的后果不同。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p5fbf8272fe">
+   <rect x="46.08" y="172.8" width="1059.84" height="496.8"/>
+  </clipPath>
+  <clipPath id="pbabb42bb4d">
+   <rect x="46.08" y="691.2" width="1059.84" height="324"/>
+  </clipPath>
+  <clipPath id="p38e220ba7d">
+   <rect x="46.08" y="1033.2" width="1059.84" height="111.6"/>
+  </clipPath>
+ </defs>
+</svg>

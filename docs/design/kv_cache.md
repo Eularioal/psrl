@@ -25,6 +25,16 @@ In multi-turn agentic RL, each trajectory may accumulate **10,000+ tokens** acro
 1. Concatenating the full conversation history (prompt + all prior turns).
 2. Sending the full sequence to the rollout instance for the next generation step.
 
+<!-- figure:kv-prefix-pages -->
+这张图沿同一个场景解释：两条请求共享同一前缀，怎样省显存而不互相改坏生成历史？
+
+[![KV缓存：共享已完成的前缀，分支继续时保留各自的新状态（1/2）](../_static/img/document-figures/kv-prefix-pages-screen.png)](../_static/img/document-figures/kv-prefix-pages.png)
+
+[![KV缓存：共享已完成的前缀，分支继续时保留各自的新状态（2/2）](../_static/img/document-figures/kv-prefix-pages-screen-02.png)](../_static/img/document-figures/kv-prefix-pages.png)
+
+A、B 输入前缀相同，前缀 KV 块只读共享；生成各自的新 token 后开始分支。 共享依赖不可变内容与独立引用。共享前缀不会让一条请求读取另一条的私有后缀。 块大小和 token 数为示意，缓存是否启用、可共享条件和回收策略按实现确认。 [查看矢量图](../_static/img/document-figures/kv-prefix-pages.svg)。
+<!-- /figure:kv-prefix-pages -->
+
 Without KV cache reuse, each turn requires **full re-prefill** of all prior tokens, repeating computation on earlier context. In a teaching example with 10 turns adding 1k input tokens each, processing every full prefix touches `1k + 2k + ... + 10k = 55k` input-token positions. Perfect reuse would process only the 10k newly added positions. This counts repeated input positions, not total attention FLOPs or a measured speedup.
 
 PSRL integrates with [LMCache](https://github.com/LMCache/LMCache) to solve this problem, enabling KV cache offloading, prefix reuse, and cross-instance transfer.

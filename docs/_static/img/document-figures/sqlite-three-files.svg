@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1152pt" height="1152pt" viewBox="0 0 1152 1152" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-20T12:13:01.821065</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1152 
+L 1152 1152 
+L 1152 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="46.08" y="39.94043" transform="rotate(-0 46.08 39.94043)">SQLite：主库、WAL和共享索引分工不同</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="93.330797" transform="rotate(-0 46.08 93.330797)">为什么数据库旁边还有 WAL 和 SHM，只复制主文件可能丢什么？</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 99.072 247.32 
+L 374.6304 247.32 
+L 374.6304 421.2 
+L 99.072 421.2 
+z
+" clip-path="url(#padd0b76fdf)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 236.8512 231.795 
+C 273.390671 231.795 308.438499 233.430812 334.275807 236.342167 
+C 360.113114 239.253523 374.6304 243.202722 374.6304 247.32 
+C 374.6304 251.437278 360.113114 255.386477 334.275807 258.297833 
+C 308.438499 261.209188 273.390671 262.845 236.8512 262.845 
+C 200.311729 262.845 165.263901 261.209188 139.426593 258.297833 
+C 113.589286 255.386477 99.072 251.437278 99.072 247.32 
+C 99.072 243.202722 113.589286 239.253523 139.426593 236.342167 
+C 165.263901 233.430812 200.311729 231.795 236.8512 231.795 
+z
+" clip-path="url(#padd0b76fdf)" style="fill: #eaf2ff; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 236.8512 405.675 
+C 273.390671 405.675 308.438499 407.310812 334.275807 410.222167 
+C 360.113114 413.133523 374.6304 417.082722 374.6304 421.2 
+C 374.6304 425.317278 360.113114 429.266477 334.275807 432.177833 
+C 308.438499 435.089188 273.390671 436.725 236.8512 436.725 
+C 200.311729 436.725 165.263901 435.089188 139.426593 432.177833 
+C 113.589286 429.266477 99.072 425.317278 99.072 421.2 
+C 99.072 417.082722 113.589286 413.133523 139.426593 410.222167 
+C 165.263901 407.310812 200.311729 405.675 236.8512 405.675 
+z
+" clip-path="url(#padd0b76fdf)" style="fill: #eaf2ff; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 438.2208 247.32 
+L 713.7792 247.32 
+L 713.7792 421.2 
+L 438.2208 421.2 
+z
+" clip-path="url(#padd0b76fdf)" style="fill: #fff2db; stroke: #e79730; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 576 231.795 
+C 612.539471 231.795 647.587299 233.430812 673.424607 236.342167 
+C 699.261914 239.253523 713.7792 243.202722 713.7792 247.32 
+C 713.7792 251.437278 699.261914 255.386477 673.424607 258.297833 
+C 647.587299 261.209188 612.539471 262.845 576 262.845 
+C 539.460529 262.845 504.412701 261.209188 478.575393 258.297833 
+C 452.738086 255.386477 438.2208 251.437278 438.2208 247.32 
+C 438.2208 243.202722 452.738086 239.253523 478.575393 236.342167 
+C 504.412701 233.430812 539.460529 231.795 576 231.795 
+z
+" clip-path="url(#padd0b76fdf)" style="fill: #fff2db; stroke: #e79730; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 576 405.675 
+C 612.539471 405.675 647.587299 407.310812 673.424607 410.222167 
+C 699.261914 413.133523 713.7792 417.082722 713.7792 421.2 
+C 713.7792 425.317278 699.261914 429.266477 673.424607 432.177833 
+C 647.587299 435.089188 612.539471 436.725 576 436.725 
+C 539.460529 436.725 504.412701 435.089188 478.575393 432.177833 
+C 452.738086 429.266477 438.2208 425.317278 438.2208 421.2 
+C 438.2208 417.082722 452.738086 413.133523 478.575393 410.222167 
+C 504.412701 407.310812 539.460529 405.675 576 405.675 
+z
+" clip-path="url(#padd0b76fdf)" style="fill: #fff2db; stroke: #e79730; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 777.3696 247.32 
+L 1052.928 247.32 
+L 1052.928 421.2 
+L 777.3696 421.2 
+z
+" clip-path="url(#padd0b76fdf)" style="fill: #f2edfb; stroke: #8764b8; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 915.1488 231.795 
+C 951.688271 231.795 986.736099 233.430812 1012.573407 236.342167 
+C 1038.410714 239.253523 1052.928 243.202722 1052.928 247.32 
+C 1052.928 251.437278 1038.410714 255.386477 1012.573407 258.297833 
+C 986.736099 261.209188 951.688271 262.845 915.1488 262.845 
+C 878.609329 262.845 843.561501 261.209188 817.724193 258.297833 
+C 791.886886 255.386477 777.3696 251.437278 777.3696 247.32 
+C 777.3696 243.202722 791.886886 239.253523 817.724193 236.342167 
+C 843.561501 233.430812 878.609329 231.795 915.1488 231.795 
+z
+" clip-path="url(#padd0b76fdf)" style="fill: #f2edfb; stroke: #8764b8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 915.1488 405.675 
+C 951.688271 405.675 986.736099 407.310812 1012.573407 410.222167 
+C 1038.410714 413.133523 1052.928 417.082722 1052.928 421.2 
+C 1052.928 425.317278 1038.410714 429.266477 1012.573407 432.177833 
+C 986.736099 435.089188 951.688271 436.725 915.1488 436.725 
+C 878.609329 436.725 843.561501 435.089188 817.724193 432.177833 
+C 791.886886 429.266477 777.3696 425.317278 777.3696 421.2 
+C 777.3696 417.082722 791.886886 413.133523 817.724193 410.222167 
+C 843.561501 407.310812 878.609329 405.675 915.1488 405.675 
+z
+" clip-path="url(#padd0b76fdf)" style="fill: #f2edfb; stroke: #8764b8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 563.403807 532.98 
+Q 401.126555 532.98 240.526353 532.98 
+" clip-path="url(#padd0b76fdf)" style="fill: none; stroke: #e79730; stroke-width: 1.5; stroke-linecap: round"/>
+    <path d="M 246.926353 536.18 
+L 240.526353 532.98 
+L 246.926353 529.78 
+z
+" clip-path="url(#padd0b76fdf)" style="fill: #e79730; stroke: #e79730; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="236.8512" y="341.4475" transform="rotate(-0 236.8512 341.4475)">主数据库</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="236.8512" y="484.238437" transform="rotate(-0 236.8512 484.238437)">已经合并的数据页</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="576" y="341.4475" transform="rotate(-0 576 341.4475)">WAL</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="576" y="484.2775" transform="rotate(-0 576 484.2775)">新提交的页版本</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="915.1488" y="341.408437" transform="rotate(-0 915.1488 341.408437)">SHM</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #203149" x="915.1488" y="484.316562" transform="rotate(-0 915.1488 484.316562)">索引与协调信息</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #e79730" x="406.4256" y="582.270312" transform="rotate(-0 406.4256 582.270312)">checkpoint合并</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: middle; fill: #8764b8" x="915.1488" y="583.715625" transform="rotate(-0 915.1488 583.715625)">帮助定位可见版本</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="text_11">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="142.085547" transform="rotate(-0 46.08 142.085547)">SQLite 使用 WAL 模式：主库里是旧页，新提交先写进 WAL，SHM 协助查找与协调。</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_12">
+    <path d="M 56.6784 689.904 
+L 1095.3216 689.904 
+Q 1110.15936 689.904 1110.15936 694.44 
+L 1110.15936 785.16 
+Q 1110.15936 789.696 1095.3216 789.696 
+L 56.6784 789.696 
+Q 41.84064 789.696 41.84064 785.16 
+L 41.84064 694.44 
+Q 41.84064 689.904 56.6784 689.904 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #eaf2ff; stroke: #3478c5; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 353.4336 705.132 
+L 359.79264 705.132 
+L 359.79264 714.852 
+L 353.4336 714.852 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 353.4336 734.292 
+L 359.79264 734.292 
+L 359.79264 744.012 
+L 353.4336 744.012 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 353.4336 763.452 
+L 359.79264 763.452 
+L 359.79264 773.172 
+L 353.4336 773.172 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #3478c5; stroke: #3478c5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 56.6784 800.064 
+L 1095.3216 800.064 
+Q 1110.15936 800.064 1110.15936 804.6 
+L 1110.15936 895.32 
+Q 1110.15936 899.856 1095.3216 899.856 
+L 56.6784 899.856 
+Q 41.84064 899.856 41.84064 895.32 
+L 41.84064 804.6 
+Q 41.84064 800.064 56.6784 800.064 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 353.4336 815.292 
+L 359.79264 815.292 
+L 359.79264 825.012 
+L 353.4336 825.012 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 353.4336 844.452 
+L 359.79264 844.452 
+L 359.79264 854.172 
+L 353.4336 854.172 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 353.4336 873.612 
+L 359.79264 873.612 
+L 359.79264 883.332 
+L 353.4336 883.332 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #159b8d; stroke: #159b8d; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 56.6784 910.224 
+L 1095.3216 910.224 
+Q 1110.15936 910.224 1110.15936 914.76 
+L 1110.15936 1005.48 
+Q 1110.15936 1010.016 1095.3216 1010.016 
+L 56.6784 1010.016 
+Q 41.84064 1010.016 41.84064 1005.48 
+L 41.84064 914.76 
+Q 41.84064 910.224 56.6784 910.224 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #fff2db; stroke: #d68b20; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 353.4336 925.452 
+L 359.79264 925.452 
+L 359.79264 935.172 
+L 353.4336 935.172 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_22">
+    <path d="M 353.4336 954.612 
+L 359.79264 954.612 
+L 359.79264 964.332 
+L 353.4336 964.332 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_23">
+    <path d="M 353.4336 983.772 
+L 359.79264 983.772 
+L 359.79264 993.492 
+L 353.4336 993.492 
+z
+" clip-path="url(#p17b16cdf30)" style="fill: #d68b20; stroke: #d68b20; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #3478c5" x="67.2768" y="725.937246" transform="rotate(-0 67.2768 725.937246)">01  主库已有旧页</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="721.660234" transform="rotate(-0 374.6304 721.660234)">db：页 P 的旧版本</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="750.859297" transform="rotate(-0 374.6304 750.859297)">读取要遵循一致快照</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="779.980234" transform="rotate(-0 374.6304 779.980234)">主文件未必含最新提交</text>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="67.2768" y="836.097246" transform="rotate(-0 67.2768 836.097246)">02  新提交进入 WAL</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="831.859297" transform="rotate(-0 374.6304 831.859297)">WAL：页 P 的新版本</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="861.019297" transform="rotate(-0 374.6304 861.019297)">SHM：索引和协调信息</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="890.179297" transform="rotate(-0 374.6304 890.179297)">新读取可按协议找到新页</text>
+   </g>
+   <g id="text_20">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #d68b20" x="67.2768" y="944.821699" transform="rotate(-0 67.2768 944.821699)">03  checkpoint 合并</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="941.941172" transform="rotate(-0 374.6304 941.941172)">在允许条件下合并页面</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="971.140234" transform="rotate(-0 374.6304 971.140234)">更新主库内容</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #203149" x="374.6304" y="1000.339297" transform="rotate(-0 374.6304 1000.339297)">备份应使用一致性方法</text>
+   </g>
+  </g>
+  <g id="axes_5">
+   <g id="patch_24">
+    <path d="M 56.6784 1032.7536 
+L 1095.3216 1032.7536 
+Q 1110.15936 1032.7536 1110.15936 1034.316 
+L 1110.15936 1090.116 
+Q 1110.15936 1091.6784 1095.3216 1091.6784 
+L 56.6784 1091.6784 
+Q 41.84064 1091.6784 41.84064 1090.116 
+L 41.84064 1034.316 
+Q 41.84064 1032.7536 56.6784 1032.7536 
+z
+" clip-path="url(#pf16ec3cc9b)" style="fill: #e6f6f2; stroke: #159b8d; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_24">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #159b8d" x="61.9776" y="1061.439734" transform="rotate(-0 61.9776 1061.439734)">三个文件承担不同职责。直接复制或截断活跃文件，可能破坏所需的一致快照。</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 18px; font-family: 'Droid Sans Fallback', 'DejaVu Sans'; text-anchor: start; fill: #53677c" x="46.08" y="1120.943742" transform="rotate(-0 46.08 1120.943742)">页号为示意。实际持久化和备份保证取决于事务、锁、checkpoint 与备份方法。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="padd0b76fdf">
+   <rect x="46.08" y="172.8" width="1059.84" height="496.8"/>
+  </clipPath>
+  <clipPath id="p17b16cdf30">
+   <rect x="46.08" y="691.2" width="1059.84" height="324"/>
+  </clipPath>
+  <clipPath id="pf16ec3cc9b">
+   <rect x="46.08" y="1033.2" width="1059.84" height="111.6"/>
+  </clipPath>
+ </defs>
+</svg>

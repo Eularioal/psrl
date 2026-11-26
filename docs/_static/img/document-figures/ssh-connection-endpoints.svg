@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="548" viewBox="0 0 800 548" role="img" aria-labelledby="title description">
+  <title id="title">一条 SSH 连接如何在两端收发数据</title>
+  <desc id="description">教学示例。上半部分显示客户端和服务端的程序、接口、地址和两个方向。下半部分用两条连接说明服务端怎样通过客户端源端口区分它们。</desc>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#245fa3"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#157469"/>
+    </marker>
+  </defs>
+
+  <rect width="800" height="548" fill="#f6f9fd" rx="14"/>
+  <g font-family="Droid Sans Fallback, Noto Sans CJK SC, sans-serif" fill="#172a42" font-size="17">
+    <text x="26" y="39" font-size="26" font-weight="bold">一条 SSH 连接如何在两端收发数据</text>
+    <text x="26" y="68" fill="#4d6076">教学示例 · 客户端 A 主动连接服务器 B</text>
+
+    <rect x="24" y="86" width="346" height="173" rx="12" fill="#e8f2ff" stroke="#9ebde2"/>
+    <rect x="430" y="86" width="346" height="173" rx="12" fill="#e7f6f2" stroke="#9ccfc3"/>
+    <text x="43" y="115" font-size="19" font-weight="bold">A · SSH 客户端</text>
+    <text x="449" y="115" font-size="19" font-weight="bold">B · SSH 服务端</text>
+
+    <rect x="43" y="130" width="307" height="43" rx="7" fill="#fff" stroke="#9ebde2"/>
+    <rect x="449" y="130" width="307" height="43" rx="7" fill="#fff" stroke="#9ccfc3"/>
+    <text x="55" y="157">ssh 使用临时 TCP 端口<tspan dx="5" fill="#245fa3" font-weight="bold">42640</tspan></text>
+    <text x="461" y="157">sshd 监听 TCP 端口<tspan dx="5" fill="#157469" font-weight="bold">36000</tspan></text>
+    <path d="M 196 173 V 188 M 603 173 V 188" stroke="#7890a8" stroke-width="2"/>
+
+    <rect x="43" y="188" width="307" height="51" rx="7" fill="#d2e5ff" stroke="#9ebde2"/>
+    <rect x="449" y="188" width="307" height="51" rx="7" fill="#ccece3" stroke="#9ccfc3"/>
+    <text x="55" y="219">网络接口 · IP<tspan dx="5" font-weight="bold">198.51.100.20</tspan></text>
+    <text x="461" y="219">bond1 接口 · IP<tspan dx="5" font-weight="bold">192.0.2.40</tspan></text>
+    <path d="M 351 199 H 447" fill="none" stroke="#245fa3" stroke-width="2" marker-end="url(#arrow-blue)"/>
+    <path d="M 448 229 H 352" fill="none" stroke="#157469" stroke-width="2" marker-end="url(#arrow-green)"/>
+    <text x="400" y="189" text-anchor="middle" fill="#245fa3" font-size="15">发出</text>
+    <text x="400" y="252" text-anchor="middle" fill="#157469" font-size="15">回送</text>
+
+    <text x="26" y="288" font-size="17" font-weight="bold">B 的 Shell 中，四列记录连接的两个端点</text>
+    <g font-family="DejaVu Sans Mono, monospace" font-size="18" font-weight="bold">
+      <text x="43" y="318" fill="#245fa3">198.51.100.20</text>
+      <text x="223" y="318" fill="#245fa3">42640</text>
+      <text x="450" y="318" fill="#157469">192.0.2.40</text>
+      <text x="636" y="318" fill="#157469">36000</text>
+    </g>
+    <text x="43" y="341" font-size="15">客户端 IP</text>
+    <text x="223" y="341" font-size="15">客户端端口</text>
+    <text x="450" y="341" font-size="15">服务端 IP</text>
+    <text x="636" y="341" font-size="15">服务端端口</text>
+
+    <path d="M 24 358 H 776" stroke="#ccd8e5"/>
+    <text x="26" y="384" font-size="18" font-weight="bold">A 再发起一条 TCP 连接，B 继续使用同一个监听端口</text>
+    <rect x="24" y="398" width="309" height="43" rx="7" fill="#e8f2ff" stroke="#9ebde2"/>
+    <rect x="24" y="458" width="309" height="43" rx="7" fill="#e8f2ff" stroke="#9ebde2"/>
+    <text x="39" y="425">连接 1　198.51.100.20:<tspan fill="#245fa3" font-weight="bold">42640</tspan></text>
+    <text x="39" y="485">连接 2　198.51.100.20:<tspan fill="#245fa3" font-weight="bold">42641</tspan></text>
+    <rect x="457" y="398" width="319" height="103" rx="10" fill="#e7f6f2" stroke="#9ccfc3"/>
+    <path d="M 334 421 H 395 L 455 443" fill="none" stroke="#245fa3" stroke-width="2" marker-end="url(#arrow-blue)"/>
+    <path d="M 334 479 H 395 L 455 456" fill="none" stroke="#245fa3" stroke-width="2" marker-end="url(#arrow-blue)"/>
+    <text x="477" y="437" font-size="17">同一服务端<tspan dx="5" fill="#157469" font-weight="bold">192.0.2.40:36000</tspan></text>
+    <text x="477" y="465" font-size="16">源端口不同，内核可区分两条连接</text>
+    <text x="26" y="529" font-size="15" fill="#4d6076">端点由 IP 和端口组成。箭头表示数据收发或发起连接的方向。</text>
+  </g>
+</svg>

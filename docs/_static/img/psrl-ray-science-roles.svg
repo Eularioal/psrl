@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="554" viewBox="0 0 800 554" role="img" aria-labelledby="title description">
+  <title id="title">Ray 怎样组织一次 PSRL Science 训练</title>
+  <desc id="description">Driver 用 Ray 启动 TaskRunner，Ray 按资源要求放置进程。AgentLoopWorker 请求 vLLM 生成，远程调用 EnvRouter 申请环境资源，并在获准的环境里运行工具。PSRL 按训练批次取用完成的轨迹。</desc>
+  <defs>
+    <marker id="ray-arrow" markerWidth="8" markerHeight="8" viewBox="0 0 8 8" refX="7" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#315f9e"/>
+    </marker>
+    <marker id="work-arrow" markerWidth="8" markerHeight="8" viewBox="0 0 8 8" refX="7" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#427064"/>
+    </marker>
+    <style>
+      text { font-family: Droid Sans Fallback; fill: #20334c; }
+      .title { font-size: 27px; font-weight: bold; }
+      .section { font-size: 20px; font-weight: bold; }
+      .role { font-size: 18px; font-weight: bold; }
+      .description { font-size: 16px; }
+      .call { font-size: 15px; text-anchor: middle; }
+      .ray { stroke: #315f9e; stroke-width: 2; marker-end: url(#ray-arrow); }
+      .work { stroke: #427064; stroke-width: 2; stroke-dasharray: 5 4; marker-end: url(#work-arrow); }
+    </style>
+  </defs>
+  <rect width="800" height="554" fill="#fff"/>
+  <text x="27" y="43" class="title">Ray 怎样组织一次 PSRL Science 训练</text>
+  <text x="27" y="71" class="description">教学示意 · 使用 Env Service 的一次运行</text>
+
+  <rect x="24" y="90" width="752" height="129" rx="12" fill="#eef4ff"/>
+  <text x="40" y="121" class="section">作业启动</text>
+  <g fill="#fff" stroke="#bdcfea">
+    <rect x="38" y="137" width="158" height="65" rx="8"/>
+    <rect x="286" y="137" width="222" height="65" rx="8"/>
+    <rect x="598" y="137" width="163" height="65" rx="8"/>
+  </g>
+  <text x="52" y="163" class="role">Driver</text>
+  <text x="52" y="187" class="description">提交训练作业</text>
+  <line x1="201" y1="171" x2="280" y2="171" class="ray"/>
+  <text x="239" y="160" class="call">远程创建</text>
+  <text x="300" y="163" class="role">TaskRunner actor</text>
+  <text x="300" y="187" class="description">创建 Trainer，声明角色资源</text>
+  <line x1="513" y1="171" x2="592" y2="171" class="ray"/>
+  <text x="552" y="160" class="call">资源要求</text>
+  <text x="612" y="163" class="role">Ray 调度</text>
+  <text x="612" y="187" class="description">按资源放置进程</text>
+
+  <rect x="24" y="233" width="752" height="253" rx="12" fill="#f4f7fa"/>
+  <text x="40" y="265" class="section">一条轨迹的执行</text>
+  <rect x="38" y="282" width="191" height="188" rx="9" fill="#e0ebff" stroke="#bdcfea"/>
+  <text x="51" y="319" class="role">AgentLoopWorker</text>
+  <text x="51" y="354" class="description">运行多轮交互</text>
+  <text x="51" y="389" class="description">等待模型或工具时</text>
+  <text x="51" y="414" class="description">可继续推进其他轨迹</text>
+
+  <line x1="234" y1="312" x2="345" y2="312" class="work"/>
+  <text x="287" y="300" class="call">模型请求</text>
+  <rect x="351" y="282" width="410" height="59" rx="8" fill="#e4f4ed" stroke="#b6d9c7"/>
+  <text x="365" y="307" class="role">模型网关 → vLLM</text>
+  <text x="365" y="329" class="description">网关转发请求，vLLM 生成 token</text>
+
+  <line x1="234" y1="386" x2="345" y2="386" class="ray"/>
+  <text x="287" y="374" class="call">Ray 调用</text>
+  <rect x="351" y="351" width="219" height="65" rx="8" fill="#e0ebff" stroke="#bdcfea"/>
+  <text x="365" y="378" class="role">EnvRouter</text>
+  <text x="365" y="402" class="description">预算够就发租约，否则等</text>
+  <line x1="575" y1="386" x2="612" y2="386" class="ray"/>
+  <rect x="618" y="351" width="143" height="65" rx="8" fill="#e0ebff" stroke="#bdcfea"/>
+  <text x="630" y="378" style="font-size:16px;font-weight:bold">EnvNodeService</text>
+  <text x="630" y="402" class="description">目标节点服务</text>
+
+  <line x1="234" y1="449" x2="345" y2="449" class="work"/>
+  <text x="287" y="437" class="call">工具调用</text>
+  <rect x="351" y="426" width="410" height="44" rx="8" fill="#fff0d9" stroke="#e8cca1"/>
+  <text x="365" y="454" class="role">Harbor / Docker</text>
+  <text x="531" y="454" class="description">在获准环境里执行命令</text>
+
+  <rect x="24" y="500" width="752" height="40" rx="8" fill="#e8f2fb"/>
+  <text x="40" y="526" class="description">轨迹和奖励入队</text>
+  <text x="208" y="526" class="description">→</text>
+  <text x="244" y="526" class="description">Trainer 按训练批次取样</text>
+  <text x="464" y="526" class="description">→</text>
+  <text x="500" y="526" class="description">训练 worker 更新权重</text>
+</svg>

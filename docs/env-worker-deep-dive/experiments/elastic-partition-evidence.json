@@ -1,0 +1,42 @@
+{
+  "trials": [
+    {
+      "id": "0-fixed",
+      "policy": "fixed",
+      "work_done_s": 344.3168334569782,
+      "total_with_restore_s": 344.31689700111747,
+      "mean_env_wait_s": 39.47016990774622,
+      "mean_inference_latency_s": 6.419690902034442,
+      "max_inference_latency_s": 6.490743901580572,
+      "borrowed_commands": 0,
+      "sleep_wake_s": 0
+    },
+    {
+      "id": "1-dynamic",
+      "policy": "dynamic",
+      "work_done_s": 271.04284114949405,
+      "total_with_restore_s": 271.04288241267204,
+      "mean_env_wait_s": 1.6613232867481809,
+      "mean_inference_latency_s": 6.336755462146054,
+      "max_inference_latency_s": 6.546175431460142,
+      "borrowed_commands": 4,
+      "sleep_wake_s": 3.467134004458785
+    }
+  ],
+  "mean_total_s": {
+    "fixed": 344.31689700111747,
+    "dynamic": 271.04288241267204
+  },
+  "dynamic_reduction_fraction": 0.21280981336273952,
+  "tensor_hashes": [
+    "0b37fdee2cc94444299eccfe4ae644ed293616d37eae770a9d94d575c6ce1743"
+  ],
+  "scores": [
+    0.43710736452436894
+  ],
+  "inference_outputs_identical": true,
+  "initialization_s": 321.67611898481846,
+  "elapsed_including_validation_and_cleanup_s": 969.5672656167299,
+  "physical_release_confirmed": true,
+  "boundary": "Real Ray, EnvRouter, Docker, vLLM and PostTrain commands. Explicit entry, no SMG or PPO."
+}
